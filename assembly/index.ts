@@ -28,6 +28,16 @@ let m_len: i32;
 let m_tot_len: i32;
 let SHA224_256_BLOCK_SIZE: i32 = (512/8);
 
+function SHFR(x, n) {return x >> n};
+function ROTR(x, n) {return ((x >> n) | (x << ((x.length() << 3) - n)))};
+function ROTL(x, n) {return ((x << n) | (x >> ((x.length() << 3) -n )))};
+function CH(x, y, z) {return ((x & y) ^ (~x & z))};
+function MAJ(x, y, z) {return ((x & y) ^ (x & z) ^ (y & z))};
+function F1(x) {return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))};
+function F2(x) {return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))};
+function F3(x) {return (ROTR(x,  7) ^ ROTR(x, 18) ^ SHFR(x,  3))};
+function F4(x) {return (ROTR(x, 17) ^ ROTR(x, 19) ^ SHFR(x, 10))};
+
 function transform(message: string, block: i32): void {
   // uint32 w[64];
   // uint32 wv[8];
