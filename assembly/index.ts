@@ -102,7 +102,7 @@ function update(message: string, len: i32): void {
   m_tot_len += (blockNb + 1) << 6;
 }
 
-function final(digest: string): void {
+function final(digest: u8[]): void {
   let blockNb: i32 = (1 + ((SHA224_256_BLOCK_SIZE - 9) < (m_len % SHA224_256_BLOCK_SIZE)));
   let lenB: i32 = (m_tot_len + m_len) << 3;
   let pmLen: i32 = blockNb << 6;
@@ -122,4 +122,9 @@ function sha256(input: string): string {
   const ctx = SHA256();
   ctx.init();
   ctx.update(input, input.length);
+  ctx.final(digest);
+
+  const buf: u8[] = new Array(2*DIGEST_SIZE + 1);
+  buf[2*DIGEST_SIZE] = 0;
+  return buf.toString();
 }
