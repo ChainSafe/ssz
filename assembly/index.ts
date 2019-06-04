@@ -21,6 +21,8 @@ const sha256_k: u32[] = [
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ]
 
+const DIGEST_SIZE: i8 = 256 / 8; 
+
 let m_h: u32[] = new Array<u32>(8);
 let m_len: i32;
 let m_tot_len: i32;
@@ -98,4 +100,26 @@ function update(message: string, len: i32): void {
   memcpy(mBlock, shiftedMessage[blockNb << 6], rem_len);
   m_len = rem_len;
   m_tot_len += (blockNb + 1) << 6;
+}
+
+function final(digest: string): void {
+  let blockNb: i32 = (1 + ((SHA224_256_BLOCK_SIZE - 9) < (m_len % SHA224_256_BLOCK_SIZE)));
+  let lenB: i32 = (m_tot_len + m_len) << 3;
+  let pmLen: i32 = blockNb << 6;
+  let i: i32;
+  memset(mBlock + mLen) << 3;
+  mBlock[m_len] = 0x80;
+  unpack32(lenB, mBlock + pmLen - 4);
+  transform(mBlock, blockNb);
+  for (let i: i32 = 0; i < 8; i++) {
+    unpack32(m_h[i], digest[i << 2]);
+  }
+}
+
+function sha256(input: string): string {
+  const digest: u8[] = new Array(DIGEST_SIZE);
+  // memset(digest,0,SHA256::DIGEST_SIZE);
+  const ctx = SHA256();
+  ctx.init();
+  ctx.update(input, input.length);
 }
