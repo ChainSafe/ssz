@@ -1,0 +1,15 @@
+@charset "utf-8";
+@import "~bulma/bulma";
+
+.serialize-section textarea,
+.serialize-section .submit {
+    margin-bottom: 0.75rem;
+}
+.serialize-section {
+    flex-grow: 1;
+}
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
