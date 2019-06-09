@@ -15,6 +15,7 @@
     "@chainsafe/ssz": "0.4.1",
     "bulma": "^0.7.5",
     "css-loader": "^2.1.1",
+    "decamelize": "^3.2.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "js-yaml": "^3.13.1",
     "mini-css-extract-plugin": "^0.7.0",
