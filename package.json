@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "babel-typescript-react-boilerplate",
-  "version": "1.0.0",
-  "repository": "git@github.com:saltyshiomix/babel-typescript-react-boilerplate.git",
-  "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
+  "name": "simpleserialize.com",
+  "version": "0.1.0",
+  "repository": "https://github.com/chainsafe/simpleserialize.com",
+  "author": "Chainsafe Systems",
   "license": "MIT",
   "scripts": {
     "check-types": "tsc",
