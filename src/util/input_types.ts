@@ -15,8 +15,8 @@ export const inputTypes: InputTypeRecord = {
         dump: (value, type) => dumpYaml(unexpandInput(value, parseType(type))),
     },
     json: {
-        parse: (raw, type) => "todo",
-        dump: (value, type) => "todo",
+        parse: (raw, type) => expandInput(JSON.parse(raw), parseType(type)),
+        dump: (value, type) => JSON.stringify(unexpandInput(value, parseType(type))),
     },
     ssz: {
         parse: (raw, type) => deserialize(Buffer.from(raw.replace('0x', ''), 'hex'), type),
