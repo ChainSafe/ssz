@@ -1,4 +1,5 @@
 import {AnySSZType, FullSSZType, parseType, Type, UintType} from '@chainsafe/ssz';
+import {expandInput} from "./translate";
 
 function randomUint(type: UintType): number {
   const byteLength = Math.min(type.byteLength, 5);
@@ -27,7 +28,9 @@ function randomBytes(length: number): string {
 }
 
 export function createRandomValue(type: AnySSZType): any {
-  return _createRandomValue(parseType(type));
+  const fullType = parseType(type);
+  const randomValue = _createRandomValue(fullType);
+  return expandInput(randomValue, fullType);
 }
 
 function _createRandomValue(type: FullSSZType): any {
