@@ -15,6 +15,13 @@ type State = {
 
 export default class Output extends React.Component<Props, State> {
 
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            showError: false
+        };
+    }
+
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
         return {showError: !!nextProps.error}
     }
