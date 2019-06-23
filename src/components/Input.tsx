@@ -11,10 +11,28 @@ type Props = {
 }
 
 type State = {
-    type: string;
+    sszType: string;
     input: string;
     inputType: string;
 }
+
+type InputType = {
+    parse: (value: string, type: AnySSZType) => any,
+    dump: (value: any) => string,
+}
+
+type InputTypeRecord = Record<string, InputType>
+
+const inputTypes: InputTypeRecord = {
+    'yaml': {
+        parse: parseYaml,
+        dump: dumpYaml
+    },
+    'json': {
+        parse: () => "todo",
+        dump: (data: any) => "todo"
+    }
+};
 
 export default class Input extends React.Component<Props, State> {
 
@@ -22,14 +40,10 @@ export default class Input extends React.Component<Props, State> {
         super(props);
         const initialType = names[Math.floor(Math.random() * names.length)];
         this.state = {
-            input: Input.createRandom(types[initialType]),
-            type: initialType,
+            input: inputTypes.yaml.dump(createRandomValue(types[initialType])),
+            sszType: initialType,
             inputType: 'yaml',
         };
-    }
-
-    static createRandom(type: AnySSZType): string {
-        return dumpYaml(createRandomValue(type));
     }
 
     getRows(): number {
@@ -43,18 +57,20 @@ export default class Input extends React.Component<Props, State> {
     }
 
     parsedInput() {
-        switch(this.state.inputType) {
-            case 'json':
-                return JSON.parse(this.state.input);
-            case 'yaml':
-                return parseYaml(this.state.input, types[this.state.type]);
-        }
+        return inputTypes[this.state.inputType].parse(this.state.input, this.state.sszType);
     }
 
-    setType(e: ChangeEvent<HTMLSelectElement>) {
+    setInputType(e: ChangeEvent<HTMLSelectElement>) {
+        const inputTypeName = e.target.value;
+        const value = createRandomValue(types[this.state.sszType]);
+        const input = inputTypes[inputTypeName].dump(value);
+        this.setState({inputType: e.target.value, input});
+    }
+
+    setSSZType(e: ChangeEvent<HTMLSelectElement>) {
         const typeName = e.target.value;
-        const input = Input.createRandom(types[typeName]);
-        this.setState({type: e.target.value, input});
+        const input = createRandomValue(types[typeName]);
+        this.setState({sszType: e.target.value, input});
     }
 
     setInput(e: ChangeEvent<HTMLTextAreaElement>) {
@@ -62,7 +78,7 @@ export default class Input extends React.Component<Props, State> {
     }
 
     doProcess() {
-        this.props.onProcess(this.state.type, this.parsedInput(), types[this.state.type])
+        this.props.onProcess(this.state.sszType, this.parsedInput(), types[this.state.sszType])
     }
 
     render() {
@@ -78,10 +94,21 @@ export default class Input extends React.Component<Props, State> {
                     <div className='control is-expanded'>
                         <div className='select is-fullwidth'>
                             <select
-                                value={this.state.type}
-                                onChange={this.setType.bind(this)}>
+                                value={this.state.sszType}
+                                onChange={this.setSSZType.bind(this)}>
                                 {
-                                    names.map((name) => <option key={name} value={name}>{name}</option>)
+                                    names.map(
+                                        (name) => <option key={name} value={name}>{name}</option>)
+                                }
+                            </select>
+                        </div>
+                        <div className='select is-fullwidth'>
+                            <select
+                                value={this.state.inputType}
+                                onChange={this.setInputType.bind(this)}>
+                                {
+                                    Object.keys(inputTypes).map(
+                                        (name) => <option key={name} value={name}>{name}</option>)
                                 }
                             </select>
                         </div>
@@ -92,7 +119,7 @@ export default class Input extends React.Component<Props, State> {
                           value={this.state.input}
                           onChange={this.setInput.bind(this)}/>
                 <button className='button is-primary is-medium is-fullwidth is-uppercase is-family-code submit'
-                        disabled={!(this.state.type && this.state.input)}
+                        disabled={!(this.state.sszType && this.state.input)}
                         onClick={this.doProcess.bind(this)}>
                     Serialize
                 </button>
