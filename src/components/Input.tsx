@@ -30,7 +30,6 @@ export default class Input extends React.Component<Props, State> {
     }
 
     getRows(): number {
-        console.log(this.state.input);
         return Math.min(
             16,
             Math.max(
@@ -41,7 +40,6 @@ export default class Input extends React.Component<Props, State> {
     }
 
     parsedInput() {
-        console.log("parse!");
         return inputTypes[this.state.inputType].parse(this.state.input, types[this.state.sszTypeName]);
     }
 

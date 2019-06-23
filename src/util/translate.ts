@@ -32,9 +32,7 @@ export function unexpandInput(input: any, type: FullSSZType): any {
             return input;
         case Type.byteList:
         case Type.byteVector:
-            const out = input.toString('hex');
-            console.log("unexpanded: ", input, out);
-            return out;
+            return input.toString('hex');
         case Type.list:
         case Type.vector:
             return input.map((i: any) => unexpandInput(i, type.elementType));

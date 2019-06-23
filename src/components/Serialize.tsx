@@ -30,7 +30,6 @@ export default class Serialize extends React.Component<Props, State> {
   process(name: string, input: any, type: AnySSZType) {
     let serialized, root, error;
     try {
-      console.log('processing', input);
       serialized = serialize(input, type).toString('hex');
       root = hashTreeRoot(input, type).toString('hex');
     } catch (e) {
