@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { AnySSZType, serialize, hashTreeRoot } from "@chainsafe/ssz";
+import {AnySSZType, serialize, hashTreeRoot, parseType, FullSSZType} from "@chainsafe/ssz";
 import Output from "./Output";
 import Input from "./Input";
+import TreeView from "./TreeView";
+import {unexpandInput} from "../util/translate";
 
 
 type Props = {
@@ -9,7 +11,9 @@ type Props = {
 }
 
 type State = {
-  name: string | undefined
+  name: string | undefined;
+  input: any;
+  sszType: FullSSZType | undefined;
   error: string | undefined;
   serialized: string | undefined;
   hashTreeRoot: string | undefined;
@@ -21,6 +25,8 @@ export default class Serialize extends React.Component<Props, State> {
     super(props);
     this.state = {
       name: undefined,
+      input: undefined,
+      sszType: undefined,
       error: undefined,
       serialized: undefined,
       hashTreeRoot: undefined,
@@ -35,11 +41,15 @@ export default class Serialize extends React.Component<Props, State> {
     } catch (e) {
       error = e.message;
     }
-    this.setState({name, serialized, hashTreeRoot: root, error});
+    const sszTyp = parseType(type);
+    // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
+    // and can be passed through React component properties.
+    const stringifiedInput = unexpandInput(input, sszTyp, true);
+    this.setState({name, input: stringifiedInput, sszType: sszTyp, serialized, hashTreeRoot: root, error});
   }
 
   render() {
-    const {error, serialized, hashTreeRoot} = this.state;
+    const {input, sszType, error, serialized, hashTreeRoot} = this.state;
     return (
       <div className='section serialize-section is-family-code'>
         <div className='container'>
@@ -52,6 +62,7 @@ export default class Serialize extends React.Component<Props, State> {
             </div>
           </div>
         </div>
+        {(!error && input && sszType) && <TreeView key={hashTreeRoot} input={input} sszType={sszType}/>}
       </div>
     );
   }
