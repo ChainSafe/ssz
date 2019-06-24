@@ -13,10 +13,13 @@
   },
   "dependencies": {
     "@chainsafe/ssz": "0.4.2",
+    "@types/bn.js": "^4.11.5",
+    "bn.js": "^4.11.8",
     "bulma": "^0.7.5",
     "css-loader": "^2.1.1",
     "decamelize": "^3.2.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "eyzy-tree": "^0.2.2",
     "js-yaml": "^3.13.1",
     "mini-css-extract-plugin": "^0.7.0",
     "node-sass": "^4.12.0",
