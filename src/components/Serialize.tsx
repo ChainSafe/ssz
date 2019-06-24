@@ -15,8 +15,8 @@ type State = {
   input: any;
   sszType: FullSSZType | undefined;
   error: string | undefined;
-  serialized: string | undefined;
-  hashTreeRoot: string | undefined;
+  serialized: Buffer | undefined;
+  hashTreeRoot: Buffer | undefined;
 }
 
 export default class Serialize extends React.Component<Props, State> {
@@ -36,8 +36,8 @@ export default class Serialize extends React.Component<Props, State> {
   process(name: string, input: any, type: AnySSZType) {
     let serialized, root, error;
     try {
-      serialized = serialize(input, type).toString('hex');
-      root = hashTreeRoot(input, type).toString('hex');
+      serialized = serialize(input, type);
+      root = hashTreeRoot(input, type);
     } catch (e) {
       error = e.message;
     }
@@ -50,6 +50,7 @@ export default class Serialize extends React.Component<Props, State> {
 
   render() {
     const {input, sszType, error, serialized, hashTreeRoot} = this.state;
+    const treeKey = hashTreeRoot ? hashTreeRoot.toString('hex') : '';
     return (
       <div className='section serialize-section is-family-code'>
         <div className='container'>
@@ -62,7 +63,7 @@ export default class Serialize extends React.Component<Props, State> {
             </div>
           </div>
         </div>
-        {(!error && input && sszType) && <TreeView key={hashTreeRoot} input={input} sszType={sszType}/>}
+        {(!error && input && sszType) && <TreeView key={treeKey} input={input} sszType={sszType}/>}
       </div>
     );
   }
