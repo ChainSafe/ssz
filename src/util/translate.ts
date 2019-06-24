@@ -17,7 +17,7 @@ export function expandInput(input: any, type: FullSSZType, intFromStr: boolean):
             if (input && input.slice(0, 2) === '0x') {
                 return Buffer.from(input.slice(2), 'hex');
             } else {
-                return Buffer.from(input, 'hex');
+                return Buffer.from(input, 'base64');
             }
         case Type.list:
         case Type.vector:
