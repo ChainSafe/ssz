@@ -1,22 +1,19 @@
 import {AnySSZType, FullSSZType, parseType, Type, UintType} from '@chainsafe/ssz';
 import {expandInput} from "./translate";
+import BN from "bn.js";
 
-function randomUint(type: UintType): number {
-  const byteLength = Math.min(type.byteLength, 5);
-  let out = 0;
-  for (let i = 0; i < byteLength; i++) {
-    out += Math.floor(Math.random() * 8);
-    out = out << 1;
+function randomUint(type: UintType): BN {
+  const byteLength = type.useNumber? Math.min(type.byteLength, 6) : type.byteLength;
+  let out = new BN(Math.floor(Math.random() * 8));
+  for (let i = 1; i < byteLength; i++) {
+    out.iushln(8);
+    out.iaddn(Math.floor(Math.random() * 8));
   }
   return out;
 }
 
 function randomBool(): boolean {
-  if (Math.random() > 0.5) {
-    return true;
-  } else {
-    return false;
-  }
+  return Math.random() > 0.5;
 }
 
 function randomNibble(): string {
@@ -30,7 +27,7 @@ function randomBytes(length: number): string {
 export function createRandomValue(type: AnySSZType): any {
   const fullType = parseType(type);
   const randomValue = _createRandomValue(fullType);
-  return expandInput(randomValue, fullType);
+  return expandInput(randomValue, fullType, false);
 }
 
 function _createRandomValue(type: FullSSZType): any {
