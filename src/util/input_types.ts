@@ -11,15 +11,15 @@ type InputType = {
 
 export const inputTypes: InputTypeRecord = {
     yaml: {
-        parse: (raw, type) => expandInput(parseYaml(raw), parseType(type)),
-        dump: (value, type) => dumpYaml(unexpandInput(value, parseType(type))),
+        parse: (raw, type) => expandInput(parseYaml(raw), parseType(type), false),
+        dump: (value, type) => dumpYaml(unexpandInput(value, parseType(type), false)),
     },
     json: {
-        parse: (raw, type) => expandInput(JSON.parse(raw), parseType(type)),
-        dump: (value, type) => JSON.stringify(unexpandInput(value, parseType(type))),
+        parse: (raw, type) => expandInput(JSON.parse(raw), parseType(type), true),
+        dump: (value, type) => JSON.stringify(unexpandInput(value, parseType(type), true)),
     },
     ssz: {
         parse: (raw, type) => deserialize(Buffer.from(raw.replace('0x', ''), 'hex'), type),
-        dump: (value, type) => '0x' + serialize(expandInput(value, parseType(type)), type).toString('hex'),
+        dump: (value, type) => '0x' + serialize(expandInput(value, parseType(type), false), type).toString('hex'),
     },
 };
