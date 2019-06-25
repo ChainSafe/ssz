@@ -2,6 +2,14 @@ import {FullSSZType, Type} from "@chainsafe/ssz";
 import decamelize from "decamelize";
 import BN from "bn.js";
 
+export function expandByteArray(input: string): Buffer {
+  if (input && input.slice(0, 2) === '0x') {
+    return Buffer.from(input.slice(2), 'hex');
+  } else {
+    return Buffer.from(input, 'base64');
+  }
+}
+
 export function expandInput(input: any, type: FullSSZType, intFromStr: boolean): any {
     switch (type.type) {
         case Type.uint:
@@ -14,11 +22,7 @@ export function expandInput(input: any, type: FullSSZType, intFromStr: boolean):
             return input;
         case Type.byteList:
         case Type.byteVector:
-            if (input && input.slice(0, 2) === '0x') {
-                return Buffer.from(input.slice(2), 'hex');
-            } else {
-                return Buffer.from(input, 'base64');
-            }
+            return expandByteArray(input);
         case Type.list:
         case Type.vector:
             return input.map((i: any) => expandInput(i, type.elementType, intFromStr));
