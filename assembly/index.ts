@@ -28,23 +28,23 @@ let m_len: i32;
 let m_tot_len: i32;
 let SHA224_256_BLOCK_SIZE: i32 = (512/8);
 
-function SHFR(x, n) {return x >> n};
-function ROTR(x, n) {return ((x >> n) | (x << ((x.length() << 3) - n)))};
-function ROTL(x, n) {return ((x << n) | (x >> ((x.length() << 3) -n )))};
+function SHFR(x: u32, n: i8): u32 {return x >> n};
+function ROTR(x: u32, n: i8): u32 {return ((x >> n) | (x << ((x.length() << 3) - n)))};
+function ROTL(x: u32, n: i8): u32 {return ((x << n) | (x >> ((x.length() << 3) -n )))};
 function CH(x, y, z) {return ((x & y) ^ (~x & z))};
 function MAJ(x, y, z) {return ((x & y) ^ (x & z) ^ (y & z))};
-function F1(x) {return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))};
-function F2(x) {return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))};
-function F3(x) {return (ROTR(x,  7) ^ ROTR(x, 18) ^ SHFR(x,  3))};
-function F4(x) {return (ROTR(x, 17) ^ ROTR(x, 19) ^ SHFR(x, 10))};
+function F1(x: u32): u32 {return (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))};
+function F2(x: u32): u32 {return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))};
+function F3(x: u32): u32 {return (ROTR(x,  7) ^ ROTR(x, 18) ^ SHFR(x,  3))};
+function F4(x: u32): u32 {return (ROTR(x, 17) ^ ROTR(x, 19) ^ SHFR(x, 10))};
 
 function transform(message: string, block: i32): void {
   // uint32 w[64];
   // uint32 wv[8];
   // uint32 t1, t2;
   // const unsigned char *sub_block;
-  let w = new Array<any>(64);
-  let wv = new Array<any>(8);
+  let w = new Array<u32>(64);
+  let wv = new Array<u32>(8);
   let t1: u32;
   let t2: u32;
   let j: i32;
@@ -54,14 +54,14 @@ function transform(message: string, block: i32): void {
       pack32(subBlock[j << 2], w[j]);  
     }
     for (let j: i32 = 16; j < 64; j++) {
-      w[j] = f4(w[j - 2] + w[j - 7] + f3(w[j - 15])) + w[j - 16];  
+      w[j] = F4(w[j - 2] + w[j - 7] + F3(w[j - 15])) + w[j - 16];  
     }
     for (let j: i32 = 0; j < 8; j++) {
       wv[j] = m_h[j];
     }
     for (let j: i32 = 0; j < 64; j++) {
-      t1 = wv[7] + f2(wv[4]) + ch(wv[4], wv[5], wv[6]) + sha256_k[j] + w[j];
-      t2 = f1(wv[0]) + maj(wv[0], wv[1], wv[2]);
+      t1 = wv[7] + F2(wv[4]) + CH(wv[4], wv[5], wv[6]) + sha256_k[j] + w[j];
+      t2 = F1(wv[0]) + MAJ(wv[0], wv[1], wv[2]);
       wv[7] = wv[6];
       wv[6] = wv[5];
       wv[5] = wv[4];
