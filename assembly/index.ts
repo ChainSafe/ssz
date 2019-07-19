@@ -1,6 +1,5 @@
 // https://github.com/marco-fp/Bitcoin-Mining-Benchmark/blob/master/src/sha256.cpp
 import "allocator/arena"
-export {memory}
 
 const sha256_k: u32[] = [
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
@@ -19,13 +18,16 @@ const sha256_k: u32[] = [
   0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
   0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
-]
+];
 
-const DIGEST_SIZE: i8 = 256 / 8; 
+const DIGEST_SIZE: i8 = 256 / 8;
 
-let m_h: u32[] = new Array<u32>(8);
-let m_len: i32;
-let m_tot_len: i32;
+export interface Sha256 {
+  m_h: u32[];
+  m_block: int32[];//TODO: or something more appropriate for char array
+  m_len: i32;
+  m_tot_len: i32;
+}
 let SHA224_256_BLOCK_SIZE: i32 = (512/8);
 
 function SHFR(x: u32, n: i8): u32 {return x >> n};
@@ -38,7 +40,7 @@ function F2(x: u32): u32 {return (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))};
 function F3(x: u32): u32 {return (ROTR(x,  7) ^ ROTR(x, 18) ^ SHFR(x,  3))};
 function F4(x: u32): u32 {return (ROTR(x, 17) ^ ROTR(x, 19) ^ SHFR(x, 10))};
 
-function transform(message: string, block: i32): void {
+function transform(hash: Sha256, message: string, block: i32): Sha256 {
   // uint32 w[64];
   // uint32 wv[8];
   // uint32 t1, t2;
@@ -51,13 +53,13 @@ function transform(message: string, block: i32): void {
   for (let i: i32 = 0; i < block; i++) {
     let subBlock = message + (i << 6);
     for (let j: i32 = 0; j < 16; j++) {
-      pack32(subBlock[j << 2], w[j]);  
+      pack32(subBlock[j << 2], w[j]);
     }
     for (let j: i32 = 16; j < 64; j++) {
-      w[j] = F4(w[j - 2] + w[j - 7] + F3(w[j - 15])) + w[j - 16];  
+      w[j] = F4(w[j - 2] + w[j - 7] + F3(w[j - 15])) + w[j - 16];
     }
     for (let j: i32 = 0; j < 8; j++) {
-      wv[j] = m_h[j];
+      wv[j] = hash.m_h[j];
     }
     for (let j: i32 = 0; j < 64; j++) {
       t1 = wv[7] + F2(wv[4]) + CH(wv[4], wv[5], wv[6]) + sha256_k[j] + w[j];
@@ -72,69 +74,72 @@ function transform(message: string, block: i32): void {
       wv[0] = t1 + t2;
     }
     for (let j: i32 = 0; j < 8; j++) {
-      m_h[j] += wv[j];
+      hash.m_h[j] += wv[j];
     }
   }
+  return hash;
 }
 
-function init(): void {
-  m_h[0] = 0x6a09e667;
-  m_h[1] = 0xbb67ae85;
-  m_h[2] = 0x3c6ef372;
-  m_h[3] = 0xa54ff53a;
-  m_h[4] = 0x510e527f;
-  m_h[5] = 0x9b05688c;
-  m_h[6] = 0x1f83d9ab;
-  m_h[7] = 0x5be0cd19;
-  m_len = 0;
-  m_tot_len = 0;
+function init(): Sha256 {
+  const sha256 = {
+    m_h: new Array<u32>(8),
+    m_block: new Array<int32>(2*SHA224_256_BLOCK_SIZE),
+    m_len: 0,
+    m_tot_len: 0,
+  };
+  sha256.m_h[0] = 0x6a09e667;
+  sha256.m_h[1] = 0xbb67ae85;
+  sha256.m_h[2] = 0x3c6ef372;
+  sha256.m_h[3] = 0xa54ff53a;
+  sha256.m_h[4] = 0x510e527f;
+  sha256.m_h[5] = 0x9b05688c;
+  sha256.m_h[6] = 0x1f83d9ab;
+  sha256.m_h[7] = 0x5be0cd19;
+  return sha256;
 }
 
-function update(message: string, len: i32): void {
+function update(hash: Sha256, message: string, len: i32): Sha256 {
   let blockNb: i32;
   let new_len: i32;
   let shiftedMessage: string;
   let tmp_len: i32 = SHA224_256_BLOCK_SIZE - m_len;
   let rem_len: i32 = len < tmp_len ? len : tmp_len;
-  memcpy(mBlock[m_len], message, rem_len);
-  if (m_len + len < SHA224_256_BLOCK_SIZE) {
-    m_len += len;
+  memcpy(hash.mBlock[hash.m_len], message, rem_len);
+  if (hash.m_len + len < SHA224_256_BLOCK_SIZE) {
+    hash.m_len += len;
     return;
   }
   new_len = len - rem_len;
   blockNb = new_len / SHA224_256_BLOCK_SIZE;
   shiftedMessage = message + rem_len;
-  transform(mBlock, 1);
-  transform(shiftedMessage, blockNb);
+  hash = transform(hash, hash.mBlock, 1);
+  hash = transform(hash, shiftedMessage, blockNb);
   rem_len = new_len % SHA224_256_BLOCK_SIZE;
-  memcpy(mBlock, shiftedMessage[blockNb << 6], rem_len);
-  m_len = rem_len;
-  m_tot_len += (blockNb + 1) << 6;
+  memcpy(hash.mBlock, shiftedMessage[blockNb << 6], rem_len);
+  hash.m_len = rem_len;
+  hash.m_tot_len += (blockNb + 1) << 6;
+  return hash;
 }
 
-function final(digest: u8[]): void {
-  let blockNb: i32 = (1 + ((SHA224_256_BLOCK_SIZE - 9) < (m_len % SHA224_256_BLOCK_SIZE)));
-  let lenB: i32 = (m_tot_len + m_len) << 3;
+function final(hash: Sha256): u8[] {
+  const digest: u8[] = new Array(DIGEST_SIZE);
+  let blockNb: i32 = (1 + ((SHA224_256_BLOCK_SIZE - 9) < (hash.m_len % SHA224_256_BLOCK_SIZE)));
+  let lenB: i32 = (hash.m_tot_len + hash.m_len) << 3;
   let pmLen: i32 = blockNb << 6;
-  let i: i32;
-  memset(mBlock + mLen) << 3;
-  mBlock[m_len] = 0x80;
+  memset(hash.mBlock[mLen]) << 3;
+  mBlock[hash.m_len] = 0x80;
   unpack32(lenB, mBlock + pmLen - 4);
-  transform(mBlock, blockNb);
+  hash = transform(hash, mBlock, blockNb);
   for (let i: i32 = 0; i < 8; i++) {
-    unpack32(m_h[i], digest[i << 2]);
+    unpack32(hash.m_h[i], digest[i << 2]);
   }
+  return digest;
 }
 
 function sha256(input: string): string {
-  const digest: u8[] = new Array(DIGEST_SIZE);
   // memset(digest,0,SHA256::DIGEST_SIZE);
-  const ctx = SHA256();
-  ctx.init();
-  ctx.update(input, input.length);
-  ctx.final(digest);
-
-  const buf: u8[] = new Array(2*DIGEST_SIZE + 1);
-  buf[2*DIGEST_SIZE] = 0;
-  return buf.toString();
+  let sha256 = init();
+  sha256 = update(sha256, input, input.length);
+  const digest = final(sha256);
+  return digest.toString();
 }
