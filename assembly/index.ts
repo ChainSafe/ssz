@@ -11,15 +11,9 @@ export class  jsSHA256{
     private data: Byte[] = new Array<Byte>(64);
     private hash: Uint8Array = new Uint8Array(32);
     private state: Word[] = new Array<Word>(8);
-    public dummy(): u32 {
-      return 555;
-    }
+
     //init 
     public constructor() {
-      // this.data = new u8(64);
-      // this.state = new u32(8);
-      // this.hash = new u8(32);
-  
       this.datalen = 0;
       this.bitlen = 0;
       this.state[0] = 0x6a09e667;
