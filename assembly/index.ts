@@ -170,14 +170,15 @@ export class  jsSHA256{
       this.sha256_transform();
 
       for (i = 0; i < 4; ++i) {
-        this.hash[i] = <u8>((this.state[0] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 4] = <u8>((this.state[1] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 8] = <u8>((this.state[2] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 12] = <u8>((this.state[3] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 16] = <u8>((this.state[4] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 20] = <u8>((this.state[5] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 24] = <u8>((this.state[6] >> (24 - i * 8)) & 0x000000ff);
-        this.hash[i + 28] = <u8>((this.state[7] >> (24 - i * 8)) & 0x000000ff);
+        let temp = 24 - i * 8;
+        this.hash[i] = <u8>((this.state[0] >> temp) & 0x000000ff);
+        this.hash[i + 4] = <u8>((this.state[1] >> temp) & 0x000000ff);
+        this.hash[i + 8] = <u8>((this.state[2] >> temp) & 0x000000ff);
+        this.hash[i + 12] = <u8>((this.state[3] >> temp) & 0x000000ff);
+        this.hash[i + 16] = <u8>((this.state[4] >> temp) & 0x000000ff);
+        this.hash[i + 20] = <u8>((this.state[5] >> temp) & 0x000000ff);
+        this.hash[i + 24] = <u8>((this.state[6] >> temp) & 0x000000ff);
+        this.hash[i + 28] = <u8>((this.state[7] >> temp) & 0x000000ff);
       }
     }
     
