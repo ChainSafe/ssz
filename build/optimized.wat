@@ -22,9 +22,11 @@
  (export "memory" (memory $0))
  (export "table" (table $0))
  (export "jsSHA256#constructor" (func $assembly/index/jsSHA256#constructor))
+ (export "jsSHA256#init" (func $assembly/index/jsSHA256#init))
  (export "jsSHA256#sha256_update" (func $assembly/index/jsSHA256#sha256_update))
  (export "jsSHA256#sha256_final" (func $assembly/index/jsSHA256#sha256_final))
  (export "jsSHA256#digest" (func $assembly/index/jsSHA256#digest))
+ (export "jsSHA256#hashBrowns" (func $assembly/index/jsSHA256#hashBrowns))
  (export "memory.compare" (func $~lib/memory/memory.compare))
  (export "memory.allocate" (func $~lib/memory/memory.allocate))
  (export "memory.free" (func $~lib/memory/memory.free))
@@ -1744,7 +1746,55 @@
   call $~lib/array/Array<u32>#__set
   local.get $0
  )
- (func $~lib/internal/typedarray/TypedArray<u8>#__get (; 14 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $assembly/index/jsSHA256#init (; 14 ;) (type $FUNCSIG$vi) (param $0 i32)
+  local.get $0
+  i32.const 0
+  i32.store
+  local.get $0
+  i64.const 0
+  i64.store offset=8
+  local.get $0
+  i32.load offset=24
+  i32.const 0
+  i32.const 1779033703
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 1
+  i32.const -1150833019
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 2
+  i32.const 1013904242
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 3
+  i32.const -1521486534
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 4
+  i32.const 1359893119
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 5
+  i32.const -1694144372
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 6
+  i32.const 528734635
+  call $~lib/array/Array<u32>#__set
+  local.get $0
+  i32.load offset=24
+  i32.const 7
+  i32.const 1541459225
+  call $~lib/array/Array<u32>#__set
+ )
+ (func $~lib/internal/typedarray/TypedArray<u8>#__get (; 15 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -1766,7 +1816,7 @@
   i32.add
   i32.load8_u offset=8
  )
- (func $~lib/array/Array<u8>#__set (; 15 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/array/Array<u8>#__set (; 16 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   local.get $1
   local.get $0
@@ -1806,7 +1856,7 @@
   local.get $2
   i32.store8 offset=8
  )
- (func $~lib/internal/typedarray/TypedArray<u32>#constructor (; 16 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/internal/typedarray/TypedArray<u32>#constructor (; 17 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   i32.const 256
   call $~lib/internal/arraybuffer/allocateUnsafe
@@ -1842,7 +1892,7 @@
   i32.store offset=8
   local.get $0
  )
- (func $~lib/array/Array<u8>#__get (; 17 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u8>#__get (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load
@@ -1858,7 +1908,7 @@
    unreachable
   end
  )
- (func $~lib/internal/typedarray/TypedArray<u32>#__set (; 18 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/typedarray/TypedArray<u32>#__set (; 19 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -1885,7 +1935,7 @@
   local.get $2
   i32.store offset=8
  )
- (func $~lib/internal/typedarray/TypedArray<u32>#__get (; 19 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/internal/typedarray/TypedArray<u32>#__get (; 20 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -1911,7 +1961,7 @@
   i32.add
   i32.load offset=8
  )
- (func $~lib/array/Array<u32>#__get (; 20 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u32>#__get (; 21 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load
@@ -1931,7 +1981,7 @@
    unreachable
   end
  )
- (func $assembly/index/jsSHA256#sha256_transform (; 21 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $assembly/index/jsSHA256#sha256_transform (; 22 ;) (type $FUNCSIG$vi) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -2278,7 +2328,7 @@
   i32.add
   call $~lib/array/Array<u32>#__set
  )
- (func $assembly/index/jsSHA256#sha256_update (; 22 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $assembly/index/jsSHA256#sha256_update (; 23 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   block $break|0
    loop $repeat|0
@@ -2327,7 +2377,42 @@
    unreachable
   end
  )
- (func $~lib/internal/typedarray/TypedArray<u8>#__set (; 23 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/array/Array<u8>#fill (; 24 ;) (type $FUNCSIG$vi) (param $0 i32)
+  (local $1 i32)
+  (local $2 i32)
+  local.get $0
+  i32.load
+  local.set $2
+  i32.const 0
+  local.get $0
+  i32.load offset=4
+  local.tee $0
+  i32.const 0
+  local.get $0
+  i32.lt_s
+  select
+  local.tee $1
+  i32.const 56
+  local.get $0
+  i32.const 56
+  local.get $0
+  i32.lt_s
+  select
+  local.tee $0
+  i32.lt_s
+  if
+   local.get $1
+   local.get $2
+   i32.add
+   i32.const 8
+   i32.add
+   local.get $0
+   local.get $1
+   i32.sub
+   call $~lib/internal/memory/memset
+  end
+ )
+ (func $~lib/internal/typedarray/TypedArray<u8>#__set (; 25 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -2350,7 +2435,7 @@
   local.get $2
   i32.store8 offset=8
  )
- (func $assembly/index/jsSHA256#sha256_final (; 24 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $assembly/index/jsSHA256#sha256_final (; 26 ;) (type $FUNCSIG$vi) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   local.get $0
@@ -2426,26 +2511,9 @@
    end
    local.get $0
    call $assembly/index/jsSHA256#sha256_transform
-   i32.const 0
-   local.set $1
-   loop $repeat|2
-    block $break|2
-     local.get $1
-     i32.const 56
-     i32.ge_s
-     br_if $break|2
-     local.get $0
-     i32.load offset=16
-     local.get $1
-     i32.const 0
-     call $~lib/array/Array<u8>#__set
-     local.get $1
-     i32.const 1
-     i32.add
-     local.set $1
-     br $repeat|2
-    end
-   end
+   local.get $0
+   i32.load offset=16
+   call $~lib/array/Array<u8>#fill
   end
   local.get $0
   local.get $0
@@ -2531,12 +2599,12 @@
   call $assembly/index/jsSHA256#sha256_transform
   i32.const 0
   local.set $1
-  loop $repeat|3
-   block $break|3
+  loop $repeat|2
+   block $break|2
     local.get $1
     i32.const 4
     i32.ge_u
-    br_if $break|3
+    br_if $break|2
     local.get $0
     i32.load offset=20
     local.get $1
@@ -2656,15 +2724,25 @@
     i32.const 1
     i32.add
     local.set $1
-    br $repeat|3
+    br $repeat|2
    end
   end
  )
- (func $assembly/index/jsSHA256#digest (; 25 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/jsSHA256#digest (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.load offset=20
  )
- (func $~lib/internal/memory/memcmp (; 26 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $assembly/index/jsSHA256#hashBrowns (; 28 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+  local.get $0
+  local.get $1
+  local.get $2
+  call $assembly/index/jsSHA256#sha256_update
+  local.get $0
+  call $assembly/index/jsSHA256#sha256_final
+  local.get $0
+  i32.load offset=20
+ )
+ (func $~lib/internal/memory/memcmp (; 29 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   local.get $0
   local.get $1
@@ -2714,26 +2792,26 @@
    i32.const 0
   end
  )
- (func $~lib/memory/memory.compare (; 27 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/memory/memory.compare (; 30 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   local.get $1
   local.get $2
   call $~lib/internal/memory/memcmp
  )
- (func $~lib/memory/memory.free (; 28 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/memory/memory.free (; 31 ;) (type $FUNCSIG$vi) (param $0 i32)
   nop
  )
- (func $~lib/memory/memory.reset (; 29 ;) (type $FUNCSIG$v)
+ (func $~lib/memory/memory.reset (; 32 ;) (type $FUNCSIG$v)
   global.get $~lib/allocator/arena/startOffset
   global.set $~lib/allocator/arena/offset
  )
- (func $start (; 30 ;) (type $FUNCSIG$v)
+ (func $start (; 33 ;) (type $FUNCSIG$v)
   i32.const 688
   global.set $~lib/allocator/arena/startOffset
   global.get $~lib/allocator/arena/startOffset
   global.set $~lib/allocator/arena/offset
  )
- (func $null (; 31 ;) (type $FUNCSIG$v)
+ (func $null (; 34 ;) (type $FUNCSIG$v)
   nop
  )
 )
