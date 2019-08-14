@@ -1,8 +1,6 @@
 
 //https://github.com/dchest/fast-sha256-js/blob/master/src/sha256.ts
-import "allocator/arena"
-export { memory };
-
+export const UINT8ARRAY_ID = idof<Uint8Array>();
 type Byte = u8;
 type Word = u32
 const digestLength: u32 = 32;
