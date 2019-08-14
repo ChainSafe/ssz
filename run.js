@@ -35,3 +35,4 @@ console.log(toHexString(wasm.__getArray(wasm.hashMe(wasm.__allocArray(wasm.UINT8
 // wasm.update(ctx, preimg);
 // console.log(wasm.finish(ctx, out))
 // console.log(out)
+
