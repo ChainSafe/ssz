@@ -1518,81 +1518,13 @@
    i32.const 8
    i32.sub
    local.get $3
-   i32.const 24
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 7
-   i32.sub
-   local.get $3
-   i32.const 16
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 6
-   i32.sub
-   local.get $3
-   i32.const 8
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 5
-   i32.sub
-   local.get $3
-   i32.const 0
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
+   call $assembly/index/store32_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 4
    i32.sub
    local.get $4
-   i32.const 24
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 3
-   i32.sub
-   local.get $4
-   i32.const 16
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 2
-   i32.sub
-   local.get $4
-   i32.const 8
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 1
-   i32.sub
-   local.get $4
-   i32.const 0
-   i32.shr_u
-   i32.const 255
-   i32.and
-   call $assembly/index/store8_be
+   call $assembly/index/store32_be
    global.get $assembly/index/temp
    global.get $assembly/index/state
    global.get $assembly/index/buffer
@@ -1679,6 +1611,7 @@
  )
  (func $assembly/index/hashMe (; 28 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
+  (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -1689,12 +1622,41 @@
   call $assembly/index/update
   global.get $assembly/index/out
   call $assembly/index/finish
-  global.get $assembly/index/out
-  call $~lib/rt/stub/__retain
+  i32.const 0
+  global.get $assembly/index/digestLength
+  call $~lib/typedarray/Uint8Array#constructor
   local.set $1
+  block $break|0
+   i32.const 0
+   local.set $2
+   loop $repeat|0
+    local.get $2
+    i32.const 32
+    i32.lt_u
+    i32.eqz
+    br_if $break|0
+    local.get $1
+    local.get $2
+    global.get $assembly/index/out
+    local.get $2
+    call $assembly/index/load8_be
+    i32.const 255
+    i32.and
+    call $~lib/typedarray/Uint8Array#__set
+    local.get $2
+    i32.const 1
+    i32.add
+    local.set $2
+    br $repeat|0
+    unreachable
+   end
+   unreachable
+  end
+  local.get $1
+  local.set $2
   local.get $0
   call $~lib/rt/stub/__release
-  local.get $1
+  local.get $2
  )
  (func $start (; 29 ;) (type $FUNCSIG$v)
   global.get $~lib/heap/__heap_base

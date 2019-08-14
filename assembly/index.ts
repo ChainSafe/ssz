@@ -181,14 +181,9 @@ export function finish(out: ArrayBuffer): void {
     for (let i: i32 = left + 1; i < padLength - 8; i++) {
       store8_be(buffer, i, 0);
     }
-    store8_be(buffer, (padLength - 8),  <u8>((bitLenHi >>> 24) & 0xff));
-    store8_be(buffer, (padLength - 7),  <u8>((bitLenHi >>> 16) & 0xff));
-    store8_be(buffer, (padLength - 6),  <u8>((bitLenHi >>> 8) & 0xff));
-    store8_be(buffer, (padLength - 5),  <u8>((bitLenHi >>> 0) & 0xff));
-    store8_be(buffer, (padLength - 4),  <u8>((bitLenLo >>> 24) & 0xff));
-    store8_be(buffer, (padLength - 3),  <u8>((bitLenLo >>> 16) & 0xff));
-    store8_be(buffer, (padLength - 2),  <u8>((bitLenLo >>> 8) & 0xff));
-    store8_be(buffer, (padLength - 1),  <u8>((bitLenLo >>> 0) & 0xff));
+
+    store32_be(buffer, padLength-8, bitLenHi)
+    store32_be(buffer, padLength-4, bitLenLo)
 
     hashBlocks(temp, state, buffer, 0, padLength);
 
@@ -201,7 +196,7 @@ export function finish(out: ArrayBuffer): void {
   }
 }
 
-export function hashMe(data: Uint8Array): ArrayBuffer{
+export function hashMe(data: Uint8Array): Uint8Array{
   reset();
   update(data, data.length);
   finish(out);
@@ -209,5 +204,5 @@ export function hashMe(data: Uint8Array): ArrayBuffer{
   for(let i: u32 = 0 ; i < digestLength ; i++){
     ret[i] = load8_be(out, i)
   }
-  return out;
+  return ret;
 }
