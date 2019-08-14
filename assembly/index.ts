@@ -18,7 +18,7 @@ const K: Word[] = [
 
 
 var state: ArrayBuffer = new ArrayBuffer(32); // hash state
-var temp: Uint32Array  = new Uint32Array(64); // temporary state
+var temp: ArrayBuffer  = new ArrayBuffer(256); // temporary state
 var buffer: Uint8Array = new Uint8Array(128); // buffer for data to hash
 var bufferLength: u32 = 0; // number of bytes in buffer
 var bytesHashed: u32 = 0; // number of total bytes hashed 
@@ -37,7 +37,7 @@ function store8_be(x: ArrayBuffer, offset: isize, u: u8): void {
   store<u8>(changetype<usize>(x) + offset, bswap(u));
 }
 
-function hashBlocks(w: Uint32Array, v: ArrayBuffer, p: Uint8Array, pos: u32, len: u32): u32 {
+function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: Uint8Array, pos: u32, len: u32): u32 {
   let a: u32, b: u32, c: u32, d: u32, e: u32,
     f: u32, g: u32, h: u32, u: u32, i: u32,
     j: u32, t1: u32, t2: u32;
@@ -53,24 +53,24 @@ function hashBlocks(w: Uint32Array, v: ArrayBuffer, p: Uint8Array, pos: u32, len
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
-      w[i] = (((<u32>p[j] & 0xff) << 24) | ((<u32>p[j + 1] & 0xff) << 16) |
-        ((<u32>p[j + 2] & 0xff) << 8) | (<u32>p[j + 3] & 0xff));
+      store32_be(w, i*4, (((<u32>p[j] & 0xff) << 24) | ((<u32>p[j + 1] & 0xff) << 16) |
+        ((<u32>p[j + 2] & 0xff) << 8) | (<u32>p[j + 3] & 0xff)))
     }
 
     for (i = 16; i < 64; i++) {
-      u = w[i - 2];
+      u = load32_be(w, (i - 2)*4);
       t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
 
-      u = w[i - 15];
+      u = load32_be(w, (i - 15)*4);
       t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
 
-      w[i] = (t1 + w[i - 7] | 0) + (t2 + w[i - 16] | 0);
+      store32_be(w, i * 4 , (t1 + load32_be(w, (i - 7)*4) | 0) + (t2 + load32_be(w, (i - 16)*4)) | 0);
     }
 
     for (i = 0; i < 64; i++) {
       t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
         (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g))) | 0) +
-        ((h + ((K[i] + w[i]) | 0)) | 0)) | 0;
+        ((h + ((K[i] + load32_be(w, i*4)) | 0)) | 0)) | 0;
 
       t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
         (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
