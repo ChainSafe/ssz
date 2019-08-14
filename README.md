@@ -1,7 +1,4 @@
 # sha256-as
 Assembly Script implementation of SHA256
-
-
-To build, be on v0.6 of AssemblyScript. 
-
+Built using the AssemblyScript Dev Branch
 To run, `node run.js`.
