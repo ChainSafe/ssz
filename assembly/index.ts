@@ -19,11 +19,11 @@ const K: Word[] = [
 
 var state: ArrayBuffer = new ArrayBuffer(32); // hash state
 var temp: ArrayBuffer  = new ArrayBuffer(256); // temporary state
-var buffer: Uint8Array = new Uint8Array(128); // buffer for data to hash
+var buffer: ArrayBuffer = new ArrayBuffer(128); // buffer for data to hash
 var bufferLength: u32 = 0; // number of bytes in buffer
 var bytesHashed: u32 = 0; // number of total bytes hashed 
 var finished: bool = false;
-var out: Uint8Array = new Uint8Array(digestLength)
+var out: ArrayBuffer = new ArrayBuffer(digestLength)
 
 function load32_be(x: ArrayBuffer, offset: isize): u32 {
   return bswap(load<u32>(changetype<usize>(x) + offset));
@@ -36,8 +36,10 @@ function store32_be(x: ArrayBuffer, offset: isize, u: u32): void {
 function store8_be(x: ArrayBuffer, offset: isize, u: u8): void {
   store<u8>(changetype<usize>(x) + offset, bswap(u));
 }
-
-function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: Uint8Array, pos: u32, len: u32): u32 {
+function load8_be(x: ArrayBuffer, offset: isize): u8 {
+  return bswap<u8>(load<u8>(changetype<usize>(x) + offset));
+}
+function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
   let a: u32, b: u32, c: u32, d: u32, e: u32,
     f: u32, g: u32, h: u32, u: u32, i: u32,
     j: u32, t1: u32, t2: u32;
@@ -53,8 +55,8 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: Uint8Array, pos: u32, len
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
-      store32_be(w, i*4, (((<u32>p[j] & 0xff) << 24) | ((<u32>p[j + 1] & 0xff) << 16) |
-        ((<u32>p[j + 2] & 0xff) << 8) | (<u32>p[j + 3] & 0xff)))
+      store32_be(w, i*4, (((<u32>load8_be(p, j) & 0xff) << 24) | ((<u32>load8_be(p, j+1) & 0xff) << 16) |
+        ((<u32>load8_be(p, j+2) & 0xff) << 8) | (<u32>load8_be(p, j+3) & 0xff)))
     }
 
     for (i = 16; i < 64; i++) {
@@ -139,11 +141,17 @@ export function update( data: Uint8Array, dataLength: u32): void {
   if (finished) {
     throw new Error("SHA256: can't update because hash was finished.");
   }
+
+  let dataBuffer: ArrayBuffer = new ArrayBuffer(dataLength);
+  for(let i: u32 = 0 ; i < dataLength ; i++){
+    store8_be(dataBuffer, i, data[i]);
+  }
+
   let dataPos = 0;
   bytesHashed += dataLength;
   if (bufferLength > 0) {
     while (bufferLength < 64 && dataLength > 0) {
-      buffer[bufferLength++] = data[dataPos++];
+      store8_be(buffer, bufferLength++, load8_be(dataBuffer, dataPos++));
       dataLength--;
     }
     if (bufferLength === 64) {
@@ -152,16 +160,16 @@ export function update( data: Uint8Array, dataLength: u32): void {
     }
   }
   if (dataLength >= 64) {
-    dataPos = hashBlocks(temp, state, data, dataPos, dataLength);
+    dataPos = hashBlocks(temp, state, dataBuffer, dataPos, dataLength);
     dataLength %= 64;
   }
   while (dataLength > 0) {
-    buffer[bufferLength++] = data[dataPos++];
+    store8_be(buffer, bufferLength++, load8_be(dataBuffer, dataPos++));
     dataLength--;
   }
 }
 
-export function finish(out: Uint8Array): void {
+export function finish(out: ArrayBuffer): void {
   if (!finished) {
     let bytesHashed = bytesHashed;
     let left = bufferLength;
@@ -169,18 +177,18 @@ export function finish(out: Uint8Array): void {
     let bitLenLo = bytesHashed << 3;
     let padLength = (bytesHashed % 64 < 56) ? 64 : 128;
 
-    buffer[left] = 0x80;
+    store8_be(buffer, left, 0x80);
     for (let i: i32 = left + 1; i < padLength - 8; i++) {
-      buffer[i] = 0;
+      store8_be(buffer, i, 0);
     }
-    buffer[padLength - 8] = (bitLenHi >>> 24) & 0xff;
-    buffer[padLength - 7] = (bitLenHi >>> 16) & 0xff;
-    buffer[padLength - 6] = (bitLenHi >>> 8) & 0xff;
-    buffer[padLength - 5] = (bitLenHi >>> 0) & 0xff;
-    buffer[padLength - 4] = (bitLenLo >>> 24) & 0xff;
-    buffer[padLength - 3] = (bitLenLo >>> 16) & 0xff;
-    buffer[padLength - 2] = (bitLenLo >>> 8) & 0xff;
-    buffer[padLength - 1] = (bitLenLo >>> 0) & 0xff;
+    store8_be(buffer, (padLength - 8),  <u8>((bitLenHi >>> 24) & 0xff));
+    store8_be(buffer, (padLength - 7),  <u8>((bitLenHi >>> 16) & 0xff));
+    store8_be(buffer, (padLength - 6),  <u8>((bitLenHi >>> 8) & 0xff));
+    store8_be(buffer, (padLength - 5),  <u8>((bitLenHi >>> 0) & 0xff));
+    store8_be(buffer, (padLength - 4),  <u8>((bitLenLo >>> 24) & 0xff));
+    store8_be(buffer, (padLength - 3),  <u8>((bitLenLo >>> 16) & 0xff));
+    store8_be(buffer, (padLength - 2),  <u8>((bitLenLo >>> 8) & 0xff));
+    store8_be(buffer, (padLength - 1),  <u8>((bitLenLo >>> 0) & 0xff));
 
     hashBlocks(temp, state, buffer, 0, padLength);
 
@@ -189,16 +197,17 @@ export function finish(out: Uint8Array): void {
 
   for (let i = 0; i < 8; i++) {
     let state_i: u32 = load32_be(state, i*4);
-    out[i * 4 + 0] = (state_i >>> 24) & 0xff;
-    out[i * 4 + 1] = (state_i >>> 16) & 0xff;
-    out[i * 4 + 2] = (state_i >>> 8) & 0xff;
-    out[i * 4 + 3] = (state_i >>> 0) & 0xff;
+    store32_be(out, i*4, state_i)
   }
 }
 
-export function hashMe(data: Uint8Array): Uint8Array{
+export function hashMe(data: Uint8Array): ArrayBuffer{
   reset();
   update(data, data.length);
   finish(out);
+  let ret: Uint8Array = new Uint8Array(digestLength);
+  for(let i: u32 = 0 ; i < digestLength ; i++){
+    ret[i] = load8_be(out, i)
+  }
   return out;
 }

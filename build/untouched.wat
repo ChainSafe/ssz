@@ -588,11 +588,11 @@
   global.set $assembly/index/temp
   i32.const 0
   i32.const 128
-  call $~lib/typedarray/Uint8Array#constructor
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/buffer
   i32.const 0
   global.get $assembly/index/digestLength
-  call $~lib/typedarray/Uint8Array#constructor
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/out
   i32.const 0
   i32.const 32
@@ -642,7 +642,39 @@
   i32.add
   i32.load8_u
  )
- (func $~lib/polyfills/bswap<u32> (; 14 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap<u8> (; 14 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  return
+ )
+ (func $assembly/index/store8_be (; 15 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+  local.get $0
+  call $~lib/rt/stub/__retain
+  drop
+  local.get $0
+  local.get $1
+  i32.add
+  local.get $2
+  call $~lib/polyfills/bswap<u8>
+  i32.store8
+  local.get $0
+  call $~lib/rt/stub/__release
+ )
+ (func $assembly/index/load8_be (; 16 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  local.get $0
+  call $~lib/rt/stub/__retain
+  drop
+  local.get $0
+  local.get $1
+  i32.add
+  i32.load8_u
+  call $~lib/polyfills/bswap<u8>
+  local.set $2
+  local.get $0
+  call $~lib/rt/stub/__release
+  local.get $2
+ )
+ (func $~lib/polyfills/bswap<u32> (; 17 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.const -16711936
   i32.and
@@ -656,7 +688,7 @@
   i32.or
   return
  )
- (func $assembly/index/load32_be (; 15 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $assembly/index/load32_be (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
@@ -671,7 +703,7 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $assembly/index/store32_be (; 16 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $assembly/index/store32_be (; 19 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -684,7 +716,7 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $~lib/array/Array<u32>#__unchecked_get (; 17 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u32>#__unchecked_get (; 20 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   i32.load offset=4
   local.get $1
@@ -693,7 +725,7 @@
   i32.add
   i32.load
  )
- (func $~lib/array/Array<u32>#__get (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u32>#__get (; 21 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -712,7 +744,7 @@
   local.get $1
   call $~lib/array/Array<u32>#__unchecked_get
  )
- (func $assembly/index/hashBlocks (; 19 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hashBlocks (; 22 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
@@ -811,7 +843,9 @@
        i32.mul
        local.get $2
        local.get $15
-       call $~lib/typedarray/Uint8Array#__get
+       call $assembly/index/load8_be
+       i32.const 255
+       i32.and
        i32.const 255
        i32.and
        i32.const 24
@@ -820,7 +854,9 @@
        local.get $15
        i32.const 1
        i32.add
-       call $~lib/typedarray/Uint8Array#__get
+       call $assembly/index/load8_be
+       i32.const 255
+       i32.and
        i32.const 255
        i32.and
        i32.const 16
@@ -830,7 +866,9 @@
        local.get $15
        i32.const 2
        i32.add
-       call $~lib/typedarray/Uint8Array#__get
+       call $assembly/index/load8_be
+       i32.const 255
+       i32.and
        i32.const 255
        i32.and
        i32.const 8
@@ -840,7 +878,9 @@
        local.get $15
        i32.const 3
        i32.add
-       call $~lib/typedarray/Uint8Array#__get
+       call $assembly/index/load8_be
+       i32.const 255
+       i32.and
        i32.const 255
        i32.and
        i32.or
@@ -1234,9 +1274,10 @@
   call $~lib/rt/stub/__release
   local.get $18
  )
- (func $assembly/index/update (; 20 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $assembly/index/update (; 23 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
+  (local $4 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -1247,7 +1288,7 @@
    block
     i32.const 672
     i32.const 784
-    i32.const 140
+    i32.const 142
     i32.const 4
     call $~lib/builtins/abort
     unreachable
@@ -1256,7 +1297,35 @@
    unreachable
   end
   i32.const 0
+  local.get $1
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   local.set $2
+  block $break|0
+   i32.const 0
+   local.set $3
+   loop $repeat|0
+    local.get $3
+    local.get $1
+    i32.lt_u
+    i32.eqz
+    br_if $break|0
+    local.get $2
+    local.get $3
+    local.get $0
+    local.get $3
+    call $~lib/typedarray/Uint8Array#__get
+    call $assembly/index/store8_be
+    local.get $3
+    i32.const 1
+    i32.add
+    local.set $3
+    br $repeat|0
+    unreachable
+   end
+   unreachable
+  end
+  i32.const 0
+  local.set $3
   global.get $assembly/index/bytesHashed
   local.get $1
   i32.add
@@ -1265,8 +1334,8 @@
   i32.const 0
   i32.gt_u
   if
-   block $break|0
-    loop $continue|0
+   block $break|1
+    loop $continue|1
      global.get $assembly/index/bufferLength
      i32.const 64
      i32.lt_u
@@ -1281,28 +1350,28 @@
       global.get $assembly/index/buffer
       block (result i32)
        global.get $assembly/index/bufferLength
-       local.tee $3
+       local.tee $4
        i32.const 1
        i32.add
        global.set $assembly/index/bufferLength
-       local.get $3
+       local.get $4
       end
-      local.get $0
+      local.get $2
       block (result i32)
-       local.get $2
-       local.tee $3
+       local.get $3
+       local.tee $4
        i32.const 1
        i32.add
-       local.set $2
-       local.get $3
+       local.set $3
+       local.get $4
       end
-      call $~lib/typedarray/Uint8Array#__get
-      call $~lib/typedarray/Uint8Array#__set
+      call $assembly/index/load8_be
+      call $assembly/index/store8_be
       local.get $1
       i32.const 1
       i32.sub
       local.set $1
-      br $continue|0
+      br $continue|1
      end
     end
    end
@@ -1327,18 +1396,18 @@
   if
    global.get $assembly/index/temp
    global.get $assembly/index/state
-   local.get $0
    local.get $2
+   local.get $3
    local.get $1
    call $assembly/index/hashBlocks
-   local.set $2
+   local.set $3
    local.get $1
    i32.const 64
    i32.rem_u
    local.set $1
   end
-  block $break|1
-   loop $continue|1
+  block $break|2
+   loop $continue|2
     local.get $1
     i32.const 0
     i32.gt_u
@@ -1346,35 +1415,37 @@
      global.get $assembly/index/buffer
      block (result i32)
       global.get $assembly/index/bufferLength
-      local.tee $3
+      local.tee $4
       i32.const 1
       i32.add
       global.set $assembly/index/bufferLength
-      local.get $3
+      local.get $4
      end
-     local.get $0
+     local.get $2
      block (result i32)
-      local.get $2
-      local.tee $3
+      local.get $3
+      local.tee $4
       i32.const 1
       i32.add
-      local.set $2
-      local.get $3
+      local.set $3
+      local.get $4
      end
-     call $~lib/typedarray/Uint8Array#__get
-     call $~lib/typedarray/Uint8Array#__set
+     call $assembly/index/load8_be
+     call $assembly/index/store8_be
      local.get $1
      i32.const 1
      i32.sub
      local.set $1
-     br $continue|1
+     br $continue|2
     end
    end
   end
+  local.get $2
+  call $~lib/rt/stub/__release
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/index/finish (; 21 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $assembly/index/finish (; 24 ;) (type $FUNCSIG$vi) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -1415,7 +1486,7 @@
    global.get $assembly/index/buffer
    local.get $2
    i32.const 128
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    block $break|0
     local.get $2
     i32.const 1
@@ -1432,7 +1503,7 @@
      global.get $assembly/index/buffer
      local.get $6
      i32.const 0
-     call $~lib/typedarray/Uint8Array#__set
+     call $assembly/index/store8_be
      local.get $6
      i32.const 1
      i32.add
@@ -1451,7 +1522,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 7
@@ -1461,7 +1532,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 6
@@ -1471,7 +1542,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 5
@@ -1481,7 +1552,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 4
@@ -1491,7 +1562,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 3
@@ -1501,7 +1572,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 2
@@ -1511,7 +1582,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/buffer
    local.get $5
    i32.const 1
@@ -1521,7 +1592,7 @@
    i32.shr_u
    i32.const 255
    i32.and
-   call $~lib/typedarray/Uint8Array#__set
+   call $assembly/index/store8_be
    global.get $assembly/index/temp
    global.get $assembly/index/state
    global.get $assembly/index/buffer
@@ -1551,50 +1622,8 @@
     local.get $5
     i32.const 4
     i32.mul
-    i32.const 0
-    i32.add
     local.get $4
-    i32.const 24
-    i32.shr_u
-    i32.const 255
-    i32.and
-    call $~lib/typedarray/Uint8Array#__set
-    local.get $0
-    local.get $5
-    i32.const 4
-    i32.mul
-    i32.const 1
-    i32.add
-    local.get $4
-    i32.const 16
-    i32.shr_u
-    i32.const 255
-    i32.and
-    call $~lib/typedarray/Uint8Array#__set
-    local.get $0
-    local.get $5
-    i32.const 4
-    i32.mul
-    i32.const 2
-    i32.add
-    local.get $4
-    i32.const 8
-    i32.shr_u
-    i32.const 255
-    i32.and
-    call $~lib/typedarray/Uint8Array#__set
-    local.get $0
-    local.get $5
-    i32.const 4
-    i32.mul
-    i32.const 3
-    i32.add
-    local.get $4
-    i32.const 0
-    i32.shr_u
-    i32.const 255
-    i32.and
-    call $~lib/typedarray/Uint8Array#__set
+    call $assembly/index/store32_be
     local.get $5
     i32.const 1
     i32.add
@@ -1607,24 +1636,7 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $~lib/polyfills/bswap<u8> (; 22 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  local.get $0
-  return
- )
- (func $assembly/index/store8_be (; 23 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
-  local.get $0
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.add
-  local.get $2
-  call $~lib/polyfills/bswap<u8>
-  i32.store8
-  local.get $0
-  call $~lib/rt/stub/__release
- )
- (func $assembly/index/reset (; 24 ;) (type $FUNCSIG$v)
+ (func $assembly/index/reset (; 25 ;) (type $FUNCSIG$v)
   (local $0 i32)
   block $break|0
    i32.const 0
@@ -1657,15 +1669,15 @@
   i32.const 0
   global.set $assembly/index/finished
  )
- (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 25 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 26 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.load offset=8
  )
- (func $~lib/typedarray/Uint8Array#get:length (; 26 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/typedarray/Uint8Array#get:length (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   call $~lib/arraybuffer/ArrayBufferView#get:byteLength
  )
- (func $assembly/index/hashMe (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/hashMe (; 28 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   local.get $0
   call $~lib/rt/stub/__retain
@@ -1684,7 +1696,7 @@
   call $~lib/rt/stub/__release
   local.get $1
  )
- (func $start (; 28 ;) (type $FUNCSIG$v)
+ (func $start (; 29 ;) (type $FUNCSIG$v)
   global.get $~lib/heap/__heap_base
   i32.const 15
   i32.add
@@ -1697,6 +1709,6 @@
   global.set $~lib/rt/stub/offset
   call $start:assembly/index
  )
- (func $null (; 29 ;) (type $FUNCSIG$v)
+ (func $null (; 30 ;) (type $FUNCSIG$v)
  )
 )
