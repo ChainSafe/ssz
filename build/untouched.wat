@@ -28,7 +28,6 @@
  (export "update" (func $assembly/index/update))
  (export "finish" (func $assembly/index/finish))
  (export "hashMe" (func $assembly/index/hashMe))
- (export "reHash" (func $assembly/index/reHash))
  (export "memory.compare" (func $~lib/memory/memory.compare))
  (export "memory.allocate" (func $~lib/memory/memory.allocate))
  (export "memory.free" (func $~lib/memory/memory.free))
@@ -1743,29 +1742,7 @@
   i32.const 0
   i32.store8 offset=20
  )
- (func $assembly/index/hashMe (; 22 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (local $2 i32)
-  call $assembly/index/reset
-  i32.const 0
-  global.get $assembly/index/digestLength
-  call $~lib/typedarray/Uint8Array#constructor
-  local.set $1
-  local.get $0
-  block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.0 (result i32)
-   local.get $0
-   local.set $2
-   local.get $2
-   i32.load offset=8
-   i32.const 0
-   i32.shr_u
-  end
-  call $assembly/index/update
-  local.get $1
-  call $assembly/index/finish
-  local.get $1
- )
- (func $assembly/index/clean (; 23 ;) (type $FUNCSIG$v)
+ (func $assembly/index/clean (; 22 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   block $break|0
@@ -1773,7 +1750,7 @@
    local.set $0
    loop $repeat|0
     local.get $0
-    block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.2 (result i32)
+    block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.1 (result i32)
      global.get $assembly/index/ctx
      i32.load offset=8
      local.set $1
@@ -1832,7 +1809,7 @@
   end
   call $assembly/index/reset
  )
- (func $assembly/index/reHash (; 24 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/hashMe (; 23 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   call $assembly/index/clean
@@ -1841,7 +1818,7 @@
   call $~lib/typedarray/Uint8Array#constructor
   local.set $1
   local.get $0
-  block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.3 (result i32)
+  block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.2 (result i32)
    local.get $0
    local.set $2
    local.get $2
@@ -1854,7 +1831,7 @@
   call $assembly/index/finish
   local.get $1
  )
- (func $~lib/internal/memory/memcmp (; 25 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/internal/memory/memcmp (; 24 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   local.get $0
   local.get $1
@@ -1908,31 +1885,31 @@
    i32.const 0
   end
  )
- (func $~lib/memory/memory.compare (; 26 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/memory/memory.compare (; 25 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   local.get $1
   local.get $2
   call $~lib/internal/memory/memcmp
  )
- (func $~lib/allocator/arena/__memory_free (; 27 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/allocator/arena/__memory_free (; 26 ;) (type $FUNCSIG$vi) (param $0 i32)
   nop
  )
- (func $~lib/memory/memory.free (; 28 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/memory/memory.free (; 27 ;) (type $FUNCSIG$vi) (param $0 i32)
   local.get $0
   call $~lib/allocator/arena/__memory_free
   return
  )
- (func $~lib/allocator/arena/__memory_reset (; 29 ;) (type $FUNCSIG$v)
+ (func $~lib/allocator/arena/__memory_reset (; 28 ;) (type $FUNCSIG$v)
   global.get $~lib/allocator/arena/startOffset
   global.set $~lib/allocator/arena/offset
  )
- (func $~lib/memory/memory.reset (; 30 ;) (type $FUNCSIG$v)
+ (func $~lib/memory/memory.reset (; 29 ;) (type $FUNCSIG$v)
   call $~lib/allocator/arena/__memory_reset
   return
  )
- (func $start (; 31 ;) (type $FUNCSIG$v)
+ (func $start (; 30 ;) (type $FUNCSIG$v)
   call $start:assembly/index
  )
- (func $null (; 32 ;) (type $FUNCSIG$v)
+ (func $null (; 31 ;) (type $FUNCSIG$v)
  )
 )

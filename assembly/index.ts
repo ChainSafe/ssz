@@ -196,11 +196,3 @@ export function hashMe(data: Uint8Array): Uint8Array{
   finish(out);
   return out;
 }
-
-export function reHash( data: Uint8Array): Uint8Array{
-  clean();
-  let out: Uint8Array = new Uint8Array(digestLength);
-  update(data, data.length);
-  finish( out);
-  return out;
-}

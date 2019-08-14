@@ -26,7 +26,6 @@
  (export "update" (func $assembly/index/update))
  (export "finish" (func $assembly/index/finish))
  (export "hashMe" (func $assembly/index/hashMe))
- (export "reHash" (func $assembly/index/reHash))
  (export "memory.compare" (func $~lib/memory/memory.compare))
  (export "memory.allocate" (func $~lib/memory/memory.allocate))
  (export "memory.free" (func $~lib/memory/memory.free))
@@ -1419,21 +1418,7 @@
   i32.const 0
   i32.store8 offset=20
  )
- (func $assembly/index/hashMe (; 19 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  call $assembly/index/reset
-  i32.const 32
-  call $~lib/typedarray/Uint8Array#constructor
-  local.set $1
-  local.get $0
-  local.get $0
-  i32.load offset=8
-  call $assembly/index/update
-  local.get $1
-  call $assembly/index/finish
-  local.get $1
- )
- (func $assembly/index/clean (; 20 ;) (type $FUNCSIG$v)
+ (func $assembly/index/clean (; 19 ;) (type $FUNCSIG$v)
   (local $0 i32)
   loop $repeat|0
    block $break|0
@@ -1481,7 +1466,7 @@
   end
   call $assembly/index/reset
  )
- (func $assembly/index/reHash (; 21 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/hashMe (; 20 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   call $assembly/index/clean
   i32.const 32
@@ -1495,7 +1480,7 @@
   call $assembly/index/finish
   local.get $1
  )
- (func $~lib/internal/memory/memcmp (; 22 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/internal/memory/memcmp (; 21 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   local.get $0
   local.get $1
@@ -1545,20 +1530,20 @@
    i32.const 0
   end
  )
- (func $~lib/memory/memory.compare (; 23 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/memory/memory.compare (; 22 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   local.get $1
   local.get $2
   call $~lib/internal/memory/memcmp
  )
- (func $~lib/memory/memory.free (; 24 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/memory/memory.free (; 23 ;) (type $FUNCSIG$vi) (param $0 i32)
   nop
  )
- (func $~lib/memory/memory.reset (; 25 ;) (type $FUNCSIG$v)
+ (func $~lib/memory/memory.reset (; 24 ;) (type $FUNCSIG$v)
   global.get $~lib/allocator/arena/startOffset
   global.set $~lib/allocator/arena/offset
  )
- (func $start (; 26 ;) (type $FUNCSIG$v)
+ (func $start (; 25 ;) (type $FUNCSIG$v)
   i32.const 696
   global.set $~lib/allocator/arena/startOffset
   global.get $~lib/allocator/arena/startOffset
@@ -1566,7 +1551,7 @@
   call $assembly/index/CTX#constructor
   global.set $assembly/index/ctx
  )
- (func $null (; 27 ;) (type $FUNCSIG$v)
+ (func $null (; 26 ;) (type $FUNCSIG$v)
   nop
  )
 )
