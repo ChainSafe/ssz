@@ -1,8 +1,8 @@
 (module
  (type $FUNCSIG$v (func))
- (type $FUNCSIG$ii (func (param i32) (result i32)))
  (type $FUNCSIG$iii (func (param i32 i32) (result i32)))
  (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
+ (type $FUNCSIG$ii (func (param i32) (result i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
  (type $FUNCSIG$iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
@@ -21,7 +21,13 @@
  (global $~lib/allocator/arena/offset (mut i32) (i32.const 0))
  (global $assembly/index/digestLength i32 (i32.const 32))
  (global $assembly/index/K i32 (i32.const 520))
- (global $assembly/index/ctx (mut i32) (i32.const 0))
+ (global $assembly/index/state (mut i32) (i32.const 0))
+ (global $assembly/index/temp (mut i32) (i32.const 0))
+ (global $assembly/index/buffer (mut i32) (i32.const 0))
+ (global $assembly/index/bufferLength (mut i32) (i32.const 0))
+ (global $assembly/index/bytesHashed (mut i32) (i32.const 0))
+ (global $assembly/index/finished (mut i32) (i32.const 0))
+ (global $assembly/index/out (mut i32) (i32.const 0))
  (global $~lib/memory/HEAP_BASE i32 (i32.const 696))
  (export "memory" (memory $0))
  (export "table" (table $0))
@@ -586,58 +592,26 @@
   local.set $0
   local.get $0
  )
- (func $assembly/index/CTX#constructor (; 11 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  block (result i32)
-   local.get $0
-   i32.eqz
-   if
-    i32.const 21
-    call $~lib/memory/memory.allocate
-    local.set $0
-   end
-   local.get $0
-   i32.const 0
-   i32.store
-   local.get $0
-   i32.const 0
-   i32.store offset=4
-   local.get $0
-   i32.const 0
-   i32.store offset=8
-   local.get $0
-   i32.const 0
-   i32.store offset=12
-   local.get $0
-   i32.const 0
-   i32.store offset=16
-   local.get $0
-   i32.const 0
-   i32.store8 offset=20
-   local.get $0
-  end
+ (func $start:assembly/index (; 11 ;) (type $FUNCSIG$v)
+  call $start:~lib/allocator/arena
   i32.const 0
   i32.const 8
   call $~lib/typedarray/Int32Array#constructor
-  i32.store
-  local.get $0
+  global.set $assembly/index/state
   i32.const 0
   i32.const 64
   call $~lib/typedarray/Int32Array#constructor
-  i32.store offset=4
-  local.get $0
+  global.set $assembly/index/temp
   i32.const 0
   i32.const 128
   call $~lib/typedarray/Uint8Array#constructor
-  i32.store offset=8
-  local.get $0
- )
- (func $start:assembly/index (; 12 ;) (type $FUNCSIG$v)
-  call $start:~lib/allocator/arena
+  global.set $assembly/index/buffer
   i32.const 0
-  call $assembly/index/CTX#constructor
-  global.set $assembly/index/ctx
+  global.get $assembly/index/digestLength
+  call $~lib/typedarray/Uint8Array#constructor
+  global.set $assembly/index/out
  )
- (func $~lib/internal/typedarray/TypedArray<u8>#__get (; 13 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/internal/typedarray/TypedArray<u8>#__get (; 12 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -674,7 +648,7 @@
    i32.load8_u offset=8
   end
  )
- (func $~lib/internal/typedarray/TypedArray<u8>#__set (; 14 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/typedarray/TypedArray<u8>#__set (; 13 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -715,7 +689,7 @@
    i32.store8 offset=8
   end
  )
- (func $~lib/internal/typedarray/TypedArray<i32>#__get (; 15 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/internal/typedarray/TypedArray<i32>#__get (; 14 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -752,7 +726,7 @@
    i32.load offset=8
   end
  )
- (func $~lib/internal/typedarray/TypedArray<i32>#__set (; 16 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $~lib/internal/typedarray/TypedArray<i32>#__set (; 15 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -793,7 +767,7 @@
    i32.store offset=8
   end
  )
- (func $~lib/array/Array<u32>#__get (; 17 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u32>#__get (; 16 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -826,7 +800,7 @@
    unreachable
   end
  )
- (func $assembly/index/hashBlocks (; 18 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hashBlocks (; 17 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
@@ -1278,38 +1252,31 @@
   end
   local.get $3
  )
- (func $assembly/index/update (; 19 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $assembly/index/update (; 18 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
-  global.get $assembly/index/ctx
-  i32.load8_u offset=20
-  i32.const 0
-  i32.ne
+  global.get $assembly/index/finished
   if
    i32.const 0
    i32.const 656
-   i32.const 134
+   i32.const 120
    i32.const 4
    call $~lib/env/abort
    unreachable
   end
   i32.const 0
   local.set $2
-  global.get $assembly/index/ctx
-  global.get $assembly/index/ctx
-  i32.load offset=16
+  global.get $assembly/index/bytesHashed
   local.get $1
   i32.add
-  i32.store offset=16
-  global.get $assembly/index/ctx
-  i32.load offset=12
+  global.set $assembly/index/bytesHashed
+  global.get $assembly/index/bufferLength
   i32.const 0
   i32.gt_u
   if
    block $break|0
     loop $continue|0
-     global.get $assembly/index/ctx
-     i32.load offset=12
+     global.get $assembly/index/bufferLength
      i32.const 64
      i32.lt_u
      local.tee $3
@@ -1322,16 +1289,13 @@
      end
      if
       block
-       global.get $assembly/index/ctx
-       i32.load offset=8
+       global.get $assembly/index/buffer
        block (result i32)
-        global.get $assembly/index/ctx
-        global.get $assembly/index/ctx
-        i32.load offset=12
+        global.get $assembly/index/bufferLength
         local.tee $3
         i32.const 1
         i32.add
-        i32.store offset=12
+        global.set $assembly/index/bufferLength
         local.get $3
        end
        local.get $0
@@ -1356,34 +1320,27 @@
      end
     end
    end
-   global.get $assembly/index/ctx
-   i32.load offset=12
+   global.get $assembly/index/bufferLength
    i32.const 64
    i32.eq
    if
-    global.get $assembly/index/ctx
-    i32.load offset=4
-    global.get $assembly/index/ctx
-    i32.load
-    global.get $assembly/index/ctx
-    i32.load offset=8
+    global.get $assembly/index/temp
+    global.get $assembly/index/state
+    global.get $assembly/index/buffer
     i32.const 0
     i32.const 64
     call $assembly/index/hashBlocks
     drop
-    global.get $assembly/index/ctx
     i32.const 0
-    i32.store offset=12
+    global.set $assembly/index/bufferLength
    end
   end
   local.get $1
   i32.const 64
   i32.ge_s
   if
-   global.get $assembly/index/ctx
-   i32.load offset=4
-   global.get $assembly/index/ctx
-   i32.load
+   global.get $assembly/index/temp
+   global.get $assembly/index/state
    local.get $0
    local.get $2
    local.get $1
@@ -1401,16 +1358,13 @@
     i32.gt_s
     if
      block
-      global.get $assembly/index/ctx
-      i32.load offset=8
+      global.get $assembly/index/buffer
       block (result i32)
-       global.get $assembly/index/ctx
-       global.get $assembly/index/ctx
-       i32.load offset=12
+       global.get $assembly/index/bufferLength
        local.tee $3
        i32.const 1
        i32.add
-       i32.store offset=12
+       global.set $assembly/index/bufferLength
        local.get $3
       end
       local.get $0
@@ -1436,24 +1390,19 @@
    end
   end
  )
- (func $assembly/index/finish (; 20 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $assembly/index/finish (; 19 ;) (type $FUNCSIG$vi) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
   (local $6 i32)
-  global.get $assembly/index/ctx
-  i32.load8_u offset=20
-  i32.const 0
-  i32.ne
+  global.get $assembly/index/finished
   i32.eqz
   if
-   global.get $assembly/index/ctx
-   i32.load offset=16
+   global.get $assembly/index/bytesHashed
    local.set $1
-   global.get $assembly/index/ctx
-   i32.load offset=12
+   global.get $assembly/index/bufferLength
    local.set $2
    local.get $1
    i32.const 536870912
@@ -1476,8 +1425,7 @@
     i32.const 128
    end
    local.set $5
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $2
    i32.const 128
    call $~lib/internal/typedarray/TypedArray<u8>#__set
@@ -1494,8 +1442,7 @@
      i32.lt_s
      i32.eqz
      br_if $break|0
-     global.get $assembly/index/ctx
-     i32.load offset=8
+     global.get $assembly/index/buffer
      local.get $6
      i32.const 0
      call $~lib/internal/typedarray/TypedArray<u8>#__set
@@ -1508,8 +1455,7 @@
     end
     unreachable
    end
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 8
    i32.sub
@@ -1519,8 +1465,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 7
    i32.sub
@@ -1530,8 +1475,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 6
    i32.sub
@@ -1541,8 +1485,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 5
    i32.sub
@@ -1552,8 +1495,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 4
    i32.sub
@@ -1563,8 +1505,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 3
    i32.sub
@@ -1574,8 +1515,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 2
    i32.sub
@@ -1585,8 +1525,7 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/buffer
    local.get $5
    i32.const 1
    i32.sub
@@ -1596,19 +1535,15 @@
    i32.const 255
    i32.and
    call $~lib/internal/typedarray/TypedArray<u8>#__set
-   global.get $assembly/index/ctx
-   i32.load offset=4
-   global.get $assembly/index/ctx
-   i32.load
-   global.get $assembly/index/ctx
-   i32.load offset=8
+   global.get $assembly/index/temp
+   global.get $assembly/index/state
+   global.get $assembly/index/buffer
    i32.const 0
    local.get $5
    call $assembly/index/hashBlocks
    drop
-   global.get $assembly/index/ctx
    i32.const 1
-   i32.store8 offset=20
+   global.set $assembly/index/finished
   end
   block $break|1
    i32.const 0
@@ -1626,8 +1561,7 @@
      i32.mul
      i32.const 0
      i32.add
-     global.get $assembly/index/ctx
-     i32.load
+     global.get $assembly/index/state
      local.get $5
      call $~lib/internal/typedarray/TypedArray<i32>#__get
      i32.const 24
@@ -1641,8 +1575,7 @@
      i32.mul
      i32.const 1
      i32.add
-     global.get $assembly/index/ctx
-     i32.load
+     global.get $assembly/index/state
      local.get $5
      call $~lib/internal/typedarray/TypedArray<i32>#__get
      i32.const 16
@@ -1656,8 +1589,7 @@
      i32.mul
      i32.const 2
      i32.add
-     global.get $assembly/index/ctx
-     i32.load
+     global.get $assembly/index/state
      local.get $5
      call $~lib/internal/typedarray/TypedArray<i32>#__get
      i32.const 8
@@ -1671,8 +1603,7 @@
      i32.mul
      i32.const 3
      i32.add
-     global.get $assembly/index/ctx
-     i32.load
+     global.get $assembly/index/state
      local.get $5
      call $~lib/internal/typedarray/TypedArray<i32>#__get
      i32.const 0
@@ -1691,147 +1622,64 @@
    unreachable
   end
  )
- (func $assembly/index/reset (; 21 ;) (type $FUNCSIG$v)
-  global.get $assembly/index/ctx
-  i32.load
+ (func $assembly/index/reset (; 20 ;) (type $FUNCSIG$v)
+  global.get $assembly/index/state
   i32.const 0
   i32.const 1779033703
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 1
   i32.const -1150833019
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 2
   i32.const 1013904242
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 3
   i32.const -1521486534
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 4
   i32.const 1359893119
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 5
   i32.const -1694144372
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 6
   i32.const 528734635
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
-  i32.load
+  global.get $assembly/index/state
   i32.const 7
   i32.const 1541459225
   call $~lib/internal/typedarray/TypedArray<i32>#__set
-  global.get $assembly/index/ctx
   i32.const 0
-  i32.store offset=12
-  global.get $assembly/index/ctx
+  global.set $assembly/index/bufferLength
   i32.const 0
-  i32.store offset=16
-  global.get $assembly/index/ctx
+  global.set $assembly/index/bytesHashed
   i32.const 0
-  i32.store8 offset=20
+  global.set $assembly/index/finished
  )
- (func $assembly/index/clean (; 22 ;) (type $FUNCSIG$v)
-  (local $0 i32)
+ (func $assembly/index/hashMe (; 21 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
-  block $break|0
-   i32.const 0
-   local.set $0
-   loop $repeat|0
-    local.get $0
-    block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.1 (result i32)
-     global.get $assembly/index/ctx
-     i32.load offset=8
-     local.set $1
-     local.get $1
-     i32.load offset=8
-     i32.const 0
-     i32.shr_u
-    end
-    i32.lt_s
-    i32.eqz
-    br_if $break|0
-    global.get $assembly/index/ctx
-    i32.load offset=8
-    local.get $0
-    i32.const 0
-    call $~lib/internal/typedarray/TypedArray<u8>#__set
-    local.get $0
-    i32.const 1
-    i32.add
-    local.set $0
-    br $repeat|0
-    unreachable
-   end
-   unreachable
-  end
-  block $break|1
-   i32.const 0
-   local.set $0
-   loop $repeat|1
-    local.get $0
-    block $~lib/internal/typedarray/TypedArray<i32>#get:length|inlined.1 (result i32)
-     global.get $assembly/index/ctx
-     i32.load offset=4
-     local.set $1
-     local.get $1
-     i32.load offset=8
-     i32.const 2
-     i32.shr_u
-    end
-    i32.lt_s
-    i32.eqz
-    br_if $break|1
-    global.get $assembly/index/ctx
-    i32.load offset=4
-    local.get $0
-    i32.const 0
-    call $~lib/internal/typedarray/TypedArray<i32>#__set
-    local.get $0
-    i32.const 1
-    i32.add
-    local.set $0
-    br $repeat|1
-    unreachable
-   end
-   unreachable
-  end
   call $assembly/index/reset
- )
- (func $assembly/index/hashMe (; 23 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (local $2 i32)
-  call $assembly/index/clean
-  i32.const 0
-  global.get $assembly/index/digestLength
-  call $~lib/typedarray/Uint8Array#constructor
-  local.set $1
   local.get $0
-  block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.2 (result i32)
+  block $~lib/internal/typedarray/TypedArray<u8>#get:length|inlined.0 (result i32)
    local.get $0
-   local.set $2
-   local.get $2
+   local.set $1
+   local.get $1
    i32.load offset=8
    i32.const 0
    i32.shr_u
   end
   call $assembly/index/update
-  local.get $1
+  global.get $assembly/index/out
   call $assembly/index/finish
-  local.get $1
+  global.get $assembly/index/out
  )
- (func $~lib/internal/memory/memcmp (; 24 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/internal/memory/memcmp (; 22 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   local.get $0
   local.get $1
@@ -1885,31 +1733,31 @@
    i32.const 0
   end
  )
- (func $~lib/memory/memory.compare (; 25 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/memory/memory.compare (; 23 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $0
   local.get $1
   local.get $2
   call $~lib/internal/memory/memcmp
  )
- (func $~lib/allocator/arena/__memory_free (; 26 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/allocator/arena/__memory_free (; 24 ;) (type $FUNCSIG$vi) (param $0 i32)
   nop
  )
- (func $~lib/memory/memory.free (; 27 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $~lib/memory/memory.free (; 25 ;) (type $FUNCSIG$vi) (param $0 i32)
   local.get $0
   call $~lib/allocator/arena/__memory_free
   return
  )
- (func $~lib/allocator/arena/__memory_reset (; 28 ;) (type $FUNCSIG$v)
+ (func $~lib/allocator/arena/__memory_reset (; 26 ;) (type $FUNCSIG$v)
   global.get $~lib/allocator/arena/startOffset
   global.set $~lib/allocator/arena/offset
  )
- (func $~lib/memory/memory.reset (; 29 ;) (type $FUNCSIG$v)
+ (func $~lib/memory/memory.reset (; 27 ;) (type $FUNCSIG$v)
   call $~lib/allocator/arena/__memory_reset
   return
  )
- (func $start (; 30 ;) (type $FUNCSIG$v)
+ (func $start (; 28 ;) (type $FUNCSIG$v)
   call $start:assembly/index
  )
- (func $null (; 31 ;) (type $FUNCSIG$v)
+ (func $null (; 29 ;) (type $FUNCSIG$v)
  )
 )

@@ -18,23 +18,14 @@ const K: Word[] = [
   0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ]
 
-@unmanaged
-class CTX {
-  public state: Int32Array; // hash state
-  public temp: Int32Array; // temporary state
-  public buffer: Uint8Array; // buffer for data to hash
-  public bufferLength: u32 = 0; // number of bytes in buffer
-  public bytesHashed: u32 = 0; // number of total bytes hashed 
-  public finished: bool = false;
 
-  constructor() {
-    this.state = new Int32Array(8);
-    this.temp = new Int32Array(64);
-    this.buffer = new Uint8Array(128);
-  }
-}
-
-var ctx: CTX = new CTX();
+var state: Int32Array = new Int32Array(8); // hash state
+var temp: Int32Array  = new Int32Array(64);; // temporary state
+var buffer: Uint8Array = new Uint8Array(128);; // buffer for data to hash
+var bufferLength: u32 = 0; // number of bytes in buffer
+var bytesHashed: u32 = 0; // number of total bytes hashed 
+var finished: bool = false;
+var out: Uint8Array = new Uint8Array(digestLength)
 
 function hashBlocks(w: Int32Array, v: Int32Array, p: Uint8Array, pos: i32, len: i32): i32 {
   let a: i32, b: i32, c: i32, d: i32, e: i32,
@@ -99,99 +90,92 @@ function hashBlocks(w: Int32Array, v: Int32Array, p: Uint8Array, pos: i32, len: 
   return pos;
 }
 
-// export function init(): CTX {
-//   let ctx: CTX = new CTX();
-//   reset(ctx);
-//   return ctx;
-// }
-
 function reset(): void {
-  ctx.state[0] = 0x6a09e667;
-  ctx.state[1] = 0xbb67ae85;
-  ctx.state[2] = 0x3c6ef372;
-  ctx.state[3] = 0xa54ff53a;
-  ctx.state[4] = 0x510e527f;
-  ctx.state[5] = 0x9b05688c;
-  ctx.state[6] = 0x1f83d9ab;
-  ctx.state[7] = 0x5be0cd19;
-  ctx.bufferLength = 0;
-  ctx.bytesHashed = 0;
-  ctx.finished = false;
+  state[0] = 0x6a09e667;
+  state[1] = 0xbb67ae85;
+  state[2] = 0x3c6ef372;
+  state[3] = 0xa54ff53a;
+  state[4] = 0x510e527f;
+  state[5] = 0x9b05688c;
+  state[6] = 0x1f83d9ab;
+  state[7] = 0x5be0cd19;
+  bufferLength = 0;
+  bytesHashed = 0;
+  finished = false;
 }
 
 function clean(): void {
-  for (let i = 0; i < ctx.buffer.length; i++) {
-    ctx.buffer[i] = 0;
+  for (let i = 0; i < buffer.length; i++) {
+    buffer[i] = 0;
   }
-  for (let i = 0; i < ctx.temp.length; i++) {
-    ctx.temp[i] = 0;
+  for (let i = 0; i < temp.length; i++) {
+    temp[i] = 0;
   }
   reset();
 }
 
 export function update( data: Uint8Array, dataLength: i32): void {
-  if (ctx.finished) {
+  if (finished) {
     throw new Error("SHA256: can't update because hash was finished.");
   }
   let dataPos = 0;
-  ctx.bytesHashed += dataLength;
-  if (ctx.bufferLength > 0) {
-    while (ctx.bufferLength < 64 && dataLength > 0) {
-      ctx.buffer[ctx.bufferLength++] = data[dataPos++];
+  bytesHashed += dataLength;
+  if (bufferLength > 0) {
+    while (bufferLength < 64 && dataLength > 0) {
+      buffer[bufferLength++] = data[dataPos++];
       dataLength--;
     }
-    if (ctx.bufferLength === 64) {
-      hashBlocks(ctx.temp, ctx.state, ctx.buffer, 0, 64);
-      ctx.bufferLength = 0;
+    if (bufferLength === 64) {
+      hashBlocks(temp, state, buffer, 0, 64);
+      bufferLength = 0;
     }
   }
   if (dataLength >= 64) {
-    dataPos = hashBlocks(ctx.temp, ctx.state, data, dataPos, dataLength);
+    dataPos = hashBlocks(temp, state, data, dataPos, dataLength);
     dataLength %= 64;
   }
   while (dataLength > 0) {
-    ctx.buffer[ctx.bufferLength++] = data[dataPos++];
+    buffer[bufferLength++] = data[dataPos++];
     dataLength--;
   }
 }
 
 export function finish( out: Uint8Array): void {
-  if (!ctx.finished) {
-    let bytesHashed = ctx.bytesHashed;
-    let left = ctx.bufferLength;
+  if (!finished) {
+    let bytesHashed = bytesHashed;
+    let left = bufferLength;
     let bitLenHi = (bytesHashed / 0x20000000) | 0;
     let bitLenLo = bytesHashed << 3;
     let padLength = (bytesHashed % 64 < 56) ? 64 : 128;
 
-    ctx.buffer[left] = 0x80;
+    buffer[left] = 0x80;
     for (let i: i32 = left + 1; i < padLength - 8; i++) {
-      ctx.buffer[i] = 0;
+      buffer[i] = 0;
     }
-    ctx.buffer[padLength - 8] = (bitLenHi >>> 24) & 0xff;
-    ctx.buffer[padLength - 7] = (bitLenHi >>> 16) & 0xff;
-    ctx.buffer[padLength - 6] = (bitLenHi >>> 8) & 0xff;
-    ctx.buffer[padLength - 5] = (bitLenHi >>> 0) & 0xff;
-    ctx.buffer[padLength - 4] = (bitLenLo >>> 24) & 0xff;
-    ctx.buffer[padLength - 3] = (bitLenLo >>> 16) & 0xff;
-    ctx.buffer[padLength - 2] = (bitLenLo >>> 8) & 0xff;
-    ctx.buffer[padLength - 1] = (bitLenLo >>> 0) & 0xff;
+    buffer[padLength - 8] = (bitLenHi >>> 24) & 0xff;
+    buffer[padLength - 7] = (bitLenHi >>> 16) & 0xff;
+    buffer[padLength - 6] = (bitLenHi >>> 8) & 0xff;
+    buffer[padLength - 5] = (bitLenHi >>> 0) & 0xff;
+    buffer[padLength - 4] = (bitLenLo >>> 24) & 0xff;
+    buffer[padLength - 3] = (bitLenLo >>> 16) & 0xff;
+    buffer[padLength - 2] = (bitLenLo >>> 8) & 0xff;
+    buffer[padLength - 1] = (bitLenLo >>> 0) & 0xff;
 
-    hashBlocks(ctx.temp, ctx.state, ctx.buffer, 0, padLength);
+    hashBlocks(temp, state, buffer, 0, padLength);
 
-    ctx.finished = true;
+    finished = true;
   }
 
   for (let i = 0; i < 8; i++) {
-    out[i * 4 + 0] = (ctx.state[i] >>> 24) & 0xff;
-    out[i * 4 + 1] = (ctx.state[i] >>> 16) & 0xff;
-    out[i * 4 + 2] = (ctx.state[i] >>> 8) & 0xff;
-    out[i * 4 + 3] = (ctx.state[i] >>> 0) & 0xff;
+    out[i * 4 + 0] = (state[i] >>> 24) & 0xff;
+    out[i * 4 + 1] = (state[i] >>> 16) & 0xff;
+    out[i * 4 + 2] = (state[i] >>> 8) & 0xff;
+    out[i * 4 + 3] = (state[i] >>> 0) & 0xff;
   }
 }
 
 export function hashMe(data: Uint8Array): Uint8Array{
-  clean();
-  let out: Uint8Array = new Uint8Array(digestLength);
+  reset();
   update(data, data.length);
   finish(out);
   return out;
