@@ -25,54 +25,57 @@ var bytesHashed: u32 = 0; // number of total bytes hashed
 var finished: bool = false;
 var out: ArrayBuffer = new ArrayBuffer(digestLength)
 
+@inline
 function load32_be(x: ArrayBuffer, offset: isize): u32 {
-  return bswap(load<u32>(changetype<usize>(x) + offset));
+  return bswap(load<u32>(changetype<usize>(x) + (offset << alignof<u32>())));
 }
-
+@inline
 function store32_be(x: ArrayBuffer, offset: isize, u: u32): void {
-  store<u32>(changetype<usize>(x) + offset, bswap(u));
+  store<u32>(changetype<usize>(x) + (offset << alignof<u32>()), bswap(u));
 }
-
+@inline
 function store8_be(x: ArrayBuffer, offset: isize, u: u8): void {
   store<u8>(changetype<usize>(x) + offset, bswap(u));
 }
+@inline
 function load8_be(x: ArrayBuffer, offset: isize): u8 {
   return bswap<u8>(load<u8>(changetype<usize>(x) + offset));
 }
+  
 function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
   let a: u32, b: u32, c: u32, d: u32, e: u32,
     f: u32, g: u32, h: u32, u: u32, i: u32,
     j: u32, t1: u32, t2: u32;
   while (len >= 64) {
-    a = load32_be(v, 0 * 4);
-    b = load32_be(v, 1 * 4)
-    c = load32_be(v, 2 * 4)
-    d = load32_be(v, 3 * 4)
-    e = load32_be(v, 4 * 4)
-    f = load32_be(v, 5 * 4)
-    g = load32_be(v, 6 * 4)
-    h = load32_be(v, 7 * 4)
+    a = load32_be(v, 0  );
+    b = load32_be(v, 1  )
+    c = load32_be(v, 2  )
+    d = load32_be(v, 3  )
+    e = load32_be(v, 4  )
+    f = load32_be(v, 5  )
+    g = load32_be(v, 6  )
+    h = load32_be(v, 7  )
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
-      store32_be(w, i*4, (((<u32>load8_be(p, j) & 0xff) << 24) | ((<u32>load8_be(p, j+1) & 0xff) << 16) |
+      store32_be(w, i , (((<u32>load8_be(p, j) & 0xff) << 24) | ((<u32>load8_be(p, j+1) & 0xff) << 16) |
         ((<u32>load8_be(p, j+2) & 0xff) << 8) | (<u32>load8_be(p, j+3) & 0xff)))
     }
 
     for (i = 16; i < 64; i++) {
-      u = load32_be(w, (i - 2)*4);
+      u = load32_be(w, (i - 2) );
       t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
 
-      u = load32_be(w, (i - 15)*4);
+      u = load32_be(w, (i - 15) );
       t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
 
-      store32_be(w, i * 4 , (t1 + load32_be(w, (i - 7)*4) | 0) + (t2 + load32_be(w, (i - 16)*4)) | 0);
+      store32_be(w, i   , (t1 + load32_be(w, (i - 7) ) | 0) + (t2 + load32_be(w, (i - 16) )) | 0);
     }
 
     for (i = 0; i < 64; i++) {
       t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
         (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g))) | 0) +
-        ((h + ((K[i] + load32_be(w, i*4)) | 0)) | 0)) | 0;
+        ((h + ((K[i] + load32_be(w, i )) | 0)) | 0)) | 0;
 
       t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
         (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
@@ -86,15 +89,15 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
       b = a;
       a = (t1 + t2) | 0;
     }
-    load32_be(v,0 *4)
-    store32_be(v, 0 * 4, load32_be(v, 0 * 4) + a);
-    store32_be(v, 1 * 4, load32_be(v, 1 * 4) + b);
-    store32_be(v, 2 * 4, load32_be(v, 2 * 4) + c);
-    store32_be(v, 3 * 4, load32_be(v, 3 * 4) + d);
-    store32_be(v, 4 * 4, load32_be(v, 4 * 4) + e);
-    store32_be(v, 5 * 4, load32_be(v, 5 * 4) + f);
-    store32_be(v, 6 * 4, load32_be(v, 6 * 4) + g);
-    store32_be(v, 7 * 4, load32_be(v, 7 * 4) + h);
+    load32_be(v,0  )
+    store32_be(v, 0  , load32_be(v, 0  ) + a);
+    store32_be(v, 1  , load32_be(v, 1  ) + b);
+    store32_be(v, 2  , load32_be(v, 2  ) + c);
+    store32_be(v, 3  , load32_be(v, 3  ) + d);
+    store32_be(v, 4  , load32_be(v, 4  ) + e);
+    store32_be(v, 5  , load32_be(v, 5  ) + f);
+    store32_be(v, 6  , load32_be(v, 6  ) + g);
+    store32_be(v, 7  , load32_be(v, 7  ) + h);
 
     pos += 64;
     len -= 64;
@@ -182,8 +185,8 @@ export function finish(out: ArrayBuffer): void {
       store8_be(buffer, i, 0);
     }
 
-    store32_be(buffer, padLength-8, bitLenHi)
-    store32_be(buffer, padLength-4, bitLenLo)
+    store32_be(buffer, (padLength-8) >> alignof<u32>() , bitLenHi)
+    store32_be(buffer, padLength-4 >> alignof<u32>(), bitLenLo)
 
     hashBlocks(temp, state, buffer, 0, padLength);
 
@@ -191,8 +194,8 @@ export function finish(out: ArrayBuffer): void {
   }
 
   for (let i = 0; i < 8; i++) {
-    let state_i: u32 = load32_be(state, i*4);
-    store32_be(out, i*4, state_i)
+    let state_i: u32 = load32_be(state, i );
+    store32_be(out, i , state_i)
   }
 }
 

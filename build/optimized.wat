@@ -5,9 +5,9 @@
  (type $FUNCSIG$v (func))
  (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
+ (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
  (type $FUNCSIG$iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
- (type $FUNCSIG$i (func (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 9) "\01\00\00\01")
@@ -43,6 +43,7 @@
  (export "__collect" (func $~lib/rt/stub/__collect))
  (export "__rtti_base" (global $~lib/rt/__rtti_base))
  (export "UINT8ARRAY_ID" (global $assembly/index/UINT8ARRAY_ID))
+ (export "what" (func $assembly/index/what))
  (export "update" (func $assembly/index/update))
  (export "finish" (func $assembly/index/finish))
  (export "hashMe" (func $assembly/index/hashMe))
@@ -480,7 +481,10 @@
    end
   end
  )
- (func $~lib/typedarray/Uint8Array#__get (; 12 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $assembly/index/what (; 12 ;) (type $FUNCSIG$i) (result i32)
+  i32.const 2
+ )
+ (func $~lib/typedarray/Uint8Array#__get (; 13 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -499,7 +503,7 @@
   i32.add
   i32.load8_u
  )
- (func $~lib/array/Array<u32>#__get (; 13 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/array/Array<u32>#__get (; 14 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.const 304
   i32.load
@@ -522,7 +526,7 @@
   i32.add
   i32.load
  )
- (func $assembly/index/hashBlocks (; 14 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hashBlocks (; 15 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
@@ -534,7 +538,6 @@
   (local $13 i32)
   (local $14 i32)
   (local $15 i32)
-  (local $16 i32)
   loop $continue|0
    local.get $4
    i32.const 64
@@ -676,16 +679,17 @@
       local.get $7
       i32.const 2
       i32.shl
-      local.tee $15
       local.get $3
       i32.add
       local.tee $6
       local.get $2
       i32.add
       i32.load8_u
-      local.set $16
+      local.set $15
+      local.get $7
+      i32.const 2
+      i32.shl
       local.get $0
-      local.get $15
       i32.add
       local.get $6
       i32.const 3
@@ -693,7 +697,9 @@
       local.get $2
       i32.add
       i32.load8_u
-      local.get $16
+      local.get $15
+      i32.const 255
+      i32.and
       i32.const 24
       i32.shl
       local.get $6
@@ -805,6 +811,25 @@
       i32.xor
       i32.add
       local.get $7
+      i32.const 16
+      i32.sub
+      i32.const 2
+      i32.shl
+      local.get $0
+      i32.add
+      i32.load
+      local.tee $6
+      i32.const -16711936
+      i32.and
+      i32.const 8
+      i32.rotl
+      local.get $6
+      i32.const 16711935
+      i32.and
+      i32.const 8
+      i32.rotr
+      i32.or
+      local.get $7
       i32.const 15
       i32.sub
       i32.const 2
@@ -842,25 +867,6 @@
       i32.const 3
       i32.shr_u
       i32.xor
-      local.get $7
-      i32.const 16
-      i32.sub
-      i32.const 2
-      i32.shl
-      local.get $0
-      i32.add
-      i32.load
-      local.tee $6
-      i32.const -16711936
-      i32.and
-      i32.const 8
-      i32.rotl
-      local.get $6
-      i32.const 16711935
-      i32.and
-      i32.const 8
-      i32.rotr
-      i32.or
       i32.add
       i32.add
       local.tee $6
@@ -1277,7 +1283,7 @@
   end
   local.get $3
  )
- (func $assembly/index/update (; 15 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $assembly/index/update (; 16 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -1285,7 +1291,7 @@
   if
    i32.const 672
    i32.const 784
-   i32.const 142
+   i32.const 149
    i32.const 4
    call $~lib/builtins/abort
    unreachable
@@ -1419,7 +1425,7 @@
    end
   end
  )
- (func $assembly/index/finish (; 16 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $assembly/index/finish (; 17 ;) (type $FUNCSIG$vi) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -1478,6 +1484,10 @@
    local.get $1
    i32.const 8
    i32.sub
+   i32.const 2
+   i32.shr_s
+   i32.const 2
+   i32.shl
    i32.add
    local.get $3
    i32.const -16711936
@@ -1495,6 +1505,10 @@
    local.get $1
    i32.const 4
    i32.sub
+   i32.const 2
+   i32.shr_s
+   i32.const 2
+   i32.shl
    i32.add
    local.get $4
    i32.const -16711936
@@ -1528,8 +1542,12 @@
     local.get $1
     i32.const 2
     i32.shl
-    local.tee $3
+    local.get $0
+    i32.add
     global.get $assembly/index/state
+    local.get $1
+    i32.const 2
+    i32.shl
     i32.add
     i32.load
     local.tee $2
@@ -1543,11 +1561,7 @@
     i32.const 8
     i32.rotr
     i32.or
-    local.set $2
-    local.get $0
-    local.get $3
-    i32.add
-    local.get $2
+    local.tee $2
     i32.const -16711936
     i32.and
     i32.const 8
@@ -1567,7 +1581,7 @@
    end
   end
  )
- (func $assembly/index/reset (; 17 ;) (type $FUNCSIG$v)
+ (func $assembly/index/reset (; 18 ;) (type $FUNCSIG$v)
   (local $0 i32)
   loop $repeat|0
    local.get $0
@@ -1595,7 +1609,7 @@
   i32.const 0
   global.set $assembly/index/finished
  )
- (func $assembly/index/hashMe (; 18 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/hashMe (; 19 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   call $assembly/index/reset
   local.get $0
@@ -1627,7 +1641,7 @@
   end
   local.get $0
  )
- (func $start (; 19 ;) (type $FUNCSIG$v)
+ (func $start (; 20 ;) (type $FUNCSIG$v)
   i32.const 880
   global.set $~lib/rt/stub/startOffset
   global.get $~lib/rt/stub/startOffset

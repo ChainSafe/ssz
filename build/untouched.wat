@@ -6,6 +6,7 @@
  (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
+ (type $FUNCSIG$i (func (result i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
  (type $FUNCSIG$iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
@@ -48,6 +49,7 @@
  (export "__collect" (func $~lib/rt/stub/__collect))
  (export "__rtti_base" (global $~lib/rt/__rtti_base))
  (export "UINT8ARRAY_ID" (global $assembly/index/UINT8ARRAY_ID))
+ (export "what" (func $assembly/index/what))
  (export "update" (func $assembly/index/update))
  (export "finish" (func $assembly/index/finish))
  (export "hashMe" (func $assembly/index/hashMe))
@@ -623,7 +625,10 @@
    unreachable
   end
  )
- (func $~lib/typedarray/Uint8Array#__get (; 13 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $assembly/index/what (; 13 ;) (type $FUNCSIG$i) (result i32)
+  i32.const 2
+ )
+ (func $~lib/typedarray/Uint8Array#__get (; 14 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -642,39 +647,11 @@
   i32.add
   i32.load8_u
  )
- (func $~lib/polyfills/bswap<u8> (; 14 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap<u8> (; 15 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   return
  )
- (func $assembly/index/store8_be (; 15 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
-  local.get $0
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.add
-  local.get $2
-  call $~lib/polyfills/bswap<u8>
-  i32.store8
-  local.get $0
-  call $~lib/rt/stub/__release
- )
- (func $assembly/index/load8_be (; 16 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  local.get $0
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.add
-  i32.load8_u
-  call $~lib/polyfills/bswap<u8>
-  local.set $2
-  local.get $0
-  call $~lib/rt/stub/__release
-  local.get $2
- )
- (func $~lib/polyfills/bswap<u32> (; 17 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/polyfills/bswap<u32> (; 16 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.const -16711936
   i32.and
@@ -688,35 +665,7 @@
   i32.or
   return
  )
- (func $assembly/index/load32_be (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  local.get $0
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.add
-  i32.load
-  call $~lib/polyfills/bswap<u32>
-  local.set $2
-  local.get $0
-  call $~lib/rt/stub/__release
-  local.get $2
- )
- (func $assembly/index/store32_be (; 19 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
-  local.get $0
-  call $~lib/rt/stub/__retain
-  drop
-  local.get $0
-  local.get $1
-  i32.add
-  local.get $2
-  call $~lib/polyfills/bswap<u32>
-  i32.store
-  local.get $0
-  call $~lib/rt/stub/__release
- )
- (func $~lib/array/Array<u32>#__unchecked_get (; 20 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u32>#__unchecked_get (; 17 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   i32.load offset=4
   local.get $1
@@ -725,7 +674,7 @@
   i32.add
   i32.load
  )
- (func $~lib/array/Array<u32>#__get (; 21 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/array/Array<u32>#__get (; 18 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $1
   local.get $0
   i32.load offset=8
@@ -744,7 +693,7 @@
   local.get $1
   call $~lib/array/Array<u32>#__unchecked_get
  )
- (func $assembly/index/hashBlocks (; 22 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hashBlocks (; 19 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
@@ -759,6 +708,12 @@
   (local $16 i32)
   (local $17 i32)
   (local $18 i32)
+  (local $19 i32)
+  (local $20 i32)
+  (local $21 i32)
+  (local $22 i32)
+  (local $23 i32)
+  (local $24 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -774,53 +729,157 @@
     i32.const 64
     i32.ge_u
     if
-     local.get $1
-     i32.const 0
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.0 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $19
+      i32.const 0
+      local.set $18
+      local.get $19
+      local.get $18
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $20
+      local.get $19
+      call $~lib/rt/stub/__release
+      local.get $20
+     end
      local.set $5
-     local.get $1
-     i32.const 1
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.1 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $18
+      i32.const 1
+      local.set $20
+      local.get $18
+      local.get $20
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $19
+      local.get $18
+      call $~lib/rt/stub/__release
+      local.get $19
+     end
      local.set $6
-     local.get $1
-     i32.const 2
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.2 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $20
+      i32.const 2
+      local.set $19
+      local.get $20
+      local.get $19
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $18
+      local.get $20
+      call $~lib/rt/stub/__release
+      local.get $18
+     end
      local.set $7
-     local.get $1
-     i32.const 3
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.3 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $19
+      i32.const 3
+      local.set $18
+      local.get $19
+      local.get $18
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $20
+      local.get $19
+      call $~lib/rt/stub/__release
+      local.get $20
+     end
      local.set $8
-     local.get $1
-     i32.const 4
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.4 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $18
+      i32.const 4
+      local.set $20
+      local.get $18
+      local.get $20
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $19
+      local.get $18
+      call $~lib/rt/stub/__release
+      local.get $19
+     end
      local.set $9
-     local.get $1
-     i32.const 5
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.5 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $20
+      i32.const 5
+      local.set $19
+      local.get $20
+      local.get $19
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $18
+      local.get $20
+      call $~lib/rt/stub/__release
+      local.get $18
+     end
      local.set $10
-     local.get $1
-     i32.const 6
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.6 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $19
+      i32.const 6
+      local.set $18
+      local.get $19
+      local.get $18
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $20
+      local.get $19
+      call $~lib/rt/stub/__release
+      local.get $20
+     end
      local.set $11
-     local.get $1
-     i32.const 7
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.7 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $18
+      i32.const 7
+      local.set $20
+      local.get $18
+      local.get $20
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $19
+      local.get $18
+      call $~lib/rt/stub/__release
+      local.get $19
+     end
      local.set $12
      block $break|1
       i32.const 0
@@ -837,54 +896,119 @@
        i32.mul
        i32.add
        local.set $15
-       local.get $0
-       local.get $14
-       i32.const 4
-       i32.mul
-       local.get $2
-       local.get $15
-       call $assembly/index/load8_be
-       i32.const 255
-       i32.and
-       i32.const 255
-       i32.and
-       i32.const 24
-       i32.shl
-       local.get $2
-       local.get $15
-       i32.const 1
-       i32.add
-       call $assembly/index/load8_be
-       i32.const 255
-       i32.and
-       i32.const 255
-       i32.and
-       i32.const 16
-       i32.shl
-       i32.or
-       local.get $2
-       local.get $15
-       i32.const 2
-       i32.add
-       call $assembly/index/load8_be
-       i32.const 255
-       i32.and
-       i32.const 255
-       i32.and
-       i32.const 8
-       i32.shl
-       i32.or
-       local.get $2
-       local.get $15
-       i32.const 3
-       i32.add
-       call $assembly/index/load8_be
-       i32.const 255
-       i32.and
-       i32.const 255
-       i32.and
-       i32.or
-       call $assembly/index/store32_be
+       block $assembly/index/store32_be|inlined.0
+        local.get $0
+        call $~lib/rt/stub/__retain
+        local.set $22
+        local.get $14
+        local.set $21
+        block $assembly/index/load8_be|inlined.1 (result i32)
+         local.get $2
+         call $~lib/rt/stub/__retain
+         local.set $20
+         local.get $15
+         local.set $19
+         local.get $20
+         local.get $19
+         i32.add
+         i32.load8_u
+         call $~lib/polyfills/bswap<u8>
+         local.set $18
+         local.get $20
+         call $~lib/rt/stub/__release
+         local.get $18
+        end
+        i32.const 255
+        i32.and
+        i32.const 255
+        i32.and
+        i32.const 24
+        i32.shl
+        block $assembly/index/load8_be|inlined.2 (result i32)
+         local.get $2
+         call $~lib/rt/stub/__retain
+         local.set $19
+         local.get $15
+         i32.const 1
+         i32.add
+         local.set $18
+         local.get $19
+         local.get $18
+         i32.add
+         i32.load8_u
+         call $~lib/polyfills/bswap<u8>
+         local.set $20
+         local.get $19
+         call $~lib/rt/stub/__release
+         local.get $20
+        end
+        i32.const 255
+        i32.and
+        i32.const 255
+        i32.and
+        i32.const 16
+        i32.shl
+        i32.or
+        block $assembly/index/load8_be|inlined.3 (result i32)
+         local.get $2
+         call $~lib/rt/stub/__retain
+         local.set $18
+         local.get $15
+         i32.const 2
+         i32.add
+         local.set $20
+         local.get $18
+         local.get $20
+         i32.add
+         i32.load8_u
+         call $~lib/polyfills/bswap<u8>
+         local.set $19
+         local.get $18
+         call $~lib/rt/stub/__release
+         local.get $19
+        end
+        i32.const 255
+        i32.and
+        i32.const 255
+        i32.and
+        i32.const 8
+        i32.shl
+        i32.or
+        block $assembly/index/load8_be|inlined.4 (result i32)
+         local.get $2
+         call $~lib/rt/stub/__retain
+         local.set $20
+         local.get $15
+         i32.const 3
+         i32.add
+         local.set $19
+         local.get $20
+         local.get $19
+         i32.add
+         i32.load8_u
+         call $~lib/polyfills/bswap<u8>
+         local.set $18
+         local.get $20
+         call $~lib/rt/stub/__release
+         local.get $18
+        end
+        i32.const 255
+        i32.and
+        i32.const 255
+        i32.and
+        i32.or
+        local.set $18
+        local.get $22
+        local.get $21
+        i32.const 2
+        i32.shl
+        i32.add
+        local.get $18
+        call $~lib/polyfills/bswap<u32>
+        i32.store
+        local.get $22
+        call $~lib/rt/stub/__release
+       end
        local.get $14
        i32.const 1
        i32.add
@@ -903,13 +1027,26 @@
        i32.lt_u
        i32.eqz
        br_if $break|2
-       local.get $0
-       local.get $14
-       i32.const 2
-       i32.sub
-       i32.const 4
-       i32.mul
-       call $assembly/index/load32_be
+       block $assembly/index/load32_be|inlined.8 (result i32)
+        local.get $0
+        call $~lib/rt/stub/__retain
+        local.set $20
+        local.get $14
+        i32.const 2
+        i32.sub
+        local.set $19
+        local.get $20
+        local.get $19
+        i32.const 2
+        i32.shl
+        i32.add
+        i32.load
+        call $~lib/polyfills/bswap<u32>
+        local.set $22
+        local.get $20
+        call $~lib/rt/stub/__release
+        local.get $22
+       end
        local.set $13
        local.get $13
        i32.const 17
@@ -935,13 +1072,26 @@
        i32.shr_u
        i32.xor
        local.set $16
-       local.get $0
-       local.get $14
-       i32.const 15
-       i32.sub
-       i32.const 4
-       i32.mul
-       call $assembly/index/load32_be
+       block $assembly/index/load32_be|inlined.9 (result i32)
+        local.get $0
+        call $~lib/rt/stub/__retain
+        local.set $21
+        local.get $14
+        i32.const 15
+        i32.sub
+        local.set $18
+        local.get $21
+        local.get $18
+        i32.const 2
+        i32.shl
+        i32.add
+        i32.load
+        call $~lib/polyfills/bswap<u32>
+        local.set $20
+        local.get $21
+        call $~lib/rt/stub/__release
+        local.get $20
+       end
        local.set $13
        local.get $13
        i32.const 7
@@ -967,34 +1117,73 @@
        i32.shr_u
        i32.xor
        local.set $17
-       local.get $0
-       local.get $14
-       i32.const 4
-       i32.mul
-       local.get $16
-       local.get $0
-       local.get $14
-       i32.const 7
-       i32.sub
-       i32.const 4
-       i32.mul
-       call $assembly/index/load32_be
-       i32.add
-       i32.const 0
-       i32.or
-       local.get $17
-       local.get $0
-       local.get $14
-       i32.const 16
-       i32.sub
-       i32.const 4
-       i32.mul
-       call $assembly/index/load32_be
-       i32.add
-       i32.add
-       i32.const 0
-       i32.or
-       call $assembly/index/store32_be
+       block $assembly/index/store32_be|inlined.1
+        local.get $0
+        call $~lib/rt/stub/__retain
+        local.set $24
+        local.get $14
+        local.set $23
+        local.get $16
+        block $assembly/index/load32_be|inlined.10 (result i32)
+         local.get $0
+         call $~lib/rt/stub/__retain
+         local.set $19
+         local.get $14
+         i32.const 7
+         i32.sub
+         local.set $22
+         local.get $19
+         local.get $22
+         i32.const 2
+         i32.shl
+         i32.add
+         i32.load
+         call $~lib/polyfills/bswap<u32>
+         local.set $21
+         local.get $19
+         call $~lib/rt/stub/__release
+         local.get $21
+        end
+        i32.add
+        i32.const 0
+        i32.or
+        local.get $17
+        block $assembly/index/load32_be|inlined.11 (result i32)
+         local.get $0
+         call $~lib/rt/stub/__retain
+         local.set $18
+         local.get $14
+         i32.const 16
+         i32.sub
+         local.set $20
+         local.get $18
+         local.get $20
+         i32.const 2
+         i32.shl
+         i32.add
+         i32.load
+         call $~lib/polyfills/bswap<u32>
+         local.set $19
+         local.get $18
+         call $~lib/rt/stub/__release
+         local.get $19
+        end
+        i32.add
+        i32.add
+        i32.const 0
+        i32.or
+        local.set $21
+        local.get $24
+        local.get $23
+        i32.const 2
+        i32.shl
+        i32.add
+        local.get $21
+        call $~lib/polyfills/bswap<u32>
+        i32.store
+        local.get $24
+        call $~lib/rt/stub/__release
+       end
        local.get $14
        i32.const 1
        i32.add
@@ -1058,11 +1247,24 @@
        global.get $assembly/index/K
        local.get $14
        call $~lib/array/Array<u32>#__get
-       local.get $0
-       local.get $14
-       i32.const 4
-       i32.mul
-       call $assembly/index/load32_be
+       block $assembly/index/load32_be|inlined.12 (result i32)
+        local.get $0
+        call $~lib/rt/stub/__retain
+        local.set $19
+        local.get $14
+        local.set $22
+        local.get $19
+        local.get $22
+        i32.const 2
+        i32.shl
+        i32.add
+        i32.load
+        call $~lib/polyfills/bswap<u32>
+        local.set $24
+        local.get $19
+        call $~lib/rt/stub/__release
+        local.get $24
+       end
        i32.add
        i32.const 0
        i32.or
@@ -1150,108 +1352,329 @@
       end
       unreachable
      end
-     local.get $1
-     i32.const 0
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
+     block $assembly/index/load32_be|inlined.13 (result i32)
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $18
+      i32.const 0
+      local.set $20
+      local.get $18
+      local.get $20
+      i32.const 2
+      i32.shl
+      i32.add
+      i32.load
+      call $~lib/polyfills/bswap<u32>
+      local.set $19
+      local.get $18
+      call $~lib/rt/stub/__release
+      local.get $19
+     end
      drop
-     local.get $1
-     i32.const 0
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 0
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $5
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 1
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 1
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $6
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 2
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 2
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $7
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 3
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 3
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $8
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 4
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 4
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $9
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 5
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 5
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $10
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 6
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 6
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $11
-     i32.add
-     call $assembly/index/store32_be
-     local.get $1
-     i32.const 7
-     i32.const 4
-     i32.mul
-     local.get $1
-     i32.const 7
-     i32.const 4
-     i32.mul
-     call $assembly/index/load32_be
-     local.get $12
-     i32.add
-     call $assembly/index/store32_be
+     block $assembly/index/store32_be|inlined.2
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $19
+      i32.const 0
+      local.set $22
+      block $assembly/index/load32_be|inlined.14 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $23
+       i32.const 0
+       local.set $21
+       local.get $23
+       local.get $21
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $18
+       local.get $23
+       call $~lib/rt/stub/__release
+       local.get $18
+      end
+      local.get $5
+      i32.add
+      local.set $24
+      local.get $19
+      local.get $22
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $24
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $19
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.3
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $24
+      i32.const 1
+      local.set $23
+      block $assembly/index/load32_be|inlined.15 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $18
+       i32.const 1
+       local.set $20
+       local.get $18
+       local.get $20
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $19
+       local.get $18
+       call $~lib/rt/stub/__release
+       local.get $19
+      end
+      local.get $6
+      i32.add
+      local.set $21
+      local.get $24
+      local.get $23
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $21
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $24
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.4
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $21
+      i32.const 2
+      local.set $18
+      block $assembly/index/load32_be|inlined.16 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $19
+       i32.const 2
+       local.set $22
+       local.get $19
+       local.get $22
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $24
+       local.get $19
+       call $~lib/rt/stub/__release
+       local.get $24
+      end
+      local.get $7
+      i32.add
+      local.set $20
+      local.get $21
+      local.get $18
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $20
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $21
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.5
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $20
+      i32.const 3
+      local.set $19
+      block $assembly/index/load32_be|inlined.17 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $24
+       i32.const 3
+       local.set $23
+       local.get $24
+       local.get $23
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $21
+       local.get $24
+       call $~lib/rt/stub/__release
+       local.get $21
+      end
+      local.get $8
+      i32.add
+      local.set $22
+      local.get $20
+      local.get $19
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $22
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $20
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.6
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $22
+      i32.const 4
+      local.set $24
+      block $assembly/index/load32_be|inlined.18 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $21
+       i32.const 4
+       local.set $18
+       local.get $21
+       local.get $18
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $20
+       local.get $21
+       call $~lib/rt/stub/__release
+       local.get $20
+      end
+      local.get $9
+      i32.add
+      local.set $23
+      local.get $22
+      local.get $24
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $23
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $22
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.7
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $23
+      i32.const 5
+      local.set $21
+      block $assembly/index/load32_be|inlined.19 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $20
+       i32.const 5
+       local.set $19
+       local.get $20
+       local.get $19
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $22
+       local.get $20
+       call $~lib/rt/stub/__release
+       local.get $22
+      end
+      local.get $10
+      i32.add
+      local.set $18
+      local.get $23
+      local.get $21
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $18
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $23
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.8
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $18
+      i32.const 6
+      local.set $20
+      block $assembly/index/load32_be|inlined.20 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $22
+       i32.const 6
+       local.set $24
+       local.get $22
+       local.get $24
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $23
+       local.get $22
+       call $~lib/rt/stub/__release
+       local.get $23
+      end
+      local.get $11
+      i32.add
+      local.set $19
+      local.get $18
+      local.get $20
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $19
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $18
+      call $~lib/rt/stub/__release
+     end
+     block $assembly/index/store32_be|inlined.9
+      local.get $1
+      call $~lib/rt/stub/__retain
+      local.set $19
+      i32.const 7
+      local.set $22
+      block $assembly/index/load32_be|inlined.21 (result i32)
+       local.get $1
+       call $~lib/rt/stub/__retain
+       local.set $23
+       i32.const 7
+       local.set $21
+       local.get $23
+       local.get $21
+       i32.const 2
+       i32.shl
+       i32.add
+       i32.load
+       call $~lib/polyfills/bswap<u32>
+       local.set $18
+       local.get $23
+       call $~lib/rt/stub/__release
+       local.get $18
+      end
+      local.get $12
+      i32.add
+      local.set $24
+      local.get $19
+      local.get $22
+      i32.const 2
+      i32.shl
+      i32.add
+      local.get $24
+      call $~lib/polyfills/bswap<u32>
+      i32.store
+      local.get $19
+      call $~lib/rt/stub/__release
+     end
      local.get $3
      i32.const 64
      i32.add
@@ -1265,19 +1688,24 @@
    end
   end
   local.get $3
-  local.set $18
+  local.set $19
   local.get $0
   call $~lib/rt/stub/__release
   local.get $1
   call $~lib/rt/stub/__release
   local.get $2
   call $~lib/rt/stub/__release
-  local.get $18
+  local.get $19
  )
- (func $assembly/index/update (; 23 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $assembly/index/update (; 20 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  (local $9 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -1288,7 +1716,7 @@
    block
     i32.const 672
     i32.const 784
-    i32.const 142
+    i32.const 149
     i32.const 4
     call $~lib/builtins/abort
     unreachable
@@ -1309,12 +1737,25 @@
     i32.lt_u
     i32.eqz
     br_if $break|0
-    local.get $2
-    local.get $3
-    local.get $0
-    local.get $3
-    call $~lib/typedarray/Uint8Array#__get
-    call $assembly/index/store8_be
+    block $assembly/index/store8_be|inlined.0
+     local.get $2
+     call $~lib/rt/stub/__retain
+     local.set $6
+     local.get $3
+     local.set $5
+     local.get $0
+     local.get $3
+     call $~lib/typedarray/Uint8Array#__get
+     local.set $4
+     local.get $6
+     local.get $5
+     i32.add
+     local.get $4
+     call $~lib/polyfills/bswap<u8>
+     i32.store8
+     local.get $6
+     call $~lib/rt/stub/__release
+    end
     local.get $3
     i32.const 1
     i32.add
@@ -1347,26 +1788,52 @@
       i32.const 0
      end
      if
-      global.get $assembly/index/buffer
-      block (result i32)
-       global.get $assembly/index/bufferLength
-       local.tee $4
-       i32.const 1
+      block $assembly/index/store8_be|inlined.1
+       global.get $assembly/index/buffer
+       call $~lib/rt/stub/__retain
+       local.set $8
+       block (result i32)
+        global.get $assembly/index/bufferLength
+        local.tee $6
+        i32.const 1
+        i32.add
+        global.set $assembly/index/bufferLength
+        local.get $6
+       end
+       local.set $7
+       block $assembly/index/load8_be|inlined.0 (result i32)
+        local.get $2
+        call $~lib/rt/stub/__retain
+        local.set $5
+        block (result i32)
+         local.get $3
+         local.tee $6
+         i32.const 1
+         i32.add
+         local.set $3
+         local.get $6
+        end
+        local.set $4
+        local.get $5
+        local.get $4
+        i32.add
+        i32.load8_u
+        call $~lib/polyfills/bswap<u8>
+        local.set $6
+        local.get $5
+        call $~lib/rt/stub/__release
+        local.get $6
+       end
+       local.set $6
+       local.get $8
+       local.get $7
        i32.add
-       global.set $assembly/index/bufferLength
-       local.get $4
+       local.get $6
+       call $~lib/polyfills/bswap<u8>
+       i32.store8
+       local.get $8
+       call $~lib/rt/stub/__release
       end
-      local.get $2
-      block (result i32)
-       local.get $3
-       local.tee $4
-       i32.const 1
-       i32.add
-       local.set $3
-       local.get $4
-      end
-      call $assembly/index/load8_be
-      call $assembly/index/store8_be
       local.get $1
       i32.const 1
       i32.sub
@@ -1412,26 +1879,52 @@
     i32.const 0
     i32.gt_u
     if
-     global.get $assembly/index/buffer
-     block (result i32)
-      global.get $assembly/index/bufferLength
-      local.tee $4
-      i32.const 1
+     block $assembly/index/store8_be|inlined.2
+      global.get $assembly/index/buffer
+      call $~lib/rt/stub/__retain
+      local.set $9
+      block (result i32)
+       global.get $assembly/index/bufferLength
+       local.tee $8
+       i32.const 1
+       i32.add
+       global.set $assembly/index/bufferLength
+       local.get $8
+      end
+      local.set $7
+      block $assembly/index/load8_be|inlined.5 (result i32)
+       local.get $2
+       call $~lib/rt/stub/__retain
+       local.set $5
+       block (result i32)
+        local.get $3
+        local.tee $8
+        i32.const 1
+        i32.add
+        local.set $3
+        local.get $8
+       end
+       local.set $4
+       local.get $5
+       local.get $4
+       i32.add
+       i32.load8_u
+       call $~lib/polyfills/bswap<u8>
+       local.set $8
+       local.get $5
+       call $~lib/rt/stub/__release
+       local.get $8
+      end
+      local.set $6
+      local.get $9
+      local.get $7
       i32.add
-      global.set $assembly/index/bufferLength
-      local.get $4
+      local.get $6
+      call $~lib/polyfills/bswap<u8>
+      i32.store8
+      local.get $9
+      call $~lib/rt/stub/__release
      end
-     local.get $2
-     block (result i32)
-      local.get $3
-      local.tee $4
-      i32.const 1
-      i32.add
-      local.set $3
-      local.get $4
-     end
-     call $assembly/index/load8_be
-     call $assembly/index/store8_be
      local.get $1
      i32.const 1
      i32.sub
@@ -1445,13 +1938,16 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/index/finish (; 24 ;) (type $FUNCSIG$vi) (param $0 i32)
+ (func $assembly/index/finish (; 21 ;) (type $FUNCSIG$vi) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
   (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  (local $9 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -1483,48 +1979,108 @@
     i32.const 128
    end
    local.set $5
-   global.get $assembly/index/buffer
-   local.get $2
-   i32.const 128
-   call $assembly/index/store8_be
+   block $assembly/index/store8_be|inlined.3
+    global.get $assembly/index/buffer
+    call $~lib/rt/stub/__retain
+    local.set $8
+    local.get $2
+    local.set $7
+    i32.const 128
+    local.set $6
+    local.get $8
+    local.get $7
+    i32.add
+    local.get $6
+    call $~lib/polyfills/bswap<u8>
+    i32.store8
+    local.get $8
+    call $~lib/rt/stub/__release
+   end
    block $break|0
     local.get $2
     i32.const 1
     i32.add
-    local.set $6
+    local.set $8
     loop $repeat|0
-     local.get $6
+     local.get $8
      local.get $5
      i32.const 8
      i32.sub
      i32.lt_s
      i32.eqz
      br_if $break|0
-     global.get $assembly/index/buffer
-     local.get $6
-     i32.const 0
-     call $assembly/index/store8_be
-     local.get $6
+     block $assembly/index/store8_be|inlined.4
+      global.get $assembly/index/buffer
+      call $~lib/rt/stub/__retain
+      local.set $9
+      local.get $8
+      local.set $7
+      i32.const 0
+      local.set $6
+      local.get $9
+      local.get $7
+      i32.add
+      local.get $6
+      call $~lib/polyfills/bswap<u8>
+      i32.store8
+      local.get $9
+      call $~lib/rt/stub/__release
+     end
+     local.get $8
      i32.const 1
      i32.add
-     local.set $6
+     local.set $8
      br $repeat|0
      unreachable
     end
     unreachable
    end
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 8
-   i32.sub
-   local.get $3
-   call $assembly/index/store32_be
-   global.get $assembly/index/buffer
-   local.get $5
-   i32.const 4
-   i32.sub
-   local.get $4
-   call $assembly/index/store32_be
+   block $assembly/index/store32_be|inlined.10
+    global.get $assembly/index/buffer
+    call $~lib/rt/stub/__retain
+    local.set $9
+    local.get $5
+    i32.const 8
+    i32.sub
+    i32.const 2
+    i32.shr_s
+    local.set $7
+    local.get $3
+    local.set $6
+    local.get $9
+    local.get $7
+    i32.const 2
+    i32.shl
+    i32.add
+    local.get $6
+    call $~lib/polyfills/bswap<u32>
+    i32.store
+    local.get $9
+    call $~lib/rt/stub/__release
+   end
+   block $assembly/index/store32_be|inlined.11
+    global.get $assembly/index/buffer
+    call $~lib/rt/stub/__retain
+    local.set $7
+    local.get $5
+    i32.const 4
+    i32.sub
+    i32.const 2
+    i32.shr_s
+    local.set $6
+    local.get $4
+    local.set $8
+    local.get $7
+    local.get $6
+    i32.const 2
+    i32.shl
+    i32.add
+    local.get $8
+    call $~lib/polyfills/bswap<u32>
+    i32.store
+    local.get $7
+    call $~lib/rt/stub/__release
+   end
    global.get $assembly/index/temp
    global.get $assembly/index/state
    global.get $assembly/index/buffer
@@ -1544,18 +2100,44 @@
     i32.lt_s
     i32.eqz
     br_if $break|1
-    global.get $assembly/index/state
-    local.get $5
-    i32.const 4
-    i32.mul
-    call $assembly/index/load32_be
-    local.set $4
-    local.get $0
-    local.get $5
-    i32.const 4
-    i32.mul
-    local.get $4
-    call $assembly/index/store32_be
+    block $assembly/index/load32_be|inlined.22 (result i32)
+     global.get $assembly/index/state
+     call $~lib/rt/stub/__retain
+     local.set $8
+     local.get $5
+     local.set $9
+     local.get $8
+     local.get $9
+     i32.const 2
+     i32.shl
+     i32.add
+     i32.load
+     call $~lib/polyfills/bswap<u32>
+     local.set $4
+     local.get $8
+     call $~lib/rt/stub/__release
+     local.get $4
+    end
+    local.set $8
+    block $assembly/index/store32_be|inlined.12
+     local.get $0
+     call $~lib/rt/stub/__retain
+     local.set $1
+     local.get $5
+     local.set $7
+     local.get $8
+     local.set $6
+     local.get $1
+     local.get $7
+     i32.const 2
+     i32.shl
+     i32.add
+     local.get $6
+     call $~lib/polyfills/bswap<u32>
+     i32.store
+     local.get $1
+     call $~lib/rt/stub/__release
+    end
     local.get $5
     i32.const 1
     i32.add
@@ -1568,8 +2150,11 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/index/reset (; 25 ;) (type $FUNCSIG$v)
+ (func $assembly/index/reset (; 22 ;) (type $FUNCSIG$v)
   (local $0 i32)
+  (local $1 i32)
+  (local $2 i32)
+  (local $3 i32)
   block $break|0
    i32.const 0
    local.set $0
@@ -1579,12 +2164,25 @@
     i32.lt_s
     i32.eqz
     br_if $break|0
-    global.get $assembly/index/state
-    local.get $0
-    global.get $assembly/index/iv
-    local.get $0
-    call $~lib/typedarray/Uint8Array#__get
-    call $assembly/index/store8_be
+    block $assembly/index/store8_be|inlined.5
+     global.get $assembly/index/state
+     call $~lib/rt/stub/__retain
+     local.set $3
+     local.get $0
+     local.set $2
+     global.get $assembly/index/iv
+     local.get $0
+     call $~lib/typedarray/Uint8Array#__get
+     local.set $1
+     local.get $3
+     local.get $2
+     i32.add
+     local.get $1
+     call $~lib/polyfills/bswap<u8>
+     i32.store8
+     local.get $3
+     call $~lib/rt/stub/__release
+    end
     local.get $0
     i32.const 1
     i32.add
@@ -1601,17 +2199,20 @@
   i32.const 0
   global.set $assembly/index/finished
  )
- (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 26 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 23 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   i32.load offset=8
  )
- (func $~lib/typedarray/Uint8Array#get:length (; 27 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/typedarray/Uint8Array#get:length (; 24 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   local.get $0
   call $~lib/arraybuffer/ArrayBufferView#get:byteLength
  )
- (func $assembly/index/hashMe (; 28 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/hashMe (; 25 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -1637,9 +2238,22 @@
     br_if $break|0
     local.get $1
     local.get $2
-    global.get $assembly/index/out
-    local.get $2
-    call $assembly/index/load8_be
+    block $assembly/index/load8_be|inlined.6 (result i32)
+     global.get $assembly/index/out
+     call $~lib/rt/stub/__retain
+     local.set $4
+     local.get $2
+     local.set $3
+     local.get $4
+     local.get $3
+     i32.add
+     i32.load8_u
+     call $~lib/polyfills/bswap<u8>
+     local.set $5
+     local.get $4
+     call $~lib/rt/stub/__release
+     local.get $5
+    end
     i32.const 255
     i32.and
     call $~lib/typedarray/Uint8Array#__set
@@ -1658,7 +2272,7 @@
   call $~lib/rt/stub/__release
   local.get $2
  )
- (func $start (; 29 ;) (type $FUNCSIG$v)
+ (func $start (; 26 ;) (type $FUNCSIG$v)
   global.get $~lib/heap/__heap_base
   i32.const 15
   i32.add
@@ -1671,6 +2285,6 @@
   global.set $~lib/rt/stub/offset
   call $start:assembly/index
  )
- (func $null (; 30 ;) (type $FUNCSIG$v)
+ (func $null (; 27 ;) (type $FUNCSIG$v)
  )
 )
