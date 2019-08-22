@@ -200,14 +200,12 @@
    i32.and
    local.tee $1
    i32.sub
-   local.set $2
    local.get $0
    local.get $1
    i32.add
    local.tee $0
    i32.const 0
    i32.store
-   local.get $2
    i32.const -4
    i32.and
    local.tee $1
@@ -348,7 +346,7 @@
   if
    i32.const 408
    i32.const 456
-   i32.const 56
+   i32.const 57
    i32.const 42
    call $~lib/builtins/abort
    unreachable
@@ -397,7 +395,7 @@
   i32.const 256
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/K
-  loop $repeat|0
+  loop $loop|0
    local.get $0
    i32.const 308
    i32.load
@@ -414,7 +412,7 @@
     i32.const 1
     i32.add
     local.set $0
-    br $repeat|0
+    br $loop|0
    end
   end
  )
@@ -426,7 +424,7 @@
   if
    i32.const 512
    i32.const 784
-   i32.const 109
+   i32.const 135
    i32.const 44
    call $~lib/builtins/abort
    unreachable
@@ -582,7 +580,7 @@
     local.set $11
     i32.const 0
     local.set $7
-    loop $repeat|1
+    loop $loop|1
      local.get $7
      i32.const 16
      i32.lt_u
@@ -648,12 +646,12 @@
       i32.const 1
       i32.add
       local.set $7
-      br $repeat|1
+      br $loop|1
      end
     end
     i32.const 16
     local.set $7
-    loop $repeat|2
+    loop $loop|2
      local.get $7
      i32.const 64
      i32.lt_u
@@ -796,12 +794,12 @@
       i32.const 1
       i32.add
       local.set $7
-      br $repeat|2
+      br $loop|2
      end
     end
     i32.const 0
     local.set $7
-    loop $repeat|3
+    loop $loop|3
      local.get $7
      i32.const 64
      i32.lt_u
@@ -938,7 +936,7 @@
       i32.const 1
       i32.add
       local.set $7
-      br $repeat|3
+      br $loop|3
      end
     end
     local.get $1
@@ -1217,7 +1215,7 @@
   if
    i32.const 616
    i32.const 728
-   i32.const 149
+   i32.const 150
    i32.const 4
    call $~lib/builtins/abort
    unreachable
@@ -1225,7 +1223,7 @@
   local.get $1
   call $~lib/arraybuffer/ArrayBuffer#constructor
   local.set $3
-  loop $repeat|0
+  loop $loop|0
    local.get $2
    local.get $1
    i32.lt_u
@@ -1241,7 +1239,7 @@
     i32.const 1
     i32.add
     local.set $2
-    br $repeat|0
+    br $loop|0
    end
   end
   i32.const 0
@@ -1387,7 +1385,7 @@
    i32.const 1
    i32.add
    local.set $2
-   loop $repeat|0
+   loop $loop|0
     local.get $2
     local.get $1
     i32.const 8
@@ -1403,7 +1401,7 @@
      i32.const 1
      i32.add
      local.set $2
-     br $repeat|0
+     br $loop|0
     end
    end
    global.get $assembly/index/buffer
@@ -1460,7 +1458,7 @@
   end
   i32.const 0
   local.set $1
-  loop $repeat|1
+  loop $loop|1
    local.get $1
    i32.const 8
    i32.lt_s
@@ -1503,13 +1501,13 @@
     i32.const 1
     i32.add
     local.set $1
-    br $repeat|1
+    br $loop|1
    end
   end
  )
  (func $assembly/index/reset (; 13 ;) (type $FUNCSIG$v)
   (local $0 i32)
-  loop $repeat|0
+  loop $loop|0
    local.get $0
    i32.const 32
    i32.lt_s
@@ -1525,7 +1523,7 @@
     i32.const 1
     i32.add
     local.set $0
-    br $repeat|0
+    br $loop|0
    end
   end
   i32.const 0
@@ -1540,7 +1538,9 @@
   i32.const 32
   i32.const 0
   call $~lib/rt/stub/__alloc
-  local.set $1
+  local.tee $1
+  i32.const 32
+  call $~lib/memory/memory.fill
   local.get $0
   i32.eqz
   if
@@ -1580,7 +1580,7 @@
   if
    i32.const 512
    i32.const 784
-   i32.const 115
+   i32.const 146
    i32.const 44
    call $~lib/builtins/abort
    unreachable
@@ -1606,7 +1606,7 @@
   call $~lib/rt/stub/__alloc
   call $~lib/arraybuffer/ArrayBufferView#constructor
   local.set $0
-  loop $repeat|0
+  loop $loop|0
    local.get $1
    i32.const 32
    i32.lt_u
@@ -1622,7 +1622,7 @@
     i32.const 1
     i32.add
     local.set $1
-    br $repeat|0
+    br $loop|0
    end
   end
   local.get $0

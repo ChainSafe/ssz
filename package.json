@@ -1,10 +1,15 @@
 {
   "devDependencies": {
-    "assemblyscript": "github:AssemblyScript/assemblyscript"
+    "assemblyscript": "github:assemblyscript/assemblyscript"
   },
   "scripts": {
     "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime stub --validate --debug",
     "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime stub --validate -O3",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
+  },
+  "dependencies": {
+    "@as-pect/assembly": "^2.3.1",
+    "@as-pect/cli": "^2.3.1",
+    "@as-pect/core": "^2.3.1"
   }
 }

@@ -23,16 +23,18 @@ function toHexString(byteArray) {
         (output + ('0' + elem.toString(16)).slice(-2)),
         '');
 }
-const message = new Uint8Array(Buffer.from('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'));
-console.log(toHexString(wasm.__getArray(wasm.hashMe(wasm.__allocArray(wasm.UINT8ARRAY_ID, message)))))
-console.log(toHexString(wasm.__getArray(wasm.hashMe(wasm.__allocArray(wasm.UINT8ARRAY_ID, new Uint8Array([97, 98, 99]))))))
-console.log(toHexString(wasm.__getArray(wasm.hashMe(wasm.__allocArray(wasm.UINT8ARRAY_ID, new Uint8Array([97, 98, 99]))))))
-console.log(toHexString(wasm.__getArray(wasm.hashMe(wasm.__allocArray(wasm.UINT8ARRAY_ID, new Uint8Array([97, 98, 99]))))))
+const Message = new Uint8Array(Buffer.from('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'));
+const message = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, Message));
+const aMessage = new Uint8Array([97,98,99]);
+const amessage = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, aMessage));
 
-// let preimg = wasm.newArray(new Uint8Array([97, 98, 99]))
-// let ctx = wasm.init();
-// let out = 0;
-// wasm.update(ctx, preimg);
-// console.log(wasm.finish(ctx, out))
-// console.log(out)
+const emptyMessage = new Uint8Array(Buffer.from(''));
+const emptymessage = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, emptyMessage));
 
+// console.log(toHexString(wasm.__getArray(wasm.hashMe(message))))
+// console.log(toHexString(wasm.__getArray(wasm.hashMe(amessage))))
+// console.log(toHexString(wasm.__getArray(wasm.hashMe(amessage))))
+// console.log(toHexString(wasm.__getArray(wasm.hashMe(amessage))))
+ console.log(toHexString(wasm.__getArray(wasm.hashMe(emptymessage))))
+
+ 

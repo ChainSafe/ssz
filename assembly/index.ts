@@ -53,13 +53,11 @@ function load8_be(x: ArrayBuffer, offset: isize): u8 {
   return bswap<u8>(load<u8>(changetype<usize>(x) + offset));
 }
 
+
 //Convert k to ArrayBuffers
 for(let i: i32 = 0 ; i < k.length ; i++){
   store8_be(K, i, k[i])
 }
-
-
-
 
 function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
   let a: u32, b: u32, c: u32, d: u32, e: u32,
@@ -67,18 +65,21 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
     j: u32, t1: u32, t2: u32;
   while (len >= 64) {
     a = load32_be(v, 0);
-    b = load32_be(v, 1)
-    c = load32_be(v, 2)
-    d = load32_be(v, 3)
-    e = load32_be(v, 4)
-    f = load32_be(v, 5)
-    g = load32_be(v, 6)
-    h = load32_be(v, 7)
+    b = load32_be(v, 1);
+    c = load32_be(v, 2);
+    d = load32_be(v, 3);
+    e = load32_be(v, 4);
+    f = load32_be(v, 5);
+    g = load32_be(v, 6);
+    h = load32_be(v, 7);
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
       store32_be(w, i , (((<u32>load8_be(p, j) & 0xff) << 24) | ((<u32>load8_be(p, j+1) & 0xff) << 16) |
         ((<u32>load8_be(p, j+2) & 0xff) << 8) | (<u32>load8_be(p, j+3) & 0xff)))
+      // j = pos + i; 
+      //weird. i get memory access issues after a few runs
+      // store32_be(w, i , load32_be(p,j));
     }
 
     for (i = 16; i < 64; i++) {
