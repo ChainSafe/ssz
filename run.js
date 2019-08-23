@@ -41,7 +41,10 @@ const randomessage2048 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, ran
 const randomessage16384 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, randomMessage16384));
 
 // durty bench
-console.time('t'); // 0.506ms
+// Before: 0.506ms
+// After: 0.265ms
+
+console.time('t');
 
   const messageOut = wasm.hashMe(message);
   const amessageOut = wasm.hashMe(amessage);

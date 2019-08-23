@@ -28,22 +28,22 @@ var finished = false;
 var out = new ArrayBuffer(digestLength);
 
 @inline
-function load32_be(x: ArrayBuffer, offset: isize): u32 {
+function load32(x: ArrayBuffer, offset: usize): u32 {
   return load<u32>(changetype<usize>(x) + (offset << alignof<u32>()));
 }
 
 @inline
-function store32_be(x: ArrayBuffer, offset: isize, u: u32): void {
+function store32(x: ArrayBuffer, offset: usize, u: u32): void {
   store<u32>(changetype<usize>(x) + (offset << alignof<u32>()), u);
 }
 
 @inline
-function store8_be(x: ArrayBuffer, offset: isize, u: u8): void {
+function store8(x: ArrayBuffer, offset: usize, u: u8): void {
   store<u8>(changetype<usize>(x) + offset, u);
 }
 
 @inline
-function load8_be(x: ArrayBuffer, offset: isize): u8 {
+function load8(x: ArrayBuffer, offset: usize): u8 {
   return load<u8>(changetype<usize>(x) + offset);
 }
 
@@ -53,43 +53,38 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
     j: u32, t1: u32, t2: u32;
 
   while (len >= 64) {
-    a = load32_be(v, 0);
-    b = load32_be(v, 1);
-    c = load32_be(v, 2);
-    d = load32_be(v, 3);
-    e = load32_be(v, 4);
-    f = load32_be(v, 5);
-    g = load32_be(v, 6);
-    h = load32_be(v, 7);
+    a = load32(v, 0);
+    b = load32(v, 1);
+    c = load32(v, 2);
+    d = load32(v, 3);
+    e = load32(v, 4);
+    f = load32(v, 5);
+    g = load32(v, 6);
+    h = load32(v, 7);
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
-      store32_be(w, i, (((<u32>load8_be(p, j) & 0xff) << 24) | ((<u32>load8_be(p, j + 1) & 0xff) << 16) |
-        ((<u32>load8_be(p, j + 2) & 0xff) << 8) | (<u32>load8_be(p, j + 3) & 0xff)));
-      // j = pos + i;
-      //weird. i get memory access issues after a few runs
-      // store32_be(w, i , load32_be(p,j));
+      store32(w, i,
+        (<u32>load8(p, j + 0) << 24) |
+        (<u32>load8(p, j + 1) << 16) |
+        (<u32>load8(p, j + 2) <<  8) |
+        (<u32>load8(p, j + 3) <<  0)
+      );
     }
 
     for (i = 16; i < 64; i++) {
-      u = load32_be(w, (i - 2) );
-      t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
+      u  = load32(w, i - 2);
+      t1 = rotr(u, 17) ^ rotr(u, 19) ^ (u >>> 10);
+      u  = load32(w, i - 15);
+      t2 = rotr(u, 7) ^ rotr(u, 18) ^ (u >>> 3);
 
-      u = load32_be(w, (i - 15) );
-      t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
-
-      store32_be(w, i, (t1 + load32_be(w, i - 7)) + (t2 + load32_be(w, i - 16)));
+      store32(w, i, t1 + load32(w, i - 7) + t2 + load32(w, i - 16));
     }
 
     const k = K.buffer;
     for (i = 0; i < 64; i++) {
-      t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
-        (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g)))) +
-        ((h + ((load32_be(k, i) + load32_be(w, i ))))));
-
-      t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
-        (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c)));
-
+      t1 = (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + h + load32(k, i) + load32(w, i);
+      t2 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c));
       h = g;
       g = f;
       f = e;
@@ -99,15 +94,15 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
       b = a;
       a = t1 + t2;
     }
-    load32_be(v, 0);
-    store32_be(v, 0, load32_be(v, 0) + a);
-    store32_be(v, 1, load32_be(v, 1) + b);
-    store32_be(v, 2, load32_be(v, 2) + c);
-    store32_be(v, 3, load32_be(v, 3) + d);
-    store32_be(v, 4, load32_be(v, 4) + e);
-    store32_be(v, 5, load32_be(v, 5) + f);
-    store32_be(v, 6, load32_be(v, 6) + g);
-    store32_be(v, 7, load32_be(v, 7) + h);
+
+    store32(v, 0, load32(v, 0) + a);
+    store32(v, 1, load32(v, 1) + b);
+    store32(v, 2, load32(v, 2) + c);
+    store32(v, 3, load32(v, 3) + d);
+    store32(v, 4, load32(v, 4) + e);
+    store32(v, 5, load32(v, 5) + f);
+    store32(v, 6, load32(v, 6) + g);
+    store32(v, 7, load32(v, 7) + h);
 
     pos += 64;
     len -= 64;
@@ -118,21 +113,18 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
 
 
 function reset(): void {
-  // for (let i = 0; i < 32; i++) {
-  //   store8_be(state, i, iv[i]);
-  // }
-  store32_be(state,  0, 0x6a09e667);
-  store32_be(state,  4, 0xbb67ae85);
-  store32_be(state,  8, 0x3c6ef372);
-  store32_be(state, 12, 0xa54ff53a);
-  store32_be(state, 16, 0x510e527f);
-  store32_be(state, 20, 0x9b05688c);
-  store32_be(state, 24, 0x1f83d9ab);
-  store32_be(state, 28, 0x5be0cd19);
+  store32(state, 0, 0x6a09e667);
+  store32(state, 1, 0xbb67ae85);
+  store32(state, 2, 0x3c6ef372);
+  store32(state, 3, 0xa54ff53a);
+  store32(state, 4, 0x510e527f);
+  store32(state, 5, 0x9b05688c);
+  store32(state, 6, 0x1f83d9ab);
+  store32(state, 7, 0x5be0cd19);
 
   bufferLength = 0;
-  bytesHashed = 0;
-  finished = false;
+  bytesHashed  = 0;
+  finished     = false;
 }
 
 export function clean(): void {
@@ -147,18 +139,16 @@ export function update(data: Uint8Array, dataLength: i32): void {
   }
 
   let dataBuffer = new ArrayBuffer(dataLength);
-  for(let i = 0 ; i < dataLength; i++){
-    store8_be(dataBuffer, i, data[i]);
-  }
+  memory.copy(changetype<usize>(dataBuffer), data.dataStart, dataLength);
 
   let dataPos = 0;
   bytesHashed += dataLength;
   if (bufferLength > 0) {
     while (bufferLength < 64 && dataLength > 0) {
-      store8_be(buffer, bufferLength++, load8_be(dataBuffer, dataPos++));
-      dataLength--;
+      store8(buffer, bufferLength++, load8(dataBuffer, dataPos++));
+      --dataLength;
     }
-    if (bufferLength === 64) {
+    if (bufferLength == 64) {
       hashBlocks(temp, state, buffer, 0, 64);
       bufferLength = 0;
     }
@@ -167,10 +157,13 @@ export function update(data: Uint8Array, dataLength: i32): void {
     dataPos = hashBlocks(temp, state, dataBuffer, dataPos, dataLength);
     dataLength &= 63;
   }
-  while (dataLength > 0) {
-    store8_be(buffer, bufferLength++, load8_be(dataBuffer, dataPos++));
-    dataLength--;
-  }
+  // while (dataLength > 0) {
+  //   store8(buffer, bufferLength++, load8(dataBuffer, dataPos++));
+  //   --dataLength;
+  // }
+  memory.copy(changetype<usize>(buffer), changetype<usize>(dataBuffer) + dataPos, dataLength);
+  dataPos += dataLength;
+  bufferLength += dataLength;
 }
 
 export function finish(out: ArrayBuffer): void {
@@ -178,37 +171,22 @@ export function finish(out: ArrayBuffer): void {
     let left      = bufferLength;
     let bitLenHi  = bytesHashed / 0x20000000;
     let bitLenLo  = bytesHashed << 3;
-    let padLength = (bytesHashed % 64 < 56) ? 64 : 128; // 64 << i32((bytesHashed & 63) >= 56);
+    let padLength = 64 << i32((bytesHashed & 63) >= 56);
 
-    store8_be(buffer, left, 0x80);
+    store8(buffer, left, 0x80);
     for (let i = left + 1, len = padLength - 8; i < len; i++) {
-      store8_be(buffer, i, 0);
+      store8(buffer, i, 0);
     }
 
-    //store32_be(buffer, (padLength - 8) >> alignof<u32>(), bswap(bitLenHi));
-    //store32_be(buffer, (padLength - 4) >> alignof<u32>(), bswap(bitLenLo));
-    store8_be(buffer, padLength - 8, <u8>(bitLenHi >>> 24));
-    store8_be(buffer, padLength - 7, <u8>(bitLenHi >>> 16));
-    store8_be(buffer, padLength - 6, <u8>(bitLenHi >>>  8));
-    store8_be(buffer, padLength - 5, <u8>(bitLenHi >>>  0));
-    store8_be(buffer, padLength - 4, <u8>(bitLenLo >>> 24));
-    store8_be(buffer, padLength - 3, <u8>(bitLenLo >>> 16));
-    store8_be(buffer, padLength - 2, <u8>(bitLenLo >>>  8));
-    store8_be(buffer, padLength - 1, <u8>(bitLenLo >>>  0));
+    store32(buffer, (padLength - 8) >> alignof<u32>(), bswap(bitLenHi));
+    store32(buffer, (padLength - 4) >> alignof<u32>(), bswap(bitLenLo));
 
     hashBlocks(temp, state, buffer, 0, padLength);
     finished = true;
   }
 
   for (let i = 0; i < 8; i++) {
-    //let state_i = bswap<u32>(load32_be(state, i));
-    //store32_be(out, i, state_i);
-
-    let state_i = load32_be(state, i);
-    store8_be(out, i * 4 + 0, <u8>(state_i >> 4));
-    store8_be(out, i * 4 + 1, <u8>(state_i >> 6));
-    store8_be(out, i * 4 + 2, <u8>(state_i >> 8));
-    store8_be(out, i * 4 + 3, <u8>(state_i >> 0));
+    store32(out, i, bswap(load32(state, i)));
   }
 }
 
@@ -218,8 +196,6 @@ export function hashMe(data: Uint8Array): Uint8Array {
   finish(out);
 
   let ret = new Uint8Array(digestLength);
-  for(let i = 0 ; i < digestLength ; i++){
-    ret[i] = load8_be(out, i);
-  }
+  memory.copy(ret.dataStart, changetype<usize>(out), digestLength);
   return ret;
 }

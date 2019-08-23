@@ -41,6 +41,17 @@ ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
+"assemblyscript@github:AssemblyScript/assemblyscript":
+  version "0.7.0"
+  resolved "https://codeload.github.com/AssemblyScript/assemblyscript/tar.gz/12aed07918e45feced676a713ee4d5588a49f4f3"
+  dependencies:
+    "@protobufjs/utf8" "^1.1.0"
+    binaryen "87.0.0-nightly.20190716"
+    glob "^7.1.4"
+    long "^4.0.0"
+    opencollective-postinstall "^2.0.0"
+    source-map-support "^0.5.12"
+
 "assemblyscript@github:assemblyscript/assemblyscript":
   version "0.7.0"
   resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/12aed07918e45feced676a713ee4d5588a49f4f3"
@@ -56,6 +67,11 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
+
+binaryen@84.0.0-nightly.20190522:
+  version "84.0.0-nightly.20190522"
+  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-84.0.0-nightly.20190522.tgz#31d3e8df90ec01509183d23d15b1ce16b53e87af"
+  integrity sha512-bxSPi3MOkFmK5W6VIlqxnOc1nYzpUCzT/tHz3C7sgbz7jTR2lOBlZnKStTJlBt018xeZK9/JpK/jXdduH7eQFg==
 
 binaryen@87.0.0-nightly.20190716:
   version "87.0.0-nightly.20190716"
