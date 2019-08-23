@@ -2,23 +2,38 @@
 # yarn lockfile v1
 
 
-"@as-pect/assembly@^2.4.0":
+"@as-pect/assembly@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@as-pect/assembly/-/assembly-2.3.1.tgz#42834f5955677071b8764400fb916feaf2ad6d82"
+  integrity sha512-KYBhyTEnaVcJjN/1EpzLhpbUHKT3pJjCPxm+Mdc7obnZ9EdVz6vN/lw+BQjeL4cUi1YLsnvgl8ftXcup5jVbQA==
+
+"@as-pect/assembly@^2.3.1", "@as-pect/assembly@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@as-pect/assembly/-/assembly-2.4.0.tgz#293a2525ee08c08060973c39cc455f32a9a6c4ba"
   integrity sha512-EITjZbVIzoI7b61PZakfBh08LI3g7uB8tuk4e+IoRj5SuV8i0MyeLxQnzwu/uC6p9HZJYQE2BzqN6tQFIcDMWw==
 
-"@as-pect/cli@^2.3.1":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@as-pect/cli/-/cli-2.4.0.tgz#e1e8aedba8390689b1a32873f3c45cf334d0c95f"
-  integrity sha512-fkyAObZKrpSizF5EZtHQalo9AsqD59NpmizOIb9CED6YIl5CANl6u7ZHQsi03BzTxu+TcnIvFi0eC7sNhNtHMQ==
+"@as-pect/cli@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@as-pect/cli/-/cli-2.3.1.tgz#d6456d8b2809eea0aba90bb8579e480cf8cb54ca"
+  integrity sha512-ipcxrXnK9Xj1Foy92nSRsganapB+yxFe4HJ/RuwnjRQ9s8bqu0UwH12XbiHktcK7bJMs1H77/sqbQVxqoYHQcA==
   dependencies:
-    "@as-pect/assembly" "^2.4.0"
-    "@as-pect/core" "^2.4.0"
-    assemblyscript "github:assemblyscript/assemblyscript"
+    "@as-pect/assembly" "^2.3.1"
+    "@as-pect/core" "^2.3.1"
     chalk "^2.4.2"
     glob "^7.1.4"
 
-"@as-pect/core@^2.4.0":
+"@as-pect/core@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@as-pect/core/-/core-2.3.1.tgz#3b608fad05958a1672a66461eb8c9551916d6cb7"
+  integrity sha512-iwd4MkGuO1wZqo9/sPlT567XYK0PkMLzBvwfkXOM2zq1wwuc5GZQrKoofgYorA40KI0edJW39djtOmPwIhx2vA==
+  dependencies:
+    "@as-pect/assembly" "^2.3.1"
+    chalk "^2.4.2"
+    long "^4.0.0"
+  optionalDependencies:
+    csv-stringify "^5.3.0"
+
+"@as-pect/core@^2.3.1":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@as-pect/core/-/core-2.4.0.tgz#4249bd33fa2fb9a34d36af8cd29eb88922b27aef"
   integrity sha512-pwWFSIF/7D13KXfO5p5kBMVrC19MwF+GUA+4jERvPNr/l5lVcx1Mk794TXMfIP4ytGXY09TM8L7Mw6wv0huwIg==
@@ -52,26 +67,10 @@ ansi-styles@^3.2.1:
     opencollective-postinstall "^2.0.0"
     source-map-support "^0.5.12"
 
-"assemblyscript@github:assemblyscript/assemblyscript":
-  version "0.7.0"
-  resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/12aed07918e45feced676a713ee4d5588a49f4f3"
-  dependencies:
-    "@protobufjs/utf8" "^1.1.0"
-    binaryen "84.0.0-nightly.20190522"
-    glob "^7.1.4"
-    long "^4.0.0"
-    opencollective-postinstall "^2.0.0"
-    source-map-support "^0.5.12"
-
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
-
-binaryen@84.0.0-nightly.20190522:
-  version "84.0.0-nightly.20190522"
-  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-84.0.0-nightly.20190522.tgz#31d3e8df90ec01509183d23d15b1ce16b53e87af"
-  integrity sha512-bxSPi3MOkFmK5W6VIlqxnOc1nYzpUCzT/tHz3C7sgbz7jTR2lOBlZnKStTJlBt018xeZK9/JpK/jXdduH7eQFg==
 
 binaryen@87.0.0-nightly.20190716:
   version "87.0.0-nightly.20190716"
@@ -117,7 +116,7 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-csv-stringify@^5.3.3:
+csv-stringify@^5.3.0, csv-stringify@^5.3.3:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.3.3.tgz#c4725686a33db9f61e70d87af712285baefebe21"
   integrity sha512-q8Qj+/lN74LRmG7Mg0LauE5WcnJOD5MEGe1gI57IYJCB61KWuEbAFHm1uIPDkI26aqElyBB57SlE2GGwq2EY5A==

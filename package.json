@@ -1,6 +1,8 @@
 {
   "devDependencies": {
-    "@as-pect/cli": "^2.3.1",
+    "@as-pect/assembly": "2.3.1",
+    "@as-pect/cli": "2.3.1",
+    "@as-pect/core": "2.3.1",
     "assemblyscript": "github:AssemblyScript/assemblyscript",
     "fast-sha256": "^1.1.0"
   },
