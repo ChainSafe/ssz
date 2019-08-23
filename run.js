@@ -21,7 +21,11 @@ const sha256 = require('fast-sha256');
 // console.log(`tsSHA256Fast again `, toHexString(res))
 
 
-
+function jsHash(msg) {
+  const hasher = new sha256.Hash();
+  hasher.update(msg);
+  return hasher.digest();
+}
 
 const toHexString = byteArray => byteArray.reduce((acc, val) => (acc + ('0' + val.toString(16)).slice(-2)), '');
 
@@ -44,7 +48,7 @@ const randomessage16384 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, ra
 // Before: 0.506ms
 // After: 0.265ms
 
-console.time('t');
+console.time('as');
 
   const messageOut = wasm.hashMe(message);
   const amessageOut = wasm.hashMe(amessage);
@@ -52,14 +56,18 @@ console.time('t');
   const randommessage2048Out = wasm.hashMe(randomessage2048);
   const randommessage16384Out = wasm.hashMe(randomessage16384);
 
-console.timeEnd('t');
+console.timeEnd('as');
+
+console.time('js');
+
+  const js_messageOut = jsHash(Message);
+  const js_amessageOut = jsHash(aMessage);
+  const js_emptymessageOut = jsHash(emptyMessage);
+  const js_randommessage2048Out = jsHash(randomMessage2048);
+  const js_randommessage16384Out = jsHash(randomMessage16384);
+
+console.timeEnd('js');
 
 console.log(toHexString(wasm.__getArray(messageOut)), '7321348c8894678447b54c888fdbc4e4b825bf4d1eb0cfb27874286a23ea9fd2');
 console.log(toHexString(wasm.__getArray(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
 console.log(toHexString(wasm.__getArray(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
-
-const hasher = new sha256.Hash();
-hasher.update(Message);
-const result = hasher.digest();
-
-console.log(toHexString(result));
