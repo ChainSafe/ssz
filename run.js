@@ -2,6 +2,8 @@
 const crypto = require('crypto');
 const wasm = require('./index.js');
 
+const sha256 = require('fast-sha256');
+
 // const f = new wasm.tsSHA256Fast()
 // // sha256("abc")
 
@@ -52,3 +54,9 @@ console.timeEnd('t');
 console.log(toHexString(wasm.__getArray(messageOut)), '7321348c8894678447b54c888fdbc4e4b825bf4d1eb0cfb27874286a23ea9fd2');
 console.log(toHexString(wasm.__getArray(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
 console.log(toHexString(wasm.__getArray(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+
+const hasher = new sha256.Hash();
+hasher.update(Message);
+const result = hasher.digest();
+
+console.log(toHexString(result));

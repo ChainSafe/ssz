@@ -1,7 +1,8 @@
 {
   "devDependencies": {
+    "@as-pect/cli": "^2.3.1",
     "assemblyscript": "github:assemblyscript/assemblyscript",
-    "@as-pect/cli": "^2.3.1"
+    "fast-sha256": "^1.1.0"
   },
   "scripts": {
     "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime stub --validate --debug",

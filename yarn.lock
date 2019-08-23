@@ -46,7 +46,7 @@ ansi-styles@^3.2.1:
   resolved "https://codeload.github.com/assemblyscript/assemblyscript/tar.gz/12aed07918e45feced676a713ee4d5588a49f4f3"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
-    binaryen "87.0.0-nightly.20190716"
+    binaryen "84.0.0-nightly.20190522"
     glob "^7.1.4"
     long "^4.0.0"
     opencollective-postinstall "^2.0.0"
@@ -110,6 +110,11 @@ escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
+
+fast-sha256@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/fast-sha256/-/fast-sha256-1.1.0.tgz#b640189403c7ff0d796d1251a1c1f6954c40e7b4"
+  integrity sha1-tkAYlAPH/w15bRJRocH2lUxA57Q=
 
 fs.realpath@^1.0.0:
   version "1.0.0"
