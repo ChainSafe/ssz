@@ -48,7 +48,7 @@ const randomessage16384 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, ra
 // Before: 0.506ms
 // After: 0.265ms
 
-console.time('as');
+console.time('as (wasm)');
 
   const messageOut = wasm.hashMe(message);
   const amessageOut = wasm.hashMe(amessage);
@@ -56,9 +56,9 @@ console.time('as');
   const randommessage2048Out = wasm.hashMe(randomessage2048);
   const randommessage16384Out = wasm.hashMe(randomessage16384);
 
-console.timeEnd('as');
+console.timeEnd('as (wasm)');
 
-console.time('js');
+console.time('js (fast-sha256)');
 
   const js_messageOut = jsHash(Message);
   const js_amessageOut = jsHash(aMessage);
@@ -66,7 +66,7 @@ console.time('js');
   const js_randommessage2048Out = jsHash(randomMessage2048);
   const js_randommessage16384Out = jsHash(randomMessage16384);
 
-console.timeEnd('js');
+console.timeEnd('js (fast-sha256)');
 
 console.log(toHexString(wasm.__getArray(messageOut)), '7321348c8894678447b54c888fdbc4e4b825bf4d1eb0cfb27874286a23ea9fd2');
 console.log(toHexString(wasm.__getArray(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
