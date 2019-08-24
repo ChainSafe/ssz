@@ -48,20 +48,33 @@ function load8(x: ArrayBuffer, offset: usize): u8 {
 }
 
 function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
-  let a: u32, b: u32, c: u32, d: u32, e: u32,
-    f: u32, g: u32, h: u32, u: u32, i: u32,
-    j: u32, t1: u32, t2: u32,
+  let
+    a: u32, b: u32, c: u32, d: u32, e: u32,
+    f: u32, g: u32, h: u32, u: u32,
+    A: u32, B: u32, C: u32, D: u32, E: u32,
+    F: u32, G: u32, H: u32, U: u32,
+    i: u32, j: u32, t1: u32, t2: u32,
     k = K.buffer;
 
+  A = load32(v, 0);
+  B = load32(v, 1);
+  C = load32(v, 2);
+  D = load32(v, 3);
+  E = load32(v, 4);
+  F = load32(v, 5);
+  G = load32(v, 6);
+  H = load32(v, 7);
+
   while (len >= 64) {
-    a = load32(v, 0);
-    b = load32(v, 1);
-    c = load32(v, 2);
-    d = load32(v, 3);
-    e = load32(v, 4);
-    f = load32(v, 5);
-    g = load32(v, 6);
-    h = load32(v, 7);
+
+    a = A;
+    b = B;
+    c = C;
+    d = D;
+    e = E;
+    f = F;
+    g = G;
+    h = H;
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
@@ -95,18 +108,27 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
       a = t1 + t2;
     }
 
-    store32(v, 0, load32(v, 0) + a);
-    store32(v, 1, load32(v, 1) + b);
-    store32(v, 2, load32(v, 2) + c);
-    store32(v, 3, load32(v, 3) + d);
-    store32(v, 4, load32(v, 4) + e);
-    store32(v, 5, load32(v, 5) + f);
-    store32(v, 6, load32(v, 6) + g);
-    store32(v, 7, load32(v, 7) + h);
+    A += a;
+    B += b;
+    C += c;
+    D += d;
+    E += e;
+    F += f;
+    G += g;
+    H += h;
 
     pos += 64;
     len -= 64;
   }
+
+  store32(v, 0, A);
+  store32(v, 1, B);
+  store32(v, 2, C);
+  store32(v, 3, D);
+  store32(v, 4, E);
+  store32(v, 5, F);
+  store32(v, 6, G);
+  store32(v, 7, H);
 
   return pos;
 }
