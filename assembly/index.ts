@@ -49,11 +49,12 @@ function load8(x: ArrayBuffer, offset: usize): u8 {
 
 function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
   let
-    a: u32, b: u32, c: u32, d: u32, e: u32,
-    f: u32, g: u32, h: u32, u: u32,
-    A: u32, B: u32, C: u32, D: u32, E: u32,
-    F: u32, G: u32, H: u32, U: u32,
-    i: u32, j: u32, t1: u32, t2: u32,
+    a: u32, b: u32, c: u32, d: u32,
+    e: u32, f: u32, g: u32, h: u32,
+    A: u32, B: u32, C: u32, D: u32,
+    E: u32, F: u32, G: u32, H: u32,
+    u: u32, i: u32, j: u32,
+    t1: u32, t2: u32,
     k = K.buffer;
 
   A = load32(v, 0);
