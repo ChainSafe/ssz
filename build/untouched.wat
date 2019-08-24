@@ -6,7 +6,7 @@
  (type $FUNCSIG$viiii (func (param i32 i32 i32 i32)))
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$vii (func (param i32 i32)))
- (type $FUNCSIG$iiiiii (func (param i32 i32 i32 i32 i32) (result i32)))
+ (type $FUNCSIG$iiiii (func (param i32 i32 i32 i32) (result i32)))
  (type $FUNCSIG$iiii (func (param i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
@@ -24,8 +24,15 @@
  (global $assembly/index/UINT8ARRAY_ID i32 (i32.const 3))
  (global $assembly/index/digestLength i32 (i32.const 32))
  (global $assembly/index/K i32 (i32.const 296))
+ (global $assembly/index/H0 (mut i32) (i32.const 0))
+ (global $assembly/index/H1 (mut i32) (i32.const 0))
+ (global $assembly/index/H2 (mut i32) (i32.const 0))
+ (global $assembly/index/H3 (mut i32) (i32.const 0))
+ (global $assembly/index/H4 (mut i32) (i32.const 0))
+ (global $assembly/index/H5 (mut i32) (i32.const 0))
+ (global $assembly/index/H6 (mut i32) (i32.const 0))
+ (global $assembly/index/H7 (mut i32) (i32.const 0))
  (global $~lib/ASC_SHRINK_LEVEL i32 (i32.const 0))
- (global $assembly/index/state (mut i32) (i32.const 0))
  (global $assembly/index/temp (mut i32) (i32.const 0))
  (global $assembly/index/buffer (mut i32) (i32.const 0))
  (global $assembly/index/bufferLength (mut i32) (i32.const 0))
@@ -439,10 +446,6 @@
   (local $0 i32)
   (local $1 i32)
   i32.const 0
-  i32.const 32
-  call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/index/state
-  i32.const 0
   i32.const 256
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/temp
@@ -462,137 +465,22 @@
   i32.load offset=12
  )
  (func $assembly/index/reset (; 9 ;) (type $FUNCSIG$v)
-  (local $0 i32)
-  (local $1 i32)
-  (local $2 i32)
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 0
-  local.set $1
   i32.const 1779033703
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 1
-  local.set $1
+  global.set $assembly/index/H0
   i32.const -1150833019
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 2
-  local.set $1
+  global.set $assembly/index/H1
   i32.const 1013904242
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 3
-  local.set $1
+  global.set $assembly/index/H2
   i32.const -1521486534
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 4
-  local.set $1
+  global.set $assembly/index/H3
   i32.const 1359893119
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 5
-  local.set $1
+  global.set $assembly/index/H4
   i32.const -1694144372
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 6
-  local.set $1
+  global.set $assembly/index/H5
   i32.const 528734635
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
-  global.get $assembly/index/state
-  call $~lib/rt/stub/__retain
-  local.set $2
-  i32.const 7
-  local.set $1
+  global.set $assembly/index/H6
   i32.const 1541459225
-  local.set $0
-  local.get $2
-  local.get $1
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $0
-  i32.store
-  local.get $2
-  call $~lib/rt/stub/__release
+  global.set $assembly/index/H7
   i32.const 0
   global.set $assembly/index/bufferLength
   i32.const 0
@@ -623,7 +511,8 @@
   i32.load
   call $~lib/rt/stub/__retain
  )
- (func $assembly/index/hashBlocks (; 13 ;) (type $FUNCSIG$iiiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/index/hashBlocks (; 13 ;) (type $FUNCSIG$iiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result i32)
+  (local $4 i32)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
@@ -645,730 +534,460 @@
   (local $23 i32)
   (local $24 i32)
   (local $25 i32)
-  (local $26 i32)
-  (local $27 i32)
-  (local $28 i32)
-  (local $29 i32)
-  (local $30 i32)
-  (local $31 i32)
-  (local $32 i32)
-  (local $33 i32)
-  (local $34 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
   local.get $1
   call $~lib/rt/stub/__retain
   drop
-  local.get $2
-  call $~lib/rt/stub/__retain
-  drop
   global.get $assembly/index/K
   call $~lib/array/Array<u32>#get:buffer
-  local.tee $26
+  local.tee $17
   call $~lib/rt/stub/__retain
-  local.set $27
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $29
-  i32.const 0
-  local.set $28
-  local.get $29
-  local.get $28
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $30
-  local.get $29
-  call $~lib/rt/stub/__release
-  local.get $30
-  local.set $13
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $28
-  i32.const 1
-  local.set $30
-  local.get $28
-  local.get $30
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $29
-  local.get $28
-  call $~lib/rt/stub/__release
-  local.get $29
-  local.set $14
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $30
-  i32.const 2
-  local.set $29
-  local.get $30
-  local.get $29
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $28
-  local.get $30
-  call $~lib/rt/stub/__release
-  local.get $28
-  local.set $15
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $29
-  i32.const 3
-  local.set $28
-  local.get $29
-  local.get $28
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $30
-  local.get $29
-  call $~lib/rt/stub/__release
-  local.get $30
-  local.set $16
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $28
-  i32.const 4
-  local.set $30
-  local.get $28
-  local.get $30
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $29
-  local.get $28
-  call $~lib/rt/stub/__release
-  local.get $29
-  local.set $17
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $30
-  i32.const 5
-  local.set $29
-  local.get $30
-  local.get $29
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $28
-  local.get $30
-  call $~lib/rt/stub/__release
-  local.get $28
   local.set $18
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $29
-  i32.const 6
-  local.set $28
-  local.get $29
-  local.get $28
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $30
-  local.get $29
-  call $~lib/rt/stub/__release
-  local.get $30
-  local.set $19
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $28
-  i32.const 7
-  local.set $30
-  local.get $28
-  local.get $30
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.set $29
-  local.get $28
-  call $~lib/rt/stub/__release
-  local.get $29
-  local.set $20
   block $break|0
    loop $continue|0
-    local.get $4
+    local.get $3
     i32.const 64
     i32.ge_u
     i32.eqz
     br_if $break|0
-    local.get $13
+    global.get $assembly/index/H0
+    local.set $4
+    global.get $assembly/index/H1
     local.set $5
-    local.get $14
+    global.get $assembly/index/H2
     local.set $6
-    local.get $15
+    global.get $assembly/index/H3
     local.set $7
-    local.get $16
+    global.get $assembly/index/H4
     local.set $8
-    local.get $17
+    global.get $assembly/index/H5
     local.set $9
-    local.get $18
+    global.get $assembly/index/H6
     local.set $10
-    local.get $19
+    global.get $assembly/index/H7
     local.set $11
-    local.get $20
-    local.set $12
     block $break|1
      i32.const 0
-     local.set $22
+     local.set $13
      loop $loop|1
-      local.get $22
+      local.get $13
       i32.const 16
       i32.lt_u
       i32.eqz
       br_if $break|1
-      local.get $3
-      local.get $22
+      local.get $2
+      local.get $13
       i32.const 4
       i32.mul
       i32.add
-      local.set $23
+      local.set $14
       local.get $0
       call $~lib/rt/stub/__retain
-      local.set $32
-      local.get $22
-      local.set $31
-      local.get $2
+      local.set $23
+      local.get $13
+      local.set $22
+      local.get $1
       call $~lib/rt/stub/__retain
-      local.set $30
-      local.get $23
+      local.set $20
+      local.get $14
       i32.const 0
       i32.add
-      local.set $29
-      local.get $30
-      local.get $29
+      local.set $19
+      local.get $20
+      local.get $19
       i32.add
       i32.load8_u
-      local.set $28
-      local.get $30
+      local.set $21
+      local.get $20
       call $~lib/rt/stub/__release
-      local.get $28
+      local.get $21
       i32.const 255
       i32.and
       i32.const 24
       i32.shl
-      local.get $2
+      local.get $1
       call $~lib/rt/stub/__retain
-      local.set $29
-      local.get $23
+      local.set $19
+      local.get $14
       i32.const 1
       i32.add
-      local.set $28
-      local.get $29
-      local.get $28
+      local.set $21
+      local.get $19
+      local.get $21
       i32.add
       i32.load8_u
-      local.set $30
-      local.get $29
+      local.set $20
+      local.get $19
       call $~lib/rt/stub/__release
-      local.get $30
+      local.get $20
       i32.const 255
       i32.and
       i32.const 16
       i32.shl
       i32.or
-      local.get $2
+      local.get $1
       call $~lib/rt/stub/__retain
-      local.set $28
-      local.get $23
+      local.set $21
+      local.get $14
       i32.const 2
       i32.add
-      local.set $30
-      local.get $28
-      local.get $30
+      local.set $20
+      local.get $21
+      local.get $20
       i32.add
       i32.load8_u
-      local.set $29
-      local.get $28
+      local.set $19
+      local.get $21
       call $~lib/rt/stub/__release
-      local.get $29
+      local.get $19
       i32.const 255
       i32.and
       i32.const 8
       i32.shl
       i32.or
-      local.get $2
+      local.get $1
       call $~lib/rt/stub/__retain
-      local.set $30
-      local.get $23
+      local.set $20
+      local.get $14
       i32.const 3
       i32.add
-      local.set $29
-      local.get $30
-      local.get $29
+      local.set $19
+      local.get $20
+      local.get $19
       i32.add
       i32.load8_u
-      local.set $28
-      local.get $30
+      local.set $21
+      local.get $20
       call $~lib/rt/stub/__release
-      local.get $28
+      local.get $21
       i32.const 255
       i32.and
       i32.const 0
       i32.shl
       i32.or
-      local.set $28
-      local.get $32
-      local.get $31
+      local.set $21
+      local.get $23
+      local.get $22
       i32.const 2
       i32.shl
       i32.add
-      local.get $28
+      local.get $21
       i32.store
-      local.get $32
+      local.get $23
       call $~lib/rt/stub/__release
-      local.get $22
+      local.get $13
       i32.const 1
       i32.add
-      local.set $22
+      local.set $13
       br $loop|1
      end
      unreachable
     end
     block $break|2
      i32.const 16
-     local.set $22
+     local.set $13
      loop $loop|2
-      local.get $22
+      local.get $13
       i32.const 64
       i32.lt_u
       i32.eqz
       br_if $break|2
       local.get $0
       call $~lib/rt/stub/__retain
-      local.set $30
-      local.get $22
+      local.set $20
+      local.get $13
       i32.const 2
       i32.sub
-      local.set $29
-      local.get $30
-      local.get $29
+      local.set $19
+      local.get $20
+      local.get $19
       i32.const 2
       i32.shl
       i32.add
       i32.load
-      local.set $32
-      local.get $30
+      local.set $23
+      local.get $20
       call $~lib/rt/stub/__release
-      local.get $32
-      local.set $21
-      local.get $21
+      local.get $23
+      local.set $12
+      local.get $12
       i32.const 17
       i32.rotr
-      local.get $21
+      local.get $12
       i32.const 19
       i32.rotr
       i32.xor
-      local.get $21
+      local.get $12
       i32.const 10
       i32.shr_u
       i32.xor
-      local.set $24
+      local.set $15
       local.get $0
       call $~lib/rt/stub/__retain
-      local.set $31
-      local.get $22
+      local.set $22
+      local.get $13
       i32.const 15
       i32.sub
-      local.set $28
-      local.get $31
-      local.get $28
+      local.set $21
+      local.get $22
+      local.get $21
       i32.const 2
       i32.shl
       i32.add
       i32.load
-      local.set $30
-      local.get $31
+      local.set $20
+      local.get $22
       call $~lib/rt/stub/__release
-      local.get $30
-      local.set $21
-      local.get $21
+      local.get $20
+      local.set $12
+      local.get $12
       i32.const 7
       i32.rotr
-      local.get $21
+      local.get $12
       i32.const 18
       i32.rotr
       i32.xor
-      local.get $21
+      local.get $12
       i32.const 3
       i32.shr_u
       i32.xor
+      local.set $16
+      local.get $0
+      call $~lib/rt/stub/__retain
       local.set $25
+      local.get $13
+      local.set $24
+      local.get $15
       local.get $0
       call $~lib/rt/stub/__retain
-      local.set $34
-      local.get $22
-      local.set $33
-      local.get $24
-      local.get $0
-      call $~lib/rt/stub/__retain
-      local.set $29
-      local.get $22
+      local.set $19
+      local.get $13
       i32.const 7
       i32.sub
-      local.set $32
-      local.get $29
-      local.get $32
+      local.set $23
+      local.get $19
+      local.get $23
       i32.const 2
       i32.shl
       i32.add
       i32.load
-      local.set $31
-      local.get $29
+      local.set $22
+      local.get $19
       call $~lib/rt/stub/__release
-      local.get $31
+      local.get $22
       i32.add
-      local.get $25
+      local.get $16
       i32.add
       local.get $0
       call $~lib/rt/stub/__retain
-      local.set $28
-      local.get $22
+      local.set $21
+      local.get $13
       i32.const 16
       i32.sub
-      local.set $30
-      local.get $28
-      local.get $30
+      local.set $20
+      local.get $21
+      local.get $20
       i32.const 2
       i32.shl
       i32.add
       i32.load
-      local.set $29
-      local.get $28
+      local.set $19
+      local.get $21
       call $~lib/rt/stub/__release
-      local.get $29
+      local.get $19
       i32.add
-      local.set $31
-      local.get $34
-      local.get $33
+      local.set $22
+      local.get $25
+      local.get $24
       i32.const 2
       i32.shl
       i32.add
-      local.get $31
-      i32.store
-      local.get $34
-      call $~lib/rt/stub/__release
       local.get $22
+      i32.store
+      local.get $25
+      call $~lib/rt/stub/__release
+      local.get $13
       i32.const 1
       i32.add
-      local.set $22
+      local.set $13
       br $loop|2
      end
      unreachable
     end
     block $break|3
      i32.const 0
-     local.set $22
+     local.set $13
      loop $loop|3
-      local.get $22
+      local.get $13
       i32.const 64
       i32.lt_u
       i32.eqz
       br_if $break|3
-      local.get $9
+      local.get $8
       i32.const 6
       i32.rotr
-      local.get $9
+      local.get $8
       i32.const 11
       i32.rotr
       i32.xor
-      local.get $9
+      local.get $8
       i32.const 25
       i32.rotr
       i32.xor
+      local.get $8
       local.get $9
-      local.get $10
       i32.and
-      local.get $9
+      local.get $8
       i32.const -1
       i32.xor
-      local.get $11
+      local.get $10
       i32.and
       i32.xor
       i32.add
-      local.get $12
+      local.get $11
       i32.add
-      local.get $27
+      local.get $18
       call $~lib/rt/stub/__retain
-      local.set $29
-      local.get $22
-      local.set $32
-      local.get $29
-      local.get $32
+      local.set $19
+      local.get $13
+      local.set $23
+      local.get $19
+      local.get $23
       i32.const 2
       i32.shl
       i32.add
       i32.load
-      local.set $34
-      local.get $29
+      local.set $25
+      local.get $19
       call $~lib/rt/stub/__release
-      local.get $34
+      local.get $25
       i32.add
       local.get $0
       call $~lib/rt/stub/__retain
-      local.set $28
-      local.get $22
-      local.set $30
-      local.get $28
-      local.get $30
+      local.set $21
+      local.get $13
+      local.set $20
+      local.get $21
+      local.get $20
       i32.const 2
       i32.shl
       i32.add
       i32.load
-      local.set $29
-      local.get $28
+      local.set $19
+      local.get $21
       call $~lib/rt/stub/__release
-      local.get $29
+      local.get $19
       i32.add
-      local.set $24
-      local.get $5
+      local.set $15
+      local.get $4
       i32.const 2
       i32.rotr
-      local.get $5
+      local.get $4
       i32.const 13
       i32.rotr
       i32.xor
-      local.get $5
+      local.get $4
       i32.const 22
       i32.rotr
       i32.xor
+      local.get $4
       local.get $5
-      local.get $6
       i32.and
-      local.get $5
-      local.get $7
+      local.get $4
+      local.get $6
       i32.and
       i32.xor
+      local.get $5
       local.get $6
-      local.get $7
       i32.and
       i32.xor
       i32.add
-      local.set $25
-      local.get $11
-      local.set $12
+      local.set $16
       local.get $10
       local.set $11
       local.get $9
       local.set $10
       local.get $8
-      local.get $24
-      i32.add
       local.set $9
       local.get $7
+      local.get $15
+      i32.add
       local.set $8
       local.get $6
       local.set $7
       local.get $5
       local.set $6
-      local.get $24
-      local.get $25
-      i32.add
+      local.get $4
       local.set $5
-      local.get $22
+      local.get $15
+      local.get $16
+      i32.add
+      local.set $4
+      local.get $13
       i32.const 1
       i32.add
-      local.set $22
+      local.set $13
       br $loop|3
      end
      unreachable
     end
-    local.get $13
+    global.get $assembly/index/H0
+    local.get $4
+    i32.add
+    global.set $assembly/index/H0
+    global.get $assembly/index/H1
     local.get $5
     i32.add
-    local.set $13
-    local.get $14
+    global.set $assembly/index/H1
+    global.get $assembly/index/H2
     local.get $6
     i32.add
-    local.set $14
-    local.get $15
+    global.set $assembly/index/H2
+    global.get $assembly/index/H3
     local.get $7
     i32.add
-    local.set $15
-    local.get $16
+    global.set $assembly/index/H3
+    global.get $assembly/index/H4
     local.get $8
     i32.add
-    local.set $16
-    local.get $17
+    global.set $assembly/index/H4
+    global.get $assembly/index/H5
     local.get $9
     i32.add
-    local.set $17
-    local.get $18
+    global.set $assembly/index/H5
+    global.get $assembly/index/H6
     local.get $10
     i32.add
-    local.set $18
-    local.get $19
+    global.set $assembly/index/H6
+    global.get $assembly/index/H7
     local.get $11
     i32.add
-    local.set $19
-    local.get $20
-    local.get $12
+    global.set $assembly/index/H7
+    local.get $2
+    i32.const 64
     i32.add
-    local.set $20
+    local.set $2
     local.get $3
     i32.const 64
-    i32.add
-    local.set $3
-    local.get $4
-    i32.const 64
     i32.sub
-    local.set $4
+    local.set $3
     br $continue|0
    end
    unreachable
   end
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $34
-  i32.const 0
-  local.set $33
-  local.get $13
-  local.set $31
-  local.get $34
-  local.get $33
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $31
-  i32.store
-  local.get $34
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $30
-  i32.const 1
-  local.set $29
-  local.get $14
-  local.set $32
-  local.get $30
-  local.get $29
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $32
-  i32.store
-  local.get $30
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $33
-  i32.const 2
-  local.set $31
-  local.get $15
-  local.set $28
-  local.get $33
-  local.get $31
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $28
-  i32.store
-  local.get $33
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $29
-  i32.const 3
-  local.set $32
-  local.get $16
-  local.set $34
-  local.get $29
-  local.get $32
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $34
-  i32.store
-  local.get $29
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $31
-  i32.const 4
-  local.set $28
+  local.get $2
+  local.set $21
   local.get $17
-  local.set $30
-  local.get $31
-  local.get $28
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $30
-  i32.store
-  local.get $31
   call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $32
-  i32.const 5
-  local.set $34
   local.get $18
-  local.set $33
-  local.get $32
-  local.get $34
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $33
-  i32.store
-  local.get $32
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $28
-  i32.const 6
-  local.set $30
-  local.get $19
-  local.set $29
-  local.get $28
-  local.get $30
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $29
-  i32.store
-  local.get $28
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $34
-  i32.const 7
-  local.set $33
-  local.get $20
-  local.set $31
-  local.get $34
-  local.get $33
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $31
-  i32.store
-  local.get $34
-  call $~lib/rt/stub/__release
-  local.get $3
-  local.set $34
-  local.get $26
-  call $~lib/rt/stub/__release
-  local.get $27
   call $~lib/rt/stub/__release
   local.get $0
   call $~lib/rt/stub/__release
   local.get $1
   call $~lib/rt/stub/__release
-  local.get $2
-  call $~lib/rt/stub/__release
-  local.get $34
+  local.get $21
  )
  (func $~lib/util/memory/memcpy (; 14 ;) (type $FUNCSIG$viii) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
@@ -2641,7 +2260,7 @@
    call $~lib/rt/stub/__release
    i32.const 432
    i32.const 544
-   i32.const 161
+   i32.const 143
    i32.const 4
    call $~lib/builtins/abort
    unreachable
@@ -2724,7 +2343,6 @@
    i32.eq
    if
     global.get $assembly/index/temp
-    global.get $assembly/index/state
     global.get $assembly/index/buffer
     i32.const 0
     i32.const 64
@@ -2739,7 +2357,6 @@
   i32.ge_s
   if
    global.get $assembly/index/temp
-   global.get $assembly/index/state
    local.get $3
    local.get $4
    local.get $1
@@ -2927,7 +2544,6 @@
    local.get $5
    call $~lib/rt/stub/__release
    global.get $assembly/index/temp
-   global.get $assembly/index/state
    global.get $assembly/index/buffer
    i32.const 0
    local.get $4
@@ -2936,54 +2552,142 @@
    i32.const 1
    global.set $assembly/index/finished
   end
-  block $break|1
-   i32.const 0
-   local.set $4
-   loop $loop|1
-    local.get $4
-    i32.const 8
-    i32.lt_s
-    i32.eqz
-    br_if $break|1
-    local.get $0
-    call $~lib/rt/stub/__retain
-    local.set $5
-    local.get $4
-    local.set $6
-    global.get $assembly/index/state
-    call $~lib/rt/stub/__retain
-    local.set $9
-    local.get $4
-    local.set $8
-    local.get $9
-    local.get $8
-    i32.const 2
-    i32.shl
-    i32.add
-    i32.load
-    local.set $3
-    local.get $9
-    call $~lib/rt/stub/__release
-    local.get $3
-    call $~lib/polyfills/bswap<u32>
-    local.set $7
-    local.get $5
-    local.get $6
-    i32.const 2
-    i32.shl
-    i32.add
-    local.get $7
-    i32.store
-    local.get $5
-    call $~lib/rt/stub/__release
-    local.get $4
-    i32.const 1
-    i32.add
-    local.set $4
-    br $loop|1
-   end
-   unreachable
-  end
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $7
+  i32.const 0
+  local.set $9
+  global.get $assembly/index/H0
+  call $~lib/polyfills/bswap<u32>
+  local.set $8
+  local.get $7
+  local.get $9
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $8
+  i32.store
+  local.get $7
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $1
+  i32.const 1
+  local.set $5
+  global.get $assembly/index/H1
+  call $~lib/polyfills/bswap<u32>
+  local.set $6
+  local.get $1
+  local.get $5
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $6
+  i32.store
+  local.get $1
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $4
+  i32.const 2
+  local.set $3
+  global.get $assembly/index/H2
+  call $~lib/polyfills/bswap<u32>
+  local.set $2
+  local.get $4
+  local.get $3
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $2
+  i32.store
+  local.get $4
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $7
+  i32.const 3
+  local.set $9
+  global.get $assembly/index/H3
+  call $~lib/polyfills/bswap<u32>
+  local.set $8
+  local.get $7
+  local.get $9
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $8
+  i32.store
+  local.get $7
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $1
+  i32.const 4
+  local.set $5
+  global.get $assembly/index/H4
+  call $~lib/polyfills/bswap<u32>
+  local.set $6
+  local.get $1
+  local.get $5
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $6
+  i32.store
+  local.get $1
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $4
+  i32.const 5
+  local.set $3
+  global.get $assembly/index/H5
+  call $~lib/polyfills/bswap<u32>
+  local.set $2
+  local.get $4
+  local.get $3
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $2
+  i32.store
+  local.get $4
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $7
+  i32.const 6
+  local.set $9
+  global.get $assembly/index/H6
+  call $~lib/polyfills/bswap<u32>
+  local.set $8
+  local.get $7
+  local.get $9
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $8
+  i32.store
+  local.get $7
+  call $~lib/rt/stub/__release
+  local.get $0
+  call $~lib/rt/stub/__retain
+  local.set $1
+  i32.const 7
+  local.set $5
+  global.get $assembly/index/H7
+  call $~lib/polyfills/bswap<u32>
+  local.set $6
+  local.get $1
+  local.get $5
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $6
+  i32.store
+  local.get $1
+  call $~lib/rt/stub/__release
   local.get $0
   call $~lib/rt/stub/__release
  )

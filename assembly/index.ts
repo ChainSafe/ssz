@@ -19,7 +19,9 @@ const K: u32[] = [
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ];
 
-var state = new ArrayBuffer(32); // hash state
+// state stored in H0-H7
+var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
+
 var temp  = new ArrayBuffer(256); // temporary state
 var buffer = new ArrayBuffer(128); // buffer for data to hash
 var bufferLength = 0; // number of bytes in buffer
@@ -47,35 +49,24 @@ function load8(x: ArrayBuffer, offset: usize): u8 {
   return load<u8>(changetype<usize>(x) + offset);
 }
 
-function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
+function hashBlocks(w: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
   let
     a: u32, b: u32, c: u32, d: u32,
     e: u32, f: u32, g: u32, h: u32,
-    A: u32, B: u32, C: u32, D: u32,
-    E: u32, F: u32, G: u32, H: u32,
     u: u32, i: u32, j: u32,
     t1: u32, t2: u32,
     k = K.buffer;
 
-  A = load32(v, 0);
-  B = load32(v, 1);
-  C = load32(v, 2);
-  D = load32(v, 3);
-  E = load32(v, 4);
-  F = load32(v, 5);
-  G = load32(v, 6);
-  H = load32(v, 7);
-
   while (len >= 64) {
 
-    a = A;
-    b = B;
-    c = C;
-    d = D;
-    e = E;
-    f = F;
-    g = G;
-    h = H;
+    a = H0;
+    b = H1;
+    c = H2;
+    d = H3;
+    e = H4;
+    f = H5;
+    g = H6;
+    h = H7;
 
     for (i = 0; i < 16; i++) {
       j = pos + i * 4;
@@ -109,41 +100,32 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
       a = t1 + t2;
     }
 
-    A += a;
-    B += b;
-    C += c;
-    D += d;
-    E += e;
-    F += f;
-    G += g;
-    H += h;
+    H0 += a;
+    H1 += b;
+    H2 += c;
+    H3 += d;
+    H4 += e;
+    H5 += f;
+    H6 += g;
+    H7 += h;
 
     pos += 64;
     len -= 64;
   }
-
-  store32(v, 0, A);
-  store32(v, 1, B);
-  store32(v, 2, C);
-  store32(v, 3, D);
-  store32(v, 4, E);
-  store32(v, 5, F);
-  store32(v, 6, G);
-  store32(v, 7, H);
 
   return pos;
 }
 
 
 function reset(): void {
-  store32(state, 0, 0x6a09e667);
-  store32(state, 1, 0xbb67ae85);
-  store32(state, 2, 0x3c6ef372);
-  store32(state, 3, 0xa54ff53a);
-  store32(state, 4, 0x510e527f);
-  store32(state, 5, 0x9b05688c);
-  store32(state, 6, 0x1f83d9ab);
-  store32(state, 7, 0x5be0cd19);
+  H0 = 0x6a09e667;
+  H1 = 0xbb67ae85;
+  H2 = 0x3c6ef372;
+  H3 = 0xa54ff53a;
+  H4 = 0x510e527f;
+  H5 = 0x9b05688c;
+  H6 = 0x1f83d9ab;
+  H7 = 0x5be0cd19;
 
   bufferLength = 0;
   bytesHashed  = 0;
@@ -170,12 +152,12 @@ export function update(data: Uint8Array, dataLength: i32): void {
       --dataLength;
     }
     if (bufferLength == 64) {
-      hashBlocks(temp, state, buffer, 0, 64);
+      hashBlocks(temp, buffer, 0, 64);
       bufferLength = 0;
     }
   }
   if (dataLength >= 64) {
-    dataPos = hashBlocks(temp, state, dataBuffer, dataPos, dataLength);
+    dataPos = hashBlocks(temp, dataBuffer, dataPos, dataLength);
     dataLength &= 63;
   }
   memory.copy(changetype<usize>(buffer), changetype<usize>(dataBuffer) + dataPos, dataLength);
@@ -198,13 +180,18 @@ export function finish(out: ArrayBuffer): void {
     store32(buffer, (padLength - 8) >> alignof<u32>(), bswap(bitLenHi));
     store32(buffer, (padLength - 4) >> alignof<u32>(), bswap(bitLenLo));
 
-    hashBlocks(temp, state, buffer, 0, padLength);
+    hashBlocks(temp, buffer, 0, padLength);
     finished = true;
   }
 
-  for (let i = 0; i < 8; i++) {
-    store32(out, i, bswap(load32(state, i)));
-  }
+  store32(out, 0, bswap(H0));
+  store32(out, 1, bswap(H1));
+  store32(out, 2, bswap(H2));
+  store32(out, 3, bswap(H3));
+  store32(out, 4, bswap(H4));
+  store32(out, 5, bswap(H5));
+  store32(out, 6, bswap(H6));
+  store32(out, 7, bswap(H7));
 }
 
 export function hashMe(data: Uint8Array): Uint8Array {

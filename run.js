@@ -45,8 +45,8 @@ const randomessage2048 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, ran
 const randomessage16384 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, randomMessage16384));
 
 // durty bench
-// as (wasm):        31.927ms
-// js (fast-sha256): 55.456ms
+// as (wasm):        31.311ms
+// js (fast-sha256): 55.831ms
 
 console.time('as (wasm)');
 
