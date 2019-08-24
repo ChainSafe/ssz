@@ -1,10 +1,16 @@
 {
   "devDependencies": {
-    "assemblyscript": "AssemblyScript/assemblyscript"
+    "@as-pect/assembly": "2.3.1",
+    "@as-pect/cli": "2.3.1",
+    "@as-pect/core": "2.3.1",
+    "assemblyscript": "github:AssemblyScript/assemblyscript",
+    "fast-sha256": "^1.1.0"
   },
   "scripts": {
-    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --sourceMap --validate --debug",
-    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --sourceMap --validate --optimize",
-    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
+    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime stub --validate --debug",
+    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime stub --validate -O3",
+    "build": "yarn asbuild:untouched && yarn asbuild:optimized",
+    "test": "asp --nortrace --verbose",
+    "test:ci": "asp --nortrace 2> /dev/null"
   }
 }
