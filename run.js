@@ -53,8 +53,12 @@ console.time('as (wasm)');
   const messageOut = wasm.hashMe(message);
   const amessageOut = wasm.hashMe(amessage);
   const emptymessageOut = wasm.hashMe(emptymessage);
-  const randommessage2048Out = wasm.hashMe(randomessage2048);
-  const randommessage16384Out = wasm.hashMe(randomessage16384);
+  for (let i = 0; i < 1000; i++) {
+    wasm.hashMe(randomessage2048);
+  }
+  for (let i = 0; i < 100; i++) {
+    wasm.hashMe(randomessage16384);
+  }
 
 console.timeEnd('as (wasm)');
 
@@ -63,8 +67,12 @@ console.time('js (fast-sha256)');
   const js_messageOut = jsHash(Message);
   const js_amessageOut = jsHash(aMessage);
   const js_emptymessageOut = jsHash(emptyMessage);
-  const js_randommessage2048Out = jsHash(randomMessage2048);
-  const js_randommessage16384Out = jsHash(randomMessage16384);
+  for (let i = 0; i < 1000; i++) {
+    jsHash(randomMessage2048);
+  }
+  for (let i = 0; i < 100; i++) {
+    jsHash(randomMessage16384);
+  }
 
 console.timeEnd('js (fast-sha256)');
 
