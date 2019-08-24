@@ -50,7 +50,8 @@ function load8(x: ArrayBuffer, offset: usize): u8 {
 function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
   let a: u32, b: u32, c: u32, d: u32, e: u32,
     f: u32, g: u32, h: u32, u: u32, i: u32,
-    j: u32, t1: u32, t2: u32;
+    j: u32, t1: u32, t2: u32,
+    k = K.buffer;
 
   while (len >= 64) {
     a = load32(v, 0);
@@ -81,7 +82,6 @@ function hashBlocks(w: ArrayBuffer, v: ArrayBuffer, p: ArrayBuffer, pos: u32, le
       store32(w, i, t1 + load32(w, i - 7) + t2 + load32(w, i - 16));
     }
 
-    const k = K.buffer;
     for (i = 0; i < 64; i++) {
       t1 = (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + h + load32(k, i) + load32(w, i);
       t2 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c));
@@ -138,9 +138,7 @@ export function update(data: Uint8Array, dataLength: i32): void {
     throw new Error("SHA256: can't update because hash was finished.");
   }
 
-  let dataBuffer = new ArrayBuffer(dataLength);
-  memory.copy(changetype<usize>(dataBuffer), data.dataStart, dataLength);
-
+  let dataBuffer = data.buffer;
   let dataPos = 0;
   bytesHashed += dataLength;
   if (bufferLength > 0) {
@@ -157,10 +155,6 @@ export function update(data: Uint8Array, dataLength: i32): void {
     dataPos = hashBlocks(temp, state, dataBuffer, dataPos, dataLength);
     dataLength &= 63;
   }
-  // while (dataLength > 0) {
-  //   store8(buffer, bufferLength++, load8(dataBuffer, dataPos++));
-  //   --dataLength;
-  // }
   memory.copy(changetype<usize>(buffer), changetype<usize>(dataBuffer) + dataPos, dataLength);
   dataPos += dataLength;
   bufferLength += dataLength;
