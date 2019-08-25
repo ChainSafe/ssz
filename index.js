@@ -1,8 +1,14 @@
-const fs = require("fs");
-const loader = require("assemblyscript/lib/loader");
-const compiled = new WebAssembly.Module(fs.readFileSync(__dirname + "/build/optimized.wasm"));
-const imports = {};
-Object.defineProperty(module, "exports", {
-  get: () => loader.instantiate(compiled, imports)
-});
+import wasm from "./wasm";
 
+/**
+ * Wraps the AssemblyScript build in a JS function.
+ * This allows users to not have to make AS a dependency in their project.
+ * @param {Uint8Array} message Message to hash
+ */
+function sha256(message) {
+    // @ts-ignore
+    wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
+}
+
+export default sha256;
+export {wasm};

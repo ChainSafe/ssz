@@ -204,7 +204,7 @@ export function finish(out: ArrayBuffer): void {
   store32(outPtr, 7, bswap(H7));
 }
 
-export function hashMe(data: Uint8Array): Uint8Array {
+export function hash(data: Uint8Array): Uint8Array {
   reset();
   update(data, data.length);
   finish(out);
