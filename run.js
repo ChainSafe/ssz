@@ -29,14 +29,14 @@ function jsHash(msg) {
 
 const toHexString = byteArray => byteArray.reduce((acc, val) => (acc + ('0' + val.toString(16)).slice(-2)), '');
 
-const emptyMessage = new Uint8Array(Buffer.from(''));
+const emptyMessage = new Uint8Array(0);
 
-const Message = new Uint8Array(Buffer.from('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'));
+const Message = Buffer.from('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.');
 
 const aMessage = new Uint8Array([97,98,99]);
 
-const randomMessage2048 = new Uint8Array(crypto.randomBytes(2048));
-const randomMessage16384 = new Uint8Array(crypto.randomBytes(16384));
+const randomMessage2048 = crypto.randomBytes(2048);
+const randomMessage16384 = crypto.randomBytes(16384);
 
 const message = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, Message));
 const amessage = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, aMessage));
