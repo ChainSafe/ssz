@@ -37,11 +37,11 @@ We also expose the lower level WASM exports for those that may wish to use it. I
 ```JS
 import sha256, {wasm} from "@chainsafe/sha256"
 
-const message = Buffer.from("Hello world");
+const buffer = Buffer.from("Hello world");
+const array = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buffer));
+const message = wasm.hash(array)
 
-const message = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
-
-console.log(toHexString(wasm.__getArray(messageOut)));
+console.log(toHexString(wasm.__getArray(message)));
 ```
 
 ### License
