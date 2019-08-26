@@ -178,12 +178,13 @@ export function finish(out: ArrayBuffer): void {
     let bufferPtr = changetype<usize>(buffer);
 
     store8(bufferPtr, left, 0x80);
-    for (let i = left + 1, len = padLength - 8; i < len; i++) {
-      store8(bufferPtr, i, 0);
-    }
+    // for (let i = left + 1, len = padLength - 8; i < len; i++) {
+    //   store8(bufferPtr, i, 0);
+    // }
+    memory.fill(bufferPtr + left + 1, 0, padLength - left - 9);
 
-    store32(bufferPtr, (padLength - 8) >> alignof<u32>(), bswap(bitLenHi));
-    store32(bufferPtr, (padLength - 4) >> alignof<u32>(), bswap(bitLenLo));
+    store<u32>(bufferPtr + padLength - 8, bswap(bitLenHi));
+    store<u32>(bufferPtr + padLength - 4, bswap(bitLenLo));
 
     hashBlocks(temp, buffer, 0, padLength);
     finished = true;

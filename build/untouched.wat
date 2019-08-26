@@ -4183,8 +4183,6 @@
   (local $6 i32)
   (local $7 i32)
   (local $8 i32)
-  (local $9 i32)
-  (local $10 i32)
   local.get $0
   call $~lib/rt/pure/__retain
   drop
@@ -4222,75 +4220,33 @@
    i32.add
    local.get $6
    i32.store8
-   block $break|0
-    local.get $1
-    i32.const 1
-    i32.add
-    local.set $8
-    local.get $4
-    i32.const 8
-    i32.sub
-    local.set $7
-    loop $loop|0
-     local.get $8
-     local.get $7
-     i32.lt_s
-     i32.eqz
-     br_if $break|0
-     local.get $5
-     local.set $10
-     local.get $8
-     local.set $9
-     i32.const 0
-     local.set $6
-     local.get $10
-     local.get $9
-     i32.add
-     local.get $6
-     i32.store8
-     local.get $8
-     i32.const 1
-     i32.add
-     local.set $8
-     br $loop|0
-    end
-    unreachable
-   end
    local.get $5
-   local.set $10
+   local.get $1
+   i32.add
+   i32.const 1
+   i32.add
+   i32.const 0
    local.get $4
+   local.get $1
+   i32.sub
+   i32.const 9
+   i32.sub
+   call $~lib/memory/memory.fill
+   local.get $5
+   local.get $4
+   i32.add
    i32.const 8
    i32.sub
-   i32.const 2
-   i32.shr_s
-   local.set $9
    local.get $2
    call $~lib/polyfills/bswap<i32>
-   local.set $6
-   local.get $10
-   local.get $9
-   i32.const 2
-   i32.shl
-   i32.add
-   local.get $6
    i32.store
    local.get $5
-   local.set $6
    local.get $4
+   i32.add
    i32.const 4
    i32.sub
-   i32.const 2
-   i32.shr_s
-   local.set $7
    local.get $3
    call $~lib/polyfills/bswap<i32>
-   local.set $8
-   local.get $6
-   local.get $7
-   i32.const 2
-   i32.shl
-   i32.add
-   local.get $8
    i32.store
    global.get $assembly/index/temp
    global.get $assembly/index/buffer
@@ -4306,68 +4262,82 @@
   local.get $5
   local.set $8
   i32.const 0
-  local.set $10
+  local.set $7
   global.get $assembly/index/H0
   call $~lib/polyfills/bswap<u32>
-  local.set $9
+  local.set $6
   local.get $8
-  local.get $10
+  local.get $7
   i32.const 2
   i32.shl
   i32.add
-  local.get $9
+  local.get $6
   i32.store
   local.get $5
-  local.set $1
+  local.set $3
   i32.const 1
-  local.set $6
+  local.set $2
   global.get $assembly/index/H1
   call $~lib/polyfills/bswap<u32>
-  local.set $7
-  local.get $1
-  local.get $6
+  local.set $1
+  local.get $3
+  local.get $2
   i32.const 2
   i32.shl
   i32.add
-  local.get $7
+  local.get $1
   i32.store
   local.get $5
-  local.set $4
+  local.set $7
   i32.const 2
-  local.set $3
+  local.set $6
   global.get $assembly/index/H2
   call $~lib/polyfills/bswap<u32>
-  local.set $2
-  local.get $4
-  local.get $3
+  local.set $4
+  local.get $7
+  local.get $6
   i32.const 2
   i32.shl
   i32.add
-  local.get $2
+  local.get $4
   i32.store
   local.get $5
-  local.set $8
+  local.set $2
   i32.const 3
-  local.set $10
+  local.set $1
   global.get $assembly/index/H3
   call $~lib/polyfills/bswap<u32>
-  local.set $9
-  local.get $8
-  local.get $10
+  local.set $8
+  local.get $2
+  local.get $1
   i32.const 2
   i32.shl
   i32.add
-  local.get $9
+  local.get $8
+  i32.store
+  local.get $5
+  local.set $6
+  i32.const 4
+  local.set $4
+  global.get $assembly/index/H4
+  call $~lib/polyfills/bswap<u32>
+  local.set $3
+  local.get $6
+  local.get $4
+  i32.const 2
+  i32.shl
+  i32.add
+  local.get $3
   i32.store
   local.get $5
   local.set $1
-  i32.const 4
-  local.set $6
-  global.get $assembly/index/H4
+  i32.const 5
+  local.set $8
+  global.get $assembly/index/H5
   call $~lib/polyfills/bswap<u32>
   local.set $7
   local.get $1
-  local.get $6
+  local.get $8
   i32.const 2
   i32.shl
   i32.add
@@ -4375,9 +4345,9 @@
   i32.store
   local.get $5
   local.set $4
-  i32.const 5
+  i32.const 6
   local.set $3
-  global.get $assembly/index/H5
+  global.get $assembly/index/H6
   call $~lib/polyfills/bswap<u32>
   local.set $2
   local.get $4
@@ -4389,31 +4359,17 @@
   i32.store
   local.get $5
   local.set $8
-  i32.const 6
-  local.set $10
-  global.get $assembly/index/H6
-  call $~lib/polyfills/bswap<u32>
-  local.set $9
-  local.get $8
-  local.get $10
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $9
-  i32.store
-  local.get $5
-  local.set $1
   i32.const 7
-  local.set $6
+  local.set $7
   global.get $assembly/index/H7
   call $~lib/polyfills/bswap<u32>
-  local.set $7
-  local.get $1
-  local.get $6
+  local.set $6
+  local.get $8
+  local.get $7
   i32.const 2
   i32.shl
   i32.add
-  local.get $7
+  local.get $6
   i32.store
   local.get $0
   call $~lib/rt/pure/__release
