@@ -49,15 +49,13 @@ function load8(ptr: usize, offset: usize): u8 {
   return load<u8>(ptr + offset);
 }
 
-function hashBlocks(w: ArrayBuffer, p: ArrayBuffer, pos: u32, len: u32): u32 {
+function hashBlocks(wPtr: usize, pPtr: usize, pos: u32, len: u32): u32 {
   let
     a: u32, b: u32, c: u32, d: u32,
     e: u32, f: u32, g: u32, h: u32,
     u: u32, i: u32, j: u32,
     t1: u32, t2: u32,
-    k = K.dataStart,
-    pPtr = changetype<usize>(p),
-    wPtr = changetype<usize>(w);
+    k = K.dataStart;
 
   while (len >= 64) {
 
@@ -147,7 +145,9 @@ export function update(data: Uint8Array, dataLength: i32): void {
 
   let dataBuffer = data.buffer;
   let dataPtr = data.dataStart;
+  let tempPtr = changetype<usize>(temp);
   let bufferPtr = changetype<usize>(buffer);
+  let dataBufferPtr = changetype<usize>(dataBuffer);
   let dataPos = 0;
   bytesHashed += dataLength;
   if (bufferLength > 0) {
@@ -156,12 +156,12 @@ export function update(data: Uint8Array, dataLength: i32): void {
       --dataLength;
     }
     if (bufferLength == 64) {
-      hashBlocks(temp, buffer, 0, 64);
+      hashBlocks(tempPtr, bufferPtr, 0, 64);
       bufferLength = 0;
     }
   }
   if (dataLength >= 64) {
-    dataPos = hashBlocks(temp, dataBuffer, dataPos, dataLength);
+    dataPos = hashBlocks(tempPtr, dataBufferPtr, dataPos, dataLength);
     dataLength &= 63;
   }
   memory.copy(bufferPtr, dataPtr + dataPos, dataLength);
@@ -176,6 +176,7 @@ export function finish(out: ArrayBuffer): void {
     let bitLenLo  = bytesHashed << 3;
     let padLength = 64 << i32((bytesHashed & 63) >= 56);
     let bufferPtr = changetype<usize>(buffer);
+    let tempPtr   = changetype<usize>(temp);
 
     store8(bufferPtr, left, 0x80);
     // for (let i = left + 1, len = padLength - 8; i < len; i++) {
@@ -186,7 +187,7 @@ export function finish(out: ArrayBuffer): void {
     store<u32>(bufferPtr + padLength - 8, bswap(bitLenHi));
     store<u32>(bufferPtr + padLength - 4, bswap(bitLenLo));
 
-    hashBlocks(temp, buffer, 0, padLength);
+    hashBlocks(tempPtr, bufferPtr, 0, padLength);
     finished = true;
   }
 
