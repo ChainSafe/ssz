@@ -34,8 +34,8 @@
  (global $assembly/index/H5 (mut i32) (i32.const 0))
  (global $assembly/index/H6 (mut i32) (i32.const 0))
  (global $assembly/index/H7 (mut i32) (i32.const 0))
- (global $assembly/index/temp (mut i32) (i32.const 0))
  (global $assembly/index/buffer (mut i32) (i32.const 0))
+ (global $assembly/index/temp (mut i32) (i32.const 0))
  (global $assembly/index/out (mut i32) (i32.const 0))
  (global $assembly/index/bufferLength (mut i32) (i32.const 0))
  (global $assembly/index/bytesHashed (mut i32) (i32.const 0))
@@ -2567,6 +2567,15 @@
   local.get $0
   local.get $1
   call $~lib/memory/memory.fill
+  global.get $assembly/index/out
+  local.tee $0
+  i32.const 16
+  i32.sub
+  i32.load offset=12
+  local.set $1
+  local.get $0
+  local.get $1
+  call $~lib/memory/memory.fill
   call $assembly/index/reset
  )
  (func $assembly/index/hashBlocks (; 29 ;) (type $FUNCSIG$iiiii) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result i32)
@@ -2891,14 +2900,12 @@
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
-  (local $8 i32)
-  (local $9 i32)
   local.get $0
-  local.tee $3
+  local.tee $2
   i32.const 828
   i32.gt_u
   if
-   local.get $3
+   local.get $2
    i32.const 16
    i32.sub
    local.tee $0
@@ -2910,55 +2917,22 @@
   end
   global.get $assembly/index/finished
   if
-   local.get $3
+   local.get $2
    call $~lib/rt/pure/__release
    i32.const 632
    i32.const 744
-   i32.const 145
+   i32.const 146
    i32.const 4
    call $~lib/builtins/abort
    unreachable
   end
-  local.get $3
-  i32.load
-  local.tee $0
-  i32.const 828
-  i32.gt_u
-  if
-   local.get $0
-   i32.const 16
-   i32.sub
-   local.tee $2
-   local.get $2
-   i32.load offset=4
-   i32.const 1
-   i32.add
-   i32.store offset=4
-  end
-  local.get $0
-  local.tee $2
-  i32.const 828
-  i32.gt_u
-  if
-   local.get $2
-   i32.const 16
-   i32.sub
-   local.tee $4
-   local.get $4
-   i32.load offset=4
-   i32.const 1
-   i32.add
-   i32.store offset=4
-  end
   local.get $2
-  local.set $4
-  local.get $3
   i32.load offset=4
-  local.set $7
+  local.set $4
   global.get $assembly/index/temp
-  local.set $8
-  global.get $assembly/index/buffer
   local.set $6
+  global.get $assembly/index/buffer
+  local.set $5
   global.get $assembly/index/bytesHashed
   local.get $1
   i32.add
@@ -2978,20 +2952,20 @@
     select
     if
      global.get $assembly/index/bufferLength
-     local.tee $9
+     local.tee $7
      i32.const 1
      i32.add
      global.set $assembly/index/bufferLength
-     local.get $5
-     local.tee $2
+     local.get $3
+     local.tee $0
      i32.const 1
      i32.add
-     local.set $5
-     local.get $6
-     local.get $9
-     i32.add
-     local.get $2
+     local.set $3
+     local.get $5
      local.get $7
+     i32.add
+     local.get $0
+     local.get $4
      i32.add
      i32.load8_u
      i32.store8
@@ -3006,8 +2980,8 @@
    i32.const 64
    i32.eq
    if
-    local.get $8
     local.get $6
+    local.get $5
     i32.const 0
     i32.const 64
     call $assembly/index/hashBlocks
@@ -3020,20 +2994,20 @@
   i32.const 64
   i32.ge_s
   if
-   local.get $8
+   local.get $6
    local.get $4
-   local.get $5
+   local.get $3
    local.get $1
    call $assembly/index/hashBlocks
-   local.set $5
+   local.set $3
    local.get $1
    i32.const 63
    i32.and
    local.set $1
   end
-  local.get $6
   local.get $5
-  local.get $7
+  local.get $3
+  local.get $4
   i32.add
   local.get $1
   call $~lib/memory/memory.copy
@@ -3041,11 +3015,7 @@
   local.get $1
   i32.add
   global.set $assembly/index/bufferLength
-  local.get $0
-  call $~lib/rt/pure/__release
-  local.get $4
-  call $~lib/rt/pure/__release
-  local.get $3
+  local.get $2
   call $~lib/rt/pure/__release
  )
  (func $assembly/index/finish (; 31 ;) (type $FUNCSIG$vi) (param $0 i32)
@@ -3402,12 +3372,12 @@
   local.get $1
  )
  (func $start (; 34 ;) (type $FUNCSIG$v)
-  i32.const 256
-  call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/index/temp
   i32.const 128
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/buffer
+  i32.const 256
+  call $~lib/arraybuffer/ArrayBuffer#constructor
+  global.set $assembly/index/temp
   i32.const 32
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/out

@@ -1,7 +1,7 @@
 
 //https://github.com/dchest/fast-sha256-js/blob/master/src/sha256.ts
 export const UINT8ARRAY_ID = idof<Uint8Array>();
-const digestLength = 32;
+const DIGEST_LENGTH = 32;
 
 const K: u32[] = [
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
@@ -23,9 +23,9 @@ const K: u32[] = [
 var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
 // prealloc buffers
-var temp  = new ArrayBuffer(256); // temporary state
 var buffer = new ArrayBuffer(128); // buffer for data to hash
-var out = new ArrayBuffer(digestLength); // buffer for output
+var temp   = new ArrayBuffer(256); // temporary state
+var out    = new ArrayBuffer(DIGEST_LENGTH); // buffer for output
 
 var bufferLength = 0; // number of bytes in buffer
 var bytesHashed = 0; // number of total bytes hashed
@@ -137,6 +137,7 @@ function reset(): void {
 export function clean(): void {
   memory.fill(changetype<usize>(buffer), 0, buffer.byteLength);
   memory.fill(changetype<usize>(temp),   0, temp.byteLength);
+  memory.fill(changetype<usize>(out),    0, out.byteLength);
   reset();
 }
 
@@ -145,11 +146,9 @@ export function update(data: Uint8Array, dataLength: i32): void {
     throw new Error("SHA256: can't update because hash was finished.");
   }
 
-  let dataBuffer = data.buffer;
   let dataPtr = data.dataStart;
   let tempPtr = changetype<usize>(temp);
   let bufferPtr = changetype<usize>(buffer);
-  let dataBufferPtr = changetype<usize>(dataBuffer);
   let dataPos = 0;
   bytesHashed += dataLength;
   if (bufferLength > 0) {
@@ -163,7 +162,7 @@ export function update(data: Uint8Array, dataLength: i32): void {
     }
   }
   if (dataLength >= 64) {
-    dataPos = hashBlocks(tempPtr, dataBufferPtr, dataPos, dataLength);
+    dataPos = hashBlocks(tempPtr, dataPtr, dataPos, dataLength);
     dataLength &= 63;
   }
   memory.copy(bufferPtr, dataPtr + dataPos, dataLength);
@@ -210,7 +209,7 @@ export function hashMe(data: Uint8Array): Uint8Array {
   update(data, data.length);
   finish(out);
 
-  let ret = new Uint8Array(digestLength);
-  memory.copy(ret.dataStart, changetype<usize>(out), digestLength);
+  let ret = new Uint8Array(DIGEST_LENGTH);
+  memory.copy(ret.dataStart, changetype<usize>(out), DIGEST_LENGTH);
   return ret;
 }
