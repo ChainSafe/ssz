@@ -22,12 +22,14 @@ const K: u32[] = [
 // state stored in H0-H7
 var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
+// prealloc buffers
 var temp  = new ArrayBuffer(256); // temporary state
 var buffer = new ArrayBuffer(128); // buffer for data to hash
+var out = new ArrayBuffer(digestLength); // buffer for output
+
 var bufferLength = 0; // number of bytes in buffer
 var bytesHashed = 0; // number of total bytes hashed
 var finished = false;
-var out = new ArrayBuffer(digestLength);
 
 @inline
 function load32(ptr: usize, offset: usize): u32 {

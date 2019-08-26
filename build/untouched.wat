@@ -42,10 +42,10 @@
  (global $assembly/index/H7 (mut i32) (i32.const 0))
  (global $assembly/index/temp (mut i32) (i32.const 0))
  (global $assembly/index/buffer (mut i32) (i32.const 0))
+ (global $assembly/index/out (mut i32) (i32.const 0))
  (global $assembly/index/bufferLength (mut i32) (i32.const 0))
  (global $assembly/index/bytesHashed (mut i32) (i32.const 0))
  (global $assembly/index/finished (mut i32) (i32.const 0))
- (global $assembly/index/out (mut i32) (i32.const 0))
  (global $~lib/rt/__rtti_base i32 (i32.const 832))
  (global $~lib/heap/__heap_base i32 (i32.const 876))
  (export "memory" (memory $0))
@@ -4005,7 +4005,7 @@
    call $~lib/rt/pure/__release
    i32.const 680
    i32.const 792
-   i32.const 143
+   i32.const 145
    i32.const 4
    call $~lib/builtins/abort
    unreachable
