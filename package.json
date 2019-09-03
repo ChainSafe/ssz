@@ -13,9 +13,11 @@
     "url": "git+https://github.com/chainsafe/sha256-as.git"
   },
   "scripts": {
+    "prebuild": "rm -rf ./dist",
+    "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:web",
     "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime full --validate --debug",
     "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime full --validate -O3 --noAssert",
-    "build": "yarn asbuild:untouched && yarn asbuild:optimized",
+    "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "asp --nortrace --verbose",
     "test:ci": "asp --nortrace 2> /dev/null"
   },
