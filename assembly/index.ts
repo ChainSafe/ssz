@@ -204,6 +204,13 @@ export function finish(out: ArrayBuffer): void {
   store32(outPtr, 7, bswap(H7));
 }
 
+export function digest (): Uint8Array {
+  finish(out);
+  let ret = new Uint8Array(digestLength);
+  memory.copy(ret.dataStart, changetype<usize>(out), digestLength);
+  return ret;
+}
+
 export function hash(data: Uint8Array): Uint8Array {
   reset();
   update(data, data.length);
