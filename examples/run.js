@@ -1,8 +1,7 @@
 
 const crypto = require('crypto');
-const wasm = require('./index.js');
-console.log(wasm)
 const sha256 = require('fast-sha256');
+const wasm = require('../wasm.js');
 
 const f = new wasm.tsSHA256Fast()
 // sha256("abc")

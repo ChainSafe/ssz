@@ -41,6 +41,10 @@ const buffer = Buffer.from("Hello world");
 const array = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buffer));
 const message = wasm.hash(array)
 
+// To prevent memory leaks
+wasm.__release(array);
+wasm.__release(message);
+
 console.log(toHexString(wasm.__getArray(message)));
 ```
 
