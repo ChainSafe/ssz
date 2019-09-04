@@ -46,6 +46,10 @@ export function getChildNodes(node: Node): Array<Node> {
     switch (node.type.type) {
         case Type.uint:
         case Type.bool:
+        case Type.bitList:
+            return [];
+        case Type.bitVector:
+            return [];
         case Type.byteList:
         case Type.byteVector:
             return [];

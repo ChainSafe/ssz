@@ -1,4 +1,5 @@
 import {FullSSZType, Type} from "@chainsafe/ssz";
+import {BitList, BitVector} from "@chainsafe/bit-utils";
 import decamelize from "decamelize";
 import BN from "bn.js";
 
@@ -20,6 +21,10 @@ export function expandInput(input: any, type: FullSSZType, intFromStr: boolean):
             }
         case Type.bool:
             return input;
+        case Type.bitList:
+            return BitList.deserialize(expandByteArray(input))
+        case Type.bitVector:
+            return BitVector.fromBitfield(expandByteArray(input), type.length)
         case Type.byteList:
         case Type.byteVector:
             return expandByteArray(input);
@@ -45,6 +50,10 @@ export function unexpandInput(input: any, type: FullSSZType, intToStr: boolean):
             }
         case Type.bool:
             return input;
+        case Type.bitList:
+            return "0x" + input.serialize().toString('hex');
+        case Type.bitVector:
+            return "0x" + input.toBitfield().toString('hex');
         case Type.byteList:
         case Type.byteVector:
             return "0x" + input.toString('hex');

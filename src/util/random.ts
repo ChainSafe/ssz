@@ -41,8 +41,13 @@ function _createRandomValue(type: FullSSZType): any {
       return randomBytes(byteListLength);
     case Type.byteVector:
       return randomBytes(type.length);
+    case Type.bitVector:
+      return randomBytes(Math.floor((type.length + 7)/8));
+    case Type.bitList:
+      const bitListLength = Math.floor(Math.random() * 16);
+      return randomBytes(Math.ceil((bitListLength+7)/8));
     case Type.list:
-      const listLength = Math.floor(Math.random() * 16);
+      const listLength = Math.min(Math.floor(Math.random() * 16), type.maxLength);
       return Array.from({length: listLength}, () => _createRandomValue(type.elementType));
     case Type.vector:
       return Array.from({length: type.length}, () => _createRandomValue(type.elementType));

@@ -24,10 +24,22 @@ beyond that in the final javascript output. Because of this, we also export an
 object (of the same name as the interface), which defines the interface's field
 names/types that can be inspected at run-time.
  */
-export * from "./primitive";
-export * from "./misc";
-export * from "./operations";
-export * from "./block";
-export * from "./state";
-export * from "./validator";
-export * from "./wire";
+
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/primitive";
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/misc";
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/operations";
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/block";
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/state";
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/validator";
+// export * from "@chainsafe/eth2.0-ssz-types/lib/generators/wire";
+
+
+// export * from "./primitive";
+// export * from "./misc";
+// export * from "./operations";
+// export * from "./block";
+// export * from "./state";
+// export * from "./validator";
+// export * from "./wire";
+
+export * from "@chainsafe/eth2.0-ssz-types/lib/presets/mainnet"

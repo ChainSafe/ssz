@@ -12,7 +12,10 @@
     "start": "serve dist"
   },
   "dependencies": {
-    "@chainsafe/ssz": "0.4.2",
+    "@babel/runtime": "^7.5.5",
+    "@chainsafe/eth2.0-config": "^0.1.0",
+    "@chainsafe/eth2.0-ssz-types": "^0.1.0",
+    "@chainsafe/ssz": "0.5.1",
     "@types/bn.js": "^4.11.5",
     "bn.js": "^4.11.8",
     "bulma": "^0.7.5",
