@@ -8,8 +8,9 @@ import wasm from "./wasm";
 export default function sha256(message) {
   // @ts-ignore
   const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
+  const result = wasm.hash(arr);
   wasm.__release(arr);
-  return wasm.hash(arr);
+  return result;
 }
 
 export function clean() {
@@ -25,8 +26,8 @@ export function init() {
 export function update(data, length) {
   // @ts-ignore
   const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, data));
+  wasm.update(arr, length);
   wasm.__release(arr);
-  wasm.update(arr, length)
 }
 
 export function digest() {

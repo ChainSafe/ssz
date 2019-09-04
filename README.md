@@ -19,7 +19,7 @@ Fastest is AS-Sha256#hash
 
 `yarn add @chainsafe/as-sha256`
 
-## Typescript Warpper
+## TypeScript Wrapper
 
 `yarn add @chainsafe/sha256`
 
