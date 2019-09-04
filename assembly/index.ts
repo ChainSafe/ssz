@@ -166,7 +166,6 @@ export function update(data: Uint8Array, dataLength: i32): void {
     dataLength &= 63;
   }
   memory.copy(bufferPtr, dataPtr + dataPos, dataLength);
-  dataPos += dataLength;
   bufferLength += dataLength;
 }
 
@@ -180,9 +179,6 @@ export function finish(out: ArrayBuffer): void {
     let tempPtr   = changetype<usize>(temp);
 
     store8(bufferPtr, left, 0x80);
-    // for (let i = left + 1, len = padLength - 8; i < len; i++) {
-    //   store8(bufferPtr, i, 0);
-    // }
     memory.fill(bufferPtr + left + 1, 0, padLength - left - 9);
 
     store<u32>(bufferPtr + padLength - 8, bswap(bitLenHi));
