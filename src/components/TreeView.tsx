@@ -3,14 +3,17 @@ import * as React from "react";
 import EyzyTree from "eyzy-tree";
 import {Node as SSZNode, getChildNodes, getRootNode, isBottomType} from "../util/partials";
 import {
+    BitVectorType,
     ByteVectorType,
-    ContainerType, FullSSZType,
+    ContainerType,
+    FullSSZType,
     ListType,
     Type,
     UintType,
-    VectorType
+    VectorType,
 } from "@chainsafe/ssz";
 import BN from "bn.js";
+import {types, typeName} from "../util/types";
 
 const getTypeName = (typ: FullSSZType): string => typeNames[typ.type](typ);
 
@@ -19,11 +22,13 @@ type TypeNameRecords = Record<Type, (t: FullSSZType) => string>
 const typeNames: TypeNameRecords = {
     [Type.bool]: (t) => "bool",
     [Type.uint]: (t) => "uint" + ((t as UintType).byteLength * 8),
+    [Type.bitList]: (t) => "BitList",
+    [Type.bitVector]: (t) => `BitVector[${(t as BitVectorType).length}]`,
     [Type.byteList]: (t) => "Bytes",
     [Type.byteVector]: (t) => `BytesN[${(t as ByteVectorType).length}]`,
     [Type.vector]: (t) => `Vector[${getTypeName((t as VectorType).elementType)}, ${(t as VectorType).length}]`,
     [Type.list]: (t) => `List[${getTypeName((t as ListType).elementType)}]`,
-    [Type.container]: (t) => `${(t as ContainerType).name}(Container)`,
+    [Type.container]: (t) => `${typeName(t, types)}(Container)`,
 };
 
 const getKind = (typ: FullSSZType): string => typeKindNames[typ.type];
