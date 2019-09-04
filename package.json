@@ -12,6 +12,8 @@
     "type": "git",
     "url": "git+https://github.com/chainsafe/sha256-as.git"
   },
+  "main": "src/index.js",
+  "types": "src/index.d.js",
   "scripts": {
     "prebuild": "rm -rf ./dist",
     "build": "yarn asbuild:untouched && yarn asbuild:optimized",
