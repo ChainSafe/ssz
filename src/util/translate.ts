@@ -20,7 +20,7 @@ export function expandInput(input: any, type: FullSSZType, intFromStr: boolean):
                 return input;
             }
         case Type.bool:
-            return input;
+            return Boolean(input);
         case Type.bitList:
             return BitList.deserialize(expandByteArray(input))
         case Type.bitVector:
@@ -49,7 +49,7 @@ export function unexpandInput(input: any, type: FullSSZType, intToStr: boolean):
                 return input;
             }
         case Type.bool:
-            return input;
+            return Boolean(input);
         case Type.bitList:
             return "0x" + input.serialize().toString('hex');
         case Type.bitVector:

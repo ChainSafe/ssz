@@ -14,6 +14,8 @@ export type Node = {
 export function isBottomType(typ: FullSSZType) {
     return (typ.type == Type.uint
         || typ.type == Type.bool
+        || typ.type == Type.bitList
+        || typ.type == Type.bitVector
         || typ.type == Type.byteList
         || typ.type == Type.byteVector);
 }
@@ -47,9 +49,7 @@ export function getChildNodes(node: Node): Array<Node> {
         case Type.uint:
         case Type.bool:
         case Type.bitList:
-            return [];
         case Type.bitVector:
-            return [];
         case Type.byteList:
         case Type.byteVector:
             return [];
