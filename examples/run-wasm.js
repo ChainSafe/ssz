@@ -1,8 +1,5 @@
-
 const crypto = require('crypto');
-const wasm = require('../wasm.js');
-
-
+const wasm = require('../src/wasm.js');
 
 const toHexString = byteArray => byteArray.reduce((acc, val) => (acc + ('0' + val.toString(16)).slice(-2)), '');
 
@@ -11,7 +8,6 @@ const emptyMessage = new Uint8Array(Buffer.from(''));
 const Message = new Uint8Array(Buffer.from('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'));
 
 const aMessage = new Uint8Array([97,98,99]);
-
 const randomMessage2048 = new Uint8Array(crypto.randomBytes(2048));
 const randomMessage16384 = new Uint8Array(crypto.randomBytes(16384));
 
@@ -21,12 +17,8 @@ const emptymessage = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, emptyMe
 const randomessage2048 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, randomMessage2048));
 const randomessage16384 = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, randomMessage16384));
 
-// durty bench
-// as (wasm):        31.311ms
-// js (fast-sha256): 55.831ms
 
 console.time('as (wasm)');
-
   const messageOut = wasm.hash(message);
   const amessageOut = wasm.hash(amessage);
   const emptymessageOut = wasm.hash(emptymessage);
