@@ -206,8 +206,8 @@ export function finish(out: ArrayBuffer): void {
 
 export function digest (): Uint8Array {
   finish(out);
-  let ret = new Uint8Array(digestLength);
-  memory.copy(ret.dataStart, changetype<usize>(out), digestLength);
+  let ret = new Uint8Array(DIGEST_LENGTH);
+  memory.copy(ret.dataStart, changetype<usize>(out), DIGEST_LENGTH);
   return ret;
 }
 
