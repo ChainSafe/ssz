@@ -7,6 +7,7 @@
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$vi (func (param i32)))
  (type $FUNCSIG$iiiii (func (param i32 i32 i32 i32) (result i32)))
+ (type $FUNCSIG$i (func (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "(\00\00\00\01\00\00\00\01\00\00\00(\00\00\00a\00l\00l\00o\00c\00a\00t\00i\00o\00n\00 \00t\00o\00o\00 \00l\00a\00r\00g\00e")
@@ -51,7 +52,8 @@
  (export "clean" (func $assembly/index/clean))
  (export "update" (func $assembly/index/update))
  (export "finish" (func $assembly/index/finish))
- (export "hashMe" (func $assembly/index/hashMe))
+ (export "digest" (func $assembly/index/digest))
+ (export "hash" (func $assembly/index/hash))
  (start $start)
  (func $~lib/rt/tlsf/removeBlock (; 1 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
@@ -3319,9 +3321,43 @@
   i32.store offset=8
   local.get $0
  )
- (func $assembly/index/hashMe (; 33 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $~lib/typedarray/Uint8Array#constructor (; 33 ;) (type $FUNCSIG$i) (result i32)
+  (local $0 i32)
   (local $1 i32)
-  (local $2 i32)
+  i32.const 12
+  i32.const 3
+  call $~lib/rt/tlsf/__alloc
+  local.tee $0
+  i32.const 828
+  i32.gt_u
+  if
+   local.get $0
+   i32.const 16
+   i32.sub
+   local.tee $1
+   local.get $1
+   i32.load offset=4
+   i32.const 1
+   i32.add
+   i32.store offset=4
+  end
+  local.get $0
+  call $~lib/arraybuffer/ArrayBufferView#constructor
+ )
+ (func $assembly/index/digest (; 34 ;) (type $FUNCSIG$i) (result i32)
+  (local $0 i32)
+  global.get $assembly/index/out
+  call $assembly/index/finish
+  call $~lib/typedarray/Uint8Array#constructor
+  local.tee $0
+  i32.load offset=4
+  global.get $assembly/index/out
+  i32.const 32
+  call $~lib/memory/memory.copy
+  local.get $0
+ )
+ (func $assembly/index/hash (; 35 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  (local $1 i32)
   local.get $0
   i32.const 828
   i32.gt_u
@@ -3343,25 +3379,7 @@
   call $assembly/index/update
   global.get $assembly/index/out
   call $assembly/index/finish
-  i32.const 12
-  i32.const 3
-  call $~lib/rt/tlsf/__alloc
-  local.tee $1
-  i32.const 828
-  i32.gt_u
-  if
-   local.get $1
-   i32.const 16
-   i32.sub
-   local.tee $2
-   local.get $2
-   i32.load offset=4
-   i32.const 1
-   i32.add
-   i32.store offset=4
-  end
-  local.get $1
-  call $~lib/arraybuffer/ArrayBufferView#constructor
+  call $~lib/typedarray/Uint8Array#constructor
   local.tee $1
   i32.load offset=4
   global.get $assembly/index/out
@@ -3371,7 +3389,7 @@
   call $~lib/rt/pure/__release
   local.get $1
  )
- (func $start (; 34 ;) (type $FUNCSIG$v)
+ (func $start (; 36 ;) (type $FUNCSIG$v)
   i32.const 128
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/buffer
@@ -3382,7 +3400,7 @@
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/index/out
  )
- (func $~lib/rt/pure/__visit (; 35 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/pure/__visit (; 37 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   local.get $0
   i32.const 828
   i32.lt_u
@@ -3452,7 +3470,7 @@
    call $~lib/rt/pure/collectWhite
   end
  )
- (func $~lib/rt/__visit_members (; 36 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/__visit_members (; 38 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   block $block$4$break
    block $switch$1$default
     block $switch$1$case$2
@@ -3475,7 +3493,7 @@
    call $~lib/rt/pure/__visit
   end
  )
- (func $null (; 37 ;) (type $FUNCSIG$v)
+ (func $null (; 39 ;) (type $FUNCSIG$v)
   nop
  )
 )

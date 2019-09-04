@@ -8,6 +8,7 @@
  (type $FUNCSIG$viii (func (param i32 i32 i32)))
  (type $FUNCSIG$vi (func (param i32)))
  (type $FUNCSIG$iiiii (func (param i32 i32 i32 i32) (result i32)))
+ (type $FUNCSIG$i (func (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
  (data (i32.const 8) "\1e\00\00\00\01\00\00\00\01\00\00\00\1e\00\00\00~\00l\00i\00b\00/\00r\00t\00/\00t\00l\00s\00f\00.\00t\00s\00")
@@ -58,7 +59,8 @@
  (export "clean" (func $assembly/index/clean))
  (export "update" (func $assembly/index/update))
  (export "finish" (func $assembly/index/finish))
- (export "hashMe" (func $assembly/index/hashMe))
+ (export "digest" (func $assembly/index/digest))
+ (export "hash" (func $assembly/index/hash))
  (start $start)
  (func $~lib/rt/tlsf/removeBlock (; 1 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
@@ -4351,15 +4353,7 @@
   local.get $0
   call $~lib/rt/pure/__release
  )
- (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 38 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  local.get $0
-  i32.load offset=8
- )
- (func $~lib/typedarray/Uint8Array#get:length (; 39 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  local.get $0
-  call $~lib/arraybuffer/ArrayBufferView#get:byteLength
- )
- (func $~lib/arraybuffer/ArrayBufferView#constructor (; 40 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/arraybuffer/ArrayBufferView#constructor (; 38 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -4430,7 +4424,7 @@
   i32.store offset=8
   local.get $0
  )
- (func $~lib/typedarray/Uint8Array#constructor (; 41 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/typedarray/Uint8Array#constructor (; 39 ;) (type $FUNCSIG$iii) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   if (result i32)
    local.get $0
@@ -4446,7 +4440,30 @@
   local.set $0
   local.get $0
  )
- (func $assembly/index/hashMe (; 42 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/index/digest (; 40 ;) (type $FUNCSIG$i) (result i32)
+  (local $0 i32)
+  global.get $assembly/index/out
+  call $assembly/index/finish
+  i32.const 0
+  global.get $assembly/index/DIGEST_LENGTH
+  call $~lib/typedarray/Uint8Array#constructor
+  local.set $0
+  local.get $0
+  i32.load offset=4
+  global.get $assembly/index/out
+  global.get $assembly/index/DIGEST_LENGTH
+  call $~lib/memory/memory.copy
+  local.get $0
+ )
+ (func $~lib/arraybuffer/ArrayBufferView#get:byteLength (; 41 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  i32.load offset=8
+ )
+ (func $~lib/typedarray/Uint8Array#get:length (; 42 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  local.get $0
+  call $~lib/arraybuffer/ArrayBufferView#get:byteLength
+ )
+ (func $assembly/index/hash (; 43 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   local.get $0
@@ -4474,13 +4491,13 @@
   call $~lib/rt/pure/__release
   local.get $2
  )
- (func $start (; 43 ;) (type $FUNCSIG$v)
+ (func $start (; 44 ;) (type $FUNCSIG$v)
   call $start:assembly/index
  )
- (func $~lib/array/Array<u32>#__visit_impl (; 44 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/array/Array<u32>#__visit_impl (; 45 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   nop
  )
- (func $~lib/rt/pure/__visit (; 45 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/pure/__visit (; 46 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
@@ -4610,7 +4627,7 @@
    end
   end
  )
- (func $~lib/rt/__visit_members (; 46 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
+ (func $~lib/rt/__visit_members (; 47 ;) (type $FUNCSIG$vii) (param $0 i32) (param $1 i32)
   (local $2 i32)
   block $block$4$break
    block $switch$1$default
@@ -4644,6 +4661,6 @@
   end
   return
  )
- (func $null (; 47 ;) (type $FUNCSIG$v)
+ (func $null (; 48 ;) (type $FUNCSIG$v)
  )
 )

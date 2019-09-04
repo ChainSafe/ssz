@@ -1,16 +1,36 @@
 {
+  "name": "@chainsafe/as-sha256",
+  "version": "0.1.0",
+  "description": "An Assemlby Script implementation of SHA256",
+  "author": "ChainSafe Systems",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ChainSafe/sha256-as/issues"
+  },
+  "homepage": "https://github.com/ChainSafe/sha256-as#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chainsafe/sha256-as.git"
+  },
+  "main": "src/index.js",
+  "types": "src/index.d.js",
+  "scripts": {
+    "prebuild": "rm -rf ./dist",
+    "build": "yarn asbuild:untouched && yarn asbuild:optimized",
+    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime full --validate --debug",
+    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime full --validate -O3 --noAssert",
+    "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
+    "test": "yarn test:as",
+    "test:ci": "yarn test:as-ci",
+    "test:as": "asp --nortrace --verbose",
+    "test:as-ci": "asp --nortrace 2> /dev/null"
+  },
   "devDependencies": {
     "@as-pect/assembly": "2.3.1",
     "@as-pect/cli": "2.3.1",
     "@as-pect/core": "2.3.1",
     "assemblyscript": "github:AssemblyScript/assemblyscript",
-    "fast-sha256": "^1.1.0"
-  },
-  "scripts": {
-    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime full --validate --debug",
-    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime full --validate -O3 --noAssert",
-    "build": "yarn asbuild:untouched && yarn asbuild:optimized",
-    "test": "asp --verbose",
-    "test:ci": "asp 2> /dev/null"
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
   }
 }
