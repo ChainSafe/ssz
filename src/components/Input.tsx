@@ -1,5 +1,5 @@
 import * as React from "react";
-import {names, types} from "../util/types";
+import {presets, typeNames, PresetName} from "../util/types";
 import {AnySSZType} from "@chainsafe/ssz";
 import {createRandomValue} from "../util/random";
 import {ChangeEvent} from "react";
@@ -7,22 +7,28 @@ import {inputTypes} from "../util/input_types";
 
 
 type Props = {
-    onProcess: (name: string, input: any, type: AnySSZType) => void
+    onProcess: (presetName: PresetName, name: string, input: any, type: AnySSZType) => void
 }
 
 type State = {
+    presetName: PresetName;
     sszTypeName: string;
     input: string;
     inputType: string;
 }
 
+const DEFAULT_PRESET = "mainnet";
+
 export default class Input extends React.Component<Props, State> {
 
     constructor(props: any) {
         super(props);
+        const types = presets[DEFAULT_PRESET];
+        const names = typeNames(types);
         const initialType = names[Math.floor(Math.random() * names.length)];
         const sszType = types[initialType];
         this.state = {
+            presetName: DEFAULT_PRESET,
             input: inputTypes.yaml.dump(createRandomValue(sszType), sszType),
             sszTypeName: initialType,
             inputType: 'yaml',
@@ -39,15 +45,27 @@ export default class Input extends React.Component<Props, State> {
         )
     }
 
+    names() {
+      return typeNames(this.types());
+    }
+    types() {
+      return presets[this.state.presetName];
+    }
     parsedInput() {
-        return inputTypes[this.state.inputType].parse(this.state.input, types[this.state.sszTypeName]);
+        return inputTypes[this.state.inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
     }
 
     resetWith(inputType: string, sszTypeName: string) {
-        const sszType = types[sszTypeName];
+        const sszType = this.types()[sszTypeName];
         const value = createRandomValue(sszType);
         const input = inputTypes[inputType].dump(value, sszType);
         this.setState({inputType, sszTypeName, input});
+    }
+
+    setPreset(e: ChangeEvent<HTMLSelectElement>) {
+        this.setState({presetName: e.target.value as PresetName}, () => {
+          this.resetWith(this.state.inputType, this.state.sszTypeName);
+        });
     }
 
     setInputType(e: ChangeEvent<HTMLSelectElement>) {
@@ -63,7 +81,7 @@ export default class Input extends React.Component<Props, State> {
     }
 
     doProcess() {
-        this.props.onProcess(this.state.sszTypeName, this.parsedInput(), types[this.state.sszTypeName])
+        this.props.onProcess(this.state.presetName, this.state.sszTypeName, this.parsedInput(), this.types()[this.state.sszTypeName])
     }
 
     render() {
@@ -72,6 +90,25 @@ export default class Input extends React.Component<Props, State> {
                 <h3 className='subtitle'>Input</h3>
                 <div className="field is-horizontal">
                     <div className="field-body">
+                        <div className='field has-addons'>
+                            <div className='control'>
+                                <a className='button is-static'>
+                                    Preset
+                                </a>
+                            </div>
+                            <div className='control'>
+                                <div className='select'>
+                                    <select
+                                        value={this.state.presetName}
+                                        onChange={this.setPreset.bind(this)}>
+                                        {
+                                            Object.keys(presets).map(
+                                                (name) => <option key={name} value={name}>{name}</option>)
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div className='field has-addons'>
                             <div className='control'>
                                 <a className='button is-static'>
@@ -84,7 +121,7 @@ export default class Input extends React.Component<Props, State> {
                                         value={this.state.sszTypeName}
                                         onChange={this.setSSZType.bind(this)}>
                                         {
-                                            names.map(
+                                            this.names().map(
                                                 (name) => <option key={name} value={name}>{name}</option>)
                                         }
                                     </select>
