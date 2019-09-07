@@ -11,13 +11,14 @@ import {
     Type,
     UintType,
     VectorType,
+    AnySSZType,
 } from "@chainsafe/ssz";
 import BN from "bn.js";
-import {types, typeName} from "../util/types";
+import {presets, typeName, PresetName} from "../util/types";
 
-const getTypeName = (typ: FullSSZType): string => typeNames[typ.type](typ);
+const getTypeName = (typ: FullSSZType, types: Record<string, AnySSZType>): string => typeNames[typ.type](typ, types);
 
-type TypeNameRecords = Record<Type, (t: FullSSZType) => string>
+type TypeNameRecords = Record<Type, (t: FullSSZType, types: Record<string, AnySSZType>) => string>
 
 const typeNames: TypeNameRecords = {
     [Type.bool]: (t) => "bool",
@@ -26,9 +27,9 @@ const typeNames: TypeNameRecords = {
     [Type.bitVector]: (t) => `BitVector[${(t as BitVectorType).length}]`,
     [Type.byteList]: (t) => "Bytes",
     [Type.byteVector]: (t) => `BytesN[${(t as ByteVectorType).length}]`,
-    [Type.vector]: (t) => `Vector[${getTypeName((t as VectorType).elementType)}, ${(t as VectorType).length}]`,
-    [Type.list]: (t) => `List[${getTypeName((t as ListType).elementType)}]`,
-    [Type.container]: (t) => `${typeName(t, types)}(Container)`,
+    [Type.vector]: (t, types) => `Vector[${getTypeName((t as VectorType).elementType, types)}, ${(t as VectorType).length}]`,
+    [Type.list]: (t, types) => `List[${getTypeName((t as ListType).elementType, types)}]`,
+    [Type.container]: (t, types) => `${typeName(t, types)}(Container)`,
 };
 
 const getKind = (typ: FullSSZType): string => typeKindNames[typ.type];
@@ -36,6 +37,8 @@ const getKind = (typ: FullSSZType): string => typeKindNames[typ.type];
 const typeKindNames = {
     [Type.bool]: "bool",
     [Type.uint]: "uint",
+    [Type.bitList]: "BitList",
+    [Type.bitVector]: "BitVector",
     [Type.byteList]: "Bytes",
     [Type.byteVector]: "BytesN",
     [Type.vector]: "Vector",
@@ -58,6 +61,7 @@ type NodeProps = {
 }
 
 type Props = {
+    presetName: PresetName;
     input: any;
     sszType: FullSSZType;
 }
@@ -159,6 +163,8 @@ export default class TreeView extends React.Component<Props, State> {
     }
 
     render() {
+        const {presetName} = this.props;
+        const types = presets[presetName as keyof typeof presets];
         const {rootNode, selectedNode} = this.state;
         return (
             <div className='container'>
@@ -172,7 +178,7 @@ export default class TreeView extends React.Component<Props, State> {
                                         sszNode: rootNode,
                                         isBatch: !isBottomType(rootNode.type),
                                         isListKey: false,
-                                        text: getTypeName(rootNode.type),
+                                        text: getTypeName(rootNode.type, types),
                                         expanded: false,
                                     })}
                                     theme={["ssz-tree"]}
@@ -186,7 +192,7 @@ export default class TreeView extends React.Component<Props, State> {
                                             sszNode: n,
                                             isBatch: !isBottomType(n.type),
                                             isListKey: node.sszNode.type.type == Type.list || node.sszNode.type.type == Type.vector,
-                                            text: getTypeName(n.type),
+                                            text: getTypeName(n.type, types),
                                             typeWidth: 0,
                                             keyWidth: 0,
                                             expanded: false,

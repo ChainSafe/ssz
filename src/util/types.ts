@@ -1,10 +1,18 @@
-import {AnySSZType} from "@chainsafe/ssz";
 import deepEqual from "deep-equal";
+import {AnySSZType} from "@chainsafe/ssz";
+import {types as mainnetTypes} from "@chainsafe/eth2.0-ssz-types/lib/presets/mainnet";
+import {types as minimalTypes} from "@chainsafe/eth2.0-ssz-types/lib/presets/minimal";
 
-import {types as rawTypes} from '../types';
+export const presets = {
+  mainnet: mainnetTypes as unknown as Record<string, AnySSZType>,
+  minimal: minimalTypes as unknown as Record<string, AnySSZType>,
+} as const;
 
-export const names = Object.keys(rawTypes).sort();
-export const types = rawTypes as unknown as Record<string, AnySSZType>;
+export type PresetName = keyof typeof presets;
+
+export function typeNames(types: Record<string, AnySSZType>): string[] {
+  return Object.keys(types).sort();
+}
 
 export function typeName(type: AnySSZType, types: Record<string, AnySSZType>): string {
   for (const [name, typ] of Object.entries(types)) {
