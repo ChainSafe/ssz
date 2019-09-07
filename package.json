@@ -14,6 +14,10 @@
     },
     "main": "lib/index.js",
     "types": "lib/index.d.js",
+    "files": [
+        "lib",
+        "build"
+    ],
     "scripts": {
         "prebuild": "rm -rf ./dist",
         "prepublish": "yarn build",
