@@ -32,9 +32,9 @@ console.time('as (wasm)');
   }
 
 console.timeEnd('as (wasm)');
-console.log(toHexString(wasm.__getArray(messageOut)), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');
-console.log(toHexString(wasm.__getArray(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
-console.log(toHexString(wasm.__getArray(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+console.log(toHexString(wasm.__getUint8Array(messageOut)), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');
+console.log(toHexString(wasm.__getUint8Array(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
+console.log(toHexString(wasm.__getUint8Array(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
 
 const h = sha.default(testString);
 console.log(toHexString(h), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');

@@ -12,6 +12,7 @@ export default function sha256(message) {
   const pointer = wasm.hash(arr);
   const result = wasm.__getArray(pointer)
   wasm.__release(arr);
+  wasm.__release(result);
   return result;
 }
 
