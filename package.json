@@ -12,13 +12,15 @@
         "type": "git",
         "url": "git+https://github.com/chainsafe/sha256-as.git"
     },
-    "main": "src/index.js",
-    "types": "src/index.d.js",
+    "main": "lib/index.js",
+    "types": "lib/index.d.js",
     "scripts": {
         "prebuild": "rm -rf ./dist",
-        "build": "yarn asbuild:untouched && yarn asbuild:optimized",
+        "prepublish": "yarn build",
+        "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
         "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime full --validate --debug",
         "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime full --validate -O3 --noAssert",
+        "build:lib": "babel src -d lib",
         "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
         "test": "yarn test:as",
         "test:ci": "yarn test:as-ci",
@@ -26,12 +28,15 @@
         "test:as-ci": "asp --nortrace 2> /dev/null"
     },
     "dependencies": {
-        "assemblyscript": "github:AssemblyScript/assemblyscript"
+        "assemblyscript": "https://github.com/AssemblyScript/assemblyscript.git"
     },
     "devDependencies": {
         "@as-pect/assembly": "2.3.1",
         "@as-pect/cli": "2.3.1",
         "@as-pect/core": "2.3.1",
+        "@babel/cli": "^7.6.0",
+        "@babel/core": "^7.6.0",
+        "@babel/preset-env": "^7.6.0",
         "webpack": "^4.39.3",
         "webpack-cli": "^3.3.7"
     }

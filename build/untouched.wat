@@ -4111,10 +4111,6 @@
   i32.add
   local.get $1
   call $~lib/memory/memory.copy
-  local.get $5
-  local.get $1
-  i32.add
-  local.set $5
   global.get $assembly/index/bufferLength
   local.get $1
   i32.add
