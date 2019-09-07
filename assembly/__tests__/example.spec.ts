@@ -5,11 +5,14 @@ function toHexString(bin: Uint8Array): string {
   let bin_len = bin.length;
   let hex = "";
   for (let i = 0; i < bin_len; i++) {
-      let bin_i = bin[i] as u32;
-      let c = bin_i & 0xf;
-      let b = bin_i >> 4;
-      let x: u16 = ((87 + c + (((c - 10) >> 8) & ~38)) << 8) | (87 + b + (((b - 10) >> 8) & ~38));
-      hex += String.fromCharCode(x & 0xFF, x >> 8);
+    let bin_i = bin[i] as u32;
+    let c = bin_i & 0xf;
+    let b = bin_i >> 4;
+    let x: u32 = ((87 + c + (((c - 10) >> 8) & ~38)) << 8) |
+        (87 + b + (((b - 10) >> 8) & ~38));
+    hex += String.fromCharCode(x as u8);
+    x >>= 8;
+    hex += String.fromCharCode(x as u8);
   }
   return hex;
 }
