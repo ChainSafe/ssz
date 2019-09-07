@@ -7,9 +7,12 @@ import wasm from "./wasm";
  */
 export default function sha256(message) {
   // @ts-ignore
-  const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
-  const result = wasm.hash(arr);
+  const buf = new Uint8Array(Buffer.from(message));
+  const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buf));
+  const pointer = wasm.hash(arr);
+  const result = wasm.__getArray(pointer)
   wasm.__release(arr);
+  wasm.__release(result);
   return result;
 }
 

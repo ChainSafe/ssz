@@ -1,11 +1,13 @@
 const crypto = require('crypto');
 const wasm = require('../src/wasm.js');
+const sha = require('../lib/index.js');
 
 const toHexString = byteArray => byteArray.reduce((acc, val) => (acc + ('0' + val.toString(16)).slice(-2)), '');
 
 const emptyMessage = new Uint8Array(Buffer.from(''));
 
-const Message = new Uint8Array(Buffer.from('Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'));
+const testString = 'testi';
+const Message = new Uint8Array(Buffer.from(testString));
 
 const aMessage = new Uint8Array([97,98,99]);
 const randomMessage2048 = new Uint8Array(crypto.randomBytes(2048));
@@ -30,6 +32,9 @@ console.time('as (wasm)');
   }
 
 console.timeEnd('as (wasm)');
-console.log(toHexString(wasm.__getArray(messageOut)), '7321348c8894678447b54c888fdbc4e4b825bf4d1eb0cfb27874286a23ea9fd2');
-console.log(toHexString(wasm.__getArray(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
-console.log(toHexString(wasm.__getArray(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+console.log(toHexString(wasm.__getUint8Array(messageOut)), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');
+console.log(toHexString(wasm.__getUint8Array(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
+console.log(toHexString(wasm.__getUint8Array(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+
+const h = sha.default(testString);
+console.log(toHexString(h), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');
