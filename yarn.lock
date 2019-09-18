@@ -960,16 +960,16 @@ asn1.js@^4.0.0:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
 
-"assemblyscript@https://github.com/AssemblyScript/assemblyscript.git":
+"assemblyscript@https://github.com/AssemblyScript/assemblyscript.git#5b510571f6ebfc5530d85412005059e4cf961a97":
   version "0.7.0"
-  resolved "https://github.com/AssemblyScript/assemblyscript.git#e7d478603f04b4c11cdfb75a648a331b890ecf9a"
+  resolved "https://github.com/AssemblyScript/assemblyscript.git#5b510571f6ebfc5530d85412005059e4cf961a97"
   dependencies:
     "@protobufjs/utf8" "^1.1.0"
-    binaryen "87.0.0-nightly.20190716"
+    binaryen "89.0.0-nightly.20190914"
     glob "^7.1.4"
     long "^4.0.0"
     opencollective-postinstall "^2.0.0"
-    source-map-support "^0.5.12"
+    source-map-support "^0.5.13"
 
 assert@^1.1.1:
   version "1.5.0"
@@ -1034,10 +1034,10 @@ binary-extensions@^1.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.13.1.tgz#598afe54755b2868a5330d2aff9d4ebb53209b65"
   integrity sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==
 
-binaryen@87.0.0-nightly.20190716:
-  version "87.0.0-nightly.20190716"
-  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-87.0.0-nightly.20190716.tgz#5aaad26885c53cfac3163d21592cea46e3ed5c64"
-  integrity sha512-qRGfV8cLV4HVVo1oUCtTaDmOhbwctaW7vyW0G6HKftywWOJI9t9IsCrUEFKya50RqyEnanuS2w3nfOg4bxTGqg==
+binaryen@89.0.0-nightly.20190914:
+  version "89.0.0-nightly.20190914"
+  resolved "https://registry.yarnpkg.com/binaryen/-/binaryen-89.0.0-nightly.20190914.tgz#5878787f140123fc564fb94011f4d2d2db2fe95e"
+  integrity sha512-pfGX5IwPguli8IPuPjjcCYriZ2CzoEuk0XE70g6bmibZfieDUoK7miEq0FlPLNixL+n8vvyjRSPK5NtMuCcqNg==
 
 bluebird@^3.5.5:
   version "3.5.5"
@@ -3376,7 +3376,7 @@ source-map-resolve@^0.5.0:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
-source-map-support@^0.5.12, source-map-support@~0.5.12:
+source-map-support@^0.5.13, source-map-support@~0.5.12:
   version "0.5.13"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.13.tgz#31b24a9c2e73c2de85066c0feb7d44767ed52932"
   integrity sha512-SHSKFHadjVA5oR4PPqhtAVdcBWwRYVd6g6cAXnIbRiIwc2EhPrTuKUBdSLvlEKyIP3GCf89fltvcZiP9MMFA1w==
