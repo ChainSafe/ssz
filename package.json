@@ -13,7 +13,7 @@
         "url": "git+https://github.com/chainsafe/sha256-as.git"
     },
     "main": "lib/index.js",
-    "types": "lib/index.d.js",
+    "types": "lib/index.d.ts",
     "files": [
         "lib",
         "build"
@@ -24,7 +24,7 @@
         "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
         "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime full --validate --debug",
         "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime full --validate -O3 --noAssert",
-        "build:lib": "babel src -d lib",
+        "build:lib": "babel src -d lib --copy-files",
         "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
         "test": "yarn test:as",
         "test:ci": "yarn test:as-ci",
@@ -32,7 +32,7 @@
         "test:as-ci": "asp --nortrace 2> /dev/null"
     },
     "dependencies": {
-        "assemblyscript": "https://github.com/AssemblyScript/assemblyscript.git"
+        "assemblyscript": "https://github.com/AssemblyScript/assemblyscript.git#5b510571f6ebfc5530d85412005059e4cf961a97"
     },
     "devDependencies": {
         "@as-pect/assembly": "2.3.1",
