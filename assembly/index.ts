@@ -200,7 +200,7 @@ export function finish(out: ArrayBuffer): void {
   store32(outPtr, 7, bswap(H7));
 }
 
-export function digest (): Uint8Array {
+export function digest(): Uint8Array {
   finish(out);
   let ret = new Uint8Array(DIGEST_LENGTH);
   memory.copy(ret.dataStart, changetype<usize>(out), DIGEST_LENGTH);
