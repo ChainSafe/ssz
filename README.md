@@ -35,17 +35,18 @@ const hash = sha256(message);
 
 We also expose the lower level WASM exports for those that may wish to use it. It can be accessed as follows:
 ```JS
-import sha256, {wasm} from "@chainsafe/sha256"
+import { wasm } from "@chainsafe/sha256"
 
 const buffer = Buffer.from("Hello world");
-const array = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buffer));
-const message = wasm.sha256(array)
+const input  = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buffer));
+const result = wasm.hash(input);
+const output = wasm.__getUint8Array(result);
 
 // To prevent memory leaks
 wasm.__release(array);
-wasm.__release(message);
+wasm.__release(result);
 
-console.log(toHexString(wasm.__getUint8Array(message)));
+console.log(toHexString(output));
 ```
 
 ### License
