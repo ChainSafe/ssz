@@ -20,6 +20,6 @@ export const inputTypes: InputTypeRecord = {
     },
     ssz: {
         parse: (raw, type) => deserialize(expandByteArray(raw), type),
-        dump: (value, type) => '0x' + serialize(expandInput(value, parseType(type), false), type).toString('hex'),
+        dump: (value, type) => '0x' + serialize(value, type).toString('hex'),
     },
 };
