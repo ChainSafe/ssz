@@ -2,4 +2,4 @@
  * @module types
  */
 
-export * from "@chainsafe/eth2.0-ssz-types/lib/presets/mainnet"
+export * from "@chainsafe/eth2.0-types/lib/ssz/presets/mainnet"

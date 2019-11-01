@@ -51,9 +51,9 @@ export function unexpandInput(input: any, type: FullSSZType, intToStr: boolean):
         case Type.bool:
             return Boolean(input);
         case Type.bitList:
-            return "0x" + input.serialize().toString('hex');
+            return "0x" + Buffer.from(input.serialize()).toString('hex');
         case Type.bitVector:
-            return "0x" + input.toBitfield().toString('hex');
+            return "0x" + Buffer.from(input.toBitfield()).toString('hex');
         case Type.byteList:
         case Type.byteVector:
             return "0x" + input.toString('hex');

@@ -1,7 +1,7 @@
 import deepEqual from "deep-equal";
 import {AnySSZType} from "@chainsafe/ssz";
-import {types as mainnetTypes} from "@chainsafe/eth2.0-ssz-types/lib/presets/mainnet";
-import {types as minimalTypes} from "@chainsafe/eth2.0-ssz-types/lib/presets/minimal";
+import {types as mainnetTypes} from "@chainsafe/eth2.0-types/lib/ssz/presets/mainnet";
+import {types as minimalTypes} from "@chainsafe/eth2.0-types/lib/ssz/presets/minimal";
 
 export const presets = {
   mainnet: mainnetTypes as unknown as Record<string, AnySSZType>,
