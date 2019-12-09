@@ -1,7 +1,19 @@
-const fs = require("fs");
 const loader = require("assemblyscript/lib/loader");
-const compiled = new WebAssembly.Module(fs.readFileSync(__dirname + "/../build/optimized.wasm"));
+const wasmBuildLocation = "../build/optimized.wasm";
 const imports = {};
-Object.defineProperty(module, "exports", {
-    get: () => loader.instantiate(compiled, imports)
-});
+
+export async function wasmInit() {
+    try {
+        //nodejs
+        const fs = require("fs");
+        return loader.instantiate(
+            new WebAssembly.Module(
+                fs.readFileSync(__dirname + "/" + wasmBuildLocation)
+            )
+            , imports
+        );
+    } catch (e) {
+        //browser
+        return await loader.instantiateStreaming(fetch(wasmBuildLocation), imports)
+    }
+}

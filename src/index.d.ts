@@ -1,3 +1,6 @@
+
+export function initSha256(): Promise<void>;
+
 /**
  * Wraps the AssemblyScript build in a JS function.
  * This allows users to not have to make AS a dependency in their project.
