@@ -6,7 +6,7 @@ export function initSha256(): Promise<void>;
  * This allows users to not have to make AS a dependency in their project.
  * @param {Uint8Array} message Message to hash
  */
-declare function sha256(message: Uint8Array): Uint8Array;
+export function sha256(message: Uint8Array): Uint8Array;
 
 export declare function clean(): void;
 

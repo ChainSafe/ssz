@@ -1,5 +1,4 @@
 const {initSha256, sha256} = require("../src");
-const assert = require("assert");
 const {expect} = require("chai");
 
 describe("sha256", function () {
