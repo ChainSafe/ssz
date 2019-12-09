@@ -2,15 +2,8 @@ module.exports = function (config) {
     config.set({
         frameworks: ['mocha', 'chai'],
         files: [
-            {pattern: 'build/*.wasm', included: false, served: true, type: 'wasm'},
             'test/index.spec.js'
         ],
-        proxies: {
-            '/build/': '/base/build/'
-        },
-        mime: {
-            'application/wasm': ['wasm']
-        },
         preprocessors: {
             'test/index.spec.js': ['webpack']
         },
@@ -22,11 +15,6 @@ module.exports = function (config) {
                         test: /\.js?$/,
                         exclude: /node_modules/,
                         loader: 'babel-loader',
-                    },
-                    {
-                        test: /\.wasm$/,
-                        type: 'javascript/auto',
-                        loader: 'file-loader',
                     },
                 ]
             },

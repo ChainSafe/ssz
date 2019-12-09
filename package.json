@@ -50,7 +50,6 @@
         "assert": "^2.0.0",
         "babel-loader": "^8.0.6",
         "chai": "^4.2.0",
-        "file-loader": "^5.0.2",
         "karma": "^4.4.1",
         "karma-babel-preprocessor": "^8.0.1",
         "karma-chai": "^0.1.0",
