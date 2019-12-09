@@ -35,7 +35,8 @@
         "test:as-ci": "asp --nortrace 2> /dev/null"
     },
     "dependencies": {
-        "assemblyscript": "0.8.1"
+        "assemblyscript": "0.8.1",
+        "buffer": "^5.4.3"
     },
     "devDependencies": {
         "@as-pect/assembly": "2.6.0",
