@@ -50,7 +50,7 @@ export function update(data, length) {
 export function digest() {
   checkInit();
   const digestPointer = wasm.digest();
-  const digest = wasm.__getUint8Array(digestPointer);
+  const digest = wasm.__getUint8Array(digestPointer).slice();
   wasm.__release(digestPointer);
   return digest;
 }
