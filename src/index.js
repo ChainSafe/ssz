@@ -22,7 +22,7 @@ export function sha256(message) {
   checkInit();
   const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
   const pointer = wasm.hash(arr);
-  const result = wasm.__getUint8Array(pointer);
+  const result = wasm.__getUint8Array(pointer).slice();
   wasm.__release(arr);
   wasm.__release(pointer);
   return result;
