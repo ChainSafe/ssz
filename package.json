@@ -35,16 +35,17 @@
         "test:as-ci": "asp --nortrace 2> /dev/null"
     },
     "dependencies": {
-        "assemblyscript": "https://github.com/AssemblyScript/assemblyscript.git#5b510571f6ebfc5530d85412005059e4cf961a97"
+        "assemblyscript": "0.8.1"
     },
     "devDependencies": {
-        "@as-pect/assembly": "2.3.1",
-        "@as-pect/cli": "2.3.1",
-        "@as-pect/core": "2.3.1",
+        "@as-pect/assembly": "2.6.0",
+        "@as-pect/cli": "2.6.0",
+        "@as-pect/core": "2.6.0",
         "@babel/cli": "^7.6.0",
         "@babel/core": "^7.6.0",
         "@babel/preset-env": "^7.6.0",
         "@babel/register": "^7.7.4",
+        "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
         "assert": "^2.0.0",
         "babel-loader": "^8.0.6",
         "chai": "^4.2.0",

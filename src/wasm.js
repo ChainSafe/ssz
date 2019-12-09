@@ -1,19 +1,13 @@
 const loader = require("assemblyscript/lib/loader");
-const wasmBuildLocation = "../build/optimized.wasm";
-const imports = {};
+import wasmCode from "../build/optimized.wasm";
+import {Buffer} from "buffer";
 
 export async function wasmInit() {
-    try {
-        //nodejs
-        const fs = require("fs");
-        return loader.instantiate(
-            new WebAssembly.Module(
-                fs.readFileSync(__dirname + "/" + wasmBuildLocation)
-            )
-            , imports
-        );
-    } catch (e) {
-        //browser
-        return await loader.instantiateStreaming(fetch(wasmBuildLocation), imports)
-    }
+    const module = await WebAssembly.compile(
+        Buffer.from(
+            wasmCode,
+            'binary'
+        )
+    );
+    return loader.instantiate(module, {});
 }
