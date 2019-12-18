@@ -12,5 +12,4 @@ install: yarn
 jobs:
     include:
         - stage: Test
-          name: Aspect
-          script: yarn test:as-ci
+          script: yarn run test

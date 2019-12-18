@@ -1,4 +1,24 @@
 {
-    "presets": ["@babel/preset-env"]
+    "presets": [
+        [
+            "@babel/env",
+            {
+                "targets": {
+                    "node": "8",
+                    "browsers": ">1%, not ie 11"
+                },
+                "exclude": [
+                    "transform-regenerator"
+                ]
+            }
+        ]
+    ],
+    "plugins": [
+        ["@chainsafe/babel-plugin-inline-binary-import", {
+            "extensions": [
+                ".wasm"
+            ]
+        }]
+    ]
 }
 
