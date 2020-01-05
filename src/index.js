@@ -1,6 +1,6 @@
-const {wasmInit}  = require("./wasm");
+const {wasmInit} = require("./wasm");
 
-let wasm;
+let wasm = null;
 
 /**
  * Use this method to initialize wasm build.
@@ -8,9 +8,7 @@ let wasm;
  * before using any other method.
  */
 export async function initSha256() {
-  if(!wasm) {
-    wasm = await wasmInit();
-  }
+  if(!wasm) wasm = await wasmInit();
 }
 
 /**
@@ -20,11 +18,11 @@ export async function initSha256() {
  */
 export function sha256(message) {
   checkInit();
-  const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
-  const pointer = wasm.hash(arr);
-  const result = wasm.__getUint8Array(pointer).slice();
-  wasm.__release(arr);
-  wasm.__release(pointer);
+  const input  = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
+  const output = wasm.hash(input);
+  const result = wasm.__getUint8Array(output).slice();
+  wasm.__release(output);
+  wasm.__release(input);
   return result;
 }
 
@@ -42,21 +40,19 @@ export function init() {
 
 export function update(data, length) {
   checkInit();
-  const arr = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, data));
-  wasm.update(arr, length);
-  wasm.__release(arr);
+  const input = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, data));
+  wasm.update(input, length);
+  wasm.__release(input);
 }
 
 export function digest() {
   checkInit();
-  const digestPointer = wasm.digest();
-  const digest = wasm.__getUint8Array(digestPointer).slice();
-  wasm.__release(digestPointer);
+  const output = wasm.digest();
+  const digest = wasm.__getUint8Array(output).slice();
+  wasm.__release(output);
   return digest;
 }
 
 function checkInit() {
-  if(!wasm) {
-    throw new Error("Please call 'initSha256' before using other methods");
-  }
+  if(!wasm) throw new Error("Please call 'initSha256' before using other methods");
 }

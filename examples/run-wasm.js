@@ -4,7 +4,7 @@ const sha = require('../lib/index.js');
 
 const toHexString = byteArray => byteArray.reduce((acc, val) => (acc + ('0' + val.toString(16)).slice(-2)), '');
 
-const emptyMessage = new Uint8Array(Buffer.from(''));
+const emptyMessage = new Uint8Array(0);
 
 const testString = 'testi';
 const Message = new Uint8Array(Buffer.from(testString));
@@ -30,11 +30,21 @@ console.time('as (wasm)');
   for (let i = 0; i < 100; i++) {
     wasm.hash(randomessage16384);
   }
-
 console.timeEnd('as (wasm)');
+
 console.log(toHexString(wasm.__getUint8Array(messageOut)), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');
 console.log(toHexString(wasm.__getUint8Array(amessageOut)), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
 console.log(toHexString(wasm.__getUint8Array(emptymessageOut)), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
 
 const h = sha.default(testString);
 console.log(toHexString(h), '26e19f2b4dd93a3a7c49c3e785ec8932550af6aa6bea13078672a8c81508f18e');
+
+wasm.__release(messageOut);
+wasm.__release(amessageOut);
+wasm.__release(emptymessageOut);
+
+wasm.__release(message);
+wasm.__release(amessage);
+wasm.__release(emptymessage);
+wasm.__release(randomessage2048);
+wasm.__release(randomessage16384);
