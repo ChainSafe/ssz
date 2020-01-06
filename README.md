@@ -28,9 +28,7 @@ Fastest is AS-Sha256#hash
 ```JS
 import sha256 from "@chainsafe/sha256";
 
-const message = Buffer.from("Hello world");
-
-const hash = sha256(message);
+const hash = sha256(Buffer.from("Hello world"));
 ```
 
 We also expose the lower level WASM exports for those that may wish to use it. It can be accessed as follows:
@@ -39,16 +37,17 @@ import { wasm } from "@chainsafe/sha256"
 
 const buffer = Buffer.from("Hello world");
 const input  = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buffer));
-const result = wasm.hash(input);
-const output = wasm.__getUint8Array(result);
+const output = wasm.hash(input);
+const result = wasm.__getUint8Array(output);
+
+// use result before releases. Otherwise use `.slice()` for `result` for prevent modification attached buffer
+console.log(toHexString(result));
 
 // To prevent memory leaks
-wasm.__release(array);
-wasm.__release(result);
-
-console.log(toHexString(output));
+wasm.__release(input);
+wasm.__release(output);
 ```
 
 ### License
 
-LGPL-V3
+Apache 2.0
