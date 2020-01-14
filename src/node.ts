@@ -1,5 +1,5 @@
 import { hash } from "./hash";
-import { Gindex, pivot, anchor, bitLength } from "./gindex";
+import {Gindex, pivot, anchor, subIndex, gindexDepth} from "./gindex";
 
 const ERR_INVALID_TREE = "Invalid tree";
 const ERR_INVALID_GINDEX = "Invalid gindex";
@@ -131,8 +131,9 @@ export class LeafNode extends Node {
     } else if (target === 1n) {
       return identity;
     } else {
-      const child = zeroNode(bitLength(target) - 1n);
-      return (new BranchNode(child, child)).expandInto(target);
+      const childTargetIndex = subIndex(target);
+      const child = zeroNode(gindexDepth(childTargetIndex));
+      return (new BranchNode(child, child)).expandInto(childTargetIndex);
     }
   }
 }
@@ -152,18 +153,18 @@ function compose(inner: Link, outer: Link): Link {
 // zeros singleton state
 let zeroes: Node[] = [new LeafNode(Buffer.alloc(32))];
 
-export function zeroNode(depth: bigint): Node {
+export function zeroNode(depth: number): Node {
   if (depth >= zeroes.length) {
     for (let i = zeroes.length; i <= depth; i++) {
       zeroes[i] = new BranchNode(zeroes[i-1], zeroes[i-1]);
     }
   }
-  return zeroes[Number(depth)];
+  return zeroes[depth];
 }
 
 // subtree filling
 
-export function subtreeFillToDepth(bottom: Node, depth: bigint): Node {
+export function subtreeFillToDepth(bottom: Node, depth: number): Node {
   let node = bottom;
   while (depth > 0) {
     node = new BranchNode(node, node);
@@ -172,44 +173,44 @@ export function subtreeFillToDepth(bottom: Node, depth: bigint): Node {
   return node;
 }
 
-export function subtreeFillToLength(bottom: Node, depth: bigint, length: bigint): Node {
-  const maxLength = 1n << depth;
+export function subtreeFillToLength(bottom: Node, depth: number, length: number): Node {
+  const maxLength = 1 << depth;
   if (length > maxLength) throw new Error(ERR_TOO_MANY_NODES);
   else if (length === maxLength) return subtreeFillToDepth(bottom, depth);
-  else if (depth === 0n) {
-    if (length === 1n) return bottom;
+  else if (depth === 0) {
+    if (length === 1) return bottom;
     else throw new Error(ERR_NAVIGATION);
-  } else if (depth === 1n) {
-    return new BranchNode(bottom, (length > 1) ? bottom : zeroNode(0n));
+  } else if (depth === 1) {
+    return new BranchNode(bottom, (length > 1) ? bottom : zeroNode(0));
   } else {
-    const pivot = maxLength >> 1n;
+    const pivot = maxLength >> 1;
     if (length <= pivot) {
-      return new BranchNode(subtreeFillToLength(bottom, depth - 1n, length), zeroNode(depth));
+      return new BranchNode(subtreeFillToLength(bottom, depth - 1, length), zeroNode(depth));
     } else {
       return new BranchNode(
-        subtreeFillToDepth(bottom, depth - 1n),
-        subtreeFillToLength(bottom, depth - 1n, length - pivot)
+        subtreeFillToDepth(bottom, depth - 1),
+        subtreeFillToLength(bottom, depth - 1, length - pivot)
       );
     }
   }
 }
 
-export function subtreeFillToContents(nodes: Node[], depth: bigint): Node {
-  const maxLength = 1n << depth;
+export function subtreeFillToContents(nodes: Node[], depth: number): Node {
+  const maxLength = 1 << depth;
   if (nodes.length > maxLength) throw new Error(ERR_TOO_MANY_NODES);
-  else if (depth === 0n) {
+  else if (depth === 0) {
     if (nodes.length === 1) return nodes[0];
     else throw new Error(ERR_NAVIGATION);
-  } else if (depth === 1n) {
-    return new BranchNode(nodes[0], (nodes.length > 1) ? nodes[1] : zeroNode(0n));
+  } else if (depth === 1) {
+    return new BranchNode(nodes[0], (nodes.length > 1) ? nodes[1] : zeroNode(0));
   } else {
-    const pivot = maxLength >> 1n;
+    const pivot = maxLength >> 1;
     if (nodes.length <= pivot) {
-      return new BranchNode(subtreeFillToContents(nodes, depth - 1n), zeroNode(depth));
+      return new BranchNode(subtreeFillToContents(nodes, depth - 1), zeroNode(depth));
     } else {
       return new BranchNode(
-        subtreeFillToContents(nodes.slice(0, Number(pivot)), depth - 1n),
-        subtreeFillToContents(nodes.slice(Number(pivot)), depth - 1n),
+        subtreeFillToContents(nodes.slice(0, Number(pivot)), depth - 1),
+        subtreeFillToContents(nodes.slice(Number(pivot)), depth - 1),
       );
     }
   }
