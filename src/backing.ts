@@ -1,7 +1,9 @@
-import { Gindex } from "./gindex";
-import { Node } from "./node";
+import { Gindex, gindexIterator } from "./gindex";
+import { Node, BranchNode, Link, compose, identity, zeroNode } from "./node";
 
 export type Hook = (b: TreeBacking) => void;
+
+const ERR_INVALID_TREE = "Invalid tree";
 
 export class TreeBacking {
   private _node: Node;
@@ -20,15 +22,48 @@ export class TreeBacking {
     }
   }
   get(index: Gindex): Node {
-    return this.node.get(index);
+    let node = this.node as BranchNode;
+    for (const i of gindexIterator(index)) {
+      if (i) {
+        if (!node.right) throw new Error(ERR_INVALID_TREE);
+        node = node.right as BranchNode;
+      } else {
+        if (!node.left) throw new Error(ERR_INVALID_TREE);
+        node = node.left as BranchNode;
+      }
+    }
+    return node;
+  }
+  setter(index: Gindex, expand=false): Link {
+    let link = identity;
+    let node = this.node as BranchNode;
+    const iterator = gindexIterator(index);
+    for (const i of iterator) {
+      if (i) {
+        if (!node.right) {
+          if (!expand) throw new Error(ERR_INVALID_TREE);
+          else {
+            const child = zeroNode(iterator.remainingBitLength() - 1);
+            node = new BranchNode(child, child);
+          }
+        }
+        link = compose(node.rebindRight.bind(node), link);
+        node = node.right as BranchNode;
+      } else {
+        if (!node.left) {
+          if (!expand) throw new Error(ERR_INVALID_TREE);
+          else {
+            const child = zeroNode(iterator.remainingBitLength() - 1);
+            node = new BranchNode(child, child);
+          }
+        }
+        link = compose(node.rebindLeft.bind(node), link);
+        node = node.left as BranchNode;
+      }
+    }
+    return compose(identity, link);
   }
   set(index: Gindex, n: Node, expand=false): void {
-    let setter;
-    if (expand) {
-      setter = this.node.expandInto(index);
-    } else {
-      setter = this.node.setter(index);
-    }
-    this.node = setter(n);
+    this.node = this.setter(index, expand)(n);
   }
 }

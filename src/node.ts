@@ -1,5 +1,4 @@
 import { hash } from "./hash";
-import {Gindex, pivot, anchor, subIndex, gindexDepth} from "./gindex";
 
 const ERR_INVALID_TREE = "Invalid tree";
 const ERR_INVALID_GINDEX = "Invalid gindex";
@@ -11,15 +10,6 @@ export type Link = (n: Node) => Node;
 
 export abstract class Node {
   get merkleRoot(): Buffer {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-  get(target: Gindex): Node {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-  setter(target: Gindex): Link {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-  expandInto(target: Gindex): Link {
     throw new Error(ERR_NOT_IMPLEMENTED);
   }
 }
@@ -43,64 +33,11 @@ export class BranchNode extends Node {
     }
     return this.root;
   }
-  get(target: Gindex): Node {
-    if (target < 1) {
-      throw new Error(ERR_INVALID_GINDEX);
-    } else if (target === 1n) {
-      return this;
-    } else if (target === 2n) {
-      if (!this.left) throw new Error(ERR_INVALID_TREE);
-      return this.left;
-    } else if (target === 3n) {
-      if (!this.right) throw new Error(ERR_INVALID_TREE);
-      return this.right;
-    } else {
-      const _pivot = pivot(target);
-      const _anchor = anchor(target);
-      const nextTarget = target ^ _anchor | _pivot;
-      if (target < (target | _pivot)) {
-        if (!this.left) throw new Error(ERR_INVALID_TREE);
-        return this.left.get(nextTarget);
-      } else {
-        if (!this.right) throw new Error(ERR_INVALID_TREE);
-        return this.right.get(nextTarget);
-      }
-    }
-  }
-  set(target: Gindex, n: Node): Node {
-    return this.setter(target)(n);
-  }
-
-  rebindLeftChild(n: Node): Node {
+  rebindLeft(n: Node): Node {
     return new BranchNode(n, this.right);
   }
-  rebindRightChild(n: Node): Node {
+  rebindRight(n: Node): Node {
     return new BranchNode(this.left, n);
-  }
-  setter(target: Gindex): Link {
-    if (target < 1) {
-      throw new Error(ERR_INVALID_GINDEX);
-    } else if (target === 1n) {
-      return identity;
-    } else if (target === 2n) {
-      return this.rebindLeftChild.bind(this);
-    } else if (target === 3n) {
-      return this.rebindRightChild.bind(this);
-    } else {
-      const _pivot = pivot(target);
-      const _anchor = anchor(target);
-      const nextTarget = target ^ _anchor | _pivot;
-      if (target < (target | _pivot)) {
-        if (!this.left) throw new Error(ERR_INVALID_TREE);
-        return compose(this.left.setter(nextTarget), this.rebindLeftChild.bind(this));
-      } else {
-        if (!this.right) throw new Error(ERR_INVALID_TREE);
-        return compose(this.right.setter(nextTarget), this.rebindRightChild.bind(this));
-      }
-    }
-  }
-  expandInto(target: Gindex): Link {
-    return this.setter(target);
   }
 }
 
@@ -113,36 +50,13 @@ export class LeafNode extends Node {
   get merkleRoot(): Buffer {
     return this.root;
   }
-  get(target: Gindex): Node {
-    if (target != 1n) {
-      throw new Error(ERR_NAVIGATION);
-    }
-    return this;
-  }
-  setter(target: Gindex): Link {
-    if (target != 1n) {
-      throw new Error(ERR_NAVIGATION);
-    }
-    return identity;
-  }
-  expandInto(target: Gindex): Link {
-    if (target < 1) {
-      throw new Error(ERR_NAVIGATION);
-    } else if (target === 1n) {
-      return identity;
-    } else {
-      const childTargetIndex = subIndex(target);
-      const child = zeroNode(gindexDepth(childTargetIndex));
-      return (new BranchNode(child, child)).expandInto(childTargetIndex);
-    }
-  }
 }
 
-function identity(n: Node): Node {
+export function identity(n: Node): Node {
   return n;
 }
 
-function compose(inner: Link, outer: Link): Link {
+export function compose(inner: Link, outer: Link): Link {
   return function(n: Node): Node {
     return outer(inner(n));
   }
