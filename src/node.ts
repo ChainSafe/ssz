@@ -99,7 +99,7 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
   } else {
     const pivot = maxLength >> 1;
     if (length <= pivot) {
-      return new BranchNode(subtreeFillToLength(bottom, depth - 1, length), zeroNode(depth));
+      return new BranchNode(subtreeFillToLength(bottom, depth - 1, length), zeroNode(depth - 1));
     } else {
       return new BranchNode(
         subtreeFillToDepth(bottom, depth - 1),
