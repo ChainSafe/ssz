@@ -120,7 +120,7 @@ export function subtreeFillToContents(nodes: Node[], depth: number): Node {
   } else {
     const pivot = maxLength >> 1;
     if (nodes.length <= pivot) {
-      return new BranchNode(subtreeFillToContents(nodes, depth - 1), zeroNode(depth));
+      return new BranchNode(subtreeFillToContents(nodes, depth - 1), zeroNode(depth - 1));
     } else {
       return new BranchNode(
         subtreeFillToContents(nodes.slice(0, Number(pivot)), depth - 1),
