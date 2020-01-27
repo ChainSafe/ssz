@@ -53,6 +53,12 @@ export function digest() {
   return digest;
 }
 
+export function toHexString(bytes) {
+  checkInit();
+  const hex = wasm.toHexString(bytes);
+  return hex;
+}
+
 function checkInit() {
   if(!wasm) throw new Error("Please call 'initSha256' before using other methods");
 }
