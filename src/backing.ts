@@ -1,5 +1,6 @@
 import { Gindex, gindexIterator } from "./gindex";
-import { Node, BranchNode, Link, compose, identity, zeroNode, LeafNode } from "./node";
+import { Node, BranchNode, Link, compose, identity, LeafNode } from "./node";
+import { zeroNode } from "./zeroes";
 
 export type Hook = (b: TreeBacking) => void;
 
