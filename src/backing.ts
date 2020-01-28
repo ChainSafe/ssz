@@ -1,5 +1,5 @@
 import { Gindex, gindexIterator } from "./gindex";
-import { Node, BranchNode, Link, compose, identity, zeroNode } from "./node";
+import { Node, BranchNode, Link, compose, identity, zeroNode, LeafNode } from "./node";
 
 export type Hook = (b: TreeBacking) => void;
 
@@ -65,5 +65,11 @@ export class TreeBacking {
   }
   set(index: Gindex, n: Node, expand=false): void {
     this.node = this.setter(index, expand)(n);
+  }
+  getRoot(index: Gindex): Uint8Array {
+    return this.get(index).merkleRoot;
+  }
+  setRoot(index: Gindex, root: Uint8Array): void {
+    this.set(index, new LeafNode(root));
   }
 }
