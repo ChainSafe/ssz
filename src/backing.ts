@@ -69,7 +69,7 @@ export class TreeBacking {
   getRoot(index: Gindex): Uint8Array {
     return this.get(index).merkleRoot;
   }
-  setRoot(index: Gindex, root: Uint8Array): void {
-    this.set(index, new LeafNode(root));
+  setRoot(index: Gindex, root: Uint8Array, expand=false): void {
+    this.set(index, new LeafNode(root), expand);
   }
 }
