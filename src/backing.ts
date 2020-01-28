@@ -72,4 +72,7 @@ export class TreeBacking {
   setRoot(index: Gindex, root: Uint8Array, expand=false): void {
     this.set(index, new LeafNode(root), expand);
   }
+  clone(): TreeBacking {
+    return new TreeBacking(this.node);
+  }
 }
