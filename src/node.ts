@@ -9,13 +9,13 @@ const ERR_TOO_MANY_NODES = "Too many nodes";
 export type Link = (n: Node) => Node;
 
 export abstract class Node {
-  get merkleRoot(): Buffer {
+  get merkleRoot(): Uint8Array {
     throw new Error(ERR_NOT_IMPLEMENTED);
   }
 }
 
 export class BranchNode extends Node {
-  public root: Buffer | null = null;
+  public root: Uint8Array | null = null;
   constructor(
     public left: Node | null = null,
     public right: Node | null = null
@@ -24,7 +24,7 @@ export class BranchNode extends Node {
     if ((!left && right) || (left && !right))
       throw new Error(ERR_INVALID_TREE);
   }
-  get merkleRoot(): Buffer {
+  get merkleRoot(): Uint8Array {
     if (!this.root) {
       if (!this.left || !this.right) {
         throw new Error(ERR_INVALID_TREE);
@@ -43,11 +43,11 @@ export class BranchNode extends Node {
 
 export class LeafNode extends Node {
   constructor(
-    public root: Buffer
+    public root: Uint8Array
   ) {
     super();
   }
-  get merkleRoot(): Buffer {
+  get merkleRoot(): Uint8Array {
     return this.root;
   }
 }
@@ -65,7 +65,7 @@ export function compose(inner: Link, outer: Link): Link {
 // zeroes
 
 // zeros singleton state
-let zeroes: Node[] = [new LeafNode(Buffer.alloc(32))];
+let zeroes: Node[] = [new LeafNode(new Uint8Array(32))];
 
 export function zeroNode(depth: number): Node {
   if (depth >= zeroes.length) {
