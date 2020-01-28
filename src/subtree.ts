@@ -1,5 +1,6 @@
 import { BranchNode, Node } from "./node";
-import { zeroNode } from "./zeroes";
+import { zeroNode } from "./zeroNode";
+import { TreeBacking } from "./backing";
 
 const ERR_NAVIGATION = "Navigation error";
 const ERR_TOO_MANY_NODES = "Too many nodes";
@@ -56,4 +57,18 @@ export function subtreeFillToContents(nodes: Node[], depth: number): Node {
       );
     }
   }
+}
+
+// Same functions as above, with TreeBacking input/output
+
+export function subtreeBackingFillToDepth(bottom: TreeBacking, depth: number): TreeBacking {
+  return new TreeBacking(subtreeFillToDepth(bottom.node, depth));
+}
+
+export function subtreeBackingFillToLength(bottom: TreeBacking, depth: number, length: number): TreeBacking {
+  return new TreeBacking(subtreeFillToLength(bottom.node, depth, length));
+}
+
+export function subtreeBackingFillToContents(backings: TreeBacking[], depth: number): TreeBacking {
+  return new TreeBacking(subtreeFillToContents(backings.map(b => b.node), depth));
 }
