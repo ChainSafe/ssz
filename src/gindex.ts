@@ -17,7 +17,7 @@ export function toGindexBitstring(index: bigint, depth: number): string {
   if (str.length > depth) {
     throw new Error("index to large for depth");
   } else {
-    return "1" + "0".repeat(depth - str.length) + str;
+    return "1" + str.padStart(depth, "0");
   }
 }
 
