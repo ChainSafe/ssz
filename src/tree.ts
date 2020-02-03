@@ -2,46 +2,49 @@ import { Gindex, gindexIterator } from "./gindex";
 import { Node, BranchNode, Link, compose, identity, LeafNode } from "./node";
 import { zeroNode } from "./zeroNode";
 
-export type Hook = (b: TreeBacking) => void;
+export type Hook = (v: Tree) => void;
 
 const ERR_INVALID_TREE = "Invalid tree";
 
-export class TreeBacking {
+export class Tree {
   private _node: Node;
   hook?: Hook;
   constructor(node: Node, hook?: Hook) {
     this._node = node;
     this.hook = hook;
   }
-  get node(): Node {
+  get rootNode(): Node {
     return this._node;
   }
-  set node(n: Node) {
+  set rootNode(n: Node) {
     this._node = n;
     if (this.hook) {
       this.hook(this);
     }
   }
-  get(index: Gindex): Node {
-    let node = this.node as BranchNode;
+  get root(): Uint8Array {
+    return this.rootNode.root;
+  }
+  getNode(index: Gindex): Node {
+    let node = this.rootNode;
     for (const i of gindexIterator(index)) {
       if (i) {
-        if (!node.right) throw new Error(ERR_INVALID_TREE);
-        node = node.right as BranchNode;
+        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+        node = node.right;
       } else {
-        if (!node.left) throw new Error(ERR_INVALID_TREE);
-        node = node.left as BranchNode;
+        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+        node = node.left;
       }
     }
     return node;
   }
   setter(index: Gindex, expand=false): Link {
     let link = identity;
-    let node = this.node as BranchNode;
+    let node = this.rootNode;
     const iterator = gindexIterator(index);
     for (const i of iterator) {
       if (i) {
-        if (!node.right) {
+        if (node.isLeaf()) {
           if (!expand) throw new Error(ERR_INVALID_TREE);
           else {
             const child = zeroNode(iterator.remainingBitLength() - 1);
@@ -49,9 +52,9 @@ export class TreeBacking {
           }
         }
         link = compose(node.rebindRight.bind(node), link);
-        node = node.right as BranchNode;
+        node = node.right;
       } else {
-        if (!node.left) {
+        if (node.isLeaf()) {
           if (!expand) throw new Error(ERR_INVALID_TREE);
           else {
             const child = zeroNode(iterator.remainingBitLength() - 1);
@@ -59,30 +62,30 @@ export class TreeBacking {
           }
         }
         link = compose(node.rebindLeft.bind(node), link);
-        node = node.left as BranchNode;
+        node = node.left;
       }
     }
     return compose(identity, link);
   }
-  set(index: Gindex, n: Node, expand=false): void {
-    this.node = this.setter(index, expand)(n);
+  setNode(index: Gindex, n: Node, expand=false): void {
+    this.rootNode = this.setter(index, expand)(n);
   }
   getRoot(index: Gindex): Uint8Array {
-    return this.get(index).merkleRoot;
+    return this.getNode(index).root;
   }
   setRoot(index: Gindex, root: Uint8Array, expand=false): void {
-    this.set(index, new LeafNode(root), expand);
+    this.setNode(index, new LeafNode(root), expand);
   }
-  getBacking(index: Gindex): TreeBacking {
-    return new TreeBacking(
-      this.get(index),
-      (v: TreeBacking): void => this.set(index, v.node)
+  getSubtree(index: Gindex): Tree {
+    return new Tree(
+      this.getNode(index),
+      (v: Tree): void => this.setNode(index, v.rootNode)
     );
   }
-  setBacking(index: Gindex, backing: TreeBacking, expand=false): void {
-    this.set(index, backing.node, expand);
+  setSubtree(index: Gindex, v: Tree, expand=false): void {
+    this.setNode(index, v.rootNode, expand);
   }
-  clone(): TreeBacking {
-    return new TreeBacking(this.node);
+  clone(): Tree {
+    return new Tree(this.rootNode);
   }
 }

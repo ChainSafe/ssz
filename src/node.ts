@@ -3,51 +3,82 @@ import { hash } from "./hash";
 const ERR_INVALID_TREE = "Invalid tree";
 const ERR_NOT_IMPLEMENTED = "Not implemented";
 
-export type Link = (n: Node) => Node;
-
 export abstract class Node {
-  get merkleRoot(): Uint8Array {
+  get root(): Uint8Array {
+    throw new Error(ERR_NOT_IMPLEMENTED);
+  }
+  isLeaf(): boolean {
+    throw new Error(ERR_NOT_IMPLEMENTED);
+  }
+  get left(): Node {
+    throw new Error(ERR_NOT_IMPLEMENTED);
+  }
+  get right(): Node {
+    throw new Error(ERR_NOT_IMPLEMENTED);
+  }
+  rebindLeft(left: Node): Node {
+    throw new Error(ERR_NOT_IMPLEMENTED);
+  }
+  rebindRight(right: Node): Node {
     throw new Error(ERR_NOT_IMPLEMENTED);
   }
 }
 
 export class BranchNode extends Node {
-  public root: Uint8Array | null = null;
+  private _root: Uint8Array | null = null;
   constructor(
-    public left: Node | null = null,
-    public right: Node | null = null
+    private _left: Node,
+    private _right: Node,
   ) {
     super();
-    if ((!left && right) || (left && !right))
-      throw new Error(ERR_INVALID_TREE);
+    if (!_left || !_right) throw new Error(ERR_INVALID_TREE);
   }
-  get merkleRoot(): Uint8Array {
-    if (!this.root) {
-      if (!this.left || !this.right) {
-        throw new Error(ERR_INVALID_TREE);
-      }
-      this.root = hash(this.left.merkleRoot, this.right.merkleRoot);
+  get root(): Uint8Array {
+    if (!this._root) {
+      this._root= hash(this.left.root, this.right.root);
     }
-    return this.root;
+    return this._root;
   }
-  rebindLeft(n: Node): Node {
-    return new BranchNode(n, this.right);
+  isLeaf(): boolean {
+    return false;
   }
-  rebindRight(n: Node): Node {
-    return new BranchNode(this.left, n);
+  get left(): Node {
+    return this._left;
+  }
+  set left(n: Node) {
+    this._left = n;
+  }
+  get right(): Node {
+    return this._right;
+  }
+  set right(n: Node) {
+    this._right = n;
+  }
+  rebindLeft(left: Node): Node {
+    return new BranchNode(left, this.right);
+  }
+  rebindRight(right: Node): Node {
+    return new BranchNode(this.left, right);
   }
 }
 
 export class LeafNode extends Node {
   constructor(
-    public root: Uint8Array
+    private _root: Uint8Array
   ) {
     super();
   }
-  get merkleRoot(): Uint8Array {
-    return this.root;
+  get root(): Uint8Array {
+    return this._root;
+  }
+  isLeaf(): boolean {
+    return true;
   }
 }
+
+// setter helpers
+
+export type Link = (n: Node) => Node;
 
 export function identity(n: Node): Node {
   return n;
