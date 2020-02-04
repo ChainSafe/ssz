@@ -67,6 +67,7 @@ export class LeafNode extends Node {
     private _root: Uint8Array
   ) {
     super();
+    if (_root.length !== 32) throw new Error(ERR_INVALID_TREE);
   }
   get root(): Uint8Array {
     return this._root;
