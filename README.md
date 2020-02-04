@@ -12,7 +12,7 @@ When dealing with large datasets, it is very expensive to merkleize them in thei
 
 The tree is represented as a linked tree of `Node`s, currently either `BranchNode`s or `LeafNode`s.
 A `BranchNode` has a `left` and `right` child `Node`, and a `root`, 32 byte `Uint8Array`.
-A `LeafNode has a `root`.
+A `LeafNode` has a `root`.
 The `root` of a `Node` is not computed until requested, and cached thereafter.
 
 #### Shared data betwen common subtrees
