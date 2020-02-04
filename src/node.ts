@@ -35,9 +35,9 @@ export class BranchNode extends Node {
   }
   get root(): Uint8Array {
     if (!this._root) {
-      this._root= hash(this.left.root, this.right.root);
+      this._root = hash(this.left.root, this.right.root);
     }
-    return this._root;
+    return this._root as Uint8Array;
   }
   isLeaf(): boolean {
     return false;
