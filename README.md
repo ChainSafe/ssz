@@ -17,7 +17,7 @@ The `root` of a `Node` is not computed until requested, and cached thereafter.
 
 #### Shared data betwen common subtrees
 
-Any updates to a tree (either to the leaves or intermediate nodes) are performed as rebindings that yield a new, updated tree that maximally shares data between versions. Garbage collection allows unused nodes to be discarded eventually.
+Any updates to a tree (either to the leaves or intermediate nodes) are performed as rebindings that yield a new, updated tree that maximally shares data between versions. Garbage collection allows memory from unused nodes to be eventually reclaimed.
 
 ## License
 
