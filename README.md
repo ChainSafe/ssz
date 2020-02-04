@@ -19,6 +19,10 @@ The `root` of a `Node` is not computed until requested, and cached thereafter.
 
 Any update to a tree (either to a leaf or intermediate node) is performed as a rebinding that yields a new, updated tree that maximally shares data between versions. Garbage collection allows memory from unused nodes to be eventually reclaimed.
 
+#### Mutable wrapper for the persistent core
+
+A `Tree` object wraps `Node` and provides an API for tree navigation and transparent rebinding on updates.
+
 ## License
 
 Apache-2.0
