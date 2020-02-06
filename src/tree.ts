@@ -88,4 +88,22 @@ export class Tree {
   clone(): Tree {
     return new Tree(this.rootNode);
   }
+
+  getSingleProof(index: Gindex): Uint8Array[] {
+    const proof: Uint8Array[] = [];
+    let node = this.rootNode;
+    for (const i of gindexIterator(index)) {
+      if (i) {
+        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+        proof.push(node.left.root);
+        node = node.right;
+      } else {
+        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+        proof.push(node.right.root);
+        node = node.left;
+      }
+    }
+    proof.push(node.root);
+    return proof.reverse();
+  }
 }
