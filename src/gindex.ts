@@ -1,10 +1,11 @@
-export type Gindex = bigint | string;
+export type Gindex = bigint;
+export type GindexBitstring = string;
 
 export function bitIndexBigInt(v: bigint): number {
   return v.toString(2).length - 1;
 }
 
-export function toGindexBigInt(index: bigint, depth: number): bigint {
+export function toGindex(index: bigint, depth: number): Gindex {
   const anchor = 1n << BigInt(depth);
   if (index >= anchor) {
     throw new Error("index too large for depth");
@@ -12,7 +13,7 @@ export function toGindexBigInt(index: bigint, depth: number): bigint {
   return anchor | index;
 }
 
-export function toGindexBitstring(index: bigint, depth: number): string {
+export function toGindexBitstring(index: bigint, depth: number): GindexBitstring {
   const str = index ? index.toString(2) : '';
   if (str.length > depth) {
     throw new Error("index too large for depth");
@@ -30,12 +31,15 @@ export function countToDepth(count: bigint): number {
   return (count-1n).toString(2).length;
 }
 
+/**
+ * Iterate through Gindexes at a certain depth
+ */
 export function iterateAtDepth(startIndex: bigint, count: bigint, depth: number): Iterable<Gindex> {
   const anchor = 1n << BigInt(depth);
   if (startIndex + count >= anchor) {
     throw new Error("Too large for depth");
   }
-  let i = toGindexBigInt(startIndex, depth);
+  let i = toGindex(startIndex, depth);
   const last = i + count;
   return {
     [Symbol.iterator]() {
@@ -62,15 +66,10 @@ export interface GindexIterator extends Iterable<number> {
 }
 
 export function gindexIterator(gindex: Gindex): GindexIterator {
-  let bitstring: string;
-  if (typeof gindex === "string") {
-    bitstring = gindex;
-  } else {
-    if (gindex < 1) {
-      throw new Error(ERR_INVALID_GINDEX);
-    }
-    bitstring = gindex.toString(2);
+  if (gindex < 1) {
+    throw new Error(ERR_INVALID_GINDEX);
   }
+  const bitstring = gindex.toString(2);
   let i = 1;
   const next = (): IteratorResult<number, undefined> => {
     if (i === bitstring.length) {
