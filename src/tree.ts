@@ -103,7 +103,6 @@ export class Tree {
         node = node.left;
       }
     }
-    proof.push(node.root);
     return proof.reverse();
   }
 }
