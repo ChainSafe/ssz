@@ -45,7 +45,7 @@ export function iterateAtDepth(startIndex: bigint, count: bigint, depth: number)
     [Symbol.iterator]() {
       return {
         next(): IteratorResult<Gindex, undefined> {
-          if (i <= last) {
+          if (i < last) {
             const value = i;
             i++;
             return {done: false, value};

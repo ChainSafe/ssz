@@ -1,6 +1,6 @@
-import {assert} from "chai";
+import {assert, expect} from "chai";
 import {describe, it} from "mocha";
-import {countToDepth, bitIndexBigInt} from "../src";
+import {countToDepth, bitIndexBigInt, iterateAtDepth} from "../src";
 
 describe("countToDepth", () => {
     const testCases = [
@@ -25,3 +25,21 @@ describe("bigIndexBigInt", () => {
         });
     }
 });
+
+describe("iterateAtDelth", () => {
+  const testCases: {
+    input: [bigint, bigint, number];
+    expected: bigint[];
+  }[] = [
+    {input: [BigInt(0), BigInt(0), 3], expected: []},
+    {input: [BigInt(0), BigInt(1), 3], expected: [BigInt(8)]},
+    {input: [BigInt(1), BigInt(1), 3], expected: [BigInt(9)]},
+    {input: [BigInt(1), BigInt(2), 3], expected: [BigInt(9), BigInt(10)]},
+  ];
+  for (const {input, expected} of testCases) {
+    it(`should correctly iterate at depth`, () => {
+      const actual = Array.from(iterateAtDepth(input[0], input[1], input[2]))
+      expect(actual).to.deep.equal(expected);
+    });
+  }
+})
