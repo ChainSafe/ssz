@@ -51,6 +51,37 @@ function load8(ptr: usize, offset: usize): u8 {
   return load<u8>(ptr + offset);
 }
 
+
+@inline
+function CH(x: u32, y: u32, z: u32): u32 {
+  return((x & y) ^ (~x & z));
+}
+
+@inline
+function MAJ(x: u32, y: u32, z:u32): u32 {
+  return ((x & y) ^ (x & z) ^ (y & z));
+}
+
+@inline
+function EP0(x: u32): u32 {
+  return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22);
+}
+
+@inline
+function EP1(x: u32): u32 {
+  return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25);
+}
+
+@inline
+function SIG0(x: u32): u32 {
+  return rotr(x, 7) ^ rotr(x, 18) ^ (x >>> 3);
+}
+
+@inline
+function SIG1(x: u32): u32 {
+  return rotr(x, 17) ^ rotr(x, 19) ^ (x >>> 10);
+}
+
 function hashBlocks(wPtr: usize, pPtr: usize, pos: u32, len: u32): u32 {
   let
     a: u32, b: u32, c: u32, d: u32,
@@ -82,16 +113,16 @@ function hashBlocks(wPtr: usize, pPtr: usize, pos: u32, len: u32): u32 {
 
     for (i = 16; i < 64; i++) {
       u  = load32(wPtr, i - 2);
-      t1 = rotr(u, 17) ^ rotr(u, 19) ^ (u >>> 10);
+      t1 = SIG1(u);
       u  = load32(wPtr, i - 15);
-      t2 = rotr(u, 7) ^ rotr(u, 18) ^ (u >>> 3);
+      t2 = SIG0(u);
 
       store32(wPtr, i, t1 + load32(wPtr, i - 7) + t2 + load32(wPtr, i - 16));
     }
 
     for (i = 0; i < 64; i++) {
-      t1 = (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + h + load32(k, i) + load32(wPtr, i);
-      t2 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c));
+      t1 = h + EP1(e) + CH(e, f, g) + load32(k, i) + load32(wPtr, i);
+      t2 = EP0(a) + MAJ(a, b, c);
       h = g;
       g = f;
       f = e;
