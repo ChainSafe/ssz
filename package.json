@@ -39,9 +39,9 @@
         "buffer": "^5.4.3"
     },
     "devDependencies": {
-        "@as-pect/assembly": "2.6.0",
-        "@as-pect/cli": "2.6.0",
-        "@as-pect/core": "2.6.0",
+        "@as-pect/assembly": "2.8.0",
+        "@as-pect/cli": "2.8.0",
+        "@as-pect/core": "2.8.0",
         "@babel/cli": "^7.6.0",
         "@babel/core": "^7.6.0",
         "@babel/preset-env": "^7.6.0",
