@@ -17,4 +17,10 @@ describe("example", () => {
     let preImgArrayBuffer = Uint8Array.wrap(String.UTF8.encode(preImgString));
     expect<string>(toHexString(hash(preImgArrayBuffer))).toBe("7321348c8894678447b54c888fdbc4e4b825bf4d1eb0cfb27874286a23ea9fd2");
   });
+
+  it("Hash: abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", () => {
+    let preImgString = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+    let preImgArrayBuffer = Uint8Array.wrap(String.UTF8.encode(preImgString));
+    expect<string>(toHexString(hash(preImgArrayBuffer))).toBe("248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
+  });
 });
