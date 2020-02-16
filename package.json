@@ -49,6 +49,7 @@
         "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
         "assert": "^2.0.0",
         "babel-loader": "^8.0.6",
+        "benchmark": "^2.1.4",
         "chai": "^4.2.0",
         "karma": "^4.4.1",
         "karma-babel-preprocessor": "^8.0.1",
