@@ -2,7 +2,9 @@
 //https://github.com/dchest/fast-sha256-js/blob/master/src/sha256.ts
 export const UINT8ARRAY_ID = idof<Uint8Array>();
 const DIGEST_LENGTH = 32;
+const INPUT_LENGTH = 512;
 
+// constants used in the SHA256 compression function
 const K: u32[] = [
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
   0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
@@ -18,22 +20,46 @@ const K: u32[] = [
   0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
   0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ];
+const kPtr = K.dataStart;
 
-// state stored in H0-H7
+// intermediate hash values stored in H0-H7
 var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
-// prealloc buffers
-var buffer = new ArrayBuffer(128); // buffer for data to hash
-var temp   = new ArrayBuffer(256); // temporary state
-var out    = new ArrayBuffer(DIGEST_LENGTH); // buffer for output
+// hash registers
+var a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: u32, t2: u32;
 
-var bufferLength = 0; // number of bytes in buffer
-var bytesHashed = 0; // number of total bytes hashed
-var finished = false;
+// 16 32bit message blocks
+const M = new ArrayBuffer(64);
+const mPtr = changetype<usize>(M);
+
+// 64 32bit extended message blocks
+const W = new ArrayBuffer(256);
+const wPtr = changetype<usize>(W);
+
+// output buffer
+const output = new ArrayBuffer(DIGEST_LENGTH);
+const outputPtr = changetype<usize>(output);
+
+// number of bytes in M buffer
+var mLength = 0;
+
+// number of total bytes hashed
+var bytesHashed = 0;
 
 @inline
 function load32(ptr: usize, offset: usize): u32 {
   return load<u32>(ptr + (offset << alignof<u32>()));
+}
+
+@inline
+function load32Bswap(ptr: usize, offset: usize): u32 {
+  const firstOffset = offset << alignof<u32>();
+  return (
+    (<u32>load8(ptr, firstOffset + 0) << 24) |
+    (<u32>load8(ptr, firstOffset + 1) << 16) |
+    (<u32>load8(ptr, firstOffset + 2) <<  8) |
+    (<u32>load8(ptr, firstOffset + 3) <<  0)
+  );
 }
 
 @inline
@@ -82,73 +108,64 @@ function SIG1(x: u32): u32 {
   return rotr(x, 17) ^ rotr(x, 19) ^ (x >>> 10);
 }
 
-function hashBlocks(wPtr: usize, pPtr: usize, pos: u32, len: u32): u32 {
-  let
-    a: u32, b: u32, c: u32, d: u32,
-    e: u32, f: u32, g: u32, h: u32,
-    u: u32, i: u32, j: u32,
-    t1: u32, t2: u32,
-    k = K.dataStart;
+/**
+ * Expand message blocks (16 32bit blocks), into extended message blocks (64 32bit blocks),
+ * Apply SHA256 compression function on extended message blocks
+ * Update intermediate hash values
+ * @param wPtr pointer to expanded message block memory
+ * @param mPtr pointer to message block memory
+ */
+function hashBlocks(wPtr: usize, mPtr: usize): void {
+  a = H0;
+  b = H1;
+  c = H2;
+  d = H3;
+  e = H4;
+  f = H5;
+  g = H6;
+  h = H7;
 
-  while (len >= 64) {
-
-    a = H0;
-    b = H1;
-    c = H2;
-    d = H3;
-    e = H4;
-    f = H5;
-    g = H6;
-    h = H7;
-
-    for (i = 0; i < 16; i++) {
-      j = pos + i * 4;
-      store32(wPtr, i,
-        (<u32>load8(pPtr, j + 0) << 24) |
-        (<u32>load8(pPtr, j + 1) << 16) |
-        (<u32>load8(pPtr, j + 2) <<  8) |
-        (<u32>load8(pPtr, j + 3) <<  0)
-      );
-    }
-
-    for (i = 16; i < 64; i++) {
-      u  = load32(wPtr, i - 2);
-      t1 = SIG1(u);
-      u  = load32(wPtr, i - 15);
-      t2 = SIG0(u);
-
-      store32(wPtr, i, t1 + load32(wPtr, i - 7) + t2 + load32(wPtr, i - 16));
-    }
-
-    for (i = 0; i < 64; i++) {
-      t1 = h + EP1(e) + CH(e, f, g) + load32(k, i) + load32(wPtr, i);
-      t2 = EP0(a) + MAJ(a, b, c);
-      h = g;
-      g = f;
-      f = e;
-      e = d + t1;
-      d = c;
-      c = b;
-      b = a;
-      a = t1 + t2;
-    }
-
-    H0 += a;
-    H1 += b;
-    H2 += c;
-    H3 += d;
-    H4 += e;
-    H5 += f;
-    H6 += g;
-    H7 += h;
-
-    pos += 64;
-    len -= 64;
+  // Load message blocks into first 16 expanded message blocks
+  for (i = 0; i < 16; i++) {
+    store32(wPtr, i,
+      load32Bswap(mPtr, i)
+    );
   }
 
-  return pos;
-}
 
+  // Expand message blocks 17-64
+  for (i = 16; i < 64; i++) {
+    store32(wPtr, i,
+      SIG1(load32(wPtr, i - 2)) +
+      load32(wPtr, i - 7) +
+      SIG0(load32(wPtr, i - 15)) +
+      load32(wPtr, i - 16)
+    );
+  }
+
+  // Apply SHA256 compression function on expanded message blocks
+  for (i = 0; i < 64; i++) {
+    t1 = h + EP1(e) + CH(e, f, g) + load32(kPtr, i) + load32(wPtr, i);
+    t2 = EP0(a) + MAJ(a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + t1;
+    d = c;
+    c = b;
+    b = a;
+    a = t1 + t2;
+  }
+
+  H0 += a;
+  H1 += b;
+  H2 += c;
+  H3 += d;
+  H4 += e;
+  H5 += f;
+  H6 += g;
+  H7 += h;
+}
 
 function reset(): void {
   H0 = 0x6a09e667;
@@ -160,66 +177,56 @@ function reset(): void {
   H6 = 0x1f83d9ab;
   H7 = 0x5be0cd19;
 
-  bufferLength = 0;
+  mLength = 0;
   bytesHashed  = 0;
-  finished     = false;
-}
-
-export function clean(): void {
-  memory.fill(changetype<usize>(buffer), 0, buffer.byteLength);
-  memory.fill(changetype<usize>(temp),   0, temp.byteLength);
-  memory.fill(changetype<usize>(out),    0, out.byteLength);
-  reset();
 }
 
 export function update(data: Uint8Array, dataLength: i32): void {
-  if (finished) {
-    throw new Error("SHA256: can't update because hash was finished.");
-  }
-
   let dataPtr = data.dataStart;
-  let tempPtr = changetype<usize>(temp);
-  let bufferPtr = changetype<usize>(buffer);
   let dataPos = 0;
   bytesHashed += dataLength;
-  if (bufferLength > 0) {
-    while (bufferLength < 64 && dataLength > 0) {
-      store8(bufferPtr, bufferLength++, load8(dataPtr, dataPos++));
-      --dataLength;
-    }
-    if (bufferLength == 64) {
-      hashBlocks(tempPtr, bufferPtr, 0, 64);
-      bufferLength = 0;
+  while (dataLength > 0) {
+    const minLength = min(64 - mLength, dataLength);
+    memory.copy(mPtr + mLength, dataPtr + dataPos, minLength);
+    mLength += minLength;
+    dataPos += minLength;
+    dataLength -= minLength;
+    if (mLength === 64) {
+      hashBlocks(wPtr, mPtr);
+      mLength = 0;
     }
   }
-  if (dataLength >= 64) {
-    dataPos = hashBlocks(tempPtr, dataPtr, dataPos, dataLength);
-    dataLength &= 63;
-  }
-  memory.copy(bufferPtr, dataPtr + dataPos, dataLength);
-  bufferLength += dataLength;
 }
 
-export function finish(out: ArrayBuffer): void {
-  if (!finished) {
-    let left      = bufferLength;
-    let bitLenHi  = bytesHashed / 0x20000000;
-    let bitLenLo  = bytesHashed << 3;
-    let padLength = 64 << i32((bytesHashed & 63) >= 56);
-    let bufferPtr = changetype<usize>(buffer);
-    let tempPtr   = changetype<usize>(temp);
+export function finish(output: ArrayBuffer): void {
+  let left      = mLength;
+  let bitLenHi  = bytesHashed / 0x20000000;
+  let bitLenLo  = bytesHashed << 3;
 
-    store8(bufferPtr, left, 0x80);
-    memory.fill(bufferPtr + left + 1, 0, padLength - left - 9);
-
-    store<u32>(bufferPtr + padLength - 8, bswap(bitLenHi));
-    store<u32>(bufferPtr + padLength - 4, bswap(bitLenLo));
-
-    hashBlocks(tempPtr, bufferPtr, 0, padLength);
-    finished = true;
+  // one additional round of hashes required
+  // because padding will not fit
+  if ((bytesHashed & 63) < 63) {
+    store8(mPtr, left, 0x80);
+    left++;
   }
+  if ((bytesHashed & 63) >= 56) {
+    memory.fill(mPtr + left, 0, 64 - left);
+    hashBlocks(wPtr, mPtr);
+    left = 0;
+  }
+  if ((bytesHashed & 63) >= 63) {
+    store8(mPtr, left, 0x80);
+    left++;
+  }
+  memory.fill(mPtr + left, 0, 64 - left - 8);
 
-  let outPtr = changetype<usize>(out);
+  store<u32>(mPtr + 64 - 8, bswap(bitLenHi));
+  store<u32>(mPtr + 64 - 4, bswap(bitLenLo));
+
+  // hash round for padding
+  hashBlocks(wPtr, mPtr);
+
+  let outPtr = changetype<usize>(output);
 
   store32(outPtr, 0, bswap(H0));
   store32(outPtr, 1, bswap(H1));
@@ -232,19 +239,19 @@ export function finish(out: ArrayBuffer): void {
 }
 
 export function digest(): Uint8Array {
-  finish(out);
+  finish(output);
   let ret = new Uint8Array(DIGEST_LENGTH);
-  memory.copy(ret.dataStart, changetype<usize>(out), DIGEST_LENGTH);
+  memory.copy(ret.dataStart, outputPtr, DIGEST_LENGTH);
   return ret;
 }
 
 export function hash(data: Uint8Array): Uint8Array {
   reset();
   update(data, data.length);
-  finish(out);
+  finish(output);
 
   let ret = new Uint8Array(DIGEST_LENGTH);
-  memory.copy(ret.dataStart, changetype<usize>(out), DIGEST_LENGTH);
+  memory.copy(ret.dataStart, changetype<usize>(output), DIGEST_LENGTH);
   return ret;
 }
 
