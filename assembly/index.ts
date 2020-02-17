@@ -52,7 +52,7 @@ function load32(ptr: usize, offset: usize): u32 {
 }
 
 @inline
-function load32Bswap(ptr: usize, offset: usize): u32 {
+function load32be(ptr: usize, offset: usize): u32 {
   const firstOffset = offset << alignof<u32>();
   return (
     (<u32>load8(ptr, firstOffset + 0) << 24) |
@@ -128,7 +128,7 @@ function hashBlocks(wPtr: usize, mPtr: usize): void {
   // Load message blocks into first 16 expanded message blocks
   for (i = 0; i < 16; i++) {
     store32(wPtr, i,
-      load32Bswap(mPtr, i)
+      load32be(mPtr, i)
     );
   }
 
