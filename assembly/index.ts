@@ -1,8 +1,7 @@
 
 //https://github.com/dchest/fast-sha256-js/blob/master/src/sha256.ts
-export const UINT8ARRAY_ID = idof<Uint8Array>();
 const DIGEST_LENGTH = 32;
-const INPUT_LENGTH = 512;
+export const INPUT_LENGTH = 512;
 
 // constants used in the SHA256 compression function
 const K: u32[] = [
@@ -26,6 +25,7 @@ const kPtr = K.dataStart;
 var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
 // hash registers
+
 var a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: u32, t2: u32;
 
 // 16 32bit message blocks
@@ -36,8 +36,12 @@ const mPtr = changetype<usize>(M);
 const W = new ArrayBuffer(256);
 const wPtr = changetype<usize>(W);
 
+// input buffer
+export const input = new ArrayBuffer(INPUT_LENGTH);
+const inputPtr = changetype<usize>(input);
+
 // output buffer
-const output = new ArrayBuffer(DIGEST_LENGTH);
+export const output = new ArrayBuffer(DIGEST_LENGTH);
 const outputPtr = changetype<usize>(output);
 
 // number of bytes in M buffer
@@ -77,6 +81,14 @@ function load8(ptr: usize, offset: usize): u8 {
   return load<u8>(ptr + offset);
 }
 
+@inline
+function fill(ptr: usize, value: u8, length: u32): void {
+  const finalPtr = ptr + length;
+  while(ptr < finalPtr) {
+    store<u8>(ptr, value);
+    ptr++;
+  }
+}
 
 @inline
 function CH(x: u32, y: u32, z: u32): u32 {
@@ -167,7 +179,7 @@ function hashBlocks(wPtr: usize, mPtr: usize): void {
   H7 += h;
 }
 
-function reset(): void {
+export function init(): void {
   H0 = 0x6a09e667;
   H1 = 0xbb67ae85;
   H2 = 0x3c6ef372;
@@ -181,8 +193,7 @@ function reset(): void {
   bytesHashed  = 0;
 }
 
-export function update(data: Uint8Array, dataLength: i32): void {
-  let dataPtr = data.dataStart;
+export function update(dataPtr: usize, dataLength: i32): void {
   let dataPos = 0;
   bytesHashed += dataLength;
   // If message blocks buffer has data, fill to 64
@@ -215,7 +226,7 @@ export function update(data: Uint8Array, dataLength: i32): void {
   }
 }
 
-export function finish(output: ArrayBuffer): void {
+export function final(outPtr: usize): void {
   // one additional round of hashes required
   // because padding will not fit
   if ((bytesHashed & 63) < 63) {
@@ -223,7 +234,7 @@ export function finish(output: ArrayBuffer): void {
     mLength++;
   }
   if ((bytesHashed & 63) >= 56) {
-    memory.fill(mPtr + mLength, 0, 64 - mLength);
+    fill(mPtr + mLength, 0, 64 - mLength);
     hashBlocks(wPtr, mPtr);
     mLength = 0;
   }
@@ -231,15 +242,13 @@ export function finish(output: ArrayBuffer): void {
     store8(mPtr, mLength, 0x80);
     mLength++;
   }
-  memory.fill(mPtr + mLength, 0, 64 - mLength - 8);
+  fill(mPtr + mLength, 0, 64 - mLength - 8);
 
   store<u32>(mPtr + 64 - 8, bswap(bytesHashed / 0x20000000)); // length -- high bits
   store<u32>(mPtr + 64 - 4, bswap(bytesHashed << 3)); // length -- low bits
 
   // hash round for padding
   hashBlocks(wPtr, mPtr);
-
-  let outPtr = changetype<usize>(output);
 
   store32(outPtr, 0, bswap(H0));
   store32(outPtr, 1, bswap(H1));
@@ -251,20 +260,8 @@ export function finish(output: ArrayBuffer): void {
   store32(outPtr, 7, bswap(H7));
 }
 
-export function digest(): Uint8Array {
-  finish(output);
-  let ret = new Uint8Array(DIGEST_LENGTH);
-  memory.copy(ret.dataStart, outputPtr, DIGEST_LENGTH);
-  return ret;
+export function digest(length: i32): void {
+  init();
+  update(inputPtr, length);
+  final(outputPtr)
 }
-
-export function hash(data: Uint8Array): Uint8Array {
-  reset();
-  update(data, data.length);
-  finish(output);
-
-  let ret = new Uint8Array(DIGEST_LENGTH);
-  memory.copy(ret.dataStart, changetype<usize>(output), DIGEST_LENGTH);
-  return ret;
-}
-

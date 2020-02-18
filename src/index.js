@@ -1,64 +1,46 @@
-const {wasmInit} = require("./wasm");
+import {newInstance} from './wasm';
 
-let wasm = null;
+export default class SHA256 {
+  constructor() {
+    this.ctx = newInstance();
+  }
+  init() {
+    this.ctx.init();
+    return this;
+  }
+  update(data) {
+    const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
+    const input = new Uint8Array(this.ctx.memory.buffer, this.ctx.input.value, INPUT_LENGTH);
+    if (data.length < INPUT_LENGTH) {
+      for (let i = 0; i < data.length; i += INPUT_LENGTH) {
+        const sliced = data.slice(i, i + INPUT_LENGTH);
+        input.set(sliced);
+        this.ctx.update(this.ctx.input.value, sliced.length);
+      }
+    } else {
+      input.set(data)
+      this.ctx.update(this.ctx.input.value, data.length);
+    }
+    return this;
+  }
+  final() {
+    this.ctx.final(this.ctx.output.value);
+    const output = new Uint8Array(32);
+    output.set(new Uint8Array(this.ctx.memory.buffer, this.ctx.output.value, 32));
+    return output;
+  }
 
-/**
- * Use this method to initialize wasm build.
- * This method needs to be called only once but
- * before using any other method.
- */
-export async function initSha256() {
-  if(!wasm) wasm = await wasmInit();
+  static digest(data) {
+    if (data.length <= SHA256.ctx.INPUT_LENGTH) {
+      const input = new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.input.value, SHA256.ctx.INPUT_LENGTH);
+      input.set(data);
+      SHA256.ctx.digest(data.length);
+      const output = new Uint8Array(32);
+      output.set(new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.output.value, 32));
+      return output;
+    }
+    return SHA256.ctx.init().update(data).final();
+  }
 }
 
-/**
- * Wraps the AssemblyScript build in a JS function.
- * This allows users to not have to make AS a dependency in their project.
- * @param {Uint8Array} message Message to hash
- */
-export function sha256(message) {
-  checkInit();
-  const input  = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, message));
-  const output = wasm.hash(input);
-  const result = wasm.__getUint8Array(output).slice();
-  wasm.__release(output);
-  wasm.__release(input);
-  return result;
-}
-
-export default sha256;
-
-export function clean() {
-  checkInit();
-  wasm.clean();
-}
-
-export function init() {
-  checkInit();
-  clean();
-}
-
-export function update(data, length) {
-  checkInit();
-  const input = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, data));
-  wasm.update(input, length);
-  wasm.__release(input);
-}
-
-export function digest() {
-  checkInit();
-  const output = wasm.digest();
-  const digest = wasm.__getUint8Array(output).slice();
-  wasm.__release(output);
-  return digest;
-}
-
-export function toHexString(bytes) {
-  checkInit();
-  const hex = wasm.toHexString(bytes);
-  return hex;
-}
-
-function checkInit() {
-  if(!wasm) throw new Error("Please call 'initSha256' before using other methods");
-}
+SHA256.ctx = new SHA256();

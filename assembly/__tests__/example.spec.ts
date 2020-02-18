@@ -1,4 +1,4 @@
-import { hash } from '..';
+import { init, update, final } from '..';
 
 export function toHexString(bin: Uint8Array): string {
   let bin_len = bin.length;
@@ -14,6 +14,14 @@ export function toHexString(bin: Uint8Array): string {
     hex += String.fromCharCode(x as u8);
   }
   return hex;
+}
+
+function hash(data: Uint8Array): Uint8Array {
+  const output = new Uint8Array(32);
+  init();
+  update(changetype<usize>(data.buffer), data.length);
+  final(changetype<usize>(output.buffer));
+  return output;
 }
 
 describe("example", () => {
