@@ -1,4 +1,11 @@
 <a name="0.1.4"></a>
+## 0.2.0 (unreleased)
+
+### BREAKING CHANGES
+
+* new TS and AS exported interface
+
+<a name="0.1.4"></a>
 ## 0.1.4 (2020-01-30)
 
 ### Bug Fixes
