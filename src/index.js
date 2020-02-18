@@ -11,7 +11,7 @@ export default class SHA256 {
   update(data) {
     const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
     const input = new Uint8Array(this.ctx.memory.buffer, this.ctx.input.value, INPUT_LENGTH);
-    if (data.length < INPUT_LENGTH) {
+    if (data.length > INPUT_LENGTH) {
       for (let i = 0; i < data.length; i += INPUT_LENGTH) {
         const sliced = data.slice(i, i + INPUT_LENGTH);
         input.set(sliced);
