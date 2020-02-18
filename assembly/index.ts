@@ -185,43 +185,56 @@ export function update(data: Uint8Array, dataLength: i32): void {
   let dataPtr = data.dataStart;
   let dataPos = 0;
   bytesHashed += dataLength;
-  while (dataLength > 0) {
-    const minLength = min(64 - mLength, dataLength);
-    memory.copy(mPtr + mLength, dataPtr + dataPos, minLength);
-    mLength += minLength;
-    dataPos += minLength;
-    dataLength -= minLength;
-    if (mLength === 64) {
+  // If message blocks buffer has data, fill to 64
+  if (mLength) {
+    if (64 - mLength <= dataLength) {
+      // we can fully fill the buffer with data left over
+      memory.copy(mPtr + mLength, dataPtr, 64 - mLength);
+      mLength += 64 - mLength;
+      dataPos += 64 - mLength;
+      dataLength -= 64 - mLength;
       hashBlocks(wPtr, mPtr);
       mLength = 0;
+    } else {
+      // we can't fully fill the buffer but we exhaust the whole data buffer
+      memory.copy(mPtr + mLength, dataPtr, dataLength);
+      mLength += dataLength;
+      dataPos += dataLength;
+      dataLength -= dataLength;
+      return;
     }
+  }
+  // If input has remaining 64-byte chunks, hash those
+  for (let i = 0; i < dataLength / 64; i++, dataPos += 64) {
+    hashBlocks(wPtr, dataPtr + dataPos);
+  }
+  // If any additional bytes remain, copy into message blocks buffer
+  if (dataLength & 63) {
+    memory.copy(mPtr + mLength, dataPtr + dataPos, dataLength & 63);
+    mLength += dataLength & 63;
   }
 }
 
 export function finish(output: ArrayBuffer): void {
-  let left      = mLength;
-  let bitLenHi  = bytesHashed / 0x20000000;
-  let bitLenLo  = bytesHashed << 3;
-
   // one additional round of hashes required
   // because padding will not fit
   if ((bytesHashed & 63) < 63) {
-    store8(mPtr, left, 0x80);
-    left++;
+    store8(mPtr, mLength, 0x80);
+    mLength++;
   }
   if ((bytesHashed & 63) >= 56) {
-    memory.fill(mPtr + left, 0, 64 - left);
+    memory.fill(mPtr + mLength, 0, 64 - mLength);
     hashBlocks(wPtr, mPtr);
-    left = 0;
+    mLength = 0;
   }
   if ((bytesHashed & 63) >= 63) {
-    store8(mPtr, left, 0x80);
-    left++;
+    store8(mPtr, mLength, 0x80);
+    mLength++;
   }
-  memory.fill(mPtr + left, 0, 64 - left - 8);
+  memory.fill(mPtr + mLength, 0, 64 - mLength - 8);
 
-  store<u32>(mPtr + 64 - 8, bswap(bitLenHi));
-  store<u32>(mPtr + 64 - 4, bswap(bitLenLo));
+  store<u32>(mPtr + 64 - 8, bswap(bytesHashed / 0x20000000)); // length -- high bits
+  store<u32>(mPtr + 64 - 4, bswap(bytesHashed << 3)); // length -- low bits
 
   // hash round for padding
   hashBlocks(wPtr, mPtr);
