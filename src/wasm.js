@@ -1,4 +1,4 @@
-import loader from "assemblyscript/lib/loader";
+import loader from "@assemblyscript/loader";
 import wasmCode from "../build/optimized.wasm";
 import {Buffer} from "buffer";
 

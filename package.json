@@ -35,7 +35,7 @@
         "test:as-ci": "asp --nortrace 2> /dev/null"
     },
     "dependencies": {
-        "assemblyscript": "0.9.2",
+        "@assemblyscript/loader": "^0.9.2",
         "buffer": "^5.4.3"
     },
     "devDependencies": {
@@ -47,7 +47,7 @@
         "@babel/preset-env": "^7.6.0",
         "@babel/register": "^7.7.4",
         "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
-        "assert": "^2.0.0",
+        "assemblyscript": "0.9.2",
         "babel-loader": "^8.0.6",
         "benchmark": "^2.1.4",
         "chai": "^4.2.0",
