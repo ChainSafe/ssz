@@ -1,8 +1,8 @@
-const loader = require("assemblyscript/lib/loader");
+import loader from "assemblyscript/lib/loader";
 import wasmCode from "../build/optimized.wasm";
 import {Buffer} from "buffer";
 
-const module = new WebAssembly.Module((Buffer.from(wasmCode, 'binary')));
+const module = new WebAssembly.Module(Buffer.from(wasmCode, 'binary'));
 
 export function newInstance() {
   return loader.instantiateSync(module);
