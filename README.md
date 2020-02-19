@@ -1,51 +1,23 @@
 # as-sha256
-Assembly Script implementation of SHA256.
 
-This repository contains two npm distributions; a pure AssemblyScript version, and a Typescript wrapper for the WASM build.
-
-## Benchmarks
-
-```
-Sha256-Rust#hash x 328,611 ops/sec ±5.99% (75 runs sampled)
-Sha256-Js#hash x 340,641 ops/sec ±4.64% (77 runs sampled)
-Sha256-Asm#hash x 5,217 ops/sec ±8.83% (74 runs sampled)
-Sha256-BCrypto#hash x 411,191 ops/sec ±9.87% (59 runs sampled)
-AS-Sha256#hash x 537,124 ops/sec ±8.91% (76 runs sampled)
-Fastest is AS-Sha256#hash
-```
-
-
-## AssemblyScript
-
-`yarn add @chainsafe/as-sha256`
-
-## TypeScript Wrapper
-
-`yarn add @chainsafe/sha256`
+AssemblyScript implementation of SHA256.
 
 ## Usage
 
-```JS
-import sha256 from "@chainsafe/sha256";
+`yarn add @chainsafe/as-sha256`
 
-const hash = sha256(Buffer.from("Hello world"));
-```
+```typescript
+import SHA256 from "@chainsafe/as-sha256";
 
-We also expose the lower level WASM exports for those that may wish to use it. It can be accessed as follows:
-```JS
-import { wasm } from "@chainsafe/sha256"
+let hash: Uint8Array;
 
-const buffer = Buffer.from("Hello world");
-const input  = wasm.__retain(wasm.__allocArray(wasm.UINT8ARRAY_ID, buffer));
-const output = wasm.hash(input);
-const result = wasm.__getUint8Array(output);
+// create a new sha256 context
+const sha256 = new SHA256();
+// with init(), update(data), and final()
+hash = sha256.init().update(Buffer.from("Hello world")).final();
 
-// use result before releases. Otherwise use `.slice()` for `result` for prevent modification attached buffer
-console.log(toHexString(result));
-
-// To prevent memory leaks
-wasm.__release(input);
-wasm.__release(output);
+// or use a one-pass interface
+hash = SHA256.digest(Buffer.from("Hello world"));
 ```
 
 ### License
