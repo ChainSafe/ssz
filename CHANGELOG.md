@@ -1,5 +1,5 @@
-<a name="0.1.4"></a>
-## 0.2.0 (unreleased)
+<a name="0.2.0"></a>
+## 0.2.0 (2020-02-19)
 
 ### BREAKING CHANGES
 

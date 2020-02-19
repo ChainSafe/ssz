@@ -1,6 +1,6 @@
 {
     "name": "@chainsafe/as-sha256",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "description": "An AssemblyScript implementation of SHA256",
     "author": "ChainSafe Systems",
     "license": "Apache-2.0",
