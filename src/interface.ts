@@ -6,8 +6,8 @@
  */
 
 export interface ArrayLike<T> {
-  readonly length: number;
   [n: number]: T;
+  readonly length: number;
   [Symbol.iterator](): Iterator<T>;
   find(fn: (value: T, index: number, array: this) => boolean): T | undefined;
   findIndex(fn: (value: T, index: number, array: this) => boolean): number;

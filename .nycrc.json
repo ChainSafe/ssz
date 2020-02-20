@@ -1,3 +1,20 @@
 {
-  "extends": "../../.nycrc.json"
+  "cache": false,
+  "extension": [
+    ".ts"
+  ],
+  "exclude": [
+    "*.d.ts",
+    "*.js",
+    "lib/**",
+    "coverage/**",
+    "test/**",
+    "types/**",
+    "node_modules/**"
+  ],
+  "all": false,
+  "reporter": [
+    "text",
+    "lcov"
+  ]
 }

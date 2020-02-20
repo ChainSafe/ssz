@@ -1,10 +1,16 @@
 {
-  "extends": "../../tsconfig",
   "include": ["src"],
   "compilerOptions": {
     "typeRoots": [
-      "../../node_modules/@types",
-      "./types"
-    ]
+        "node_modules/@types",
+        "./types"
+    ],
+    "target": "esnext",
+    "module": "commonjs",
+    "pretty": true,
+     "declaration": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "esModuleInterop": true
   }
 }
