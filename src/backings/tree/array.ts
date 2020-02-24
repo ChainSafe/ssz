@@ -86,9 +86,8 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
   setProperty(target: Tree, property: number, value: T[number], expand=false): boolean {
     const chunkGindex = this.gindexOfChunk(target, this.getChunkIndex(property));
     // copy data from old chunk, use new memory to set a new chunk
-    const dataChunk = target.getRoot(chunkGindex);
     const chunk = new Uint8Array(32);
-    chunk.set(dataChunk);
+    chunk.set(target.getRoot(chunkGindex));
     this._type.elementType.toBytes(value, chunk, this.getChunkOffset(property));
     target.setRoot(chunkGindex, chunk, expand);
     return true;

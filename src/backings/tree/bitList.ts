@@ -28,9 +28,9 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     }
     const target = super.fromBytes(data, start, end);
     const lastGindex = this.gindexOfChunk(target, Math.ceil((end - start) / 32) - 1);
-    // mutate lastChunk (instead of copying/creating a new chunk)
-    // this is ok only because we haven't cached hashes yet
-    const lastChunk = target.getRoot(lastGindex);
+    // copy chunk into new memory
+    const lastChunk = new Uint8Array(32);
+    lastChunk.set(target.getRoot(lastGindex));
     const lastChunkByte = ((end - start) % 32) - 1;
     let length;
     if (lastByte === 1) { // zero lastChunkByte
@@ -42,6 +42,7 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
       const mask = 0xff >> (8 - lastByteBitLength);
       lastChunk[lastChunkByte] &= mask;
     }
+    target.setRoot(lastGindex, lastChunk);
     this.setLength(target, length);
     return target;
   }
@@ -69,7 +70,8 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
   }
   setProperty(target: Tree, property: number, value: boolean, expand=false): boolean {
     const chunkGindex = this.gindexOfChunk(target, this.getChunkIndex(property));
-    const chunk = target.getRoot(chunkGindex);
+    const chunk = new Uint8Array(32);
+    chunk.set(target.getRoot(chunkGindex));
     const byteOffset = this.getChunkOffset(property);
     if (value) {
       chunk[byteOffset] |= (1 << this.getBitOffset(property));
