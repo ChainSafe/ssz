@@ -47,6 +47,6 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "bcrypto": "^4.2.8"
+    "@chainsafe/as-sha256": "^0.2.0"
   }
 }
