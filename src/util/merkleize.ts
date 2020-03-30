@@ -19,7 +19,7 @@ export function merkleize(chunks: Buffer[], padFor = 0): Buffer {
       chunks.push(zeroHashes[layer]);
     }
     for (let i = 0; i < chunks.length; i += 2) {
-      chunks[i / 2] = hash(chunks[i], chunks[i + 1]);
+      chunks[i / 2] = Buffer.from(hash(chunks[i], chunks[i + 1]));
     }
     chunks.splice(chunks.length / 2, chunks.length / 2);
     layer++;
@@ -31,5 +31,5 @@ export function merkleize(chunks: Buffer[], padFor = 0): Buffer {
 export function mixInLength(root: Buffer, length: number): Buffer {
   const lengthBuf = Buffer.alloc(32);
   lengthBuf.writeUIntLE(length, 0, 6);
-  return hash(root, lengthBuf);
+  return Buffer.from(hash(root, lengthBuf));
 }
