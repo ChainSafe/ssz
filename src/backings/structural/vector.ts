@@ -51,7 +51,7 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
     this._type = type;
   }
   defaultValue(): T {
-    return Array.from({length: this.type.length}, () => {
+    return Array.from({length: this._type.length}, () => {
       return this._type.elementType.structural.defaultValue();
     }) as unknown as T;
   }
