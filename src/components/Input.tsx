@@ -1,13 +1,13 @@
 import * as React from "react";
 import {presets, typeNames, PresetName} from "../util/types";
-import {AnySSZType} from "@chainsafe/ssz";
+import {Type} from "@chainsafe/ssz";
 import {createRandomValue} from "../util/random";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
 
 
 type Props = {
-    onProcess: (presetName: PresetName, name: string, input: any, type: AnySSZType) => void
+    onProcess: (presetName: PresetName, name: string, input: any, type: Type<any>, inputType: string) => void
 }
 
 type State = {
@@ -81,7 +81,7 @@ export default class Input extends React.Component<Props, State> {
     }
 
     doProcess() {
-        this.props.onProcess(this.state.presetName, this.state.sszTypeName, this.parsedInput(), this.types()[this.state.sszTypeName])
+        this.props.onProcess(this.state.presetName, this.state.sszTypeName, this.parsedInput(), this.types()[this.state.sszTypeName], this.state.inputType)
     }
 
     render() {

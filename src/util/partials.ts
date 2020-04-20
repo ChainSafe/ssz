@@ -1,11 +1,11 @@
-import {ArrayType, FullSSZType, ListType, Type} from "@chainsafe/ssz";
+import {ArrayType, ListType, Type} from "@chainsafe/ssz";
 import BN from "bn.js";
 
 // binary string
 type GenIndex = string
 
 export type Node = {
-    type: FullSSZType;
+    type: Type;
     data: any;
     key: string | number;
     genIndex: GenIndex;

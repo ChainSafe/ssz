@@ -8,8 +8,8 @@ import {outputTypes} from "../util/output_types";
 
 type Props = {
     error: string | undefined;
-    serialized: Buffer | undefined;
-    hashTreeRoot: Buffer | undefined;
+    serialized: Uint8Array | undefined;
+    hashTreeRoot: Uint8Array | undefined;
 }
 
 type State = {

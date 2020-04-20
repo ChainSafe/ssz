@@ -1,7 +1,8 @@
-import {FullSSZType, Type} from "@chainsafe/ssz";
-import {BitList, BitVector} from "@chainsafe/bit-utils";
+import {Type} from "@chainsafe/ssz";
+// import {BitList, BitVector} from "@chainsafe/bit-utils";
 import decamelize from "decamelize";
 import BN from "bn.js";
+import { config } from "@chainsafe/lodestar-config/lib/presets/mainnet";
 
 export function expandByteArray(input: string): Buffer {
   if (input && input.slice(0, 2) === '0x') {
@@ -11,7 +12,7 @@ export function expandByteArray(input: string): Buffer {
   }
 }
 
-export function expandInput(input: any, type: FullSSZType, intFromStr: boolean): any {
+export function expandInput(input: any, type: Type<any>, intFromStr: boolean): any {
     switch (type.type) {
         case Type.uint:
             if(intFromStr) {
@@ -22,9 +23,9 @@ export function expandInput(input: any, type: FullSSZType, intFromStr: boolean):
         case Type.bool:
             return Boolean(input);
         case Type.bitList:
-            return BitList.deserialize(expandByteArray(input))
+            return type.deserialize(expandByteArray(input))
         case Type.bitVector:
-            return BitVector.fromBitfield(expandByteArray(input), type.length)
+            return type.fromBitfield(expandByteArray(input), type.length)
         case Type.byteList:
         case Type.byteVector:
             return expandByteArray(input);

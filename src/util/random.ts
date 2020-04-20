@@ -1,4 +1,4 @@
-import {AnySSZType, FullSSZType, parseType, Type, UintType} from '@chainsafe/ssz';
+import {Type, UintType} from '@chainsafe/ssz';
 import {expandInput} from "./translate";
 import BN from "bn.js";
 
@@ -24,13 +24,26 @@ function randomBytes(length: number): string {
   return '0x' + Array.from({length: length * 2}, () => randomNibble()).join('');
 }
 
-export function createRandomValue(type: AnySSZType): any {
-  const fullType = parseType(type);
-  const randomValue = _createRandomValue(fullType);
-  return expandInput(randomValue, fullType, false);
+export function createRandomValue<T>(type: Type<T>): any {
+  const fullType = type; // parseType(type);
+  // @TODO: this is a temprary substitute
+  const randomValue = type.defaultValue();
+  // const randomValue = _createRandomValue(fullType);
+  return randomValue; // expandInput(randomValue, fullType, false);
 }
 
-function _createRandomValue(type: FullSSZType): any {
+function _createRandomValue<T>(type: Type<T>): any {
+  // BooleanType
+  // ByteVectorType
+  // NumberUintType
+  // BigIntUintType
+  // ContainerType
+  // BitListType
+  // CompositeVectorType
+  // CompositeListType
+  // BasicListType
+  // ListType
+  // VectorType
   switch (type.type) {
     case Type.uint:
       return randomUint(type);
