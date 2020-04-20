@@ -30,7 +30,7 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@chainsafe/as-sha256": "^0.2.0",
-    "@chainsafe/persistent-merkle-tree": "^0.1.1"
+    "@chainsafe/persistent-merkle-tree": "^0.1.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
