@@ -1,17 +1,20 @@
 # ssz
 [![Build Status](https://travis-ci.com/ChainSafe/lodestar.svg?branch=master)](https://travis-ci.com/ChainSafe/lodestar)
 
-Simple Serialize (SSZ) - [An ETH2 standard implementation](https://github.com/ethereum/eth2.0-specs/blob/dev/ssz/simple-serialize.md) as a Js package for defining, serializating / deserializating object schemas.
-
 ## Summary
-SSZ is a type system allows you to define object schemas which allow for efficient serialization / deserialization, stable merkleization with a default constructor for all types.
 
-Additionally, schemas allow for:
+Simple Serialize (SSZ) is [an Eth2 standard](https://github.com/ethereum/eth2.0-specs/blob/dev/ssz/simple-serialize.md) that defines how Eth2 consensus objects are serialized and merkleized.
+
+SSZ is a type system that defines:
+* efficient serialization / deserialization
+* stable merkleization
+* default constructor
+
+Additionally, this library allows for additional operations:
 * equality
 * valid value assertion
 * copy / clone
-* serialized byte length (for serialization)
-* chunk count (for merkleization)
+* to / from json-serializable object
 
 ## Install
 
@@ -19,10 +22,10 @@ Additionally, schemas allow for:
 
 ## Usage
 
-```TS
+```typescript
 import {ContainerType, ByteVectorType} from "@chainsafe/ssz";
 
-// Creates a Keypair SSZ data type (a private key of 32 bytes, a public key of 48 bytes)
+// Creates a "Keypair" SSZ data type (a private key of 32 bytes, a public key of 48 bytes)
 const Keypair = new ContainerType({
   fields: {
     priv: new ByteVectorType({
@@ -45,8 +48,8 @@ interface Keypair {
 
 const kp = Keypair.defaultValue(); // Create a default Keypair
 
-kp.priv; // => Uint8Array [0,0,0,...], length 32
-kp.pub; // => Uint8Array [0,0,0, ...], length 48
+kp.priv; // => ByteVector [0,0,0,...], length 32
+kp.pub; // => ByteVector [0,0,0, ...], length 48
 
 const serialized: Uint8Array = Keypair.serialize(kp); // serialize the object to a byte array
 const root: Uint8Array = Keypair.hashTreeRoot(kp); // get the merkle root of the object
@@ -56,28 +59,23 @@ const kp3: Keypair = Keypair.deserialize(serialized); // deserialize a serialize
 const jsonKp = Keypair.toJson(kp); // convert the object to a json-serializable representation (binary data is converted to hex strings)
 JSON.stringify(jsonKp);
 Keypair.fromJson(jsonKp); // convert the json-serializable representation to the object
+
+// The merkle-tree-backed representation of a Keypair may be created / operated on
+const kp2: Keypair = Keypair.tree.defaultValue();
+
+// All of the same operations can be performed on tree-backed values
+Keypair.serialize(kp2);
 ```
 
 ### ETH2 Objects
 
-[Lodestar-types](https://www.npmjs.com/package/@chainsafe/lodestar-types) has a premade collection of ETH2 schemas (eg: BeaconBlock, DepositData, BeaconState, etc), simply add @chainsafe/lodestar-types to your project.
+For Eth2 datatypes (eg: `BeaconBlock`, `DepositData`, `BeaconState`, etc), see [`@chainsafe/lodestar-types`](https://github.com/ChainSafe/lodestar/tree/master/packages/lodestar-types).
 
-```TS
-// we provide preset mainnet and minimal eth2 types
-// This toggle-ability is because ssz types rely on the eth2 network parameters set in @chainsafe/lodestar-params
-import {types as mainnetTypes} from "@chainsafe/lodestar-types/lib/ssz/presets/mainnet";
-
-// `mainnetTypes` is of type IBeaconSSZTypes, an object of ssz types
-import {IBeaconSSZTypes} from "@chainsafe/lodestar-types";
-
-// Typescript interfaces can be imported as well
-import {DepositData} from "@chainsafe/lodestar-types";
-
-const d: DepositData = mainnetTypes.DepositData.defaultValue();
-```
 
 ## Additional notes
+
 ### Backings
+
 This library operates on values of several kinds of 'backings', or underlying representations of data. Each backing has runtime tradeoffs for the above operations that arise from the nature of the underlying representation. 
 
 Effort has been made to minimize the differences between backings for the core API, which includes the above operations, property getter/setters, and iteration (value iteration for vectors/lists and enumerable key iteration for containers).
