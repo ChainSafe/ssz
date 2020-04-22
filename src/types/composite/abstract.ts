@@ -5,7 +5,7 @@ import {
   StructuralHandler, TreeHandler, ByteArrayHandler,
 } from "../../backings";
 
-import {BasicType} from "../basic";
+import {isTypeOf, BasicType} from "../basic";
 
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
@@ -15,6 +15,17 @@ export class CompositeType<T extends object> {
   structural: StructuralHandler<T>;
   tree: TreeHandler<T>;
   byteArray: ByteArrayHandler<T>;
+
+  /**
+   * Symbols used to track the identity of a type
+   *
+   * Used by various isFooType functions
+   */
+  _typeSymbols: Set<symbol>;
+
+  constructor() {
+    this._typeSymbols = new Set();
+  }
 
   isBasic(): this is BasicType<T> {
     return false;
