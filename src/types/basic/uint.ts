@@ -24,7 +24,17 @@ export class UintType<T> extends BasicType<T> {
   }
 }
 
+export const NUMBER_UINT_TYPE = Symbol.for("ssz/NumberUintType");
+
+export function isNumberUintType(type: unknown): type is NumberUintType {
+  return isTypeOf(type, NUMBER_UINT_TYPE);
+}
+
 export class NumberUintType extends UintType<number> {
+  constructor(options: IUintOptions) {
+    super(options);
+    this._typeSymbols.add(NUMBER_UINT_TYPE);
+  }
   assertValidValue(value: unknown): asserts value is number {
     if (!(Number.isSafeInteger(value as number) || value === Infinity)) {
       throw new Error("Uint value is not a number");
@@ -78,7 +88,17 @@ export class NumberUintType extends UintType<number> {
   }
 }
 
+export const BIGINT_UINT_TYPE = Symbol.for("ssz/BigIntUintType");
+
+export function isBigIntUintType(type: unknown): type is BigIntUintType {
+  return isTypeOf(type, BIGINT_UINT_TYPE);
+}
+
 export class BigIntUintType extends UintType<bigint> {
+  constructor(options: IUintOptions) {
+    super(options);
+    this._typeSymbols.add(BIGINT_UINT_TYPE);
+  }
   assertValidValue(value: unknown): asserts value is bigint {
     if (typeof value !== "bigint") {
       throw new Error("Uint value is not a bigint");
