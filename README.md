@@ -91,6 +91,10 @@ A `Tree` object wraps `Node` and provides an API for tree navigation and transpa
 
 https://github.com/protolambda/remerkleable
 
+### Audit
+
+This repo was audited by Least Authority as part of [this security audit](https://github.com/ChainSafe/lodestar/blob/master/audits/2020-03-23_UTILITY_LIBRARIES.pdf), released 2020-03-23. Commit [`8b5ad7`](https://github.com/ChainSafe/bls-hd-key/commit/8b5ad7) verified in the report.
+
 ## License
 
 Apache-2.0
