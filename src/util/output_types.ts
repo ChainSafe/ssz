@@ -8,7 +8,7 @@ type OutputType = {
 
 export const outputTypes: OutputTypeRecord = {
   hex: {
-    dump: (value) => toHexString(value), // value.toString('hex'),
+    dump: (value) => toHexString(value),
   },
   base64: {
     dump: (value) => value.toString('base64'),
