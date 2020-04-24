@@ -10,11 +10,11 @@ export const presets = {
 
 export type PresetName = keyof typeof presets;
 
-export function typeNames(types: Record<string, Type<any>>): string[] {
+export function typeNames<T>(types: Record<string, Type<T>>): string[] {
   return Object.keys(types).sort();
 }
 
-export function typeName(type: Type<any>, types: Record<string, Type<any>>): string {
+export function typeName<T>(type: Type<T>, types: Record<string, Type<T>>): string {
   for (const [name, typ] of Object.entries(types)) {
     if (deepEqual(type, typ)) {
       return name;

@@ -4,6 +4,7 @@ import Output from "./Output";
 import Input from "./Input";
 import {PresetName} from '../util/types';
 import {inputTypes} from "../util/input_types";
+import TreeView from './TreeView';
 
 type Props = {
 
@@ -50,7 +51,6 @@ export default class Serialize extends React.Component<Props, State> {
 
   render() {
     const {presetName, input, sszType, error, serialized, hashTreeRoot} = this.state;
-    // const treeKey = hashTreeRoot ? hashTreeRoot.toString('hex') : '';
     const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : '';
     return (
       <div className='section serialize-section is-family-code'>
@@ -65,7 +65,7 @@ export default class Serialize extends React.Component<Props, State> {
           </div>
         </div>
         {
-          // {(!error && input && sszType && presetName) && <TreeView key={treeKey} presetName={presetName} input={input} sszType={sszType}/>}
+          (!error && input && sszType && presetName) && <TreeView key={treeKey} presetName={presetName} input={input} sszType={sszType}/>
         }
       </div>
     );
