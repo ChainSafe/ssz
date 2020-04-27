@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
-import {
-  BackedValue, isBackedValue,
-  StructuralHandler, TreeHandler, ByteArrayHandler,
-} from "../../backings";
+import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler,} from "../../backings";
 
 import {BasicType} from "../basic";
+import {IJsonOptions} from "../type";
 
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
@@ -133,14 +131,14 @@ export class CompositeType<T extends object> {
   /**
    * Convert from a JSON-serializable object
    */
-  fromJson(data: Json): T {
-    return this.structural.fromJson(data);
+  fromJson(data: Json, options?: IJsonOptions): T {
+    return this.structural.fromJson(data, options);
   }
 
   /**
    * Convert to a JSON-serializable object
    */
-  toJson(value: T): Json {
-    return this.structural.toJson(value);
+  toJson(value: T, options?: IJsonOptions): Json {
+    return this.structural.toJson(value, options);
   }
 }
