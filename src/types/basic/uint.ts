@@ -18,6 +18,15 @@ export class UintType<T> extends BasicType<T> {
 
 export class NumberUintType extends UintType<number> {
   assertValidValue(value: unknown): asserts value is number {
+    if (
+      value !== Infinity 
+        && (
+          !Number.isSafeInteger(value as number)
+          || value > (BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
+        )
+    ) {
+      throw new Error("Uint value is not a number");
+    }
     if (value as number < 0) {
       throw new Error("Uint value must be gte 0");
     }
