@@ -13,8 +13,13 @@ describe("known issues", () => {
 
   it("far future epoch from json", function () {
     const Number = new NumberUintType({byteLength: 4});
-    const farFutureEpohc = Number.fromJson(18446744073709551615);
-    expect(farFutureEpohc).to.be.equal(Infinity);
+    const farFutureEpoch = Number.fromJson("18446744073709551615");
+    expect(farFutureEpoch).to.be.equal(Infinity);
+  });
+
+  it("too large number from json", function () {
+    const Number = new NumberUintType({byteLength: 4});
+    expect(() => Number.fromJson("18446744073709551616")).to.throw;
   });
 
 

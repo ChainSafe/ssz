@@ -55,9 +55,14 @@ export class NumberUintType extends UintType<number> {
     return Number(output);
   }
   fromJson(data: Json): number {
-    let n = Number(data);
-    if(n > Number.MAX_SAFE_INTEGER) {
+    let n: number;
+    const bigN = BigInt(data);
+    if (bigN === (BigInt(2) ** BigInt(64)) - BigInt(1)) {
       n = Infinity;
+    } else if (bigN < Number.MAX_SAFE_INTEGER) {
+      n = Number(bigN);
+    } else {
+      throw new Error("Uint value unsafe");
     }
     this.assertValidValue(n);
     return n;
