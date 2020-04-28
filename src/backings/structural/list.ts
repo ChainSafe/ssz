@@ -1,5 +1,5 @@
 import {List, Json} from "../../interface";
-import {BasicListType, CompositeListType} from "../../types";
+import {BasicListType, CompositeListType, IJsonOptions} from "../../types";
 import {mixInLength} from "../../util/compat";
 import {BasicArrayStructuralHandler, CompositeArrayStructuralHandler} from "./array";
 
@@ -64,7 +64,7 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
   hashTreeRoot(value: T): Uint8Array {
     return mixInLength(super.hashTreeRoot(value), value.length);
   }
-  fromJson(data: Json): T {
+  fromJson(data: Json, options?: IJsonOptions): T {
     if (!Array.isArray(data)) {
       throw new Error("Invalid JSON list: expected an Array");
     }
@@ -72,6 +72,6 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
     if (data.length > maxLength) {
       throw new Error(`Invalid JSON list: length ${data.length} greater than limit ${maxLength}`);
     }
-    return super.fromJson(data);
+    return super.fromJson(data, options);
   }
 }

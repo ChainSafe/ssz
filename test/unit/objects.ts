@@ -72,6 +72,14 @@ export const CamelCaseFieldObject = new ContainerType({
   },
 });
 
+export const ComplexCamelCaseFieldObject = new ContainerType({
+  fields: {
+    someValue: new NumberUintType({byteLength: 4}),
+    someOtherValue: new BooleanType(),
+    container: CamelCaseFieldObject
+  },
+});
+
 export const InnerObject = new ContainerType({
   fields: {
     v: number16Type,
