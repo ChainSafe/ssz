@@ -15,6 +15,8 @@ import {
   isVectorType,
   isListType,
   isContainerType,
+  VectorType,
+  ListType,
 } from "@chainsafe/ssz";
 import BN from "bn.js";
 import {presets, PresetName} from "../util/types";
@@ -23,18 +25,16 @@ import {presets, PresetName} from "../util/types";
 
 // type TypeNameRecords = Record<Type, (t: FullSSZType, types: Record<string, AnySSZType>) => string>
 
-function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>): string {
-  console.log('type: ', type);
-  console.log('type2: ', (type as unknown as ByteVectorType));
+function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>, name: string): string | undefined {
   if(isBooleanType(type)) return "bool";
-  else if(isUintType(type)) return `uint${((type as UintType<T>).byteLength * 8)}`;
+  else if(isUintType(type)) return `uint${(type.byteLength * 8)}`;
   else if(isBitListType(type)) return "BitList";
-  else if(isBitVectorType(type)) return `BitVector[${(type as BitVectorType).length}]`;
+  else if(isBitVectorType(type)) return `BitVector[${type.length}]`;
   else if(isBitListType(type)) return "Bytes";
-  else if(isByteVectorType(type)) return `BytesN[${(type as ByteVectorType).length}]`;
-  // else if(isVectorType(type)) return `Vector[${getTypeName((type as VectorType<T>).elementType, types)}, ${(type as VectorType).length}]`;
-  // else if(isListType(type)) return `List[${getTypeName((type as ListType<T>).elementType, types)}]`;
-  // else if(isContainerType(type)) return `${typeName(type, types)}(Container)`;
+  else if(isByteVectorType(type)) return `BytesN[${type.length}]`;
+  else if(isVectorType(type)) return `Vector`; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}, ${(type as VectorType).length}]`;
+  else if(isListType(type)) return `List`; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}]`;
+  else if(isContainerType(type)) return `${name}(Container)`;
   else return "N/A";
 }
 
@@ -68,15 +68,15 @@ type NodeProps<T> = {
 type Props<T> = {
   presetName: PresetName;
   input: any;
-  // sszType: Type;
+  sszTypeName: string;
   sszType: Type<T>; // @TODO: is this correct?
+  name: string | undefined;
 }
 
 type State<T> = {
   rootNode: SSZNode<T> | undefined;
   selectedNode: Node<T> | undefined;
 }
-
 
 type DefProps = {
   title: string;
@@ -130,7 +130,8 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
   }
 
   static getDerivedStateFromProps<T>(nextProps: Props<T>, _prevState: State<T>) {
-    return {rootNode: getRootNode(nextProps.input, nextProps.sszType)}
+    const rootNode = getRootNode(nextProps.input, nextProps.sszType);
+    return {rootNode};
   }
 
   static renderArrow<T>(_nodeProps: NodeProps<T>) {
@@ -139,11 +140,9 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
 
   static renderText<T>(nodeProps: NodeProps<T>) {
     const sszNode = nodeProps.node.sszNode;
-    console.log('nodeProps: ', nodeProps);
     return (
       <span className={"ssz-" + getKind(sszNode.type)}>
-      <span className={"node-key " + (nodeProps.node.isListKey ? "list-key" : "normal-key")}
-      key="text-key" style={{width: `${nodeProps.node.keyWidth + 1}ch`}}>
+      <span className={"node-key " + (nodeProps.node.isListKey ? "list-key" : "normal-key")} key="text-key" style={{width: `${nodeProps.node.keyWidth + 1}ch`}}>
       {sszNode.key}
       </span>
       <span className="node-type" key="text-type" style={{width: `${nodeProps.node.typeWidth + 1}ch`}}>
@@ -167,23 +166,22 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
   }
 
   render() {
-    const {presetName} = this.props;
-    const types = presets[presetName as keyof typeof presets];
+    const {presetName, sszTypeName} = this.props;
+    const types = presets[presetName];
     const {rootNode, selectedNode} = this.state;
-    console.log('rootNode: ', rootNode);
     return (
       <div className='container'>
       <div className='columns is-desktop'>
       <div className='column'>
       <div className='container'>
       <h3 className='subtitle'>Tree-view</h3>
-      {rootNode ?
+      {rootNode && rootNode.type ?
         <EyzyTree
           data={({
             sszNode: rootNode,
             isBatch: !isBottomType(rootNode.type),
             isListKey: false,
-            // text: getTypeName(rootNode.type, types),
+            text: getTypeName(rootNode.type, types, sszTypeName),
             expanded: false,
           })}
           theme={["ssz-tree"]}
@@ -191,13 +189,13 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
           arrowRenderer={TreeView.renderArrow}
           textRenderer={TreeView.renderText}
           onSelect={this.onSelect.bind(this)}
-          fetchData={async (node: Node<T>) => {
-            const childNodes = getChildNodes(node.sszNode);
+          fetchData={async(node) => {
+            const childNodes = getChildNodes(this.state.rootNode ? this.state.rootNode : node);
             const out = childNodes.map((n): Node<T> => ({
               sszNode: n,
               isBatch: !isBottomType(n.type),
               isListKey: isListType(node.sszNode.type) || isVectorType(node.sszNode.type),
-              text: getTypeName(n.type, types),
+              text: getTypeName(n.type, types, 'placeholder!'),
               typeWidth: 0,
               keyWidth: 0,
               expanded: false,

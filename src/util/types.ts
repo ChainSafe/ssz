@@ -14,11 +14,12 @@ export function typeNames<T>(types: Record<string, Type<T>>): string[] {
   return Object.keys(types).sort();
 }
 
-export function typeName<T>(type: Type<T>, types: Record<string, Type<T>>): string {
-  for (const [name, typ] of Object.entries(types)) {
-    if (deepEqual(type, typ)) {
-      return name;
-    }
-  }
-  return "unknown";
-}
+// export function typeName<T>(type: Type<T>, types: Record<string, Type<T>>): string {
+//   console.log('typeName happening...');
+//   for (const [name, typ] of Object.entries(types)) {
+//     if (deepEqual(type, typ)) {
+//       return name;
+//     }
+//   }
+//   return "unknown";
+// }

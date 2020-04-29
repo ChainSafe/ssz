@@ -1,4 +1,4 @@
-import {ArrayType, ListType, Type, isBooleanType, isUintType, isBitListType, isBitVectorType, isContainerType, isVectorType, isByteVectorType, isListType} from "@chainsafe/ssz";
+import {ListType, Type, isBooleanType, isUintType, isBitListType, isBitVectorType, isContainerType, isVectorType, isByteVectorType, isListType} from "@chainsafe/ssz";
 import BN from "bn.js";
 
 // binary string
@@ -16,13 +16,12 @@ export function isBottomType<T>(type: Type<T>) {
     || isBooleanType(type)
     || isBitListType(type)
     || isBitVectorType(type)
-    // || isType(type) Type.byteList
     || isByteVectorType(type));
 }
 
 export function getRootNode<T>(data: any, type: Type<T>): Node<T> {
   return {
-    type,
+    type: {_typeSymbols: type._typeSymbols, fields: type.fields, depth: type.tree.depth()},
     data: data,
     key: "root",
     genIndex: "1",
@@ -42,39 +41,33 @@ const childIndex = (parentIndex: GenIndex, listIndex: number, depth: number, ele
   return genIndex;
 };
 
-const getDepth = (count: number) => count == 0 ? 0 : new BN(count - 1).bitLength();
-
 export function getChildNodes<T>(node: Node<T>): Array<Node<T>> {
-  if(isBottomType(node.type)) {
+  const { type, data, genIndex, depth } = node;
+  if(isBottomType(type)) {
       return [];
-  } else if(isListType(node.type) || isVectorType(node.type)) {
-    // dynamic length lists will have a limit that determines the depth in the future.
-    // Just fake it to be 32 for now.
-    let depth = 32;
-    if (isVectorType(node.type)) {
-      depth = getDepth(node.type.length)
-    }
+  } else if(isListType(type) || isVectorType(type)) {
     let elementsPerChunk = 1;
-    const elemType = (node.type as ListType).elementType;
+    const elemType = (type as ListType).elementType;
     if (isUintType(elemType)) {
       elementsPerChunk = 32 / elemType.byteLength;
     } else if (isBooleanType(elemType)) {
       elementsPerChunk = 32;
     }
-    return node.data.map((e: any, i: number): Node<T> => ({
-      type: (node.type as ArrayType).elementType,
+    return data.map((e: any, i: number): Node<T> => ({
+      type: (type as ArrayType).elementType,
       data: e,
       key: i,
-      genIndex: childIndex(node.genIndex, i, depth, elementsPerChunk),
+      genIndex: childIndex(genIndex, i, depth, elementsPerChunk),
     }));
   }
-  if (isContainerType(node.type)) {
-    const depth = getDepth(node.type.fields.length);
-    return node.type.fields.map(([fieldName, fieldType], i): Node<T> => ({
-      type: fieldType,
-      data: node.data[fieldName],
-      key: fieldName,
-      genIndex: childIndex(node.genIndex, i, depth, 1),
+  if (isContainerType(type)) {
+    // const depth = type.tree.depth();
+    const { fields } = type;
+    return Object.keys(fields).map((i): Node<T> => ({
+      // type: fieldType,
+      data: data[i],
+      key: i,
+      // genIndex: childIndex(genIndex, i, depth, 1),
     }));
   } else {
     return [];

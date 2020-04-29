@@ -10,17 +10,17 @@ type Props = {
 
 }
 
-type State = {
+type State<T> = {
   presetName: PresetName | undefined;
   name: string | undefined;
   input: any;
-  sszType: Type<any> | undefined;
+  sszType: Type<T> | undefined;
   error: string | undefined;
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
 }
 
-export default class Serialize extends React.Component<Props, State> {
+export default class Serialize<T> extends React.Component<Props, State<T>> {
 
   constructor(props: any) {
     super(props);
@@ -45,8 +45,8 @@ export default class Serialize extends React.Component<Props, State> {
     }
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
-    const stringifiedInput = inputTypes[inputType].dump(input, type);
-    this.setState({presetName, name, input: stringifiedInput, sszType: type, serialized, hashTreeRoot: root, error});
+
+    this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error});
   }
 
   render() {
@@ -65,7 +65,7 @@ export default class Serialize extends React.Component<Props, State> {
           </div>
         </div>
         {
-          (!error && input && sszType && presetName) && <TreeView key={treeKey} presetName={presetName} input={input} sszType={sszType}/>
+          // (!error && input && sszType && presetName) && <TreeView key={treeKey} presetName={presetName} input={input} sszType={sszType} sszTypeName={this.state.name}/>
         }
       </div>
     );
