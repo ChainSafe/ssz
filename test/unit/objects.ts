@@ -1,5 +1,16 @@
 // Adapted from https://github.com/prysmaticlabs/prysm/blob/master/shared/ssz/encode_test.go#L296
-import {BigIntUintType, BitVectorType, BitListType, ByteVectorType, ContainerType, NumberUintType, byteType, ListType, VectorType} from "../../src";
+import {
+  BigIntUintType,
+  BitVectorType,
+  BitListType,
+  ByteVectorType,
+  ContainerType,
+  NumberUintType,
+  byteType,
+  ListType,
+  VectorType,
+  BooleanType
+} from "../../src";
 
 export const bytes2Type = new ByteVectorType({
   length: 2
@@ -51,6 +62,21 @@ export const SimpleObject = new ContainerType({
   fields: {
     b: number16Type,
     a: byteType,
+  },
+});
+
+export const CamelCaseFieldObject = new ContainerType({
+  fields: {
+    someValue: new NumberUintType({byteLength: 4}),
+    someOtherValue: new BooleanType(),
+  },
+});
+
+export const ComplexCamelCaseFieldObject = new ContainerType({
+  fields: {
+    someValue: new NumberUintType({byteLength: 4}),
+    someOtherValue: new BooleanType(),
+    container: CamelCaseFieldObject
   },
 });
 

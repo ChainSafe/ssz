@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
-import {CompositeType} from "../../types";
+import {CompositeType, IJsonOptions} from "../../types";
 import {merkleize} from "../../util/compat";
 
 /**
@@ -65,10 +65,10 @@ export class StructuralHandler<T extends object> {
   hashTreeRoot(target: T): Uint8Array {
     return merkleize(this.chunks(target), this._type.chunkCount());
   }
-  fromJson(data: Json): T {
+  fromJson(data: Json, options?: IJsonOptions): T {
     throw new Error("Not implemented");
   }
-  toJson(value: T): Json {
+  toJson(value: T, options?: IJsonOptions): Json {
     throw new Error("Not implemented");
   }
 }

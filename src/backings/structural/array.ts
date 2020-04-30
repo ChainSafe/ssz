@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {ArrayLike, Json} from "../../interface";
-import {BasicArrayType, CompositeArrayType} from "../../types";
+import {BasicArrayType, CompositeArrayType, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
 
 export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends StructuralHandler<T> {
@@ -189,16 +189,16 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
   chunk(value: T, index: number): Uint8Array {
     return this._type.elementType.hashTreeRoot(value[index]);
   }
-  fromJson(data: Json[]): T {
+  fromJson(data: Json[], options?: IJsonOptions): T {
     return Array.from(
       {length: data.length},
-      (_, i) => this._type.elementType.structural.fromJson(data[i]),
+      (_, i) => this._type.elementType.structural.fromJson(data[i], options),
     ) as unknown as T;
   }
-  toJson(value: T): Json {
+  toJson(value: T, options?: IJsonOptions): Json {
     return Array.from(
       {length: this.getLength(value)},
-      (_, i) => this._type.elementType.structural.toJson(value[i]),
+      (_, i) => this._type.elementType.structural.toJson(value[i], options),
     );
   }
 }

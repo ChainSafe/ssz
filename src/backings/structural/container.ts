@@ -1,6 +1,7 @@
 import {ObjectLike, Json} from "../../interface";
-import {ContainerType, CompositeType, Type} from "../../types";
+import {ContainerType, CompositeType, Type, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
+import {toExpectedCase} from "../utils";
 
 export class ContainerStructuralHandler<T extends ObjectLike> extends StructuralHandler<T> {
   _type: ContainerType<T>;
@@ -152,23 +153,30 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     const fieldType = this._type.fields[fieldName];
     return fieldType.hashTreeRoot(value[fieldName]);
   }
-  fromJson(data: Json): T {
+  fromJson(data: Json, options?: IJsonOptions): T {
     if (typeof data !== "object") {
       throw new Error("Invalid JSON container: expected Object");
     }
     const value = {} as T;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
-      if ((data as Record<string, Json>)[fieldName] === undefined) {
+
+      const expectedCase = options ? options.case : null;
+      const expectedFieldName = toExpectedCase(fieldName, expectedCase);
+      if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${fieldName} is undefined`);
       }
-      value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[fieldName]);
+      value[fieldName as keyof T] = fieldType.fromJson(
+        (data as Record<string, Json>)[expectedFieldName],
+        options
+      );
     });
     return value;
   }
-  toJson(value: T): Json {
+  toJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
+    const expectedCase = options ? options.case : null;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
-      data[fieldName] = fieldType.toJson(value[fieldName as keyof T]);
+      data[toExpectedCase(fieldName, expectedCase)] = fieldType.toJson(value[fieldName as keyof T], options);
     });
     return data;
   }
