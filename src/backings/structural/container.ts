@@ -163,7 +163,7 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
       const expectedCase = options ? options.case : null;
       const expectedFieldName = toExpectedCase(fieldName, expectedCase);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
-        throw new Error(`Invalid JSON container field: expected field ${fieldName} is undefined`);
+        throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
       value[fieldName as keyof T] = fieldType.fromJson(
         (data as Record<string, Json>)[expectedFieldName],
