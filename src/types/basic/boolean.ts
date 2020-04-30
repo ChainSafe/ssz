@@ -1,7 +1,17 @@
 import {Json} from "../../interface";
-import {BasicType} from "./abstract";
+import {BasicType, isTypeOf} from "./abstract";
+
+export const BOOLEAN_TYPE = Symbol.for("ssz/BooleanType");
+
+export function isBooleanType(type: unknown): type is BooleanType {
+  return isTypeOf(type, BOOLEAN_TYPE);
+}
 
 export class BooleanType extends BasicType<boolean> {
+  constructor() {
+    super();
+    this._typeSymbols.add(BOOLEAN_TYPE);
+  }
   size(): number {
     return 1;
   }

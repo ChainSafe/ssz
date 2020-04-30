@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
 import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler,} from "../../backings";
-
 import {BasicType} from "../basic";
 import {IJsonOptions} from "../type";
 
@@ -13,6 +12,17 @@ export class CompositeType<T extends object> {
   structural: StructuralHandler<T>;
   tree: TreeHandler<T>;
   byteArray: ByteArrayHandler<T>;
+
+  /**
+   * Symbols used to track the identity of a type
+   *
+   * Used by various isFooType functions
+   */
+  _typeSymbols: Set<symbol>;
+
+  constructor() {
+    this._typeSymbols = new Set();
+  }
 
   isBasic(): this is BasicType<T> {
     return false;

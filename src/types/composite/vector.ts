@@ -1,5 +1,6 @@
 import {Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
+import {isTypeOf} from "../basic";
 import {
   BasicVectorStructuralHandler, CompositeVectorStructuralHandler,
   BasicVectorTreeHandler, CompositeVectorTreeHandler,
@@ -8,6 +9,13 @@ import {
 
 export interface IVectorOptions extends IArrayOptions {
   length: number;
+}
+
+export const VECTOR_TYPE = Symbol.for("ssz/VectorType");
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isVectorType<T extends Vector<any>=Vector<any>>(type: unknown): type is VectorType<T> {
+  return isTypeOf(type, VECTOR_TYPE);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +44,7 @@ export class BasicVectorType<T extends Vector<unknown>=Vector<unknown>> extends 
     this.structural = new BasicVectorStructuralHandler(this);
     this.tree = new BasicVectorTreeHandler(this);
     this.byteArray = new BasicVectorByteArrayHandler(this);
+    this._typeSymbols.add(VECTOR_TYPE);
   }
   isVariableSize(): boolean {
     return false;
@@ -53,6 +62,7 @@ export class CompositeVectorType<T extends Vector<object>=Vector<object>> extend
     this.structural = new CompositeVectorStructuralHandler(this);
     this.tree = new CompositeVectorTreeHandler(this);
     this.byteArray = new CompositeVectorByteArrayHandler(this);
+    this._typeSymbols.add(VECTOR_TYPE);
   }
   isVariableSize(): boolean {
     return this.elementType.isVariableSize();
