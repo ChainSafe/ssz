@@ -1,5 +1,6 @@
 import {List} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
+import {isTypeOf} from "../basic";
 import {
   BasicListStructuralHandler, CompositeListStructuralHandler,
   BasicListTreeHandler, CompositeListTreeHandler,
@@ -16,6 +17,13 @@ type ListTypeConstructor = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new<T extends List<any>>(options: IListOptions): ListType<T>;
 };
+
+export const LIST_TYPE = Symbol.for("ssz/ListType");
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isListType<T extends List<any>=List<any>>(type: unknown): type is ListType<T> {
+  return isTypeOf(type, LIST_TYPE);
+}
 
 // Trick typescript into treating ListType as a constructor
 export const ListType: ListTypeConstructor =
@@ -36,6 +44,7 @@ export class BasicListType<T extends List<unknown>=List<unknown>> extends BasicA
     this.structural = new BasicListStructuralHandler(this);
     this.tree = new BasicListTreeHandler(this);
     this.byteArray = new BasicListByteArrayHandler(this);
+    this._typeSymbols.add(LIST_TYPE);
   }
   isVariableSize(): boolean {
     return true;
@@ -53,6 +62,7 @@ export class CompositeListType<T extends List<object>=List<object>> extends Comp
     this.structural = new CompositeListStructuralHandler(this);
     this.tree = new CompositeListTreeHandler(this);
     this.byteArray = new CompositeListByteArrayHandler(this);
+    this._typeSymbols.add(LIST_TYPE);
   }
   isVariableSize(): boolean {
     return true;

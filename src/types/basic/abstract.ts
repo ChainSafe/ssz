@@ -2,11 +2,36 @@
 import {Json} from "../../interface";
 
 /**
+ * Check if `type` is an instance of `typeSymbol` type
+ *
+ * Used by various isFooType functions
+ */
+export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
+  return (
+    type &&
+    (type as BasicType<unknown>)._typeSymbols &&
+    (type as BasicType<unknown>)._typeSymbols.has &&
+    (type as BasicType<unknown>)._typeSymbols.has(typeSymbol)
+  );
+}
+
+/**
  * A BasicType is a terminal type, which has no flexibility in its representation.
  *
  * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
  */
 export class BasicType<T> {
+  /**
+   * Symbols used to track the identity of a type
+   *
+   * Used by various isFooType functions
+   */
+  _typeSymbols: Set<symbol>;
+
+  constructor() {
+    this._typeSymbols = new Set();
+  }
+
   isBasic(): this is BasicType<T> {
     return true;
   }
