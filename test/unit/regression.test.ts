@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {VectorType, ByteVectorType} from "../../src";
+import {VectorType, ByteVectorType, NumberUintType} from "../../src";
 
 describe("known issues", () => {
   it("default value of composite vector should be correct", () => {
@@ -10,4 +10,17 @@ describe("known issues", () => {
     });
     expect(Vec.defaultValue().length).to.equal(Vec.length);
   });
+
+  it("far future epoch from json", function () {
+    const Number = new NumberUintType({byteLength: 4});
+    const farFutureEpoch = Number.fromJson("18446744073709551615");
+    expect(farFutureEpoch).to.be.equal(Infinity);
+  });
+
+  it("too large number from json", function () {
+    const Number = new NumberUintType({byteLength: 4});
+    expect(() => Number.fromJson("18446744073709551616")).to.throw;
+  });
+
+
 });

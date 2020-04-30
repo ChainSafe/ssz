@@ -18,7 +18,13 @@ export class UintType<T> extends BasicType<T> {
 
 export class NumberUintType extends UintType<number> {
   assertValidValue(value: unknown): asserts value is number {
-    if (!(Number.isSafeInteger(value as number) || value === Infinity)) {
+    if (
+      value !== Infinity 
+        && (
+          !Number.isSafeInteger(value as number)
+          || value > (BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
+        )
+    ) {
       throw new Error("Uint value is not a number");
     }
     if (value as number < 0) {
@@ -58,7 +64,15 @@ export class NumberUintType extends UintType<number> {
     return Number(output);
   }
   fromJson(data: Json): number {
-    const n = Number(data);
+    let n: number;
+    const bigN = BigInt(data);
+    if (bigN === (BigInt(2) ** BigInt(64)) - BigInt(1)) {
+      n = Infinity;
+    } else if (bigN < Number.MAX_SAFE_INTEGER) {
+      n = Number(bigN);
+    } else {
+      throw new Error("Uint value unsafe");
+    }
     this.assertValidValue(n);
     return n;
   }
