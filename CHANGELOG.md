@@ -1,3 +1,9 @@
+## 0.6.4 (2020-05-04)
+
+### Features
+
+* Add ObjBacked wrapper type ([1cf4ac](https://github.com/chainsafe/ssz/commit/1cf4ac))
+
 ## 0.6.3 (2020-04-30)
 
 ### Features
