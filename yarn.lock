@@ -878,49 +878,52 @@
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/lodestar-config@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.5.0.tgz#85b2b9c47685afea145da9f647d59a5507ed9a6a"
-  integrity sha512-nnTbxE9fmaJSroe2Rc7CdrAQZcuAPoUBraI9A3NMyTQ/MAJ0tUn6bQF6j119JOzruth2nDGTfXjYr3zFksDE6w==
+"@chainsafe/lodestar-config@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.6.0.tgz#5d0c4284d95e21b7f5f6ef0f584351e574ba766e"
+  integrity sha512-/md/dwFYpYjKSR1523shwDefJq47wNYk8g12oqfhEuOAPPw5Gt2FERuj/0JyOLfY1omB5pk9W+L48eV9qFjs3A==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.5.0"
-    "@chainsafe/lodestar-types" "^0.5.0"
+    "@chainsafe/lodestar-params" "^0.6.0"
+    "@chainsafe/lodestar-types" "^0.6.0"
 
-"@chainsafe/lodestar-params@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.5.0.tgz#c0be10277510e9f34159f30da0e3c47444bcfcfb"
-  integrity sha512-5cmadp2dDlTDozejsSq6IbOUXzp3jEiBUvxehkZ+O2ezc3SsFMun4FkJs81jn8LMvsZwAq+0ZkALjh/brTIHJg==
-
-"@chainsafe/lodestar-types@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.5.0.tgz#4ed800556719f12bfc539ed09530744a7fb8aa4b"
-  integrity sha512-SKVopypp3IoQthBKQzfKPr5W+jJazP6Gs37v4uvK3/U8ShA6cIuAZDU8swu3mSbRXFVDaYIYNANIkA0vMbuEaw==
+"@chainsafe/lodestar-params@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.6.0.tgz#0df2b91c4ab71a48dd450dd5734bc3b8df9f366b"
+  integrity sha512-nmEjrM99P3UtYZjYI3YZjHo5z/LG34SH5iN8EHn+1ZqAfici7BkzFqlwDcv915xFErwvmD/chW378UWYi0khJw==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.5.0"
-    "@chainsafe/ssz" "0.6.0"
+    js-yaml "^3.13.1"
 
-"@chainsafe/persistent-merkle-tree@^0.1.1", "@chainsafe/persistent-merkle-tree@^0.1.2":
+"@chainsafe/lodestar-types@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.6.0.tgz#cd30be71d54dcda7c4db293c368d85078fef2455"
+  integrity sha512-7JFuJgcSCjZ9w+MMli+d6ARIr28ci+tLv1VyHmoUHnhtLu9ADaco7DE8PWkfj8frY4jRaYIGGlygx4rCfNAkJw==
+  dependencies:
+    "@chainsafe/lodestar-params" "^0.6.0"
+    "@chainsafe/ssz" "0.6.2"
+
+"@chainsafe/persistent-merkle-tree@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.1.2.tgz#d052e068fa69be60117f47d686b28caf4b6d9b5a"
   integrity sha512-W3WLCMnuYpXHALnDD1wd09H8m3dNtv1Rqx8+3VS/6gbILJaydGDUvroDIltshRg3bpVMTsTSxAM54J9ddNOApw==
   dependencies:
     "@chainsafe/as-sha256" "^0.2.0"
 
-"@chainsafe/ssz@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.0.tgz#9f496cc70abc9c7f7802c727396508e539d94697"
-  integrity sha512-i0lo6SFeg7mn8LXrHpZ9Wo730M04nYMItaJAx4kYFu3E3IEcEDQH/Aon8+MHQ6nVHAAPaVLs9zyhNUvgNUAofA==
-  dependencies:
-    "@chainsafe/persistent-merkle-tree" "^0.1.1"
-    bcrypto "^4.1.0"
-
-"@chainsafe/ssz@^0.6.2":
+"@chainsafe/ssz@0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.2.tgz#f548f13ca17ce2f9a06bfe16b7521a566faa6067"
   integrity sha512-w6wk6kBB2KXeiu1wI2VXPDQqNjen7P0uK+NcxXAzBcD3HDr/XHzjBz1U1BI96uTjRI6kbXhujejAWFUOSNAunA==
   dependencies:
     "@chainsafe/as-sha256" "^0.2.0"
     "@chainsafe/persistent-merkle-tree" "^0.1.2"
+
+"@chainsafe/ssz@^0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.3.tgz#a4a28e6cc932b455d56ef6ab102dde0a0a08f85b"
+  integrity sha512-3EbEdQrTfjhuxhi9iuCkuPqXetyP0dcRYybzRqILZxqlDQQWnIGhKMv14CpXneWDDsgJvdtl05BNpmHQimtXpA==
+  dependencies:
+    "@chainsafe/as-sha256" "^0.2.0"
+    "@chainsafe/persistent-merkle-tree" "^0.1.2"
+    case "^1.6.3"
 
 "@types/bn.js@^4.11.5":
   version "4.11.6"
@@ -1454,16 +1457,6 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bcrypto@^4.1.0:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/bcrypto/-/bcrypto-4.3.2.tgz#50d4543cc16c39a9fca1d7f457a3850703867814"
-  integrity sha512-uGmeiqLvLYUPRa0XoACDgXwxZY9wE1uiFHpdtGSs7FI2YYkakqIWZklkF8sKMzXM/HaHRIjulzQ8xuDoqptjVQ==
-  dependencies:
-    bsert "~0.0.10"
-    bufio "~1.0.6"
-    loady "~0.0.1"
-    nan "^2.14.0"
-
 big.js@^3.1.3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-3.2.0.tgz#a5fc298b81b9e0dca2e458824784b65c52ba588e"
@@ -1647,11 +1640,6 @@ browserslist@^4.8.3, browserslist@^4.9.1:
     node-releases "^1.1.53"
     pkg-up "^2.0.0"
 
-bsert@~0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/bsert/-/bsert-0.0.10.tgz#231ac82873a1418c6ade301ab5cd9ae385895597"
-  integrity sha512-NHNwlac+WPy4t2LoNh8pXk8uaIGH3NSaIUbTTRXGpE2WEbq0te/tDykYHkFK57YKLPjv/aGHmbqvnGeVWDz57Q==
-
 buffer-from@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
@@ -1683,11 +1671,6 @@ buffer@^5.4.3:
   dependencies:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
-
-bufio@~1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/bufio/-/bufio-1.0.6.tgz#e0eb6d70b2efcc997b6f8872173540967f90fa4d"
-  integrity sha512-mjYZFRHmI9bk3Oeexu0rWjHFY+w6hGLabdmwSFzq+EFr4MHHsNOYduDVdYl71NG5pTPL7GGzUCMk9cYuV34/Qw==
 
 builtin-status-codes@^3.0.0:
   version "3.0.0"
@@ -1785,6 +1768,11 @@ caniuse-lite@^1.0.30001038:
   version "1.0.30001040"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001040.tgz#103fc8e6eb1d7397e95134cd0e996743353d58ea"
   integrity sha512-Ep0tEPeI5wCvmJNrXjE3etgfI+lkl1fTDU6Y3ZH1mhrjkPlVI9W4pcKbMo+BQLpEWKVYYp2EmYaRsqpPC3k7lQ==
+
+case@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
+  integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -4020,11 +4008,6 @@ loader-utils@^1.0.1, loader-utils@^1.1.0, loader-utils@^1.2.3, loader-utils@^1.4
     emojis-list "^3.0.0"
     json5 "^1.0.1"
 
-loady@~0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/loady/-/loady-0.0.1.tgz#24a99c14cfed9cd0bffed365b1836035303f7e5d"
-  integrity sha512-PW5Z13Jd0v6ZcA1P6ZVUc3EV8BJwQuAiwUvvT6VQGHoaZ1d/tu7r1QZctuKfQqwy9SFBWeAGfcIdLxhp7ZW3Rw==
-
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
@@ -4352,7 +4335,7 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-nan@^2.12.1, nan@^2.13.2, nan@^2.14.0:
+nan@^2.12.1, nan@^2.13.2:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
