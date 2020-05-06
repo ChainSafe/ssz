@@ -878,28 +878,28 @@
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/lodestar-config@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.6.0.tgz#5d0c4284d95e21b7f5f6ef0f584351e574ba766e"
-  integrity sha512-/md/dwFYpYjKSR1523shwDefJq47wNYk8g12oqfhEuOAPPw5Gt2FERuj/0JyOLfY1omB5pk9W+L48eV9qFjs3A==
+"@chainsafe/lodestar-config@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.7.0.tgz#0e2f1742ca05f9a7a4c5d546ee82bf8fa2e5797d"
+  integrity sha512-vTamGMldhIeXTy8Nh2n92iiSzUmMWLlsmPpmsatPlhPhaTiMjjXSRojL6DOaYoX8VULs3OnukGdWeFm3XV6mIw==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.6.0"
-    "@chainsafe/lodestar-types" "^0.6.0"
+    "@chainsafe/lodestar-params" "^0.7.0"
+    "@chainsafe/lodestar-types" "^0.7.0"
 
-"@chainsafe/lodestar-params@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.6.0.tgz#0df2b91c4ab71a48dd450dd5734bc3b8df9f366b"
-  integrity sha512-nmEjrM99P3UtYZjYI3YZjHo5z/LG34SH5iN8EHn+1ZqAfici7BkzFqlwDcv915xFErwvmD/chW378UWYi0khJw==
+"@chainsafe/lodestar-params@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.7.0.tgz#13fc5d5272ced531fe942151e1b37cf2be199c03"
+  integrity sha512-Bude9FMTKSagdGQjCNEYC3U8Aydoly+MKboIPnxsRjoLyw0SJAISS/H7i5UPLLbWC394xBBYdT3pyzcRxbtbIg==
   dependencies:
     js-yaml "^3.13.1"
 
-"@chainsafe/lodestar-types@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.6.0.tgz#cd30be71d54dcda7c4db293c368d85078fef2455"
-  integrity sha512-7JFuJgcSCjZ9w+MMli+d6ARIr28ci+tLv1VyHmoUHnhtLu9ADaco7DE8PWkfj8frY4jRaYIGGlygx4rCfNAkJw==
+"@chainsafe/lodestar-types@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.7.0.tgz#2206432fb102baaac3aae935c7c6ec714ae6ec54"
+  integrity sha512-RyJJCfwTZYRhPn+HD9W1BFi6tz8sZntDkoKRDFiJ02IrDTPN2xlk1zxvlTzr16CUDXleYgg2wBXZUc8sFFPXmg==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.6.0"
-    "@chainsafe/ssz" "0.6.2"
+    "@chainsafe/lodestar-params" "^0.7.0"
+    "@chainsafe/ssz" "^0.6.4"
 
 "@chainsafe/persistent-merkle-tree@^0.1.2":
   version "0.1.2"
@@ -908,18 +908,10 @@
   dependencies:
     "@chainsafe/as-sha256" "^0.2.0"
 
-"@chainsafe/ssz@0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.2.tgz#f548f13ca17ce2f9a06bfe16b7521a566faa6067"
-  integrity sha512-w6wk6kBB2KXeiu1wI2VXPDQqNjen7P0uK+NcxXAzBcD3HDr/XHzjBz1U1BI96uTjRI6kbXhujejAWFUOSNAunA==
-  dependencies:
-    "@chainsafe/as-sha256" "^0.2.0"
-    "@chainsafe/persistent-merkle-tree" "^0.1.2"
-
-"@chainsafe/ssz@^0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.3.tgz#a4a28e6cc932b455d56ef6ab102dde0a0a08f85b"
-  integrity sha512-3EbEdQrTfjhuxhi9iuCkuPqXetyP0dcRYybzRqILZxqlDQQWnIGhKMv14CpXneWDDsgJvdtl05BNpmHQimtXpA==
+"@chainsafe/ssz@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.4.tgz#1ee5e5599790a34f16406cd743ad83c9dc1d6bee"
+  integrity sha512-FeBwchyzSXBNJ/xToMDeldwM1IARIul9DZpEFLlzktKM+1zaJ9zRE2gMZf1dPPcUB15053dkb3ZsdqTIlm+BaA==
   dependencies:
     "@chainsafe/as-sha256" "^0.2.0"
     "@chainsafe/persistent-merkle-tree" "^0.1.2"
