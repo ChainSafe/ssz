@@ -1,12 +1,14 @@
+import { toHexString } from "@chainsafe/ssz";
+
 type OutputTypeRecord = Record<string, OutputType>;
 
 type OutputType = {
-  dump: (value: Buffer) => string;
+  dump: (value: Uint8Array) => string;
 };
 
 export const outputTypes: OutputTypeRecord = {
   hex: {
-    dump: (value) => value.toString('hex'),
+    dump: (value) => toHexString(value),
   },
   base64: {
     dump: (value) => value.toString('base64'),
