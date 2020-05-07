@@ -16,6 +16,12 @@ export default function() {
           @chainsafe/ssz {pkg.dependencies['@chainsafe/ssz']}
         </a>
       </div>
+      <div className='content has-text-centered is-small is-family-code'>
+        <a className='is-link has-text-grey'
+          href='https://www.npmjs.com/package/@chainsafe/lodestar-types'>
+          @chainsafe/lodestar-types {pkg.dependencies['@chainsafe/lodestar-types']}
+        </a>
+      </div>
     </footer>
   );
 }
