@@ -8,6 +8,7 @@ import {inputTypes} from "../util/input_types";
 
 type Props = {
   onProcess: (presetName: PresetName, name: string, input: any, type: Type<any>, inputType: string) => void
+  serializeModeOn: boolean
 }
 
 type State = {
@@ -15,6 +16,7 @@ type State = {
   sszTypeName: string;
   input: string;
   inputType: string;
+  value: any;
 }
 
 const DEFAULT_PRESET = "mainnet";
@@ -27,13 +29,21 @@ export default class Input extends React.Component<Props, State> {
     const names = typeNames(types);
     const initialType = names[Math.floor(Math.random() * names.length)];
     const sszType = types[initialType];
-    const input = inputTypes.yaml.dump(createRandomValue(sszType), sszType);
+    const value = createRandomValue(sszType);
+    const input = inputTypes.yaml.dump(value, sszType);
     this.state = {
       presetName: DEFAULT_PRESET,
       input,
       sszTypeName: initialType,
       inputType: 'yaml',
+      value,
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if(!this.props.serializeModeOn && prevProps.serializeModeOn !== this.props.serializeModeOn) {
+      this.setInputType('ssz');
+    }
   }
 
   getRows(): number {
@@ -60,7 +70,7 @@ export default class Input extends React.Component<Props, State> {
     const sszType = this.types()[sszTypeName];
     const value = createRandomValue(sszType);
     const input = inputTypes[inputType].dump(value, sszType);
-    this.setState({inputType, sszTypeName, input});
+    this.setState({inputType, sszTypeName, input, value});
   }
 
   setPreset(e: ChangeEvent<HTMLSelectElement>) {
@@ -69,8 +79,12 @@ export default class Input extends React.Component<Props, State> {
     });
   }
 
-  setInputType(e: ChangeEvent<HTMLSelectElement>) {
-    this.resetWith(e.target.value, this.state.sszTypeName);
+  setInputType(inputType: string) {
+    const {sszTypeName, value} = this.state;
+    const sszType = this.types()[sszTypeName];
+    const input = inputTypes[inputType].dump(value, sszType);
+    this.setState({inputType, sszTypeName, input});
+    // this.resetWith(e.target.value, this.state.sszTypeName);
   }
 
   setSSZType(e: ChangeEvent<HTMLSelectElement>) {
@@ -86,6 +100,7 @@ export default class Input extends React.Component<Props, State> {
   }
 
   render() {
+    const {serializeModeOn} = this.props;
     return (
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
@@ -129,35 +144,40 @@ export default class Input extends React.Component<Props, State> {
                 </div>
               </div>
             </div>
-            <div className='field has-addons'>
-              <div className='control'>
-                <a className='button is-static'>
-                  Input Type
-                </a>
-              </div>
-              <div className='control'>
-                <div className='select'>
-                  <select
-                    value={this.state.inputType}
-                    onChange={this.setInputType.bind(this)}>
-                    {
-                      Object.keys(inputTypes).map(
-                        (name) => <option key={name} value={name}>{name}</option>)
-                    }
-                  </select>
+            {serializeModeOn &&
+              <div className='field has-addons'>
+                <div className='control'>
+                  <a className='button is-static'>
+                    Input Type
+                  </a>
+                </div>
+                <div className='control'>
+                  <div className='select'>
+                    <select
+                      value={this.state.inputType}
+                      onChange={(e) => this.setInputType(e.target.value)}>
+                      {
+                        Object.keys(inputTypes).map(
+                          (name) => <option key={name} value={name}>{name}</option>)
+                      }
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
+            }
           </div>
         </div>
         <textarea className='textarea'
-              rows={this.getRows()}
-              value={this.state.input}
-              onChange={this.setInput.bind(this)}/>
-        <button className='button is-primary is-medium is-fullwidth is-uppercase is-family-code submit'
-            disabled={!(this.state.sszTypeName && this.state.input)}
-            onClick={this.doProcess.bind(this)}>
-          Serialize
+          rows={this.getRows()}
+          value={this.state.input}
+          onChange={this.setInput.bind(this)}
+        />
+        <button
+          className='button is-primary is-medium is-fullwidth is-uppercase is-family-code submit'
+          disabled={!(this.state.sszTypeName && this.state.input)}
+          onClick={this.doProcess.bind(this)}
+        >
+          {serializeModeOn ? 'Serialize' : 'Deserialize'}
         </button>
       </div>
     )

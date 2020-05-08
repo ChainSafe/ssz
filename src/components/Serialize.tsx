@@ -7,7 +7,7 @@ import {inputTypes} from "../util/input_types";
 import TreeView from './TreeView';
 
 type Props = {
-
+  serializeModeOn: boolean;
 }
 
 type State<T> = {
@@ -51,16 +51,17 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
 
   render() {
     const {presetName, input, sszType, error, serialized, hashTreeRoot} = this.state;
+    const {serializeModeOn} = this.props;
     const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : '';
     return (
       <div className='section serialize-section is-family-code'>
         <div className='container'>
           <div className='columns is-desktop'>
             <div className='column'>
-              <Input onProcess={this.process.bind(this)}/>
+              <Input serializeModeOn={serializeModeOn} onProcess={this.process.bind(this)}/>
             </div>
             <div className='column'>
-              <Output error={error} serialized={serialized} hashTreeRoot={hashTreeRoot}/>
+              <Output serializeModeOn={serializeModeOn} error={error} serialized={serialized} hashTreeRoot={hashTreeRoot}/>
             </div>
           </div>
         </div>
