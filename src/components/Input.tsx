@@ -40,7 +40,7 @@ export default class Input extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: { serializeModeOn: boolean; }) {
     if(!this.props.serializeModeOn && prevProps.serializeModeOn !== this.props.serializeModeOn) {
       this.setInputType('ssz');
     }
@@ -84,7 +84,6 @@ export default class Input extends React.Component<Props, State> {
     const sszType = this.types()[sszTypeName];
     const input = inputTypes[inputType].dump(value, sszType);
     this.setState({inputType, sszTypeName, input});
-    // this.resetWith(e.target.value, this.state.sszTypeName);
   }
 
   setSSZType(e: ChangeEvent<HTMLSelectElement>) {
@@ -96,7 +95,14 @@ export default class Input extends React.Component<Props, State> {
   }
 
   doProcess() {
-    this.props.onProcess(this.state.presetName, this.state.sszTypeName, this.parsedInput(), this.types()[this.state.sszTypeName], this.state.inputType)
+    const {presetName, sszTypeName, inputType} = this.state;
+    this.props.onProcess(
+      presetName,
+      sszTypeName,
+      this.parsedInput(),
+      this.types()[sszTypeName],
+      inputType
+    );
   }
 
   render() {

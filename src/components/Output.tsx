@@ -4,13 +4,16 @@ import ErrorBox from "./display/ErrorBox";
 import { ChangeEvent } from "react";
 
 import {serializeOutputTypes, deserializeOutputTypes} from "../util/output_types";
+import { Type } from "@chainsafe/ssz";
 
 
 type Props = {
     error: string | undefined;
     serialized: Uint8Array | undefined;
     hashTreeRoot: Uint8Array | undefined;
-    serializeModeOn: boolean
+    serializeModeOn: boolean;
+    deserialized: any;
+    sszType: Type<any>;
 }
 
 type State = {
@@ -28,24 +31,41 @@ export default class Output extends React.Component<Props, State> {
         };
     }
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    static getDerivedStateFromProps(nextProps: Props) {
         return {showError: !!nextProps.error}
+    }
+
+    componentDidUpdate(prevProps: { serializeModeOn: boolean; }) {
+      if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
+        if (!this.props.serializeModeOn) {
+          this.setOutputType('yaml');
+        } else {
+          this.setOutputType('hex');
+        }
+      }
     }
 
     hideError() {
         this.setState({showError: false})
     }
 
-    setOutputType(e: ChangeEvent<HTMLSelectElement>) {
-      this.setState({outputType: e.target.value});
+    setOutputType(outputType: string) {
+      this.setState({outputType: outputType});
     }
 
     render() {
-        const {error, serialized, hashTreeRoot, serializeModeOn} = this.props;
-        const {showError} = this.state;
+        const {error, serialized, deserialized, hashTreeRoot, serializeModeOn, sszType} = this.props;
+        const {showError, outputType} = this.state;
 
-        const serializedStr = serialized ? serializeOutputTypes[this.state.outputType].dump(serialized) : '';
-        const hashTreeRootStr = hashTreeRoot ? serializeOutputTypes[this.state.outputType].dump(hashTreeRoot) : '';
+        let serializedStr, deserializedStr, hashTreeRootStr;
+        if (serializeModeOn) {
+          const serializedOutput = serializeOutputTypes[outputType];
+          serializedStr = serialized && serializedOutput ? serializedOutput.dump(serialized) : '';
+          hashTreeRootStr = hashTreeRoot && serializedOutput ? serializedOutput.dump(hashTreeRoot) : '';
+        } else {
+          const deserializedOuput = deserializeOutputTypes[outputType];
+          deserializedStr = deserialized && deserializedOuput ? deserializedOuput.dump(deserialized, sszType) : '';
+        }
 
         return (<div className='container'>
             <h3 className='subtitle'>Output</h3>
@@ -64,8 +84,8 @@ export default class Output extends React.Component<Props, State> {
                           <div className='control'>
                             <div className='select'>
                               <select
-                                value={this.state.outputType}
-                                onChange={this.setOutputType.bind(this)}>
+                                value={outputType}
+                                onChange={(e) => this.setOutputType(e.target.value)}>
                                 {
                                   Object.keys(serializeModeOn ? serializeOutputTypes : deserializeOutputTypes).map(
                                     (name) => <option key={name} value={name}>{name}</option>)
@@ -76,15 +96,17 @@ export default class Output extends React.Component<Props, State> {
                         </div>
                         </div>
                         {serializeModeOn ?
-                          <NamedOutput name="Serialized" value={serializedStr}/>
+                          <>
+                            <NamedOutput name="Serialized" value={serializedStr}/>
+                            <NamedOutput name="HashTreeRoot" value={hashTreeRootStr}/>
+                          </>
                           :
                           <textarea className='textarea'
                             rows={8}
-                            value={serializedStr || ''}
+                            value={deserializedStr || ''}
                             readOnly={true}
                           />
                         }
-                        {serializeModeOn && <NamedOutput name="HashTreeRoot" value={hashTreeRootStr}/>}
                     </>
             }
         </div>)

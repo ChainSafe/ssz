@@ -18,6 +18,7 @@ type State<T> = {
   error: string | undefined;
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
+  deserialized: any;
 }
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
@@ -32,6 +33,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       error: undefined,
       serialized: undefined,
       hashTreeRoot: undefined,
+      deserialized: undefined,
     };
   }
 
@@ -46,11 +48,13 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
 
-    this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error});
+    const deserialized = !this.props.serializeModeOn && input;
+
+    this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error, deserialized});
   }
 
   render() {
-    const {presetName, input, sszType, error, serialized, hashTreeRoot} = this.state;
+    const {presetName, input, sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
     const {serializeModeOn} = this.props;
     const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : '';
     return (
@@ -58,10 +62,20 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
         <div className='container'>
           <div className='columns is-desktop'>
             <div className='column'>
-              <Input serializeModeOn={serializeModeOn} onProcess={this.process.bind(this)}/>
+              <Input
+                serializeModeOn={serializeModeOn}
+                onProcess={this.process.bind(this)}
+              />
             </div>
             <div className='column'>
-              <Output serializeModeOn={serializeModeOn} error={error} serialized={serialized} hashTreeRoot={hashTreeRoot}/>
+              <Output
+                deserialized={deserialized}
+                serializeModeOn={serializeModeOn}
+                serialized={serialized}
+                hashTreeRoot={hashTreeRoot}
+                error={error}
+                sszType={sszType}
+              />
             </div>
           </div>
         </div>
