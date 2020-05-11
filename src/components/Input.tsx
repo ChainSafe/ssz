@@ -15,7 +15,8 @@ type State = {
   presetName: PresetName;
   sszTypeName: string;
   input: string;
-  inputType: string;
+  serializeInputType: string;
+  deserializeInputType: string;
   value: any;
 }
 
@@ -35,14 +36,19 @@ export default class Input extends React.Component<Props, State> {
       presetName: DEFAULT_PRESET,
       input,
       sszTypeName: initialType,
-      inputType: 'yaml',
+      serializeInputType: 'yaml',
+      deserializeInputType: 'ssz',
       value,
     };
   }
 
   componentDidUpdate(prevProps: { serializeModeOn: boolean; }) {
-    if(!this.props.serializeModeOn && prevProps.serializeModeOn !== this.props.serializeModeOn) {
-      this.setInputType('ssz');
+    if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
+      if (!this.props.serializeModeOn) {
+        this.setInputType('ssz');
+      } else {
+        this.setInputType(this.state.serializeInputType);
+      }
     }
   }
 
@@ -62,20 +68,32 @@ export default class Input extends React.Component<Props, State> {
   types() {
     return presets[this.state.presetName];
   }
+
+  getInputType(): string {
+    const {serializeModeOn} = this.props;
+    const {serializeInputType, deserializeInputType} = this.state;
+    return serializeModeOn ? serializeInputType : deserializeInputType;
+  }
+
   parsedInput() {
-    return inputTypes[this.state.inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
+    const inputType = this.getInputType();
+    return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
   }
 
   resetWith(inputType: string, sszTypeName: string) {
     const sszType = this.types()[sszTypeName];
     const value = createRandomValue(sszType);
     const input = inputTypes[inputType].dump(value, sszType);
-    this.setState({inputType, sszTypeName, input, value});
+    if (this.props.serializeModeOn) {
+      this.setState({serializeInputType: inputType, sszTypeName, input, value});
+    } else {
+      this.setState({deserializeInputType: inputType, sszTypeName, input, value});
+    }
   }
 
   setPreset(e: ChangeEvent<HTMLSelectElement>) {
     this.setState({presetName: e.target.value as PresetName}, () => {
-      this.resetWith(this.state.inputType, this.state.sszTypeName);
+      this.resetWith(this.getInputType(), this.state.sszTypeName);
     });
   }
 
@@ -83,11 +101,15 @@ export default class Input extends React.Component<Props, State> {
     const {sszTypeName, value} = this.state;
     const sszType = this.types()[sszTypeName];
     const input = inputTypes[inputType].dump(value, sszType);
-    this.setState({inputType, sszTypeName, input});
+    if (this.props.serializeModeOn) {
+      this.setState({serializeInputType: inputType, sszTypeName, input});
+    } else {
+      this.setState({deserializeInputType: inputType, sszTypeName, input});
+    }
   }
 
   setSSZType(e: ChangeEvent<HTMLSelectElement>) {
-    this.resetWith(this.state.inputType, e.target.value);
+    this.resetWith(this.getInputType(), e.target.value);
   }
 
   setInput(e: ChangeEvent<HTMLTextAreaElement>) {
@@ -95,13 +117,13 @@ export default class Input extends React.Component<Props, State> {
   }
 
   doProcess() {
-    const {presetName, sszTypeName, inputType} = this.state;
+    const {presetName, sszTypeName} = this.state;
     this.props.onProcess(
       presetName,
       sszTypeName,
       this.parsedInput(),
       this.types()[sszTypeName],
-      inputType
+      this.getInputType(),
     );
   }
 
@@ -160,7 +182,7 @@ export default class Input extends React.Component<Props, State> {
                 <div className='control'>
                   <div className='select'>
                     <select
-                      value={this.state.inputType}
+                      value={this.getInputType()}
                       onChange={(e) => this.setInputType(e.target.value)}>
                       {
                         Object.keys(inputTypes).map(
