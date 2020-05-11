@@ -3,9 +3,9 @@ import * as React from "react";
 type Props = {
   name: string | undefined;
   value: string | undefined;
-}
+};
 
-export default ({name, value}: Props) => (
+export default ({name, value}: Props): object => (
   <div className='field has-addons'>
     <div className='control'>
       <a className='button is-static'>
@@ -16,7 +16,7 @@ export default ({name, value}: Props) => (
       <input className='input'
         type='text'
         readOnly={true}
-        value={value || ''} />
+        value={value || ""} />
     </div>
   </div>
 );

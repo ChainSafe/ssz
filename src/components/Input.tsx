@@ -6,25 +6,25 @@ import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
 
 
-type Props = {
-  onProcess: (presetName: PresetName, name: string, input: any, type: Type<any>, inputType: string) => void
-  serializeModeOn: boolean
-}
+type Props<T> = {
+  onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
+  serializeModeOn: boolean;
+};
 
-type State = {
+type State<T> = {
   presetName: PresetName;
   sszTypeName: string;
   input: string;
   serializeInputType: string;
   deserializeInputType: string;
-  value: any;
-}
+  value: T;
+};
 
 const DEFAULT_PRESET = "mainnet";
 
-export default class Input extends React.Component<Props, State> {
+export default class Input<T> extends React.Component<Props<T>, State<T>> {
 
-  constructor(props: any) {
+  constructor(props: Props<T>) {
     super(props);
     const types = presets[DEFAULT_PRESET];
     const names = typeNames(types);
@@ -36,16 +36,16 @@ export default class Input extends React.Component<Props, State> {
       presetName: DEFAULT_PRESET,
       input,
       sszTypeName: initialType,
-      serializeInputType: 'yaml',
-      deserializeInputType: 'ssz',
+      serializeInputType: "yaml",
+      deserializeInputType: "ssz",
       value,
     };
   }
 
-  componentDidUpdate(prevProps: { serializeModeOn: boolean; }) {
+  componentDidUpdate(prevProps: { serializeModeOn: boolean }): void {
     if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
       if (!this.props.serializeModeOn) {
-        this.setInputType('ssz');
+        this.setInputType("ssz");
       } else {
         this.setInputType(this.state.serializeInputType);
       }
@@ -59,10 +59,10 @@ export default class Input extends React.Component<Props, State> {
         4,
         Math.floor((this.state.input.match(/\n/g) || []).length * 1.5)
       )
-    )
+    );
   }
 
-  names() {
+  names(): string[] {
     return typeNames(this.types());
   }
   types() {
@@ -75,12 +75,12 @@ export default class Input extends React.Component<Props, State> {
     return serializeModeOn ? serializeInputType : deserializeInputType;
   }
 
-  parsedInput() {
+  parsedInput(): string | T {
     const inputType = this.getInputType();
     return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
   }
 
-  resetWith(inputType: string, sszTypeName: string) {
+  resetWith(inputType: string, sszTypeName: string): void {
     const sszType = this.types()[sszTypeName];
     const value = createRandomValue(sszType);
     const input = inputTypes[inputType].dump(value, sszType);
@@ -91,13 +91,13 @@ export default class Input extends React.Component<Props, State> {
     }
   }
 
-  setPreset(e: ChangeEvent<HTMLSelectElement>) {
+  setPreset(e: ChangeEvent<HTMLSelectElement>): void {
     this.setState({presetName: e.target.value as PresetName}, () => {
       this.resetWith(this.getInputType(), this.state.sszTypeName);
     });
   }
 
-  setInputType(inputType: string) {
+  setInputType(inputType: string): void {
     const {sszTypeName, value} = this.state;
     const sszType = this.types()[sszTypeName];
     const input = inputTypes[inputType].dump(value, sszType);
@@ -108,15 +108,15 @@ export default class Input extends React.Component<Props, State> {
     }
   }
 
-  setSSZType(e: ChangeEvent<HTMLSelectElement>) {
+  setSSZType(e: ChangeEvent<HTMLSelectElement>): void {
     this.resetWith(this.getInputType(), e.target.value);
   }
 
-  setInput(e: ChangeEvent<HTMLTextAreaElement>) {
+  setInput(e: ChangeEvent<HTMLTextAreaElement>): void {
     this.setState({input: e.target.value});
   }
 
-  doProcess() {
+  doProcess(): void {
     const {presetName, sszTypeName} = this.state;
     this.props.onProcess(
       presetName,
@@ -205,9 +205,9 @@ export default class Input extends React.Component<Props, State> {
           disabled={!(this.state.sszTypeName && this.state.input)}
           onClick={this.doProcess.bind(this)}
         >
-          {serializeModeOn ? 'Serialize' : 'Deserialize'}
+          {serializeModeOn ? "Serialize" : "Deserialize"}
         </button>
       </div>
-    )
+    );
   }
 }

@@ -1,29 +1,29 @@
-import * as React from 'react';
+import * as React from "react";
 import {Type, toHexString} from "@chainsafe/ssz";
 import Output from "./Output";
 import Input from "./Input";
-import {PresetName} from '../util/types';
+import {PresetName} from "../util/types";
 import {inputTypes} from "../util/input_types";
-import TreeView from './TreeView';
+import TreeView from "./TreeView";
 
 type Props = {
   serializeModeOn: boolean;
-}
+};
 
 type State<T> = {
   presetName: PresetName | undefined;
   name: string | undefined;
-  input: any;
+  input: object;
   sszType: Type<T> | undefined;
   error: string | undefined;
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
-  deserialized: any;
-}
+  deserialized: object;
+};
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
 
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       presetName: undefined,
@@ -37,7 +37,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     };
   }
 
-  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string) {
+  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string): void {
     let serialized, root, error;
     try {
       serialized = type.serialize(input);
@@ -56,7 +56,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   render() {
     const {presetName, input, sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
     const {serializeModeOn} = this.props;
-    const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : '';
+    const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : "";
     return (
       <div className='section serialize-section is-family-code'>
         <div className='container'>
