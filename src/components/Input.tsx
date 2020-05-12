@@ -1,6 +1,6 @@
 import * as React from "react";
 import {presets, typeNames, PresetName} from "../util/types";
-import {Type} from "@chainsafe/ssz";
+import {Type, toHexString, fromHexString} from "@chainsafe/ssz";
 import {createRandomValue} from "../util/random";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
@@ -9,6 +9,7 @@ import {inputTypes} from "../util/input_types";
 type Props<T> = {
   onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
   serializeModeOn: boolean;
+  sszType: Type<T> | undefined;
 };
 
 type State<T> = {
@@ -44,10 +45,20 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
 
   componentDidUpdate(prevProps: { serializeModeOn: boolean }): void {
     if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
+      console.log('this: ', this);
       if (!this.props.serializeModeOn) {
         this.setInputType("ssz");
+        if (this.props.serialized) {
+          this.setState({value: toHexString(this.props.serialized)});
+          this.setInput(toHexString(this.props.serialized));
+        }
       } else {
         this.setInputType(this.state.serializeInputType);
+        if (this.props.deserialized) {
+          this.setState({value: this.props.deserialized})
+          this.setInput(inputTypes[this.state.serializeInputType].dump(this.props.deserialized, this.props.sszType));
+          // this.setInput(inputTypes[this.state.serializeInputType].dump(this.state.value, this.props.sszType));
+        }
       }
     }
   }
@@ -112,8 +123,8 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
     this.resetWith(this.getInputType(), e.target.value);
   }
 
-  setInput(e: ChangeEvent<HTMLTextAreaElement>): void {
-    this.setState({input: e.target.value});
+  setInput(input: string): void {
+    this.setState({input});
   }
 
   doProcess(): void {
@@ -198,7 +209,7 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
         <textarea className='textarea'
           rows={this.getRows()}
           value={this.state.input}
-          onChange={this.setInput.bind(this)}
+          onChange={(e) => this.setInput(e.target.value)}
         />
         <button
           className='button is-primary is-medium is-fullwidth is-uppercase is-family-code submit'

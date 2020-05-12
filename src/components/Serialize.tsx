@@ -48,7 +48,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
 
-    const deserialized = !this.props.serializeModeOn && input;
+    const deserialized = input;
 
     this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error, deserialized});
   }
@@ -65,6 +65,9 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
               <Input
                 serializeModeOn={serializeModeOn}
                 onProcess={this.process.bind(this)}
+                sszType={sszType}
+                serialized={serialized}
+                deserialized={deserialized}
               />
             </div>
             <div className='column'>
