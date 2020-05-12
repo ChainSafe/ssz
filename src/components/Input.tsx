@@ -50,7 +50,6 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
       if (!this.props.serializeModeOn) {
         this.setInputType("ssz");
         if (this.props.serialized) {
-          this.setState({value: toHexString(this.props.serialized)});
           this.setInput(toHexString(this.props.serialized));
         }
       } else {
