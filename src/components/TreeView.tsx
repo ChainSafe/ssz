@@ -32,8 +32,8 @@ function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>, name: str
   else if(isBitVectorType(type)) return `BitVector[${type.length}]`;
   else if(isBitListType(type)) return "Bytes";
   else if(isByteVectorType(type)) return `BytesN[${type.length}]`;
-  else if(isVectorType(type)) return `Vector`; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}, ${(type as VectorType).length}]`;
-  else if(isListType(type)) return `List`; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}]`;
+  else if(isVectorType(type)) return "Vector"; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}, ${(type as VectorType).length}]`;
+  else if(isListType(type)) return "List"; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}]`;
   else if(isContainerType(type)) return `${name}(Container)`;
   else return "N/A";
 }
@@ -49,7 +49,7 @@ function getKind<T>(type: Type<T>): string {
   else if(isListType(type)) return "List";
   else if(isContainerType(type)) return "Container";
   else return "N/A";
-};
+}
 
 type Node<T> = {
   sszNode: SSZNode<T>;
@@ -59,11 +59,11 @@ type Node<T> = {
   typeWidth: number;
   keyWidth: number;
   expanded: boolean;
-}
+};
 
 type NodeProps<T> = {
-  node: Node<T>
-}
+  node: Node<T>;
+};
 
 type Props<T> = {
   presetName: PresetName;
@@ -71,18 +71,18 @@ type Props<T> = {
   sszTypeName: string;
   sszType: Type<T>; // @TODO: is this correct?
   name: string | undefined;
-}
+};
 
 type State<T> = {
   rootNode: SSZNode<T> | undefined;
   selectedNode: Node<T> | undefined;
-}
+};
 
 type DefProps = {
   title: string;
   children: any;
-  isHeader: boolean | undefined
-}
+  isHeader: boolean | undefined;
+};
 
 const Definition = (props: DefProps) => (
   <div className="definition field">
@@ -117,7 +117,7 @@ const DisplayNodeInfo = (props: NodeProps<any>) => {
         <Definition title="Key"><code>{props.node.sszNode.key}</code></Definition>
       </Definition>
     </div>
-  )
+  );
 };
 
 export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
@@ -135,28 +135,28 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
   }
 
   static renderArrow<T>(_nodeProps: NodeProps<T>) {
-    return <span className="node-arrow"/>
+    return <span className="node-arrow"/>;
   }
 
   static renderText<T>(nodeProps: NodeProps<T>) {
     const sszNode = nodeProps.node.sszNode;
     return (
       <span className={"ssz-" + getKind(sszNode.type)}>
-      <span className={"node-key " + (nodeProps.node.isListKey ? "list-key" : "normal-key")} key="text-key" style={{width: `${nodeProps.node.keyWidth + 1}ch`}}>
-      {sszNode.key}
-      </span>
-      <span className="node-type" key="text-type" style={{width: `${nodeProps.node.typeWidth + 1}ch`}}>
-      {nodeProps.node.text}
-      </span>
-      {
-        isListType(nodeProps.node.sszNode.type)
-        && <i className="node-type" key="text-type-addon" >({nodeProps.node.sszNode.data.length} items)</i>
-      }
-      {isBottomType(sszNode.type) &&
-        <span className="node-value" key="text-value">
-        {sszNode.data}
+        <span className={"node-key " + (nodeProps.node.isListKey ? "list-key" : "normal-key")} key="text-key" style={{width: `${nodeProps.node.keyWidth + 1}ch`}}>
+          {sszNode.key}
         </span>
-      }
+        <span className="node-type" key="text-type" style={{width: `${nodeProps.node.typeWidth + 1}ch`}}>
+          {nodeProps.node.text}
+        </span>
+        {
+          isListType(nodeProps.node.sszNode.type)
+        && <i className="node-type" key="text-type-addon" >({nodeProps.node.sszNode.data.length} items)</i>
+        }
+        {isBottomType(sszNode.type) &&
+        <span className="node-value" key="text-value">
+          {sszNode.data}
+        </span>
+        }
       </span>
     );
   }
@@ -171,64 +171,64 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
     const {rootNode, selectedNode} = this.state;
     return (
       <div className='container'>
-      <div className='columns is-desktop'>
-      <div className='column'>
-      <div className='container'>
-      <h3 className='subtitle'>Tree-view</h3>
-      {rootNode && rootNode.type ?
-        <EyzyTree
-          data={({
-            sszNode: rootNode,
-            isBatch: !isBottomType(rootNode.type),
-            isListKey: false,
-            text: getTypeName(rootNode.type, types, sszTypeName),
-            expanded: false,
-          })}
-          theme={["ssz-tree"]}
-          expandOnSelect={true}
-          arrowRenderer={TreeView.renderArrow}
-          textRenderer={TreeView.renderText}
-          onSelect={this.onSelect.bind(this)}
-          fetchData={async(node) => {
-            const childNodes = getChildNodes(this.state.rootNode ? this.state.rootNode : node);
-            const out = childNodes.map((n): Node<T> => ({
-              sszNode: n,
-              isBatch: !isBottomType(n.type),
-              isListKey: isListType(node.sszNode.type) || isVectorType(node.sszNode.type),
-              text: getTypeName(n.type, types, 'placeholder!'),
-              typeWidth: 0,
-              keyWidth: 0,
-              expanded: false,
-            }));
-            let maxTypeWidth = 0; // hack to simulate a table layout in a list.
-            let maxKeyWidth = 0;
-            out.forEach((n) => {
-              if (n.text.length > maxTypeWidth) {
-                maxTypeWidth = n.text.length;
-              }
-              const kl = n.sszNode.key.toString().length;
-              if (kl > maxKeyWidth) {
-                maxKeyWidth = kl;
-              }
-            });
-            return out.map((n): Node<T> => ({
-              ...n,
-              typeWidth: maxTypeWidth,
-              keyWidth: maxKeyWidth,
-            }));
-          }}
-        />
-        : <span>No data</span>}
-        </div>
-        </div>
-        <div className='column'>
-          <div className='container'>
-            <h3 className='subtitle'>Node details</h3>
-            {selectedNode && <DisplayNodeInfo node={selectedNode}/>}
+        <div className='columns is-desktop'>
+          <div className='column'>
+            <div className='container'>
+              <h3 className='subtitle'>Tree-view</h3>
+              {rootNode && rootNode.type ?
+                <EyzyTree
+                  data={({
+                    sszNode: rootNode,
+                    isBatch: !isBottomType(rootNode.type),
+                    isListKey: false,
+                    text: getTypeName(rootNode.type, types, sszTypeName),
+                    expanded: false,
+                  })}
+                  theme={["ssz-tree"]}
+                  expandOnSelect={true}
+                  arrowRenderer={TreeView.renderArrow}
+                  textRenderer={TreeView.renderText}
+                  onSelect={this.onSelect.bind(this)}
+                  fetchData={async(node) => {
+                    const childNodes = getChildNodes(this.state.rootNode ? this.state.rootNode : node);
+                    const out = childNodes.map((n): Node<T> => ({
+                      sszNode: n,
+                      isBatch: !isBottomType(n.type),
+                      isListKey: isListType(node.sszNode.type) || isVectorType(node.sszNode.type),
+                      text: getTypeName(n.type, types, "placeholder!"),
+                      typeWidth: 0,
+                      keyWidth: 0,
+                      expanded: false,
+                    }));
+                    let maxTypeWidth = 0; // hack to simulate a table layout in a list.
+                    let maxKeyWidth = 0;
+                    out.forEach((n) => {
+                      if (n.text.length > maxTypeWidth) {
+                        maxTypeWidth = n.text.length;
+                      }
+                      const kl = n.sszNode.key.toString().length;
+                      if (kl > maxKeyWidth) {
+                        maxKeyWidth = kl;
+                      }
+                    });
+                    return out.map((n): Node<T> => ({
+                      ...n,
+                      typeWidth: maxTypeWidth,
+                      keyWidth: maxKeyWidth,
+                    }));
+                  }}
+                />
+                : <span>No data</span>}
+            </div>
+          </div>
+          <div className='column'>
+            <div className='container'>
+              <h3 className='subtitle'>Node details</h3>
+              {selectedNode && <DisplayNodeInfo node={selectedNode}/>}
+            </div>
           </div>
         </div>
-        </div>
-        </div>
-      );
-    }
+      </div>
+    );
+  }
 }

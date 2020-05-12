@@ -1,14 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
 import {Type, toHexString} from "@chainsafe/ssz";
 import Output from "./Output";
 import Input from "./Input";
-import {PresetName} from '../util/types';
+import {PresetName} from "../util/types";
 import {inputTypes} from "../util/input_types";
-import TreeView from './TreeView';
+import TreeView from "./TreeView";
 
 type Props = {
-
-}
+  serializeModeOn: boolean;
+};
 
 type State<T> = {
   presetName: PresetName | undefined;
@@ -18,11 +18,12 @@ type State<T> = {
   error: string | undefined;
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
-}
+  deserialized: Type<T>;
+};
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
 
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       presetName: undefined,
@@ -35,7 +36,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     };
   }
 
-  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string) {
+  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string): void {
     let serialized, root, error;
     try {
       serialized = type.serialize(input);
@@ -46,21 +47,37 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
 
-    this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error});
+    const deserialized = input;
+
+    this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error, deserialized});
   }
 
   render() {
-    const {presetName, input, sszType, error, serialized, hashTreeRoot} = this.state;
-    const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : '';
+    const {presetName, input, sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
+    const {serializeModeOn} = this.props;
+    const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : "";
     return (
       <div className='section serialize-section is-family-code'>
         <div className='container'>
           <div className='columns is-desktop'>
             <div className='column'>
-              <Input onProcess={this.process.bind(this)}/>
+              <Input
+                serializeModeOn={serializeModeOn}
+                onProcess={this.process.bind(this)}
+                sszType={sszType}
+                serialized={serialized}
+                deserialized={deserialized}
+              />
             </div>
             <div className='column'>
-              <Output error={error} serialized={serialized} hashTreeRoot={hashTreeRoot}/>
+              <Output
+                deserialized={deserialized}
+                serializeModeOn={serializeModeOn}
+                serialized={serialized}
+                hashTreeRoot={hashTreeRoot}
+                error={error}
+                sszType={sszType}
+              />
             </div>
           </div>
         </div>

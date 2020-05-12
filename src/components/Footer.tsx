@@ -1,9 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 
-import pkg from '../../package.json';
+import pkg from "../../package.json";
 
-
-export default function() {
+export default function(): JSX.Element {
   return (
     <footer className='footer'>
       <div className='content has-text-centered'>
@@ -14,13 +13,13 @@ export default function() {
         <div>
           <a className='is-link has-text-grey'
             href='https://www.npmjs.com/package/@chainsafe/ssz'>
-            @chainsafe/ssz {pkg.dependencies['@chainsafe/ssz']}
+            @chainsafe/ssz {pkg.dependencies["@chainsafe/ssz"]}
           </a>
         </div>
         <div>
           <a className='is-link has-text-grey'
             href='https://www.npmjs.com/package/@chainsafe/lodestar-types'>
-            @chainsafe/lodestar-types {pkg.dependencies['@chainsafe/lodestar-types']}
+            @chainsafe/lodestar-types {pkg.dependencies["@chainsafe/lodestar-types"]}
           </a>
         </div>
       </div>

@@ -4,7 +4,7 @@ import {dumpYaml, parseYaml} from "./yaml";
 type InputTypeRecord = Record<string, InputType>
 
 type InputType = {
-  parse: <T>(raw: string, type: Type<T>) => any,
+  parse: <T>(raw: string, type: Type<T>) => T,
   dump: <T>(value: any, type: Type<T>) => string,
 }
 
