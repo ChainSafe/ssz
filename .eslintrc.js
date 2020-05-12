@@ -24,13 +24,6 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended"
   ],
-  // settings: {
-  //   "import/resolver": {
-  //     "@mpetrunic/eslint-import-resolver-lerna": {
-  //       packages: path.resolve(__dirname, "packages")
-  //     }
-  //   }
-  // },
   rules: {
     //doesnt work, it reports false errors
     "constructor-super": "off",
@@ -63,12 +56,9 @@ module.exports = {
     "new-parens": "error",
     "no-caller": "error",
     "no-bitwise": "off",
-    // "no-conditional-assignment": true,
-    // "no-consecutive-blank-lines": false,
     "no-console": "warn",
     "no-var": "error",
     "object-curly-spacing": ["error", "never"],
-    // "object-literal-sort-keys": false,
     "prefer-const": "error",
     "quotes": ["error", "double"],
     "semi": "off"

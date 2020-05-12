@@ -1,6 +1,6 @@
 import * as React from "react";
 import {presets, typeNames, PresetName} from "../util/types";
-import {Type, toHexString, fromHexString} from "@chainsafe/ssz";
+import {Type, toHexString} from "@chainsafe/ssz";
 import {createRandomValue} from "../util/random";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
@@ -10,6 +10,8 @@ type Props<T> = {
   onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
   serializeModeOn: boolean;
   sszType: Type<T> | undefined;
+  serialized: Uint8Array | undefined;
+  deserialized: object;
 };
 
 type State<T> = {
@@ -18,7 +20,7 @@ type State<T> = {
   input: string;
   serializeInputType: string;
   deserializeInputType: string;
-  value: T;
+  value: object | string;
 };
 
 const DEFAULT_PRESET = "mainnet";
@@ -45,7 +47,6 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
 
   componentDidUpdate(prevProps: { serializeModeOn: boolean }): void {
     if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
-      console.log('this: ', this);
       if (!this.props.serializeModeOn) {
         this.setInputType("ssz");
         if (this.props.serialized) {
@@ -55,9 +56,8 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
       } else {
         this.setInputType(this.state.serializeInputType);
         if (this.props.deserialized) {
-          this.setState({value: this.props.deserialized})
+          this.setState({value: this.props.deserialized});
           this.setInput(inputTypes[this.state.serializeInputType].dump(this.props.deserialized, this.props.sszType));
-          // this.setInput(inputTypes[this.state.serializeInputType].dump(this.state.value, this.props.sszType));
         }
       }
     }
@@ -76,7 +76,7 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
   names(): string[] {
     return typeNames(this.types());
   }
-  types() {
+  types(): Record<string, Type<any>> {
     return presets[this.state.presetName];
   }
 

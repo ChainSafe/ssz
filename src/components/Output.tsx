@@ -11,7 +11,7 @@ type Props<T> = {
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
   serializeModeOn: boolean;
-  deserialized: object;
+  deserialized: T;
   sszType: Type<T>;
 };
 
@@ -30,7 +30,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     };
   }
 
-  static getDerivedStateFromProps<T>(nextProps: Props<T>) {
+  static getDerivedStateFromProps<T>(nextProps: Props<T>): object {
     return {showError: !!nextProps.error};
   }
 
