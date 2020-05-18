@@ -4,7 +4,7 @@ import {Type, toHexString} from "@chainsafe/ssz";
 import {createRandomValue} from "../util/random";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
-
+import {withAlert} from "react-alert";
 
 type Props<T> = {
   onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
@@ -12,6 +12,7 @@ type Props<T> = {
   sszType: Type<T> | undefined;
   serialized: Uint8Array | undefined;
   deserialized: object;
+  alert: object;
 };
 
 type State<T> = {
@@ -25,7 +26,7 @@ type State<T> = {
 
 const DEFAULT_PRESET = "mainnet";
 
-export default class Input<T> extends React.Component<Props<T>, State<T>> {
+class Input<T> extends React.Component<Props<T>, State<T>> {
 
   constructor(props: Props<T>) {
     super(props);
@@ -60,6 +61,15 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
         }
       }
     }
+  }
+
+  handleError(error: { message: string }): void {
+    this.showError(error.message);
+    this.setState({showOverlay: false});
+  }
+
+  showError(errorMessage: string): void {
+    this.props.alert.error(errorMessage);
   }
 
   getRows(): number {
@@ -128,13 +138,17 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
 
   doProcess(): void {
     const {presetName, sszTypeName} = this.state;
-    this.props.onProcess(
-      presetName,
-      sszTypeName,
-      this.parsedInput(),
-      this.types()[sszTypeName],
-      this.getInputType(),
-    );
+    try {
+      this.props.onProcess(
+        presetName,
+        sszTypeName,
+        this.parsedInput(),
+        this.types()[sszTypeName],
+        this.getInputType(),
+      );
+    } catch(e) {
+      this.handleError(e);
+    }
   }
 
   render() {
@@ -221,3 +235,5 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
     );
   }
 }
+
+export default withAlert()(Input)
