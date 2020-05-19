@@ -1,32 +1,33 @@
+import {presets} from "../util/types";
 import {BasicType, CompositeType, isBooleanType, isListType, isVectorType, isBitListType, isBitVectorType, isContainerType, isByteVectorType, isNumberUintType, isBigIntUintType} from '@chainsafe/ssz';
 
-function randomNumber(length: number): number {
+function randomNumber(length) {
   return Math.random() * length | 0;
 }
 
-function randomNumberUint(byteLength: number): number {
+function randomNumberUint(byteLength) {
   return randomNumber(byteLength);
 }
 
-function randomBigUint(byteLength: number): BigInt {
+function randomBigUint(byteLength) {
   return BigInt(randomNumber(byteLength));
 }
 
-function randomBoolean(): boolean {
+function randomBoolean() {
   return Math.random() > 0.5;
 }
 
-function randomBooleanArray(length: number): Array<boolean> {
+function randomBooleanArray(length) {
   return Array.from({ length }, () => randomBoolean());
 }
 
-function randomByteVector(length: number): Uint8Array {
+function randomByteVector(length) {
   var array = new Uint8Array(length);
-  window.crypto.getRandomValues(array);
+  self.crypto.getRandomValues(array);
   return array;
 }
 
-export function createRandomValue(type: BasicType<unknown> | CompositeType<object>): any {
+function createRandomValue(type) {
   try {
     if(isNumberUintType(type)) {
       return randomNumberUint(type.byteLength);
@@ -55,14 +56,21 @@ export function createRandomValue(type: BasicType<unknown> | CompositeType<objec
       return Array.from({ length: type.length }, () => createRandomValue(type.elementType));
     }
     else if(isContainerType(type)) {
-      const obj: any = {};
+      const obj = {};
       Object.entries(type.fields).forEach(([fieldName, fieldType]) => {
         obj[fieldName] = createRandomValue(fieldType);
       });
       return obj;
     }
-  } catch(e) {
+  }
+   catch(e) {
     console.error(e.message, e.name);
     return;
   }
+}
+
+export function createRandomValueWorker(input) {
+  const sszType = presets[input.presetName][input.sszTypeName];
+  const value = createRandomValue(sszType);
+  return value;
 }

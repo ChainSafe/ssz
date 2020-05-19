@@ -37,6 +37,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   }
 
   process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string): void {
+
     let serialized, root, error;
     try {
       serialized = type.serialize(input);
