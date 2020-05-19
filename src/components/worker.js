@@ -69,8 +69,19 @@ function createRandomValue(type) {
   }
 }
 
-export function createRandomValueWorker(input) {
-  const sszType = presets[input.presetName][input.sszTypeName];
+function getSSZType(data) {
+  return presets[data.presetName][data.sszTypeName];
+}
+
+export function createRandomValueWorker(data) {
+  const sszType = getSSZType(data);
   const value = createRandomValue(sszType);
   return value;
+}
+
+export function serialize(data) {
+  const type = getSSZType(data);
+  const serialized = type.serialize(data.input);
+  const root = type.hashTreeRoot(data.input);
+  return {serialized, root};
 }

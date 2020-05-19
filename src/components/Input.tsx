@@ -4,8 +4,6 @@ import {Type, toHexString} from "@chainsafe/ssz";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
 import {withAlert} from "react-alert";
-import LoadingOverlay from "react-loading-overlay";
-import BounceLoader from "react-spinners/BounceLoader";
 import worker from "workerize-loader!./worker";
 
 type Props<T> = {
@@ -15,24 +13,23 @@ type Props<T> = {
   serialized: Uint8Array | undefined;
   deserialized: object;
   alert: object;
+  setOverlay: Function;
 };
 
-type State<T> = {
+type State = {
   presetName: PresetName;
   sszTypeName: string;
   input: string;
   serializeInputType: string;
   deserializeInputType: string;
   value: object | string;
-  showOverlay: boolean;
-  overlayText: string;
 };
 
 const workerInstance = worker();
 
 const DEFAULT_PRESET = "mainnet";
 
-class Input<T> extends React.Component<Props<T>, State<T>> {
+class Input<T> extends React.Component<Props<T>, State> {
 
   constructor(props: Props<T>) {
     super(props);
@@ -54,8 +51,6 @@ class Input<T> extends React.Component<Props<T>, State<T>> {
         serializeInputType: "yaml",
         deserializeInputType: "ssz",
         value: '',
-        showOverlay: false,
-        overlayText: "",
       };
   }
 
@@ -82,7 +77,7 @@ class Input<T> extends React.Component<Props<T>, State<T>> {
 
   handleError(error: { message: string }): void {
     this.showError(error.message);
-    this.setState({showOverlay: false});
+    this.props.setOverlay(false);
   }
 
   showError(errorMessage: string): void {
@@ -121,10 +116,7 @@ class Input<T> extends React.Component<Props<T>, State<T>> {
     const sszType = this.types()[sszTypeName];
     const {presetName} = this.state;
 
-    this.setState({
-      showOverlay: true,
-      overlayText: `Generating random ${sszTypeName} value`,
-    });
+    this.props.setOverlay(true, `Generating random ${sszTypeName} value`);
     workerInstance.createRandomValueWorker({sszTypeName, presetName})
       .then((value: object | string) => {
         const input = inputTypes[inputType].dump(value, sszType);
@@ -133,7 +125,7 @@ class Input<T> extends React.Component<Props<T>, State<T>> {
         } else {
           this.setState({deserializeInputType: inputType, sszTypeName, input, value});
         }
-        this.setState({showOverlay: false})
+        this.props.setOverlay(false);
       })
       .catch((error: { message: string }) => this.handleError(error));
   }
@@ -180,15 +172,8 @@ class Input<T> extends React.Component<Props<T>, State<T>> {
 
   render() {
     const {serializeModeOn} = this.props;
-    const bounceLoader = <BounceLoader css="margin: auto;" />;
     return (
       <div className='container'>
-        <LoadingOverlay
-          active={this.state.showOverlay}
-          spinner={bounceLoader}
-          text={this.state.overlayText}
-        >
-        </LoadingOverlay>
         <h3 className='subtitle'>Input</h3>
         <div className="field is-horizontal">
           <div className="field-body">

@@ -5,6 +5,9 @@ import Input from "./Input";
 import {PresetName} from "../util/types";
 import {inputTypes} from "../util/input_types";
 import TreeView from "./TreeView";
+import worker from "workerize-loader!./worker";
+import LoadingOverlay from "react-loading-overlay";
+import BounceLoader from "react-spinners/BounceLoader";
 
 type Props = {
   serializeModeOn: boolean;
@@ -19,7 +22,11 @@ type State<T> = {
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
   deserialized: Type<T>;
+  showOverlay: boolean;
+  overlayText: string;
 };
+
+const workerInstance = worker();
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
 
@@ -33,32 +40,51 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       error: undefined,
       serialized: undefined,
       hashTreeRoot: undefined,
+      showOverlay: false,
+      overlayText: "",
     };
+  }
+
+  setOverlay(showOverlay: boolean, overlayText: string = '') {
+    this.setState({
+      showOverlay,
+      overlayText,
+    });
   }
 
   process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string): void {
 
-    let serialized, root, error;
-    try {
-      serialized = type.serialize(input);
-      root = type.hashTreeRoot(input);
-    } catch (e) {
-      error = e.message;
-    }
+    let error;
+    this.setOverlay(true, `Serializing...`)
+    workerInstance.serialize({sszTypeName: name, presetName: presetName, input})
+      .then((result: { root: Uint8Array | undefined, serialized: Uint8Array | undefined }) => {
+        this.setState({hashTreeRoot: result.root, serialized: result.serialized})
+        this.setOverlay(false);
+      })
+      .catch((e: { message: string }) => error = e.message);
+
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
 
     const deserialized = input;
 
-    this.setState({presetName, name, input, sszType: type, serialized, hashTreeRoot: root, error, deserialized});
+    this.setState({presetName, name, input, sszType: type, error, deserialized});
   }
 
   render() {
     const {presetName, input, sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
     const {serializeModeOn} = this.props;
     const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : "";
+    const bounceLoader = <BounceLoader css="margin: auto;" />;
+
     return (
       <div className='section serialize-section is-family-code'>
+        <LoadingOverlay
+          active={this.state.showOverlay}
+          spinner={bounceLoader}
+          text={this.state.overlayText}
+        >
+        </LoadingOverlay>
         <div className='container'>
           <div className='columns is-desktop'>
             <div className='column'>
@@ -68,6 +94,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
                 sszType={sszType}
                 serialized={serialized}
                 deserialized={deserialized}
+                setOverlay={this.setOverlay.bind(this)}
               />
             </div>
             <div className='column'>
