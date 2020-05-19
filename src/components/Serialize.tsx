@@ -45,7 +45,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     };
   }
 
-  setOverlay(showOverlay: boolean, overlayText: string = '') {
+  setOverlay(showOverlay: boolean, overlayText = "") {
     this.setState({
       showOverlay,
       overlayText,
@@ -55,10 +55,10 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string): void {
 
     let error;
-    this.setOverlay(true, `Serializing...`)
+    this.setOverlay(true, "Serializing...");
     workerInstance.serialize({sszTypeName: name, presetName: presetName, input})
-      .then((result: { root: Uint8Array | undefined, serialized: Uint8Array | undefined }) => {
-        this.setState({hashTreeRoot: result.root, serialized: result.serialized})
+      .then((result: { root: Uint8Array | undefined; serialized: Uint8Array | undefined }) => {
+        this.setState({hashTreeRoot: result.root, serialized: result.serialized});
         this.setOverlay(false);
       })
       .catch((e: { message: string }) => error = e.message);

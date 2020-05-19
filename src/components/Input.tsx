@@ -44,18 +44,18 @@ class Input<T> extends React.Component<Props<T>, State> {
       })
       .catch((error: { message: string }) => this.handleError(error));
 
-      this.state = {
-        presetName: DEFAULT_PRESET,
-        input: '',
-        sszTypeName: initialType,
-        serializeInputType: "yaml",
-        deserializeInputType: "ssz",
-        value: '',
-      };
+    this.state = {
+      presetName: DEFAULT_PRESET,
+      input: "",
+      sszTypeName: initialType,
+      serializeInputType: "yaml",
+      deserializeInputType: "ssz",
+      value: "",
+    };
   }
 
   initializeRandomValueAndInput(value: object | string, input: string) {
-    this.setState({value, input})
+    this.setState({value, input});
   }
 
   componentDidUpdate(prevProps: { serializeModeOn: boolean }): void {
@@ -255,4 +255,4 @@ class Input<T> extends React.Component<Props<T>, State> {
   }
 }
 
-export default withAlert()(Input)
+export default withAlert()(Input);
