@@ -60,7 +60,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     };
   }
 
-  setValueAndInput(value: object | string, input: string) {
+  setValueAndInput(value: object | string, input: string): void {
     this.setState({value, input});
   }
 
@@ -185,7 +185,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
-  processFileContents(input: string) {
+  processFileContents(input: string): void {
     try {
       // remove newline character
       const trimmedInput = input.replace(/\s*$/g,"");
@@ -195,7 +195,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
-  onUploadFile(file: Blob) {
+  onUploadFile(file: Blob): void {
     if (file) {
       const reader = new FileReader();
       const processFileContents = this.processFileContents.bind(this);
@@ -208,12 +208,11 @@ class Input<T> extends React.Component<Props<T>, State> {
       };
       reader.onerror = (e) => {
         handleError(e);
-        console.log("reader.onerror: ", e);
       };
     }
   }
 
-  render() {
+  render(): JSX.Element {
     const {serializeModeOn} = this.props;
     const {serializeInputType, deserializeInputType} = this.state;
     return (
@@ -292,13 +291,13 @@ class Input<T> extends React.Component<Props<T>, State> {
           </div>
         </div>
         <textarea
-          className='textarea'
+          className="textarea"
           rows={this.state.input && this.getRows()}
           value={this.state.input}
           onChange={(e) => this.setInput(e.target.value)}
         />
         <button
-          className='button is-primary is-medium is-fullwidth is-uppercase is-family-code submit'
+          className="button is-primary is-medium is-fullwidth is-uppercase is-family-code submit"
           disabled={!(this.state.sszTypeName && this.state.input)}
           onClick={this.doProcess.bind(this)}
         >

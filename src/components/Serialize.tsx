@@ -15,12 +15,12 @@ type Props = {
 type State<T> = {
   presetName: PresetName | undefined;
   name: string | undefined;
-  input: any;
+  input: string | undefined;
   sszType: Type<T> | undefined;
   error: string | undefined;
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
-  deserialized: any;
+  deserialized: string | undefined;
   showOverlay: boolean;
   overlayText: string;
 };
@@ -45,7 +45,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     };
   }
 
-  setOverlay(showOverlay: boolean, overlayText = "") {
+  setOverlay(showOverlay: boolean, overlayText = ""): void {
     this.setState({
       showOverlay,
       overlayText,
@@ -74,7 +74,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     this.setState({presetName, name, input, sszType: type, error, deserialized});
   }
 
-  render() {
+  render(): JSX.Element {
     const {presetName, input, sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
     const {serializeModeOn} = this.props;
     const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : "";

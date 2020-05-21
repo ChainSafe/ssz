@@ -52,7 +52,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     this.setState({outputType: outputType});
   }
 
-  render() {
+  render(): JSX.Element {
     const {error, serialized, deserialized, hashTreeRoot, serializeModeOn, sszType} = this.props;
     const {showError, outputType} = this.state;
 

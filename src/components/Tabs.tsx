@@ -25,7 +25,7 @@ export default class Tabs extends React.Component<Props, State> {
     this.setState({serializeModeOn: false});
   }
 
-  render() {
+  render(): JSX.Element {
     const {serializeModeOn} = this.state;
     return (
       <>
