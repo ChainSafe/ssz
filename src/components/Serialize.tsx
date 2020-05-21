@@ -3,7 +3,6 @@ import {Type, toHexString} from "@chainsafe/ssz";
 import Output from "./Output";
 import Input from "./Input";
 import {PresetName} from "../util/types";
-import {inputTypes} from "../util/input_types";
 import TreeView from "./TreeView";
 import worker from "workerize-loader!./worker";
 import LoadingOverlay from "react-loading-overlay";

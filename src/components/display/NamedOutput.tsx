@@ -5,7 +5,7 @@ type Props = {
   value: string | undefined;
 };
 
-export default ({name, value}: Props): object => (
+export default ({name, value}: Props): JSX.Element => (
   <div className='field has-addons'>
     <div className='control'>
       <a className='button is-static'>

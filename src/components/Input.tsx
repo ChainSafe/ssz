@@ -40,7 +40,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     workerInstance.createRandomValueWorker({sszTypeName: initialType, presetName: DEFAULT_PRESET})
       .then((value: object | string) => {
         const input = inputTypes.yaml.dump(value, sszType);
-        this.initializeRandomValueAndInput(value, input);
+        this.setValueAndInput(value, input);
       })
       .catch((error: { message: string }) => this.handleError(error));
 
@@ -54,7 +54,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     };
   }
 
-  initializeRandomValueAndInput(value: object | string, input: string) {
+  setValueAndInput(value: object | string, input: string) {
     this.setState({value, input});
   }
 
@@ -116,7 +116,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     const sszType = this.types()[sszTypeName];
     const {presetName} = this.state;
 
-    this.props.setOverlay(true, `Generating random ${sszTypeName} value`);
+    this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
     workerInstance.createRandomValueWorker({sszTypeName, presetName})
       .then((value: object | string) => {
         const input = inputTypes[inputType].dump(value, sszType);
@@ -170,11 +170,39 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
+  onUploadFile(file) {
+    if (file) {
+      const sszType = this.types()[this.state.sszTypeName];
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      const setValueAndInput = this.setValueAndInput.bind(this);
+      reader.onload = function (e) {
+        const value = e.target.result;
+        const input = inputTypes.yaml.dump(value, sszType);
+        console.log('sttuff: ', value, input)
+        setValueAndInput(value, input);
+      }
+      reader.onerror = function (evt) {
+        this.handleError('error reading file');
+      }
+    }
+  }
+
   render() {
     const {serializeModeOn} = this.props;
     return (
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
+        {!this.props.serializeModeOn &&
+          <div>
+            <div>Upload a file to populate field below (optional)</div>
+            <input
+              type="file"
+              onChange={(e) => this.onUploadFile(e.target.files[0])}
+            />
+          </div>
+        }
+        <br />
         <div className="field is-horizontal">
           <div className="field-body">
             <div className='field has-addons'>

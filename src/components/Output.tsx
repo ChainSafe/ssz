@@ -66,6 +66,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
       deserializedStr = deserialized && deserializedOuput ? deserializedOuput.dump(deserialized, sszType) : "";
     }
 
+
     return (<div className='container'>
       <h3 className='subtitle'>Output</h3>
       {
@@ -77,7 +78,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
               <div className='field has-addons'>
                 <div className='control'>
                   <a className='button is-static'>
-                              Output Type
+                    Output Type
                   </a>
                 </div>
                 <div className='control'>
