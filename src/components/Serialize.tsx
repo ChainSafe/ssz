@@ -20,7 +20,7 @@ type State<T> = {
   error: string | undefined;
   serialized: Uint8Array | undefined;
   hashTreeRoot: Uint8Array | undefined;
-  deserialized: Type<T>;
+  deserialized: any;
   showOverlay: boolean;
   overlayText: string;
 };
@@ -38,6 +38,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       sszType: undefined,
       error: undefined,
       serialized: undefined,
+      deserialized: undefined,
       hashTreeRoot: undefined,
       showOverlay: false,
       overlayText: "",
@@ -51,13 +52,16 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     });
   }
 
-  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>, inputType: string): void {
+  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>): void {
 
     let error;
     this.setOverlay(true, "Serializing...");
     workerInstance.serialize({sszTypeName: name, presetName: presetName, input})
       .then((result: { root: Uint8Array | undefined; serialized: Uint8Array | undefined }) => {
-        this.setState({hashTreeRoot: result.root, serialized: result.serialized});
+        this.setState({
+          hashTreeRoot: result.root,
+          serialized: result.serialized
+        });
         this.setOverlay(false);
       })
       .catch((e: { message: string }) => error = e.message);

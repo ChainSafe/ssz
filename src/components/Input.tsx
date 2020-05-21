@@ -37,10 +37,16 @@ class Input<T> extends React.Component<Props<T>, State> {
     const names = typeNames(types);
     const initialType = names[Math.floor(Math.random() * names.length)];
     const sszType = types[initialType];
-    workerInstance.createRandomValueWorker({sszTypeName: initialType, presetName: DEFAULT_PRESET})
+
+    this.props.setOverlay(true, `Generating random ${initialType} value...`);
+    workerInstance.createRandomValueWorker({
+      sszTypeName: initialType,
+      presetName: DEFAULT_PRESET
+    })
       .then((value: object | string) => {
         const input = inputTypes.yaml.dump(value, sszType);
         this.setValueAndInput(value, input);
+        this.props.setOverlay(false);
       })
       .catch((error: { message: string }) => this.handleError(error));
 
@@ -121,10 +127,19 @@ class Input<T> extends React.Component<Props<T>, State> {
       .then((value: object | string) => {
         const input = inputTypes[inputType].dump(value, sszType);
         if (this.props.serializeModeOn) {
-          this.setState({serializeInputType: inputType, sszTypeName, input, value});
+          this.setState({
+            serializeInputType: inputType,
+          });
         } else {
-          this.setState({deserializeInputType: inputType, sszTypeName, input, value});
+          this.setState({
+            deserializeInputType: inputType,
+          });
         }
+        this.setState({
+          sszTypeName,
+          input,
+          value
+        });
         this.props.setOverlay(false);
       })
       .catch((error: { message: string }) => this.handleError(error));
@@ -170,21 +185,32 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
-  onUploadFile(file) {
+  processFile(input: string) {
+    try {
+      // remove newline character
+      const trimmedInput = input.replace(/\s*$/g,"");
+      this.setState({input: trimmedInput});
+    } catch(error) {
+      this.handleError(error);
+      console.log("error: ", error);
+    }
+  }
+
+  onUploadFile(file: Blob) {
     if (file) {
-      const sszType = this.types()[this.state.sszTypeName];
       const reader = new FileReader();
+      const processFile = this.processFile.bind(this);
+      const handleError = this.handleError.bind(this);
       reader.readAsText(file, "UTF-8");
-      const setValueAndInput = this.setValueAndInput.bind(this);
       reader.onload = function (e) {
-        const value = e.target.result;
-        const input = inputTypes.yaml.dump(value, sszType);
-        console.log('sttuff: ', value, input)
-        setValueAndInput(value, input);
-      }
+        if (e.target) {
+          processFile(e.target.result);
+        }
+      };
       reader.onerror = function (evt) {
-        this.handleError('error reading file');
-      }
+        handleError(evt);
+        console.log("reader.onerror: ", evt);
+      };
     }
   }
 
@@ -194,15 +220,18 @@ class Input<T> extends React.Component<Props<T>, State> {
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
         {!this.props.serializeModeOn &&
-          <div>
-            <div>Upload a file to populate field below (optional)</div>
-            <input
-              type="file"
-              onChange={(e) => this.onUploadFile(e.target.files[0])}
-            />
-          </div>
+          <>
+            <div>
+              <div>Upload a file to populate field below (optional)</div>
+              <input
+                type="file"
+                accept=".ssz"
+                onChange={(e) => e.target && this.onUploadFile(e.target.files[0])}
+              />
+            </div>
+            <br />
+          </>
         }
-        <br />
         <div className="field is-horizontal">
           <div className="field-body">
             <div className='field has-addons'>

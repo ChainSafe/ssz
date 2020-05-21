@@ -6,7 +6,7 @@ type Props = {
 };
 
 
-export default ({error, hideError}: Props): object => (
+export default ({error, hideError}: Props): JSX.Element => (
   <div className='notification'>
     <a className='delete'
       onClick={hideError}/>
