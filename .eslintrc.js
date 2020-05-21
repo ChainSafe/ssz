@@ -37,9 +37,7 @@ module.exports = {
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-require-imports": "error",
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "varsIgnorePattern": "^_"
-    }],
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/semi": "error",
     "@typescript-eslint/type-annotation-spacing": "error",
@@ -50,9 +48,6 @@ module.exports = {
     }],
     "camelcase": "error",
     "func-call-spacing": "off",
-    "max-len": ["error", {
-      "code": 120
-    }],
     "new-parens": "error",
     "no-caller": "error",
     "no-bitwise": "off",

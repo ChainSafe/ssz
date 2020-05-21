@@ -185,53 +185,49 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
-  processFile(input: string) {
+  processFileContents(input: string) {
     try {
       // remove newline character
       const trimmedInput = input.replace(/\s*$/g,"");
       this.setState({input: trimmedInput});
     } catch(error) {
       this.handleError(error);
-      console.log("error: ", error);
     }
   }
 
   onUploadFile(file: Blob) {
     if (file) {
       const reader = new FileReader();
-      const processFile = this.processFile.bind(this);
+      const processFileContents = this.processFileContents.bind(this);
       const handleError = this.handleError.bind(this);
       reader.readAsText(file, "UTF-8");
-      reader.onload = function (e) {
+      reader.onload = (e) => {
         if (e.target) {
-          processFile(e.target.result);
+          processFileContents(e.target.result);
         }
       };
-      reader.onerror = function (evt) {
-        handleError(evt);
-        console.log("reader.onerror: ", evt);
+      reader.onerror = (e) => {
+        handleError(e);
+        console.log("reader.onerror: ", e);
       };
     }
   }
 
   render() {
     const {serializeModeOn} = this.props;
+    const {serializeInputType, deserializeInputType} = this.state;
     return (
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
-        {!this.props.serializeModeOn &&
-          <>
-            <div>
-              <div>Upload a file to populate field below (optional)</div>
-              <input
-                type="file"
-                accept=".ssz"
-                onChange={(e) => e.target && this.onUploadFile(e.target.files[0])}
-              />
-            </div>
-            <br />
-          </>
-        }
+        <div>
+          <div>Upload a file to populate field below (optional)</div>
+          <input
+            type="file"
+            accept={`.${serializeModeOn ? serializeInputType : deserializeInputType}`}
+            onChange={(e) => e.target && this.onUploadFile(e.target.files[0])}
+          />
+        </div>
+        <br />
         <div className="field is-horizontal">
           <div className="field-body">
             <div className='field has-addons'>
@@ -295,7 +291,8 @@ class Input<T> extends React.Component<Props<T>, State> {
             }
           </div>
         </div>
-        <textarea className='textarea'
+        <textarea
+          className='textarea'
           rows={this.state.input && this.getRows()}
           value={this.state.input}
           onChange={(e) => this.setInput(e.target.value)}
