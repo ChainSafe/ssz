@@ -55,7 +55,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   process<T>(presetName: PresetName, name: string, input: T, type: Type<T>): void {
 
     let error;
-    this.setOverlay(true, "Serializing...");
+    this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
     workerInstance.serialize({sszTypeName: name, presetName: presetName, input})
       .then((result: { root: Uint8Array | undefined; serialized: Uint8Array | undefined }) => {
         this.setState({

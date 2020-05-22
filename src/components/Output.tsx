@@ -1,6 +1,7 @@
 import * as React from "react";
 import NamedOutput from "./display/NamedOutput";
 import ErrorBox from "./display/ErrorBox";
+import {saveAs} from "file-saver";
 
 import {serializeOutputTypes, deserializeOutputTypes} from "../util/output_types";
 import {Type} from "@chainsafe/ssz";
@@ -52,6 +53,11 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     this.setState({outputType: outputType});
   }
 
+  downloadFile() {
+    const fileContents = new Blob([this.props.serialized]);
+    saveAs(fileContents, "test.ssz");
+  }
+
   render(): JSX.Element {
     const {error, serialized, deserialized, hashTreeRoot, serializeModeOn, sszType} = this.props;
     const {showError, outputType} = this.state;
@@ -59,8 +65,8 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     let serializedStr, deserializedStr, hashTreeRootStr;
     if (serializeModeOn) {
       const serializedOutput = serializeOutputTypes[outputType];
-      serializedStr = serialized && serializedOutput ? serializedOutput.dump(serialized) : "";
-      hashTreeRootStr = hashTreeRoot && serializedOutput ? serializedOutput.dump(hashTreeRoot) : "";
+      serializedStr = (serialized && serializedOutput) ? serializedOutput.dump(serialized) : "";
+      hashTreeRootStr = (hashTreeRoot && serializedOutput) ? serializedOutput.dump(hashTreeRoot) : "";
     } else {
       const deserializedOuput = deserializeOutputTypes[outputType];
       deserializedStr = deserialized && deserializedOuput ? deserializedOuput.dump(deserialized, sszType) : "";
@@ -99,13 +105,18 @@ export default class Output<T> extends React.Component<Props<T>, State> {
               <>
                 <NamedOutput name="Serialized" value={serializedStr}/>
                 <NamedOutput name="HashTreeRoot" value={hashTreeRootStr}/>
+                <button
+                  onClick={() => this.downloadFile()}
+                >{"Download data as .ssz file"}</button>
               </>
               :
-              <textarea className='textarea'
-                rows={8}
-                value={deserializedStr || ""}
-                readOnly={true}
-              />
+              <>
+                <textarea className='textarea'
+                  rows={8}
+                  value={deserializedStr || ""}
+                  readOnly={true}
+                />
+              </>
             }
           </>
       }
