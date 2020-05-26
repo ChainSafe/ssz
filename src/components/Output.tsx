@@ -53,7 +53,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     this.setState({outputType: outputType});
   }
 
-  downloadFile() {
+  downloadFile(): void {
     const fileContents = new Blob([this.props.serialized]);
     saveAs(fileContents, "test.ssz");
   }
@@ -71,7 +71,6 @@ export default class Output<T> extends React.Component<Props<T>, State> {
       const deserializedOuput = deserializeOutputTypes[outputType];
       deserializedStr = deserialized && deserializedOuput ? deserializedOuput.dump(deserialized, sszType) : "";
     }
-
 
     return (<div className='container'>
       <h3 className='subtitle'>Output</h3>
@@ -103,8 +102,8 @@ export default class Output<T> extends React.Component<Props<T>, State> {
             </div>
             {serializeModeOn ?
               <>
-                <NamedOutput name="Serialized" value={serializedStr}/>
-                <NamedOutput name="HashTreeRoot" value={hashTreeRootStr}/>
+                <NamedOutput name="HashTreeRoot" value={hashTreeRootStr} />
+                <NamedOutput name="Serialized" value={serializedStr} textarea />
                 <button
                   onClick={() => this.downloadFile()}
                 >{"Download data as .ssz file"}</button>

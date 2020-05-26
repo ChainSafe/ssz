@@ -55,7 +55,6 @@ module.exports = {
     "no-var": "error",
     "object-curly-spacing": ["error", "never"],
     "prefer-const": "error",
-    "quotes": ["error", "double"],
     "semi": "off"
   },
   "overrides": [
