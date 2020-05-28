@@ -53,9 +53,7 @@ export class NumberUintType extends UintType<number> {
     return 0;
   }
   maxBigInt(byteLength: number): BigInt {
-    const hexRep = "0x" + "ff".repeat(byteLength);
-    const numberRep = parseInt(hexRep, 16);
-    return BigInt(numberRep);
+    return BigInt(2) ** BigInt(byteLength * 8 + 1) - BigInt(1);
   }
   toBytes(value: number, output: Uint8Array, offset: number): number {
     if (this.byteLength > 6 && value === Infinity) {
