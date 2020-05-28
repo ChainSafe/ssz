@@ -37,7 +37,7 @@ export class NumberUintType extends UintType<number> {
   }
   assertValidValue(value: unknown): asserts value is number {
     if (
-      value !== Infinity 
+      value !== Infinity
         && (
           !Number.isSafeInteger(value as number)
           || value > (BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
@@ -96,6 +96,9 @@ export class NumberUintType extends UintType<number> {
   }
   toJson(value: number): Json {
     if (this.byteLength > 4) {
+      if (value === Infinity) {
+        return `0x${'ff'.repeat(this.byteLength)}`;
+      }
       return String(value);
     }
     return value;
