@@ -97,7 +97,7 @@ export class NumberUintType extends UintType<number> {
   toJson(value: number): Json {
     if (this.byteLength > 4) {
       if (value === Infinity) {
-        return `0x${'ff'.repeat(this.byteLength)}`;
+        return "0x" + "ff".repeat(this.byteLength);
       }
       return String(value);
     }
