@@ -1,3 +1,9 @@
+## 0.6.5 (2020-06-01)
+
+### Bug Fixes
+
+* Fix Infinity serialization to/fromJson ([9a68c3](https://github.com/chainsafe/ssz/commit/9a68c3))
+
 ## 0.6.4 (2020-05-04)
 
 ### Features
