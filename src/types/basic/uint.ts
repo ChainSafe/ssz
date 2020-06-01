@@ -52,8 +52,8 @@ export class NumberUintType extends UintType<number> {
   defaultValue(): number {
     return 0;
   }
-  maxBigInt(byteLength: number): BigInt {
-    return BigInt(2) ** BigInt(byteLength * 8) - BigInt(1);
+  maxBigInt(): BigInt {
+    return BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1);
   }
   toBytes(value: number, output: Uint8Array, offset: number): number {
     if (this.byteLength > 6 && value === Infinity) {
@@ -87,7 +87,7 @@ export class NumberUintType extends UintType<number> {
   fromJson(data: Json): number {
     let n: number;
     const bigN = BigInt(data);
-    if (bigN === this.maxBigInt(this.byteLength)) {
+    if (bigN === this.maxBigInt()) {
       n = Infinity;
     } else if (bigN < Number.MAX_SAFE_INTEGER) {
       n = Number(bigN);
@@ -100,7 +100,7 @@ export class NumberUintType extends UintType<number> {
   toJson(value: number): Json {
     if (this.byteLength > 4) {
       if (value === Infinity) {
-        return this.maxBigInt(this.byteLength).toString();
+        return this.maxBigInt().toString();
       }
       return String(value);
     }
