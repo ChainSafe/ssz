@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "@chainsafe/lodestar-config": "^0.7.0",
-    "@chainsafe/lodestar-types": "^0.7.0",
-    "@chainsafe/ssz": "^0.6.4",
+    "@chainsafe/lodestar-config": "^0.9.0",
+    "@chainsafe/lodestar-types": "^0.9.0",
+    "@chainsafe/ssz": "^0.6.5",
     "@types/bn.js": "^4.11.5",
     "@types/deep-equal": "^1.0.1",
     "@types/file-saver": "^2.0.1",
