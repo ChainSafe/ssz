@@ -1,11 +1,12 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
+import BN from "bn.js";
 
 import {booleanType, byteType, ContainerType, ListType} from "../../src";
 import {
   ArrayObject, ArrayObject2, bigint16Type, bigint64Type, bigint128Type, bigint256Type, bitList100Type, bitVector100Type, byteVector100Type,
   bytes2Type, bytes4Type, bytes8Type, bytes32Type,
-  number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
+  bn64Type, number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
 } from "./objects";
 
 describe("serialize", () => {
@@ -43,6 +44,9 @@ describe("serialize", () => {
       value: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn,
       type: bigint256Type, expected: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
     },
+    {value: new BN(1), type: bn64Type, expected: "0100000000000000"},
+    {value: new BN(256), type: bn64Type, expected: "0001000000000000"},
+    {value: new BN("1000000000000000", 16), type: bn64Type, expected: "0000000000000010"},
     {value: Buffer.from("deadbeef", "hex"), type: bytes4Type, expected: "deadbeef"},
     {value: Buffer.from("deadbeef", "hex"), type: bytes4Type, expected: "deadbeef"},
     {value: {b:0,a:0}, type: SimpleObject, expected: "000000"},

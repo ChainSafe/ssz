@@ -9,7 +9,8 @@ import {
   byteType,
   ListType,
   VectorType,
-  BooleanType
+  BooleanType,
+  BNUintType,
 } from "../../src";
 
 export const bytes2Type = new ByteVectorType({
@@ -47,6 +48,8 @@ export const number16Type = new NumberUintType({byteLength: 2});
 export const number32Type = new NumberUintType({byteLength: 4});
 
 export const number64Type = new NumberUintType({byteLength: 8});
+
+export const bn64Type = new BNUintType({byteLength: 8});
 
 export const number16Vector6Type = new VectorType({
   elementType: number16Type,

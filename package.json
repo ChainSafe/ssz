@@ -31,6 +31,7 @@
   "dependencies": {
     "@chainsafe/as-sha256": "^0.2.0",
     "@chainsafe/persistent-merkle-tree": "^0.1.2",
+    "bn.js": "^5.1.2",
     "case": "^1.6.3"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@babel/register": "^7.8.3",
+    "@types/bn.js": "^4.11.6",
     "@types/chai": "^4.2.9",
     "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.4",

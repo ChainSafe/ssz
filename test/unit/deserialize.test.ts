@@ -1,11 +1,12 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
+import BN from "bn.js";
 
 import {booleanType, byteType, ContainerType} from "../../src";
 import {
   ArrayObject, ArrayObject2, bigint16Type, bigint64Type, bigint128Type, bigint256Type, bitList100Type, bitVector100Type, byteVector100Type,
   bytes2Type, bytes8Type, bytes32Type,
-  number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
+  bn64Type, number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
 } from "./objects";
 
 
@@ -66,7 +67,7 @@ describe("deserialize", () => {
   for (const {type, value, expected} of testCases) {
     it(`should correctly deserialize ${type}`, () => {
       const actual = type.deserialize(Buffer.from(value, "hex"));
-      assert.deepEqual(actual, expected);
+      assert(type.equals(actual, expected));
     });
   }
 });

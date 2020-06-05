@@ -1,3 +1,4 @@
+import BN from "bn.js";
 import {Json} from "../../interface";
 import {BasicType, isTypeOf} from "./abstract";
 
@@ -151,6 +152,48 @@ export class BigIntUintType extends UintType<bigint> {
     return value;
   }
   toJson(value: bigint): Json {
+    return value.toString();
+  }
+}
+
+export const BN_UINT_TYPE = Symbol.for("ssz/BNUintType");
+
+export function isBNUintType(type: unknown): type is BNUintType {
+  return isTypeOf(type, BN_UINT_TYPE);
+}
+
+export class BNUintType extends UintType<BN> {
+  constructor(options: IUintOptions) {
+    super(options);
+    this._typeSymbols.add(BN_UINT_TYPE);
+  }
+  assertValidValue(value: unknown): asserts value is BN {
+    if (!BN.isBN(value)) {
+      throw new Error("Uint value is not a BN object");
+    }
+    if ((value as BN).ltn(0)) {
+      throw new Error("Uint value must be gte 0");
+    }
+  }
+  defaultValue(): BN {
+    return new BN(0);
+  }
+  toBytes(value: BN, output: Uint8Array, offset: number): number {
+    const asBytes = value.toArray("le", this.byteLength);
+    for (let i = 0; i < this.byteLength; i ++) {
+      output[offset + i] = asBytes[i];
+    }
+    return offset + this.byteLength;
+  }
+  fromBytes(data: Uint8Array, offset: number): BN {
+    return new BN(data.slice(offset, offset + this.byteLength), "be");
+  }
+  fromJson(data: Json): BN {
+    const value = new BN(data as string);
+    this.assertValidValue(value);
+    return value;
+  }
+  toJson(value: BN): Json {
     return value.toString();
   }
 }
