@@ -1,3 +1,9 @@
+## 0.6.6 (2020-06-07)
+
+### Chores
+
+* Update persistent-merkle-tree dependency ([b54ea0](https://github.com/chainsafe/ssz/commit/b54ea0))
+
 ## 0.6.5 (2020-06-01)
 
 ### Bug Fixes
