@@ -6,7 +6,7 @@ export function bitIndexBigInt(v: bigint): number {
 }
 
 export function toGindex(index: bigint, depth: number): Gindex {
-  const anchor = 1n << BigInt(depth);
+  const anchor = BigInt(1) << BigInt(depth);
   if (index >= anchor) {
     throw new Error("index too large for depth");
   }
@@ -28,14 +28,14 @@ export function countToDepth(count: bigint): number {
   if (count <= 1) {
     return 0;
   }
-  return (count-1n).toString(2).length;
+  return (count - BigInt(1)).toString(2).length;
 }
 
 /**
  * Iterate through Gindexes at a certain depth
  */
 export function iterateAtDepth(startIndex: bigint, count: bigint, depth: number): Iterable<Gindex> {
-  const anchor = 1n << BigInt(depth);
+  const anchor = BigInt(1) << BigInt(depth);
   if (startIndex + count >= anchor) {
     throw new Error("Too large for depth");
   }
