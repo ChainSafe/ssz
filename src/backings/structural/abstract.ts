@@ -71,4 +71,10 @@ export class StructuralHandler<T extends object> {
   toJson(value: T, options?: IJsonOptions): Json {
     throw new Error("Not implemented");
   }
+  maxSize(): number {
+    throw new Error("Not implemented.");
+  }
+  minSize(): number {
+    throw new Error("Not implemented.");
+  }
 }

@@ -135,4 +135,12 @@ export class BasicType<T> {
   toJson(value: T): Json {
     throw new Error("Not implemented");
   }
+
+  minSize(): number {
+    return this.size();
+  }
+
+  maxSize(): number {
+    return this.size();
+  }
 }

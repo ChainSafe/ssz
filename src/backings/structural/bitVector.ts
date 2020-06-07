@@ -56,6 +56,12 @@ export class BitVectorStructuralHandler extends BasicVectorStructuralHandler<Bit
     }
     return offset + byteLength;
   }
+  maxSize(): number {
+    return Math.ceil(this._type.length / 8);
+  }
+  minSize(): number {
+    return this.maxSize();
+  }
   chunk(value: BitVector, index: number): Uint8Array {
     const output = new Uint8Array(32);
     const byteLength = Math.min(32, this.getByteLength(value) - index);

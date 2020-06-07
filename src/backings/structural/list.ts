@@ -37,6 +37,12 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
     }
     return super.fromJson(data);
   }
+  maxSize(): number {
+    return this._type.elementType.maxSize() * this._type.limit;
+  }
+  minSize(): number {
+    return 0;
+  }
 }
 
 export class CompositeListStructuralHandler<T extends List<object>> extends CompositeArrayStructuralHandler<T> {
@@ -73,5 +79,15 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
       throw new Error(`Invalid JSON list: length ${data.length} greater than limit ${maxLength}`);
     }
     return super.fromJson(data, options);
+  }
+  maxSize(): number {
+    if (this._type.elementType.isVariableSize()) {
+      return this._type.limit * 4 + this._type.limit * this._type.elementType.maxSize();
+    } else {
+      return this._type.limit * this._type.elementType.maxSize();
+    }
+  }
+  minSize(): number {
+    return 0;
   }
 }

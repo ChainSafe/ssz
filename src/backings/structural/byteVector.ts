@@ -25,6 +25,12 @@ export class ByteVectorStructuralHandler extends BasicVectorStructuralHandler<By
     output.set(value, offset);
     return offset + this._type.length;
   }
+  maxSize(): number {
+    return this._type.length;
+  }
+  minSize(): number {
+    return this.maxSize();
+  }
   fromJson(data: Json): ByteVector {
     const value = fromHexString(data as string);
     if (value.length !== this._type.length) {

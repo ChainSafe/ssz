@@ -151,4 +151,12 @@ export class CompositeType<T extends object> {
   toJson(value: T, options?: IJsonOptions): Json {
     return this.structural.toJson(value, options);
   }
+
+  minSize(): number {
+    return this.structural.minSize();
+  }
+
+  maxSize(): number {
+    return this.structural.maxSize();
+  }
 }

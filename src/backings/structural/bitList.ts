@@ -68,6 +68,12 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
       return newOffset;
     }
   }
+  maxSize(): number {
+    return Math.ceil(this._type.limit / 8) + 1;
+  }
+  minSize(): number {
+    return 1;
+  }
   chunk(value: BitList, index: number): Uint8Array {
     const output = new Uint8Array(32);
     const byteLength = Math.min(32, this.getByteLength(value) - index);
