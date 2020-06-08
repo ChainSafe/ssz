@@ -31,6 +31,20 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     });
     return s;
   }
+  maxSize(): number {
+    const fixedSize = Object.values(this._type.fields).reduce((total, fieldType) =>
+      total + (fieldType.isVariableSize() ? 4 : fieldType.maxSize()), 0);
+    const maxDynamicSize = Object.values(this._type.fields).reduce(
+      (total, fieldType) => total += fieldType.isVariableSize()? fieldType.maxSize() : 0, 0);
+    return fixedSize + maxDynamicSize;
+  }
+  minSize(): number {
+    const fixedSize = Object.values(this._type.fields).reduce((total, fieldType) =>
+      total + (fieldType.isVariableSize() ? 4 : fieldType.minSize()), 0);
+    const minDynamicSize = Object.values(this._type.fields).reduce(
+      (total, fieldType) => total += fieldType.isVariableSize()? fieldType.minSize() : 0, 0);
+    return fixedSize + minDynamicSize;
+  }
   assertValidValue(value: unknown): asserts value is T {
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       try {
@@ -147,20 +161,6 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
       }
     });
     return variableIndex;
-  }
-  maxSize(): number {
-    const fixedSize = Object.values(this._type.fields).reduce((total, fieldType) =>
-      total + (fieldType.isVariableSize() ? 4 : fieldType.maxSize()), 0);
-    const maxDynamicSize = Object.values(this._type.fields).reduce(
-      (total, fieldType) => total += fieldType.isVariableSize()? fieldType.maxSize() : 0, 0);
-    return fixedSize + maxDynamicSize;
-  }
-  minSize(): number {
-    const fixedSize = Object.values(this._type.fields).reduce((total, fieldType) =>
-      total + (fieldType.isVariableSize() ? 4 : fieldType.minSize()), 0);
-    const minDynamicSize = Object.values(this._type.fields).reduce(
-      (total, fieldType) => total += fieldType.isVariableSize()? fieldType.minSize() : 0, 0);
-    return fixedSize + minDynamicSize;
   }
   chunk(value: T, index: number): Uint8Array {
     const fieldName = Object.keys(this._type.fields)[index];

@@ -84,6 +84,20 @@ export class CompositeType<T extends object> {
   }
 
   /**
+   * Maximal serialized byte length
+   */
+  maxSize(): number {
+    return this.structural.maxSize();
+  }
+
+  /**
+   * Minimal serialized byte length
+   */
+  minSize(): number {
+    return this.structural.minSize();
+  }
+
+  /**
    * Low-level deserialization
    */
   fromBytes(data: Uint8Array, start: number, end: number): T {
@@ -150,13 +164,5 @@ export class CompositeType<T extends object> {
    */
   toJson(value: T, options?: IJsonOptions): Json {
     return this.structural.toJson(value, options);
-  }
-
-  minSize(): number {
-    return this.structural.minSize();
-  }
-
-  maxSize(): number {
-    return this.structural.maxSize();
   }
 }

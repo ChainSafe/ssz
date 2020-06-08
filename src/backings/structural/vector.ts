@@ -17,6 +17,12 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
   getLength(value: T): number {
     return this._type.length;
   }
+  getMaxLength(): number {
+    return this._type.length;
+  }
+  getMinLength(): number {
+    return this._type.length;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): T {
     if ((end - start) / this._type.elementType.size() !== this._type.length) {
       throw new Error("Incorrect deserialized vector length");
@@ -42,12 +48,6 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
     }
     return super.fromJson(data);
   }
-  maxSize(): number {
-    return this._type.elementType.size() * this._type.length;
-  }
-  minSize(): number {
-    return this.maxSize();
-  }
 }
 
 export class CompositeVectorStructuralHandler<T extends Vector<object>> extends CompositeArrayStructuralHandler<T> {
@@ -62,6 +62,12 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
     }) as unknown as T;
   }
   getLength(value: T): number {
+    return this._type.length;
+  }
+  getMaxLength(): number {
+    return this._type.length;
+  }
+  getMinLength(): number {
     return this._type.length;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
@@ -89,19 +95,5 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
       throw new Error(`Invalid JSON vector length: expected ${expectedLength}, actual ${data.length}`);
     }
     return super.fromJson(data);
-  }
-  maxSize(): number {
-    if (this._type.elementType.isVariableSize()) {
-      return this._type.length * 4 + this._type.length * this._type.elementType.maxSize();
-    } else {
-      return this._type.length * this._type.elementType.maxSize();
-    }
-  }
-  minSize(): number {
-    if (this._type.elementType.isVariableSize()) {
-      return this._type.length * 4 + this._type.length * this._type.elementType.minSize();
-    } else {
-      return this._type.length * this._type.elementType.minSize();
-    }
   }
 }
