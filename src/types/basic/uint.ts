@@ -61,11 +61,11 @@ export class NumberUintType extends UintType<number> {
         output[i] = 0xff;
       }
     } else {
-      let v = BigInt(value);
-      const MAX_BYTE = BigInt(0xff);
+      let v = value;
+      const MAX_BYTE = 0xff;
       for (let i = 0; i < this.byteLength; i ++) {
-        output[offset + i] = Number(v & MAX_BYTE);
-        v >>= BigInt(8);
+        output[offset + i] = v & MAX_BYTE;
+        v = Math.floor(v / 256);
       }
     }
     return offset + this.byteLength;
