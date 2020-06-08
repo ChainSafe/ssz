@@ -3,6 +3,8 @@ import {presets, typeNames, PresetName} from "../util/types";
 import {Type, toHexString} from "@chainsafe/ssz";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
+import {deserializeOutputTypes} from "../util/output_types";
+import {dumpYaml} from "../util/yaml";
 import {withAlert} from "react-alert";
 import worker from "workerize-loader!./worker";
 
@@ -187,8 +189,13 @@ class Input<T> extends React.Component<Props<T>, State> {
 
   processFileContents(contents: string | ArrayBuffer | null): void {
     try {
-      const input = toHexString(new Uint8Array(contents));
-      this.setState({input});
+      const {serializeInputType, sszTypeName} = this.state;
+      const sszType = this.types()[sszTypeName];
+      if (!this.props.serializeModeOn) {
+        this.setInput(toHexString(new Uint8Array(contents)));
+      } else {
+        this.setInput(contents);
+      }
     } catch(error) {
       this.handleError(error);
     }
@@ -199,7 +206,11 @@ class Input<T> extends React.Component<Props<T>, State> {
       const reader = new FileReader();
       const processFileContents = this.processFileContents.bind(this);
       const handleError = this.handleError.bind(this);
-      reader.readAsArrayBuffer(file);
+      if (this.props.serializeModeOn) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
       reader.onload = (e) => {
         if (e.target) {
           processFileContents(e.target.result);
@@ -217,17 +228,14 @@ class Input<T> extends React.Component<Props<T>, State> {
     return (
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
-        {!this.props.serializeModeOn &&
-          <div>
-            <div>Upload a file to populate field below (optional)</div>
-            <input
-              type="file"
-              // accept={`.${serializeModeOn ? serializeInputType : deserializeInputType}`}
-              accept=".ssz"
-              onChange={(e) => e.target.files && this.onUploadFile(e.target.files[0])}
-            />
-          </div>
-        }
+        <div>
+          <div>Upload a file to populate field below (optional)</div>
+          <input
+            type="file"
+            accept={`.${serializeModeOn ? serializeInputType : 'ssz'}`}
+            onChange={(e) => e.target.files && this.onUploadFile(e.target.files[0])}
+          />
+        </div>
         <br />
         <div className="field is-horizontal">
           <div className="field-body">

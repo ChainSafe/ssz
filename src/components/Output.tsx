@@ -53,9 +53,9 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     this.setState({outputType: outputType});
   }
 
-  downloadFile(): void {
-    const fileContents = new Blob([this.props.serialized]);
-    saveAs(fileContents, "test.ssz");
+  downloadFile(contents, type): void {
+    const fileContents = new Blob([contents]);
+    saveAs(fileContents, "test." + type);
   }
 
   render(): JSX.Element {
@@ -105,7 +105,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                 <NamedOutput name="HashTreeRoot" value={hashTreeRootStr} />
                 <NamedOutput name="Serialized" value={serializedStr} textarea />
                 <button
-                  onClick={() => this.downloadFile()}
+                  onClick={() => this.downloadFile(this.props.serialized, 'ssz')}
                 >{"Download data as .ssz file"}</button>
               </>
               :
@@ -115,6 +115,9 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                   value={deserializedStr || ""}
                   readOnly={true}
                 />
+                <button
+                  onClick={() => this.downloadFile(deserializedStr, this.state.outputType)}
+                >{"Download data as ." + this.state.outputType + " file"}</button>
               </>
             }
           </>
