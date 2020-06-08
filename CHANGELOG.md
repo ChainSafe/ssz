@@ -1,3 +1,13 @@
+## 0.6.7 (2020-06-08)
+
+### Features
+
+* Implement minSize and mazSize api  ([fb14bd](https://github.com/chainsafe/ssz/commit/fb14bd))
+
+### Chores
+
+* Don't use BigInt in NumberUintType ([7abe06](https://github.com/chainsafe/ssz/commit/7abe06))
+
 ## 0.6.6 (2020-06-07)
 
 ### Chores
