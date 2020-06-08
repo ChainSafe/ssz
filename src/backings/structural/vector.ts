@@ -17,6 +17,12 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
   getLength(value: T): number {
     return this._type.length;
   }
+  getMaxLength(): number {
+    return this._type.length;
+  }
+  getMinLength(): number {
+    return this._type.length;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): T {
     if ((end - start) / this._type.elementType.size() !== this._type.length) {
       throw new Error("Incorrect deserialized vector length");
@@ -56,6 +62,12 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
     }) as unknown as T;
   }
   getLength(value: T): number {
+    return this._type.length;
+  }
+  getMaxLength(): number {
+    return this._type.length;
+  }
+  getMinLength(): number {
     return this._type.length;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {

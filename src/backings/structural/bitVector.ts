@@ -19,6 +19,12 @@ export class BitVectorStructuralHandler extends BasicVectorStructuralHandler<Bit
   size(value: BitVector): number {
     return Math.ceil(this._type.length / 8);
   }
+  maxSize(): number {
+    return this.size(null);
+  }
+  minSize(): number {
+    return this.size(null);
+  }
   getByte(value: BitVector, index: number): number {
     const firstBitIndex = index * 8;
     const lastBitIndex = Math.min(firstBitIndex + 7, value.length - 1);

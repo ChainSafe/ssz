@@ -22,6 +22,12 @@ export class StructuralHandler<T extends object> {
   size(target: T): number {
     throw new Error("Not implemented");
   }
+  maxSize(): number {
+    throw new Error("Not implemented.");
+  }
+  minSize(): number {
+    throw new Error("Not implemented.");
+  }
   assertValidValue(target: unknown): asserts target is T {
     throw new Error("Not implemented");
   }

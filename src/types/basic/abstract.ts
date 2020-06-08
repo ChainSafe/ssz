@@ -84,6 +84,20 @@ export class BasicType<T> {
   }
 
   /**
+   * Maximal serialized byte length
+   */
+  maxSize(): number {
+    return this.size();
+  }
+
+  /**
+   * Minimal serialized byte length
+   */
+  minSize(): number {
+    return this.size();
+  }
+
+  /**
    * Low-level deserialization
    */
   fromBytes(data: Uint8Array, offset: number): T {

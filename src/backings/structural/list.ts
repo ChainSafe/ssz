@@ -15,6 +15,12 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
   getLength(value: T): number {
     return value.length;
   }
+  getMaxLength(): number {
+    return this._type.limit;
+  }
+  getMinLength(): number {
+    return 0;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): T {
     if ((end - start) / this._type.elementType.size() > this._type.limit) {
       throw new Error("Deserialized list length greater than limit");
@@ -50,6 +56,12 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
   }
   getLength(value: T): number {
     return value.length;
+  }
+  getMaxLength(): number {
+    return this._type.limit;
+  }
+  getMinLength(): number {
+    return 0;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
     const value = super.fromBytes(data, start, end);

@@ -31,6 +31,12 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
       return this.getByteLength(value);
     }
   }
+  maxSize(): number {
+    return Math.ceil(this._type.limit / 8) + 1;
+  }
+  minSize(): number {
+    return 1;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): BitList {
     const value = [];
     const toBool = (c: string): boolean => c === "1" ? true : false;

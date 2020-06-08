@@ -8,8 +8,20 @@ export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends S
   getLength(value: T): number {
     throw new Error("Not implemented");
   }
+  getMaxLength(): number {
+    throw new Error("Not implemented");
+  }
+  getMinLength(): number {
+    throw new Error("Not implemented");
+  }
   size(value: T): number {
     return this._type.elementType.size() * this.getLength(value);
+  }
+  maxSize(): number {
+    return this.getMaxLength() * this._type.elementType.maxSize();
+  }
+  minSize(): number {
+    return this.getMinLength() * this._type.elementType.minSize();
   }
   assertValidValue(value: unknown): asserts value is T {
     for (let i = 0; i < this.getLength(value as T); i++) {
@@ -83,6 +95,12 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
   getLength(value: T): number {
     throw new Error("Not implemented");
   }
+  getMaxLength(): number {
+    throw new Error("Not implemented");
+  }
+  getMinLength(): number {
+    throw new Error("Not implemented");
+  }
   size(value: T): number {
     if (this._type.elementType.isVariableSize()) {
       let s = 0;
@@ -92,6 +110,20 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
       return s;
     } else {
       return this._type.elementType.structural.size(null) * this.getLength(value);
+    }
+  }
+  maxSize(): number {
+    if (this._type.elementType.isVariableSize()) {
+      return this.getMaxLength() * 4 + this.getMaxLength() * this._type.elementType.maxSize();
+    } else {
+      return this.getMaxLength() * this._type.elementType.maxSize();
+    }
+  }
+  minSize(): number {
+    if (this._type.elementType.isVariableSize()) {
+      return this.getMinLength() * 4 + this.getMinLength() * this._type.elementType.minSize();
+    } else {
+      return this.getMinLength() * this._type.elementType.minSize();
     }
   }
   assertValidValue(value: unknown): asserts value is T {
