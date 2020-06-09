@@ -37,7 +37,9 @@ module.exports = {
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-require-imports": "error",
-    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", {
+      "varsIgnorePattern": "^_"
+    }],
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/semi": "error",
     "@typescript-eslint/type-annotation-spacing": "error",
@@ -58,6 +60,7 @@ module.exports = {
     "no-var": "error",
     "object-curly-spacing": ["error", "never"],
     "prefer-const": "error",
+    "quotes": ["error", "double"],
     "semi": "off"
   },
   "overrides": [
