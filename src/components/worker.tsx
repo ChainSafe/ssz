@@ -17,7 +17,7 @@ function randomBoolean(): number {
   return Math.random() > 0.5;
 }
 
-function randomBooleanArray(length: number): Array {
+function randomBooleanArray(length: number): Array<boolean> {
   return Array.from({length}, () => randomBoolean());
 }
 
@@ -27,7 +27,7 @@ function randomByteVector(length: number): Uint8Array {
   return array;
 }
 
-function createRandomValue(type: T): object {
+function createRandomValue(type: BasicType<unknown> | CompositeType<object>): object {
   try {
     if(isNumberUintType(type)) {
       return randomNumberUint(type.byteLength);
