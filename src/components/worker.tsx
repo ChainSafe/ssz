@@ -1,33 +1,33 @@
 import {presets} from "../util/types";
 import {BasicType, CompositeType, isBooleanType, isListType, isVectorType, isBitListType, isBitVectorType, isContainerType, isByteVectorType, isNumberUintType, isBigIntUintType} from '@chainsafe/ssz';
 
-function randomNumber(length) {
+function randomNumber(length): number {
   return Math.random() * length | 0;
 }
 
-function randomNumberUint(byteLength) {
+function randomNumberUint(byteLength): number {
   return randomNumber(byteLength);
 }
 
-function randomBigUint(byteLength) {
+function randomBigUint(byteLength): bigint {
   return BigInt(randomNumber(byteLength));
 }
 
-function randomBoolean() {
+function randomBoolean(): number {
   return Math.random() > 0.5;
 }
 
-function randomBooleanArray(length) {
-  return Array.from({ length }, () => randomBoolean());
+function randomBooleanArray(length): Array {
+  return Array.from({length}, () => randomBoolean());
 }
 
-function randomByteVector(length) {
-  var array = new Uint8Array(length);
+function randomByteVector(length): Uint8Array {
+  const array = new Uint8Array(length);
   self.crypto.getRandomValues(array);
   return array;
 }
 
-function createRandomValue(type) {
+function createRandomValue(type): object {
   try {
     if(isNumberUintType(type)) {
       return randomNumberUint(type.byteLength);
@@ -50,10 +50,10 @@ function createRandomValue(type) {
     }
     else if(isListType(type)) {
       const listLength = Math.min(Math.floor(Math.random() * 16), type.limit);
-        return Array.from({ length: listLength }, () => createRandomValue(type.elementType));
+      return Array.from({length: listLength}, () => createRandomValue(type.elementType));
     }
     else if(isVectorType(type)) {
-      return Array.from({ length: type.length }, () => createRandomValue(type.elementType));
+      return Array.from({length: type.length}, () => createRandomValue(type.elementType));
     }
     else if(isContainerType(type)) {
       const obj = {};
@@ -63,23 +63,23 @@ function createRandomValue(type) {
       return obj;
     }
   }
-   catch(e) {
+  catch(e) {
     console.error(e.message, e.name);
     return;
   }
 }
 
-function getSSZType(data) {
+function getSSZType(data): Record<string, Type<T>> {
   return presets[data.presetName][data.sszTypeName];
 }
 
-export function createRandomValueWorker(data) {
+export function createRandomValueWorker(data): object {
   const sszType = getSSZType(data);
   const value = createRandomValue(sszType);
   return value;
 }
 
-export function serialize(data) {
+export function serialize(data): object {
   const type = getSSZType(data);
   const serialized = type.serialize(data.input);
   const root = type.hashTreeRoot(data.input);

@@ -48,6 +48,9 @@ module.exports = {
     }],
     "camelcase": "error",
     "func-call-spacing": "off",
+    "max-len": ["warn", {
+      "code": 120
+    }],
     "new-parens": "error",
     "no-caller": "error",
     "no-bitwise": "off",
