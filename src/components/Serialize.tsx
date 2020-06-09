@@ -108,6 +108,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
                 hashTreeRoot={hashTreeRoot}
                 error={error}
                 sszType={sszType}
+                sszTypeName={this.state.name}
               />
             </div>
           </div>

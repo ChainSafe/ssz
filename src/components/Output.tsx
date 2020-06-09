@@ -53,9 +53,9 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     this.setState({outputType: outputType});
   }
 
-  downloadFile(contents, type): void {
+  downloadFile(contents, type, hashTreeRootStr): void {
     const fileContents = new Blob([contents]);
-    saveAs(fileContents, this.props.hashTreeRoot + "." + type);
+    saveAs(fileContents, this.props.sszTypeName + "." + type);
   }
 
   render(): JSX.Element {
