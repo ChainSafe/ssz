@@ -55,7 +55,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
 
   downloadFile(contents, type): void {
     const fileContents = new Blob([contents]);
-    saveAs(fileContents, "test." + type);
+    saveAs(fileContents, this.props.hashTreeRoot + "." + type);
   }
 
   render(): JSX.Element {
@@ -69,7 +69,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
       hashTreeRootStr = (hashTreeRoot && serializedOutput) ? serializedOutput.dump(hashTreeRoot) : "";
     } else {
       const deserializedOuput = deserializeOutputTypes[outputType];
-      deserializedStr = deserialized && deserializedOuput ? deserializedOuput.dump(deserialized, sszType) : "";
+      deserializedStr = ((deserialized !== undefined) && deserializedOuput) ? deserializedOuput.dump(deserialized, sszType) : "";
     }
 
     return (<div className='container'>
@@ -105,6 +105,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                 <NamedOutput name="HashTreeRoot" value={hashTreeRootStr} />
                 <NamedOutput name="Serialized" value={serializedStr} textarea />
                 <button
+                  disabled={!this.props.serialized}
                   onClick={() => this.downloadFile(this.props.serialized, 'ssz')}
                 >{"Download data as .ssz file"}</button>
               </>
@@ -112,10 +113,11 @@ export default class Output<T> extends React.Component<Props<T>, State> {
               <>
                 <textarea className='textarea'
                   rows={8}
-                  value={deserializedStr || ""}
+                  value={deserializedStr !== undefined && deserializedStr}
                   readOnly={true}
                 />
                 <button
+                  disabled={!deserializedStr}
                   onClick={() => this.downloadFile(deserializedStr, this.state.outputType)}
                 >{"Download data as ." + this.state.outputType + " file"}</button>
               </>
