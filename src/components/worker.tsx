@@ -1,15 +1,15 @@
 import {presets} from "../util/types";
 import {BasicType, CompositeType, isBooleanType, isListType, isVectorType, isBitListType, isBitVectorType, isContainerType, isByteVectorType, isNumberUintType, isBigIntUintType} from '@chainsafe/ssz';
 
-function randomNumber(length): number {
+function randomNumber(length: number): number {
   return Math.random() * length | 0;
 }
 
-function randomNumberUint(byteLength): number {
+function randomNumberUint(byteLength: number): number {
   return randomNumber(byteLength);
 }
 
-function randomBigUint(byteLength): bigint {
+function randomBigUint(byteLength: number): bigint {
   return BigInt(randomNumber(byteLength));
 }
 
@@ -17,17 +17,17 @@ function randomBoolean(): number {
   return Math.random() > 0.5;
 }
 
-function randomBooleanArray(length): Array {
+function randomBooleanArray(length: number): Array {
   return Array.from({length}, () => randomBoolean());
 }
 
-function randomByteVector(length): Uint8Array {
+function randomByteVector(length: number): Uint8Array {
   const array = new Uint8Array(length);
   self.crypto.getRandomValues(array);
   return array;
 }
 
-function createRandomValue(type): object {
+function createRandomValue(type: T): object {
   try {
     if(isNumberUintType(type)) {
       return randomNumberUint(type.byteLength);
@@ -69,17 +69,17 @@ function createRandomValue(type): object {
   }
 }
 
-function getSSZType(data): Record<string, Type<T>> {
+function getSSZType(data: object): Record<string, Type<T>> {
   return presets[data.presetName][data.sszTypeName];
 }
 
-export function createRandomValueWorker(data): object {
+export function createRandomValueWorker(data: object): object {
   const sszType = getSSZType(data);
   const value = createRandomValue(sszType);
   return value;
 }
 
-export function serialize(data): object {
+export function serialize(data: object): object {
   const type = getSSZType(data);
   const serialized = type.serialize(data.input);
   const root = type.hashTreeRoot(data.input);
