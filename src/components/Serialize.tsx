@@ -14,8 +14,8 @@ type Props = {
 
 type State<T> = {
   presetName: PresetName | undefined;
-  name: string | undefined;
-  input: string | undefined;
+  name: string;
+  input: T;
   sszType: Type<T> | undefined;
   error: string | undefined;
   serialized: Uint8Array | undefined;
@@ -33,7 +33,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     super(props);
     this.state = {
       presetName: undefined,
-      name: undefined,
+      name: "",
       input: undefined,
       sszType: undefined,
       error: undefined,

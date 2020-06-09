@@ -1,5 +1,19 @@
 import {presets} from "../util/types";
-import {BasicType, CompositeType, isBooleanType, isListType, isVectorType, isBitListType, isBitVectorType, isContainerType, isByteVectorType, isNumberUintType, isBigIntUintType} from '@chainsafe/ssz';
+import {
+  BasicType,
+  CompositeType,
+  isBooleanType,
+  isListType,
+  isVectorType,
+  isBitListType,
+  isBitVectorType,
+  isContainerType,
+  isByteVectorType,
+  isNumberUintType,
+  isBigIntUintType,
+  Type,
+} from '@chainsafe/ssz';
+
 
 function randomNumber(length: number): number {
   return Math.random() * length | 0;
@@ -13,7 +27,7 @@ function randomBigUint(byteLength: number): bigint {
   return BigInt(randomNumber(byteLength));
 }
 
-function randomBoolean(): number {
+function randomBoolean(): boolean {
   return Math.random() > 0.5;
 }
 
@@ -21,13 +35,13 @@ function randomBooleanArray(length: number): Array<boolean> {
   return Array.from({length}, () => randomBoolean());
 }
 
-function randomByteVector(length: number): Uint8Array {
+function randomByteVector(length): Uint8Array {
   const array = new Uint8Array(length);
   self.crypto.getRandomValues(array);
   return array;
 }
 
-function createRandomValue(type: BasicType<unknown> | CompositeType<object>): object {
+function createRandomValue(type: BasicType<unknown> | CompositeType<object>): boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   try {
     if(isNumberUintType(type)) {
       return randomNumberUint(type.byteLength);
@@ -69,17 +83,17 @@ function createRandomValue(type: BasicType<unknown> | CompositeType<object>): ob
   }
 }
 
-function getSSZType(data: object): Record<string, Type<T>> {
+function getSSZType(data: {sszTypeName: string; presetName: string; input: object}): BasicType<unknown> | CompositeType<object> {
   return presets[data.presetName][data.sszTypeName];
 }
 
-export function createRandomValueWorker(data: object): object {
+export function createRandomValueWorker(data: {sszTypeName: string; presetName: string; input: object}): boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   const sszType = getSSZType(data);
   const value = createRandomValue(sszType);
   return value;
 }
 
-export function serialize(data: object): object {
+export function serialize<T>(data: {sszTypeName: string; presetName: string; input: object}): object {
   const type = getSSZType(data);
   const serialized = type.serialize(data.input);
   const root = type.hashTreeRoot(data.input);

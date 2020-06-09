@@ -14,6 +14,7 @@ type Props<T> = {
   serializeModeOn: boolean;
   deserialized: T;
   sszType: Type<T>;
+  sszTypeName: string;
 };
 
 type State = {
@@ -53,7 +54,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     this.setState({outputType: outputType});
   }
 
-  downloadFile(contents, type, hashTreeRootStr): void {
+  downloadFile(contents: Uint8Array | string, type: string): void {
     const fileContents = new Blob([contents]);
     saveAs(fileContents, this.props.sszTypeName + "." + type);
   }
@@ -62,14 +63,17 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     const {error, serialized, deserialized, hashTreeRoot, serializeModeOn, sszType} = this.props;
     const {showError, outputType} = this.state;
 
-    let serializedStr, deserializedStr, hashTreeRootStr;
+    let serializedStr, hashTreeRootStr;
+    let deserializedStr = "";
     if (serializeModeOn) {
       const serializedOutput = serializeOutputTypes[outputType];
       serializedStr = (serialized && serializedOutput) ? serializedOutput.dump(serialized) : "";
       hashTreeRootStr = (hashTreeRoot && serializedOutput) ? serializedOutput.dump(hashTreeRoot) : "";
     } else {
       const deserializedOuput = deserializeOutputTypes[outputType];
-      deserializedStr = ((deserialized !== undefined) && deserializedOuput) ? deserializedOuput.dump(deserialized, sszType) : "";
+      deserializedStr = ((deserialized !== undefined) && deserializedOuput) ? 
+        deserializedOuput.dump(deserialized, sszType)
+        : "";
     }
 
     return (<div className='container'>
@@ -102,7 +106,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
             </div>
             {serializeModeOn ?
               <>
-                <NamedOutput name="HashTreeRoot" value={hashTreeRootStr} />
+                <NamedOutput name="HashTreeRoot" value={hashTreeRootStr} textarea={false} />
                 <NamedOutput name="Serialized" value={serializedStr} textarea />
                 <button
                   disabled={!this.props.serialized}
@@ -113,7 +117,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
               <>
                 <textarea className='textarea'
                   rows={8}
-                  value={deserializedStr !== undefined && deserializedStr}
+                  value={deserializedStr}
                   readOnly={true}
                 />
                 <button

@@ -3,6 +3,7 @@ import * as React from "react";
 type Props = {
   name: string | undefined;
   value: string | undefined;
+  textarea: boolean;
 };
 
 export default ({name, value, textarea}: Props): JSX.Element => (
@@ -15,7 +16,6 @@ export default ({name, value, textarea}: Props): JSX.Element => (
     <div className='control is-expanded'>
       {textarea ?
         <textarea className='input'
-          type='text'
           readOnly={true}
           value={value || ""}
         />
