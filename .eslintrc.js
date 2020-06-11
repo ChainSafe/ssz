@@ -50,7 +50,7 @@ module.exports = {
     }],
     "camelcase": "error",
     "func-call-spacing": "off",
-    "max-len": ["error", {
+    "max-len": ["warn", {
       "code": 120
     }],
     "new-parens": "error",

@@ -124,3 +124,16 @@
         }
     }
 }
+
+._loading_overlay_overlay {
+  position: fixed !important;
+}
+
+._loading_overlay_wrapper {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+}
