@@ -6,7 +6,7 @@ type Props = {
   textarea: boolean;
 };
 
-export default ({name, value, textarea}: Props): JSX.Element => (
+const NamedOuput = ({name, value, textarea}: Props): JSX.Element => (
   <div className='field has-addons'>
     <div className='control'>
       <a className='button is-static'>
@@ -29,3 +29,5 @@ export default ({name, value, textarea}: Props): JSX.Element => (
     </div>
   </div>
 );
+
+export default NamedOuput;

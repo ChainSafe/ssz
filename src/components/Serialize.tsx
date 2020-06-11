@@ -1,12 +1,11 @@
 import * as React from "react";
-import {Type, toHexString} from "@chainsafe/ssz";
+import {Type} from "@chainsafe/ssz";
 import Output from "./Output";
 import Input from "./Input";
 import {PresetName} from "../util/types";
-import TreeView from "./TreeView";
-import worker from "workerize-loader!./worker";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
+import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
 
 type Props = {
   serializeModeOn: boolean;
@@ -35,10 +34,10 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       presetName: undefined,
       name: "",
       input: undefined,
+      deserialized: undefined,
       sszType: undefined,
       error: undefined,
       serialized: undefined,
-      deserialized: undefined,
       hashTreeRoot: undefined,
       showOverlay: false,
       overlayText: "",
@@ -75,9 +74,8 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   }
 
   render(): JSX.Element {
-    const {presetName, input, sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
+    const {sszType, error, serialized, hashTreeRoot, deserialized} = this.state;
     const {serializeModeOn} = this.props;
-    const treeKey = hashTreeRoot ? toHexString(hashTreeRoot) : "";
     const bounceLoader = <BounceLoader css="margin: auto;" />;
 
     return (
@@ -113,9 +111,6 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
             </div>
           </div>
         </div>
-        {
-          // (!error && input && sszType && presetName) && <TreeView key={treeKey} presetName={presetName} input={input} sszType={sszType} sszTypeName={this.state.name}/>
-        }
       </div>
     );
   }

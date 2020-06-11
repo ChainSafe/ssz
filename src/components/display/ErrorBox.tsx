@@ -5,11 +5,12 @@ type Props = {
   hideError: () => void;
 };
 
-
-export default ({error, hideError}: Props): JSX.Element => (
+const ErrorBox = ({error, hideError}: Props): JSX.Element => (
   <div className='notification'>
     <a className='delete'
       onClick={hideError}/>
     {error}
   </div>
 );
+
+export default ErrorBox;

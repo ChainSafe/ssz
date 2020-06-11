@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import * as React from "react";
 // @ts-ignore
 import EyzyTree from "eyzy-tree";

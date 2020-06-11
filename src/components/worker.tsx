@@ -11,8 +11,7 @@ import {
   isByteVectorType,
   isNumberUintType,
   isBigIntUintType,
-  Type,
-} from '@chainsafe/ssz';
+} from "@chainsafe/ssz";
 
 
 function randomNumber(length: number): number {
@@ -41,53 +40,50 @@ function randomByteVector(length): Uint8Array {
   return array;
 }
 
-function createRandomValue(type: BasicType<unknown> | CompositeType<object>): boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
-  try {
-    if(isNumberUintType(type)) {
-      return randomNumberUint(type.byteLength);
-    }
-    else if(isBigIntUintType(type)) {
-      return randomBigUint(type.byteLength);
-    }
-    else if(isBooleanType(type)) {
-      return randomBoolean();
-    }
-    else if(isBitVectorType(type)) {
-      return randomBooleanArray(type.length);
-    }
-    else if(isByteVectorType(type)) {
-      return randomByteVector(type.length);
-    }
-    else if(isBitListType(type)) {
-      const listLength = Math.min(Math.floor(Math.random() * 16), type.limit);
-      return randomBooleanArray(listLength);
-    }
-    else if(isListType(type)) {
-      const listLength = Math.min(Math.floor(Math.random() * 16), type.limit);
-      return Array.from({length: listLength}, () => createRandomValue(type.elementType));
-    }
-    else if(isVectorType(type)) {
-      return Array.from({length: type.length}, () => createRandomValue(type.elementType));
-    }
-    else if(isContainerType(type)) {
-      const obj = {};
-      Object.entries(type.fields).forEach(([fieldName, fieldType]) => {
-        obj[fieldName] = createRandomValue(fieldType);
-      });
-      return obj;
-    }
+function createRandomValue(type: BasicType<unknown> | CompositeType<object>): 
+boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
+  if(isNumberUintType(type)) {
+    return randomNumberUint(type.byteLength);
   }
-  catch(e) {
-    console.error(e.message, e.name);
-    return;
+  else if(isBigIntUintType(type)) {
+    return randomBigUint(type.byteLength);
+  }
+  else if(isBooleanType(type)) {
+    return randomBoolean();
+  }
+  else if(isBitVectorType(type)) {
+    return randomBooleanArray(type.length);
+  }
+  else if(isByteVectorType(type)) {
+    return randomByteVector(type.length);
+  }
+  else if(isBitListType(type)) {
+    const listLength = Math.min(Math.floor(Math.random() * 16), type.limit);
+    return randomBooleanArray(listLength);
+  }
+  else if(isListType(type)) {
+    const listLength = Math.min(Math.floor(Math.random() * 16), type.limit);
+    return Array.from({length: listLength}, () => createRandomValue(type.elementType));
+  }
+  else if(isVectorType(type)) {
+    return Array.from({length: type.length}, () => createRandomValue(type.elementType));
+  }
+  else if(isContainerType(type)) {
+    const obj = {};
+    Object.entries(type.fields).forEach(([fieldName, fieldType]) => {
+      obj[fieldName] = createRandomValue(fieldType);
+    });
+    return obj;
   }
 }
 
-function getSSZType(data: {sszTypeName: string; presetName: string; input: object}): BasicType<unknown> | CompositeType<object> {
+function getSSZType(data: {sszTypeName: string; presetName: string; input: object}): 
+BasicType<unknown> | CompositeType<object> {
   return presets[data.presetName][data.sszTypeName];
 }
 
-export function createRandomValueWorker(data: {sszTypeName: string; presetName: string; input: object}): boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
+export function createRandomValueWorker(data: {sszTypeName: string; presetName: string; input: object}): 
+boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   const sszType = getSSZType(data);
   const value = createRandomValue(sszType);
   return value;

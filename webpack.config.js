@@ -16,6 +16,9 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      'workerize-loader': path.resolve(__dirname, 'workerize-loader')
+    },
   },
   module: {
     rules: [

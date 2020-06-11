@@ -3,10 +3,8 @@ import {presets, typeNames, PresetName} from "../util/types";
 import {Type, toHexString} from "@chainsafe/ssz";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
-import {deserializeOutputTypes} from "../util/output_types";
-import {dumpYaml} from "../util/yaml";
 import {withAlert} from "react-alert";
-import worker from "workerize-loader!./worker";
+import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
 
 type Props<T> = {
   onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
@@ -105,7 +103,7 @@ class Input<T> extends React.Component<Props<T>, State> {
   names(): string[] {
     return typeNames(this.types());
   }
-  types(): Record<string, Type<any>> {
+  types<T>(): Record<string, Type<T>> {
     return presets[this.state.presetName];
   }
 
@@ -189,8 +187,6 @@ class Input<T> extends React.Component<Props<T>, State> {
 
   processFileContents(contents: string | ArrayBuffer | null): void {
     try {
-      const {serializeInputType, sszTypeName} = this.state;
-      const sszType = this.types()[sszTypeName];
       if (!this.props.serializeModeOn) {
         this.setInput(toHexString(new Uint8Array(contents)));
       } else {
@@ -224,7 +220,7 @@ class Input<T> extends React.Component<Props<T>, State> {
 
   render(): JSX.Element {
     const {serializeModeOn} = this.props;
-    const {serializeInputType, deserializeInputType} = this.state;
+    const {serializeInputType} = this.state;
     return (
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
@@ -232,7 +228,7 @@ class Input<T> extends React.Component<Props<T>, State> {
           <div>Upload a file to populate field below (optional)</div>
           <input
             type="file"
-            accept={`.${serializeModeOn ? serializeInputType : 'ssz'}`}
+            accept={`.${serializeModeOn ? serializeInputType : "ssz"}`}
             onChange={(e) => e.target.files && this.onUploadFile(e.target.files[0])}
           />
         </div>

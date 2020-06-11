@@ -110,7 +110,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                 <NamedOutput name="Serialized" value={serializedStr} textarea />
                 <button
                   disabled={!this.props.serialized}
-                  onClick={() => this.downloadFile(this.props.serialized, 'ssz')}
+                  onClick={() => this.downloadFile(this.props.serialized, "ssz")}
                 >{"Download data as .ssz file"}</button>
               </>
               :

@@ -8,6 +8,9 @@ module.exports = {
     node: true,
     mocha: true
   },
+  globals: {
+    BigInt: true
+  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 10,
@@ -21,6 +24,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
+    'plugin:react/recommended',
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -50,7 +54,7 @@ module.exports = {
     }],
     "camelcase": "error",
     "func-call-spacing": "off",
-    "max-len": ["warn", {
+    "max-len": ["error", {
       "code": 120
     }],
     "new-parens": "error",
