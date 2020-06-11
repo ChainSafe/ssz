@@ -9,10 +9,10 @@ import worker from "workerize-loader!./worker"; // eslint-disable-line import/no
 type Props<T> = {
   onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
   serializeModeOn: boolean;
-  sszType: Type<T> | undefined;
+  sszType: Type<T>;
   serialized: Uint8Array | undefined;
   deserialized: object;
-  alert: object;
+  alert: {error: Function};
   setOverlay: Function;
 };
 
