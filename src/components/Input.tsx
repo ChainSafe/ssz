@@ -113,7 +113,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     return serializeModeOn ? serializeInputType : deserializeInputType;
   }
 
-  parsedInput(): string | T {
+  parsedInput(): T {
     const inputType = this.getInputType();
     return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
   }
