@@ -1,11 +1,11 @@
 const { resolve } = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
 const config = {
+  devtool: "source-map",
   mode: isProd ? 'production' : 'development',
   entry: {
     index: './src/index.tsx',
@@ -54,7 +54,6 @@ const config = {
 if (isProd) {
   config.optimization = {
     minimizer: [
-      new TerserWebpackPlugin(),
     ],
   };
 } else {
