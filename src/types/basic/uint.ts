@@ -151,6 +151,10 @@ export class BigIntUintType extends UintType<bigint> {
     return value;
   }
   toJson(value: bigint): Json {
-    return value.toString();
+    if (this.byteLength > 4) {
+      return value.toString();
+    } else {
+      return Number(value);
+    }
   }
 }
