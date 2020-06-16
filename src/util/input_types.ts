@@ -17,7 +17,7 @@ export const inputTypes: InputTypeRecord = {
     parse: (raw, type) => type.fromJson(JSON.parse(raw)),
     dump: (value, type) => JSON.stringify(type.toJson(value), null, 2),
   },
-  ssz: {
+  hex: {
     parse: (raw, type) => type.deserialize(fromHexString(raw)),
     dump: (value, type) => toHexString(type.serialize(value)),
   },

@@ -1,10 +1,12 @@
 import * as React from "react";
 import {presets, typeNames, PresetName} from "../util/types";
 import {Type, toHexString} from "@chainsafe/ssz";
-import {createRandomValue} from "../util/random";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
-
+import {deserializeOutputTypes} from "../util/output_types";
+import {dumpYaml} from "../util/yaml";
+import {withAlert} from "react-alert";
+import worker from "workerize-loader!./worker";
 
 type Props<T> = {
   onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
@@ -12,9 +14,11 @@ type Props<T> = {
   sszType: Type<T> | undefined;
   serialized: Uint8Array | undefined;
   deserialized: object;
+  alert: object;
+  setOverlay: Function;
 };
 
-type State<T> = {
+type State = {
   presetName: PresetName;
   sszTypeName: string;
   input: string;
@@ -23,9 +27,11 @@ type State<T> = {
   value: object | string;
 };
 
+const workerInstance = worker();
+
 const DEFAULT_PRESET = "mainnet";
 
-export default class Input<T> extends React.Component<Props<T>, State<T>> {
+class Input<T> extends React.Component<Props<T>, State> {
 
   constructor(props: Props<T>) {
     super(props);
@@ -33,22 +39,37 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
     const names = typeNames(types);
     const initialType = names[Math.floor(Math.random() * names.length)];
     const sszType = types[initialType];
-    const value = createRandomValue(sszType);
-    const input = inputTypes.yaml.dump(value, sszType);
+
+    this.props.setOverlay(true, `Generating random ${initialType} value...`);
+    workerInstance.createRandomValueWorker({
+      sszTypeName: initialType,
+      presetName: DEFAULT_PRESET
+    })
+      .then((value: object | string) => {
+        const input = inputTypes.yaml.dump(value, sszType);
+        this.setValueAndInput(value, input);
+        this.props.setOverlay(false);
+      })
+      .catch((error: { message: string }) => this.handleError(error));
+
     this.state = {
       presetName: DEFAULT_PRESET,
-      input,
+      input: "",
       sszTypeName: initialType,
       serializeInputType: "yaml",
-      deserializeInputType: "ssz",
-      value,
+      deserializeInputType: "hex",
+      value: "",
     };
+  }
+
+  setValueAndInput(value: object | string, input: string): void {
+    this.setState({value, input});
   }
 
   componentDidUpdate(prevProps: { serializeModeOn: boolean }): void {
     if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
       if (!this.props.serializeModeOn) {
-        this.setInputType("ssz");
+        this.setInputType("hex");
         if (this.props.serialized) {
           this.setInput(toHexString(this.props.serialized));
         }
@@ -60,6 +81,15 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
         }
       }
     }
+  }
+
+  handleError(error: { message: string }): void {
+    this.showError(error.message);
+    this.props.setOverlay(false);
+  }
+
+  showError(errorMessage: string): void {
+    this.props.alert.error(errorMessage);
   }
 
   getRows(): number {
@@ -92,13 +122,29 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
 
   resetWith(inputType: string, sszTypeName: string): void {
     const sszType = this.types()[sszTypeName];
-    const value = createRandomValue(sszType);
-    const input = inputTypes[inputType].dump(value, sszType);
-    if (this.props.serializeModeOn) {
-      this.setState({serializeInputType: inputType, sszTypeName, input, value});
-    } else {
-      this.setState({deserializeInputType: inputType, sszTypeName, input, value});
-    }
+    const {presetName} = this.state;
+
+    this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
+    workerInstance.createRandomValueWorker({sszTypeName, presetName})
+      .then((value: object | string) => {
+        const input = inputTypes[inputType].dump(value, sszType);
+        if (this.props.serializeModeOn) {
+          this.setState({
+            serializeInputType: inputType,
+          });
+        } else {
+          this.setState({
+            deserializeInputType: inputType,
+          });
+        }
+        this.setState({
+          sszTypeName,
+          input,
+          value
+        });
+        this.props.setOverlay(false);
+      })
+      .catch((error: { message: string }) => this.handleError(error));
   }
 
   setPreset(e: ChangeEvent<HTMLSelectElement>): void {
@@ -128,20 +174,69 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
 
   doProcess(): void {
     const {presetName, sszTypeName} = this.state;
-    this.props.onProcess(
-      presetName,
-      sszTypeName,
-      this.parsedInput(),
-      this.types()[sszTypeName],
-      this.getInputType(),
-    );
+    try {
+      this.props.onProcess(
+        presetName,
+        sszTypeName,
+        this.parsedInput(),
+        this.types()[sszTypeName],
+        this.getInputType(),
+      );
+    } catch(e) {
+      this.handleError(e);
+    }
   }
 
-  render() {
+  processFileContents(contents: string | ArrayBuffer | null): void {
+    try {
+      const {serializeInputType, sszTypeName} = this.state;
+      const sszType = this.types()[sszTypeName];
+      if (!this.props.serializeModeOn) {
+        this.setInput(toHexString(new Uint8Array(contents)));
+      } else {
+        this.setInput(contents);
+      }
+    } catch(error) {
+      this.handleError(error);
+    }
+  }
+
+  onUploadFile(file: Blob): void {
+    if (file) {
+      const reader = new FileReader();
+      const processFileContents = this.processFileContents.bind(this);
+      const handleError = this.handleError.bind(this);
+      if (this.props.serializeModeOn) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
+      reader.onload = (e) => {
+        if (e.target) {
+          processFileContents(e.target.result);
+        }
+      };
+      reader.onerror = (e) => {
+        handleError(e);
+      };
+    }
+  }
+
+  render(): JSX.Element {
     const {serializeModeOn} = this.props;
+    const {serializeInputType, deserializeInputType} = this.state;
     return (
       <div className='container'>
         <h3 className='subtitle'>Input</h3>
+        <div>
+          <div>Upload a file to populate field below (optional)</div>
+          <input
+            type="file"
+            accept={`.${serializeModeOn ? serializeInputType : 'ssz'}`}
+            onChange={(e) => e.target.files && this.onUploadFile(e.target.files[0])}
+          />
+        </div>
+        <br />
         <div className="field is-horizontal">
           <div className="field-body">
             <div className='field has-addons'>
@@ -205,13 +300,14 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
             }
           </div>
         </div>
-        <textarea className='textarea'
-          rows={this.getRows()}
+        <textarea
+          className="textarea"
+          rows={this.state.input && this.getRows()}
           value={this.state.input}
           onChange={(e) => this.setInput(e.target.value)}
         />
         <button
-          className='button is-primary is-medium is-fullwidth is-uppercase is-family-code submit'
+          className="button is-primary is-medium is-fullwidth is-uppercase is-family-code submit"
           disabled={!(this.state.sszTypeName && this.state.input)}
           onClick={this.doProcess.bind(this)}
         >
@@ -221,3 +317,5 @@ export default class Input<T> extends React.Component<Props<T>, State<T>> {
     );
   }
 }
+
+export default withAlert()(Input);
