@@ -18,10 +18,12 @@ module.exports = {
   },
   plugins: [
     "@typescript-eslint",
-    "eslint-plugin-import"
+    "eslint-plugin-import",
+    "react"
   ],
   extends: [
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
     'plugin:react/recommended',
