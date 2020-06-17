@@ -7,17 +7,13 @@ jobs:
   Test:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       # - uses: hallee/eslint-action@1.0.3
         # GITHUB_TOKEN in forked repositories is read-only
         # https://help.github.com/en/actions/reference/events-that-trigger-workflows#pull-request-event-pull_request
         # if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }} 
         # with:
           # repo-token: ${{secrets.GITHUB_TOKEN}}
-      - name: install
       - run: yarn install
-      - name: build
       - run: yarn build
-      - name: lint
       - run: yarn lint
