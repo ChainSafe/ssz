@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export default function(): JSX.Element {
+export default function ForkMe(): JSX.Element {
   return (
     <a href="https://github.com/chainsafe/simpleserialize.com"
       style={{position: "absolute", right: 0, top: 0}}>
