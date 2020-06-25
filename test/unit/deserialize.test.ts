@@ -1,11 +1,11 @@
-import {assert} from "chai";
+import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
 import {booleanType, byteType, ContainerType} from "../../src";
 import {
-  ArrayObject, ArrayObject2, bigint16Type, bigint64Type, bigint128Type, bigint256Type, bitList100Type, bitVector100Type, byteVector100Type,
-  bytes2Type, bytes8Type, bytes32Type,
-  number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
+  ArrayObject, ArrayObject2, bigint64Type, bigint128Type, bigint256Type,
+  bytes8Type, bytes32Type,
+  number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject, VariableSizeSimpleObject
 } from "./objects";
 
 
@@ -69,6 +69,33 @@ describe("deserialize", () => {
       assert.deepEqual(actual, expected);
     });
   }
+  const invalidDataTestCases: {
+    value: string;
+    type: any;
+    typeName: string;
+    expectedError: string;
+  }[] = [
+    {value: "", type: number16Type, typeName: "number16Type", expectedError: "Data is empty"},
+    {value: "00", type: number16Type, typeName: "number16Type", expectedError: "Data length of 1 is too small, expect 2"},
+    {value: "", type: number16Vector6Type, typeName: "number16Vector6Type", expectedError: "Data is empty"},
+    {value: "00", type: number16Vector6Type, typeName: "number16Vector6Type", expectedError: "Incorrect data length 1, expect 12"},
+    {value: "", type: number16List100Type, typeName: "number16List100Type", expectedError: "Data is empty"},
+    {value: "", type: SimpleObject, typeName: "SimpleObject", expectedError: "Data is empty"},
+    {value: "00", type: SimpleObject, typeName: "SimpleObject", expectedError: "Incorrect data length 1, expect 3"},
+    {value: "", type: VariableSizeSimpleObject, typeName: "VariableSizeSimpleObject", expectedError: "Data is empty"},
+    {value: "00", type: VariableSizeSimpleObject, typeName: "VariableSizeSimpleObject", expectedError: "Data length 1 is too small, expect at least 7"},
+  ];
+  for (const {type, typeName, value, expectedError} of invalidDataTestCases) {
+    it(`should throw error deserializing invalid data for ${typeName}`, () => {
+      try {
+        type.deserialize(Buffer.from(value, "hex"));
+        assert.fail("Expect error here");
+      } catch (e) {
+        expect(e.message).to.be.equal(expectedError);
+      }
+    });
+  }
+
 });
 
 interface ITestType {

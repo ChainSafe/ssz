@@ -23,10 +23,14 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
   getMinLength(): number {
     return this._type.length;
   }
-  fromBytes(data: Uint8Array, start: number, end: number): T {
+  validateBytes(data: Uint8Array, start: number, end: number): void {
+    super.validateBytes(data, start, end);
     if ((end - start) / this._type.elementType.size() !== this._type.length) {
       throw new Error("Incorrect deserialized vector length");
     }
+  }
+  fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     return super.fromBytes(data, start, end);
   }
   assertValidValue(value: unknown): asserts value is T {
@@ -71,6 +75,7 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
     return this._type.length;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    super.validateBytes(data, start, end);
     const value = super.fromBytes(data, start, end);
     if (value.length !== this._type.length) {
       throw new Error("Incorrect deserialized vector length");

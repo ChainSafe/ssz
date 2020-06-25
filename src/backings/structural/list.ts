@@ -21,10 +21,14 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
   getMinLength(): number {
     return 0;
   }
-  fromBytes(data: Uint8Array, start: number, end: number): T {
+  validateBytes(data: Uint8Array, start: number, end: number): void {
+    super.validateBytes(data, start, end);
     if ((end - start) / this._type.elementType.size() > this._type.limit) {
       throw new Error("Deserialized list length greater than limit");
     }
+  }
+  fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     return super.fromBytes(data, start, end);
   }
   nonzeroChunkCount(value: T): number {
@@ -64,6 +68,7 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
     return 0;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    super.validateBytes(data, start, end);
     const value = super.fromBytes(data, start, end);
     if (value.length > this._type.limit) {
       throw new Error("Deserialized list length greater than limit");

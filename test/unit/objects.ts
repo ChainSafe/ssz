@@ -25,7 +25,7 @@ export const bytes8Type = new ByteVectorType({
 });
 
 export const bytes32Type = new ByteVectorType({
-  length: 32 
+  length: 32
 });
 
 export const byteVector100Type = new ByteVectorType({length: 100});
@@ -55,13 +55,21 @@ export const number16Vector6Type = new VectorType({
 
 export const number16List100Type = new ListType({
   elementType: number16Type,
-  limit:100 
+  limit:100
 });
 
 export const SimpleObject = new ContainerType({
   fields: {
     b: number16Type,
     a: byteType,
+  },
+});
+
+export const VariableSizeSimpleObject = new ContainerType({
+  fields: {
+    b: number16Type,
+    a: byteType,
+    list: number16List100Type,
   },
 });
 
