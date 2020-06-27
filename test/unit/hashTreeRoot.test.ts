@@ -48,7 +48,7 @@ describe("hashTreeRoot", () => {
     {value: [], type: ArrayObject2, expected: ""},
   ];
   for (const {type, value} of testCases) {
-    it(`should correctly hash ${type}`, () => {
+    it(`should correctly hash ${type.constructor.name}`, () => {
       const actual = Buffer.from(type.hashTreeRoot(value)).toString("hex");
       assert(actual);
     });

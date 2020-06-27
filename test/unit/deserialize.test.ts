@@ -64,7 +64,7 @@ describe("deserialize", () => {
     },
   ];
   for (const {type, value, expected} of testCases) {
-    it(`should correctly deserialize ${type}`, () => {
+    it(`should correctly deserialize ${type.constructor.name}`, () => {
       const actual = type.deserialize(Buffer.from(value, "hex"));
       assert.deepEqual(actual, expected);
     });
