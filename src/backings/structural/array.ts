@@ -2,6 +2,7 @@
 import {ArrayLike, Json} from "../../interface";
 import {BasicArrayType, CompositeArrayType, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
+import {SSZNestedError} from "../../util/error";
 
 export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends StructuralHandler<T> {
   _type: BasicArrayType<T>;
@@ -176,9 +177,13 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
         if (currentOffset > nextOffset) {
           throw new Error("Offsets must be increasing");
         }
-        value.push(
-          this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset)
-        );
+        try {
+          value.push(
+            this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset)
+          );
+        } catch (e) {
+          throw new SSZNestedError(e, value.length);
+        }
         currentIndex = nextIndex;
         currentOffset = nextOffset;
       }
