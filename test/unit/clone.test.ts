@@ -21,7 +21,7 @@ describe("clone", () => {
     {value: {v:[{a:1,b:2},{b:4,a:3}]}, type: ArrayObject, expected: true},
   ];
   for (const {type, value} of testCases) {
-    it(`should correctly perform clone for ${type}`, () => {
+    it(`should correctly perform clone for ${type.constructor.name}`, () => {
       const actual = type.clone(value);
       expect(type.equals(actual, value));
     });

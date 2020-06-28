@@ -58,7 +58,7 @@ describe("equals", () => {
     },
   ];
   for (const {type, value1, value2, expected} of testCases) {
-    it(`should correctly perform equal for ${type}`, () => {
+    it(`should correctly perform equal for ${type.constructor.name}`, () => {
       const actual = type.equals(value1, value2);
       expect(actual).to.equal(expected);
     });

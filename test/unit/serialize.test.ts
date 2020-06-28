@@ -57,7 +57,7 @@ describe("serialize", () => {
     {value: [], type: ArrayObject2, expected: ""},
   ];
   for (const {type, value, expected} of testCases) {
-    it(`should correctly serialize ${type}`, () => {
+    it(`should correctly serialize ${type.constructor.name}`, () => {
       const actual = Buffer.from(type.serialize(value)).toString("hex");
       assert.equal(actual, expected);
     });

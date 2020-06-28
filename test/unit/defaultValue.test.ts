@@ -20,7 +20,7 @@ describe("defaultValue", () => {
     {type: ArrayObject, expected: {v: []}},
   ];
   for (const {type, expected} of testCases) {
-    it(`should correctly get the defaultValue for ${type}`, () => {
+    it(`should correctly get the defaultValue for ${type.constructor.name}`, () => {
       const actual = type.defaultValue();
       expect(type.equals(actual, expected));
     });
