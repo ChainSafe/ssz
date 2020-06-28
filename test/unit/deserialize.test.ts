@@ -72,21 +72,20 @@ describe("deserialize", () => {
   const invalidDataTestCases: {
     value: string;
     type: any;
-    typeName: string;
     expectedError: string;
   }[] = [
-    {value: "", type: number16Type, typeName: "number16Type", expectedError: "Data is empty"},
-    {value: "00", type: number16Type, typeName: "number16Type", expectedError: "Data length of 1 is too small, expect 2"},
-    {value: "", type: number16Vector6Type, typeName: "number16Vector6Type", expectedError: "Data is empty"},
-    {value: "00", type: number16Vector6Type, typeName: "number16Vector6Type", expectedError: "Incorrect data length 1, expect 12"},
-    {value: "", type: number16List100Type, typeName: "number16List100Type", expectedError: "Data is empty"},
-    {value: "", type: SimpleObject, typeName: "SimpleObject", expectedError: "Data is empty"},
-    {value: "00", type: SimpleObject, typeName: "SimpleObject", expectedError: "Incorrect data length 1, expect 3"},
-    {value: "", type: VariableSizeSimpleObject, typeName: "VariableSizeSimpleObject", expectedError: "Data is empty"},
-    {value: "00", type: VariableSizeSimpleObject, typeName: "VariableSizeSimpleObject", expectedError: "Data length 1 is too small, expect at least 7"},
+    {value: "", type: number16Type, expectedError: "Data is empty"},
+    {value: "00", type: number16Type, expectedError: "Data length of 1 is too small, expect 2"},
+    {value: "", type: number16Vector6Type, expectedError: "Data is empty"},
+    {value: "00", type: number16Vector6Type, expectedError: "Incorrect data length 1, expect 12"},
+    {value: "", type: number16List100Type, expectedError: "Data is empty"},
+    {value: "", type: SimpleObject, expectedError: "Data is empty"},
+    {value: "00", type: SimpleObject, expectedError: "Incorrect data length 1, expect 3"},
+    {value: "", type: VariableSizeSimpleObject, expectedError: "Data is empty"},
+    {value: "00", type: VariableSizeSimpleObject, expectedError: "Data length 1 is too small, expect at least 7"},
   ];
-  for (const {type, typeName, value, expectedError} of invalidDataTestCases) {
-    it(`should throw error deserializing invalid data for ${typeName}`, () => {
+  for (const {type, value, expectedError} of invalidDataTestCases) {
+    it(`should throw error deserializing invalid data for ${type.constructor.name}`, () => {
       try {
         type.deserialize(Buffer.from(value, "hex"));
         assert.fail("Expect error here");

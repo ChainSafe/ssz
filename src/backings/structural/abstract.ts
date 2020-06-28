@@ -41,11 +41,17 @@ export class StructuralHandler<T extends object> {
     if (data.length === 0) {
       throw new Error("Data is empty");
     }
-    if (start < 0 || start >= data.length) {
-      throw new Error(`Invalid start param: ${start}, data length: ${data.length}`);
+    if (start < 0) {
+      throw new Error(`Start param is negative: ${start}`);
     }
-    if (end < 0 || end > data.length) {
-      throw new Error(`Invalid end param: ${end}, data length: ${data.length}`);
+    if (start >= data.length) {
+      throw new Error(`Start param: ${start} is greater than length: ${data.length}`);
+    }
+    if (end < 0) {
+      throw new Error(`End param is negative: ${end}`);
+    }
+    if (end > data.length) {
+      throw new Error(`End param: ${end} is greater than length: ${data.length}`);
     }
     const length = end - start;
     if (!this._type.isVariableSize() && length !== this.size(null)) {
