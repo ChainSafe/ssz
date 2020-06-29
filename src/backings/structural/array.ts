@@ -48,6 +48,7 @@ export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends S
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     const elementSize = this._type.elementType.size();
     return Array.from(
       {length: (end - start) / elementSize},
@@ -151,6 +152,7 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     if (start === end) {
       return [] as unknown as T;
     }

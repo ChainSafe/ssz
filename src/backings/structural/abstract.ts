@@ -34,13 +34,37 @@ export class StructuralHandler<T extends object> {
   equals(target: T, other: T): boolean {
     throw new Error("Not implemented");
   }
+  validateBytes(data: Uint8Array, start: number, end: number): void {
+    if (!data) {
+      throw new Error("Data is null or undefined");
+    }
+    if (data.length === 0) {
+      throw new Error("Data is empty");
+    }
+    if (start < 0) {
+      throw new Error(`Start param is negative: ${start}`);
+    }
+    if (start >= data.length) {
+      throw new Error(`Start param: ${start} is greater than length: ${data.length}`);
+    }
+    if (end < 0) {
+      throw new Error(`End param is negative: ${end}`);
+    }
+    if (end > data.length) {
+      throw new Error(`End param: ${end} is greater than length: ${data.length}`);
+    }
+    const length = end - start;
+    if (!this._type.isVariableSize() && length !== this.size(null)) {
+      throw new Error(`Incorrect data length ${length}, expect ${this.size(null)}`);
+    }
+    if (end - start < this.minSize()) {
+      throw new Error(`Data length ${length} is too small, expect at least ${this.minSize()}`);
+    }
+  }
   fromBytes(data: Uint8Array, start: number, end: number): T {
     throw new Error("Not implemented");
   }
   deserialize(data: Uint8Array): T {
-    if (!this._type.isVariableSize() && this.size(null) !== data.length) {
-      throw new Error("Incorrect data length");
-    }
     return this.fromBytes(data, 0, data.length);
   }
   serialize(target: T): Uint8Array {
