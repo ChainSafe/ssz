@@ -82,7 +82,7 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
-    super.validateBytes(data, start, end);
+    this.validateBytes(data, start, end);
     let currentIndex = start;
     let nextIndex = currentIndex;
     const value = {} as T;

@@ -38,7 +38,7 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
     return 1;
   }
   fromBytes(data: Uint8Array, start: number, end: number): BitList {
-    super.validateBytes(data, start, end);
+    this.validateBytes(data, start, end);
     const value = [];
     const toBool = (c: string): boolean => c === "1" ? true : false;
     for (let i = start; i < end-1; i++) {

@@ -68,7 +68,7 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
     return 0;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
-    super.validateBytes(data, start, end);
+    this.validateBytes(data, start, end);
     const value = super.fromBytes(data, start, end);
     if (value.length > this._type.limit) {
       throw new Error("Deserialized list length greater than limit");

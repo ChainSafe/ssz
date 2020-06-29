@@ -13,7 +13,7 @@ export class ByteVectorStructuralHandler extends BasicVectorStructuralHandler<By
     return new Uint8Array(this._type.length);
   }
   fromBytes(data: Uint8Array, start: number, end: number): ByteVector {
-    super.validateBytes(data, start, end);
+    this.validateBytes(data, start, end);
     const length = end - start;
     if (length !== this._type.length) {
       throw new Error(`Invalid deserialized vector length: expected ${this._type.length}, actual: ${length}`);
