@@ -2,7 +2,7 @@ import {ObjectLike, Json} from "../../interface";
 import {ContainerType, CompositeType, Type, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
 import {toExpectedCase} from "../utils";
-import {SSZNestedError} from "../../util/error";
+import {SszErrorPath} from "../../util/errorPath";
 
 export class ContainerStructuralHandler<T extends ObjectLike> extends StructuralHandler<T> {
   _type: ContainerType<T>;
@@ -132,7 +132,7 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
           currentIndex = nextIndex;
         }
       } catch (e) {
-        throw new SSZNestedError(e, fieldName);
+        throw new SszErrorPath(e, fieldName);
       }
     });
     if (offsets.length > 1) {

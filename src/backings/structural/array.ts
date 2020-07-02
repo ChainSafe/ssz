@@ -2,7 +2,7 @@
 import {ArrayLike, Json} from "../../interface";
 import {BasicArrayType, CompositeArrayType, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
-import {SSZNestedError} from "../../util/error";
+import {SszErrorPath} from "../../util/errorPath";
 
 export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends StructuralHandler<T> {
   _type: BasicArrayType<T>;
@@ -182,7 +182,7 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
             this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset)
           );
         } catch (e) {
-          throw new SSZNestedError(e, value.length);
+          throw new SszErrorPath(e, value.length);
         }
         currentIndex = nextIndex;
         currentOffset = nextOffset;

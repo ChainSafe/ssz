@@ -3,17 +3,17 @@ type JsonPathItem = string | number;
 /**
  * Tracks the JSON path location of nested errors
  */
-export class SSZNestedError extends Error {
+export class SszErrorPath extends Error {
   jsonPath: JsonPathItem[];
   rawMessage: string;
 
   constructor(
-    e: Error | SSZNestedError, 
+    e: Error | SszErrorPath, 
     keyOrIndex: JsonPathItem
   ) {
-    const prevJsonPath = e instanceof SSZNestedError ? e.jsonPath : [];
+    const prevJsonPath = e instanceof SszErrorPath ? e.jsonPath : [];
     const jsonPath = [keyOrIndex, ...prevJsonPath];
-    const rawMessage = e instanceof SSZNestedError ? e.rawMessage : e.message;
+    const rawMessage = e instanceof SszErrorPath ? e.rawMessage : e.message;
     super(`${renderJsonPath(jsonPath)}: ${rawMessage}`);
     this.jsonPath = jsonPath;
     this.rawMessage = rawMessage;

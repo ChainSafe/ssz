@@ -23,7 +23,7 @@ const ArrayObject = new ContainerType({
   },
 });
 
-describe("deserialize errors", () => {
+describe("error path", () => {
   const testCases: {
     value: string;
     type: any;
@@ -36,7 +36,7 @@ describe("deserialize errors", () => {
   ];
 
   for (const {type, value, expected} of testCases) {
-    it(`should throw deserializing ${type.constructor.name}`, () => {
+    it(`should print the error path deserializing ${type.constructor.name}`, () => {
       assert.throw(
         () => type.deserialize(Buffer.from(value, "hex")),
         "v[1]: Not all variable bytes consumed"
