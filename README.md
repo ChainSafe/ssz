@@ -1,5 +1,8 @@
 # as-sha256
 
+![ES Version](https://img.shields.io/badge/ES-2015-yellow)
+![Node Version](https://img.shields.io/badge/node-12.x-green)
+
 AssemblyScript implementation of SHA256.
 
 ## Usage
