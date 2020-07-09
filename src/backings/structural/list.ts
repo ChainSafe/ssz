@@ -23,7 +23,7 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
   }
   validateBytes(data: Uint8Array, start: number, end: number): void {
     super.validateBytes(data, start, end);
-    if ((end - start) / this._type.elementType.size() > this._type.limit) {
+    if (end - start > this.maxSize()) {
       throw new Error("Deserialized list length greater than limit");
     }
   }

@@ -25,7 +25,7 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
   }
   validateBytes(data: Uint8Array, start: number, end: number): void {
     super.validateBytes(data, start, end);
-    if ((end - start) / this._type.elementType.size() !== this._type.length) {
+    if (end - start !== this.size(null)) {
       throw new Error("Incorrect deserialized vector length");
     }
   }
