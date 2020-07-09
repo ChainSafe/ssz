@@ -98,6 +98,25 @@ export class BasicType<T> {
   }
 
   /**
+   * Validate bytes before calling fromBytes
+   * @param data
+   * @param offset
+   */
+  validateBytes(data: Uint8Array, offset: number): void {
+    if (!data) {
+      throw new Error("Data is null or undefined");
+    }
+    if (data.length === 0) {
+      throw new Error("Data is empty");
+    }
+    const length = data.length - offset;
+    if (length < this.size()) {
+      throw new Error(`Data length of ${length} is too small, expect ${this.size()}`);
+    }
+    // accept data length > this.size()
+  }
+
+  /**
    * Low-level deserialization
    */
   fromBytes(data: Uint8Array, offset: number): T {

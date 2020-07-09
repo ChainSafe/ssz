@@ -35,6 +35,7 @@ export class BitVectorStructuralHandler extends BasicVectorStructuralHandler<Bit
     return Number(bitstring);
   }
   fromBytes(data: Uint8Array, start: number, end: number): BitVector {
+    this.validateBytes(data, start, end);
     if ((end - start) !== this.size(null)) {
       throw new Error("Invalid bitvector: length not equal to vector length");
     }

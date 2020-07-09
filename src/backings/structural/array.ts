@@ -2,6 +2,7 @@
 import {ArrayLike, Json} from "../../interface";
 import {BasicArrayType, CompositeArrayType, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
+import {SszErrorPath} from "../../util/errorPath";
 
 export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends StructuralHandler<T> {
   _type: BasicArrayType<T>;
@@ -48,6 +49,7 @@ export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends S
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     const elementSize = this._type.elementType.size();
     return Array.from(
       {length: (end - start) / elementSize},
@@ -151,6 +153,7 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     if (start === end) {
       return [] as unknown as T;
     }
@@ -176,9 +179,13 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
         if (currentOffset > nextOffset) {
           throw new Error("Offsets must be increasing");
         }
-        value.push(
-          this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset)
-        );
+        try {
+          value.push(
+            this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset)
+          );
+        } catch (e) {
+          throw new SszErrorPath(e, value.length);
+        }
         currentIndex = nextIndex;
         currentOffset = nextOffset;
       }

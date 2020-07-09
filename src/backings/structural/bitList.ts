@@ -38,6 +38,7 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
     return 1;
   }
   fromBytes(data: Uint8Array, start: number, end: number): BitList {
+    this.validateBytes(data, start, end);
     const value = [];
     const toBool = (c: string): boolean => c === "1" ? true : false;
     for (let i = start; i < end-1; i++) {
@@ -76,7 +77,7 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
   }
   chunk(value: BitList, index: number): Uint8Array {
     const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.getByteLength(value) - index);
+    const byteLength = Math.min(32, this.getByteLength(value) - index * 32);
     for (let i = 0; i < byteLength; i++) {
       output[i] = this.getByte(value, i + index);
     }

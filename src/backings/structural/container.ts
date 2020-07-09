@@ -2,6 +2,7 @@ import {ObjectLike, Json} from "../../interface";
 import {ContainerType, CompositeType, Type, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
 import {toExpectedCase} from "../utils";
+import {SszErrorPath} from "../../util/errorPath";
 
 export class ContainerStructuralHandler<T extends ObjectLike> extends StructuralHandler<T> {
   _type: ContainerType<T>;
@@ -82,6 +83,7 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     let currentIndex = start;
     let nextIndex = currentIndex;
     const value = {} as T;
@@ -107,27 +109,31 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     }
     let offsetIndex = 0;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType], i) => {
-      const fieldSize = fixedSizes[i];
-      if (fieldSize === false) { // variable-sized field
-        if (offsets[offsetIndex] > end) {
-          throw new Error("Offset out of bounds");
+      try {
+        const fieldSize = fixedSizes[i];
+        if (fieldSize === false) { // variable-sized field
+          if (offsets[offsetIndex] > end) {
+            throw new Error("Offset out of bounds");
+          }
+          if (offsets[offsetIndex] > offsets[offsetIndex + 1]) {
+            throw new Error("Offsets must be increasing");
+          }
+          value[fieldName as keyof T] = (fieldType as CompositeType<T[keyof T]>).structural.fromBytes(
+            data, offsets[offsetIndex], offsets[offsetIndex + 1],
+          );
+          offsetIndex++;
+          currentIndex += 4;
+        } else { // fixed-sized field
+          nextIndex = currentIndex + fieldSize;
+          if (fieldType.isBasic()) {
+            value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex);
+          } else {
+            value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex);
+          }
+          currentIndex = nextIndex;
         }
-        if (offsets[offsetIndex] > offsets[offsetIndex + 1]) {
-          throw new Error("Offsets must be increasing");
-        }
-        value[fieldName as keyof T] = (fieldType as CompositeType<T[keyof T]>).structural.fromBytes(
-          data, offsets[offsetIndex], offsets[offsetIndex + 1],
-        );
-        offsetIndex++;
-        currentIndex += 4;
-      } else { // fixed-sized field
-        nextIndex = currentIndex + fieldSize;
-        if (fieldType.isBasic()) {
-          value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex);
-        } else {
-          value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex);
-        }
-        currentIndex = nextIndex;
+      } catch (e) {
+        throw new SszErrorPath(e, fieldName);
       }
     });
     if (offsets.length > 1) {

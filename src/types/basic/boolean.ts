@@ -31,6 +31,7 @@ export class BooleanType extends BasicType<boolean> {
     return offset + 1;
   }
   fromBytes(data: Uint8Array, offset: number): boolean {
+    this.validateBytes(data, offset);
     if (data[offset] === 1) {
       return true;
     } else if (data[offset] === 0) {

@@ -71,6 +71,7 @@ export class NumberUintType extends UintType<number> {
     return offset + this.byteLength;
   }
   fromBytes(data: Uint8Array, offset: number): number {
+    this.validateBytes(data, offset);
     let isInfinity = true;
     let output = BigInt(0);
     for (let i = 0; i < this.byteLength; i++) {
@@ -139,6 +140,7 @@ export class BigIntUintType extends UintType<bigint> {
     return offset + this.byteLength;
   }
   fromBytes(data: Uint8Array, offset: number): bigint {
+    this.validateBytes(data, offset);
     let output = BigInt(0);
     for (let i = 0; i < this.byteLength; i++) {
       output += BigInt(data[offset + i]) << BigInt(8 * i);
