@@ -44,7 +44,7 @@ export class StructuralHandler<T extends object> {
     if (start < 0) {
       throw new Error(`Start param is negative: ${start}`);
     }
-    if (start >= data.length) {
+    if (start > data.length) {
       throw new Error(`Start param: ${start} is greater than length: ${data.length}`);
     }
     if (end < 0) {
