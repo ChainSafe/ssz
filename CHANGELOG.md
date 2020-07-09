@@ -1,3 +1,9 @@
+## 0.6.9 (2020-07-09)
+
+### Bug Fixes
+
+- Fix bitlist/bitvector validation ([030784](https://github.com/chainsafe/ssz/commit/030784))
+
 ## 0.6.8 (2020-07-09)
 
 ### Features
