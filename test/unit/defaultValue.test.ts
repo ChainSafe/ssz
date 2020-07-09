@@ -2,7 +2,17 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 
 import {booleanType, byteType} from "../../src";
-import {ArrayObject, bigint16Type, bitList100Type, bitVector100Type, byteVector100Type, bytes2Type, number16Type, number16Vector6Type, number16List100Type} from "./objects";
+import {
+  ArrayObject,
+  bigint16Type,
+  bitList100Type,
+  bitVector100Type,
+  byteVector100Type,
+  bytes2Type,
+  number16Type,
+  number16Vector6Type,
+  number16List100Type,
+} from "./objects";
 
 describe("defaultValue", () => {
   const testCases: {

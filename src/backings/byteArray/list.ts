@@ -30,4 +30,3 @@ export class CompositeListByteArrayHandler<T extends List<object>> extends Compo
     return mixInLength(super.hashTreeRoot(target), this.getLength(target));
   }
 }
-

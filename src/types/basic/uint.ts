@@ -37,15 +37,12 @@ export class NumberUintType extends UintType<number> {
   }
   assertValidValue(value: unknown): asserts value is number {
     if (
-      value !== Infinity
-        && (
-          !Number.isSafeInteger(value as number)
-          || value > (BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
-        )
+      value !== Infinity &&
+      (!Number.isSafeInteger(value as number) || value > BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
     ) {
       throw new Error("Uint value is not a number");
     }
-    if (value as number < 0) {
+    if ((value as number) < 0) {
       throw new Error("Uint value must be gte 0");
     }
   }
@@ -63,7 +60,7 @@ export class NumberUintType extends UintType<number> {
     } else {
       let v = value;
       const MAX_BYTE = 0xff;
-      for (let i = 0; i < this.byteLength; i ++) {
+      for (let i = 0; i < this.byteLength; i++) {
         output[offset + i] = v & MAX_BYTE;
         v = Math.floor(v / 256);
       }
@@ -124,7 +121,7 @@ export class BigIntUintType extends UintType<bigint> {
     if (typeof value !== "bigint") {
       throw new Error("Uint value is not a bigint");
     }
-    if (value as bigint < 0) {
+    if ((value as bigint) < 0) {
       throw new Error("Uint value must be gte 0");
     }
   }
@@ -133,7 +130,7 @@ export class BigIntUintType extends UintType<bigint> {
   }
   toBytes(value: bigint, output: Uint8Array, offset: number): number {
     let v = value;
-    for (let i = 0; i < this.byteLength; i ++) {
+    for (let i = 0; i < this.byteLength; i++) {
       output[offset + i] = Number(v & BigInt(0xff));
       v >>= BigInt(8);
     }

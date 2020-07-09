@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
-import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler,} from "../../backings";
+import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler} from "../../backings";
 import {BasicType} from "../basic";
 import {IJsonOptions} from "../type";
 

@@ -20,6 +20,6 @@ export class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeT
   elementType: CompositeType<object>;
   constructor(options: IArrayOptions) {
     super();
-    this.elementType = options.elementType as unknown as CompositeType<object>;
+    this.elementType = (options.elementType as unknown) as CompositeType<object>;
   }
 }

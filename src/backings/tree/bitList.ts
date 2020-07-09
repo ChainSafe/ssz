@@ -33,10 +33,12 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     lastChunk.set(target.getRoot(lastGindex));
     const lastChunkByte = ((end - start) % 32) - 1;
     let length;
-    if (lastByte === 1) { // zero lastChunkByte
+    if (lastByte === 1) {
+      // zero lastChunkByte
       length = (end - start - 1) * 8;
       lastChunk[lastChunkByte] = 0;
-    } else { // mask lastChunkByte
+    } else {
+      // mask lastChunkByte
       const lastByteBitLength = lastByte.toString(2).length - 1;
       length = (end - start - 1) * 8 + lastByteBitLength;
       const mask = 0xff >> (8 - lastByteBitLength);
@@ -51,7 +53,7 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     const bitLength = this.getLength(target);
     const size = this.size(target);
     // set padding bit
-    output[offset + size - 1] |= 1 << (bitLength  % 8);
+    output[offset + size - 1] |= 1 << bitLength % 8;
     return newOffset;
   }
   getBitOffset(index: number): number {
@@ -68,15 +70,15 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     const byte = chunk[this.getChunkOffset(index)];
     return !!(byte & (1 << this.getBitOffset(index)));
   }
-  setProperty(target: Tree, property: number, value: boolean, expand=false): boolean {
+  setProperty(target: Tree, property: number, value: boolean, expand = false): boolean {
     const chunkGindex = this.gindexOfChunk(target, this.getChunkIndex(property));
     const chunk = new Uint8Array(32);
     chunk.set(target.getRoot(chunkGindex));
     const byteOffset = this.getChunkOffset(property);
     if (value) {
-      chunk[byteOffset] |= (1 << this.getBitOffset(property));
+      chunk[byteOffset] |= 1 << this.getBitOffset(property);
     } else {
-      chunk[byteOffset] &= (0xff ^ (1 <<  this.getBitOffset(property)));
+      chunk[byteOffset] &= 0xff ^ (1 << this.getBitOffset(property));
     }
     target.setRoot(chunkGindex, chunk, expand);
     return true;

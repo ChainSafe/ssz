@@ -1,10 +1,7 @@
 import {BitVector} from "../../interface";
 import {BasicVectorType} from "./vector";
 import {booleanType, isTypeOf} from "../basic";
-import {
-  BitVectorStructuralHandler,
-  BitVectorTreeHandler,
-} from "../../backings";
+import {BitVectorStructuralHandler, BitVectorTreeHandler} from "../../backings";
 
 export interface IBitVectorOptions {
   length: number;
@@ -12,7 +9,7 @@ export interface IBitVectorOptions {
 
 export const BITVECTOR_TYPE = Symbol.for("ssz/BitVectorType");
 
-export function isBitVectorType<T extends BitVector=BitVector>(type: unknown): type is BitVectorType {
+export function isBitVectorType<T extends BitVector = BitVector>(type: unknown): type is BitVectorType {
   return isTypeOf(type, BITVECTOR_TYPE);
 }
 

@@ -7,10 +7,7 @@ export class SszErrorPath extends Error {
   jsonPath: JsonPathItem[];
   rawMessage: string;
 
-  constructor(
-    e: Error | SszErrorPath, 
-    keyOrIndex: JsonPathItem
-  ) {
+  constructor(e: Error | SszErrorPath, keyOrIndex: JsonPathItem) {
     const prevJsonPath = e instanceof SszErrorPath ? e.jsonPath : [];
     const jsonPath = [keyOrIndex, ...prevJsonPath];
     const rawMessage = e instanceof SszErrorPath ? e.rawMessage : e.message;

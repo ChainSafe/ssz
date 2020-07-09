@@ -29,4 +29,3 @@ export class CompositeVectorByteArrayHandler<T extends Vector<object>> extends C
     return target;
   }
 }
-

@@ -9,25 +9,13 @@ describe("isFooType", () => {
   }[] = [
     {
       type: new src.NumberUintType({byteLength: 4}),
-      isType: [
-        src.isUintType,
-        src.isNumberUintType,
-      ],
-      isntType: [
-        src.isBigIntUintType,
-        src.isContainerType,
-      ]
+      isType: [src.isUintType, src.isNumberUintType],
+      isntType: [src.isBigIntUintType, src.isContainerType],
     },
     {
       type: new src.BigIntUintType({byteLength: 4}),
-      isType: [
-        src.isUintType,
-        src.isBigIntUintType,
-      ],
-      isntType: [
-        src.isNumberUintType,
-        src.isContainerType,
-      ]
+      isType: [src.isUintType, src.isBigIntUintType],
+      isntType: [src.isNumberUintType, src.isContainerType],
     },
     {
       type: new src.BooleanType(),
@@ -52,40 +40,31 @@ describe("isFooType", () => {
       type: new src.BitVectorType({
         length: 4,
       }),
-      isType: [
-        src.isVectorType,
-        src.isBitVectorType,
-      ],
+      isType: [src.isVectorType, src.isBitVectorType],
     },
     {
       type: new src.BitListType({
         limit: 4,
       }),
-      isType: [
-        src.isListType,
-        src.isBitListType,
-      ],
+      isType: [src.isListType, src.isBitListType],
     },
     {
       type: new src.ByteVectorType({
         length: 4,
       }),
-      isType: [
-        src.isVectorType,
-        src.isByteVectorType,
-      ],
+      isType: [src.isVectorType, src.isByteVectorType],
     },
     {
       type: new src.ContainerType({
         fields: {
-          foo: new src.NumberUintType({byteLength: 4})
+          foo: new src.NumberUintType({byteLength: 4}),
         },
       }),
       isType: src.isContainerType,
     },
   ];
   for (const {type, isType, isntType} of cases) {
-    for (const _isType of (Array.isArray(isType) ? isType : [isType])) {
+    for (const _isType of Array.isArray(isType) ? isType : [isType]) {
       it(`${type.constructor.name} should match ${_isType.name}`, () => {
         expect(_isType(type)).to.be.true;
       });
@@ -93,7 +72,7 @@ describe("isFooType", () => {
     if (!isntType) {
       return;
     }
-    for (const _isntType of (Array.isArray(isntType) ? isntType : [isntType])) {
+    for (const _isntType of Array.isArray(isntType) ? isntType : [isntType]) {
       it(`${type.constructor.name} should not match ${_isntType.name}`, () => {
         expect(_isntType(type)).to.be.false;
       });

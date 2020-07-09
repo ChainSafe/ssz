@@ -3,9 +3,25 @@ import {describe, it} from "mocha";
 
 import {booleanType, byteType, ContainerType} from "../../src";
 import {
-  ArrayObject, ArrayObject2, bigint16Type, bigint64Type, bigint128Type, bigint256Type, bitList100Type, bitVector100Type, byteVector100Type,
-  bytes2Type, bytes8Type, bytes32Type,
-  number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
+  ArrayObject,
+  ArrayObject2,
+  bigint16Type,
+  bigint64Type,
+  bigint128Type,
+  bigint256Type,
+  bitList100Type,
+  bitVector100Type,
+  byteVector100Type,
+  bytes2Type,
+  bytes8Type,
+  bytes32Type,
+  number16Type,
+  number32Type,
+  number64Type,
+  number16Vector6Type,
+  number16List100Type,
+  OuterObject,
+  SimpleObject,
 } from "./objects";
 
 describe("equals", () => {
@@ -30,31 +46,61 @@ describe("equals", () => {
       value1: [0, 1, 2, 3, 4, 5],
       value2: [0, 1, 2, 3, 4, 5],
       type: number16List100Type,
-      expected: true
+      expected: true,
     },
     {
       value1: [0, 1, 2, 3, 4, 6],
       value2: [0, 1, 2, 3, 4, 5],
       type: number16List100Type,
-      expected: false
+      expected: false,
     },
     {
-      value1: {v: [{b: 2, a: 1}, {b: 4, a: 3}]},
-      value2: {v: [{b: 2, a: 1}, {b: 4, a: 3}]},
+      value1: {
+        v: [
+          {b: 2, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
+      value2: {
+        v: [
+          {b: 2, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
       type: ArrayObject,
-      expected: true
+      expected: true,
     },
     {
-      value1: {v: [{a: 1, b: 2}, {b: 4, a: 3}]},
-      value2: {v: [{b: 2, a: 1}, {b: 4, a: 3}]},
+      value1: {
+        v: [
+          {a: 1, b: 2},
+          {b: 4, a: 3},
+        ],
+      },
+      value2: {
+        v: [
+          {b: 2, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
       type: ArrayObject,
-      expected: true
+      expected: true,
     },
     {
-      value1: {v: [{b: 4, a: 1}, {b: 4, a: 3}]},
-      value2: {v: [{b: 2, a: 1}, {b: 4, a: 3}]},
+      value1: {
+        v: [
+          {b: 4, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
+      value2: {
+        v: [
+          {b: 2, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
       type: ArrayObject,
-      expected: false
+      expected: false,
     },
   ];
   for (const {type, value1, value2, expected} of testCases) {

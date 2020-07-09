@@ -11,7 +11,7 @@ export interface IRootOptions<T extends object> {
 
 export const ROOT_TYPE = Symbol.for("ssz/RootType");
 
-export function isRootType<T extends object=object>(type: unknown): type is RootType<T> {
+export function isRootType<T extends object = object>(type: unknown): type is RootType<T> {
   return isTypeOf(type, ROOT_TYPE);
 }
 

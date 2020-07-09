@@ -22,6 +22,4 @@ describe("known issues", () => {
     const Number = new NumberUintType({byteLength: 4});
     expect(() => Number.fromJson("18446744073709551616")).to.throw;
   });
-
-
 });

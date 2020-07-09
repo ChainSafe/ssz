@@ -22,7 +22,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
             return fieldType.tree.defaultNode();
           }
         }),
-        this.depth(),
+        this.depth()
       );
     }
     return this._defaultNode;
@@ -60,33 +60,25 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
         const dataChunk = new Uint8Array(
           data.buffer,
           data.byteOffset + start + currentOffset,
-          nextOffset - currentOffset,
+          nextOffset - currentOffset
         );
         const chunk = new Uint8Array(32);
         // copy chunk into new memory
         chunk.set(dataChunk);
-        this.setRootAtChunk(
-          target,
-          i,
-          chunk,
-        );
+        this.setRootAtChunk(target, i, chunk);
       } else {
-        this.setSubtreeAtChunk(
-          target,
-          i,
-          fieldType.tree.fromBytes(
-            data,
-            start + currentOffset,
-            start + nextOffset,
-          ),
-        );
+        this.setSubtreeAtChunk(target, i, fieldType.tree.fromBytes(data, start + currentOffset, start + nextOffset));
       }
     });
     return target;
   }
   toBytes(target: Tree, output: Uint8Array, offset: number): number {
-    let variableIndex = offset + Object.values(this._type.fields).reduce((total, fieldType) =>
-      total + (fieldType.isVariableSize() ? 4 : fieldType.size(null)), 0);
+    let variableIndex =
+      offset +
+      Object.values(this._type.fields).reduce(
+        (total, fieldType) => total + (fieldType.isVariableSize() ? 4 : fieldType.size(null)),
+        0
+      );
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
     Object.values(this._type.fields).forEach((fieldType, i) => {
@@ -105,7 +97,6 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       }
     });
     return variableIndex;
-
   }
   gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
     const chunkIndex = Object.keys(this._type.fields).findIndex((fieldName) => fieldName === prop);
@@ -124,9 +115,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       const chunk = this.getRootAtChunk(target, chunkIndex);
       return fieldType.fromBytes(chunk, 0);
     } else {
-      return fieldType.tree.asTreeBacked(
-        this.getSubtreeAtChunk(target, chunkIndex)
-      );
+      return fieldType.tree.asTreeBacked(this.getSubtreeAtChunk(target, chunkIndex));
     }
   }
   set(target: Tree, property: keyof T, value: T[keyof T]): boolean {

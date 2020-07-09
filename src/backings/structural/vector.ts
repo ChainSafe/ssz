@@ -10,9 +10,9 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
     this._type = type;
   }
   defaultValue(): T {
-    return Array.from({length: this._type.length}, () => {
+    return (Array.from({length: this._type.length}, () => {
       return this._type.elementType.defaultValue();
-    }) as unknown as T;
+    }) as unknown) as T;
   }
   getLength(value: T): number {
     return this._type.length;
@@ -35,7 +35,7 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
   }
   assertValidValue(value: unknown): asserts value is T {
     const actualLength = (value as T).length;
-    const expectedLength = this.getLength((value as T));
+    const expectedLength = this.getLength(value as T);
     if (actualLength !== expectedLength) {
       throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
     }
@@ -61,9 +61,9 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
     this._type = type;
   }
   defaultValue(): T {
-    return Array.from({length: this._type.length}, () => {
+    return (Array.from({length: this._type.length}, () => {
       return this._type.elementType.structural.defaultValue();
-    }) as unknown as T;
+    }) as unknown) as T;
   }
   getLength(value: T): number {
     return this._type.length;
