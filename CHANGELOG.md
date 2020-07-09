@@ -1,3 +1,21 @@
+## 0.6.8 (2020-07-09)
+
+### Features
+
+- Track error JSON path location with try / catch ([4ff92d](https://github.com/chainsafe/ssz/commit/4ff92d))
+- Add validation for fromBytes ([64b757](https://github.com/chainsafe/ssz/commit/64b757))
+
+### Chores
+
+- Add prettier as an eslint plugin ([c606a0](https://github.com/chainsafe/ssz/commit/c606a0))
+- Add es and node badges ([b25c39](https://github.com/chainsafe/ssz/commit/b25c39))
+- Standardize uint toJson ([4dbc6f](https://github.com/chainsafe/ssz/commit/4dbc6f))
+
+### Bug Fixes
+
+- Fix structural bitlist/bitvector hashtreeroot ([5ed8e0](https://github.com/chainsafe/ssz/commit/5ed8e0))
+- Fix start param validation case ([5fd207](https://github.com/chainsafe/ssz/commit/5fd207))
+
 ## 0.6.7 (2020-06-08)
 
 ### Features
