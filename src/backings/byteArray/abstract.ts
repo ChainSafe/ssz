@@ -4,7 +4,7 @@ import {CompositeType} from "../../types";
 import {BackingType} from "../backedValue";
 
 export function toHexString(target: Uint8Array | ByteVector): string {
-  return "0x" + [...target].map(b => b.toString(16).padStart(2, "0")).join("");
+  return "0x" + [...target].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 export function fromHexString(data: string): Uint8Array {
   if (typeof data !== "string") {
@@ -14,7 +14,7 @@ export function fromHexString(data: string): Uint8Array {
     throw new Error("Expected an even number of characters");
   }
   data = data.replace("0x", "");
-  return new Uint8Array(data.match(/.{1,2}/g).map(b => parseInt(b, 16)));
+  return new Uint8Array(data.match(/.{1,2}/g).map((b) => parseInt(b, 16)));
 }
 
 export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
@@ -26,8 +26,7 @@ export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
 
 export function isByteArrayBacked<T extends object>(value: T): value is ByteArrayBacked<T> {
   return (
-    (value as ByteArrayBacked<T>).backingType &&
-    (value as ByteArrayBacked<T>).backingType() === BackingType.byteArray
+    (value as ByteArrayBacked<T>).backingType && (value as ByteArrayBacked<T>).backingType() === BackingType.byteArray
   );
 }
 
@@ -107,11 +106,13 @@ export type PropOfBasicByteArrayBacked<T extends object, V extends keyof T> = T[
 /**
  * Every property of a 'composite' byte-array-backed value is of a composite type, ie a byte-array-backed value
  */
-export type PropOfCompositeByteArrayBacked<T extends object, V extends keyof T> =
-  T[V] extends object ? ByteArrayBacked<T[V]> : never;
+export type PropOfCompositeByteArrayBacked<T extends object, V extends keyof T> = T[V] extends object
+  ? ByteArrayBacked<T[V]>
+  : never;
 
 export type PropOfByteArrayBacked<T extends object, V extends keyof T> =
-  PropOfBasicByteArrayBacked<T, V> | PropOfCompositeByteArrayBacked<T, V>;
+  | PropOfBasicByteArrayBacked<T, V>
+  | PropOfCompositeByteArrayBacked<T, V>;
 
 /**
  * A ByteArrayHandler instance handles byte-array-backed-specific logic.
@@ -157,7 +158,7 @@ export class ByteArrayHandler<T extends object> implements ProxyHandler<T> {
    * Default constructor
    */
   defaultValue(): ByteArrayBacked<T> {
-    return this.asByteArrayBacked((this.defaultBacking()));
+    return this.asByteArrayBacked(this.defaultBacking());
   }
   createValue(value: T): ByteArrayBacked<T> {
     throw new Error("Not implemented");
@@ -198,15 +199,11 @@ export class ByteArrayHandler<T extends object> implements ProxyHandler<T> {
   getByteBits(target: Uint8Array, offset: number): boolean[] {
     const byte = target[offset];
     if (!byte) {
-      return [
-        false, false, false, false,
-        false, false, false, false,
-      ];
+      return [false, false, false, false, false, false, false, false];
     }
-    const bits = Array.prototype.map.call(
-      byte.toString(2).padStart(8, "0"),
-      (c) => c === "1" ? true : false
-    ).reverse() as boolean[];
+    const bits = Array.prototype.map
+      .call(byte.toString(2).padStart(8, "0"), (c) => (c === "1" ? true : false))
+      .reverse() as boolean[];
     return bits;
   }
 
@@ -286,6 +283,6 @@ export class ByteArrayHandler<T extends object> implements ProxyHandler<T> {
    * Return a IByteArrayBacked method, to be called using the IByteArrayBacked interface
    */
   protected getMethod<V extends keyof IByteArrayBacked<T>>(target: Uint8Array, methodName: V): IByteArrayBacked<T>[V] {
-    return (this[methodName as keyof this] as unknown as Function).bind(this, target);
+    return ((this[methodName as keyof this] as unknown) as Function).bind(this, target);
   }
 }

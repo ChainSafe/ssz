@@ -40,9 +40,7 @@ export class CompositeArrayByteArrayHandler<T extends ArrayLike<unknown>> extend
           throw new Error("Offset out of bounds");
         }
         nextIndex = currentIndex + 4;
-        nextOffset = nextIndex === firstOffset
-          ? target.length
-          : fixedSection.getUint32(nextIndex, true);
+        nextOffset = nextIndex === firstOffset ? target.length : fixedSection.getUint32(nextIndex, true);
         if (currentOffset > nextOffset) {
           throw new Error("Offsets must be increasing");
         }
@@ -59,6 +57,3 @@ export class CompositeArrayByteArrayHandler<T extends ArrayLike<unknown>> extend
     }
   }
 }
-
-
-

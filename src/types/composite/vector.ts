@@ -2,9 +2,12 @@ import {Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isTypeOf} from "../basic";
 import {
-  BasicVectorStructuralHandler, CompositeVectorStructuralHandler,
-  BasicVectorTreeHandler, CompositeVectorTreeHandler,
-  BasicVectorByteArrayHandler, CompositeVectorByteArrayHandler,
+  BasicVectorStructuralHandler,
+  CompositeVectorStructuralHandler,
+  BasicVectorTreeHandler,
+  CompositeVectorTreeHandler,
+  BasicVectorByteArrayHandler,
+  CompositeVectorByteArrayHandler,
 } from "../../backings";
 
 export interface IVectorOptions extends IArrayOptions {
@@ -14,29 +17,29 @@ export interface IVectorOptions extends IArrayOptions {
 export const VECTOR_TYPE = Symbol.for("ssz/VectorType");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isVectorType<T extends Vector<any>=Vector<any>>(type: unknown): type is VectorType<T> {
+export function isVectorType<T extends Vector<any> = Vector<any>>(type: unknown): type is VectorType<T> {
   return isTypeOf(type, VECTOR_TYPE);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type VectorType<T extends Vector<any>=Vector<any>> = BasicVectorType<T> | CompositeVectorType<T>;
+export type VectorType<T extends Vector<any> = Vector<any>> = BasicVectorType<T> | CompositeVectorType<T>;
 type VectorTypeConstructor = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new<T extends Vector<any>>(options: IVectorOptions): VectorType<T>;
+  new <T extends Vector<any>>(options: IVectorOptions): VectorType<T>;
 };
 
 // Trick typescript into treating VectorType as a constructor
 export const VectorType: VectorTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function VectorType<T extends Vector<any>=Vector<any>>(options: IVectorOptions): VectorType<T> {
+  (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions): VectorType<T> {
     if (options.elementType.isBasic()) {
       return new BasicVectorType(options);
     } else {
       return new CompositeVectorType(options);
     }
-  } as unknown as VectorTypeConstructor;
+  } as unknown) as VectorTypeConstructor;
 
-export class BasicVectorType<T extends Vector<unknown>=Vector<unknown>> extends BasicArrayType<T> {
+export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extends BasicArrayType<T> {
   length: number;
   constructor(options: IVectorOptions) {
     super(options);
@@ -50,11 +53,11 @@ export class BasicVectorType<T extends Vector<unknown>=Vector<unknown>> extends 
     return false;
   }
   chunkCount(): number {
-    return Math.ceil(this.length * this.elementType.size() / 32);
+    return Math.ceil((this.length * this.elementType.size()) / 32);
   }
 }
 
-export class CompositeVectorType<T extends Vector<object>=Vector<object>> extends CompositeArrayType<T> {
+export class CompositeVectorType<T extends Vector<object> = Vector<object>> extends CompositeArrayType<T> {
   length: number;
   constructor(options: IVectorOptions) {
     super(options);

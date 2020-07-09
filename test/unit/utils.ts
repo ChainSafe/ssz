@@ -1,6 +1,6 @@
-import {SimpleSSZType,} from "@chainsafe/ssz-type-schema";
+import {SimpleSSZType} from "@chainsafe/ssz-type-schema";
 
-export function stringifyType (type: SimpleSSZType): string {
+export function stringifyType(type: SimpleSSZType): string {
   if (typeof type === "string") {
     return type;
   } else if (Array.isArray(type)) {

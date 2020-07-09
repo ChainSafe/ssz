@@ -15,10 +15,28 @@ describe("clone", () => {
     {value: true, type: booleanType, expected: true},
     {value: false, type: booleanType, expected: true},
     {value: Buffer.from("abcd", "hex"), type: bytes2Type, expected: true},
-    {value: [0,1,2,3,4,5], type: number16List100Type, expected: true},
-    {value: [0,1,2,3,4,5], type: number16Vector6Type, expected: true},
-    {value: {v:[{b:2,a:1},{b:4,a:3}]}, type: ArrayObject, expected: true},
-    {value: {v:[{a:1,b:2},{b:4,a:3}]}, type: ArrayObject, expected: true},
+    {value: [0, 1, 2, 3, 4, 5], type: number16List100Type, expected: true},
+    {value: [0, 1, 2, 3, 4, 5], type: number16Vector6Type, expected: true},
+    {
+      value: {
+        v: [
+          {b: 2, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
+      type: ArrayObject,
+      expected: true,
+    },
+    {
+      value: {
+        v: [
+          {a: 1, b: 2},
+          {b: 4, a: 3},
+        ],
+      },
+      type: ArrayObject,
+      expected: true,
+    },
   ];
   for (const {type, value} of testCases) {
     it(`should correctly perform clone for ${type.constructor.name}`, () => {

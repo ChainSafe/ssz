@@ -3,9 +3,9 @@ import {CompositeType} from "./composite";
 
 /**
  * A Type is either a BasicType or a CompositeType.
-*/
-export type Type<T> = BasicType<T> | (T extends object ? CompositeType<T>: never);
+ */
+export type Type<T> = BasicType<T> | (T extends object ? CompositeType<T> : never);
 
 export interface IJsonOptions {
-  case: "camel"|"snake";
+  case: "camel" | "snake";
 }

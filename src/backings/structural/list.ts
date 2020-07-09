@@ -10,7 +10,7 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
     this._type = type;
   }
   defaultValue(): T {
-    return [] as unknown as T;
+    return ([] as unknown) as T;
   }
   getLength(value: T): number {
     return value.length;
@@ -32,7 +32,7 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
     return super.fromBytes(data, start, end);
   }
   nonzeroChunkCount(value: T): number {
-    return Math.ceil(value.length * this._type.elementType.size() / 32);
+    return Math.ceil((value.length * this._type.elementType.size()) / 32);
   }
   hashTreeRoot(value: T): Uint8Array {
     return mixInLength(super.hashTreeRoot(value), value.length);
@@ -56,7 +56,7 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
     this._type = type;
   }
   defaultValue(): T {
-    return [] as unknown as T;
+    return ([] as unknown) as T;
   }
   getLength(value: T): number {
     return value.length;

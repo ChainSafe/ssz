@@ -5,12 +5,8 @@ import {CompositeType} from "../../types";
 import {BackingType} from "../backedValue";
 import {byteArrayEquals} from "../byteArray";
 
-
 export function isTreeBacked<T extends object>(value: T): value is TreeBacked<T> {
-  return (
-    (value as TreeBacked<T>).backingType &&
-    (value as TreeBacked<T>).backingType() === BackingType.tree
-  );
+  return (value as TreeBacked<T>).backingType && (value as TreeBacked<T>).backingType() === BackingType.tree;
 }
 
 /**
@@ -97,11 +93,13 @@ export type PropOfBasicTreeBacked<T extends object, V extends keyof T> = T[V];
 /**
  * Every property of a 'composite' tree-backed value is of a composite type, ie a tree-backed value
  */
-export type PropOfCompositeTreeBacked<T extends object, V extends keyof T> =
-  T[V] extends object ? TreeBacked<T[V]> : never;
+export type PropOfCompositeTreeBacked<T extends object, V extends keyof T> = T[V] extends object
+  ? TreeBacked<T[V]>
+  : never;
 
 export type PropOfTreeBacked<T extends object, V extends keyof T> =
-  PropOfBasicTreeBacked<T, V> | PropOfCompositeTreeBacked<T, V>;
+  | PropOfBasicTreeBacked<T, V>
+  | PropOfCompositeTreeBacked<T, V>;
 
 /**
  * A TreeHandler instance handles tree-backed-specific logic.
@@ -174,10 +172,7 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
    */
   equals(target: Tree, other: TreeBacked<T>): boolean {
     if (isTreeBacked(other)) {
-      return byteArrayEquals(
-        this.hashTreeRoot(target),
-        this.hashTreeRoot(other.tree()),
-      );
+      return byteArrayEquals(this.hashTreeRoot(target), this.hashTreeRoot(other.tree()));
     }
     return this._type.structural.equals(this.asTreeBacked(target), other);
   }
@@ -250,13 +245,13 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
   getSubtreeAtChunk(target: Tree, index: number): Tree {
     return target.getSubtree(this.gindexOfChunk(target, index));
   }
-  setSubtreeAtChunk(target: Tree, index: number, value: Tree, expand=false): void {
+  setSubtreeAtChunk(target: Tree, index: number, value: Tree, expand = false): void {
     target.setSubtree(this.gindexOfChunk(target, index), value, expand);
   }
   getRootAtChunk(target: Tree, index: number): Uint8Array {
     return target.getRoot(this.gindexOfChunk(target, index));
   }
-  setRootAtChunk(target: Tree, index: number, value: Uint8Array, expand=false): void {
+  setRootAtChunk(target: Tree, index: number, value: Uint8Array, expand = false): void {
     target.setRoot(this.gindexOfChunk(target, index), value, expand);
   }
   /**
@@ -295,6 +290,6 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
    * Return a ITreeBacked method, to be called using the ITreeBacked interface
    */
   protected getMethod<V extends keyof ITreeBacked<T>>(target: Tree, methodName: V): ITreeBacked<T>[V] {
-    return (this[methodName as keyof this] as unknown as Function).bind(this, target);
+    return ((this[methodName as keyof this] as unknown) as Function).bind(this, target);
   }
 }

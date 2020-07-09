@@ -19,7 +19,7 @@ export class ContainerByteArrayHandler<T extends ObjectLike> extends ByteArrayHa
     let nextIndex = 0;
     const fixedSection = new DataView(target.buffer, target.byteOffset);
     const fixedOffsets: [number, number][] = [];
-    const variableOffsets: number[]  = [];
+    const variableOffsets: number[] = [];
     let variableIndex = 0;
     Object.values(this._type.fields).forEach((fieldType, i) => {
       if (fieldType.isVariableSize()) {
@@ -40,10 +40,10 @@ export class ContainerByteArrayHandler<T extends ObjectLike> extends ByteArrayHa
     variableIndex = 0;
     Object.values(this._type.fields).forEach((fieldType, i) => {
       if (fieldType.isVariableSize()) {
-        if (variableOffsets[variableIndex] > variableOffsets[variableIndex+1]) {
+        if (variableOffsets[variableIndex] > variableOffsets[variableIndex + 1]) {
           throw new Error("Offsets must be increasing");
         }
-        offsets.push([variableOffsets[variableIndex], variableOffsets[variableIndex+1]]);
+        offsets.push([variableOffsets[variableIndex], variableOffsets[variableIndex + 1]]);
         variableIndex++;
       } else {
         offsets.push(fixedOffsets[i]);

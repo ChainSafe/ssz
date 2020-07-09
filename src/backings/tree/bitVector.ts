@@ -45,9 +45,9 @@ export class BitVectorTreeHandler extends BasicVectorTreeHandler<BitVector> {
     chunk.set(target.getRoot(chunkGindex));
     const byteOffset = this.getChunkOffset(property);
     if (value) {
-      chunk[byteOffset] |= (1 << this.getBitOffset(property));
+      chunk[byteOffset] |= 1 << this.getBitOffset(property);
     } else {
-      chunk[byteOffset] &= (0xff ^ (1 << this.getBitOffset(property)));
+      chunk[byteOffset] &= 0xff ^ (1 << this.getBitOffset(property));
     }
     target.setRoot(chunkGindex, chunk);
     return true;

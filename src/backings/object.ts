@@ -5,13 +5,17 @@ export type ObjBackedify<T> = {
 };
 
 export type IObjBacked<T extends object> = {
-  [K in keyof T]:
-  T[K] extends BitList ? boolean[]
-    : T[K] extends BitVector ? boolean[]
-      : T[K] extends ByteVector ? Uint8Array
-        : T[K] extends List<unknown> ? T[K][number][]
-          : T[K] extends Vector<unknown> ? T[K][number][]
-            : T[K];
+  [K in keyof T]: T[K] extends BitList
+    ? boolean[]
+    : T[K] extends BitVector
+    ? boolean[]
+    : T[K] extends ByteVector
+    ? Uint8Array
+    : T[K] extends List<unknown>
+    ? T[K][number][]
+    : T[K] extends Vector<unknown>
+    ? T[K][number][]
+    : T[K];
 };
 
 /**

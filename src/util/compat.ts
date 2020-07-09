@@ -1,10 +1,5 @@
-import {
-  hash as _hash,
-} from "./hash";
-import {
-  merkleize as _merkleize,
-  mixInLength as _mixInLength,
-} from "./merkleize";
+import {hash as _hash} from "./hash";
+import {merkleize as _merkleize, mixInLength as _mixInLength} from "./merkleize";
 
 export function hash(...inputs: Uint8Array[]): Uint8Array {
   return Uint8Array.from(_hash(...inputs.map(Buffer.from)));

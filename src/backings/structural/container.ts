@@ -33,17 +33,25 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     return s;
   }
   maxSize(): number {
-    const fixedSize = Object.values(this._type.fields).reduce((total, fieldType) =>
-      total + (fieldType.isVariableSize() ? 4 : fieldType.maxSize()), 0);
+    const fixedSize = Object.values(this._type.fields).reduce(
+      (total, fieldType) => total + (fieldType.isVariableSize() ? 4 : fieldType.maxSize()),
+      0
+    );
     const maxDynamicSize = Object.values(this._type.fields).reduce(
-      (total, fieldType) => total += fieldType.isVariableSize()? fieldType.maxSize() : 0, 0);
+      (total, fieldType) => (total += fieldType.isVariableSize() ? fieldType.maxSize() : 0),
+      0
+    );
     return fixedSize + maxDynamicSize;
   }
   minSize(): number {
-    const fixedSize = Object.values(this._type.fields).reduce((total, fieldType) =>
-      total + (fieldType.isVariableSize() ? 4 : fieldType.minSize()), 0);
+    const fixedSize = Object.values(this._type.fields).reduce(
+      (total, fieldType) => total + (fieldType.isVariableSize() ? 4 : fieldType.minSize()),
+      0
+    );
     const minDynamicSize = Object.values(this._type.fields).reduce(
-      (total, fieldType) => total += fieldType.isVariableSize()? fieldType.minSize() : 0, 0);
+      (total, fieldType) => (total += fieldType.isVariableSize() ? fieldType.minSize() : 0),
+      0
+    );
     return fixedSize + minDynamicSize;
   }
   assertValidValue(value: unknown): asserts value is T {
@@ -90,8 +98,9 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     // Since variable-sized values can be interspersed with fixed-sized values, we precalculate
     // the offset indices so we can more easily deserialize the fields in once pass
     // first we get the fixed sizes
-    const fixedSizes: (number | false)[] = Object.values(this._type.fields)
-      .map((fieldType) => !fieldType.isVariableSize() && fieldType.size(null));
+    const fixedSizes: (number | false)[] = Object.values(this._type.fields).map(
+      (fieldType) => !fieldType.isVariableSize() && fieldType.size(null)
+    );
     // with the fixed sizes, we can read the offsets, and store for our single pass
     const offsets: number[] = [];
     const fixedSection = new DataView(data.buffer, data.byteOffset);
@@ -111,7 +120,8 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     Object.entries(this._type.fields).forEach(([fieldName, fieldType], i) => {
       try {
         const fieldSize = fixedSizes[i];
-        if (fieldSize === false) { // variable-sized field
+        if (fieldSize === false) {
+          // variable-sized field
           if (offsets[offsetIndex] > end) {
             throw new Error("Offset out of bounds");
           }
@@ -119,11 +129,14 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
             throw new Error("Offsets must be increasing");
           }
           value[fieldName as keyof T] = (fieldType as CompositeType<T[keyof T]>).structural.fromBytes(
-            data, offsets[offsetIndex], offsets[offsetIndex + 1],
+            data,
+            offsets[offsetIndex],
+            offsets[offsetIndex + 1]
           );
           offsetIndex++;
           currentIndex += 4;
-        } else { // fixed-sized field
+        } else {
+          // fixed-sized field
           nextIndex = currentIndex + fieldSize;
           if (fieldType.isBasic()) {
             value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex);
@@ -151,8 +164,12 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     return value;
   }
   toBytes(value: T, output: Uint8Array, offset: number): number {
-    let variableIndex = offset + Object.values(this._type.fields).reduce((total, fieldType) =>
-      total + (fieldType.isVariableSize() ? 4 : fieldType.size(null)), 0);
+    let variableIndex =
+      offset +
+      Object.values(this._type.fields).reduce(
+        (total, fieldType) => total + (fieldType.isVariableSize() ? 4 : fieldType.size(null)),
+        0
+      );
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
@@ -179,16 +196,12 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     }
     const value = {} as T;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
-
       const expectedCase = options ? options.case : null;
       const expectedFieldName = toExpectedCase(fieldName, expectedCase);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
-      value[fieldName as keyof T] = fieldType.fromJson(
-        (data as Record<string, Json>)[expectedFieldName],
-        options
-      );
+      value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[expectedFieldName], options);
     });
     return value;
   }
