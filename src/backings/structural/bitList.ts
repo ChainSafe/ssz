@@ -77,7 +77,7 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
   }
   chunk(value: BitList, index: number): Uint8Array {
     const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.getByteLength(value) - index);
+    const byteLength = Math.min(32, this.getByteLength(value) - index * 32);
     for (let i = 0; i < byteLength; i++) {
       output[i] = this.getByte(value, i + index);
     }
