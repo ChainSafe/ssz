@@ -9,23 +9,23 @@ import {
   byteType,
   ListType,
   VectorType,
-  BooleanType
+  BooleanType,
 } from "../../src";
 
 export const bytes2Type = new ByteVectorType({
-  length: 2
+  length: 2,
 });
 
 export const bytes4Type = new ByteVectorType({
-  length: 4
+  length: 4,
 });
 
 export const bytes8Type = new ByteVectorType({
-  length: 8
+  length: 8,
 });
 
 export const bytes32Type = new ByteVectorType({
-  length: 32 
+  length: 32,
 });
 
 export const byteVector100Type = new ByteVectorType({length: 100});
@@ -50,18 +50,26 @@ export const number64Type = new NumberUintType({byteLength: 8});
 
 export const number16Vector6Type = new VectorType({
   elementType: number16Type,
-  length: 6
+  length: 6,
 });
 
 export const number16List100Type = new ListType({
   elementType: number16Type,
-  limit:100 
+  limit: 100,
 });
 
 export const SimpleObject = new ContainerType({
   fields: {
     b: number16Type,
     a: byteType,
+  },
+});
+
+export const VariableSizeSimpleObject = new ContainerType({
+  fields: {
+    b: number16Type,
+    a: byteType,
+    list: number16List100Type,
   },
 });
 
@@ -76,7 +84,7 @@ export const ComplexCamelCaseFieldObject = new ContainerType({
   fields: {
     someValue: new NumberUintType({byteLength: 4}),
     someOtherValue: new BooleanType(),
-    container: CamelCaseFieldObject
+    container: CamelCaseFieldObject,
   },
 });
 

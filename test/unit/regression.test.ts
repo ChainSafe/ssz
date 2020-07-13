@@ -13,7 +13,8 @@ describe("known issues", () => {
 
   it("far future epoch from json", function () {
     const Number = new NumberUintType({byteLength: 4});
-    const farFutureEpoch = Number.fromJson("18446744073709551615");
+    const maxBigInt = Number.maxBigInt();
+    const farFutureEpoch = Number.fromJson(maxBigInt.toString());
     expect(farFutureEpoch).to.be.equal(Infinity);
   });
 
@@ -21,6 +22,4 @@ describe("known issues", () => {
     const Number = new NumberUintType({byteLength: 4});
     expect(() => Number.fromJson("18446744073709551616")).to.throw;
   });
-
-
 });

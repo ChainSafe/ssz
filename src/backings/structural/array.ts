@@ -2,14 +2,27 @@
 import {ArrayLike, Json} from "../../interface";
 import {BasicArrayType, CompositeArrayType, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
+import {SszErrorPath} from "../../util/errorPath";
 
 export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends StructuralHandler<T> {
   _type: BasicArrayType<T>;
   getLength(value: T): number {
     throw new Error("Not implemented");
   }
+  getMaxLength(): number {
+    throw new Error("Not implemented");
+  }
+  getMinLength(): number {
+    throw new Error("Not implemented");
+  }
   size(value: T): number {
     return this._type.elementType.size() * this.getLength(value);
+  }
+  maxSize(): number {
+    return this.getMaxLength() * this._type.elementType.maxSize();
+  }
+  minSize(): number {
+    return this.getMinLength() * this._type.elementType.minSize();
   }
   assertValidValue(value: unknown): asserts value is T {
     for (let i = 0; i < this.getLength(value as T); i++) {
@@ -36,11 +49,11 @@ export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends S
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     const elementSize = this._type.elementType.size();
-    return Array.from(
-      {length: (end - start) / elementSize},
-      (_, i) => this._type.elementType.fromBytes(data, start + (i * elementSize))
-    ) as unknown as T;
+    return (Array.from({length: (end - start) / elementSize}, (_, i) =>
+      this._type.elementType.fromBytes(data, start + i * elementSize)
+    ) as unknown) as T;
   }
   toBytes(value: T, output: Uint8Array, offset: number): number {
     const length = this.getLength(value);
@@ -65,22 +78,22 @@ export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends S
     return output;
   }
   fromJson(data: Json[]): T {
-    return Array.from(
-      {length: data.length},
-      (_, i) => this._type.elementType.fromJson(data[i]),
-    ) as unknown as T;
+    return (Array.from({length: data.length}, (_, i) => this._type.elementType.fromJson(data[i])) as unknown) as T;
   }
   toJson(value: T): Json {
-    return Array.from(
-      {length: this.getLength(value)},
-      (_, i) => this._type.elementType.toJson(value[i]),
-    );
+    return Array.from({length: this.getLength(value)}, (_, i) => this._type.elementType.toJson(value[i]));
   }
 }
 
 export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extends StructuralHandler<T> {
   _type: CompositeArrayType<T>;
   getLength(value: T): number {
+    throw new Error("Not implemented");
+  }
+  getMaxLength(): number {
+    throw new Error("Not implemented");
+  }
+  getMinLength(): number {
     throw new Error("Not implemented");
   }
   size(value: T): number {
@@ -92,6 +105,20 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
       return s;
     } else {
       return this._type.elementType.structural.size(null) * this.getLength(value);
+    }
+  }
+  maxSize(): number {
+    if (this._type.elementType.isVariableSize()) {
+      return this.getMaxLength() * 4 + this.getMaxLength() * this._type.elementType.maxSize();
+    } else {
+      return this.getMaxLength() * this._type.elementType.maxSize();
+    }
+  }
+  minSize(): number {
+    if (this._type.elementType.isVariableSize()) {
+      return this.getMinLength() * 4 + this.getMinLength() * this._type.elementType.minSize();
+    } else {
+      return this.getMinLength() * this._type.elementType.minSize();
     }
   }
   assertValidValue(value: unknown): asserts value is T {
@@ -119,8 +146,9 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
     return newValue;
   }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     if (start === end) {
-      return [] as unknown as T;
+      return ([] as unknown) as T;
     }
     if (this._type.elementType.isVariableSize()) {
       const value = [];
@@ -138,32 +166,27 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
           throw new Error("Offset out of bounds");
         }
         nextIndex = currentIndex + 4;
-        nextOffset = nextIndex === firstOffset
-          ? end
-          : start + fixedSection.getUint32(nextIndex, true);
+        nextOffset = nextIndex === firstOffset ? end : start + fixedSection.getUint32(nextIndex, true);
         if (currentOffset > nextOffset) {
           throw new Error("Offsets must be increasing");
         }
-        value.push(
-          this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset)
-        );
+        try {
+          value.push(this._type.elementType.structural.fromBytes(data, currentOffset, nextOffset));
+        } catch (e) {
+          throw new SszErrorPath(e, value.length);
+        }
         currentIndex = nextIndex;
         currentOffset = nextOffset;
       }
       if (firstOffset !== currentIndex) {
         throw new Error("First offset skips variable data");
       }
-      return value as unknown as T;
+      return (value as unknown) as T;
     } else {
       const elementSize = this._type.elementType.structural.size(null);
-      return Array.from(
-        {length: (end - start) / elementSize},
-        (_, i) => this._type.elementType.structural.fromBytes(
-          data,
-          start + (i * elementSize),
-          start + ((i+1) * elementSize)
-        )
-      ) as unknown as T;
+      return (Array.from({length: (end - start) / elementSize}, (_, i) =>
+        this._type.elementType.structural.fromBytes(data, start + i * elementSize, start + (i + 1) * elementSize)
+      ) as unknown) as T;
     }
   }
   toBytes(value: T, output: Uint8Array, offset: number): number {
@@ -190,15 +213,13 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
     return this._type.elementType.hashTreeRoot(value[index]);
   }
   fromJson(data: Json[], options?: IJsonOptions): T {
-    return Array.from(
-      {length: data.length},
-      (_, i) => this._type.elementType.structural.fromJson(data[i], options),
-    ) as unknown as T;
+    return (Array.from({length: data.length}, (_, i) =>
+      this._type.elementType.structural.fromJson(data[i], options)
+    ) as unknown) as T;
   }
   toJson(value: T, options?: IJsonOptions): Json {
-    return Array.from(
-      {length: this.getLength(value)},
-      (_, i) => this._type.elementType.structural.toJson(value[i], options),
+    return Array.from({length: this.getLength(value)}, (_, i) =>
+      this._type.elementType.structural.toJson(value[i], options)
     );
   }
 }

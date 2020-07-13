@@ -14,11 +14,7 @@ export class BasicVectorTreeHandler<T extends Vector<unknown>> extends BasicArra
   }
   defaultNode(): Node {
     if (!this._defaultNode) {
-      this._defaultNode = subtreeFillToLength(
-        zeroNode(0),
-        this.depth(),
-        this._type.chunkCount()
-      );
+      this._defaultNode = subtreeFillToLength(zeroNode(0), this.depth(), this._type.chunkCount());
     }
     return this._defaultNode;
   }
@@ -29,7 +25,7 @@ export class BasicVectorTreeHandler<T extends Vector<unknown>> extends BasicArra
     return this._type.length;
   }
   fromBytes(data: Uint8Array, start: number, end: number): Tree {
-    if ((end - start) !== this._type.size(null)) {
+    if (end - start !== this._type.size(null)) {
       throw new Error("Incorrect deserialized vector length");
     }
     return super.fromBytes(data, start, end);
@@ -79,11 +75,7 @@ export class CompositeVectorTreeHandler<T extends Vector<object>> extends Compos
         this.setSubtreeAtChunk(
           target,
           i,
-          this._type.elementType.tree.fromBytes(
-            data,
-            start + currentOffset,
-            start + nextOffset,
-          ),
+          this._type.elementType.tree.fromBytes(data, start + currentOffset, start + nextOffset)
         );
       }
     } else {
@@ -96,11 +88,7 @@ export class CompositeVectorTreeHandler<T extends Vector<object>> extends Compos
         this.setSubtreeAtChunk(
           target,
           i,
-          this._type.elementType.tree.fromBytes(
-            data,
-            start + (i * elementSize),
-            start + ((i+1) * elementSize),
-          ),
+          this._type.elementType.tree.fromBytes(data, start + i * elementSize, start + (i + 1) * elementSize)
         );
       }
     }

@@ -2,7 +2,17 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 
 import {booleanType, byteType} from "../../src";
-import {ArrayObject, bigint16Type, bitList100Type, bitVector100Type, byteVector100Type, bytes2Type, number16Type, number16Vector6Type, number16List100Type} from "./objects";
+import {
+  ArrayObject,
+  bigint16Type,
+  bitList100Type,
+  bitVector100Type,
+  byteVector100Type,
+  bytes2Type,
+  number16Type,
+  number16Vector6Type,
+  number16List100Type,
+} from "./objects";
 
 describe("defaultValue", () => {
   const testCases: {
@@ -20,7 +30,7 @@ describe("defaultValue", () => {
     {type: ArrayObject, expected: {v: []}},
   ];
   for (const {type, expected} of testCases) {
-    it(`should correctly get the defaultValue for ${type}`, () => {
+    it(`should correctly get the defaultValue for ${type.constructor.name}`, () => {
       const actual = type.defaultValue();
       expect(type.equals(actual, expected));
     });

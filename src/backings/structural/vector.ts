@@ -10,22 +10,32 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
     this._type = type;
   }
   defaultValue(): T {
-    return Array.from({length: this._type.length}, () => {
+    return (Array.from({length: this._type.length}, () => {
       return this._type.elementType.defaultValue();
-    }) as unknown as T;
+    }) as unknown) as T;
   }
   getLength(value: T): number {
     return this._type.length;
   }
-  fromBytes(data: Uint8Array, start: number, end: number): T {
-    if ((end - start) / this._type.elementType.size() !== this._type.length) {
+  getMaxLength(): number {
+    return this._type.length;
+  }
+  getMinLength(): number {
+    return this._type.length;
+  }
+  validateBytes(data: Uint8Array, start: number, end: number): void {
+    super.validateBytes(data, start, end);
+    if (end - start !== this.size(null)) {
       throw new Error("Incorrect deserialized vector length");
     }
+  }
+  fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     return super.fromBytes(data, start, end);
   }
   assertValidValue(value: unknown): asserts value is T {
     const actualLength = (value as T).length;
-    const expectedLength = this.getLength((value as T));
+    const expectedLength = this.getLength(value as T);
     if (actualLength !== expectedLength) {
       throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
     }
@@ -51,14 +61,21 @@ export class CompositeVectorStructuralHandler<T extends Vector<object>> extends 
     this._type = type;
   }
   defaultValue(): T {
-    return Array.from({length: this._type.length}, () => {
+    return (Array.from({length: this._type.length}, () => {
       return this._type.elementType.structural.defaultValue();
-    }) as unknown as T;
+    }) as unknown) as T;
   }
   getLength(value: T): number {
     return this._type.length;
   }
+  getMaxLength(): number {
+    return this._type.length;
+  }
+  getMinLength(): number {
+    return this._type.length;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     const value = super.fromBytes(data, start, end);
     if (value.length !== this._type.length) {
       throw new Error("Incorrect deserialized vector length");

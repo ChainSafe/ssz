@@ -37,10 +37,4 @@ export interface ObjectLike {
 /**
  * The Json interface is used for json-serializable input
  */
-export type Json =
-    | string
-    | number
-    | boolean
-    | null
-    | { [property: string]: Json }
-    | Json[];
+export type Json = string | number | boolean | null | {[property: string]: Json} | Json[];

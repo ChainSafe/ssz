@@ -1,7 +1,17 @@
 import {Json} from "../../interface";
-import {BasicType} from "./abstract";
+import {BasicType, isTypeOf} from "./abstract";
+
+export const BOOLEAN_TYPE = Symbol.for("ssz/BooleanType");
+
+export function isBooleanType(type: unknown): type is BooleanType {
+  return isTypeOf(type, BOOLEAN_TYPE);
+}
 
 export class BooleanType extends BasicType<boolean> {
+  constructor() {
+    super();
+    this._typeSymbols.add(BOOLEAN_TYPE);
+  }
   size(): number {
     return 1;
   }
@@ -21,6 +31,7 @@ export class BooleanType extends BasicType<boolean> {
     return offset + 1;
   }
   fromBytes(data: Uint8Array, offset: number): boolean {
+    this.validateBytes(data, offset);
     if (data[offset] === 1) {
       return true;
     } else if (data[offset] === 0) {

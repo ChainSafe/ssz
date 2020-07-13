@@ -3,14 +3,31 @@ import {describe, it} from "mocha";
 
 import {booleanType, byteType, ContainerType, ListType} from "../../src";
 import {
-  ArrayObject, ArrayObject2, bigint16Type, bigint64Type, bigint128Type, bigint256Type, bitList100Type, bitVector100Type, byteVector100Type,
-  bytes2Type, bytes4Type, bytes8Type, bytes32Type,
-  number16Type, number32Type, number64Type, number16Vector6Type, number16List100Type, OuterObject, SimpleObject
+  ArrayObject,
+  ArrayObject2,
+  bigint16Type,
+  bigint64Type,
+  bigint128Type,
+  bigint256Type,
+  bitList100Type,
+  bitVector100Type,
+  byteVector100Type,
+  bytes2Type,
+  bytes4Type,
+  bytes8Type,
+  bytes32Type,
+  number16Type,
+  number32Type,
+  number64Type,
+  number16Vector6Type,
+  number16List100Type,
+  OuterObject,
+  SimpleObject,
 } from "./objects";
 
 describe("hashTreeRoot", () => {
   const testCases: {
-    value: any,
+    value: any;
     type: any;
     expected: string;
   }[] = [
@@ -19,36 +36,53 @@ describe("hashTreeRoot", () => {
     {value: 0, type: byteType, expected: ""},
     {value: 1, type: byteType, expected: ""},
     {value: 255, type: byteType, expected: ""},
-    {value: 2**8, type: number16Type, expected: ""},
-    {value: 2**12-1, type: number16Type, expected: ""},
-    {value: 2**12, type: number16Type, expected: ""},
-    {value: 2**16-1, type: number16Type, expected: ""},
-    {value: 2**16, type: number32Type, expected: ""},
-    {value: 2**28-1, type: number32Type, expected: ""},
-    {value: 2**28, type: number32Type, expected: ""},
-    {value: 2**32-1, type: number32Type, expected: ""},
-    {value: 2**32, type: number64Type, expected: ""},
-    {value: 2**52-1, type: number64Type, expected: ""},
-    {value: 2**32, type: number64Type, expected: ""},
-    {value: 2**52-1, type: number64Type, expected: ""},
-    {value: 0x1n , type: bigint64Type, expected: ""},
+    {value: 2 ** 8, type: number16Type, expected: ""},
+    {value: 2 ** 12 - 1, type: number16Type, expected: ""},
+    {value: 2 ** 12, type: number16Type, expected: ""},
+    {value: 2 ** 16 - 1, type: number16Type, expected: ""},
+    {value: 2 ** 16, type: number32Type, expected: ""},
+    {value: 2 ** 28 - 1, type: number32Type, expected: ""},
+    {value: 2 ** 28, type: number32Type, expected: ""},
+    {value: 2 ** 32 - 1, type: number32Type, expected: ""},
+    {value: 2 ** 32, type: number64Type, expected: ""},
+    {value: 2 ** 52 - 1, type: number64Type, expected: ""},
+    {value: 2 ** 32, type: number64Type, expected: ""},
+    {value: 2 ** 52 - 1, type: number64Type, expected: ""},
+    {value: 0x1n, type: bigint64Type, expected: ""},
     {value: 0x1000000000000000n, type: bigint64Type, expected: ""},
     {value: 0xffffffffffffffffn, type: bigint64Type, expected: ""},
     {value: 0xffffffffffffffffffffffffffffffffn, type: bigint128Type, expected: ""},
     {
-      value: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn
-      , type: bigint256Type, expected: ""
+      value: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn,
+      type: bigint256Type,
+      expected: "",
     },
-    {value: {b:0,a:0}, type: SimpleObject, expected: ""},
-    {value: {b:2,a:1}, type: SimpleObject, expected: ""},
-    {value: {v:3, subV:{v:6}}, type: OuterObject, expected: ""},
-    {value: {v: [{b:2,a:1}, {b:4,a:3}]}, type: ArrayObject, expected: ""},
-    {value: [{v:3, subV:{v:6}}, {v:5, subV:{v:7}}], type: ArrayObject2, expected: ""},
+    {value: {b: 0, a: 0}, type: SimpleObject, expected: ""},
+    {value: {b: 2, a: 1}, type: SimpleObject, expected: ""},
+    {value: {v: 3, subV: {v: 6}}, type: OuterObject, expected: ""},
+    {
+      value: {
+        v: [
+          {b: 2, a: 1},
+          {b: 4, a: 3},
+        ],
+      },
+      type: ArrayObject,
+      expected: "",
+    },
+    {
+      value: [
+        {v: 3, subV: {v: 6}},
+        {v: 5, subV: {v: 7}},
+      ],
+      type: ArrayObject2,
+      expected: "",
+    },
     {value: [], type: number16List100Type, expected: ""},
     {value: [], type: ArrayObject2, expected: ""},
   ];
   for (const {type, value} of testCases) {
-    it(`should correctly hash ${type}`, () => {
+    it(`should correctly hash ${type.constructor.name}`, () => {
       const actual = Buffer.from(type.hashTreeRoot(value)).toString("hex");
       assert(actual);
     });
@@ -63,7 +97,7 @@ describe("hashTreeRoot", () => {
       // @ts-ignore
       elementType: number64Type,
       // VALIDATOR_REGISTRY_LIMIT
-      limit: 1099511627776
+      limit: 1099511627776,
     });
     // This is the logic to calculate activeIndexRoots in processFinalUpdates
     const hash = Buffer.from(type.hashTreeRoot(validatorIndexes)).toString("hex");
@@ -73,7 +107,7 @@ describe("hashTreeRoot", () => {
 
   it("should be able to hash inner object as list of basic object", () => {
     const accountBalances: {balances: bigint[]} = {
-      balances: []
+      balances: [],
     };
     const count = 2;
     for (let i = 0; i < count; i++) {
@@ -81,8 +115,8 @@ describe("hashTreeRoot", () => {
     }
     const accountBalancesType = new ContainerType({
       fields: {
-        balances: new ListType({elementType: bigint64Type, limit: count})
-      }
+        balances: new ListType({elementType: bigint64Type, limit: count}),
+      },
     });
     const hash = Buffer.from(accountBalancesType.hashTreeRoot(accountBalances)).toString("hex");
     assert(hash);
@@ -96,18 +130,17 @@ describe("hashTreeRoot", () => {
     const fork = {
       previousVersion,
       curVersion,
-      epoch: 11971467576204192310n
+      epoch: 11971467576204192310n,
     };
     const forkType = new ContainerType({
       fields: {
         previousVersion: bytes4Type,
         curVersion: bytes4Type,
-        epoch: bigint64Type
-      }
+        epoch: bigint64Type,
+      },
     });
     const finalHash = Buffer.from(forkType.hashTreeRoot(fork)).toString("hex");
     const want = "3ad1264c33bc66b43a49b1258b88f34b8dbfa1649f17e6df550f589650d34992";
     assert.strictEqual(finalHash, want, "finalHash does not match");
   });
 });
-

@@ -19,6 +19,12 @@ export class BitVectorStructuralHandler extends BasicVectorStructuralHandler<Bit
   size(value: BitVector): number {
     return Math.ceil(this._type.length / 8);
   }
+  maxSize(): number {
+    return this.size(null);
+  }
+  minSize(): number {
+    return this.size(null);
+  }
   getByte(value: BitVector, index: number): number {
     const firstBitIndex = index * 8;
     const lastBitIndex = Math.min(firstBitIndex + 7, value.length - 1);
@@ -29,20 +35,22 @@ export class BitVectorStructuralHandler extends BasicVectorStructuralHandler<Bit
     return Number(bitstring);
   }
   fromBytes(data: Uint8Array, start: number, end: number): BitVector {
-    if ((end - start) !== this.size(null)) {
+    this.validateBytes(data, start, end);
+    if (end - start !== this.size(null)) {
       throw new Error("Invalid bitvector: length not equal to vector length");
     }
     const value = [];
     const getByteBits = this._type.byteArray.getByteBits;
-    for (let i = start; i < end-1; i++) {
+    for (let i = start; i < end - 1; i++) {
       value.push(...getByteBits(data, i));
     }
-    const lastBitLength = (this._type.length) % 8;
-    if (!lastBitLength) { // vector takes up the whole byte, no need for checks
+    const lastBitLength = this._type.length % 8;
+    if (!lastBitLength) {
+      // vector takes up the whole byte, no need for checks
       value.push(...getByteBits(data, end - 1));
     } else {
       const lastBits = this._type.byteArray.getByteBits(data, end - 1);
-      if (lastBits.slice(lastBitLength).some(b => b)) {
+      if (lastBits.slice(lastBitLength).some((b) => b)) {
         throw new Error("Invalid bitvector: nonzero bits past length");
       }
       value.push(...lastBits.slice(0, lastBitLength));

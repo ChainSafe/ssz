@@ -31,15 +31,22 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
       return this.getByteLength(value);
     }
   }
+  maxSize(): number {
+    return Math.ceil(this._type.limit / 8) + 1;
+  }
+  minSize(): number {
+    return 1;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): BitList {
+    this.validateBytes(data, start, end);
     const value = [];
-    const toBool = (c: string): boolean => c === "1" ? true : false;
-    for (let i = start; i < end-1; i++) {
+    const toBool = (c: string): boolean => (c === "1" ? true : false);
+    for (let i = start; i < end - 1; i++) {
       let bitstring = data[i].toString(2);
       bitstring = "0".repeat(8 - bitstring.length) + bitstring;
       value.push(...Array.prototype.map.call(bitstring, toBool).reverse());
     }
-    const lastByte = data[end-1];
+    const lastByte = data[end - 1];
     if (lastByte === 0) {
       throw new Error("Invalid deserialized bitlist, padding bit required");
     }
@@ -64,13 +71,13 @@ export class BitListStructuralHandler extends BasicListStructuralHandler<BitList
       output[newOffset] = 1;
       return newOffset + 1;
     } else {
-      output[newOffset - 1] |= 1 << (value.length % 8);
+      output[newOffset - 1] |= 1 << value.length % 8;
       return newOffset;
     }
   }
   chunk(value: BitList, index: number): Uint8Array {
     const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.getByteLength(value) - index);
+    const byteLength = Math.min(32, this.getByteLength(value) - index * 32);
     for (let i = 0; i < byteLength; i++) {
       output[i] = this.getByte(value, i + index);
     }

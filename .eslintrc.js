@@ -18,7 +18,8 @@ module.exports = {
   },
   plugins: [
     "@typescript-eslint",
-    "eslint-plugin-import"
+    "eslint-plugin-import",
+    "prettier"
   ],
   extends: [
     "eslint:recommended",
@@ -29,6 +30,7 @@ module.exports = {
   ],
   settings: {},
   rules: {
+    "prettier/prettier": "error",
     //doesnt work, it reports false errors
     "constructor-super": "off",
     "@typescript-eslint/class-name-casing": "error",
@@ -36,7 +38,6 @@ module.exports = {
       "allowExpressions": true
     }],
     "@typescript-eslint/func-call-spacing": "error",
-    "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/interface-name-prefix": ["error", "always"],
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/no-explicit-any": "error",

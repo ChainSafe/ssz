@@ -10,19 +10,29 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
     this._type = type;
   }
   defaultValue(): T {
-    return [] as unknown as T;
+    return ([] as unknown) as T;
   }
   getLength(value: T): number {
     return value.length;
   }
-  fromBytes(data: Uint8Array, start: number, end: number): T {
-    if ((end - start) / this._type.elementType.size() > this._type.limit) {
+  getMaxLength(): number {
+    return this._type.limit;
+  }
+  getMinLength(): number {
+    return 0;
+  }
+  validateBytes(data: Uint8Array, start: number, end: number): void {
+    super.validateBytes(data, start, end);
+    if (end - start > this.maxSize()) {
       throw new Error("Deserialized list length greater than limit");
     }
+  }
+  fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     return super.fromBytes(data, start, end);
   }
   nonzeroChunkCount(value: T): number {
-    return Math.ceil(value.length * this._type.elementType.size() / 32);
+    return Math.ceil((value.length * this._type.elementType.size()) / 32);
   }
   hashTreeRoot(value: T): Uint8Array {
     return mixInLength(super.hashTreeRoot(value), value.length);
@@ -46,12 +56,19 @@ export class CompositeListStructuralHandler<T extends List<object>> extends Comp
     this._type = type;
   }
   defaultValue(): T {
-    return [] as unknown as T;
+    return ([] as unknown) as T;
   }
   getLength(value: T): number {
     return value.length;
   }
+  getMaxLength(): number {
+    return this._type.limit;
+  }
+  getMinLength(): number {
+    return 0;
+  }
   fromBytes(data: Uint8Array, start: number, end: number): T {
+    this.validateBytes(data, start, end);
     const value = super.fromBytes(data, start, end);
     if (value.length > this._type.limit) {
       throw new Error("Deserialized list length greater than limit");

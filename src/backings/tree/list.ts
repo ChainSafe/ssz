@@ -74,7 +74,7 @@ export class BasicListTreeHandler<T extends List<unknown>> extends BasicArrayTre
   }
   push(target: Tree, ...values: T[number][]): number {
     let newLength;
-    values.forEach((value) => newLength = this.pushSingle(target, value));
+    values.forEach((value) => (newLength = this.pushSingle(target, value)));
     return newLength;
   }
   pop(target: Tree): T[number] {
@@ -124,11 +124,7 @@ export class CompositeListTreeHandler<T extends List<object>> extends CompositeA
         this.setSubtreeAtChunk(
           target,
           i,
-          this._type.elementType.tree.fromBytes(
-            data,
-            start + currentOffset,
-            start + nextOffset,
-          ),
+          this._type.elementType.tree.fromBytes(data, start + currentOffset, start + nextOffset)
         );
       }
       this.setLength(target, offsets.length);
@@ -145,12 +141,8 @@ export class CompositeListTreeHandler<T extends List<object>> extends CompositeA
         this.setSubtreeAtChunk(
           target,
           i,
-          this._type.elementType.tree.fromBytes(
-            data,
-            start + (i * elementSize),
-            start + ((i+1) * elementSize),
-          ),
-          true, // expand tree as needed
+          this._type.elementType.tree.fromBytes(data, start + i * elementSize, start + (i + 1) * elementSize),
+          true // expand tree as needed
         );
       }
       this.setLength(target, length);
@@ -190,7 +182,7 @@ export class CompositeListTreeHandler<T extends List<object>> extends CompositeA
   }
   push(target: Tree, ...values: T[number][]): number {
     let newLength;
-    values.forEach((value) => newLength = this.pushSingle(target, value));
+    values.forEach((value) => (newLength = this.pushSingle(target, value)));
     return newLength;
   }
   pop(target: Tree): T[number] {
