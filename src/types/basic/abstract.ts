@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
+import {IJsonOptions} from "../type";
 
 /**
  * Check if `type` is an instance of `typeSymbol` type
@@ -165,7 +166,7 @@ export class BasicType<T> {
   /**
    * Convert to JSON-serializable object
    */
-  toJson(value: T): Json {
+  toJson(value: T, options?: IJsonOptions): Json {
     throw new Error("Not implemented");
   }
 }

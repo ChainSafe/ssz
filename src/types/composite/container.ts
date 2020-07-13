@@ -4,9 +4,9 @@ import {isTypeOf} from "../basic";
 import {Type} from "../type";
 import {ContainerStructuralHandler, ContainerTreeHandler, ContainerByteArrayHandler} from "../../backings";
 
-export interface IContainerOptions {
+export interface IContainerOptions<T extends ObjectLike = ObjectLike> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: Record<string, Type<any>>;
+  fields: Record<keyof T, Type<any>>;
 }
 
 export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
@@ -17,9 +17,8 @@ export function isContainerType<T extends ObjectLike = ObjectLike>(type: unknown
 
 export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeType<T> {
   // ES6 ensures key order is chronological
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: Record<string, Type<any>>;
-  constructor(options: IContainerOptions) {
+  fields: IContainerOptions<T>["fields"];
+  constructor(options: IContainerOptions<T>) {
     super();
     this.fields = {...options.fields};
     this.structural = new ContainerStructuralHandler(this);
