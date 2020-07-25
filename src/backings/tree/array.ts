@@ -161,17 +161,21 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     if (this._type.elementType.isVariableSize()) {
       let variableIndex = offset + length * 4;
       const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
-      for (let i = 0; i < length; i++) {
+      let i = 0;
+      for (const node of target.iterateNodesAtDepth(this.depth(), i, length)) {
         // write offset
         fixedSection.setUint32(i * 4, variableIndex - offset, true);
         // write serialized element to variable section
-        variableIndex = this._type.elementType.tree.toBytes(this.getSubtreeAtChunk(target, i), output, variableIndex);
+        variableIndex = this._type.elementType.tree.toBytes(new Tree(node), output, variableIndex);
+        i++;
       }
       return variableIndex;
     } else {
       let index = offset;
-      for (let i = 0; i < length; i++) {
-        index = this._type.elementType.tree.toBytes(this.getSubtreeAtChunk(target, i), output, index);
+      let i = 0;
+      for (const node of target.iterateNodesAtDepth(this.depth(), i, length)) {
+        index = this._type.elementType.tree.toBytes(new Tree(node), output, index);
+        i++;
       }
       return index;
     }
