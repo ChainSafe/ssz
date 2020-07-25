@@ -81,21 +81,25 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       );
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
-    Object.values(this._type.fields).forEach((fieldType, i) => {
+    let i = 0;
+    const fieldTypes = Object.values(this._type.fields);
+    for (const node of target.iterateNodesAtDepth(this.depth(), i, fieldTypes.length)) {
+      const fieldType = fieldTypes[i];
       if (fieldType.isBasic()) {
         const s = fieldType.size();
-        output.set(this.getRootAtChunk(target, i).slice(0, s), fixedIndex);
+        output.set(node.root.slice(0, s), fixedIndex);
         fixedIndex += s;
       } else if (fieldType.isVariableSize()) {
         // write offset
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
-        variableIndex = fieldType.tree.toBytes(this.getSubtreeAtChunk(target, i), output, variableIndex);
+        variableIndex = fieldType.tree.toBytes(new Tree(node), output, variableIndex);
       } else {
-        fixedIndex = fieldType.tree.toBytes(this.getSubtreeAtChunk(target, i), output, fixedIndex);
+        fixedIndex = fieldType.tree.toBytes(new Tree(node), output, fixedIndex);
       }
-    });
+      i++;
+    }
     return variableIndex;
   }
   gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
