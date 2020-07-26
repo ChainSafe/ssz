@@ -42,13 +42,17 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
   }
   toBytes(target: Tree, output: Uint8Array, offset: number): number {
     const size = this.size(target);
+    const fullChunkCount = Math.floor(size / 32);
+    const remainder = size % 32;
     let i = 0;
-    let chunkIndex = 0;
-    for (; i < size - 31; i += 32, chunkIndex += 1) {
-      output.set(this.getRootAtChunk(target, chunkIndex), offset + i);
+    if (fullChunkCount > 0) {
+      for (const node of target.iterateNodesAtDepth(this.depth(), 0, fullChunkCount)) {
+        output.set(node.root, offset + i * 32);
+        i++;
+      }
     }
-    if (i !== size) {
-      output.set(this.getRootAtChunk(target, chunkIndex).slice(0, size - i), offset + i);
+    if (remainder) {
+      output.set(this.getRootAtChunk(target, fullChunkCount).slice(0, remainder), offset + i * 32);
     }
     return offset + size;
   }
