@@ -222,7 +222,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
   }
   *[Symbol.iterator](target: Tree): Iterable<PropOfCompositeTreeBacked<T, number>> {
     const elementTreeHandler = this._type.elementType.tree;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       yield elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<T, number>;
     }
   }
@@ -233,7 +233,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     const value = this.asTreeBacked(target);
     const elementTreeHandler = this._type.elementType.tree;
     let i = 0;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       const elementValue = elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<
         T,
         number
@@ -252,7 +252,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     const value = this.asTreeBacked(target);
     const elementTreeHandler = this._type.elementType.tree;
     let i = 0;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       const elementValue = elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<
         T,
         number
@@ -268,7 +268,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     const value = this.asTreeBacked(target);
     const elementTreeHandler = this._type.elementType.tree;
     let i = 0;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       const elementValue = elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<
         T,
         number
