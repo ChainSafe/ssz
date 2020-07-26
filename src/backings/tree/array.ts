@@ -138,6 +138,44 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
       fn(this.getValueAtIndex(target, i), i, value);
     }
   }
+  readOnlyForEach(target: Tree, fn: (value: unknown, index: number) => void): void {
+    const elementType = this._type.elementType;
+    const length = this.getLength(target);
+    const elementSize = this._type.elementType.size();
+    const elementsPerChunk = 32 / elementSize;
+    if (!Number.isInteger(elementsPerChunk)) {
+      throw new Error("Unable to iterate over unaligned basic array");
+    }
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, Math.ceil(length / elementsPerChunk))) {
+      const chunk = node.root;
+      for (let j = 0; j < elementsPerChunk && i < length; j++) {
+        const elementValue = elementType.fromBytes(chunk, (i % elementsPerChunk) * elementSize);
+        fn(elementValue, i);
+        i++;
+      }
+    }
+  }
+  readOnlyMap<T>(target: Tree, fn: (value: unknown, index: number) => T): T[] {
+    const elementType = this._type.elementType;
+    const length = this.getLength(target);
+    const elementSize = this._type.elementType.size();
+    const elementsPerChunk = 32 / elementSize;
+    if (!Number.isInteger(elementsPerChunk)) {
+      throw new Error("Unable to iterate over unaligned basic array");
+    }
+    const result: T[] = [];
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, Math.ceil(length / elementsPerChunk))) {
+      const chunk = node.root;
+      for (let j = 0; j < elementsPerChunk && i < length; j++) {
+        const elementValue = elementType.fromBytes(chunk, (i % elementsPerChunk) * elementSize);
+        result.push(fn(elementValue, i));
+        i++;
+      }
+    }
+    return result;
+  }
 }
 
 export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends TreeHandler<T> {
@@ -284,5 +322,27 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
       fn(elementValue, i, value);
       i++;
     }
+  }
+  readOnlyForEach(target: Tree, fn: (value: unknown, index: number) => void): void {
+    const elementTreeHandler = this._type.elementType.tree;
+    const length = this.getLength(target);
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, length)) {
+      const elementValue = elementTreeHandler.asTreeBacked(new Tree(node));
+      fn(elementValue, i);
+      i++;
+    }
+  }
+  readOnlyMap<T>(target: Tree, fn: (value: unknown, index: number) => T): T[] {
+    const elementTreeHandler = this._type.elementType.tree;
+    const length = this.getLength(target);
+    const result: T[] = [];
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, length)) {
+      const elementValue = elementTreeHandler.asTreeBacked(new Tree(node));
+      result.push(fn(elementValue, i));
+      i++;
+    }
+    return result;
   }
 }

@@ -83,4 +83,34 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     target.setRoot(chunkGindex, chunk, expand);
     return true;
   }
+  readOnlyForEach(target: Tree, fn: (value: unknown, index: number) => void): void {
+    const length = this.getLength(target);
+    const elementsPerChunk = 256;
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, Math.ceil(length / elementsPerChunk))) {
+      const chunk = node.root;
+      for (let j = 0; j < elementsPerChunk && i < length; j++) {
+        const byte = chunk[this.getChunkOffset(i)];
+        const elementValue = !!(byte & (1 << this.getBitOffset(i)));
+        fn(elementValue, i);
+        i++;
+      }
+    }
+  }
+  readOnlyMap<T>(target: Tree, fn: (value: unknown, index: number) => T): T[] {
+    const length = this.getLength(target);
+    const elementsPerChunk = 256;
+    const result: T[] = [];
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, Math.ceil(length / elementsPerChunk))) {
+      const chunk = node.root;
+      for (let j = 0; j < elementsPerChunk && i < length; j++) {
+        const byte = chunk[this.getChunkOffset(i)];
+        const elementValue = !!(byte & (1 << this.getBitOffset(i)));
+        result.push(fn(elementValue, i));
+        i++;
+      }
+    }
+    return result;
+  }
 }
