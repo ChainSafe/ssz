@@ -113,7 +113,7 @@ export class Tree {
    * starting from the `startIndex`-indexed node
    * iterating through `count` nodes
    */
-  *iterateNodesAtDepth(startIndex: number, count: number, depth: number): IterableIterator<Node> {
+  *iterateNodesAtDepth(depth: number, startIndex: number, count: number): IterableIterator<Node> {
     // Strategy:
     // First nagivate to the starting Gindex node,
     // At each level record the tuple (current node, the navigation direction) in a list (Left=0, Right=1)
@@ -142,7 +142,7 @@ export class Tree {
     }
     let node = this.rootNode;
     let currCount = 0;
-    const startGindex = toGindexBitstring(BigInt(startIndex), depth);
+    const startGindex = toGindexBitstring(depth, BigInt(startIndex));
     const nav: [Node, Bit][] = [];
     for (const i of gindexIterator(startGindex)) {
       nav.push([node, i]);

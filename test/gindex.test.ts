@@ -26,15 +26,15 @@ describe("bigIndexBigInt", () => {
     }
 });
 
-describe("iterateAtDelth", () => {
+describe("iterateAtDepth", () => {
   const testCases: {
-    input: [bigint, bigint, number];
+    input: [number, bigint, bigint];
     expected: bigint[];
   }[] = [
-    {input: [BigInt(0), BigInt(0), 3], expected: []},
-    {input: [BigInt(0), BigInt(1), 3], expected: [BigInt(8)]},
-    {input: [BigInt(1), BigInt(1), 3], expected: [BigInt(9)]},
-    {input: [BigInt(1), BigInt(2), 3], expected: [BigInt(9), BigInt(10)]},
+    {input: [3, BigInt(0), BigInt(0)], expected: []},
+    {input: [3, BigInt(0), BigInt(1)], expected: [BigInt(8)]},
+    {input: [3, BigInt(1), BigInt(1)], expected: [BigInt(9)]},
+    {input: [3, BigInt(1), BigInt(2)], expected: [BigInt(9), BigInt(10)]},
   ];
   for (const {input, expected} of testCases) {
     it(`should correctly iterate at depth`, () => {

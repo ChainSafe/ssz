@@ -2,16 +2,16 @@ import { expect } from "chai";
 
 import { Tree, zeroNode, LeafNode, subtreeFillToContents } from "../src";
 
-describe("tree fast iteration", () => {
+describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
     const depth = 4;
     const zero = zeroNode(0).root;
     const tree = new Tree(zeroNode(4));
-    for (const n of tree.iterateNodesAtDepth(BigInt(0), BigInt(4), depth)) {
+    for (const n of tree.iterateNodesAtDepth(depth, 0, 4)) {
       expect(n.root).to.be.deep.equal(zero);
     }
     const one = zeroNode(1).root;
-    for (const n of tree.iterateNodesAtDepth(BigInt(0), BigInt(4), depth-1)) {
+    for (const n of tree.iterateNodesAtDepth(depth-1, 0, 4)) {
       expect(n.root).to.be.deep.equal(one);
     }
   });
@@ -26,7 +26,7 @@ describe("tree fast iteration", () => {
     for (let i = 0; i < length; i++) {
       for (let j = length - i - 1; j > 1; j--) {
         let k = i;
-        for (const n of tree.iterateNodesAtDepth(BigInt(i), BigInt(j), depth)) {
+        for (const n of tree.iterateNodesAtDepth(depth, i, j)) {
           expect(n.root).to.be.deep.equal(leaves[k].root);
           k++;
         }
