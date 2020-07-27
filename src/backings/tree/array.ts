@@ -42,13 +42,17 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
   }
   toBytes(target: Tree, output: Uint8Array, offset: number): number {
     const size = this.size(target);
+    const fullChunkCount = Math.floor(size / 32);
+    const remainder = size % 32;
     let i = 0;
-    let chunkIndex = 0;
-    for (; i < size - 31; i += 32, chunkIndex += 1) {
-      output.set(this.getRootAtChunk(target, chunkIndex), offset + i);
+    if (fullChunkCount > 0) {
+      for (const node of target.iterateNodesAtDepth(this.depth(), 0, fullChunkCount)) {
+        output.set(node.root, offset + i * 32);
+        i++;
+      }
     }
-    if (i !== size) {
-      output.set(this.getRootAtChunk(target, chunkIndex).slice(0, size - i), offset + i);
+    if (remainder) {
+      output.set(this.getRootAtChunk(target, fullChunkCount).slice(0, remainder), offset + i * 32);
     }
     return offset + size;
   }
@@ -134,6 +138,44 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
       fn(this.getValueAtIndex(target, i), i, value);
     }
   }
+  readOnlyForEach(target: Tree, fn: (value: unknown, index: number) => void): void {
+    const elementType = this._type.elementType;
+    const length = this.getLength(target);
+    const elementSize = this._type.elementType.size();
+    const elementsPerChunk = 32 / elementSize;
+    if (!Number.isInteger(elementsPerChunk)) {
+      throw new Error("Unable to iterate over unaligned basic array");
+    }
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, Math.ceil(length / elementsPerChunk))) {
+      const chunk = node.root;
+      for (let j = 0; j < elementsPerChunk && i < length; j++) {
+        const elementValue = elementType.fromBytes(chunk, (i % elementsPerChunk) * elementSize);
+        fn(elementValue, i);
+        i++;
+      }
+    }
+  }
+  readOnlyMap<T>(target: Tree, fn: (value: unknown, index: number) => T): T[] {
+    const elementType = this._type.elementType;
+    const length = this.getLength(target);
+    const elementSize = this._type.elementType.size();
+    const elementsPerChunk = 32 / elementSize;
+    if (!Number.isInteger(elementsPerChunk)) {
+      throw new Error("Unable to iterate over unaligned basic array");
+    }
+    const result: T[] = [];
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, Math.ceil(length / elementsPerChunk))) {
+      const chunk = node.root;
+      for (let j = 0; j < elementsPerChunk && i < length; j++) {
+        const elementValue = elementType.fromBytes(chunk, (i % elementsPerChunk) * elementSize);
+        result.push(fn(elementValue, i));
+        i++;
+      }
+    }
+    return result;
+  }
 }
 
 export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends TreeHandler<T> {
@@ -161,17 +203,21 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     if (this._type.elementType.isVariableSize()) {
       let variableIndex = offset + length * 4;
       const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
-      for (let i = 0; i < length; i++) {
+      let i = 0;
+      for (const node of target.iterateNodesAtDepth(this.depth(), i, length)) {
         // write offset
         fixedSection.setUint32(i * 4, variableIndex - offset, true);
         // write serialized element to variable section
-        variableIndex = this._type.elementType.tree.toBytes(this.getSubtreeAtChunk(target, i), output, variableIndex);
+        variableIndex = this._type.elementType.tree.toBytes(new Tree(node), output, variableIndex);
+        i++;
       }
       return variableIndex;
     } else {
       let index = offset;
-      for (let i = 0; i < length; i++) {
-        index = this._type.elementType.tree.toBytes(this.getSubtreeAtChunk(target, i), output, index);
+      let i = 0;
+      for (const node of target.iterateNodesAtDepth(this.depth(), i, length)) {
+        index = this._type.elementType.tree.toBytes(new Tree(node), output, index);
+        i++;
       }
       return index;
     }
@@ -222,7 +268,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
   }
   *[Symbol.iterator](target: Tree): Iterable<PropOfCompositeTreeBacked<T, number>> {
     const elementTreeHandler = this._type.elementType.tree;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       yield elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<T, number>;
     }
   }
@@ -233,7 +279,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     const value = this.asTreeBacked(target);
     const elementTreeHandler = this._type.elementType.tree;
     let i = 0;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       const elementValue = elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<
         T,
         number
@@ -252,7 +298,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     const value = this.asTreeBacked(target);
     const elementTreeHandler = this._type.elementType.tree;
     let i = 0;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       const elementValue = elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<
         T,
         number
@@ -268,7 +314,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     const value = this.asTreeBacked(target);
     const elementTreeHandler = this._type.elementType.tree;
     let i = 0;
-    for (const gindex of iterateAtDepth(BigInt(0), BigInt(this.getLength(target)), this.depth())) {
+    for (const gindex of iterateAtDepth(this.depth(), BigInt(0), BigInt(this.getLength(target)))) {
       const elementValue = elementTreeHandler.asTreeBacked(target.getSubtree(gindex)) as PropOfCompositeTreeBacked<
         T,
         number
@@ -276,5 +322,27 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
       fn(elementValue, i, value);
       i++;
     }
+  }
+  readOnlyForEach(target: Tree, fn: (value: unknown, index: number) => void): void {
+    const elementTreeHandler = this._type.elementType.tree;
+    const length = this.getLength(target);
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, length)) {
+      const elementValue = elementTreeHandler.asTreeBacked(new Tree(node));
+      fn(elementValue, i);
+      i++;
+    }
+  }
+  readOnlyMap<T>(target: Tree, fn: (value: unknown, index: number) => T): T[] {
+    const elementTreeHandler = this._type.elementType.tree;
+    const length = this.getLength(target);
+    const result: T[] = [];
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, length)) {
+      const elementValue = elementTreeHandler.asTreeBacked(new Tree(node));
+      result.push(fn(elementValue, i));
+      i++;
+    }
+    return result;
   }
 }

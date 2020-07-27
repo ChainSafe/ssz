@@ -240,7 +240,7 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
     return this._depth;
   }
   gindexOfChunk(target: Tree, index: number): Gindex {
-    return toGindex(BigInt(index), this.depth());
+    return toGindex(this.depth(), BigInt(index));
   }
   getSubtreeAtChunk(target: Tree, index: number): Tree {
     return target.getSubtree(this.gindexOfChunk(target, index));
