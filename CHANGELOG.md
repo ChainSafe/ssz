@@ -1,3 +1,13 @@
+## 0.6.10 (2020-07-27)
+
+## Features
+
+- Add readOnlyForEach and readOnlyMap functions ([356d70](https://github.com/chainsafe/ssz/commit/356d70))
+
+## Chores
+
+- Use readonly tree iteration in tree-backed toBytes ([356d70](https://github.com/chainsafe/ssz/commit/356d70))
+
 ## 0.6.9 (2020-07-09)
 
 ### Bug Fixes
