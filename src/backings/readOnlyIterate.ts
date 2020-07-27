@@ -1,23 +1,27 @@
 import {ArrayLike} from "../interface";
 
-export function readOnlyForEach<T>(value: ArrayLike<T>, fn: (value: T, index: number) => void): void {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((value as any).readOnlyForEach) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (value as any).readOnlyForEach(fn);
+export type ForEachFn<T> = (value: T, index: number) => void;
+export type MapFn<T, U> = (value: T, index: number) => U;
+
+export type ReadOnlyIterable<T> = {
+  readOnlyForEach(fn: ForEachFn<T>): void;
+  readOnlyMap<U>(fn: MapFn<T, U>): U[];
+};
+
+export function readOnlyForEach<T>(value: ArrayLike<T> | ReadOnlyIterable<T>, fn: ForEachFn<T>): void {
+  if ((value as ReadOnlyIterable<T>).readOnlyForEach) {
+    (value as ReadOnlyIterable<T>).readOnlyForEach(fn);
   } else {
-    value.forEach(fn);
+    (value as ArrayLike<T>).forEach(fn);
   }
 }
 
-export function readOnlyMap<T, U>(value: ArrayLike<T>, fn: (value: T, index: number) => U): U[] {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((value as any).readOnlyMap) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (value as any).readOnlyMap(fn);
+export function readOnlyMap<T, U>(value: ArrayLike<T> | ReadOnlyIterable<T>, fn: MapFn<T, U>): U[] {
+  if ((value as ReadOnlyIterable<T>).readOnlyMap) {
+    return (value as ReadOnlyIterable<T>).readOnlyMap(fn);
   } else {
     const result: U[] = [];
-    value.forEach((v: T, index: number): void => {
+    (value as ArrayLike<T>).forEach((v: T, index: number): void => {
       result.push(fn(v, index));
     });
     return result;
