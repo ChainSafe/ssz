@@ -159,7 +159,7 @@ export class BasicType<T> {
   /**
    * Convert from JSON-serializable object
    */
-  fromJson(data: Json): T {
+  fromJson(data: Json, options?: IJsonOptions): T {
     throw new Error("Not implemented");
   }
 
