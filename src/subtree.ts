@@ -39,15 +39,16 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
 }
 
 export function subtreeFillToContents(nodes: Node[], depth: number): Node {
-  const maxLength = 1 << depth;
+  const maxLength = 2 ** depth;
   if (nodes.length > maxLength) throw new Error(ERR_TOO_MANY_NODES);
   else if (depth === 0) {
-    if (nodes.length === 1) return nodes[0];
-    else throw new Error(ERR_NAVIGATION);
+    if (!nodes.length) return zeroNode(0);
+    return nodes[0];
   } else if (depth === 1) {
-    return new BranchNode(nodes[0], (nodes.length > 1) ? nodes[1] : zeroNode(0));
+    if (!nodes.length) return zeroNode(1);
+    return new BranchNode(nodes[0], nodes[1] || zeroNode(0));
   } else {
-    const pivot = maxLength >> 1;
+    const pivot = Math.floor(maxLength / 2);
     if (nodes.length <= pivot) {
       return new BranchNode(subtreeFillToContents(nodes, depth - 1), zeroNode(depth - 1));
     } else {
