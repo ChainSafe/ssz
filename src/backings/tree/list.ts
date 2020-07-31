@@ -20,6 +20,11 @@ export class BasicListTreeHandler<T extends List<unknown>> extends BasicArrayTre
   defaultBacking(): Tree {
     return new Tree(this.defaultNode());
   }
+  fromStructural(value: T): Tree {
+    const tree = super.fromStructural(value);
+    this.setLength(tree, value.length);
+    return tree;
+  }
   getLength(target: Tree): number {
     return number32Type.fromBytes(target.getRoot(BigInt(3)), 0);
   }
@@ -101,6 +106,11 @@ export class CompositeListTreeHandler<T extends List<object>> extends CompositeA
   }
   defaultBacking(): Tree {
     return new Tree(this.defaultNode());
+  }
+  fromStructural(value: T): Tree {
+    const tree = super.fromStructural(value);
+    this.setLength(tree, value.length);
+    return tree;
   }
   getLength(target: Tree): number {
     return number32Type.fromBytes(target.getRoot(BigInt(3)), 0);
