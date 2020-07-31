@@ -1,3 +1,9 @@
+## 0.2.1 (2020-07-32)
+
+## Bug Fixes
+
+* Fix subtreeFillToContents edge cases ([8a2012](https://github.com/persistent-merkle-tree/commit/8a2012))
+
 ## 0.2.0 (2020-07-27)
 
 ## Features
