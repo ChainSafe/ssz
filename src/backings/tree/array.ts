@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Tree, iterateAtDepth, Gindex} from "@chainsafe/persistent-merkle-tree";
+import {Tree, Node, iterateAtDepth, Gindex, LeafNode, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 
 import {ArrayLike} from "../../interface";
 import {BasicArrayType, CompositeArrayType} from "../../types";
@@ -8,11 +8,11 @@ import {isTreeBacked, TreeHandler, PropOfCompositeTreeBacked} from "./abstract";
 export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHandler<T> {
   protected _type: BasicArrayType<T>;
   fromStructural(value: T): Tree {
-    const v = this.defaultValue();
-    for (let i = 0; i < value.length; i++) {
-      (v as ArrayLike<unknown>)[i as number] = value[i];
+    const contents: Node[] = [];
+    for (const chunk of this._type.structural.chunks(value)) {
+      contents.push(new LeafNode(chunk));
     }
-    return v.tree();
+    return new Tree(subtreeFillToContents(contents, this.depth()));
   }
   size(target: Tree): number {
     return this._type.elementType.size() * this.getLength(target);
@@ -181,11 +181,9 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
 export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends TreeHandler<T> {
   protected _type: CompositeArrayType<T>;
   fromStructural(value: T): Tree {
-    const v = this.defaultValue();
-    for (let i = 0; i < value.length; i++) {
-      (v as ArrayLike<object>)[i as number] = value[i];
-    }
-    return v.tree();
+    const contents: Node[] = [];
+    value.forEach((element) => contents.push(this._type.elementType.tree.fromStructural(element).rootNode));
+    return new Tree(subtreeFillToContents(contents, this.depth()));
   }
   size(target: Tree): number {
     if (this._type.elementType.isVariableSize()) {

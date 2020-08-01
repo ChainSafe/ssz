@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Node, Tree, subtreeFillToContents, zeroNode, Gindex} from "@chainsafe/persistent-merkle-tree";
+import {Node, Tree, subtreeFillToContents, zeroNode, Gindex, LeafNode} from "@chainsafe/persistent-merkle-tree";
 
 import {ObjectLike} from "../../interface";
 import {ContainerType, CompositeType} from "../../types";
@@ -31,11 +31,24 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     return new Tree(this.defaultNode());
   }
   fromStructural(value: T): Tree {
-    const v = this.defaultValue();
-    Object.keys(this._type.fields).forEach((fieldName) => {
-      v[fieldName as keyof T] = value[fieldName];
-    });
-    return v.tree();
+    return new Tree(
+      subtreeFillToContents(
+        Object.entries(this._type.fields).map(([fieldName, fieldType]) => {
+          if (fieldType.isBasic()) {
+            const chunk = new Uint8Array(32);
+            fieldType.toBytes(value[fieldName], chunk, 0);
+            return new LeafNode(chunk);
+          } else {
+            if (isTreeBacked(value[fieldName])) {
+              return value[fieldName].tree().rootNode;
+            } else {
+              return fieldType.tree.fromStructural(value[fieldName]).rootNode;
+            }
+          }
+        }),
+        this.depth()
+      )
+    );
   }
   size(target: Tree): number {
     let s = 0;
