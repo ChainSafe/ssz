@@ -1,3 +1,9 @@
+## 0.6.11 (2020-08-01)
+
+## Features
+
+- Optimize fromStructural ([ff388a](https://github.com/chainsafe/ssz/commit/ff388a))
+
 ## 0.6.10 (2020-07-27)
 
 ## Features
