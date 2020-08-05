@@ -182,4 +182,20 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       return undefined;
     }
   }
+  readOnlyEntries(target: Tree): [string, T[keyof T]][] {
+    const entries: [string, T[keyof T]][] = [];
+    const fields = Object.entries(this._type.fields);
+    let i = 0;
+    for (const node of target.iterateNodesAtDepth(this.depth(), 0, fields.length)) {
+      const [fieldName, fieldType] = fields[i];
+      if (fieldType.isBasic()) {
+        const s = fieldType.size();
+        entries.push([fieldName, fieldType.fromBytes(node.root.slice(0, s), 0)]);
+      } else {
+        entries.push([fieldName, fieldType.tree.asTreeBacked(new Tree(node))]);
+      }
+      i++;
+    }
+    return entries;
+  }
 }
