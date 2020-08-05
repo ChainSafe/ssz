@@ -1,3 +1,9 @@
+## 0.6.12 (2020-08-05)
+
+## Features
+
+- Add readOnlyEntries ([211e6d](https://github.com/chainsafe/ssz/commit/211e6d))
+
 ## 0.6.11 (2020-08-01)
 
 ## Features
