@@ -34,6 +34,9 @@ export class BasicArrayStructuralHandler<T extends ArrayLike<unknown>> extends S
     }
   }
   equals(value1: T, value2: T): boolean {
+    if (this.getLength(value1) !== this.getLength(value2)) {
+      return false;
+    }
     for (let i = 0; i < this.getLength(value1); i++) {
       if (!this._type.elementType.equals(value1[i], value2[i])) {
         return false;
@@ -131,6 +134,9 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
     }
   }
   equals(value1: T, value2: T): boolean {
+    if (this.getLength(value1) !== this.getLength(value2)) {
+      return false;
+    }
     for (let i = 0; i < this.getLength(value1); i++) {
       if (!this._type.elementType.structural.equals(value1[i], value2[i])) {
         return false;
