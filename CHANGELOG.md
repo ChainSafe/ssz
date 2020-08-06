@@ -1,3 +1,9 @@
+## 0.6.13 (2020-08-05)
+
+## Bug Fixes
+
+- Add length check to array structural equality ([c7782a](https://github.com/chainsafe/ssz/commit/c7782a))
+
 ## 0.6.12 (2020-08-05)
 
 ## Features
