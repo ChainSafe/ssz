@@ -1,16 +1,16 @@
-import {List} from "../../interface";
-import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isTypeOf, UINT_TYPE} from "../basic";
-import {ArrayElement, FULL_HASH_LENGTH, GIndexPathKeys, GINDEX_LEN_PATH} from "../../util/gIndex";
-import {getPowerOfTwoCeil} from "../../util/math";
 import {
-  BasicListStructuralHandler,
-  CompositeListStructuralHandler,
-  BasicListTreeHandler,
-  CompositeListTreeHandler,
   BasicListByteArrayHandler,
+  BasicListStructuralHandler,
+  BasicListTreeHandler,
   CompositeListByteArrayHandler,
+  CompositeListStructuralHandler,
+  CompositeListTreeHandler,
 } from "../../backings";
+import {List} from "../../interface";
+import {FULL_HASH_LENGTH, GIndexPathKeys, GINDEX_LEN_PATH} from "../../util/gIndex";
+import {getPowerOfTwoCeil} from "../../util/math";
+import {isTypeOf, UINT_TYPE} from "../basic";
+import {BasicArrayType, CompositeArrayType, IArrayOptions} from "./array";
 
 export interface IListOptions extends IArrayOptions {
   limit: number;
