@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
+import {FULL_HASH_LENGTH, GIndexPathKeys} from "../../util/gIndex";
+import {getPowerOfTwoCeil} from "../../util/math";
 
 /**
  * Check if `type` is an instance of `typeSymbol` type
@@ -81,6 +83,28 @@ export class BasicType<T> {
    */
   size(): number {
     throw new Error("Not implemented");
+  }
+
+  /**
+   * Return the number of hashes needed to represent the top-level elements in the given type.
+   * Always 1 for basic types
+   */
+  chunkCount(): number {
+    return 1;
+  }
+
+  /**
+   * Return the number of bytes in a basic type
+   */
+  getItemLength(): number {
+    return this.size();
+  }
+
+  getGeneralizedIndex(rootIndex: number, ...path: GIndexPathKeys[]): number {
+    if (path.length !== 0) {
+      throw new Error("Cannot iterate deeper than basic type");
+    }
+    return rootIndex;
   }
 
   /**

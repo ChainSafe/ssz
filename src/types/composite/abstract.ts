@@ -3,6 +3,7 @@ import {Json} from "../../interface";
 import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler} from "../../backings";
 import {BasicType} from "../basic";
 import {IJsonOptions} from "../type";
+import {FULL_HASH_LENGTH, GIndexPathKeys} from "../../util/gIndex";
 
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
@@ -136,11 +137,44 @@ export class CompositeType<T extends object> {
   // Merkleization
 
   /**
+   * Return the number of bytes in a basic type
+   */
+  getItemLength(): number {
+    return FULL_HASH_LENGTH;
+  }
+
+  /**
    * Return the number of leaf chunks to be merkleized
    */
   chunkCount(): number {
     throw new Error("Not implemented");
   }
+
+  /**
+   * Return three variables:
+   *     (i) the index of the chunk in which the given element of the item is represented;
+   *     (ii) the starting byte position within the chunk;
+   *     (iii) the ending byte position within the chunk.
+   * For example: for a 6-item list of uint64 values, index=2 will return (0, 16, 24), index=5 will return (1, 8, 16)
+   */
+  getItemPosition(indexOrPropertyNAme: number | string): [number, number, number] {
+    throw new Error("Not implemented");
+    // const start = index * this.getItemLength();
+    // return [
+    //   Math.floor(start / FULL_HASH_LENGTH),
+    //   start % FULL_HASH_LENGTH,
+    //   (start % FULL_HASH_LENGTH) + this.getItemLength(),
+    // ];
+  }
+
+  /**
+   * Converts a path (eg. `[7, "foo", 3]` for `x[7].foo[3]`, `[12, "bar", "__len__"]` for
+   * `len(x[12].bar)`) into the generalized index representing its position in the Merkle tree.
+   */
+  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
+    throw new Error("Not implemented");
+  }
+
   /**
    * Merkleization
    */

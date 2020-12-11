@@ -20,7 +20,8 @@ export class BitListType extends BasicListType<BitList> {
     this.tree = new BitListTreeHandler(this);
     this._typeSymbols.add(BITLIST_TYPE);
   }
+
   chunkCount(): number {
-    return Math.ceil(this.limit / 256);
+    return Math.ceil((this.limit + 255) / 256);
   }
 }
