@@ -158,13 +158,8 @@ export class CompositeType<T extends object> {
    * For example: for a 6-item list of uint64 values, index=2 will return (0, 16, 24), index=5 will return (1, 8, 16)
    */
   getItemPosition(indexOrPropertyNAme: number | string): [number, number, number] {
+    // requires implementation in child classes
     throw new Error("Not implemented");
-    // const start = index * this.getItemLength();
-    // return [
-    //   Math.floor(start / FULL_HASH_LENGTH),
-    //   start % FULL_HASH_LENGTH,
-    //   (start % FULL_HASH_LENGTH) + this.getItemLength(),
-    // ];
   }
 
   /**
@@ -172,6 +167,7 @@ export class CompositeType<T extends object> {
    * `len(x[12].bar)`) into the generalized index representing its position in the Merkle tree.
    */
   getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
+    // requires implementation in child classes
     throw new Error("Not implemented");
   }
 
