@@ -21,7 +21,10 @@ export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) {
     return false;
   }
-  return a.every((v, i) => v === b[i]);
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
 }
 
 export function isByteArrayBacked<T extends object>(value: T): value is ByteArrayBacked<T> {
