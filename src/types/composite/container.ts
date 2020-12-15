@@ -59,6 +59,6 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     const [pos] = this.getItemPosition(path);
     const baseIndex = 1;
     root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.fields[path].getGeneralizedIndex(root, ...path.slice(1));
+    return this.fields[path].getGeneralizedIndex(root, ...paths.slice(1));
   }
 }

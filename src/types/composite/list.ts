@@ -79,10 +79,10 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
         throw new Error(`${GINDEX_LEN_PATH} is only supported on ${UINT_TYPE.toString()} array`);
       }
     }
-    if (typeof path !== "number") {
+    if (isNaN(parseInt(path as string))) {
       throw new Error("Not supported path on BasicList");
     }
-    const [pos] = this.getItemPosition(path);
+    const [pos] = this.getItemPosition(parseInt(path as string));
     const baseIndex = 2;
     root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
     return this.elementType.getGeneralizedIndex(root, ...paths.slice(1));
@@ -120,9 +120,9 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     if (!paths.length) {
       return root;
     }
-    const path = paths[0];
-    if (typeof path !== "number") {
-      throw new Error("CompositeArray supports only element index as path");
+    const path = parseInt(paths[0] as string);
+    if (isNaN(path)) {
+      throw new Error("CompositeArray supports only element index as path. Received " + path);
     }
     const [pos] = this.getItemPosition(path);
     const baseIndex = 2;
