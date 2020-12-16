@@ -20,7 +20,7 @@ export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
  *
  * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
  */
-export class BasicType<T> {
+export abstract class BasicType<T> {
   /**
    * Symbols used to track the identity of a type
    *
@@ -34,20 +34,6 @@ export class BasicType<T> {
 
   isBasic(): this is BasicType<T> {
     return true;
-  }
-
-  /**
-   * Valid value assertion
-   */
-  assertValidValue(value: unknown): asserts value is T {
-    throw new Error("Not implemented");
-  }
-
-  /**
-   * Default constructor
-   */
-  defaultValue(): T {
-    throw new Error("Not implemented");
   }
 
   /**
@@ -66,8 +52,6 @@ export class BasicType<T> {
     return value1 === value2;
   }
 
-  // Serialization / Deserialization
-
   /**
    * Check if type has a variable number of elements (or subelements)
    *
@@ -76,17 +60,11 @@ export class BasicType<T> {
   isVariableSize(): boolean {
     return false;
   }
-  /**
-   * Serialized byte length
-   */
-  size(): number {
-    throw new Error("Not implemented");
-  }
 
   /**
    * Maximal serialized byte length
    */
-  maxSize(): number {
+  abstractmaxSize(): number {
     return this.size();
   }
 
@@ -94,6 +72,13 @@ export class BasicType<T> {
    * Minimal serialized byte length
    */
   minSize(): number {
+    return this.size();
+  }
+
+  /**
+   * Maximal serialized byte length
+   */
+  maxSize(): number {
     return this.size();
   }
 
@@ -117,26 +102,12 @@ export class BasicType<T> {
   }
 
   /**
-   * Low-level deserialization
-   */
-  fromBytes(data: Uint8Array, offset: number): T {
-    throw new Error("Not implemented");
-  }
-  /**
    * Deserialization
    */
   deserialize(data: Uint8Array): T {
     return this.fromBytes(data, 0);
   }
 
-  /**
-   * Low-level serialization
-   *
-   * Serializes to a pre-allocated Uint8Array
-   */
-  toBytes(value: T, output: Uint8Array, offset: number): number {
-    throw new Error("Not implemented");
-  }
   /**
    * Serialization
    */
@@ -156,16 +127,39 @@ export class BasicType<T> {
   }
 
   /**
+   * Valid value assertion
+   */
+  abstract assertValidValue(value: unknown): asserts value is T;
+
+  /**
+   * Default constructor
+   */
+  abstract defaultValue(): T;
+
+  /**
+   * Serialized byte length
+   */
+  abstract size(): number;
+
+  /**
+   * Low-level deserialization
+   */
+  abstract fromBytes(data: Uint8Array, offset: number): T;
+
+  /**
+   * Low-level serialization
+   *
+   * Serializes to a pre-allocated Uint8Array
+   */
+  abstract toBytes(value: T, output: Uint8Array, offset: number): number;
+
+  /**
    * Convert from JSON-serializable object
    */
-  fromJson(data: Json): T {
-    throw new Error("Not implemented");
-  }
+  abstract fromJson(data: Json): T;
 
   /**
    * Convert to JSON-serializable object
    */
-  toJson(value: T): Json {
-    throw new Error("Not implemented");
-  }
+  abstract toJson(value: T): Json;
 }
