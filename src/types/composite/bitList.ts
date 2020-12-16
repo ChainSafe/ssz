@@ -14,12 +14,14 @@ export function isBitListType<T extends BitList = BitList>(type: unknown): type 
 }
 
 export class BitListType extends BasicListType<BitList> {
+
   constructor(options: IBitListOptions) {
     super({elementType: booleanType, ...options});
     this.structural = new BitListStructuralHandler(this);
     this.tree = new BitListTreeHandler(this);
     this._typeSymbols.add(BITLIST_TYPE);
   }
+
   chunkCount(): number {
     return Math.ceil(this.limit / 256);
   }

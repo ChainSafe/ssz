@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Tree, Node, iterateAtDepth, Gindex, LeafNode, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 
-import {ArrayLike} from "../../interface";
+import { ArrayLike, ObjectLike } from '../../interface';
 import {BasicArrayType, CompositeArrayType} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfCompositeTreeBacked} from "./abstract";
 
@@ -178,7 +178,7 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
   }
 }
 
-export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends TreeHandler<T> {
+export class CompositeArrayTreeHandler<T extends ArrayLike<ObjectLike>> extends TreeHandler<T> {
   protected _type: CompositeArrayType<T>;
   fromStructural(value: T): Tree {
     const contents: Node[] = [];

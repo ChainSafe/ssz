@@ -36,6 +36,6 @@ export function readOnlyEntries<T>(value: ObjectLike | ReadOnlyObjectIterable<T>
   if ((value as ReadOnlyObjectIterable<T>).readOnlyEntries) {
     return (value as ReadOnlyObjectIterable<T>).readOnlyEntries();
   } else {
-    return Object.entries(value as ObjectLike);
+    return Object.entries(value) as [string, T[keyof T]][];
   }
 }

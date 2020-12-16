@@ -1,14 +1,14 @@
 {
-  "include": ["src"],
+  "include": ["src", "test"],
   "compilerOptions": {
     "typeRoots": [
         "node_modules/@types",
         "./types"
     ],
-    "target": "esnext",
+    "target": "ES2020",
     "module": "commonjs",
     "pretty": true,
-     "declaration": true,
+    "declaration": true,
     "strict": true,
     "strictNullChecks": false,
     "esModuleInterop": true

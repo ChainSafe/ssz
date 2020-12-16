@@ -1,10 +1,10 @@
 import {ObjectLike, Json} from "../../interface";
-import {ContainerType, CompositeType, Type, IJsonOptions} from "../../types";
+import {ContainerType, CompositeType, Type, IJsonOptions, BasicType} from "../../types";
 import {StructuralHandler} from "./abstract";
 import {toExpectedCase} from "../utils";
 import {SszErrorPath} from "../../util/errorPath";
 
-export class ContainerStructuralHandler<T extends ObjectLike> extends StructuralHandler<T> {
+export class ContainerStructuralHandler<T extends Record<string, unknown>> extends StructuralHandler<T> {
   _type: ContainerType<T>;
   constructor(type: ContainerType<T>) {
     super();
@@ -14,9 +14,10 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     const obj = {} as T;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       if (fieldType.isBasic()) {
-        obj[fieldName as keyof T] = fieldType.defaultValue();
-      } else {
-        obj[fieldName as keyof T] = fieldType.structural.defaultValue();
+        obj[fieldName as keyof T] = fieldType.defaultValue() as T[keyof T];
+      } 
+      if( fieldType.isComposite()) {
+        obj[fieldName as keyof T] = fieldType.structural.defaultValue() as T[keyof T];
       }
     });
     return obj;
@@ -58,10 +59,12 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       try {
         if (fieldType.isBasic()) {
-          (fieldType as Type<T[keyof T]>).assertValidValue((value as T)[fieldName]);
-        } else {
           // @ts-ignore
-          fieldType.structural.assertValidValue((value as T)[fieldName]);
+          fieldType.assertValidValue(value[fieldName]);
+        }
+        if(fieldType.isComposite()){
+          // @ts-ignore
+          fieldType.structural.assertValidValue(value[fieldName]);
         }
       } catch (e) {
         throw new Error(`Invalid field ${fieldName}: ${e.message}`);
@@ -74,8 +77,9 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     return Object.entries(this._type.fields).every(([fieldName, fieldType]) => {
       if (fieldType.isBasic()) {
         return fieldType.equals(value1[fieldName], value2[fieldName]);
-      } else {
-        return fieldType.structural.equals(value1[fieldName], value2[fieldName]);
+      } 
+      if(fieldType.isComposite()) {
+        return fieldType.structural.equals(value1[fieldName] as ObjectLike, value2[fieldName] as ObjectLike);
       }
     });
   }
@@ -83,9 +87,10 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     const newValue = {} as T;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       if (fieldType.isBasic()) {
-        newValue[fieldName as keyof T] = fieldType.clone(value[fieldName]);
-      } else {
-        newValue[fieldName as keyof T] = fieldType.structural.clone(value[fieldName]);
+        newValue[fieldName as keyof T] = fieldType.clone(value[fieldName]) as T[keyof T];
+      } 
+      if(fieldType.isComposite()) {
+        newValue[fieldName as keyof T] = fieldType.structural.clone(value[fieldName] as ObjectLike) as T[keyof T];
       }
     });
     return newValue;
@@ -128,20 +133,21 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
           if (offsets[offsetIndex] > offsets[offsetIndex + 1]) {
             throw new Error("Offsets must be increasing");
           }
-          value[fieldName as keyof T] = (fieldType as CompositeType<T[keyof T]>).structural.fromBytes(
+          value[fieldName as keyof T] = (fieldType as CompositeType<T>).structural.fromBytes(
             data,
             offsets[offsetIndex],
             offsets[offsetIndex + 1]
-          );
+          ) as T[keyof T];
           offsetIndex++;
           currentIndex += 4;
         } else {
           // fixed-sized field
           nextIndex = currentIndex + fieldSize;
           if (fieldType.isBasic()) {
-            value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex);
-          } else {
-            value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex);
+            value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex)  as T[keyof T];
+          } 
+          if(fieldType.isComposite()) {
+            value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex) as T[keyof T];
           }
           currentIndex = nextIndex;
         }
@@ -173,14 +179,14 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
-      if (fieldType.isVariableSize()) {
+      if (fieldType.isVariableSize() && fieldType.isComposite()) {
         // write offset
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
-        variableIndex = fieldType.toBytes(value[fieldName], output, variableIndex);
+        variableIndex = fieldType.toBytes(value[fieldName] as ObjectLike, output, variableIndex);
       } else {
-        fixedIndex = fieldType.toBytes(value[fieldName], output, fixedIndex);
+        fixedIndex = fieldType.toBytes(value[fieldName] as ObjectLike, output, fixedIndex);
       }
     });
     return variableIndex;
@@ -201,7 +207,7 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
-      value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[expectedFieldName], options);
+      value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[expectedFieldName], options) as T[keyof T];
     });
     return value;
   }

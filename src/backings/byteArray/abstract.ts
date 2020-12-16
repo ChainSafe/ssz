@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {ByteVector} from "../../interface";
+import { ByteVector, ObjectLike, CompositeValue } from '../../interface';
 import {CompositeType} from "../../types";
 import {BackingType} from "../backedValue";
 
@@ -27,7 +27,7 @@ export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
   return true;
 }
 
-export function isByteArrayBacked<T extends object>(value: T): value is ByteArrayBacked<T> {
+export function isByteArrayBacked<T extends CompositeValue>(value: T): value is ByteArrayBacked<T> {
   return (
     (value as ByteArrayBacked<T>).backingType && (value as ByteArrayBacked<T>).backingType() === BackingType.byteArray
   );
@@ -38,7 +38,7 @@ export function isByteArrayBacked<T extends object>(value: T): value is ByteArra
  *
  * This is an alternative way of calling methods of the attached ByteArrayHandler
  */
-export interface IByteArrayBacked<T extends object> {
+export interface IByteArrayBacked<T extends CompositeValue> {
   type(): CompositeType<T>;
 
   /**
@@ -93,27 +93,27 @@ export interface IByteArrayBacked<T extends object> {
  * we need this type to recursively wrap subobjects (non-basic values) as byte-array-backed values.
  */
 export type ByteArrayBackedify<T> = {
-  [P in keyof T]: T[P] extends object ? ByteArrayBacked<T[P]> : T[P];
+  [P in keyof T]: T[P] extends CompositeValue ? ByteArrayBacked<T[P]> : T[P];
 };
 
 /**
  * A byte-array-backed value has the IByteArrayBacked public API as well as byte-array-backed getters/setters
  */
-export type ByteArrayBacked<T extends object> = IByteArrayBacked<T> & ByteArrayBackedify<T> & T;
+export type ByteArrayBacked<T extends CompositeValue> = IByteArrayBacked<T> & ByteArrayBackedify<T> & T;
 
 /**
  * Every property of a 'basic' byte-array-backed value is of a basic type, ie not a byte-array-backed value
  */
-export type PropOfBasicByteArrayBacked<T extends object, V extends keyof T> = T[V];
+export type PropOfBasicByteArrayBacked<T extends CompositeValue, V extends keyof T> = T[V];
 
 /**
  * Every property of a 'composite' byte-array-backed value is of a composite type, ie a byte-array-backed value
  */
-export type PropOfCompositeByteArrayBacked<T extends object, V extends keyof T> = T[V] extends object
+export type PropOfCompositeByteArrayBacked<T extends CompositeValue, V extends keyof T> = T[V] extends CompositeValue
   ? ByteArrayBacked<T[V]>
   : never;
 
-export type PropOfByteArrayBacked<T extends object, V extends keyof T> =
+export type PropOfByteArrayBacked<T extends CompositeValue, V extends keyof T> =
   | PropOfBasicByteArrayBacked<T, V>
   | PropOfCompositeByteArrayBacked<T, V>;
 
@@ -128,7 +128,7 @@ export type PropOfByteArrayBacked<T extends object, V extends keyof T> =
  *   and
  *   byteArrayBackedValue.serialize()
  */
-export class ByteArrayHandler<T extends object> implements ProxyHandler<T> {
+export class ByteArrayHandler<T extends CompositeValue> implements ProxyHandler<T> {
   protected _type: CompositeType<T>;
   type(): CompositeType<T> {
     return this._type;

@@ -1,4 +1,4 @@
-import {Vector} from "../../interface";
+import {Vector, ObjectLike} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isTypeOf} from "../basic";
 import {
@@ -57,7 +57,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 }
 
-export class CompositeVectorType<T extends Vector<object> = Vector<object>> extends CompositeArrayType<T> {
+export class CompositeVectorType<T extends Vector<ObjectLike> = Vector<ObjectLike>> extends CompositeArrayType<T> {
   length: number;
   constructor(options: IVectorOptions) {
     super(options);

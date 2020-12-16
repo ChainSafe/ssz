@@ -1,4 +1,4 @@
-import {List, Json} from "../../interface";
+import {List, Json, ObjectLike} from "../../interface";
 import {BasicListType, CompositeListType, IJsonOptions} from "../../types";
 import {mixInLength} from "../../util/compat";
 import {BasicArrayStructuralHandler, CompositeArrayStructuralHandler} from "./array";
@@ -49,7 +49,7 @@ export class BasicListStructuralHandler<T extends List<unknown>> extends BasicAr
   }
 }
 
-export class CompositeListStructuralHandler<T extends List<object>> extends CompositeArrayStructuralHandler<T> {
+export class CompositeListStructuralHandler<T extends List<ObjectLike>> extends CompositeArrayStructuralHandler<T> {
   _type: CompositeListType<T>;
   constructor(type: CompositeListType<T>) {
     super();

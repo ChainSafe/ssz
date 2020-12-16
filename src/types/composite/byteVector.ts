@@ -1,4 +1,4 @@
-import {ByteVector} from "../../interface";
+import {ByteVector, Vector} from "../../interface";
 import {BasicVectorType} from "./vector";
 import {byteType, isTypeOf} from "../basic";
 import {ByteVectorStructuralHandler, ByteVectorTreeHandler} from "../../backings";
@@ -14,10 +14,12 @@ export function isByteVectorType<T extends ByteVector = ByteVector>(type: unknow
 }
 
 export class ByteVectorType extends BasicVectorType<ByteVector> {
+
   constructor(options: IByteVectorOptions) {
     super({elementType: byteType, ...options});
     this.structural = new ByteVectorStructuralHandler(this);
     this.tree = new ByteVectorTreeHandler(this);
     this._typeSymbols.add(BYTEVECTOR_TYPE);
   }
+  
 }

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {Json} from "../../interface";
+import { Type } from "..";
 
 /**
  * Check if `type` is an instance of `typeSymbol` type
@@ -20,19 +19,9 @@ export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
  *
  * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
  */
-export abstract class BasicType<T> {
-  /**
-   * Symbols used to track the identity of a type
-   *
-   * Used by various isFooType functions
-   */
-  _typeSymbols: Set<symbol>;
-
-  constructor() {
-    this._typeSymbols = new Set();
-  }
-
-  isBasic(): this is BasicType<T> {
+export abstract class BasicType<T> extends Type<T> {
+ 
+  isBasic(): boolean {
     return true;
   }
 
@@ -64,7 +53,7 @@ export abstract class BasicType<T> {
   /**
    * Maximal serialized byte length
    */
-  abstractmaxSize(): number {
+  maxSize(): number {
     return this.size();
   }
 
@@ -75,14 +64,7 @@ export abstract class BasicType<T> {
     return this.size();
   }
 
-  /**
-   * Maximal serialized byte length
-   */
-  maxSize(): number {
-    return this.size();
-  }
-
-  /**
+    /**
    * Validate bytes before calling fromBytes
    * @param data
    * @param offset
@@ -126,22 +108,12 @@ export abstract class BasicType<T> {
     return output;
   }
 
-  /**
-   * Valid value assertion
-   */
-  abstract assertValidValue(value: unknown): asserts value is T;
-
-  /**
-   * Default constructor
-   */
-  abstract defaultValue(): T;
-
-  /**
+    /**
    * Serialized byte length
    */
   abstract size(): number;
 
-  /**
+    /**
    * Low-level deserialization
    */
   abstract fromBytes(data: Uint8Array, offset: number): T;
@@ -152,14 +124,4 @@ export abstract class BasicType<T> {
    * Serializes to a pre-allocated Uint8Array
    */
   abstract toBytes(value: T, output: Uint8Array, offset: number): number;
-
-  /**
-   * Convert from JSON-serializable object
-   */
-  abstract fromJson(data: Json): T;
-
-  /**
-   * Convert to JSON-serializable object
-   */
-  abstract toJson(value: T): Json;
 }

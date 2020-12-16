@@ -4,9 +4,8 @@ import {isTypeOf} from "../basic";
 import {Type} from "../type";
 import {ContainerStructuralHandler, ContainerTreeHandler, ContainerByteArrayHandler} from "../../backings";
 
-export interface IContainerOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: Record<string, Type<any>>;
+export interface IContainerOptions<T extends Record<string, unknown>> {
+  fields: Record<keyof T, Type<unknown>>;
 }
 
 export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
@@ -17,9 +16,8 @@ export function isContainerType<T extends ObjectLike = ObjectLike>(type: unknown
 
 export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeType<T> {
   // ES6 ensures key order is chronological
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: Record<string, Type<any>>;
-  constructor(options: IContainerOptions) {
+  fields: Record<string, Type<unknown>>;
+  constructor(options: IContainerOptions<T>) {
     super();
     this.fields = {...options.fields};
     this.structural = new ContainerStructuralHandler(this);
@@ -28,7 +26,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     this._typeSymbols.add(CONTAINER_TYPE);
   }
   isVariableSize(): boolean {
-    return Object.values(this.fields).some((fieldType) => fieldType.isVariableSize());
+    return Object.values(this.fields as Record<string, Type<unknown>>).some((fieldType) => fieldType.isVariableSize());
   }
   chunkCount(): number {
     return Object.keys(this.fields).length;

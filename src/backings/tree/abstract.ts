@@ -4,8 +4,9 @@ import {Node, Tree, Gindex, countToDepth, toGindex} from "@chainsafe/persistent-
 import {CompositeType} from "../../types";
 import {BackingType} from "../backedValue";
 import {byteArrayEquals} from "../byteArray";
+import { CompositeValue, ObjectLike } from '../../interface';
 
-export function isTreeBacked<T extends object>(value: T): value is TreeBacked<T> {
+export function isTreeBacked<T extends CompositeValue>(value: unknown): value is TreeBacked<T> {
   return (value as TreeBacked<T>).backingType && (value as TreeBacked<T>).backingType() === BackingType.tree;
 }
 
@@ -14,7 +15,7 @@ export function isTreeBacked<T extends object>(value: T): value is TreeBacked<T>
  *
  * This is an alternative way of calling methods of the attached TreeHandler
  */
-export interface ITreeBacked<T extends object> {
+export interface ITreeBacked<T extends CompositeValue> {
   type(): CompositeType<T>;
 
   /**
@@ -77,27 +78,27 @@ export interface ITreeBacked<T extends object> {
  * we need this type to recursively wrap subobjects (non-basic values) as tree-backed values.
  */
 export type TreeBackedify<T> = {
-  [P in keyof T]: T[P] extends object ? TreeBacked<T[P]> : T[P];
+  [P in keyof T]: T[P] extends Record<string, unknown> ? TreeBacked<T[P]> : T[P];
 };
 
 /**
  * A tree-backed value has the ITreeBacked public API as well as tree-backed getters/setters
  */
-export type TreeBacked<T extends object> = ITreeBacked<T> & TreeBackedify<T> & T;
+export type TreeBacked<T extends CompositeValue> = ITreeBacked<T> & TreeBackedify<T> & T;
 
 /**
  * Every property of a 'basic' tree-backed value is of a basic type, ie not a tree-backed value
  */
-export type PropOfBasicTreeBacked<T extends object, V extends keyof T> = T[V];
+export type PropOfBasicTreeBacked<T extends CompositeValue, V extends keyof T> = T[V];
 
 /**
  * Every property of a 'composite' tree-backed value is of a composite type, ie a tree-backed value
  */
-export type PropOfCompositeTreeBacked<T extends object, V extends keyof T> = T[V] extends object
+export type PropOfCompositeTreeBacked<T extends CompositeValue, V extends keyof T> = T[V] extends ObjectLike
   ? TreeBacked<T[V]>
   : never;
 
-export type PropOfTreeBacked<T extends object, V extends keyof T> =
+export type PropOfTreeBacked<T extends CompositeValue, V extends keyof T> =
   | PropOfBasicTreeBacked<T, V>
   | PropOfCompositeTreeBacked<T, V>;
 
@@ -112,7 +113,7 @@ export type PropOfTreeBacked<T extends object, V extends keyof T> =
  *   and
  *   treeBackedValue.hashTreeRoot()
  */
-export class TreeHandler<T extends object> implements ProxyHandler<T> {
+export class TreeHandler<T extends CompositeValue> implements ProxyHandler<T> {
   protected _type: CompositeType<T>;
   protected _depth: number;
 

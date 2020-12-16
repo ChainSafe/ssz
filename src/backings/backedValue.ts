@@ -1,5 +1,6 @@
 import {TreeBacked} from "./tree";
 import {ByteArrayBacked} from "./byteArray";
+import {CompositeValue} from "../interface";
 
 export enum BackingType {
   tree = "tree",
@@ -13,9 +14,9 @@ export enum BackingType {
  * - convenient access to the structural properties corresponding to its type
  * - additional methods for backing-specific implementations of ssz operations
  */
-export type BackedValue<T extends object> = TreeBacked<T> | ByteArrayBacked<T>;
+export type BackedValue<T extends CompositeValue> = TreeBacked<T> | ByteArrayBacked<T>;
 
-export function isBackedValue<T extends object>(value: T): value is BackedValue<T> {
+export function isBackedValue<T extends CompositeValue>(value: T): value is BackedValue<T> {
   if (value && (value as BackedValue<T>).backingType) {
     return true;
   } else {

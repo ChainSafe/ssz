@@ -1,28 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Json} from "../../interface";
+import {CompositeValue, Json, ObjectLike} from "../../interface";
 import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler} from "../../backings";
 import {BasicType} from "../basic";
-import {IJsonOptions} from "../type";
+import {IJsonOptions, Type} from "../type";
 
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
  *
  */
-export class CompositeType<T extends object> {
+export abstract class CompositeType<T extends CompositeValue = ObjectLike> extends Type<T> {
   structural: StructuralHandler<T>;
   tree: TreeHandler<T>;
   byteArray: ByteArrayHandler<T>;
-
-  /**
-   * Symbols used to track the identity of a type
-   *
-   * Used by various isFooType functions
-   */
-  _typeSymbols: Set<symbol>;
-
-  constructor() {
-    this._typeSymbols = new Set();
-  }
 
   isBasic(): this is BasicType<T> {
     return false;
@@ -64,18 +53,10 @@ export class CompositeType<T extends object> {
     }
   }
 
-  // Serialization / Deserialization
-
-  /**
-   * Check if type has a variable number of elements (or subelements)
-   */
-  isVariableSize(): boolean {
-    throw new Error("Not implemented");
-  }
   /**
    * Serialized byte length
    */
-  size(value: BackedValue<T> | T): number {
+  size(value: T): number {
     if (isBackedValue(value)) {
       return value.size();
     } else {
@@ -97,12 +78,6 @@ export class CompositeType<T extends object> {
     return this.structural.minSize();
   }
 
-  /**
-   * Low-level deserialization
-   */
-  fromBytes(data: Uint8Array, start: number, end: number): T {
-    throw new Error("Not implemented");
-  }
   /**
    * Deserialization
    */
@@ -133,14 +108,6 @@ export class CompositeType<T extends object> {
     }
   }
 
-  // Merkleization
-
-  /**
-   * Return the number of leaf chunks to be merkleized
-   */
-  chunkCount(): number {
-    throw new Error("Not implemented");
-  }
   /**
    * Merkleization
    */
@@ -165,4 +132,21 @@ export class CompositeType<T extends object> {
   toJson(value: T, options?: IJsonOptions): Json {
     return this.structural.toJson(value, options);
   }
+
+  /**
+   * Low-level deserialization
+   */
+  fromBytes(data: Uint8Array, start: number, end: number): T {
+    return this.structural.fromBytes(data, start, end);
+  }
+
+  /**
+   * Check if type has a variable number of elements (or subelements)
+   */
+  abstract isVariableSize(): boolean;
+
+  /**
+   * Return the number of leaf chunks to be merkleized
+   */
+  abstract chunkCount(): number;
 }
