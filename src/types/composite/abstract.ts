@@ -166,7 +166,7 @@ export class CompositeType<T extends object> {
    * Converts a path (eg. `[7, "foo", 3]` for `x[7].foo[3]`, `[12, "bar", "__len__"]` for
    * `len(x[12].bar)`) into the generalized index representing its position in the Merkle tree.
    */
-  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
     // requires implementation in child classes
     throw new Error("Not implemented");
   }

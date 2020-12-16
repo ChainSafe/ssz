@@ -100,8 +100,8 @@ export class BasicType<T> {
     return this.size();
   }
 
-  getGeneralizedIndex(rootIndex: number, ...path: GIndexPathKeys[]): number {
-    if (path.length !== 0) {
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+    if (pathParts.length !== 0) {
       throw new Error("Cannot iterate deeper than basic type");
     }
     return rootIndex;

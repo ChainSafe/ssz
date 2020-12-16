@@ -45,11 +45,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     return [pos, 0, this.fields[propertyName].getItemLength()];
   }
 
-  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
-    if (paths.length === 0) {
-      return root;
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+    if (pathParts.length === 0) {
+      return rootIndex;
     }
-    const path = paths[0];
+    const path = pathParts[0];
     if (typeof path !== "string" || path === GINDEX_LEN_PATH) {
       throw new Error(`Unsupported path ${path} in container`);
     }
@@ -58,7 +58,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     const [pos] = this.getItemPosition(path);
     const baseIndex = 1;
-    root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.fields[path].getGeneralizedIndex(root, ...paths.slice(1));
+    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
+    return this.fields[path].getGeneralizedIndex(pathParts.slice(1), rootIndex);
   }
 }

@@ -10,7 +10,7 @@ import {
   CompositeVectorByteArrayHandler,
 } from "../../backings";
 import {FULL_HASH_LENGTH, GIndexPathKeys, GINDEX_LEN_PATH} from "../../util/gIndex";
-import { getPowerOfTwoCeil } from "../../util/math";
+import {getPowerOfTwoCeil} from "../../util/math";
 
 export interface IVectorOptions extends IArrayOptions {
   length: number;
@@ -67,14 +67,14 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     ];
   }
 
-  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
-    if (!paths.length) {
-      return root;
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+    if (pathParts.length == 0) {
+      return rootIndex;
     }
-    const path = paths[0];
+    const path = pathParts[0];
     if (path === GINDEX_LEN_PATH) {
       if (this.elementType._typeSymbols.has(UINT_TYPE)) {
-        return root * 2 + 1;
+        return rootIndex * 2 + 1;
       } else {
         throw new Error(`${GINDEX_LEN_PATH} is only supported on ${UINT_TYPE.toString()} array`);
       }
@@ -84,8 +84,8 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     }
     const [pos] = this.getItemPosition(parseInt(path as string));
     const baseIndex = 2;
-    root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.elementType.getGeneralizedIndex(root, ...paths.slice(1));
+    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
+    return this.elementType.getGeneralizedIndex(pathParts.slice(1), rootIndex);
   }
 }
 
@@ -114,17 +114,17 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
     ];
   }
 
-  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
-    if (!paths.length) {
-      return root;
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex: number): number {
+    if (pathParts.length === 0) {
+      return rootIndex;
     }
-    const path = parseInt(paths[0] as string);
+    const path = parseInt(pathParts[0] as string);
     if (isNaN(path)) {
       throw new Error("CompositeArray supports only element index as path. Received " + path);
     }
     const [pos] = this.getItemPosition(path);
     const baseIndex = 2;
-    root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.elementType.getGeneralizedIndex(root, ...paths.slice(1));
+    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
+    return this.elementType.getGeneralizedIndex(pathParts.slice(1), rootIndex);
   }
 }

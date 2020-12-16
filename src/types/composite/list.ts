@@ -67,14 +67,14 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     ];
   }
 
-  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
-    if (!paths.length) {
-      return root;
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+    if (pathParts.length === 0) {
+      return rootIndex;
     }
-    const path = paths[0];
+    const path = pathParts[0];
     if (path === GINDEX_LEN_PATH) {
       if (this.elementType._typeSymbols.has(UINT_TYPE)) {
-        return root * 2 + 1;
+        return rootIndex * 2 + 1;
       } else {
         throw new Error(`${GINDEX_LEN_PATH} is only supported on ${UINT_TYPE.toString()} array`);
       }
@@ -84,8 +84,8 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     }
     const [pos] = this.getItemPosition(parseInt(path as string));
     const baseIndex = 2;
-    root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.elementType.getGeneralizedIndex(root, ...paths.slice(1));
+    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
+    return this.elementType.getGeneralizedIndex(pathParts.slice(1), rootIndex);
   }
 }
 
@@ -116,17 +116,17 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     ];
   }
 
-  getGeneralizedIndex(root = 1, ...paths: GIndexPathKeys[]): number {
-    if (!paths.length) {
-      return root;
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+    if (pathParts.length === 0) {
+      return rootIndex;
     }
-    const path = parseInt(paths[0] as string);
+    const path = parseInt(pathParts[0] as string);
     if (isNaN(path)) {
       throw new Error("CompositeArray supports only element index as path. Received " + path);
     }
     const [pos] = this.getItemPosition(path);
     const baseIndex = 2;
-    root = root * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.elementType.getGeneralizedIndex(root, ...paths.slice(1));
+    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
+    return this.elementType.getGeneralizedIndex(pathParts.slice(1), rootIndex);
   }
 }
