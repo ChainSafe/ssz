@@ -226,10 +226,6 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
   }
 
   // Merkleization
-
-  gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
-    throw new Error("Not implemented");
-  }
   /**
    * The depth of the merkle tree
    */

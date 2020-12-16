@@ -1,0 +1,16 @@
+TestContainer  1
+TestContainer uint 16
+TestContainer bool 17
+TestContainer bytes32 18
+TestContainer bitlist 19
+TestContainer bitvector 20
+TestContainer basicList 21
+TestContainer basicList/0 336
+TestContainer basicVector 22
+TestContainer basicVector/4 22
+TestContainer complexList 23
+TestContainer complexList/4 740
+TestContainer complexList/4/field 740
+TestContainer complexVector 24
+TestContainer complexVector/4 388
+TestContainer complexVector/4/field 388

@@ -1,14 +1,17 @@
-import {List} from "../../interface";
-import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isTypeOf} from "../basic";
 import {
-  BasicListStructuralHandler,
-  CompositeListStructuralHandler,
-  BasicListTreeHandler,
-  CompositeListTreeHandler,
   BasicListByteArrayHandler,
+  BasicListStructuralHandler,
+  BasicListTreeHandler,
   CompositeListByteArrayHandler,
+  CompositeListStructuralHandler,
+  CompositeListTreeHandler,
 } from "../../backings";
+import {List} from "../../interface";
+import {FULL_HASH_LENGTH, GIndexPathKeys, GINDEX_LEN_PATH} from "../../util/gIndex";
+import {getPowerOfTwoCeil} from "../../util/math";
+import {isTypeOf, UINT_TYPE} from "../basic";
+import {BasicArrayType, CompositeArrayType, IArrayOptions} from "./array";
+import {Gindex, toGindex} from "@chainsafe/persistent-merkle-tree";
 
 export interface IListOptions extends IArrayOptions {
   limit: number;
@@ -53,7 +56,31 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     return true;
   }
   chunkCount(): number {
-    return Math.ceil((this.limit * this.elementType.size()) / 32);
+    return Math.ceil((this.limit * this.elementType.getItemLength()) / 32);
+  }
+
+  getItemPosition(index: number): [number, number, number] {
+    const start = index + this.elementType.getItemLength();
+    return [
+      Math.floor(start / FULL_HASH_LENGTH),
+      start % FULL_HASH_LENGTH,
+      (start % FULL_HASH_LENGTH) + this.elementType.getItemLength(),
+    ];
+  }
+
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = BigInt(1)): Gindex {
+    const path = parseInt(pathParts[0] as string);
+    if (isNaN(path) || path < 0 || path > this.limit) {
+      throw new Error(`Invalid array index ${path}`);
+    }
+    let chunkIndex;
+    if (this.isPacked()) {
+      const elemsPerChunk = Math.floor(32 / this.elementType.getItemLength());
+      chunkIndex = Math.floor(path / elemsPerChunk);
+    } else {
+      chunkIndex = path;
+    }
+    return rootIndex * toGindex(chunkIndex, BigInt(this.tree.depth()));
   }
 }
 
@@ -70,7 +97,31 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   isVariableSize(): boolean {
     return true;
   }
+
   chunkCount(): number {
-    return this.limit;
+    return Math.ceil((this.limit * this.elementType.getItemLength()) / 32);
+  }
+
+  getItemPosition(index: number): [number, number, number] {
+    const start = index + this.elementType.getItemLength();
+    return [
+      Math.floor(start / FULL_HASH_LENGTH),
+      start % FULL_HASH_LENGTH,
+      (start % FULL_HASH_LENGTH) + this.elementType.getItemLength(),
+    ];
+  }
+
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+    if (pathParts.length === 0) {
+      return rootIndex;
+    }
+    const path = parseInt(pathParts[0] as string);
+    if (isNaN(path)) {
+      throw new Error("CompositeArray supports only element index as path. Received " + path);
+    }
+    const [pos] = this.getItemPosition(path);
+    const baseIndex = 2;
+    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
+    return this.elementType.getGeneralizedIndex(pathParts.slice(1), rootIndex);
   }
 }

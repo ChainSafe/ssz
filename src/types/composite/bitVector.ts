@@ -21,6 +21,6 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     this._typeSymbols.add(BITVECTOR_TYPE);
   }
   chunkCount(): number {
-    return Math.ceil(this.length / 256);
+    return Math.ceil((this.length + 255) / 256);
   }
 }
