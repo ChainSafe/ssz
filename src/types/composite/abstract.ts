@@ -4,6 +4,7 @@ import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHan
 import {BasicType} from "../basic";
 import {IJsonOptions} from "../type";
 import {FULL_HASH_LENGTH, GIndexPathKeys} from "../../util/gIndex";
+import { Gindex } from "@chainsafe/persistent-merkle-tree";
 
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
@@ -166,7 +167,7 @@ export class CompositeType<T extends object> {
    * Converts a path (eg. `[7, "foo", 3]` for `x[7].foo[3]`, `[12, "bar", "__len__"]` for
    * `len(x[12].bar)`) into the generalized index representing its position in the Merkle tree.
    */
-  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = BigInt(1)): Gindex {
     // requires implementation in child classes
     throw new Error("Not implemented");
   }

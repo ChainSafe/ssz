@@ -11,6 +11,7 @@ import {FULL_HASH_LENGTH, GIndexPathKeys, GINDEX_LEN_PATH} from "../../util/gInd
 import {getPowerOfTwoCeil} from "../../util/math";
 import {isTypeOf, UINT_TYPE} from "../basic";
 import {BasicArrayType, CompositeArrayType, IArrayOptions} from "./array";
+import {Gindex, toGindex} from "@chainsafe/persistent-merkle-tree";
 
 export interface IListOptions extends IArrayOptions {
   limit: number;
@@ -67,25 +68,19 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     ];
   }
 
-  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
-    if (pathParts.length === 0) {
-      return rootIndex;
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = BigInt(1)): Gindex {
+    const path = parseInt(pathParts[0] as string);
+    if (isNaN(path) || path < 0 || path > this.limit) {
+      throw new Error(`Invalid array index ${path}`);
     }
-    const path = pathParts[0];
-    if (path === GINDEX_LEN_PATH) {
-      if (this.elementType._typeSymbols.has(UINT_TYPE)) {
-        return rootIndex * 2 + 1;
-      } else {
-        throw new Error(`${GINDEX_LEN_PATH} is only supported on ${UINT_TYPE.toString()} array`);
-      }
+    let chunkIndex;
+    if (this.isPacked()) {
+      const elemsPerChunk = Math.floor(32 / this.elementType.getItemLength());
+      chunkIndex = Math.floor(path / elemsPerChunk);
+    } else {
+      chunkIndex = path;
     }
-    if (isNaN(parseInt(path as string))) {
-      throw new Error("Not supported path on BasicList");
-    }
-    const [pos] = this.getItemPosition(parseInt(path as string));
-    const baseIndex = 2;
-    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.elementType.getGeneralizedIndex(pathParts.slice(1), rootIndex);
+    return rootIndex * toGindex(chunkIndex, BigInt(this.tree.depth()));
   }
 }
 

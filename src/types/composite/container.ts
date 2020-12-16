@@ -1,3 +1,4 @@
+import { Gindex, toGindex } from "@chainsafe/persistent-merkle-tree";
 import {ContainerByteArrayHandler, ContainerStructuralHandler, ContainerTreeHandler} from "../../backings";
 import {ObjectLike} from "../../interface";
 import {GIndexPathKeys, GINDEX_LEN_PATH} from "../../util/gIndex";
@@ -45,20 +46,15 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     return [pos, 0, this.fields[propertyName].getItemLength()];
   }
 
-  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = 1): number {
+  getGeneralizedIndex(pathParts: GIndexPathKeys[], rootIndex = BigInt(1)): Gindex {
     if (pathParts.length === 0) {
       return rootIndex;
     }
     const path = pathParts[0];
-    if (typeof path !== "string" || path === GINDEX_LEN_PATH) {
-      throw new Error(`Unsupported path ${path} in container`);
+    const fieldIndex = Object.keys(this.fields).indexOf(String(path));
+    if (fieldIndex === -1) {
+      throw new Error(`Field ${path} doesn't exists on container`);
     }
-    if (!this.fields[path]) {
-      throw new Error(`Property ${path} doesn't exists on container.`);
-    }
-    const [pos] = this.getItemPosition(path);
-    const baseIndex = 1;
-    rootIndex = rootIndex * baseIndex * getPowerOfTwoCeil(this.chunkCount()) + pos;
-    return this.fields[path].getGeneralizedIndex(pathParts.slice(1), rootIndex);
+    return rootIndex * toGindex(fieldIndex, BigInt(this.tree.depth()));
   }
 }
