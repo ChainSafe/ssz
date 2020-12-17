@@ -19,7 +19,7 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
           if (fieldType.isBasic()) {
             return zeroNode(0);
           }
-          if(fieldType.isComposite()) {
+          if (fieldType.isComposite()) {
             return fieldType.tree.defaultNode();
           }
         }),
@@ -40,7 +40,7 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
             fieldType.toBytes(value[fieldName], chunk, 0);
             return new LeafNode(chunk);
           } else {
-            if (isTreeBacked(value[fieldName]as ObjectLike)) {
+            if (isTreeBacked(value[fieldName] as ObjectLike)) {
               return (value[fieldName] as ITreeBacked<T>).tree().rootNode;
             } else {
               return (fieldType as CompositeType).tree.fromStructural(value[fieldName] as ObjectLike).rootNode;
@@ -80,7 +80,7 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
         // copy chunk into new memory
         chunk.set(dataChunk);
         this.setRootAtChunk(target, i, chunk);
-      } 
+      }
       if (fieldType.isComposite()) {
         this.setSubtreeAtChunk(target, i, fieldType.tree.fromBytes(data, start + currentOffset, start + nextOffset));
       }
@@ -104,8 +104,8 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
         const s = fieldType.size();
         output.set(node.root.slice(0, s), fixedIndex);
         fixedIndex += s;
-      } 
-      if(fieldType.isComposite()) {
+      }
+      if (fieldType.isComposite()) {
         if (fieldType.isVariableSize()) {
           // write offset
           fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
@@ -136,8 +136,8 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
     if (fieldType.isBasic()) {
       const chunk = this.getRootAtChunk(target, chunkIndex);
       return fieldType.fromBytes(chunk, 0) as PropOfTreeBacked<T, V>;
-    } 
-    if(fieldType.isComposite()) {
+    }
+    if (fieldType.isComposite()) {
       return fieldType.tree.asTreeBacked(this.getSubtreeAtChunk(target, chunkIndex)) as PropOfTreeBacked<T, V>;
     }
   }
@@ -153,8 +153,8 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
       fieldType.toBytes(value, chunk, 0);
       target.setRoot(chunkGindex, chunk);
       return true;
-    } 
-    if(fieldType.isComposite()) {
+    }
+    if (fieldType.isComposite()) {
       if (isTreeBacked(value)) {
         target.setSubtree(chunkGindex, value.tree());
       } else {
@@ -171,8 +171,8 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
     const fieldType = this._type.fields[property as string];
     if (fieldType.isBasic()) {
       return this.set(target, property, fieldType.defaultValue() as PropOfTreeBacked<T, keyof T>);
-    } 
-    if(fieldType.isComposite()) {
+    }
+    if (fieldType.isComposite()) {
       return this.set(target, property, fieldType.tree.defaultValue() as PropOfTreeBacked<T, keyof T>);
     }
   }
@@ -199,8 +199,8 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
       if (fieldType.isBasic()) {
         const s = fieldType.size();
         entries.push([fieldName, fieldType.fromBytes(node.root.slice(0, s), 0)] as [string, T[keyof T]]);
-      } 
-      if(fieldType.isComposite()) {
+      }
+      if (fieldType.isComposite()) {
         entries.push([fieldName, fieldType.tree.asTreeBacked(new Tree(node))] as [string, T[keyof T]]);
       }
       i++;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Tree, Node, iterateAtDepth, Gindex, LeafNode, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 
-import { ArrayLike, ObjectLike } from '../../interface';
+import {ArrayLike, ObjectLike} from "../../interface";
 import {BasicArrayType, CompositeArrayType} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfCompositeTreeBacked} from "./abstract";
 

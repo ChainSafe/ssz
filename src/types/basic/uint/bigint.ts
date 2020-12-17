@@ -1,6 +1,6 @@
-import { isTypeOf, IUintOptions } from "..";
-import { Json } from "../../..";
-import { UintType } from '.';
+import {isTypeOf, IUintOptions} from "..";
+import {Json} from "../../..";
+import {UintType} from ".";
 
 export const BIGINT_UINT_TYPE = Symbol.for("ssz/BigIntUintType");
 

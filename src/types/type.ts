@@ -17,7 +17,7 @@ export abstract class Type<T> {
    *
    * Used by various isFooType functions
    */
-  _typeSymbols: Set<symbol>;
+  public _typeSymbols: Set<symbol>;
 
   constructor() {
     this._typeSymbols = new Set();

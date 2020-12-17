@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ArrayLike, Json, ObjectLike } from '../../interface';
+import {ArrayLike, Json, ObjectLike} from "../../interface";
 import {BasicArrayType, CompositeArrayType, IJsonOptions} from "../../types";
 import {StructuralHandler} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";

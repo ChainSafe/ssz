@@ -1,8 +1,8 @@
-import {ObjectLike, Json} from "../../interface";
-import {ContainerType, CompositeType, Type, IJsonOptions, BasicType} from "../../types";
-import {StructuralHandler} from "./abstract";
-import {toExpectedCase} from "../utils";
+import {Json, ObjectLike} from "../../interface";
+import {CompositeType, ContainerType, IJsonOptions} from "../../types";
 import {SszErrorPath} from "../../util/errorPath";
+import {toExpectedCase} from "../utils";
+import {StructuralHandler} from "./abstract";
 
 export class ContainerStructuralHandler<T extends Record<string, unknown>> extends StructuralHandler<T> {
   _type: ContainerType<T>;
@@ -15,8 +15,8 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       if (fieldType.isBasic()) {
         obj[fieldName as keyof T] = fieldType.defaultValue() as T[keyof T];
-      } 
-      if( fieldType.isComposite()) {
+      }
+      if (fieldType.isComposite()) {
         obj[fieldName as keyof T] = fieldType.structural.defaultValue() as T[keyof T];
       }
     });
@@ -62,7 +62,7 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
           // @ts-ignore
           fieldType.assertValidValue(value[fieldName]);
         }
-        if(fieldType.isComposite()){
+        if (fieldType.isComposite()) {
           // @ts-ignore
           fieldType.structural.assertValidValue(value[fieldName]);
         }
@@ -77,8 +77,8 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
     return Object.entries(this._type.fields).every(([fieldName, fieldType]) => {
       if (fieldType.isBasic()) {
         return fieldType.equals(value1[fieldName], value2[fieldName]);
-      } 
-      if(fieldType.isComposite()) {
+      }
+      if (fieldType.isComposite()) {
         return fieldType.structural.equals(value1[fieldName] as ObjectLike, value2[fieldName] as ObjectLike);
       }
     });
@@ -88,8 +88,8 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       if (fieldType.isBasic()) {
         newValue[fieldName as keyof T] = fieldType.clone(value[fieldName]) as T[keyof T];
-      } 
-      if(fieldType.isComposite()) {
+      }
+      if (fieldType.isComposite()) {
         newValue[fieldName as keyof T] = fieldType.structural.clone(value[fieldName] as ObjectLike) as T[keyof T];
       }
     });
@@ -144,9 +144,9 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
           // fixed-sized field
           nextIndex = currentIndex + fieldSize;
           if (fieldType.isBasic()) {
-            value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex)  as T[keyof T];
-          } 
-          if(fieldType.isComposite()) {
+            value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex) as T[keyof T];
+          }
+          if (fieldType.isComposite()) {
             value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex) as T[keyof T];
           }
           currentIndex = nextIndex;
@@ -207,7 +207,10 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
-      value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[expectedFieldName], options) as T[keyof T];
+      value[fieldName as keyof T] = fieldType.fromJson(
+        (data as Record<string, Json>)[expectedFieldName],
+        options
+      ) as T[keyof T];
     });
     return value;
   }

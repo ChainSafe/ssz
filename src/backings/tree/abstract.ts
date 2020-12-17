@@ -4,7 +4,7 @@ import {Node, Tree, Gindex, countToDepth, toGindex} from "@chainsafe/persistent-
 import {CompositeType} from "../../types";
 import {BackingType} from "../backedValue";
 import {byteArrayEquals} from "../byteArray";
-import { CompositeValue, ObjectLike } from '../../interface';
+import {CompositeValue, ObjectLike} from "../../interface";
 
 export function isTreeBacked<T extends CompositeValue>(value: unknown): value is TreeBacked<T> {
   return (value as TreeBacked<T>).backingType && (value as TreeBacked<T>).backingType() === BackingType.tree;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ByteVector, ObjectLike, CompositeValue } from '../../interface';
+import {ByteVector, ObjectLike, CompositeValue} from "../../interface";
 import {CompositeType} from "../../types";
 import {BackingType} from "../backedValue";
 

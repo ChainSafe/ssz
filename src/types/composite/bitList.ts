@@ -14,7 +14,6 @@ export function isBitListType<T extends BitList = BitList>(type: unknown): type 
 }
 
 export class BitListType extends BasicListType<BitList> {
-
   constructor(options: IBitListOptions) {
     super({elementType: booleanType, ...options});
     this.structural = new BitListStructuralHandler(this);

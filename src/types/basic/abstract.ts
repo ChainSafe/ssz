@@ -1,4 +1,4 @@
-import { Type } from "..";
+import {Type} from "../type";
 
 /**
  * Check if `type` is an instance of `typeSymbol` type
@@ -20,7 +20,10 @@ export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
  * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
  */
 export abstract class BasicType<T> extends Type<T> {
- 
+  constructor() {
+    super();
+  }
+
   isBasic(): boolean {
     return true;
   }
@@ -64,7 +67,7 @@ export abstract class BasicType<T> extends Type<T> {
     return this.size();
   }
 
-    /**
+  /**
    * Validate bytes before calling fromBytes
    * @param data
    * @param offset
@@ -108,12 +111,12 @@ export abstract class BasicType<T> extends Type<T> {
     return output;
   }
 
-    /**
+  /**
    * Serialized byte length
    */
   abstract size(): number;
 
-    /**
+  /**
    * Low-level deserialization
    */
   abstract fromBytes(data: Uint8Array, offset: number): T;

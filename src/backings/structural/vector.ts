@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Vector, Json, ObjectLike } from '../../interface';
+import {Vector, Json, ObjectLike} from "../../interface";
 import {BasicVectorType, CompositeVectorType} from "../../types";
 import {BasicArrayStructuralHandler, CompositeArrayStructuralHandler} from "./array";
 

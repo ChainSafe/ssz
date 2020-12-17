@@ -1,6 +1,6 @@
-import { ObjectLike, Vector } from '../../interface';
-import { BasicVectorType, CompositeVectorType } from "../../types";
-import { BasicArrayByteArrayHandler, CompositeArrayByteArrayHandler } from "./array";
+import {ObjectLike, Vector} from "../../interface";
+import {BasicVectorType, CompositeVectorType} from "../../types";
+import {BasicArrayByteArrayHandler, CompositeArrayByteArrayHandler} from "./array";
 
 export class BasicVectorByteArrayHandler<T extends Vector<unknown>> extends BasicArrayByteArrayHandler<T> {
   _type: BasicVectorType<T>;

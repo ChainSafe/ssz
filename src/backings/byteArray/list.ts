@@ -1,4 +1,4 @@
-import { List, ObjectLike } from '../../interface';
+import {List, ObjectLike} from "../../interface";
 import {BasicListType, CompositeListType} from "../../types";
 import {mixInLength} from "../../util/compat";
 import {BasicArrayByteArrayHandler, CompositeArrayByteArrayHandler} from "./array";

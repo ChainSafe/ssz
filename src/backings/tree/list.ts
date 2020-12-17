@@ -1,6 +1,6 @@
 import {Node, Tree, zeroNode, BranchNode} from "@chainsafe/persistent-merkle-tree";
 
-import { List, ObjectLike } from '../../interface';
+import {List, ObjectLike} from "../../interface";
 import {number32Type, BasicListType, CompositeListType} from "../../types";
 import {BasicArrayTreeHandler, CompositeArrayTreeHandler} from "./array";
 
@@ -198,7 +198,7 @@ export class CompositeListTreeHandler<T extends List<ObjectLike>> extends Compos
   pop(target: Tree): T[number] {
     const length = this.getLength(target);
     const value = this.get(target, length - 1);
-    this.setProperty(target, length - 1, new Tree(zeroNode(0)) as unknown as T[number]);
+    this.setProperty(target, length - 1, (new Tree(zeroNode(0)) as unknown) as T[number]);
     this.setLength(target, length - 1);
     return value as T[number];
   }
