@@ -20,10 +20,6 @@ export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
  * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
  */
 export abstract class BasicType<T> extends Type<T> {
-  constructor() {
-    super();
-  }
-
   isBasic(): boolean {
     return true;
   }

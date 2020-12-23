@@ -4,7 +4,7 @@ import {isTypeOf} from "../basic";
 import {Type} from "../type";
 import {ContainerStructuralHandler, ContainerTreeHandler, ContainerByteArrayHandler} from "../../backings";
 
-export interface IContainerOptions<T extends Record<string, unknown>> {
+export interface IContainerOptions<T extends ObjectLike> {
   fields: Record<keyof T, Type<unknown>>;
 }
 

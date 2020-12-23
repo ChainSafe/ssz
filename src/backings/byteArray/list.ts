@@ -1,4 +1,4 @@
-import {List, ObjectLike} from "../../interface";
+import {CompositeValue, List} from "../../interface";
 import {BasicListType, CompositeListType} from "../../types";
 import {mixInLength} from "../../util/compat";
 import {BasicArrayByteArrayHandler, CompositeArrayByteArrayHandler} from "./array";
@@ -17,7 +17,7 @@ export class BasicListByteArrayHandler<T extends List<unknown>> extends BasicArr
   }
 }
 
-export class CompositeListByteArrayHandler<T extends List<ObjectLike>> extends CompositeArrayByteArrayHandler<T> {
+export class CompositeListByteArrayHandler<T extends List<CompositeValue>> extends CompositeArrayByteArrayHandler<T> {
   _type: CompositeListType<T>;
   constructor(type: CompositeListType<T>) {
     super();

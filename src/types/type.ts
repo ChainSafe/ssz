@@ -1,6 +1,7 @@
 import {Json} from "..";
 import {BasicType} from "./basic";
 import {CompositeType} from "./composite";
+import {CompositeValue} from "../interface";
 
 export interface IJsonOptions {
   case: "camel" | "snake";
@@ -9,8 +10,6 @@ export interface IJsonOptions {
 // /**
 //  * A Type is either a BasicType or a CompositeType.
 //  */
-// export type Type<T> = BasicType<T> | (T extends object ? CompositeType<T> : never);
-
 export abstract class Type<T> {
   /**
    * Symbols used to track the identity of a type
@@ -23,7 +22,7 @@ export abstract class Type<T> {
     this._typeSymbols = new Set();
   }
 
-  isComposite(): this is CompositeType {
+  isComposite(): this is CompositeType<CompositeValue> {
     return !this.isBasic();
   }
 

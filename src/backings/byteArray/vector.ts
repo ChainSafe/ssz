@@ -1,4 +1,4 @@
-import {ObjectLike, Vector} from "../../interface";
+import {CompositeValue, Vector} from "../../interface";
 import {BasicVectorType, CompositeVectorType} from "../../types";
 import {BasicArrayByteArrayHandler, CompositeArrayByteArrayHandler} from "./array";
 
@@ -13,7 +13,9 @@ export class BasicVectorByteArrayHandler<T extends Vector<unknown>> extends Basi
   }
 }
 
-export class CompositeVectorByteArrayHandler<T extends Vector<ObjectLike>> extends CompositeArrayByteArrayHandler<T> {
+export class CompositeVectorByteArrayHandler<T extends Vector<CompositeValue>> extends CompositeArrayByteArrayHandler<
+  T
+> {
   _type: CompositeVectorType<T>;
   constructor(type: CompositeVectorType<T>) {
     super();

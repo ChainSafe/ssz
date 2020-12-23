@@ -1,4 +1,4 @@
-import {Json, ObjectLike} from "../../interface";
+import {Json, ObjectLike, CompositeValue} from "../../interface";
 import {CompositeType, ContainerType, IJsonOptions} from "../../types";
 import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../utils";
@@ -133,7 +133,7 @@ export class ContainerStructuralHandler<T extends Record<string, unknown>> exten
           if (offsets[offsetIndex] > offsets[offsetIndex + 1]) {
             throw new Error("Offsets must be increasing");
           }
-          value[fieldName as keyof T] = (fieldType as CompositeType<T>).structural.fromBytes(
+          value[fieldName as keyof T] = (fieldType as CompositeType<CompositeValue>).structural.fromBytes(
             data,
             offsets[offsetIndex],
             offsets[offsetIndex + 1]

@@ -8,7 +8,7 @@ import {IJsonOptions, Type} from "../type";
  * A CompositeType is a type containing other types, and is flexible in its representation.
  *
  */
-export abstract class CompositeType<T extends CompositeValue = ObjectLike> extends Type<T> {
+export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   structural: StructuralHandler<T>;
   tree: TreeHandler<T>;
   byteArray: ByteArrayHandler<T>;

@@ -1,22 +1,22 @@
+import {CompositeValue} from "../../interface";
 import {isTypeOf} from "../basic";
-import {ByteVectorType} from "./byteVector";
 import {CompositeType} from "./abstract";
-import {ObjectLike} from "../../interface";
+import {ByteVectorType} from "./byteVector";
 
 /**
  * Allow for lazily evaulated expandedType thunk
  */
-export interface IRootOptions<T extends ObjectLike> {
+export interface IRootOptions<T extends CompositeValue> {
   expandedType: CompositeType<T> | (() => CompositeType<T>);
 }
 
 export const ROOT_TYPE = Symbol.for("ssz/RootType");
 
-export function isRootType<T extends ObjectLike = ObjectLike>(type: unknown): type is RootType<T> {
+export function isRootType<T extends CompositeValue = CompositeValue>(type: unknown): type is RootType<T> {
   return isTypeOf(type, ROOT_TYPE);
 }
 
-export class RootType<T extends ObjectLike> extends ByteVectorType {
+export class RootType<T extends CompositeValue> extends ByteVectorType {
   _expandedType: CompositeType<T> | (() => CompositeType<T>);
   constructor(options: IRootOptions<T>) {
     super({length: 32});

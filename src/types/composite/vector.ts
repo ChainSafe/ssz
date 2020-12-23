@@ -1,14 +1,14 @@
-import {Vector, ObjectLike} from "../../interface";
-import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isTypeOf} from "../basic";
 import {
-  BasicVectorStructuralHandler,
-  CompositeVectorStructuralHandler,
-  BasicVectorTreeHandler,
-  CompositeVectorTreeHandler,
   BasicVectorByteArrayHandler,
+  BasicVectorStructuralHandler,
+  BasicVectorTreeHandler,
   CompositeVectorByteArrayHandler,
+  CompositeVectorStructuralHandler,
+  CompositeVectorTreeHandler,
 } from "../../backings";
+import {CompositeValue, Vector} from "../../interface";
+import {isTypeOf} from "../basic";
+import {BasicArrayType, CompositeArrayType, IArrayOptions} from "./array";
 
 export interface IVectorOptions extends IArrayOptions {
   length: number;
@@ -57,7 +57,9 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 }
 
-export class CompositeVectorType<T extends Vector<ObjectLike> = Vector<ObjectLike>> extends CompositeArrayType<T> {
+export class CompositeVectorType<T extends Vector<CompositeValue> = Vector<CompositeValue>> extends CompositeArrayType<
+  T
+> {
   length: number;
   constructor(options: IVectorOptions) {
     super(options);

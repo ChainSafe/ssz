@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Vector, Json, ObjectLike} from "../../interface";
+import {CompositeValue, Json, Vector} from "../../interface";
 import {BasicVectorType, CompositeVectorType} from "../../types";
 import {BasicArrayStructuralHandler, CompositeArrayStructuralHandler} from "./array";
 
@@ -54,7 +54,9 @@ export class BasicVectorStructuralHandler<T extends Vector<unknown>> extends Bas
   }
 }
 
-export class CompositeVectorStructuralHandler<T extends Vector<ObjectLike>> extends CompositeArrayStructuralHandler<T> {
+export class CompositeVectorStructuralHandler<T extends Vector<CompositeValue>> extends CompositeArrayStructuralHandler<
+  T
+> {
   _type: CompositeVectorType<T>;
   constructor(type: CompositeVectorType<T>) {
     super();

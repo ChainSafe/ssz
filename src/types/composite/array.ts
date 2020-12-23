@@ -1,4 +1,4 @@
-import {ArrayLike} from "../../interface";
+import {ArrayLike, CompositeValue} from "../../interface";
 import {Type} from "../type";
 import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
@@ -17,9 +17,9 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
 }
 
 export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
-  elementType: CompositeType<Record<string, unknown>>;
+  elementType: CompositeType<CompositeValue>;
   constructor(options: IArrayOptions) {
     super();
-    this.elementType = (options.elementType as unknown) as CompositeType<Record<string, unknown>>;
+    this.elementType = (options.elementType as unknown) as CompositeType<CompositeValue>;
   }
 }

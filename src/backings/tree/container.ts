@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Node, Tree, subtreeFillToContents, zeroNode, Gindex, LeafNode} from "@chainsafe/persistent-merkle-tree";
 
-import {ObjectLike} from "../../interface";
+import {CompositeValue, ObjectLike} from "../../interface";
 import {ContainerType, CompositeType} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfTreeBacked, ITreeBacked} from "./abstract";
 
@@ -39,11 +39,12 @@ export class ContainerTreeHandler<T extends Record<string, unknown>> extends Tre
             const chunk = new Uint8Array(32);
             fieldType.toBytes(value[fieldName], chunk, 0);
             return new LeafNode(chunk);
-          } else {
+          }
+          if (fieldType.isComposite()) {
             if (isTreeBacked(value[fieldName] as ObjectLike)) {
               return (value[fieldName] as ITreeBacked<T>).tree().rootNode;
             } else {
-              return (fieldType as CompositeType).tree.fromStructural(value[fieldName] as ObjectLike).rootNode;
+              return fieldType.tree.fromStructural(value[fieldName] as CompositeValue).rootNode;
             }
           }
         }),
