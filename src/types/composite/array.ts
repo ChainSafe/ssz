@@ -1,4 +1,4 @@
-import {ArrayLike} from "../../interface";
+import {ArrayLike, CompositeValue} from "../../interface";
 import {Type} from "../type";
 import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
@@ -8,7 +8,7 @@ export interface IArrayOptions {
   elementType: Type<any>;
 }
 
-export class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
+export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: BasicType<unknown>;
   constructor(options: IArrayOptions) {
     super();
@@ -16,10 +16,10 @@ export class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<
   }
 }
 
-export class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
-  elementType: CompositeType<object>;
+export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
+  elementType: CompositeType<CompositeValue>;
   constructor(options: IArrayOptions) {
     super();
-    this.elementType = (options.elementType as unknown) as CompositeType<object>;
+    this.elementType = (options.elementType as unknown) as CompositeType<CompositeValue>;
   }
 }

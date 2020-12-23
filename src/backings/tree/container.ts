@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Node, Tree, subtreeFillToContents, zeroNode, Gindex, LeafNode} from "@chainsafe/persistent-merkle-tree";
 
-import {ObjectLike} from "../../interface";
+import {CompositeValue, ObjectLike} from "../../interface";
 import {ContainerType, CompositeType} from "../../types";
-import {isTreeBacked, TreeHandler, PropOfTreeBacked} from "./abstract";
+import {isTreeBacked, TreeHandler, PropOfTreeBacked, ITreeBacked} from "./abstract";
 
-export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
+export class ContainerTreeHandler<T extends Record<string, unknown>> extends TreeHandler<T> {
   _type: ContainerType<T>;
   _defaultNode: Node;
   constructor(type: ContainerType<T>) {
@@ -18,7 +18,8 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
         Object.values(this._type.fields).map((fieldType) => {
           if (fieldType.isBasic()) {
             return zeroNode(0);
-          } else {
+          }
+          if (fieldType.isComposite()) {
             return fieldType.tree.defaultNode();
           }
         }),
@@ -38,11 +39,12 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
             const chunk = new Uint8Array(32);
             fieldType.toBytes(value[fieldName], chunk, 0);
             return new LeafNode(chunk);
-          } else {
-            if (isTreeBacked(value[fieldName])) {
-              return value[fieldName].tree().rootNode;
+          }
+          if (fieldType.isComposite()) {
+            if (isTreeBacked(value[fieldName] as ObjectLike)) {
+              return (value[fieldName] as ITreeBacked<T>).tree().rootNode;
             } else {
-              return fieldType.tree.fromStructural(value[fieldName]).rootNode;
+              return fieldType.tree.fromStructural(value[fieldName] as CompositeValue).rootNode;
             }
           }
         }),
@@ -53,8 +55,8 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
   size(target: Tree): number {
     let s = 0;
     Object.values(this._type.fields).forEach((fieldType, i) => {
-      if (fieldType.isVariableSize()) {
-        s += (fieldType as CompositeType<T[keyof T]>).tree.size(this.getSubtreeAtChunk(target, i)) + 4;
+      if (fieldType.isVariableSize() && fieldType.isComposite()) {
+        s += fieldType.tree.size(this.getSubtreeAtChunk(target, i)) + 4;
       } else {
         s += fieldType.size(null);
       }
@@ -79,7 +81,8 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
         // copy chunk into new memory
         chunk.set(dataChunk);
         this.setRootAtChunk(target, i, chunk);
-      } else {
+      }
+      if (fieldType.isComposite()) {
         this.setSubtreeAtChunk(target, i, fieldType.tree.fromBytes(data, start + currentOffset, start + nextOffset));
       }
     });
@@ -102,14 +105,17 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
         const s = fieldType.size();
         output.set(node.root.slice(0, s), fixedIndex);
         fixedIndex += s;
-      } else if (fieldType.isVariableSize()) {
-        // write offset
-        fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
-        fixedIndex += 4;
-        // write serialized element to variable section
-        variableIndex = fieldType.tree.toBytes(new Tree(node), output, variableIndex);
-      } else {
-        fixedIndex = fieldType.tree.toBytes(new Tree(node), output, fixedIndex);
+      }
+      if (fieldType.isComposite()) {
+        if (fieldType.isVariableSize()) {
+          // write offset
+          fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
+          fixedIndex += 4;
+          // write serialized element to variable section
+          variableIndex = fieldType.tree.toBytes(new Tree(node), output, variableIndex);
+        } else {
+          fixedIndex = fieldType.tree.toBytes(new Tree(node), output, fixedIndex);
+        }
       }
       i++;
     }
@@ -130,9 +136,10 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     const fieldType = this._type.fields[property as string];
     if (fieldType.isBasic()) {
       const chunk = this.getRootAtChunk(target, chunkIndex);
-      return fieldType.fromBytes(chunk, 0);
-    } else {
-      return fieldType.tree.asTreeBacked(this.getSubtreeAtChunk(target, chunkIndex));
+      return fieldType.fromBytes(chunk, 0) as PropOfTreeBacked<T, V>;
+    }
+    if (fieldType.isComposite()) {
+      return fieldType.tree.asTreeBacked(this.getSubtreeAtChunk(target, chunkIndex)) as PropOfTreeBacked<T, V>;
     }
   }
   set(target: Tree, property: keyof T, value: T[keyof T]): boolean {
@@ -147,11 +154,12 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       fieldType.toBytes(value, chunk, 0);
       target.setRoot(chunkGindex, chunk);
       return true;
-    } else {
+    }
+    if (fieldType.isComposite()) {
       if (isTreeBacked(value)) {
         target.setSubtree(chunkGindex, value.tree());
       } else {
-        target.setSubtree(chunkGindex, fieldType.tree.fromStructural(value));
+        target.setSubtree(chunkGindex, fieldType.tree.fromStructural(value as ObjectLike));
       }
       return true;
     }
@@ -163,9 +171,10 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     }
     const fieldType = this._type.fields[property as string];
     if (fieldType.isBasic()) {
-      return this.set(target, property, fieldType.defaultValue());
-    } else {
-      return this.set(target, property, fieldType.tree.defaultValue());
+      return this.set(target, property, fieldType.defaultValue() as PropOfTreeBacked<T, keyof T>);
+    }
+    if (fieldType.isComposite()) {
+      return this.set(target, property, fieldType.tree.defaultValue() as PropOfTreeBacked<T, keyof T>);
     }
   }
   ownKeys(target: Tree): string[] {
@@ -190,9 +199,10 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       const [fieldName, fieldType] = fields[i];
       if (fieldType.isBasic()) {
         const s = fieldType.size();
-        entries.push([fieldName, fieldType.fromBytes(node.root.slice(0, s), 0)]);
-      } else {
-        entries.push([fieldName, fieldType.tree.asTreeBacked(new Tree(node))]);
+        entries.push([fieldName, fieldType.fromBytes(node.root.slice(0, s), 0)] as [string, T[keyof T]]);
+      }
+      if (fieldType.isComposite()) {
+        entries.push([fieldName, fieldType.tree.asTreeBacked(new Tree(node))] as [string, T[keyof T]]);
       }
       i++;
     }

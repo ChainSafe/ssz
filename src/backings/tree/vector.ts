@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Node, Tree, subtreeFillToLength, zeroNode} from "@chainsafe/persistent-merkle-tree";
 
-import {Vector} from "../../interface";
+import {ObjectLike, Vector} from "../../interface";
 import {BasicVectorType, CompositeVectorType} from "../../types";
 import {BasicArrayTreeHandler, CompositeArrayTreeHandler} from "./array";
 
@@ -38,7 +38,7 @@ export class BasicVectorTreeHandler<T extends Vector<unknown>> extends BasicArra
   }
 }
 
-export class CompositeVectorTreeHandler<T extends Vector<object>> extends CompositeArrayTreeHandler<T> {
+export class CompositeVectorTreeHandler<T extends Vector<ObjectLike>> extends CompositeArrayTreeHandler<T> {
   _type: CompositeVectorType<T>;
   _defaultNode: Node;
   constructor(type: CompositeVectorType<T>) {

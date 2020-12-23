@@ -14,14 +14,16 @@ export interface ArrayLike<T> {
   forEach(fn: (value: T, index: number, array: this) => void): void;
 }
 
-export type Vector<T> = ArrayLike<T>;
+export type CompositeValue = Record<string, unknown> | ArrayLike<unknown>;
+
+export type Vector<T, Index = number> = ArrayLike<T>;
 
 export interface List<T> extends ArrayLike<T> {
   push(...values: T[]): number;
   pop(): T;
 }
 
-export type Container<T extends object> = T;
+export type Container<T extends ObjectLike> = T;
 
 export type ByteVector = Vector<number>;
 
@@ -29,10 +31,7 @@ export type BitVector = Vector<boolean>;
 
 export type BitList = List<boolean>;
 
-export interface ObjectLike {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [fieldName: string]: any;
-}
+export type ObjectLike = Record<string, unknown> | {};
 
 /**
  * The Json interface is used for json-serializable input

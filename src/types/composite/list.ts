@@ -1,14 +1,14 @@
-import {List} from "../../interface";
-import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isTypeOf} from "../basic";
 import {
-  BasicListStructuralHandler,
-  CompositeListStructuralHandler,
-  BasicListTreeHandler,
-  CompositeListTreeHandler,
   BasicListByteArrayHandler,
+  BasicListStructuralHandler,
+  BasicListTreeHandler,
   CompositeListByteArrayHandler,
+  CompositeListStructuralHandler,
+  CompositeListTreeHandler,
 } from "../../backings";
+import {List, ObjectLike} from "../../interface";
+import {isTypeOf} from "../basic";
+import {BasicArrayType, CompositeArrayType, IArrayOptions} from "./array";
 
 export interface IListOptions extends IArrayOptions {
   limit: number;
@@ -57,7 +57,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 }
 
-export class CompositeListType<T extends List<object> = List<object>> extends CompositeArrayType<T> {
+export class CompositeListType<T extends List<ObjectLike> = List<ObjectLike>> extends CompositeArrayType<T> {
   limit: number;
   constructor(options: IListOptions) {
     super(options);

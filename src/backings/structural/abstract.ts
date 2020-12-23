@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Json} from "../../interface";
+import {CompositeValue, Json} from "../../interface";
 import {CompositeType, IJsonOptions} from "../../types";
 import {merkleize} from "../../util/compat";
 
@@ -8,7 +8,7 @@ import {merkleize} from "../../util/compat";
  * It is only meant to be called via the CompositeType.structural object, rather than through a Proxied call.
  * It also acts on targets of type T rather than TreeBacked<T>.
  */
-export class StructuralHandler<T extends object> {
+export class StructuralHandler<T extends CompositeValue> {
   _type: CompositeType<T>;
   type(): CompositeType<T> {
     return this._type;
