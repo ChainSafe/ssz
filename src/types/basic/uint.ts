@@ -30,6 +30,9 @@ export function isNumberUintType(type: unknown): type is NumberUintType {
   return isTypeOf(type, NUMBER_UINT_TYPE);
 }
 
+// a group contains 4 bytes, that's what << operator supports for number
+const BYTES_PER_GROUP = 4;
+
 export class NumberUintType extends UintType<number> {
   constructor(options: IUintOptions) {
     super(options);
@@ -67,14 +70,45 @@ export class NumberUintType extends UintType<number> {
     }
     return offset + this.byteLength;
   }
+  /**
+   * To save memory and improve performance, we restrict the use of BigInt
+   * by calculating based on group instead of byte.
+   * | b7 b6 b5 b4 | b3 b2 b1 b0 |
+   * |      g1     |      g0     |
+   */
   fromBytes(data: Uint8Array, offset: number): number {
     this.validateBytes(data, offset);
     let isInfinity = true;
     let output = BigInt(0);
+    let groupOutput = 0;
+    let groupIndex = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      output += BigInt(data[offset + i]) << BigInt(8 * i);
+      const byteIndex = i % BYTES_PER_GROUP;
+      groupOutput += data[offset + i] << (8 * byteIndex);
+      // left shift returns 32 bytes signed number
+      if (groupOutput < 0) {
+        groupOutput = groupOutput >>> 0;
+      }
+      if ((i + 1) % BYTES_PER_GROUP === 0) {
+        if (groupIndex === 0) {
+          output = BigInt(groupOutput);
+        } else {
+          output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
+        }
+        groupIndex++;
+        groupOutput = 0;
+      }
+      // output += BigInt(data[offset + i]) << BigInt(8 * i);
       if (data[offset + i] !== 0xff) {
         isInfinity = false;
+      }
+    }
+    // in case (byteLength % BYTES_PER_GROUP) !== 0
+    if (groupOutput > 0) {
+      if (groupIndex === 0) {
+        output = BigInt(groupOutput);
+      } else {
+        output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
       }
     }
     if (this.byteLength > 6 && isInfinity) {
@@ -128,19 +162,60 @@ export class BigIntUintType extends UintType<bigint> {
   defaultValue(): bigint {
     return BigInt(0);
   }
+  /**
+   * To save memory and improve performance, we restrict the use of BigInt
+   * by calculating based on group instead of byte.
+   * | b7 b6 b5 b4 | b3 b2 b1 b0 |
+   * |      g1     |      g0     |
+   */
   toBytes(value: bigint, output: Uint8Array, offset: number): number {
     let v = value;
+    let groupedBytes = Number(v & BigInt(0xffffffff));
     for (let i = 0; i < this.byteLength; i++) {
-      output[offset + i] = Number(v & BigInt(0xff));
-      v >>= BigInt(8);
+      const byteIndex = i % BYTES_PER_GROUP;
+      output[offset + i] = Number((groupedBytes >> (8 * byteIndex)) & 0xff);
+      if ((i + 1) % BYTES_PER_GROUP === 0) {
+        v >>= BigInt(8 * BYTES_PER_GROUP);
+        groupedBytes = Number(v & BigInt(0xffffffff));
+      }
     }
     return offset + this.byteLength;
   }
+  /**
+   * To save memory and improve performance, we restrict the use of BigInt
+   * by calculating based on group instead of byte.
+   * | b7 b6 b5 b4 | b3 b2 b1 b0 |
+   * |      g1     |      g0     |
+   */
   fromBytes(data: Uint8Array, offset: number): bigint {
     this.validateBytes(data, offset);
     let output = BigInt(0);
+    let groupOutput = 0;
+    let groupIndex = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      output += BigInt(data[offset + i]) << BigInt(8 * i);
+      const byteIndex = i % BYTES_PER_GROUP;
+      groupOutput += data[offset + i] << (8 * byteIndex);
+      // left shift returns 32 bytes signed number
+      if (groupOutput < 0) {
+        groupOutput = groupOutput >>> 0;
+      }
+      if ((i + 1) % BYTES_PER_GROUP === 0) {
+        if (groupIndex === 0) {
+          output = BigInt(groupOutput);
+        } else {
+          output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
+        }
+        groupIndex++;
+        groupOutput = 0;
+      }
+    }
+    // in case (byteLength % BYTES_PER_GROUP) !== 0
+    if (groupOutput > 0) {
+      if (groupIndex === 0) {
+        output = BigInt(groupOutput);
+      } else {
+        output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
+      }
     }
     return output;
   }

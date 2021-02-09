@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ValidatorBalances as ValidatorBalancesType } from "./objects";
 
 describe("serialize", () => {
-  it.only("should serialize in less than 200ms", function () {
+  it("should serialize in less than 200ms", function () {
     this.timeout(0);
     const value = Array.from({length: 200000}, () => BigInt(31217089836));
     let minTime = Number.MAX_SAFE_INTEGER;
