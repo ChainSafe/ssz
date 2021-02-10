@@ -161,12 +161,12 @@ export class CompositeArrayStructuralHandler<T extends ArrayLike<object>> extend
       // all elements variable-sized
       // indices contain offsets
       let currentIndex = start;
-      let nextIndex = currentIndex;
+      let nextIndex;
       // data exists between offsets
       const fixedSection = new DataView(data.buffer, data.byteOffset);
       const firstOffset = start + fixedSection.getUint32(start, true);
       let currentOffset = firstOffset;
-      let nextOffset = currentOffset;
+      let nextOffset;
       while (currentIndex < firstOffset) {
         if (currentOffset > end) {
           throw new Error("Offset out of bounds");
