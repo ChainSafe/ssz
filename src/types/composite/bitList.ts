@@ -1,6 +1,7 @@
 import {BitList} from "../../interface";
 import {BasicListType} from "./list";
-import {booleanType, isTypeOf} from "../basic";
+import {booleanType} from "../basic";
+import {isTypeOf, Type} from "../type";
 import {BitListStructuralHandler, BitListTreeHandler} from "../../backings";
 
 export interface IBitListOptions {
@@ -9,7 +10,7 @@ export interface IBitListOptions {
 
 export const BITLIST_TYPE = Symbol.for("ssz/BitListType");
 
-export function isBitListType<T extends BitList = BitList>(type: unknown): type is BitListType {
+export function isBitListType<T extends BitList = BitList>(type: Type<unknown>): type is BitListType {
   return isTypeOf(type, BITLIST_TYPE);
 }
 

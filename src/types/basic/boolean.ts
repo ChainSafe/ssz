@@ -1,9 +1,10 @@
 import {Json} from "../../interface";
-import {BasicType, isTypeOf} from "./abstract";
+import {isTypeOf, Type} from "../type";
+import {BasicType} from "./abstract";
 
 export const BOOLEAN_TYPE = Symbol.for("ssz/BooleanType");
 
-export function isBooleanType(type: unknown): type is BooleanType {
+export function isBooleanType(type: Type<unknown>): type is BooleanType {
   return isTypeOf(type, BOOLEAN_TYPE);
 }
 

@@ -1,6 +1,7 @@
 import {ByteVector} from "../../interface";
 import {BasicVectorType} from "./vector";
-import {byteType, isTypeOf} from "../basic";
+import {byteType} from "../basic";
+import {isTypeOf, Type} from "../type";
 import {ByteVectorStructuralHandler, ByteVectorTreeHandler} from "../../backings";
 
 export interface IByteVectorOptions {
@@ -9,7 +10,7 @@ export interface IByteVectorOptions {
 
 export const BYTEVECTOR_TYPE = Symbol.for("ssz/ByteVectorType");
 
-export function isByteVectorType<T extends ByteVector = ByteVector>(type: unknown): type is ByteVectorType {
+export function isByteVectorType<T extends ByteVector = ByteVector>(type: Type<unknown>): type is ByteVectorType {
   return isTypeOf(type, BYTEVECTOR_TYPE);
 }
 

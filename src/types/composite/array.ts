@@ -8,7 +8,7 @@ export interface IArrayOptions {
   elementType: Type<any>;
 }
 
-export class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
+export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: BasicType<unknown>;
   constructor(options: IArrayOptions) {
     super();
@@ -16,7 +16,7 @@ export class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<
   }
 }
 
-export class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
+export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: CompositeType<object>;
   constructor(options: IArrayOptions) {
     super();

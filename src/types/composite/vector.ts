@@ -1,6 +1,5 @@
 import {Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isTypeOf} from "../basic";
 import {
   BasicVectorStructuralHandler,
   CompositeVectorStructuralHandler,
@@ -9,6 +8,8 @@ import {
   BasicVectorByteArrayHandler,
   CompositeVectorByteArrayHandler,
 } from "../../backings";
+import {isBasicType} from "../basic";
+import {isTypeOf, Type} from "../type";
 
 export interface IVectorOptions extends IArrayOptions {
   length: number;
@@ -17,7 +18,7 @@ export interface IVectorOptions extends IArrayOptions {
 export const VECTOR_TYPE = Symbol.for("ssz/VectorType");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isVectorType<T extends Vector<any> = Vector<any>>(type: unknown): type is VectorType<T> {
+export function isVectorType<T extends Vector<any> = Vector<any>>(type: Type<unknown>): type is VectorType<T> {
   return isTypeOf(type, VECTOR_TYPE);
 }
 
@@ -32,7 +33,7 @@ type VectorTypeConstructor = {
 export const VectorType: VectorTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions): VectorType<T> {
-    if (options.elementType.isBasic()) {
+    if (isBasicType(options.elementType)) {
       return new BasicVectorType(options);
     } else {
       return new CompositeVectorType(options);

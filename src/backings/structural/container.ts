@@ -1,5 +1,5 @@
 import {ObjectLike, Json} from "../../interface";
-import {ContainerType, CompositeType, Type, IJsonOptions} from "../../types";
+import {ContainerType, CompositeType, IJsonOptions, isCompositeType} from "../../types";
 import {StructuralHandler} from "./abstract";
 import {toExpectedCase} from "../utils";
 import {SszErrorPath} from "../../util/errorPath";
@@ -13,10 +13,10 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
   defaultValue(): T {
     const obj = {} as T;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
-      if (fieldType.isBasic()) {
+      if (!isCompositeType(fieldType)) {
         obj[fieldName as keyof T] = fieldType.defaultValue();
       } else {
-        obj[fieldName as keyof T] = fieldType.structural.defaultValue();
+        obj[fieldName as keyof T] = fieldType.structural.defaultValue() as T[keyof T];
       }
     });
     return obj;
@@ -57,8 +57,9 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
   assertValidValue(value: unknown): asserts value is T {
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
       try {
-        if (fieldType.isBasic()) {
-          (fieldType as Type<T[keyof T]>).assertValidValue((value as T)[fieldName]);
+        if (!isCompositeType(fieldType)) {
+          // @ts-ignore
+          fieldType.assertValidValue((value as T)[fieldName]);
         } else {
           // @ts-ignore
           fieldType.structural.assertValidValue((value as T)[fieldName]);
@@ -72,7 +73,7 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
     this.assertValidValue(value1);
     this.assertValidValue(value2);
     return Object.entries(this._type.fields).every(([fieldName, fieldType]) => {
-      if (fieldType.isBasic()) {
+      if (!isCompositeType(fieldType)) {
         return fieldType.equals(value1[fieldName], value2[fieldName]);
       } else {
         return fieldType.structural.equals(value1[fieldName], value2[fieldName]);
@@ -82,10 +83,10 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
   clone(value: T): T {
     const newValue = {} as T;
     Object.entries(this._type.fields).forEach(([fieldName, fieldType]) => {
-      if (fieldType.isBasic()) {
+      if (!isCompositeType(fieldType)) {
         newValue[fieldName as keyof T] = fieldType.clone(value[fieldName]);
       } else {
-        newValue[fieldName as keyof T] = fieldType.structural.clone(value[fieldName]);
+        newValue[fieldName as keyof T] = fieldType.structural.clone(value[fieldName]) as T[keyof T];
       }
     });
     return newValue;
@@ -138,10 +139,10 @@ export class ContainerStructuralHandler<T extends ObjectLike> extends Structural
         } else {
           // fixed-sized field
           nextIndex = currentIndex + fieldSize;
-          if (fieldType.isBasic()) {
+          if (!isCompositeType(fieldType)) {
             value[fieldName as keyof T] = fieldType.fromBytes(data, currentIndex);
           } else {
-            value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex);
+            value[fieldName as keyof T] = fieldType.structural.fromBytes(data, currentIndex, nextIndex) as T[keyof T];
           }
           currentIndex = nextIndex;
         }

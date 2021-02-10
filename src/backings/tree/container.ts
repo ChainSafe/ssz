@@ -2,7 +2,7 @@
 import {Node, Tree, subtreeFillToContents, zeroNode, Gindex, LeafNode} from "@chainsafe/persistent-merkle-tree";
 
 import {ObjectLike} from "../../interface";
-import {ContainerType, CompositeType} from "../../types";
+import {ContainerType, CompositeType, isBasicType, isCompositeType} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfTreeBacked} from "./abstract";
 
 export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
@@ -16,7 +16,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     if (!this._defaultNode) {
       this._defaultNode = subtreeFillToContents(
         Object.values(this._type.fields).map((fieldType) => {
-          if (fieldType.isBasic()) {
+          if (!isCompositeType(fieldType)) {
             return zeroNode(0);
           } else {
             return fieldType.tree.defaultNode();
@@ -34,7 +34,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     return new Tree(
       subtreeFillToContents(
         Object.entries(this._type.fields).map(([fieldName, fieldType]) => {
-          if (fieldType.isBasic()) {
+          if (!isCompositeType(fieldType)) {
             const chunk = new Uint8Array(32);
             fieldType.toBytes(value[fieldName], chunk, 0);
             return new LeafNode(chunk);
@@ -68,7 +68,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     );
     Object.values(this._type.fields).forEach((fieldType, i) => {
       const [currentOffset, nextOffset] = offsets[i];
-      if (fieldType.isBasic()) {
+      if (!isCompositeType(fieldType)) {
         // view of the chunk, shared buffer from `data`
         const dataChunk = new Uint8Array(
           data.buffer,
@@ -98,7 +98,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     const fieldTypes = Object.values(this._type.fields);
     for (const node of target.iterateNodesAtDepth(this.depth(), i, fieldTypes.length)) {
       const fieldType = fieldTypes[i];
-      if (fieldType.isBasic()) {
+      if (!isCompositeType(fieldType)) {
         const s = fieldType.size();
         output.set(node.root.slice(0, s), fixedIndex);
         fixedIndex += s;
@@ -128,11 +128,11 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       return undefined;
     }
     const fieldType = this._type.fields[property as string];
-    if (fieldType.isBasic()) {
+    if (!isCompositeType(fieldType)) {
       const chunk = this.getRootAtChunk(target, chunkIndex);
       return fieldType.fromBytes(chunk, 0);
     } else {
-      return fieldType.tree.asTreeBacked(this.getSubtreeAtChunk(target, chunkIndex));
+      return fieldType.tree.asTreeBacked(this.getSubtreeAtChunk(target, chunkIndex)) as PropOfTreeBacked<T, V>;
     }
   }
   set(target: Tree, property: keyof T, value: T[keyof T]): boolean {
@@ -142,7 +142,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     }
     const chunkGindex = this.gindexOfChunk(target, chunkIndex);
     const fieldType = this._type.fields[property as string];
-    if (fieldType.isBasic()) {
+    if (!isCompositeType(fieldType)) {
       const chunk = new Uint8Array(32);
       fieldType.toBytes(value, chunk, 0);
       target.setRoot(chunkGindex, chunk);
@@ -162,10 +162,10 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       throw new Error("Invalid container field name");
     }
     const fieldType = this._type.fields[property as string];
-    if (fieldType.isBasic()) {
+    if (!isCompositeType(fieldType)) {
       return this.set(target, property, fieldType.defaultValue());
     } else {
-      return this.set(target, property, fieldType.tree.defaultValue());
+      return this.set(target, property, fieldType.tree.defaultValue() as PropOfTreeBacked<T, keyof T>);
     }
   }
   ownKeys(target: Tree): string[] {
@@ -188,11 +188,11 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     let i = 0;
     for (const node of target.iterateNodesAtDepth(this.depth(), 0, fields.length)) {
       const [fieldName, fieldType] = fields[i];
-      if (fieldType.isBasic()) {
+      if (!isCompositeType(fieldType)) {
         const s = fieldType.size();
         entries.push([fieldName, fieldType.fromBytes(node.root.slice(0, s), 0)]);
       } else {
-        entries.push([fieldName, fieldType.tree.asTreeBacked(new Tree(node))]);
+        entries.push([fieldName, fieldType.tree.asTreeBacked(new Tree(node)) as T[keyof T]]);
       }
       i++;
     }

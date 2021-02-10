@@ -1,7 +1,6 @@
 import {ObjectLike} from "../../interface";
 import {CompositeType} from "./abstract";
-import {isTypeOf} from "../basic";
-import {Type} from "../type";
+import {isTypeOf, Type} from "../type";
 import {ContainerStructuralHandler, ContainerTreeHandler, ContainerByteArrayHandler} from "../../backings";
 
 export interface IContainerOptions {
@@ -11,7 +10,7 @@ export interface IContainerOptions {
 
 export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
 
-export function isContainerType<T extends ObjectLike = ObjectLike>(type: unknown): type is ContainerType<T> {
+export function isContainerType<T extends ObjectLike = ObjectLike>(type: Type<unknown>): type is ContainerType<T> {
   return isTypeOf(type, CONTAINER_TYPE);
 }
 

@@ -1,5 +1,6 @@
 import {Json} from "../../interface";
-import {BasicType, isTypeOf} from "./abstract";
+import {isTypeOf, Type} from "../type";
+import {BasicType} from "./abstract";
 
 export interface IUintOptions {
   byteLength: number;
@@ -7,12 +8,12 @@ export interface IUintOptions {
 
 export const UINT_TYPE = Symbol.for("ssz/UintType");
 
-export function isUintType<T>(type: unknown): type is UintType<T> {
+export function isUintType<T>(type: Type<unknown>): type is UintType<T> {
   return isTypeOf(type, UINT_TYPE);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class UintType<T> extends BasicType<T> {
+export abstract class UintType<T> extends BasicType<T> {
   byteLength: number;
   constructor(options: IUintOptions) {
     super();
@@ -26,7 +27,7 @@ export class UintType<T> extends BasicType<T> {
 
 export const NUMBER_UINT_TYPE = Symbol.for("ssz/NumberUintType");
 
-export function isNumberUintType(type: unknown): type is NumberUintType {
+export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
   return isTypeOf(type, NUMBER_UINT_TYPE);
 }
 
@@ -108,7 +109,7 @@ export class NumberUintType extends UintType<number> {
 
 export const BIGINT_UINT_TYPE = Symbol.for("ssz/BigIntUintType");
 
-export function isBigIntUintType(type: unknown): type is BigIntUintType {
+export function isBigIntUintType(type: Type<unknown>): type is BigIntUintType {
   return isTypeOf(type, BIGINT_UINT_TYPE);
 }
 
