@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Json} from "../../interface";
 import {isTypeOf, Type} from "../type";
 
 export const BASIC_TYPE = Symbol.for("ssz/BasicType");

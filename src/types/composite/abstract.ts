@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
 import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler} from "../../backings";
-import {BasicType} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 
 export const COMPOSITE_TYPE = Symbol.for("ssz/CompositeType");

@@ -2,7 +2,7 @@
 import {Node, Tree, subtreeFillToContents, zeroNode, Gindex, LeafNode} from "@chainsafe/persistent-merkle-tree";
 
 import {ObjectLike} from "../../interface";
-import {ContainerType, CompositeType, isBasicType, isCompositeType} from "../../types";
+import {ContainerType, CompositeType, isCompositeType} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfTreeBacked} from "./abstract";
 
 export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
