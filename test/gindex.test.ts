@@ -1,6 +1,6 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
-import {countToDepth, bitIndexBigInt, iterateAtDepth} from "../src";
+import {countToDepth, bitIndexBigInt, iterateAtDepth, Gindex, concatGindices} from "../src";
 
 describe("countToDepth", () => {
     const testCases = [
@@ -43,3 +43,21 @@ describe("iterateAtDepth", () => {
     });
   }
 })
+
+describe("concatGindices", () => {
+  const testCases: {
+    input: Gindex[];
+    expected: Gindex;
+  }[] = [
+    // cases calculated by hand
+    {input: [BigInt(2), BigInt(3)], expected: BigInt(5)},
+    {input: [BigInt(31), BigInt(3)], expected: BigInt(63)},
+    {input: [BigInt(31), BigInt(6)], expected: BigInt(126)},
+  ];
+  for (const {input, expected} of testCases) {
+    it(`should correctly concatenate gindices`, () => {
+      const actual = concatGindices(input);
+      expect(actual).to.equal(expected);
+    })
+  }
+});
