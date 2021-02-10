@@ -27,7 +27,7 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
       throw new Error("Invalid deserialized bitlist, padding bit required");
     }
     const target = super.fromBytes(data, start, end);
-    const lastGindex = this.gindexOfChunk(target, Math.ceil((end - start) / 32) - 1);
+    const lastGindex = this.gindexOfChunk(Math.ceil((end - start) / 32) - 1);
     // copy chunk into new memory
     const lastChunk = new Uint8Array(32);
     lastChunk.set(target.getRoot(lastGindex));
@@ -71,7 +71,7 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     return !!(byte & (1 << this.getBitOffset(index)));
   }
   setProperty(target: Tree, property: number, value: boolean, expand = false): boolean {
-    const chunkGindex = this.gindexOfChunk(target, this.getChunkIndex(property));
+    const chunkGindex = this.gindexOfChunk(this.getChunkIndex(property));
     const chunk = new Uint8Array(32);
     chunk.set(target.getRoot(chunkGindex));
     const byteOffset = this.getChunkOffset(property);

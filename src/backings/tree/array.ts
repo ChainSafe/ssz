@@ -56,8 +56,8 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
     }
     return offset + size;
   }
-  gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
-    return this.gindexOfChunk(target, this.getChunkIndex(prop as number));
+  gindexOfProperty(prop: PropertyKey): Gindex {
+    return this.gindexOfChunk(this.getChunkIndex(prop as number));
   }
   getLength(target: Tree): number {
     throw new Error("Not implemented");
@@ -88,7 +88,7 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
     return this.getValueAtIndex(target, index);
   }
   setProperty(target: Tree, property: number, value: T[number], expand = false): boolean {
-    const chunkGindex = this.gindexOfChunk(target, this.getChunkIndex(property));
+    const chunkGindex = this.gindexOfChunk(this.getChunkIndex(property));
     // copy data from old chunk, use new memory to set a new chunk
     const chunk = new Uint8Array(32);
     chunk.set(target.getRoot(chunkGindex));
@@ -220,8 +220,8 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
       return index;
     }
   }
-  gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
-    return this.gindexOfChunk(target, prop as number);
+  gindexOfProperty(prop: PropertyKey): Gindex {
+    return this.gindexOfChunk(prop as number);
   }
   getLength(target: Tree): number {
     throw new Error("Not implemented");
@@ -247,7 +247,7 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
     return (this.getValueAtChunk(target, index) as unknown) as PropOfCompositeTreeBacked<T, V>;
   }
   setProperty(target: Tree, property: number, value: T[number], expand = false): boolean {
-    const chunkGindex = this.gindexOfChunk(target, property);
+    const chunkGindex = this.gindexOfChunk(property);
     if (isTreeBacked(value)) {
       target.setSubtree(chunkGindex, value.tree());
     } else {
