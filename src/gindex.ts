@@ -96,3 +96,12 @@ export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator
     },
   }
 }
+
+/**
+ * Concatenate Generalized Indices
+ * Given generalized indices i1 for A -> B, i2 for B -> C .... i_n for Y -> Z, returns
+ * the generalized index for A -> Z.
+ */
+export function concatGindices(gindices: Gindex[]): Gindex {
+  return BigInt(gindices.reduce((acc, gindex) => acc + gindex.toString(2).slice(1), "0b1"));
+}
