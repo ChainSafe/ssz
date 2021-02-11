@@ -1,5 +1,6 @@
 import { Gindex, gindexIterator, Bit, toGindexBitstring } from "./gindex";
 import { Node, BranchNode, Link, compose, identity, LeafNode } from "./node";
+import { createNodeFromProof, createProof, Proof, ProofInput } from "./proof";
 import { zeroNode } from "./zeroNode";
 
 export type Hook = (v: Tree) => void;
@@ -181,5 +182,11 @@ export class Tree {
         }
       } while (nav.length && nav.length !== depth);
     }
+  }
+  getProof(input: ProofInput): Proof {
+    return createProof(this.rootNode, input);
+  }
+  static createFromProof(proof: Proof): Tree {
+    return new Tree(createNodeFromProof(proof));
   }
 }

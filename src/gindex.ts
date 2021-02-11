@@ -105,3 +105,15 @@ export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator
 export function concatGindices(gindices: Gindex[]): Gindex {
   return BigInt(gindices.reduce((acc, gindex) => acc + gindex.toString(2).slice(1), "0b1"));
 }
+
+export function gindexSibling(gindex: Gindex): Gindex {
+  return gindex ^ BigInt(1);
+}
+
+export function gindexParent(gindex: Gindex): Gindex {
+  return gindex / BigInt(2);
+}
+
+export function gindexChild(gindex: Gindex, rightChild: boolean): Gindex {
+  return gindex * BigInt(2) + BigInt(rightChild);
+}
