@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Node, Tree, Gindex, countToDepth, toGindex, concatGindices} from "@chainsafe/persistent-merkle-tree";
+import {
+  Node,
+  Tree,
+  Gindex,
+  countToDepth,
+  toGindex,
+  concatGindices,
+  Proof,
+  ProofType,
+} from "@chainsafe/persistent-merkle-tree";
 
 import {CompositeType, isCompositeType, Type} from "../../types";
 import {BackingType} from "../backedValue";
@@ -242,6 +251,23 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
       type = type.tree.typeOfProperty(prop) as CompositeType<object>;
     }
     return concatGindices(gindices);
+  }
+  computeProof(target: Tree, paths: Path[]): Proof {
+    const gindices = paths.map((path) => this.gindexOfPath(path));
+    return target.getProof({
+      type: ProofType.treeOffset,
+      gindices,
+    });
+  }
+  consumeProof(root: Uint8Array, proof: Proof): TreeBacked<T> {
+    const tree = Tree.createFromProof(proof);
+    if (!byteArrayEquals(tree.root, root)) {
+      throw new Error("Proof does not match trusted root");
+    }
+    return this.asTreeBacked(tree);
+  }
+  consumeProofUnsafe(proof: Proof): TreeBacked<T> {
+    return this.asTreeBacked(Tree.createFromProof(proof));
   }
   /**
    * The depth of the merkle tree
