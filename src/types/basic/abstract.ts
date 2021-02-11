@@ -1,18 +1,11 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Json} from "../../interface";
+import {isTypeOf, Type} from "../type";
 
-/**
- * Check if `type` is an instance of `typeSymbol` type
- *
- * Used by various isFooType functions
- */
-export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
-  return (
-    type &&
-    (type as BasicType<unknown>)._typeSymbols &&
-    (type as BasicType<unknown>)._typeSymbols.has &&
-    (type as BasicType<unknown>)._typeSymbols.has(typeSymbol)
-  );
+export const BASIC_TYPE = Symbol.for("ssz/BasicType");
+
+export function isBasicType(type: Type<unknown>): type is BasicType<unknown> {
+  return isTypeOf(type, BASIC_TYPE);
 }
 
 /**
@@ -20,34 +13,10 @@ export function isTypeOf(type: unknown, typeSymbol: symbol): boolean {
  *
  * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
  */
-export class BasicType<T> {
-  /**
-   * Symbols used to track the identity of a type
-   *
-   * Used by various isFooType functions
-   */
-  _typeSymbols: Set<symbol>;
-
+export abstract class BasicType<T> extends Type<T> {
   constructor() {
-    this._typeSymbols = new Set();
-  }
-
-  isBasic(): this is BasicType<T> {
-    return true;
-  }
-
-  /**
-   * Valid value assertion
-   */
-  assertValidValue(value: unknown): asserts value is T {
-    throw new Error("Not implemented");
-  }
-
-  /**
-   * Default constructor
-   */
-  defaultValue(): T {
-    throw new Error("Not implemented");
+    super();
+    this._typeSymbols.add(BASIC_TYPE);
   }
 
   /**
@@ -119,9 +88,7 @@ export class BasicType<T> {
   /**
    * Low-level deserialization
    */
-  fromBytes(data: Uint8Array, offset: number): T {
-    throw new Error("Not implemented");
-  }
+  abstract fromBytes(data: Uint8Array, offset: number): T;
   /**
    * Deserialization
    */
@@ -129,14 +96,6 @@ export class BasicType<T> {
     return this.fromBytes(data, 0);
   }
 
-  /**
-   * Low-level serialization
-   *
-   * Serializes to a pre-allocated Uint8Array
-   */
-  toBytes(value: T, output: Uint8Array, offset: number): number {
-    throw new Error("Not implemented");
-  }
   /**
    * Serialization
    */
@@ -153,19 +112,5 @@ export class BasicType<T> {
     const output = new Uint8Array(32);
     this.toBytes(value, output, 0);
     return output;
-  }
-
-  /**
-   * Convert from JSON-serializable object
-   */
-  fromJson(data: Json): T {
-    throw new Error("Not implemented");
-  }
-
-  /**
-   * Convert to JSON-serializable object
-   */
-  toJson(value: T): Json {
-    throw new Error("Not implemented");
   }
 }

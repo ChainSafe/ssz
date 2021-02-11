@@ -1,6 +1,6 @@
-import {isTypeOf} from "../basic";
 import {ByteVectorType} from "./byteVector";
 import {CompositeType} from "./abstract";
+import {isTypeOf, Type} from "../type";
 
 /**
  * Allow for lazily evaulated expandedType thunk
@@ -11,7 +11,7 @@ export interface IRootOptions<T extends object> {
 
 export const ROOT_TYPE = Symbol.for("ssz/RootType");
 
-export function isRootType<T extends object = object>(type: unknown): type is RootType<T> {
+export function isRootType<T extends object = object>(type: Type<unknown>): type is RootType<T> {
   return isTypeOf(type, ROOT_TYPE);
 }
 

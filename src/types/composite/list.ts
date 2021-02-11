@@ -1,6 +1,7 @@
 import {List} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isTypeOf} from "../basic";
+import {isBasicType} from "../basic";
+import {isTypeOf, Type} from "../type";
 import {
   BasicListStructuralHandler,
   CompositeListStructuralHandler,
@@ -24,7 +25,7 @@ type ListTypeConstructor = {
 export const LIST_TYPE = Symbol.for("ssz/ListType");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isListType<T extends List<any> = List<any>>(type: unknown): type is ListType<T> {
+export function isListType<T extends List<any> = List<any>>(type: Type<unknown>): type is ListType<T> {
   return isTypeOf(type, LIST_TYPE);
 }
 
@@ -32,7 +33,7 @@ export function isListType<T extends List<any> = List<any>>(type: unknown): type
 export const ListType: ListTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
-    if (options.elementType.isBasic()) {
+    if (isBasicType(options.elementType)) {
       return new BasicListType(options);
     } else {
       return new CompositeListType(options);

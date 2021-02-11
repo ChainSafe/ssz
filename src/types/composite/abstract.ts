@@ -1,31 +1,27 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Json} from "../../interface";
 import {BackedValue, ByteArrayHandler, isBackedValue, StructuralHandler, TreeHandler} from "../../backings";
-import {BasicType} from "../basic";
-import {IJsonOptions} from "../type";
+import {IJsonOptions, isTypeOf, Type} from "../type";
+
+export const COMPOSITE_TYPE = Symbol.for("ssz/CompositeType");
+
+export function isCompositeType(type: Type<unknown>): type is CompositeType<object> {
+  return isTypeOf(type, COMPOSITE_TYPE);
+}
 
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
  *
  */
-export class CompositeType<T extends object> {
+export abstract class CompositeType<T extends object> extends Type<T> {
   structural: StructuralHandler<T>;
   tree: TreeHandler<T>;
   byteArray: ByteArrayHandler<T>;
 
-  /**
-   * Symbols used to track the identity of a type
-   *
-   * Used by various isFooType functions
-   */
-  _typeSymbols: Set<symbol>;
-
   constructor() {
-    this._typeSymbols = new Set();
-  }
-
-  isBasic(): this is BasicType<T> {
-    return false;
+    super();
+    this._typeSymbols.add(COMPOSITE_TYPE);
   }
 
   /**
@@ -67,12 +63,6 @@ export class CompositeType<T extends object> {
   // Serialization / Deserialization
 
   /**
-   * Check if type has a variable number of elements (or subelements)
-   */
-  isVariableSize(): boolean {
-    throw new Error("Not implemented");
-  }
-  /**
    * Serialized byte length
    */
   size(value: BackedValue<T> | T): number {
@@ -101,8 +91,9 @@ export class CompositeType<T extends object> {
    * Low-level deserialization
    */
   fromBytes(data: Uint8Array, start: number, end: number): T {
-    throw new Error("Not implemented");
+    return this.structural.fromBytes(data, start, end);
   }
+
   /**
    * Deserialization
    */
@@ -138,9 +129,8 @@ export class CompositeType<T extends object> {
   /**
    * Return the number of leaf chunks to be merkleized
    */
-  chunkCount(): number {
-    throw new Error("Not implemented");
-  }
+  abstract chunkCount(): number;
+
   /**
    * Merkleization
    */
