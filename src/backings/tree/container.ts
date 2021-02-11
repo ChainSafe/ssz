@@ -115,12 +115,12 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     }
     return variableIndex;
   }
-  gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
+  gindexOfProperty(prop: PropertyKey): Gindex {
     const chunkIndex = Object.keys(this._type.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
       throw new Error("Invalid container field name");
     }
-    return this.gindexOfChunk(target, chunkIndex);
+    return this.gindexOfChunk(chunkIndex);
   }
   getProperty<V extends keyof T>(target: Tree, property: V): PropOfTreeBacked<T, V> {
     const chunkIndex = Object.keys(this._type.fields).findIndex((fieldName) => fieldName === property);
@@ -140,7 +140,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
     if (chunkIndex === -1) {
       throw new Error("Invalid container field name");
     }
-    const chunkGindex = this.gindexOfChunk(target, chunkIndex);
+    const chunkGindex = this.gindexOfChunk(chunkIndex);
     const fieldType = this._type.fields[property as string];
     if (fieldType.isBasic()) {
       const chunk = new Uint8Array(32);

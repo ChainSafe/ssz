@@ -48,10 +48,6 @@ export interface ITreeBacked<T extends object> {
    */
   depth(): number;
   /**
-   * The gindex of a property
-   */
-  gindexOfProperty(prop: PropertyKey): Gindex;
-  /**
    * Merkleization
    */
   hashTreeRoot(): Uint8Array;
@@ -227,7 +223,7 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
 
   // Merkleization
 
-  gindexOfProperty(target: Tree, prop: PropertyKey): Gindex {
+  gindexOfProperty(prop: PropertyKey): Gindex {
     throw new Error("Not implemented");
   }
   /**
@@ -239,20 +235,20 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
     }
     return this._depth;
   }
-  gindexOfChunk(target: Tree, index: number): Gindex {
+  gindexOfChunk(index: number): Gindex {
     return toGindex(this.depth(), BigInt(index));
   }
   getSubtreeAtChunk(target: Tree, index: number): Tree {
-    return target.getSubtree(this.gindexOfChunk(target, index));
+    return target.getSubtree(this.gindexOfChunk(index));
   }
   setSubtreeAtChunk(target: Tree, index: number, value: Tree, expand = false): void {
-    target.setSubtree(this.gindexOfChunk(target, index), value, expand);
+    target.setSubtree(this.gindexOfChunk(index), value, expand);
   }
   getRootAtChunk(target: Tree, index: number): Uint8Array {
-    return target.getRoot(this.gindexOfChunk(target, index));
+    return target.getRoot(this.gindexOfChunk(index));
   }
   setRootAtChunk(target: Tree, index: number, value: Uint8Array, expand = false): void {
-    target.setRoot(this.gindexOfChunk(target, index), value, expand);
+    target.setRoot(this.gindexOfChunk(index), value, expand);
   }
   /**
    * Merkleization
