@@ -2,7 +2,7 @@
 import {Node, Tree, subtreeFillToContents, zeroNode, Gindex, LeafNode} from "@chainsafe/persistent-merkle-tree";
 
 import {ObjectLike} from "../../interface";
-import {ContainerType, CompositeType, isCompositeType} from "../../types";
+import {ContainerType, CompositeType, isCompositeType, Type} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfTreeBacked} from "./abstract";
 
 export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
@@ -121,6 +121,13 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       throw new Error("Invalid container field name");
     }
     return this.gindexOfChunk(chunkIndex);
+  }
+  typeOfProperty(prop: PropertyKey): Type<unknown> {
+    const type = this._type.fields[prop as string];
+    if (!type) {
+      throw new Error("Invalid container field name");
+    }
+    return type;
   }
   getProperty<V extends keyof T>(target: Tree, property: V): PropOfTreeBacked<T, V> {
     const chunkIndex = Object.keys(this._type.fields).findIndex((fieldName) => fieldName === property);

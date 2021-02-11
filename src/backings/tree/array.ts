@@ -2,7 +2,7 @@
 import {Tree, Node, iterateAtDepth, Gindex, LeafNode, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 
 import {ArrayLike} from "../../interface";
-import {BasicArrayType, CompositeArrayType} from "../../types";
+import {BasicArrayType, BasicType, CompositeArrayType, CompositeType} from "../../types";
 import {isTreeBacked, TreeHandler, PropOfCompositeTreeBacked} from "./abstract";
 
 export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHandler<T> {
@@ -58,6 +58,9 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
   }
   gindexOfProperty(prop: PropertyKey): Gindex {
     return this.gindexOfChunk(this.getChunkIndex(prop as number));
+  }
+  typeOfProperty(prop: PropertyKey): BasicType<unknown> {
+    return this._type.elementType;
   }
   getLength(target: Tree): number {
     throw new Error("Not implemented");
@@ -222,6 +225,9 @@ export class CompositeArrayTreeHandler<T extends ArrayLike<object>> extends Tree
   }
   gindexOfProperty(prop: PropertyKey): Gindex {
     return this.gindexOfChunk(prop as number);
+  }
+  typeOfProperty(prop: PropertyKey): CompositeType<object> {
+    return this._type.elementType;
   }
   getLength(target: Tree): number {
     throw new Error("Not implemented");
