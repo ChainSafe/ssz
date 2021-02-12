@@ -1,74 +1,30 @@
-import { Gindex, GindexBitstring, gindexParent, gindexSibling } from "../gindex";
+import { Gindex, GindexBitstring } from "../gindex";
 import { BranchNode, LeafNode, Node } from "../node";
+import { computeMultiProofBitstrings } from "./util";
 
 /**
- * Compute both the path and branch indices
+ * Compute offsets and leaves of a tree-offset proof
  * 
- * Path indices are parent indices upwards toward the root
- * Branch indices are witnesses required for a merkle proof
- */
-export function computeProofGindices(gindex: Gindex): {path: Set<Gindex>; branch: Set<Gindex>} {
-  const path = new Set<Gindex>();
-  const branch = new Set<Gindex>();
-  let g = gindex;
-  while (g > 1) {
-    path.add(g);
-    branch.add(gindexSibling(g));
-    g = gindexParent(g);
-  }
-  return {path, branch};
-}
-
-/**
- * Sort generalized indices in-order
- */
-export function sortInOrder(gindices: Gindex[]): Gindex[] {
-  if (!gindices.length) {
-    return [];
-  }
-  const bitLength = gindices.reduce((a, b) => a > b ? a : b).toString(2).length;
-  return gindices.map(g => "0b" + g.toString(2).padEnd(bitLength)).sort().map(str => BigInt(str));
-}
-
-/**
- * Return the set of generalized indices required for a multiproof
- * This includes all leaves and any necessary witnesses
- * @param gindices leaves to include in proof
- */
-export function computeMultiProofGindices(gindices: Gindex[]): Set<Gindex> {
-  // Initialize the proof indices with the leaves
-  const proof = new Set<Gindex>(gindices);
-  const paths = new Set<Gindex>();
-  const branches = new Set<Gindex>();
-
-  // Collect all path indices and all branch indices
-  for (const gindex of gindices) {
-    const {path, branch} = computeProofGindices(gindex);
-    path.forEach((g) => paths.add(g));
-    branch.forEach((g) => branches.add(g));
-  }
-
-  // Remove all branches that are included in the paths
-  paths.forEach((g) => branches.delete(g));
-  // Add all remaining branches to the leaves
-  branches.forEach((g) => proof.add(g));
-
-  return proof;
-}
-
-/**
- * Compute offsets and leaves for a tree-offset proof
- * Recursive definition
+ * Recursive function
+ * 
+ * See https://github.com/protolambda/eth-merkle-trees/blob/master/tree_offsets.md
+ * @param node current node in the tree
+ * @param gindex current generalized index in the tree
+ * @param proofGindices generalized indices to left include in the proof - must be sorted in-order according to the tree
  */
 export function nodeToTreeOffsetProof(node: Node, gindex: GindexBitstring, proofGindices: GindexBitstring[]): [number[], Uint8Array[]] {
   if (!proofGindices.length || !proofGindices[0].startsWith(gindex)) {
+    // there are no proof indices left OR the current subtree contains no remaining proof indices
     return [[], []];
   } else if (gindex === proofGindices[0]) {
+    // the current node is at the next proof index
     proofGindices.shift();
     return [[], [node.root]];
   } else {
+    // recursively compute offsets, leaves for the left and right subtree
     const [leftOffsets, leftLeaves] = nodeToTreeOffsetProof(node.left, gindex + "0", proofGindices);
     const [rightOffsets, rightLeaves] = nodeToTreeOffsetProof(node.right, gindex + "1", proofGindices);
+    // the offset prepended to the list is # of leaves in the left subtree
     const pivot = leftLeaves.length;
     return [[pivot].concat(leftOffsets, rightOffsets), leftLeaves.concat(rightLeaves)];
   }
@@ -76,7 +32,10 @@ export function nodeToTreeOffsetProof(node: Node, gindex: GindexBitstring, proof
 
 /**
  * Recreate a `Node` given offsets and leaves of a tree-offset proof
+ * 
  * Recursive definition
+ * 
+ * See https://github.com/protolambda/eth-merkle-trees/blob/master/tree_offsets.md
  */
 export function treeOffsetProofToNode(offsets: number[], leaves: Uint8Array[]): Node {
   if (!leaves.length) {
@@ -84,6 +43,7 @@ export function treeOffsetProofToNode(offsets: number[], leaves: Uint8Array[]): 
   } else if (leaves.length === 1) {
     return new LeafNode(leaves[0])
   } else {
+    // the offset popped from the list is the # of leaves in the left subtree
     const pivot = offsets[0];
     return new BranchNode(
       treeOffsetProofToNode(offsets.slice(1, pivot), leaves.slice(0, pivot)),
@@ -102,14 +62,15 @@ export function createTreeOffsetProof(rootNode: Node, gindices: Gindex[]): [numb
   return nodeToTreeOffsetProof(
     rootNode,
     "1",
-    sortInOrder(
-      Array.from(computeMultiProofGindices(gindices))
-    ).map(g => g.toString(2))
+    computeMultiProofBitstrings(gindices.map(g => g.toString(2)))
   );
 }
 
 /**
  * Recreate a `Node` given a tree-offset proof
+ * 
+ * @param offsets offsets of a tree-offset proof
+ * @param leaves leaves of a tree-offset proof
  */
 export function createNodeFromTreeOffsetProof(offsets: number[], leaves: Uint8Array[]): Node {
   // TODO validation
