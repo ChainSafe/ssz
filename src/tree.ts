@@ -1,6 +1,7 @@
 import { Gindex, gindexIterator, Bit, toGindexBitstring } from "./gindex";
 import { Node, BranchNode, Link, compose, identity, LeafNode } from "./node";
 import { createNodeFromProof, createProof, Proof, ProofInput } from "./proof";
+import { createSingleProof } from "./proof/single";
 import { zeroNode } from "./zeroNode";
 
 export type Hook = (v: Tree) => void;
@@ -93,20 +94,7 @@ export class Tree {
   }
 
   getSingleProof(index: Gindex): Uint8Array[] {
-    const proof: Uint8Array[] = [];
-    let node = this.rootNode;
-    for (const i of gindexIterator(index)) {
-      if (i) {
-        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
-        proof.push(node.left.root);
-        node = node.right;
-      } else {
-        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
-        proof.push(node.right.root);
-        node = node.left;
-      }
-    }
-    return proof.reverse();
+    return createSingleProof(this.rootNode, index)[1];
   }
   /**
    * Fast read-only iteration
