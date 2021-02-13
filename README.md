@@ -67,6 +67,31 @@ const subtree: Tree = tree.getSubtree(gindex); // the Tree wrapping the Node at 
 
 const proof: Uint8Array[] = tree.getSingleProof(gindex);
 
+// Multiple types of proofs are supported through the `getProof` interface
+
+// For example, a multiproof for multiple gindices can be generated like so
+
+import {ProofType} from "@chainsafe/persistent-merkle-tree";
+
+const gindices: BigInt[] = [...];
+
+const proof: Proof = tree.getProof({
+  type: ProofType.treeOffset,
+  gindices,
+});
+
+// `Proof` objects can be used to recreate `Tree` objects
+// These `Tree` objects can be navigated as usual for all nodes contained in the proof
+// Navigating to unknown/unproven nodes results in an error
+
+const partialTree: Tree = Tree.createFromProof(proof);
+
+const unknownGindex: BigInt = ...;
+
+gindices.includes(unknownGindex) // false
+
+partialTree.getRoot(unknownGindex) // throws
+
 ```
 
 ## Motivation
