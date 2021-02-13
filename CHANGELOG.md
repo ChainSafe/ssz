@@ -1,3 +1,9 @@
+## 0.2.3 (2021-02-13)
+
+## Features
+
+* Add tree-offset multiproof code ([a35181](https://github.com/chainsafe/persistent-merkle-tree/commit/a35181))
+
 ## 0.2.2 (2021-02-11)
 
 ## Features
