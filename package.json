@@ -25,6 +25,7 @@
     "prepublishOnly": "yarn build",
     "pretest": "yarn check-types",
     "test": "yarn test:unit",
+    "test:perf": "mocha --colors -r ts-node/register \"test/perf/**/*.test.ts\"",
     "test:unit": "nyc -e .ts mocha --colors -r ts-node/register \"test/unit/**/*.test.ts\""
   },
   "types": "lib/index.d.ts",
