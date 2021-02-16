@@ -30,9 +30,6 @@ export function isNumberUintType(type: unknown): type is NumberUintType {
   return isTypeOf(type, NUMBER_UINT_TYPE);
 }
 
-// a group contains 4 bytes, that's what << operator supports for number
-const BYTES_PER_GROUP = 4;
-
 export class NumberUintType extends UintType<number> {
   constructor(options: IUintOptions) {
     super(options);
@@ -70,45 +67,14 @@ export class NumberUintType extends UintType<number> {
     }
     return offset + this.byteLength;
   }
-  /**
-   * To save memory and improve performance, we restrict the use of BigInt
-   * by calculating based on group instead of byte.
-   * | b7 b6 b5 b4 | b3 b2 b1 b0 |
-   * |      g1     |      g0     |
-   */
   fromBytes(data: Uint8Array, offset: number): number {
     this.validateBytes(data, offset);
     let isInfinity = true;
-    let output = BigInt(0);
-    let groupOutput = 0;
-    let groupIndex = 0;
+    let output = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      const byteIndex = i % BYTES_PER_GROUP;
-      groupOutput += data[offset + i] << (8 * byteIndex);
-      // left shift returns 32 bytes signed number
-      if (groupOutput < 0) {
-        groupOutput = groupOutput >>> 0;
-      }
-      if ((i + 1) % BYTES_PER_GROUP === 0) {
-        if (groupIndex === 0) {
-          output = BigInt(groupOutput);
-        } else {
-          output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
-        }
-        groupIndex++;
-        groupOutput = 0;
-      }
-      // output += BigInt(data[offset + i]) << BigInt(8 * i);
+      output += data[offset + i] * 2 ** (8 * i);
       if (data[offset + i] !== 0xff) {
         isInfinity = false;
-      }
-    }
-    // in case (byteLength % BYTES_PER_GROUP) !== 0
-    if (groupOutput > 0) {
-      if (groupIndex === 0) {
-        output = BigInt(groupOutput);
-      } else {
-        output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
       }
     }
     if (this.byteLength > 6 && isInfinity) {
@@ -162,60 +128,63 @@ export class BigIntUintType extends UintType<bigint> {
   defaultValue(): bigint {
     return BigInt(0);
   }
-  /**
-   * To save memory and improve performance, we restrict the use of BigInt
-   * by calculating based on group instead of byte.
-   * | b7 b6 b5 b4 | b3 b2 b1 b0 |
-   * |      g1     |      g0     |
-   */
   toBytes(value: bigint, output: Uint8Array, offset: number): number {
-    let v = value;
-    let groupedBytes = Number(v & BigInt(0xffffffff));
-    for (let i = 0; i < this.byteLength; i++) {
-      const byteIndex = i % BYTES_PER_GROUP;
-      output[offset + i] = Number((groupedBytes >> (8 * byteIndex)) & 0xff);
-      if ((i + 1) % BYTES_PER_GROUP === 0) {
-        v >>= BigInt(8 * BYTES_PER_GROUP);
-        groupedBytes = Number(v & BigInt(0xffffffff));
+    // Motivation:
+    //   BigInt bitshifting is more expensive than string manipulation,
+    // but string manipulation is more expensive than number bitshifting.
+    // We would use only number bitshifting if we could,
+    // but Number can only bitshift to 32 bits
+    // Implementation:
+    //   Convert BigInt input to hex string, encoded as big-endian
+    // Iterate through the hex string, 4 bytes (8 characters) at a time, creating a number
+    // (Start from the back of the hex string, in order to convert to little-endian)
+    // With that number, bitshift+mask to get each byte by byte
+    let hexString = value.toString(16);
+    hexString = hexString.padStart(Math.ceil((this.byteLength * 2) / 8) * 8, "0");
+    for (let i = 0, n = 0; i < this.byteLength; i++) {
+      if (i % 4 === 0) {
+        n = Number("0x" + hexString.substring(hexString.length - (8 + i * 2), hexString.length - i * 2));
       }
+      output[offset + i] = (n >> (8 * (i % 4))) & 0xff;
     }
     return offset + this.byteLength;
   }
   /**
-   * To save memory and improve performance, we restrict the use of BigInt
-   * by calculating based on group instead of byte.
-   * | b7 b6 b5 b4 | b3 b2 b1 b0 |
-   * |      g1     |      g0     |
    */
   fromBytes(data: Uint8Array, offset: number): bigint {
     this.validateBytes(data, offset);
+    // Motivation:
+    //   Creating BigInts and bitshifting is more expensive than
+    // number bitshifting.
+    // Implementation:
+    //   Iterate throuth the bytearray, bitshifting the data into a 'groupOutput' number, byte by byte
+    // After each 4 bytes, bitshift the groupOutput into the bigint output and clear the groupOutput out
+    // After iterating through the bytearray,
+    // There may be additional data in the groupOutput if the bytearray if the bytearray isn't divisible by 4
     let output = BigInt(0);
-    let groupOutput = 0;
-    let groupIndex = 0;
+    let groupIndex = 0,
+      groupOutput = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      const byteIndex = i % BYTES_PER_GROUP;
-      groupOutput += data[offset + i] << (8 * byteIndex);
-      // left shift returns 32 bytes signed number
-      if (groupOutput < 0) {
-        groupOutput = groupOutput >>> 0;
-      }
-      if ((i + 1) % BYTES_PER_GROUP === 0) {
+      groupOutput += data[offset + i] << (8 * (i % 4));
+      if ((i + 1) % 4 === 0) {
+        // Left shift returns a signed integer and the output may have become negative
+        // In that case, the output needs to be converted to unsigned integer
+        if (groupOutput < 0) {
+          groupOutput >>>= 0;
+        }
+        // Optimization to set the output the first time, forgoing BigInt addition
         if (groupIndex === 0) {
           output = BigInt(groupOutput);
         } else {
-          output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
+          output += BigInt(groupOutput) << BigInt(32 * groupIndex);
         }
         groupIndex++;
         groupOutput = 0;
       }
     }
-    // in case (byteLength % BYTES_PER_GROUP) !== 0
-    if (groupOutput > 0) {
-      if (groupIndex === 0) {
-        output = BigInt(groupOutput);
-      } else {
-        output += BigInt(groupOutput) << BigInt(8 * groupIndex * BYTES_PER_GROUP);
-      }
+    // if this.byteLength isn't a multiple of 4, there will be additional data
+    if (groupOutput) {
+      output += BigInt(groupOutput >>> 0) << BigInt(32 * groupIndex);
     }
     return output;
   }
