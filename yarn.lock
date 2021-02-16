@@ -799,10 +799,10 @@
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/persistent-merkle-tree@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.2.1.tgz#38eb5fd5772fd256e94639d0621fa606addebab1"
-  integrity sha512-07Hi5QiogeTuwNiZXxg7PQnwNyEqV3ArfITpEloGJ8JVOHxQ2Tha1fo4oNBF54628vTDMcDpMVFGrfnIMsQnxg==
+"@chainsafe/persistent-merkle-tree@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.2.3.tgz#ab94436d620ec80f849e6c3362f3e94cb4408e11"
+  integrity sha512-Cgqh1taB9ItxFHhcK4xg+Sna+qHTyey79BI1869scJS0VlA6xL0Vga2FcYGYW2t4FZ4o54zjCwGGS/0ZZxD4Lw==
   dependencies:
     "@chainsafe/as-sha256" "^0.2.0"
 
