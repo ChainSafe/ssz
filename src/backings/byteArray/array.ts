@@ -32,7 +32,7 @@ export class CompositeArrayByteArrayHandler<T extends ArrayLike<unknown>> extend
       const fixedSection = new DataView(target.buffer, target.byteOffset);
       const firstOffset = fixedSection.getUint32(0, true);
       let currentOffset = firstOffset;
-      let nextOffset = currentOffset;
+      let nextOffset;
       let currentIndex = 0;
       let nextIndex = 0;
       while (currentIndex < firstOffset) {
