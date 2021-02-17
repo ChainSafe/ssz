@@ -139,9 +139,10 @@ export class BigIntUintType extends UintType<bigint> {
     let v = value;
     let groupedBytes = Number(BigInt.asUintN(32, v));
     for (let i = 0; i < this.byteLength; i++) {
-      const byteIndex = i % 4;
-      output[offset + i] = Number((groupedBytes >> (8 * byteIndex)) & 0xff);
-      if ((i + 1) % 4 === 0) {
+      output[offset + i] = Number(groupedBytes & 0xff);
+      if ((i + 1) % 4 !== 0) {
+        groupedBytes >>= 8;
+      } else {
         v >>= BIGINT_4_BYTES;
         groupedBytes = Number(BigInt.asUintN(32, v));
       }
