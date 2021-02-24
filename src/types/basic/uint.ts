@@ -27,6 +27,8 @@ export abstract class UintType<T> extends BasicType<T> {
 
 export const NUMBER_UINT_TYPE = Symbol.for("ssz/NumberUintType");
 
+const BIGINT_4_BYTES = BigInt(32);
+
 export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
   return isTypeOf(type, NUMBER_UINT_TYPE);
 }
@@ -130,23 +132,20 @@ export class BigIntUintType extends UintType<bigint> {
     return BigInt(0);
   }
   toBytes(value: bigint, output: Uint8Array, offset: number): number {
-    // Motivation:
-    //   BigInt bitshifting is more expensive than string manipulation,
-    // but string manipulation is more expensive than number bitshifting.
-    // We would use only number bitshifting if we could,
-    // but Number can only bitshift to 32 bits
-    // Implementation:
-    //   Convert BigInt input to hex string, encoded as big-endian
-    // Iterate through the hex string, 4 bytes (8 characters) at a time, creating a number
-    // (Start from the back of the hex string, in order to convert to little-endian)
-    // With that number, bitshift+mask to get each byte by byte
-    let hexString = value.toString(16);
-    hexString = hexString.padStart(Math.ceil((this.byteLength * 2) / 8) * 8, "0");
-    for (let i = 0, n = 0; i < this.byteLength; i++) {
-      if (i % 4 === 0) {
-        n = Number("0x" + hexString.substring(hexString.length - (8 + i * 2), hexString.length - i * 2));
+    // Motivation
+    // BigInt bit shifting and BigInt allocation is slower compared to number
+    // For every 4 bytes, we extract value to groupedBytes
+    // and do bit shifting on the number
+    let v = value;
+    let groupedBytes = Number(BigInt.asUintN(32, v));
+    for (let i = 0; i < this.byteLength; i++) {
+      output[offset + i] = Number(groupedBytes & 0xff);
+      if ((i + 1) % 4 !== 0) {
+        groupedBytes >>= 8;
+      } else {
+        v >>= BIGINT_4_BYTES;
+        groupedBytes = Number(BigInt.asUintN(32, v));
       }
-      output[offset + i] = (n >> (8 * (i % 4))) & 0xff;
     }
     return offset + this.byteLength;
   }
