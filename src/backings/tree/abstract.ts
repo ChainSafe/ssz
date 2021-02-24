@@ -1,13 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Node, Tree, Gindex, countToDepth, toGindex} from "@chainsafe/persistent-merkle-tree";
+import {
+  Node,
+  Tree,
+  Gindex,
+  countToDepth,
+  toGindex,
+  concatGindices,
+  Proof,
+  ProofType,
+} from "@chainsafe/persistent-merkle-tree";
 
-import {CompositeType} from "../../types";
+import {CompositeType, isCompositeType, Type} from "../../types";
 import {BackingType} from "../backedValue";
 import {byteArrayEquals} from "../byteArray";
 
 export function isTreeBacked<T extends object>(value: T): value is TreeBacked<T> {
   return (value as TreeBacked<T>).backingType && (value as TreeBacked<T>).backingType() === BackingType.tree;
 }
+
+export type Path = (string | number)[];
 
 /**
  * The ITreeBacked interface represents the public API that attach to tree-backed Proxy objects
@@ -225,6 +236,38 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
 
   gindexOfProperty(prop: PropertyKey): Gindex {
     throw new Error("Not implemented");
+  }
+  typeOfProperty(prop: PropertyKey): Type<unknown> {
+    throw new Error("Not implemented");
+  }
+  gindexOfPath(path: Path): Gindex {
+    const gindices = [];
+    let type = (this._type as unknown) as CompositeType<object>;
+    for (const prop of path) {
+      if (!isCompositeType(type)) {
+        throw new Error("Invalid path: cannot navigate beyond a basic type");
+      }
+      gindices.push(type.tree.gindexOfProperty(prop));
+      type = type.tree.typeOfProperty(prop) as CompositeType<object>;
+    }
+    return concatGindices(gindices);
+  }
+  createProof(target: Tree, paths: Path[]): Proof {
+    const gindices = paths.map((path) => this.gindexOfPath(path));
+    return target.getProof({
+      type: ProofType.treeOffset,
+      gindices,
+    });
+  }
+  consumeProof(root: Uint8Array, proof: Proof): TreeBacked<T> {
+    const tree = Tree.createFromProof(proof);
+    if (!byteArrayEquals(tree.root, root)) {
+      throw new Error("Proof does not match trusted root");
+    }
+    return this.asTreeBacked(tree);
+  }
+  consumeProofUnsafe(proof: Proof): TreeBacked<T> {
+    return this.asTreeBacked(Tree.createFromProof(proof));
   }
   /**
    * The depth of the merkle tree
