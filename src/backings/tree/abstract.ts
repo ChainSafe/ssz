@@ -252,7 +252,7 @@ export class TreeHandler<T extends object> implements ProxyHandler<T> {
     }
     return concatGindices(gindices);
   }
-  computeProof(target: Tree, paths: Path[]): Proof {
+  createProof(target: Tree, paths: Path[]): Proof {
     const gindices = paths.map((path) => this.gindexOfPath(path));
     return target.getProof({
       type: ProofType.treeOffset,
