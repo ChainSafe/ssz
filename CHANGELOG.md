@@ -1,3 +1,15 @@
+## 0.7.0 (2021-03-01)
+
+## BREAKING CHANGES
+- Use abstract class Type/BasicType/CompositeType ([c91b19](https://github.com/chainsafe/ssz/commit/c91b19))
+- Remove TreeBacked<T>#gindexOfProperty ([d4b141](https://github.com/chainsafe/ssz/commit/d4b141))
+
+## Features
+
+- Optimize byte array equals ([7639b2](https://github.com/chainsafe/ssz/commit/7639b2))
+- Restrict the use of BigInt whenever possible ([22e8c4](https://github.com/chainsafe/ssz/commit/22e8c4))
+- Initial multiproof support ([9e758a](https://github.com/chainsafe/ssz/commit/9e758a))
+
 ## 0.6.13 (2020-08-05)
 
 ## Bug Fixes
