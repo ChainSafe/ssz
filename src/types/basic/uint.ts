@@ -65,7 +65,8 @@ export class NumberUintType extends UintType<number> {
       const MAX_BYTE = 0xff;
       for (let i = 0; i < this.byteLength; i++) {
         output[offset + i] = v & MAX_BYTE;
-        v = Math.floor(v / 256);
+        // v = Math.floor(v / 256);
+        v = v >> 8;
       }
     }
     return offset + this.byteLength;

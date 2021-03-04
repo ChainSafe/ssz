@@ -42,7 +42,8 @@ export class BasicArrayTreeHandler<T extends ArrayLike<unknown>> extends TreeHan
   }
   toBytes(target: Tree, output: Uint8Array, offset: number): number {
     const size = this.size(target);
-    const fullChunkCount = Math.floor(size / 32);
+    // Math.floor(size / 32)
+    const fullChunkCount = size >> 5;
     const remainder = size % 32;
     let i = 0;
     if (fullChunkCount > 0) {

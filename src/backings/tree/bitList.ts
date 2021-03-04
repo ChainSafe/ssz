@@ -60,10 +60,11 @@ export class BitListTreeHandler extends BasicListTreeHandler<BitList> {
     return index % 8;
   }
   getChunkOffset(index: number): number {
-    return Math.floor((index % 256) / 8);
+    // Math.floor((index % 256) / 8);
+    return (index & 0xff) >> 3;
   }
   getChunkIndex(index: number): number {
-    return Math.floor(index / 256);
+    return index >> 8;
   }
   getValueAtIndex(target: Tree, index: number): boolean {
     const chunk = this.getRootAtChunk(target, this.getChunkIndex(index));
