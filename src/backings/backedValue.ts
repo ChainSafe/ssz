@@ -1,10 +1,7 @@
-import {TreeBacked} from "./tree";
-import {ByteArrayBacked} from "./byteArray";
+import {CompositeValue} from "../interface";
+import {isTreeBacked, ITreeBacked} from "./tree";
 
-export enum BackingType {
-  tree = "tree",
-  byteArray = "byteArray",
-}
+export type Path = (string | number)[];
 
 /**
  * A BackedValue is a value that is backed by a non-structural type
@@ -13,12 +10,8 @@ export enum BackingType {
  * - convenient access to the structural properties corresponding to its type
  * - additional methods for backing-specific implementations of ssz operations
  */
-export type BackedValue<T extends object> = TreeBacked<T> | ByteArrayBacked<T>;
+export type BackedValue<T extends CompositeValue> = ITreeBacked<T> & T;
 
-export function isBackedValue<T extends object>(value: T): value is BackedValue<T> {
-  if (value && (value as BackedValue<T>).backingType) {
-    return true;
-  } else {
-    return false;
-  }
+export function isBackedValue<T extends CompositeValue>(value: unknown): value is BackedValue<T> {
+  return isTreeBacked(value);
 }

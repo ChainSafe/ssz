@@ -9,9 +9,6 @@ export interface ArrayLike<T> {
   [n: number]: T;
   readonly length: number;
   [Symbol.iterator](): Iterator<T>;
-  find(fn: (value: T, index: number, array: this) => boolean): T | undefined;
-  findIndex(fn: (value: T, index: number, array: this) => boolean): number;
-  forEach(fn: (value: T, index: number, array: this) => void): void;
 }
 
 export type Vector<T> = ArrayLike<T>;
@@ -33,6 +30,8 @@ export interface ObjectLike {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [fieldName: string]: any;
 }
+
+export type CompositeValue = Record<string, unknown> | ArrayLike<unknown> | {};
 
 /**
  * The Json interface is used for json-serializable input
