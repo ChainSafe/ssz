@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { createNodeFromProof, createProof, ProofType } from "../../src/proof";
+import { createNodeFromProof, createProof, deserializeProof, ProofType, serializeProof } from "../../src/proof";
 import { Node, LeafNode, BranchNode } from "../../src/node";
 
 // Create a tree with leaves of different values
@@ -26,3 +26,11 @@ describe("proof equivalence", () => {
   });
 });
 
+describe("proof serialize/deserialize", () => {
+  it("should round trip", () => {
+    const node = createTree(6);
+    const expected = createProof(node, {type: ProofType.treeOffset, gindices: [BigInt(7), BigInt(8), BigInt(15)]})
+    const actual = deserializeProof(serializeProof(expected));
+    expect(actual).to.deep.equal(expected);
+  })
+})

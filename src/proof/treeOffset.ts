@@ -76,3 +76,47 @@ export function createNodeFromTreeOffsetProof(offsets: number[], leaves: Uint8Ar
   // TODO validation
   return treeOffsetProofToNode(offsets, leaves);
 }
+
+export function computeTreeOffsetProofSerializedLength(offsets: number[], leaves: Uint8Array[]): number {
+  // add 1 for # of leaves
+  return (offsets.length + 1) * 2 + leaves.length * 32;
+}
+
+// Serialized tree offset proof structure:
+// # of leaves - 2 bytes
+// offsets - 2 bytes each
+// leaves - 32 bytes each
+
+export function serializeTreeOffsetProof(output: Uint8Array, byteOffset: number, offsets: number[], leaves: Uint8Array[]): void {
+  const writer = new DataView(output.buffer, output.byteOffset, output.byteLength);
+  // set # of leaves
+  writer.setUint16(byteOffset, leaves.length, true);
+  // set offsets
+  const offsetsStartIndex = byteOffset + 2;
+  for (let i = 0; i < offsets.length; i++) {
+    writer.setUint16(i * 2 + offsetsStartIndex, offsets[i], true);
+  }
+  // set leaves
+  const leavesStartIndex = offsetsStartIndex + offsets.length * 2;
+  for (let i = 0; i < leaves.length; i++) {
+    output.set(leaves[i], i * 32 + leavesStartIndex)
+  }
+}
+
+export function deserializeTreeOffsetProof(data: Uint8Array, byteOffset: number): [number[], Uint8Array[]] {
+  const reader = new DataView(data.buffer, data.byteOffset, data.byteLength);
+  // get # of leaves
+  const leafCount = reader.getUint16(byteOffset, true);
+  if (data.length < (leafCount - 1) * 2 + leafCount * 32) {
+    throw new Error("Unable to deserialize tree offset proof: not enough bytes");
+  }
+  // get offsets
+  const offsetsStartIndex = byteOffset + 2;
+  const offsets = Array.from({length: leafCount - 1}, (_, i) =>
+    reader.getUint16((i * 2) + offsetsStartIndex, true));
+  // get leaves
+  const leavesStartIndex = offsetsStartIndex + offsets.length * 2;
+  const leaves = Array.from({length: leafCount}, (_, i) =>
+    data.subarray(i * 32 + leavesStartIndex, (i + 1) * 32 + leavesStartIndex));
+  return [offsets, leaves];
+}
