@@ -1,12 +1,10 @@
 import {BitVector} from "../../interface";
-import {BasicVectorType} from "./vector";
+import {BasicVectorType, IVectorOptions} from "./vector";
 import {booleanType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {BitVectorStructuralHandler, BitVectorTreeHandler} from "../../backings";
 
-export interface IBitVectorOptions {
-  length: number;
-}
+export type IBitVectorOptions = Omit<IVectorOptions, "elementType">;
 
 export const BITVECTOR_TYPE = Symbol.for("ssz/BitVectorType");
 

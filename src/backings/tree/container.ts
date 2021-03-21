@@ -135,7 +135,7 @@ export class ContainerTreeHandler<T extends ObjectLike> extends TreeHandler<T> {
       return undefined;
     }
     const fieldType = this._type.fields[property as string];
-    if (!isCompositeType(fieldType)) {
+    if (!isCompositeType(fieldType) || fieldType.dontReturnSubTree) {
       const chunk = this.getRootAtChunk(target, chunkIndex);
       return fieldType.fromBytes(chunk, 0);
     } else {

@@ -1,12 +1,10 @@
 import {BitList} from "../../interface";
-import {BasicListType} from "./list";
+import {BasicListType, IListOptions} from "./list";
 import {booleanType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {BitListStructuralHandler, BitListTreeHandler} from "../../backings";
 
-export interface IBitListOptions {
-  limit: number;
-}
+export type IBitListOptions = Omit<IListOptions, "elementType">;
 
 export const BITLIST_TYPE = Symbol.for("ssz/BitListType");
 

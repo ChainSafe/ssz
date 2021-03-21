@@ -3,8 +3,9 @@ import {BasicVectorType} from "./vector";
 import {byteType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {ByteVectorStructuralHandler, ByteVectorTreeHandler} from "../../backings";
+import {ICompositeOptions} from "./abstract";
 
-export interface IByteVectorOptions {
+export interface IByteVectorOptions extends ICompositeOptions {
   length: number;
 }
 

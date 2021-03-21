@@ -1,11 +1,11 @@
-import {ByteVectorType} from "./byteVector";
+import {ByteVectorType, IByteVectorOptions} from "./byteVector";
 import {CompositeType} from "./abstract";
 import {isTypeOf, Type} from "../type";
 
 /**
  * Allow for lazily evaulated expandedType thunk
  */
-export interface IRootOptions<T extends object> {
+export interface IRootOptions<T extends object> extends Omit<IByteVectorOptions, "length"> {
   expandedType: CompositeType<T> | (() => CompositeType<T>);
 }
 

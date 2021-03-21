@@ -1,9 +1,9 @@
 import {ObjectLike} from "../../interface";
-import {CompositeType} from "./abstract";
+import {CompositeType, ICompositeOptions} from "./abstract";
 import {isTypeOf, Type} from "../type";
 import {ContainerStructuralHandler, ContainerTreeHandler, ContainerByteArrayHandler} from "../../backings";
 
-export interface IContainerOptions {
+export interface IContainerOptions extends ICompositeOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
 }
@@ -19,7 +19,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
   constructor(options: IContainerOptions) {
-    super();
+    super(options);
     this.fields = {...options.fields};
     this.structural = new ContainerStructuralHandler(this);
     this.tree = new ContainerTreeHandler(this);

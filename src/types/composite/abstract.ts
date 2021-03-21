@@ -10,6 +10,10 @@ export function isCompositeType(type: Type<unknown>): type is CompositeType<obje
   return isTypeOf(type, COMPOSITE_TYPE);
 }
 
+export interface ICompositeOptions {
+  dontReturnSubTree?: boolean;
+}
+
 /**
  * A CompositeType is a type containing other types, and is flexible in its representation.
  *
@@ -18,10 +22,12 @@ export abstract class CompositeType<T extends object> extends Type<T> {
   structural: StructuralHandler<T>;
   tree: TreeHandler<T>;
   byteArray: ByteArrayHandler<T>;
+  dontReturnSubTree: boolean;
 
-  constructor() {
+  constructor(options: ICompositeOptions) {
     super();
     this._typeSymbols.add(COMPOSITE_TYPE);
+    this.dontReturnSubTree = options?.dontReturnSubTree ?? false;
   }
 
   /**
