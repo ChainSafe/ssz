@@ -10,13 +10,26 @@ const ERR_INVALID_TREE = "Invalid tree operation";
 const ERR_PARAM_LT_ZERO = "Param must be >= 0";
 const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit";
 
+enum HookTypeCode {
+  WeakRef,
+  Function,
+}
+
+type HookType = {code: HookTypeCode.WeakRef; val: WeakRef<Hook>} | {code: HookTypeCode.Function; val: Hook};
+
 export class Tree {
   private _node: Node;
-  private hook?: Hook;
+  private hook?: HookType;
 
   constructor(node: Node, hook?: Hook) {
     this._node = node;
-    this.hook = hook;
+    if (hook) {
+      if (typeof WeakRef === "undefined") {
+        this.hook = {code: HookTypeCode.Function, val: hook};
+      } else {
+        this.hook = {code: HookTypeCode.WeakRef, val: new WeakRef(hook)};
+      }
+    }
   }
 
   static createFromProof(proof: Proof): Tree {
@@ -30,7 +43,17 @@ export class Tree {
   set rootNode(n: Node) {
     this._node = n;
     if (this.hook) {
-      this.hook(this);
+      if (this.hook.code === HookTypeCode.Function) {
+        this.hook.val(this);
+      } else {
+        const hookVar = this.hook.val.deref();
+        if (hookVar) {
+          hookVar(this);
+        } else {
+          // Hook has been garbage collected, no need to keep the hookRef
+          this.hook = undefined;
+        }
+      }
     }
   }
 
