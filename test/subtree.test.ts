@@ -1,6 +1,6 @@
-import { expect } from "chai";
+import {expect} from "chai";
 
-import { subtreeFillToContents, LeafNode } from "../src";
+import {subtreeFillToContents, LeafNode} from "../src";
 
 describe("subtreeFillToContents", () => {
   it("should not error on contents length 1", () => {
@@ -10,7 +10,7 @@ describe("subtreeFillToContents", () => {
       expect.fail(e);
     }
   });
-  
+
   it("should not error on empty contents", () => {
     try {
       subtreeFillToContents([], 0);
@@ -19,12 +19,12 @@ describe("subtreeFillToContents", () => {
       expect.fail(e);
     }
   });
-  
+
   it("should not error on depth 31", () => {
     try {
       subtreeFillToContents([], 31);
     } catch (e) {
       expect.fail(e);
     }
-  })
+  });
 });
