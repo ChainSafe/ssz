@@ -6,11 +6,15 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [10, 12, 14, 15]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: "12.14.1"
+          node-version: ${{matrix.node}}
       - run: yarn install
       - run: yarn build
       - name: Lint
