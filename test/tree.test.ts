@@ -15,6 +15,7 @@ describe("fixed-depth tree iteration", () => {
       expect(n.root).to.be.deep.equal(one);
     }
   });
+
   it("should properly navigate a custom tree", () => {
     const depth = 4;
     const length = 1 << depth;

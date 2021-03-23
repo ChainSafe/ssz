@@ -78,6 +78,7 @@ export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator
     }
     bitstring = gindex.toString(2);
   }
+
   let i = 1;
   const next = (): IteratorResult<Bit, undefined> => {
     if (i === bitstring.length) {
@@ -87,6 +88,7 @@ export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator
     i++;
     return {done: false, value: bit};
   };
+
   return {
     [Symbol.iterator]() {
       return {next};

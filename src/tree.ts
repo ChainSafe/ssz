@@ -13,25 +13,31 @@ const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit";
 export class Tree {
   private _node: Node;
   private hook?: Hook;
+
   constructor(node: Node, hook?: Hook) {
     this._node = node;
     this.hook = hook;
   }
+
   static createFromProof(proof: Proof): Tree {
     return new Tree(createNodeFromProof(proof));
   }
+
   get rootNode(): Node {
     return this._node;
   }
+
   set rootNode(n: Node) {
     this._node = n;
     if (this.hook) {
       this.hook(this);
     }
   }
+
   get root(): Uint8Array {
     return this.rootNode.root;
   }
+
   getNode(index: Gindex): Node {
     let node = this.rootNode;
     for (const i of gindexIterator(index)) {
@@ -45,6 +51,7 @@ export class Tree {
     }
     return node;
   }
+
   setter(index: Gindex, expand = false): Link {
     let link = identity;
     let node = this.rootNode;
@@ -74,21 +81,27 @@ export class Tree {
     }
     return compose(identity, link);
   }
+
   setNode(index: Gindex, n: Node, expand = false): void {
     this.rootNode = this.setter(index, expand)(n);
   }
+
   getRoot(index: Gindex): Uint8Array {
     return this.getNode(index).root;
   }
+
   setRoot(index: Gindex, root: Uint8Array, expand = false): void {
     this.setNode(index, new LeafNode(root), expand);
   }
+
   getSubtree(index: Gindex): Tree {
     return new Tree(this.getNode(index), (v: Tree): void => this.setNode(index, v.rootNode));
   }
+
   setSubtree(index: Gindex, v: Tree, expand = false): void {
     this.setNode(index, v.rootNode, expand);
   }
+
   clone(): Tree {
     return new Tree(this.rootNode);
   }
@@ -96,6 +109,7 @@ export class Tree {
   getSingleProof(index: Gindex): Uint8Array[] {
     return createSingleProof(this.rootNode, index)[1];
   }
+
   /**
    * Fast read-only iteration
    * In-order traversal of nodes at `depth`
@@ -119,16 +133,20 @@ export class Tree {
     if (startIndex < 0 || count < 0 || depth < 0) {
       throw new Error(ERR_PARAM_LT_ZERO);
     }
+
     if (BigInt(1) << BigInt(depth) < startIndex + count) {
       throw new Error(ERR_COUNT_GT_DEPTH);
     }
+
     if (count === 0) {
       return;
     }
+
     if (depth === 0) {
       yield this.rootNode;
       return;
     }
+
     let node = this.rootNode;
     let currCount = 0;
     const startGindex = toGindexBitstring(depth, BigInt(startIndex));
@@ -143,12 +161,15 @@ export class Tree {
         node = node.left;
       }
     }
+
     while (nav.length && currCount < count) {
       yield node;
+
       currCount++;
       if (currCount === count) {
         return;
       }
+
       do {
         const [parentNode, direction] = nav.pop()!;
         // if direction was left
@@ -168,6 +189,7 @@ export class Tree {
       } while (nav.length && nav.length !== depth);
     }
   }
+
   getProof(input: ProofInput): Proof {
     return createProof(this.rootNode, input);
   }
