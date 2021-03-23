@@ -36,3 +36,27 @@ describe("fixed-depth tree iteration", () => {
     }
   });
 });
+
+describe("subtree mutation", () => {
+  it.only("changing a subtree should change the parent root", () => {
+    const depth = 2;
+    const tree = new Tree(zeroNode(depth));
+    // Get the subtree with "X"s
+    //       0
+    //      /  \
+    //    0      X
+    //   / \    / \
+    //  0   0  X   X
+    const subtree = tree.getSubtree(BigInt(3));
+
+    const rootBefore = tree.root;
+    subtree.setRoot(BigInt(3), Buffer.alloc(32, 1));
+    const rootAfter = tree.root;
+
+    expect(toHex(rootBefore)).to.not.equal(rootAfter);
+  });
+});
+
+function toHex(bytes: Buffer | Uint8Array): string {
+  return Buffer.from(bytes).toString("hex");
+}
