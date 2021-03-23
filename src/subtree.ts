@@ -1,6 +1,5 @@
-import { BranchNode, Node } from "./node";
-import { zeroNode } from "./zeroNode";
-import { Tree } from "./tree";
+import {BranchNode, Node} from "./node";
+import {zeroNode} from "./zeroNode";
 
 const ERR_NAVIGATION = "Navigation error";
 const ERR_TOO_MANY_NODES = "Too many nodes";
@@ -24,7 +23,7 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
     if (length === 1) return bottom;
     else throw new Error(ERR_NAVIGATION);
   } else if (depth === 1) {
-    return new BranchNode(bottom, (length > 1) ? bottom : zeroNode(0));
+    return new BranchNode(bottom, length > 1 ? bottom : zeroNode(0));
   } else {
     const pivot = maxLength >> 1;
     if (length <= pivot) {
@@ -54,7 +53,7 @@ export function subtreeFillToContents(nodes: Node[], depth: number): Node {
     } else {
       return new BranchNode(
         subtreeFillToContents(nodes.slice(0, Number(pivot)), depth - 1),
-        subtreeFillToContents(nodes.slice(Number(pivot)), depth - 1),
+        subtreeFillToContents(nodes.slice(Number(pivot)), depth - 1)
       );
     }
   }

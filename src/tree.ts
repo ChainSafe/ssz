@@ -1,21 +1,24 @@
-import { Gindex, gindexIterator, Bit, toGindexBitstring } from "./gindex";
-import { Node, BranchNode, Link, compose, identity, LeafNode } from "./node";
-import { createNodeFromProof, createProof, Proof, ProofInput } from "./proof";
-import { createSingleProof } from "./proof/single";
-import { zeroNode } from "./zeroNode";
+import {Gindex, gindexIterator, Bit, toGindexBitstring} from "./gindex";
+import {Node, BranchNode, Link, compose, identity, LeafNode} from "./node";
+import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
+import {createSingleProof} from "./proof/single";
+import {zeroNode} from "./zeroNode";
 
 export type Hook = (v: Tree) => void;
 
 const ERR_INVALID_TREE = "Invalid tree operation";
-const ERR_PARAM_LT_ZERO = "Param must be >= 0"
-const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit"
+const ERR_PARAM_LT_ZERO = "Param must be >= 0";
+const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit";
 
 export class Tree {
   private _node: Node;
-  hook?: Hook;
+  private hook?: Hook;
   constructor(node: Node, hook?: Hook) {
     this._node = node;
     this.hook = hook;
+  }
+  static createFromProof(proof: Proof): Tree {
+    return new Tree(createNodeFromProof(proof));
   }
   get rootNode(): Node {
     return this._node;
@@ -42,7 +45,7 @@ export class Tree {
     }
     return node;
   }
-  setter(index: Gindex, expand=false): Link {
+  setter(index: Gindex, expand = false): Link {
     let link = identity;
     let node = this.rootNode;
     const iterator = gindexIterator(index);
@@ -71,22 +74,19 @@ export class Tree {
     }
     return compose(identity, link);
   }
-  setNode(index: Gindex, n: Node, expand=false): void {
+  setNode(index: Gindex, n: Node, expand = false): void {
     this.rootNode = this.setter(index, expand)(n);
   }
   getRoot(index: Gindex): Uint8Array {
     return this.getNode(index).root;
   }
-  setRoot(index: Gindex, root: Uint8Array, expand=false): void {
+  setRoot(index: Gindex, root: Uint8Array, expand = false): void {
     this.setNode(index, new LeafNode(root), expand);
   }
   getSubtree(index: Gindex): Tree {
-    return new Tree(
-      this.getNode(index),
-      (v: Tree): void => this.setNode(index, v.rootNode)
-    );
+    return new Tree(this.getNode(index), (v: Tree): void => this.setNode(index, v.rootNode));
   }
-  setSubtree(index: Gindex, v: Tree, expand=false): void {
+  setSubtree(index: Gindex, v: Tree, expand = false): void {
     this.setNode(index, v.rootNode, expand);
   }
   clone(): Tree {
@@ -119,7 +119,7 @@ export class Tree {
     if (startIndex < 0 || count < 0 || depth < 0) {
       throw new Error(ERR_PARAM_LT_ZERO);
     }
-    if ((BigInt(1) << BigInt(depth)) < startIndex + count) {
+    if (BigInt(1) << BigInt(depth) < startIndex + count) {
       throw new Error(ERR_COUNT_GT_DEPTH);
     }
     if (count === 0) {
@@ -127,7 +127,7 @@ export class Tree {
     }
     if (depth === 0) {
       yield this.rootNode;
-      return
+      return;
     }
     let node = this.rootNode;
     let currCount = 0;
@@ -150,10 +150,7 @@ export class Tree {
         return;
       }
       do {
-        const [
-          parentNode,
-          direction,
-        ] = nav.pop()!;
+        const [parentNode, direction] = nav.pop()!;
         // if direction was left
         if (!direction) {
           // now navigate right
@@ -163,7 +160,7 @@ export class Tree {
 
           // and then left as far as possible
           while (nav.length !== depth) {
-            nav.push([node, 0])
+            nav.push([node, 0]);
             if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
             node = node.left;
           }
@@ -173,8 +170,5 @@ export class Tree {
   }
   getProof(input: ProofInput): Proof {
     return createProof(this.rootNode, input);
-  }
-  static createFromProof(proof: Proof): Tree {
-    return new Tree(createNodeFromProof(proof));
   }
 }

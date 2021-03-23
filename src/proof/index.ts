@@ -1,7 +1,13 @@
-import { Gindex } from "../gindex";
-import { Node } from "../node";
-import { createNodeFromSingleProof, createSingleProof } from "./single";
-import { computeTreeOffsetProofSerializedLength, createNodeFromTreeOffsetProof, createTreeOffsetProof, deserializeTreeOffsetProof, serializeTreeOffsetProof } from "./treeOffset";
+import {Gindex} from "../gindex";
+import {Node} from "../node";
+import {createNodeFromSingleProof, createSingleProof} from "./single";
+import {
+  computeTreeOffsetProofSerializedLength,
+  createNodeFromTreeOffsetProof,
+  createTreeOffsetProof,
+  deserializeTreeOffsetProof,
+  serializeTreeOffsetProof,
+} from "./treeOffset";
 
 export enum ProofType {
   single = "single",
@@ -43,7 +49,7 @@ export type ProofInput = SingleProofInput | TreeOffsetProofInput;
 
 export function createProof(rootNode: Node, input: ProofInput): Proof {
   switch (input.type) {
-    case ProofType.single:
+    case ProofType.single: {
       const [leaf, witnesses] = createSingleProof(rootNode, input.gindex);
       return {
         type: ProofType.single,
@@ -51,16 +57,15 @@ export function createProof(rootNode: Node, input: ProofInput): Proof {
         leaf,
         witnesses,
       };
-    case ProofType.treeOffset:
-      const [offsets, leaves] = createTreeOffsetProof(
-        rootNode,
-        input.gindices
-      );
+    }
+    case ProofType.treeOffset: {
+      const [offsets, leaves] = createTreeOffsetProof(rootNode, input.gindices);
       return {
         type: ProofType.treeOffset,
         offsets,
         leaves,
       };
+    }
     default:
       throw new Error("Invalid proof type");
   }
@@ -78,15 +83,15 @@ export function createNodeFromProof(proof: Proof): Node {
 }
 
 export function serializeProof(proof: Proof): Uint8Array {
-  let output: Uint8Array;
   switch (proof.type) {
     case ProofType.single:
       throw new Error("Not implemented");
-    case ProofType.treeOffset:
-      output = new Uint8Array(1 + computeTreeOffsetProofSerializedLength(proof.offsets, proof.leaves));
+    case ProofType.treeOffset: {
+      const output = new Uint8Array(1 + computeTreeOffsetProofSerializedLength(proof.offsets, proof.leaves));
       output[0] = ProofTypeSerialized.indexOf(ProofType.treeOffset);
       serializeTreeOffsetProof(output, 1, proof.offsets, proof.leaves);
       return output;
+    }
     default:
       throw new Error("Invalid proof type");
   }
@@ -100,13 +105,14 @@ export function deserializeProof(data: Uint8Array): Proof {
   switch (proofType) {
     case ProofType.single:
       throw new Error("Not implemented");
-    case ProofType.treeOffset:
+    case ProofType.treeOffset: {
       const [offsets, leaves] = deserializeTreeOffsetProof(data, 1);
       return {
         type: ProofType.treeOffset,
         offsets,
         leaves,
       };
+    }
     default:
       throw new Error("Invalid proof type");
   }

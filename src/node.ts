@@ -1,4 +1,4 @@
-import { hash } from "./hash";
+import {hash} from "./hash";
 
 const ERR_INVALID_TREE = "Invalid tree";
 const ERR_NOT_IMPLEMENTED = "Not implemented";
@@ -16,9 +16,11 @@ export abstract class Node {
   get right(): Node {
     throw new Error(ERR_NOT_IMPLEMENTED);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rebindLeft(left: Node): Node {
     throw new Error(ERR_NOT_IMPLEMENTED);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rebindRight(right: Node): Node {
     throw new Error(ERR_NOT_IMPLEMENTED);
   }
@@ -26,10 +28,7 @@ export abstract class Node {
 
 export class BranchNode extends Node {
   private _root: Uint8Array | null = null;
-  constructor(
-    private _left: Node,
-    private _right: Node,
-  ) {
+  constructor(private _left: Node, private _right: Node) {
     super();
     if (!_left || !_right) throw new Error(ERR_INVALID_TREE);
   }
@@ -63,9 +62,7 @@ export class BranchNode extends Node {
 }
 
 export class LeafNode extends Node {
-  constructor(
-    private _root: Uint8Array
-  ) {
+  constructor(private _root: Uint8Array) {
     super();
     if (_root.length !== 32) throw new Error(ERR_INVALID_TREE);
   }
@@ -86,7 +83,7 @@ export function identity(n: Node): Node {
 }
 
 export function compose(inner: Link, outer: Link): Link {
-  return function(n: Node): Node {
+  return function (n: Node): Node {
     return outer(inner(n));
-  }
+  };
 }

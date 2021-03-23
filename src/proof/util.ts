@@ -1,9 +1,9 @@
-import { Gindex, GindexBitstring, gindexParent, gindexSibling } from "../gindex";
+import {Gindex, GindexBitstring, gindexParent, gindexSibling} from "../gindex";
 
 // Not currently in use, but simpler implementation useful for testing
 /**
  * Compute both the path and branch indices
- * 
+ *
  * Path indices are parent indices upwards toward the root
  * Branch indices are witnesses required for a merkle proof
  */
@@ -21,11 +21,13 @@ export function computeProofGindices(gindex: Gindex): {path: Set<Gindex>; branch
 
 /**
  * Compute both the path and branch indices
- * 
+ *
  * Path indices are parent indices upwards toward the root
  * Branch indices are witnesses required for a merkle proof
  */
-export function computeProofBitstrings(gindex: GindexBitstring): {path: Set<GindexBitstring>; branch: Set<GindexBitstring>} {
+export function computeProofBitstrings(
+  gindex: GindexBitstring
+): {path: Set<GindexBitstring>; branch: Set<GindexBitstring>} {
   const path = new Set<GindexBitstring>();
   const branch = new Set<GindexBitstring>();
   let g = gindex;
@@ -47,17 +49,19 @@ export function sortInOrderBitstrings(gindices: GindexBitstring[], bitLength: nu
   if (!gindices.length) {
     return [];
   }
-  return gindices.map(g => g.padEnd(bitLength)).sort().map(g => g.trim());
+  return gindices
+    .map((g) => g.padEnd(bitLength))
+    .sort()
+    .map((g) => g.trim());
 }
 
 /**
  * Filter out parent generalized indices
  */
 export function filterParentBitstrings(gindices: GindexBitstring[]): GindexBitstring[] {
-  const sortedBitstrings = gindices.sort((a, b) => a.length - b.length)
+  const sortedBitstrings = gindices.sort((a, b) => a.length - b.length);
   const filtered: GindexBitstring[] = [];
-  outer:
-  for (let i = 0; i < sortedBitstrings.length; i++) {
+  outer: for (let i = 0; i < sortedBitstrings.length; i++) {
     const bsA = sortedBitstrings[i];
     for (let j = i + 1; j < sortedBitstrings.length; j++) {
       const bsB = sortedBitstrings[j];

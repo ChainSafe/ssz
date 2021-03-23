@@ -1,6 +1,6 @@
-import { expect } from "chai";
+import {expect} from "chai";
 
-import { Tree, zeroNode, LeafNode, subtreeFillToContents } from "../src";
+import {Tree, zeroNode, LeafNode, subtreeFillToContents} from "../src";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
@@ -11,12 +11,12 @@ describe("fixed-depth tree iteration", () => {
       expect(n.root).to.be.deep.equal(zero);
     }
     const one = zeroNode(1).root;
-    for (const n of tree.iterateNodesAtDepth(depth-1, 0, 4)) {
+    for (const n of tree.iterateNodesAtDepth(depth - 1, 0, 4)) {
       expect(n.root).to.be.deep.equal(one);
     }
   });
   it("should properly navigate a custom tree", () => {
-    const depth = 4
+    const depth = 4;
     const length = 1 << depth;
     const leaves = Array.from({length: length}, (_, i) => new LeafNode(Buffer.alloc(32, i)));
     const tree = new Tree(subtreeFillToContents(leaves, depth));
@@ -30,8 +30,8 @@ describe("fixed-depth tree iteration", () => {
           expect(n.root).to.be.deep.equal(leaves[k].root);
           k++;
         }
-        expect(k-i, `startIx=${i} count=${j} currIx=${k}`).to.be.eql(j);
+        expect(k - i, `startIx=${i} count=${j} currIx=${k}`).to.be.eql(j);
       }
     }
-  })
+  });
 });

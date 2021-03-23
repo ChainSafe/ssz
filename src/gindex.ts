@@ -14,7 +14,7 @@ export function toGindex(depth: number, index: bigint): Gindex {
 }
 
 export function toGindexBitstring(depth: number, index: bigint): GindexBitstring {
-  const str = index ? index.toString(2) : '';
+  const str = index ? index.toString(2) : "";
   if (str.length > depth) {
     throw new Error("index too large for depth");
   } else {
@@ -52,15 +52,15 @@ export function iterateAtDepth(depth: number, startIndex: bigint, count: bigint)
           } else {
             return {done: true, value: undefined};
           }
-        }
-      }
-    }
+        },
+      };
+    },
   };
 }
 
 const ERR_INVALID_GINDEX = "Invalid gindex";
 
-export type Bit = 0 | 1
+export type Bit = 0 | 1;
 export interface GindexIterator extends Iterable<Bit> {
   remainingBitLength(): number;
 }
@@ -86,15 +86,15 @@ export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator
     const bit = Number(bitstring[i]) as Bit;
     i++;
     return {done: false, value: bit};
-  }
+  };
   return {
     [Symbol.iterator]() {
-      return {next}
+      return {next};
     },
     remainingBitLength(): number {
       return bitstring.length - i;
     },
-  }
+  };
 }
 
 /**
