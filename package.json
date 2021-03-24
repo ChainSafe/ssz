@@ -10,15 +10,8 @@
   ],
   "scripts": {
     "clean": "rm -rf lib && rm -f *.tsbuildinfo",
-    "build": "concurrently \"yarn build:lib\" \"yarn build:types\"",
-    "build:lib": "babel src -x .ts -d lib --source-maps",
-    "build:lib:watch": "yarn run build:lib --watch",
-    "build:release": "yarn clean && yarn build",
-    "build:types": "tsc -p tsconfig.build.json",
-    "build:types:watch": "yarn run build:types --watch",
-    "check-types": "tsc",
-    "lint": "eslint --color --ext .ts src/ test/",
-    "lint:fix": "yarn run lint --fix",
+    "build": "tsc",
+    "lint": "eslint --color --ext .ts src/",
     "prepublishOnly": "yarn build",
     "test:unit": "mocha 'test/unit/**/*.test.ts'",
     "test:perf": "mocha 'test/perf/**/*.test.ts'"
@@ -39,7 +32,14 @@
   },
   "homepage": "https://github.com/cronokirby/persistent-ts#readme",
   "devDependencies": {
-    "fast-check": "^1.15.1"
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "eslint": "^7.22.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "fast-check": "^1.15.1",
+    "mocha": "^8.3.2",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
   },
   "jest": {
     "transform": {

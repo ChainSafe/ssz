@@ -1,4 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {}
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "pretty": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "outDir": "lib",
+  }
 }
