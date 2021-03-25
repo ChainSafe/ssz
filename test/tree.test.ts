@@ -38,7 +38,7 @@ describe("fixed-depth tree iteration", () => {
 });
 
 describe("subtree mutation", () => {
-  it.only("changing a subtree should change the parent root", () => {
+  it("changing a subtree should change the parent root", () => {
     const depth = 2;
     const tree = new Tree(zeroNode(depth));
     // Get the subtree with "X"s
