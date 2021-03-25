@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {CompositeValue, Json} from "../../interface";
-import {BackedValue, isBackedValue, Path, TreeBacked} from "../../backings";
+import {BackedValue, createTreeBacked, isBackedValue, Path, TreeBacked} from "../../backings";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {
   concatGindices,
@@ -326,6 +326,15 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   }
 
   createTreeBacked(tree: Tree): TreeBacked<T> {
-    return this.createTreeBacked(tree);
+    return createTreeBacked(this, tree);
+  }
+  createTreeBackedFromStruct(value: T): TreeBacked<T> {
+    return this.createTreeBacked(this.struct_convertToTree(value));
+  }
+  createTreeBackedFromBytes(data: Uint8Array): TreeBacked<T> {
+    return this.createTreeBacked(this.tree_deserialize(data));
+  }
+  createTreeBackedFromJson(data: Json, options?: IJsonOptions): TreeBacked<T> {
+    return this.createTreeBackedFromStruct(this.struct_convertFromJson(data, options));
   }
 }
