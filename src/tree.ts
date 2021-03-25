@@ -10,24 +10,17 @@ const ERR_INVALID_TREE = "Invalid tree operation";
 const ERR_PARAM_LT_ZERO = "Param must be >= 0";
 const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit";
 
-enum HookTypeCode {
-  WeakRef,
-  Function,
-}
-
-type HookType = {code: HookTypeCode.WeakRef; val: WeakRef<Hook>} | {code: HookTypeCode.Function; val: Hook};
-
 export class Tree {
   private _node: Node;
-  private hook?: HookType;
+  private hook?: Hook | WeakRef<Hook>;
 
   constructor(node: Node, hook?: Hook) {
     this._node = node;
     if (hook) {
       if (typeof WeakRef === "undefined") {
-        this.hook = {code: HookTypeCode.Function, val: hook};
+        this.hook = hook;
       } else {
-        this.hook = {code: HookTypeCode.WeakRef, val: new WeakRef(hook)};
+        this.hook = new WeakRef(hook);
       }
     }
   }
@@ -43,10 +36,13 @@ export class Tree {
   set rootNode(n: Node) {
     this._node = n;
     if (this.hook) {
-      if (this.hook.code === HookTypeCode.Function) {
-        this.hook.val(this);
+      // WeakRef should not change status during a program's execution
+      // So, use WeakRef feature detection to assume the type of this.hook
+      // to minimize the memory footprint of Tree
+      if (typeof WeakRef === "undefined") {
+        (this.hook as Hook)(this);
       } else {
-        const hookVar = this.hook.val.deref();
+        const hookVar = (this.hook as WeakRef<Hook>).deref();
         if (hookVar) {
           hookVar(this);
         } else {
