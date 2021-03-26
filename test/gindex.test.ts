@@ -53,9 +53,10 @@ describe("iterateAtDepth", () => {
     {input: [3, BigInt(0), BigInt(1)], expected: [BigInt(8)]},
     {input: [3, BigInt(1), BigInt(1)], expected: [BigInt(9)]},
     {input: [3, BigInt(1), BigInt(2)], expected: [BigInt(9), BigInt(10)]},
+    {input: [3, BigInt(0), BigInt(8)], expected: [BigInt(8), BigInt(9), BigInt(10), BigInt(11), BigInt(12), BigInt(13), BigInt(14), BigInt(15)]},
   ];
   for (const {input, expected} of testCases) {
-    it(`should correctly iterate at depth`, () => {
+    it(`should correctly iterate at depth=${input[0]} start=${input[1]} count=${input[2]}`, () => {
       const actual = Array.from(iterateAtDepth(input[0], input[1], input[2]));
       expect(actual).to.deep.equal(expected);
     });
