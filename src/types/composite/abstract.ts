@@ -337,4 +337,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   createTreeBackedFromJson(data: Json, options?: IJsonOptions): TreeBacked<T> {
     return this.createTreeBackedFromStruct(this.struct_convertFromJson(data, options));
   }
+  defaultTreeBacked(): TreeBacked<T> {
+    return createTreeBacked(this, this.tree_defaultValue());
+  }
 }

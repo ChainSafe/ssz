@@ -108,7 +108,7 @@ export abstract class TreeValue<T extends CompositeValue> implements ITreeBacked
 
   clone(): TreeBacked<T> {
     const TreeValueClass = Object.getPrototypeOf(this).constructor as {new (...args: unknown[]): TreeValue<T>};
-    return proxyWrapTreeValue(new TreeValueClass(this.tree.clone(), this.type));
+    return proxyWrapTreeValue(new TreeValueClass(this.type, this.tree.clone()));
   }
   valueOf(): T {
     return this.type.tree_convertToStruct(this.tree);
@@ -195,6 +195,9 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
   }
 
   getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
+    if (property === "length") {
+      return this.type.tree_getProperty(this.tree, property) as ValueOf<T, P>;
+    }
     return createTreeBacked(this.type.elementType, this.type.tree_getProperty(this.tree, property) as Tree) as ValueOf<
       T,
       P
@@ -215,8 +218,10 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
     propNames.pop();
     yield* propNames as (keyof T)[];
   }
-  values(): IterableIterator<ValueOf<T>> {
-    return this.type.tree_iterateValues(this.tree) as IterableIterator<ValueOf<T>>;
+  *values(): IterableIterator<ValueOf<T>> {
+    for(const tree of this.type.tree_iterateValues(this.tree)) {
+      yield createTreeBacked(this.type.elementType, tree as Tree) as ValueOf<T>;
+    }
   }
   *entries(): IterableIterator<[keyof T, ValueOf<T>]> {
     const keys = this.getPropertyNames();
@@ -273,6 +278,9 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
   }
 
   getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
+    if (!this.type.fields[property as string]) {
+      return undefined;
+    }
     const propType = this.type.getPropertyType(property);
     const propValue = this.type.tree_getProperty(this.tree, property);
     if (isCompositeType(propType)) {

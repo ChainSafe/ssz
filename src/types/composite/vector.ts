@@ -72,8 +72,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     if (actualLength !== expectedLength) {
       throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
     }
-    // @ts-ignore
-    super.assertValidValue(value);
+    super.struct_assertValidValue(value);
   }
   struct_convertFromJson(data: Json): T {
     if (!Array.isArray(data)) {
@@ -154,7 +153,6 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
     if (actualLength !== expectedLength) {
       throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
     }
-    // @ts-ignore
     super.struct_assertValidValue(value);
   }
   struct_convertFromJson(data: Json): T {

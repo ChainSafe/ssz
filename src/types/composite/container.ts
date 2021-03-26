@@ -373,14 +373,14 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   getPropertyGindex(prop: PropertyKey): Gindex {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
-      throw new Error("Invalid container field name");
+      throw new Error(`Invalid container field name: ${String(prop)}`);
     }
     return this.getGindexAtChunkIndex(chunkIndex);
   }
   getPropertyType(prop: PropertyKey): Type<unknown> {
     const type = this.fields[prop as string];
     if (!type) {
-      throw new Error("Invalid container field name");
+      throw new Error(`Invalid container field name: ${String(prop)}`);
     }
     return type;
   }

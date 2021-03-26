@@ -70,7 +70,8 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   struct_hashTreeRoot(value: T): Uint8Array {
     return mixInLength(super.struct_hashTreeRoot(value), value.length);
   }
-  struct_convertFromJson(data: Json): T {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  struct_convertFromJson(data: Json, options?: IJsonOptions): T {
     if (!Array.isArray(data)) {
       throw new Error("Invalid JSON list: expected an Array");
     }
@@ -78,7 +79,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     if (data.length > maxLength) {
       throw new Error(`Invalid JSON list: length ${data.length} greater than limit ${maxLength}`);
     }
-    return super.fromJson(data);
+    return super.struct_convertFromJson(data);
   }
   struct_convertToTree(value: T): Tree {
     const tree = super.struct_convertToTree(value);
