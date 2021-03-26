@@ -1,3 +1,17 @@
+## 0.3.0 (2021-03-26)
+
+## BREAKING CHANGES
+
+- Use WeakRef on tree hook ([dd23ed](https://github.com/chainsafe/persistent-merkle-tree/commit/dd23ed))
+
+## Features
+
+- Add proof serialization logic  ([44ec21](https://github.com/chainsafe/persistent-merkle-tree/commit/44ec21))
+
+## Bug Fixes
+
+- Fix off-by-one in iterateAtDepth ([84e05e](https://github.com/chainsafe/persistent-merkle-tree/commit/84e05e))
+
 ## 0.2.3 (2021-02-13)
 
 ## Features
