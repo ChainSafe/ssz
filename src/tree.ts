@@ -12,11 +12,17 @@ const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit";
 
 export class Tree {
   private _node: Node;
-  private hook?: Hook;
+  private hook?: Hook | WeakRef<Hook>;
 
   constructor(node: Node, hook?: Hook) {
     this._node = node;
-    this.hook = hook;
+    if (hook) {
+      if (typeof WeakRef === "undefined") {
+        this.hook = hook;
+      } else {
+        this.hook = new WeakRef(hook);
+      }
+    }
   }
 
   static createFromProof(proof: Proof): Tree {
@@ -30,7 +36,20 @@ export class Tree {
   set rootNode(n: Node) {
     this._node = n;
     if (this.hook) {
-      this.hook(this);
+      // WeakRef should not change status during a program's execution
+      // So, use WeakRef feature detection to assume the type of this.hook
+      // to minimize the memory footprint of Tree
+      if (typeof WeakRef === "undefined") {
+        (this.hook as Hook)(this);
+      } else {
+        const hookVar = (this.hook as WeakRef<Hook>).deref();
+        if (hookVar) {
+          hookVar(this);
+        } else {
+          // Hook has been garbage collected, no need to keep the hookRef
+          this.hook = undefined;
+        }
+      }
     }
   }
 
