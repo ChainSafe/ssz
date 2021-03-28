@@ -3,7 +3,10 @@ import {ArrayLike, CompositeValue} from "../../interface";
 import {CompositeType} from "../../types";
 import {Path} from "../backedValue";
 
-export type ValueOf<T extends CompositeValue, V extends keyof T = keyof T> = T extends ArrayLike<any> ? T[number] : T[V];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ValueOf<T extends CompositeValue, V extends keyof T = keyof T> = T extends ArrayLike<any>
+  ? T[number]
+  : T[V];
 
 export type TreeBacked<T extends CompositeValue> = ITreeBacked<T> & T;
 

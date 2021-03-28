@@ -231,7 +231,7 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
     yield* propNames.map(String);
   }
   *values(): IterableIterator<ValueOf<T>> {
-    for(const tree of this.type.tree_iterateValues(this.tree)) {
+    for (const tree of this.type.tree_iterateValues(this.tree)) {
       yield createTreeBacked(this.type.elementType, tree as Tree) as ValueOf<T>;
     }
   }
@@ -244,7 +244,7 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
     }
   }
   *readonlyValues(): IterableIterator<ValueOf<T>> {
-    for(const tree of this.type.tree_readonlyIterateValues(this.tree)) {
+    for (const tree of this.type.tree_readonlyIterateValues(this.tree)) {
       yield createTreeBacked(this.type.elementType, tree as Tree) as ValueOf<T>;
     }
   }

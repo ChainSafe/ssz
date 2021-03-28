@@ -2,7 +2,15 @@
 import {Json, ObjectLike} from "../../interface";
 import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";
-import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {
+  Gindex,
+  iterateAtDepth,
+  LeafNode,
+  Node,
+  subtreeFillToContents,
+  Tree,
+  zeroNode,
+} from "@chainsafe/persistent-merkle-tree";
 import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 
@@ -430,7 +438,9 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
   }
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    const gindexIterator = iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.getMaxChunkCount()))[Symbol.iterator]();
+    const gindexIterator = iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.getMaxChunkCount()))[
+      Symbol.iterator
+    ]();
     for (const propType of Object.values(this.fields)) {
       const {value, done} = gindexIterator.next();
       if (done) {

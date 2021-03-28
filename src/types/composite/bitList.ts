@@ -4,7 +4,7 @@ import {BasicListType} from "./list";
 import {booleanType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {fromHexString, toHexString} from "../../util/byteArray";
-import {iterateAtDepth, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Tree} from "@chainsafe/persistent-merkle-tree";
 
 export interface IBitListOptions {
   limit: number;
