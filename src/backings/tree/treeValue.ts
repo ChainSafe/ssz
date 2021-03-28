@@ -76,7 +76,7 @@ export const TreeProxyHandler: ProxyHandler<TreeValue<CompositeValue>> = {
     }
   },
   set(target: TreeValue<CompositeValue>, property: PropertyKey, value: unknown): boolean {
-    return target.setProperty(property as keyof CompositeValue, (value as unknown) as ITreeBacked<never>);
+    return target.setProperty(property as keyof CompositeValue, (value as unknown) as never);
   },
   ownKeys(target: TreeValue<CompositeValue>): (string | symbol)[] {
     return target.getPropertyNames() as (string | symbol)[];
@@ -148,9 +148,11 @@ export abstract class TreeValue<T extends CompositeValue> implements ITreeBacked
   }
   abstract getProperty<P extends keyof T>(property: P): ValueOf<T, P>;
   abstract setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean;
-  abstract keys(): IterableIterator<keyof T>;
+  abstract keys(): IterableIterator<string>;
   abstract values(): IterableIterator<ValueOf<T>>;
-  abstract entries(): IterableIterator<[keyof T, ValueOf<T>]>;
+  abstract entries(): IterableIterator<[string, ValueOf<T>]>;
+  abstract readonlyValues(): IterableIterator<ValueOf<T>>;
+  abstract readonlyEntries(): IterableIterator<[string, ValueOf<T>]>;
 }
 
 export class BasicArrayTreeValue<T extends ArrayLike<unknown>> extends TreeValue<T> {
@@ -167,25 +169,35 @@ export class BasicArrayTreeValue<T extends ArrayLike<unknown>> extends TreeValue
   setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean {
     return this.type.tree_setProperty(this.tree, property as number, value);
   }
-  *keys(): IterableIterator<keyof T> {
+  *keys(): IterableIterator<string> {
     const propNames = this.getPropertyNames();
     // pop off "length"
     propNames.pop();
-    yield* propNames as (keyof T)[];
+    yield* propNames.map(String);
   }
   values(): IterableIterator<ValueOf<T>> {
     return this.type.tree_iterateValues(this.tree) as IterableIterator<ValueOf<T>>;
   }
-  *entries(): IterableIterator<[keyof T, ValueOf<T>]> {
+  *entries(): IterableIterator<[string, ValueOf<T>]> {
     const keys = this.getPropertyNames();
     let i = 0;
     for (const value of this.values()) {
-      yield [keys[i] as keyof T, value];
+      yield [String(keys[i]), value];
+      i++;
+    }
+  }
+  readonlyValues(): IterableIterator<ValueOf<T>> {
+    return this.type.tree_readonlyIterateValues(this.tree) as IterableIterator<ValueOf<T>>;
+  }
+  *readonlyEntries(): IterableIterator<[string, ValueOf<T>]> {
+    const keys = this.getPropertyNames();
+    let i = 0;
+    for (const value of this.readonlyValues()) {
+      yield [String(keys[i]), value];
       i++;
     }
   }
 }
-
 export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeValue<T> {
   type: CompositeArrayType<T>;
 
@@ -212,22 +224,35 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
         : this.type.elementType.struct_convertToTree((value as unknown) as CompositeValue)
     );
   }
-  *keys(): IterableIterator<keyof T> {
+  *keys(): IterableIterator<string> {
     const propNames = this.getPropertyNames();
     // pop off "length"
     propNames.pop();
-    yield* propNames as (keyof T)[];
+    yield* propNames.map(String);
   }
   *values(): IterableIterator<ValueOf<T>> {
     for(const tree of this.type.tree_iterateValues(this.tree)) {
       yield createTreeBacked(this.type.elementType, tree as Tree) as ValueOf<T>;
     }
   }
-  *entries(): IterableIterator<[keyof T, ValueOf<T>]> {
+  *entries(): IterableIterator<[string, ValueOf<T>]> {
     const keys = this.getPropertyNames();
     let i = 0;
     for (const value of this.values()) {
-      yield [keys[i] as keyof T, value];
+      yield [String(keys[i]), value];
+      i++;
+    }
+  }
+  *readonlyValues(): IterableIterator<ValueOf<T>> {
+    for(const tree of this.type.tree_readonlyIterateValues(this.tree)) {
+      yield createTreeBacked(this.type.elementType, tree as Tree) as ValueOf<T>;
+    }
+  }
+  *readonlyEntries(): IterableIterator<[string, ValueOf<T>]> {
+    const keys = this.getPropertyNames();
+    let i = 0;
+    for (const value of this.readonlyValues()) {
+      yield [String(keys[i]), value];
       i++;
     }
   }
@@ -245,7 +270,7 @@ export class BasicListTreeValue<T extends List<unknown>> extends BasicArrayTreeV
     return this.type.tree_push(this.tree, ...values);
   }
   pop(): ValueOf<T> {
-    return this.type.tree_pop(this.tree);
+    return this.type.tree_pop(this.tree) as ValueOf<T>;
   }
 }
 
@@ -266,7 +291,7 @@ export class CompositeListTreeValue<T extends List<object>> extends CompositeArr
     return this.type.tree_push(this.tree, ...convertedValues);
   }
   pop(): ValueOf<T> {
-    return this.type.tree_pop(this.tree);
+    return this.type.tree_pop(this.tree) as ValueOf<T>;
   }
 }
 export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
@@ -305,24 +330,43 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
       return this.type.tree_setProperty(this.tree, property, value);
     }
   }
-  *keys(): IterableIterator<keyof T> {
-    yield* this.getPropertyNames() as (keyof T)[];
+  *keys(): IterableIterator<string> {
+    yield* this.getPropertyNames() as string[];
   }
   *values(): IterableIterator<ValueOf<T>> {
     for (const [_key, value] of this.entries()) {
       yield value;
     }
   }
-  *entries(): IterableIterator<[keyof T, ValueOf<T>]> {
+  *entries(): IterableIterator<[string, ValueOf<T>]> {
     const keys = this.getPropertyNames();
     let i = 0;
     for (const value of this.type.tree_iterateValues(this.tree)) {
       const propName = keys[i] as keyof T;
       const propType = this.type.getPropertyType(propName);
       if (isCompositeType(propType)) {
-        yield [propName, (createTreeBacked(propType, value as Tree) as unknown) as T[keyof T]];
+        yield [propName as string, createTreeBacked(propType, value as Tree) as ValueOf<T>];
       } else {
-        yield [propName, value as T[keyof T]];
+        yield [propName as string, value as ValueOf<T>];
+      }
+      i++;
+    }
+  }
+  *readonlyValues(): IterableIterator<ValueOf<T>> {
+    for (const [_key, value] of this.readonlyEntries()) {
+      yield value;
+    }
+  }
+  *readonlyEntries(): IterableIterator<[string, ValueOf<T>]> {
+    const keys = this.getPropertyNames();
+    let i = 0;
+    for (const value of this.type.tree_readonlyIterateValues(this.tree)) {
+      const propName = keys[i] as string;
+      const propType = this.type.getPropertyType(propName);
+      if (isCompositeType(propType)) {
+        yield [propName, createTreeBacked(propType, value as Tree) as ValueOf<T>];
+      } else {
+        yield [propName, value as ValueOf<T>];
       }
       i++;
     }

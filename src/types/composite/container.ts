@@ -2,7 +2,7 @@
 import {Json, ObjectLike} from "../../interface";
 import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";
-import {Gindex, LeafNode, Node, subtreeFillToContents, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 
@@ -430,6 +430,21 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
   }
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
+    const gindexIterator = iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.getMaxChunkCount()))[Symbol.iterator]();
+    for (const propType of Object.values(this.fields)) {
+      const {value, done} = gindexIterator.next();
+      if (done) {
+        return;
+      } else {
+        if (!isCompositeType(propType)) {
+          yield propType.struct_deserializeFromBytes(value.root as Uint8Array, 0);
+        } else {
+          yield target.getSubtree(value);
+        }
+      }
+    }
+  }
+  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const chunkIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
     for (const propType of Object.values(this.fields)) {
       const {value, done} = chunkIterator.next();

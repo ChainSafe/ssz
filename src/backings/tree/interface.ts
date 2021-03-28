@@ -1,9 +1,9 @@
 import {Proof, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeValue} from "../../interface";
+import {ArrayLike, CompositeValue} from "../../interface";
 import {CompositeType} from "../../types";
 import {Path} from "../backedValue";
 
-export type ValueOf<T extends CompositeValue, V extends keyof T = keyof T> = ITreeBacked<T[V]> | T[V];
+export type ValueOf<T extends CompositeValue, V extends keyof T = keyof T> = T extends ArrayLike<any> ? T[number] : T[V];
 
 export type TreeBacked<T extends CompositeValue> = ITreeBacked<T> & T;
 
@@ -52,7 +52,9 @@ export interface ITreeBacked<T extends CompositeValue> {
 
   createProof(paths: Path[]): Proof;
 
-  keys(): IterableIterator<keyof T>;
+  keys(): IterableIterator<string>;
   values(): IterableIterator<ValueOf<T>>;
-  entries(): IterableIterator<[keyof T, ValueOf<T>]>;
+  entries(): IterableIterator<[string, ValueOf<T>]>;
+  readonlyValues(): IterableIterator<ValueOf<T>>;
+  readonlyEntries(): IterableIterator<[string, ValueOf<T>]>;
 }

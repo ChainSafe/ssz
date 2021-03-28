@@ -116,6 +116,22 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   getChunkIndex(index: number): number {
     return Math.floor(index / 256);
   }
+  tree_getChunkCount(target: Tree): number {
+    return Math.ceil(this.tree_getLength(target) / 256);
+  }
+  *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
+    const length = this.tree_getLength(target);
+    const chunkCount = this.tree_getChunkCount(target);
+    const nodeIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
+    let i = 0;
+    for (const node of nodeIterator) {
+      const chunk = node.root;
+      for (let j = 0; j < 256 && i < length; i++, j++) {
+        const byte = chunk[this.getChunkOffset(i)];
+        yield !!(byte & (1 << this.getBitOffset(i)));
+      }
+    }
+  }
   tree_getValueAtIndex(target: Tree, index: number): boolean {
     const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
     const byte = chunk[this.getChunkOffset(index)];

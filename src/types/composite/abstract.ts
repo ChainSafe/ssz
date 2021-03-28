@@ -180,6 +180,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   abstract tree_setProperty(tree: Tree, property: PropertyKey, value: Tree | unknown): boolean;
   abstract tree_deleteProperty(tree: Tree, property: PropertyKey): boolean;
   abstract tree_iterateValues(tree: Tree): IterableIterator<Tree | unknown>;
+  abstract tree_readonlyIterateValues(tree: Tree): IterableIterator<Tree | unknown>;
   tree_createProof(target: Tree, paths: Path[]): Proof {
     const gindices = paths.map((path) => this.getPathGindex(path));
     return target.getProof({

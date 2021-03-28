@@ -5,7 +5,7 @@ import {IJsonOptions, Type} from "../type";
 import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
-import {Gindex, LeafNode, Node, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 
 export interface IArrayOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -183,6 +183,9 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
         }
       }
     }
+  }
+  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
+    yield* this.tree_iterateValues(target);
   }
   getChunkOffset(index: number): number {
     const elementSize = this.elementType.struct_getSerializedLength();
@@ -458,6 +461,11 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     return (Array.from({length: this.tree_getLength(target)}, (_, i) => i) as (string | number)[]).concat(["length"]);
   }
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
+    for (const gindex of iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.tree_getLength(target)))) {
+      yield target.getSubtree(gindex);
+    }
+  }
+  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
     for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target))) {
       yield new Tree(node);
     }
