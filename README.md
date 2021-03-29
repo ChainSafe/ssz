@@ -66,7 +66,7 @@ JSON.stringify(jsonKp);
 Keypair.fromJson(jsonKp); // convert the json-serializable representation to the object
 
 // The merkle-tree-backed representation of a Keypair may be created / operated on
-const kp2: Keypair = Keypair.tree.defaultValue();
+const kp2: TreeBacked<Keypair> = Keypair.defaultTreeBacked();
 
 // All of the same operations can be performed on tree-backed values
 Keypair.serialize(kp2);
