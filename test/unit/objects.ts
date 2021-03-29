@@ -58,6 +58,11 @@ export const number16List100Type = new ListType({
   limit: 100,
 });
 
+export const bigint16List100Type = new ListType({
+  elementType: bigint16Type,
+  limit: 100,
+});
+
 export const SimpleObject = new ContainerType({
   fields: {
     b: number16Type,

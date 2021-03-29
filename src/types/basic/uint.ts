@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../../interface";
 import {isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";
@@ -20,7 +21,7 @@ export abstract class UintType<T> extends BasicType<T> {
     this.byteLength = options.byteLength;
     this._typeSymbols.add(UINT_TYPE);
   }
-  size(): number {
+  struct_getSerializedLength(): number {
     return this.byteLength;
   }
 }
@@ -34,11 +35,12 @@ export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
 }
 
 export class NumberUintType extends UintType<number> {
+  _maxBigInt: BigInt;
   constructor(options: IUintOptions) {
     super(options);
     this._typeSymbols.add(NUMBER_UINT_TYPE);
   }
-  assertValidValue(value: unknown): asserts value is number {
+  struct_assertValidValue(value: unknown): asserts value is number {
     if (
       value !== Infinity &&
       (!Number.isSafeInteger(value as number) || value > BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
@@ -49,13 +51,16 @@ export class NumberUintType extends UintType<number> {
       throw new Error("Uint value must be gte 0");
     }
   }
-  defaultValue(): number {
+  struct_defaultValue(): number {
     return 0;
   }
-  maxBigInt(): BigInt {
-    return BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1);
+  struct_getMaxBigInt(): BigInt {
+    if (this._maxBigInt === undefined) {
+      this._maxBigInt = BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1);
+    }
+    return this._maxBigInt;
   }
-  toBytes(value: number, output: Uint8Array, offset: number): number {
+  struct_serializeToBytes(value: number, output: Uint8Array, offset: number): number {
     if (this.byteLength > 6 && value === Infinity) {
       for (let i = offset; i < offset + this.byteLength; i++) {
         output[i] = 0xff;
@@ -70,8 +75,8 @@ export class NumberUintType extends UintType<number> {
     }
     return offset + this.byteLength;
   }
-  fromBytes(data: Uint8Array, offset: number): number {
-    this.validateBytes(data, offset);
+  struct_deserializeFromBytes(data: Uint8Array, offset: number): number {
+    this.bytes_validate(data, offset);
     let isInfinity = true;
     let output = 0;
     for (let i = 0; i < this.byteLength; i++) {
@@ -85,10 +90,10 @@ export class NumberUintType extends UintType<number> {
     }
     return Number(output);
   }
-  fromJson(data: Json): number {
+  struct_convertFromJson(data: Json): number {
     let n: number;
     const bigN = BigInt(data);
-    if (bigN === this.maxBigInt()) {
+    if (bigN === this.struct_getMaxBigInt()) {
       n = Infinity;
     } else if (bigN < Number.MAX_SAFE_INTEGER) {
       n = Number(bigN);
@@ -98,10 +103,10 @@ export class NumberUintType extends UintType<number> {
     this.assertValidValue(n);
     return n;
   }
-  toJson(value: number): Json {
+  struct_convertToJson(value: number): Json {
     if (this.byteLength > 4) {
       if (value === Infinity) {
-        return this.maxBigInt().toString();
+        return this.struct_getMaxBigInt().toString();
       }
       return String(value);
     }
@@ -120,7 +125,7 @@ export class BigIntUintType extends UintType<bigint> {
     super(options);
     this._typeSymbols.add(BIGINT_UINT_TYPE);
   }
-  assertValidValue(value: unknown): asserts value is bigint {
+  struct_assertValidValue(value: unknown): asserts value is bigint {
     if (typeof value !== "bigint") {
       throw new Error("Uint value is not a bigint");
     }
@@ -128,10 +133,10 @@ export class BigIntUintType extends UintType<bigint> {
       throw new Error("Uint value must be gte 0");
     }
   }
-  defaultValue(): bigint {
+  struct_defaultValue(): bigint {
     return BigInt(0);
   }
-  toBytes(value: bigint, output: Uint8Array, offset: number): number {
+  struct_serializeToBytes(value: bigint, output: Uint8Array, offset: number): number {
     // Motivation
     // BigInt bit shifting and BigInt allocation is slower compared to number
     // For every 4 bytes, we extract value to groupedBytes
@@ -149,10 +154,8 @@ export class BigIntUintType extends UintType<bigint> {
     }
     return offset + this.byteLength;
   }
-  /**
-   */
-  fromBytes(data: Uint8Array, offset: number): bigint {
-    this.validateBytes(data, offset);
+  struct_deserializeFromBytes(data: Uint8Array, offset: number): bigint {
+    this.bytes_validate(data, offset);
     // Motivation:
     //   Creating BigInts and bitshifting is more expensive than
     // number bitshifting.
@@ -188,12 +191,12 @@ export class BigIntUintType extends UintType<bigint> {
     }
     return output;
   }
-  fromJson(data: Json): bigint {
+  struct_convertFromJson(data: Json): bigint {
     const value = BigInt(data);
     this.assertValidValue(value);
     return value;
   }
-  toJson(value: bigint): Json {
+  struct_convertToJson(value: bigint): Json {
     if (this.byteLength > 4) {
       return value.toString();
     } else {

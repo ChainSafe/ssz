@@ -13,7 +13,7 @@ describe("known issues", () => {
 
   it("far future epoch from json", function () {
     const Number = new NumberUintType({byteLength: 4});
-    const maxBigInt = Number.maxBigInt();
+    const maxBigInt = Number.struct_getMaxBigInt();
     const farFutureEpoch = Number.fromJson(maxBigInt.toString());
     expect(farFutureEpoch).to.be.equal(Infinity);
   });

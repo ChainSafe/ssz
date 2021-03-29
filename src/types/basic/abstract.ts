@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {isTypeOf, Type} from "../type";
@@ -19,59 +20,34 @@ export abstract class BasicType<T> extends Type<T> {
     this._typeSymbols.add(BASIC_TYPE);
   }
 
-  /**
-   * Clone / copy
-   */
-  clone(value: T): T {
+  struct_clone(value: T): T {
     return value;
   }
 
-  /**
-   * Equality
-   */
-  equals(value1: T, value2: T): boolean {
+  struct_equals(value1: T, value2: T): boolean {
     this.assertValidValue(value1);
     this.assertValidValue(value2);
     return value1 === value2;
   }
-
-  // Serialization / Deserialization
 
   /**
    * Check if type has a variable number of elements (or subelements)
    *
    * For basic types, this is always false
    */
-  isVariableSize(): boolean {
+  hasVariableSerializedLength(): boolean {
     return false;
   }
-  /**
-   * Serialized byte length
-   */
-  size(): number {
-    throw new Error("Not implemented");
+
+  getMaxSerializedLength(): number {
+    return this.struct_getSerializedLength();
   }
 
-  /**
-   * Maximal serialized byte length
-   */
-  maxSize(): number {
-    return this.size();
+  getMinSerializedLength(): number {
+    return this.struct_getSerializedLength();
   }
 
-  /**
-   * Minimal serialized byte length
-   */
-  minSize(): number {
-    return this.size();
-  }
-
-  /**
-   * Validate bytes before calling fromBytes
-   * @param data
-   * @param offset
-   */
-  validateBytes(data: Uint8Array, offset: number): void {
+  bytes_validate(data: Uint8Array, offset: number): void {
     if (!data) {
       throw new Error("Data is null or undefined");
     }
@@ -79,38 +55,17 @@ export abstract class BasicType<T> extends Type<T> {
       throw new Error("Data is empty");
     }
     const length = data.length - offset;
-    if (length < this.size()) {
-      throw new Error(`Data length of ${length} is too small, expect ${this.size()}`);
+    if (length < this.struct_getSerializedLength()) {
+      throw new Error(`Data length of ${length} is too small, expect ${this.struct_getSerializedLength()}`);
     }
     // accept data length > this.size()
   }
 
-  /**
-   * Low-level deserialization
-   */
-  abstract fromBytes(data: Uint8Array, offset: number): T;
-  /**
-   * Deserialization
-   */
-  deserialize(data: Uint8Array): T {
-    return this.fromBytes(data, 0);
-  }
+  abstract struct_deserializeFromBytes(data: Uint8Array, offset: number): T;
 
-  /**
-   * Serialization
-   */
-  serialize(value: T): Uint8Array {
-    const output = new Uint8Array(this.size());
-    this.toBytes(value, output, 0);
-    return output;
-  }
-
-  /**
-   * Merkleization
-   */
-  hashTreeRoot(value: T): Uint8Array {
+  struct_hashTreeRoot(value: T): Uint8Array {
     const output = new Uint8Array(32);
-    this.toBytes(value, output, 0);
+    this.struct_serializeToBytes(value, output, 0);
     return output;
   }
 }

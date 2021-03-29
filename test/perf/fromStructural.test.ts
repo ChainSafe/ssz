@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { CompositeType } from "../../src";
 import { BeaconState } from "./objects";
 
 describe("fromStructural", function () {
@@ -10,9 +11,13 @@ describe("fromStructural", function () {
     const MAX_TRY = 10000;
     const from = process.hrtime.bigint();
     for (let i = 0; i < MAX_TRY; i++) {
-      const state = BeaconState.tree.defaultValue();
+      const state = BeaconState.tree_defaultValue();
       const start = Date.now();
-      state.balances = balances;
+      BeaconState.tree_setProperty(
+        state,
+        "balances",
+        (BeaconState.fields.balances as CompositeType<bigint[]>).struct_convertToTree(balances)
+      );
       const duration = Date.now() - start;
       if (duration < minTime) minTime = duration;
       if (duration > maxTime) maxTime = duration;

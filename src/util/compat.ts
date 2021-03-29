@@ -10,5 +10,7 @@ export function merkleize(chunks: Iterable<Uint8Array>, padTo: number): Uint8Arr
 }
 
 export function mixInLength(root: Uint8Array, length: number): Uint8Array {
-  return _mixInLength(Buffer.from(root), length);
+  const lengthBuf = Buffer.alloc(32);
+  lengthBuf.writeUIntLE(length, 0, 6);
+  return hash(root, lengthBuf);
 }

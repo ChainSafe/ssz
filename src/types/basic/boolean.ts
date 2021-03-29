@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../../interface";
 import {isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";
@@ -13,26 +14,23 @@ export class BooleanType extends BasicType<boolean> {
     super();
     this._typeSymbols.add(BOOLEAN_TYPE);
   }
-  size(): number {
+  struct_getSerializedLength(): number {
     return 1;
   }
-  isBasic(): boolean {
-    return true;
-  }
-  assertValidValue(value: unknown): asserts value is boolean {
+  struct_assertValidValue(value: unknown): asserts value is boolean {
     if (value !== true && value !== false) {
       throw new Error("Boolean value must be true or false");
     }
   }
-  defaultValue(): boolean {
+  struct_defaultValue(): boolean {
     return false;
   }
-  toBytes(value: boolean, output: Uint8Array, offset: number): number {
+  struct_serializeToBytes(value: boolean, output: Uint8Array, offset: number): number {
     output[offset] = value ? 1 : 0;
     return offset + 1;
   }
-  fromBytes(data: Uint8Array, offset: number): boolean {
-    this.validateBytes(data, offset);
+  struct_deserializeFromBytes(data: Uint8Array, offset: number): boolean {
+    this.bytes_validate(data, offset);
     if (data[offset] === 1) {
       return true;
     } else if (data[offset] === 0) {
@@ -41,11 +39,11 @@ export class BooleanType extends BasicType<boolean> {
       throw new Error("Invalid boolean value");
     }
   }
-  fromJson(data: Json): boolean {
-    this.assertValidValue(data);
+  struct_convertFromJson(data: Json): boolean {
+    this.struct_assertValidValue(data);
     return data;
   }
-  toJson(value: boolean): Json {
+  struct_convertToJson(value: boolean): Json {
     return value;
   }
 }

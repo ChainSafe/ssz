@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../interface";
 export interface IJsonOptions {
   case: "camel" | "snake";
@@ -27,25 +29,44 @@ export abstract class Type<T> {
     this._typeSymbols = new Set();
   }
 
+  abstract struct_assertValidValue(value: unknown): asserts value is T;
+  abstract struct_defaultValue(): T;
+  abstract struct_clone(value: T): T;
+  abstract struct_equals(value1: T, value2: T): boolean;
+  abstract struct_getSerializedLength(value?: T): number;
+  abstract struct_deserializeFromBytes(data: Uint8Array, start: number, end?: number): T;
+  abstract struct_serializeToBytes(value: T, output: Uint8Array, offset: number): number;
+  abstract struct_hashTreeRoot(value: T): Uint8Array;
+  abstract struct_convertFromJson(data: Json, options?: IJsonOptions): T;
+  abstract struct_convertToJson(value: T, options?: IJsonOptions): Json;
+
   /**
    * Valid value assertion
    */
-  abstract assertValidValue(value: unknown): asserts value is T;
+  assertValidValue(value: unknown): asserts value is T {
+    return this.struct_assertValidValue(value);
+  }
 
   /**
    * Default constructor
    */
-  abstract defaultValue(): T;
+  defaultValue(): T {
+    return this.struct_defaultValue();
+  }
 
   /**
    * Clone / copy
    */
-  abstract clone(value: T): T;
+  clone(value: T): T {
+    return this.struct_clone(value);
+  }
 
   /**
    * Equality
    */
-  abstract equals(value1: T, value2: T): boolean;
+  equals(value1: T, value2: T): boolean {
+    return this.struct_equals(value1, value2);
+  }
 
   // Serialization / Deserialization
 
@@ -54,61 +75,74 @@ export abstract class Type<T> {
    *
    * For basic types, this is always false
    */
-  abstract isVariableSize(): boolean;
-
-  /**
-   * Serialized byte length
-   */
-  abstract size(value?: T): number;
+  abstract hasVariableSerializedLength(): boolean;
 
   /**
    * Maximal serialized byte length
    */
-  abstract maxSize(): number;
+  abstract getMaxSerializedLength(): number;
 
   /**
    * Minimal serialized byte length
    */
-  abstract minSize(): number;
+  abstract getMinSerializedLength(): number;
+
+  /**
+   * Serialized byte length
+   */
+  size(value?: T): number {
+    return this.struct_getSerializedLength(value);
+  }
 
   /**
    * Low-level deserialization
    */
-  //abstract fromBytes(data: Uint8Array, offset: number): T;
-
-  /**
-   * Low-level deserialization
-   */
-  abstract fromBytes(data: Uint8Array, start: number, end?: number): T;
+  fromBytes(data: Uint8Array, start: number, end?: number): T {
+    return this.struct_deserializeFromBytes(data, start, end);
+  }
   /**
    * Deserialization
    */
-  abstract deserialize(data: Uint8Array): T;
+  deserialize(data: Uint8Array): T {
+    return this.fromBytes(data, 0, data.length);
+  }
 
   /**
    * Low-level serialization
    *
    * Serializes to a pre-allocated Uint8Array
    */
-  abstract toBytes(value: T, output: Uint8Array, offset: number): number;
+  toBytes(value: T, output: Uint8Array, offset: number): number {
+    return this.struct_serializeToBytes(value, output, offset);
+  }
 
   /**
    * Serialization
    */
-  abstract serialize(value: T): Uint8Array;
+  serialize(value: T): Uint8Array {
+    const output = new Uint8Array(this.size(value));
+    this.toBytes(value, output, 0);
+    return output;
+  }
 
   /**
    * Merkleization
    */
-  abstract hashTreeRoot(value: T): Uint8Array;
+  hashTreeRoot(value: T): Uint8Array {
+    return this.struct_hashTreeRoot(value);
+  }
 
   /**
    * Convert from JSON-serializable object
    */
-  abstract fromJson(data: Json, options?: IJsonOptions): T;
+  fromJson(data: Json, options?: IJsonOptions): T {
+    return this.struct_convertFromJson(data, options);
+  }
 
   /**
    * Convert to JSON-serializable object
    */
-  abstract toJson(value: T, options?: IJsonOptions): Json;
+  toJson(value: T, options?: IJsonOptions): Json {
+    return this.struct_convertToJson(value, options);
+  }
 }
