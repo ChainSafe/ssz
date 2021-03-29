@@ -1,3 +1,9 @@
+## 0.7.1 (2021-03-29)
+
+## Bug Fixes
+
+- Bug fix in @chainsafe/persistent-merkle-tree ([d31f82](https://github.com/chainsafe/ssz/commit/d31f82))
+
 ## 0.7.0 (2021-03-01)
 
 ## BREAKING CHANGES
