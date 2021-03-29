@@ -36,7 +36,7 @@ export function countToDepth(count: bigint): number {
  */
 export function iterateAtDepth(depth: number, startIndex: bigint, count: bigint): Iterable<Gindex> {
   const anchor = BigInt(1) << BigInt(depth);
-  if (startIndex + count >= anchor) {
+  if (startIndex + count > anchor) {
     throw new Error("Too large for depth");
   }
   let i = toGindex(depth, startIndex);
