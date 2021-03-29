@@ -1,3 +1,9 @@
+## 0.8.0 (2021-03-29)
+
+## BREAKING CHANGES
+
+- Refactor codebase ([c86871](https://github.com/chainsafe/ssz/commit/c86871))
+
 ## 0.7.1 (2021-03-29)
 
 ## Bug Fixes
