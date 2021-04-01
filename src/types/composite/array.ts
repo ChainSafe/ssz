@@ -6,6 +6,7 @@ import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
 import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
+import {isTreeBacked} from "../../backings/tree/treeValue";
 
 export interface IArrayOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +100,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     );
   }
   struct_convertToTree(value: T): Tree {
+    if (isTreeBacked<T>(value)) return value.tree;
     const contents: Node[] = [];
     for (const chunk of this.struct_yieldChunkRoots(value)) {
       contents.push(new LeafNode(chunk));
@@ -379,6 +381,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     );
   }
   struct_convertToTree(value: T): Tree {
+    if (isTreeBacked<T>(value)) return value.tree;
     const contents: Node[] = [];
     for (const element of value) {
       contents.push(this.elementType.struct_convertToTree(element as CompositeValue).rootNode);
