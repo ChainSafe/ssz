@@ -83,7 +83,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     return super.struct_convertFromJson(data);
   }
   struct_convertToTree(value: T): Tree {
-    if (isTreeBacked<T>(value)) return value.tree;
+    if (isTreeBacked<T>(value)) return value.tree.clone();
     const tree = super.struct_convertToTree(value);
     this.tree_setLength(tree, value.length);
     return tree;
@@ -231,7 +231,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     return new Tree(this.tree_defaultNode());
   }
   struct_convertToTree(value: T): Tree {
-    if (isTreeBacked<T>(value)) return value.tree;
+    if (isTreeBacked<T>(value)) return value.tree.clone();
     const tree = super.struct_convertToTree(value);
     this.tree_setLength(tree, value.length);
     return tree;

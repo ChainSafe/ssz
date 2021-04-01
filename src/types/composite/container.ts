@@ -221,7 +221,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     return data;
   }
   struct_convertToTree(value: T): Tree {
-    if (isTreeBacked<T>(value)) return value.tree;
+    if (isTreeBacked<T>(value)) return value.tree.clone();
     return new Tree(
       subtreeFillToContents(
         Object.entries(this.fields).map(([fieldName, fieldType]) => {

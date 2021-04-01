@@ -100,7 +100,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     );
   }
   struct_convertToTree(value: T): Tree {
-    if (isTreeBacked<T>(value)) return value.tree;
+    if (isTreeBacked<T>(value)) return value.tree.clone();
     const contents: Node[] = [];
     for (const chunk of this.struct_yieldChunkRoots(value)) {
       contents.push(new LeafNode(chunk));
@@ -381,7 +381,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     );
   }
   struct_convertToTree(value: T): Tree {
-    if (isTreeBacked<T>(value)) return value.tree;
+    if (isTreeBacked<T>(value)) return value.tree.clone();
     const contents: Node[] = [];
     for (const element of value) {
       contents.push(this.elementType.struct_convertToTree(element as CompositeValue).rootNode);
