@@ -39,6 +39,9 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   getMinSerializedLength(): number {
     return this.struct_getSerializedLength(null);
   }
+  struct_getChunkCount(value: BitVector): number {
+    return Math.ceil(this.struct_getLength(value) / 256);
+  }
   struct_getByte(value: BitVector, index: number): number {
     const firstBitIndex = index * 8;
     const lastBitIndex = Math.min(firstBitIndex + 7, value.length - 1);
