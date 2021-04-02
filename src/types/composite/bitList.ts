@@ -49,6 +49,9 @@ export class BitListType extends BasicListType<BitList> {
   getMinSerializedLength(): number {
     return 1;
   }
+  struct_getChunkCount(value: BitList): number {
+    return Math.ceil(this.struct_getLength(value) / 256);
+  }
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitList {
     this.bytes_validate(data, start, end);
     const value = [];

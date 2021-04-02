@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {VectorType, ByteVectorType, NumberUintType} from "../../src";
+import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType} from "../../src";
 
 describe("known issues", () => {
   it("default value of composite vector should be correct", () => {
@@ -21,5 +21,14 @@ describe("known issues", () => {
   it("too large number from json", function () {
     const Number = new NumberUintType({byteLength: 4});
     expect(() => Number.fromJson("18446744073709551616")).to.throw;
+  });
+
+  it("converts bit arrays to tree", function () {
+    const CommitteeBits = new BitListType({limit: 2048});
+    const CommitteeBitsVector = new BitVectorType({length: 2048});
+    const bits = Array.from({length: 2048}, () => true);
+
+    expect(() => CommitteeBits.createTreeBackedFromStruct(bits)).to.not.throw();
+    expect(() => CommitteeBitsVector.createTreeBackedFromStruct(bits)).to.not.throw();
   });
 });
