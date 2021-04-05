@@ -1,3 +1,9 @@
+## 0.8.2 (2021-04-05)
+
+## Features
+
+- Add tree_createFromProof ([b804f4](https://github.com/chainsafe/ssz/commit/b804f4))
+
 ## 0.8.1 (2021-04-02)
 
 ## Bug Fixes
