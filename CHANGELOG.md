@@ -1,3 +1,13 @@
+## 0.8.1 (2021-04-02)
+
+## Bug Fixes
+
+- Fix bit array struct->tree ([8b08ea](https://github.com/chainsafe/ssz/commit/8b08ea))
+
+## Features
+
+- Improve convertToTree ([776b63](https://github.com/chainsafe/ssz/commit/776b63))
+
 ## 0.8.0 (2021-03-29)
 
 ## BREAKING CHANGES
