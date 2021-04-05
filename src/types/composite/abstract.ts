@@ -188,6 +188,16 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       gindices,
     });
   }
+  tree_createFromProof(root: Uint8Array, proof: Proof): Tree {
+    const tree = Tree.createFromProof(proof);
+    if (!byteArrayEquals(tree.root, root)) {
+      throw new Error("Proof does not match trusted root");
+    }
+    return tree;
+  }
+  tree_createFromProofUnsafe(proof: Proof): Tree {
+    return Tree.createFromProof(proof);
+  }
 
   struct_hashTreeRoot(struct: T): Uint8Array {
     return merkleize(this.struct_yieldChunkRoots(struct), this.getMaxChunkCount());
@@ -337,6 +347,12 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   }
   createTreeBackedFromJson(data: Json, options?: IJsonOptions): TreeBacked<T> {
     return this.createTreeBackedFromStruct(this.struct_convertFromJson(data, options));
+  }
+  createTreeBackedFromProof(root: Uint8Array, proof: Proof): TreeBacked<T> {
+    return this.createTreeBacked(this.tree_createFromProof(root, proof));
+  }
+  createTreeBackedFromProofUnsafe(proof: Proof): TreeBacked<T> {
+    return this.createTreeBacked(this.tree_createFromProofUnsafe(proof));
   }
   defaultTreeBacked(): TreeBacked<T> {
     return createTreeBacked(this, this.tree_defaultValue());
