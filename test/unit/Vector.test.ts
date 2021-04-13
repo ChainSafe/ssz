@@ -1,23 +1,26 @@
 import fc from "fast-check";
 import {expect} from "chai";
-import {Vector} from "../../src/Vector";
+import {PersistentVector} from "../../src/Vector";
 
-it("Vector.empty has a length of 0", () => {
-  const empty = Vector.empty<void>();
+it("PersistentVector.empty has a length of 0", () => {
+  const empty = PersistentVector.empty;
   expect(empty.length).to.be.equal(0);
+  expect(empty.get(0)).to.be.undefined;
 });
 
-it("Vector.append increments the length", () => {
-  const empty = Vector.empty<number>();
-  expect(empty.append(1).length).to.be.equal(1);
-  expect(empty.append(1).append(2).length).to.be.equal(2);
+it("PersistentVector push increments the length", () => {
+  let v = PersistentVector.empty;
+  for (let i = 1; i < 1025; i++) {
+    v = v.push(i);
+    expect(v.length).to.be.equal(i);
+  }
 });
 
-it("Vector.append works with many elements", () => {
-  let acc = Vector.empty<number>();
+it("PersistentVector push works with many elements", () => {
+  let acc = PersistentVector.empty;
   const times = 1025;
   for (let i = 0; i < times; ++i) {
-    acc = acc.append(i);
+    acc = acc.push(i);
   }
   expect(acc.length).to.be.equal(times);
   for (let i = 0; i < times; ++i) {
@@ -31,10 +34,10 @@ it("Vector.append works with many elements", () => {
   expect(i).to.be.equal(times);
 });
 
-it("Vector iterator should work fine", () => {
+it("PersistentVector iterator should work", () => {
   const times = 1025;
   const originalArr = Array.from({length: times}, (_, i) => 2 * i);
-  const acc = Vector.from(originalArr);
+  const acc = PersistentVector.from(originalArr);
   expect(acc.length).to.be.equal(times);
   let i = 0;
   for (const item of acc) {
@@ -46,61 +49,61 @@ it("Vector iterator should work fine", () => {
   expect(newArr).to.be.deep.equal(originalArr);
 });
 
-it("Vector readOnlyForEach should work fine", () => {
-  let acc = Vector.empty<number>();
+it("PersistentVector forEach should work", () => {
+  let acc = PersistentVector.empty;
   const times = 1025;
   for (let i = 0; i < times; ++i) {
-    acc = acc.append(2 * i);
+    acc = acc.push(2 * i);
   }
   expect(acc.length).to.be.equal(times);
   let count = 0;
-  acc.readOnlyForEach((v, i) => {
+  acc.forEach((v, i) => {
     expect(v).to.be.equal(2 * i);
     count++;
   });
   expect(count).to.be.equal(times);
 });
 
-it("Vector readOnlyMap should work fine", () => {
+it("PersistentVector map should work", () => {
   const times = 1025;
   const originalArr = Array.from({length: times}, (_, i) => i);
   const newArr = originalArr.map((v) => v * 2);
-  const acc = Vector.from(originalArr);
+  const acc = PersistentVector.from(originalArr);
   expect(acc.length).to.be.equal(times);
-  const newArr2 = acc.readOnlyMap<number>((v) => v * 2);
+  const newArr2 = acc.map<number>((v) => v * 2);
   expect(newArr2).to.be.deep.equal(newArr);
 });
 
-it("Vector toTS should convert to regular javascript array", () => {
+it("PersistentVector toArray should convert to regular javascript array", () => {
   const times = 1025;
   const originalArr = Array.from({length: times}, (_, i) => i);
-  const acc = Vector.from(originalArr);
-  expect(acc.toTS()).to.be.deep.equal(originalArr);
+  const acc = PersistentVector.from(originalArr);
+  expect(acc.toArray()).to.be.deep.equal(originalArr);
 });
 
-it("Vector.get works", () => {
+it("PersistentVector.get works", () => {
   const element = 1;
-  const empty = Vector.empty<number>();
-  const single = empty.append(element);
-  expect(single.get(-1)).to.be.null;
-  expect(single.get(1)).to.be.null;
-  expect(empty.get(0)).to.be.null;
+  const empty = PersistentVector.empty;
+  const single = empty.push(element);
+  expect(single.get(-1)).to.be.undefined;
+  expect(single.get(1)).to.be.undefined;
+  expect(empty.get(0)).to.be.undefined;
   expect(single.get(0)).to.be.equal(element);
 });
 
-it("Vector.set works", () => {
+it("PersistentVector.set works", () => {
   const a = 0;
   const b = 1;
-  const empty = Vector.empty<number>();
-  const single = empty.append(a);
+  const empty = PersistentVector.empty;
+  const single = empty.push(a);
   expect(single.set(0, b).get(0)).to.be.equal(b);
 });
 
-it("Vector.set should not effect original vector", () => {
+it("PersistentVector.set should not effect original vector", () => {
   const times = 1025;
   const originalArr = Array.from({length: times}, (_, i) => 2 * i);
-  const originalVector = Vector.from(originalArr);
-  let newVector: Vector<number> = originalVector;
+  const originalVector = PersistentVector.from(originalArr);
+  let newVector: PersistentVector<number> = originalVector;
   for (let i = 0; i < times; i++) {
     newVector = newVector.set(i, i * 4);
   }
@@ -112,12 +115,12 @@ it("Vector.set should not effect original vector", () => {
   expect(newVector.length).to.be.equal(1025);
 });
 
-it("Vector.pop works with many elements", () => {
-  let acc = Vector.empty<number>();
+it("PersistentVector.pop works with many elements", () => {
+  let acc = PersistentVector.empty;
   expect(acc.pop()).to.be.equal(acc);
   const times = 1025;
   for (let i = 0; i < 2 * times; ++i) {
-    acc = acc.append(i);
+    acc = acc.push(i);
   }
   for (let i = 0; i < times; ++i) {
     acc = acc.pop();
@@ -129,11 +132,18 @@ it("Vector.pop works with many elements", () => {
   }
 });
 
-it("A Vector created from an array will spread to the same array", () => {
+it("PersistentVector returns undefined beyond its bounds", () => {
+  let vector = PersistentVector.from(Array.from({length: 1025}, (_, i) => i)); 
+
+  expect(vector.get(-1)).to.be.undefined;
+  expect(vector.get(1025)).to.be.undefined;
+});
+
+it("PersistentVector created from an array will spread to the same array", () => {
   fc.assert(
     fc.property(fc.array(fc.integer()), (data) => {
-      let acc = Vector.empty<number>();
-      for (const d of data) acc = acc.append(d);
+      let acc = PersistentVector.empty;
+      for (const d of data) acc = acc.push(d);
       const arr = [...acc];
       expect(arr).to.be.deep.equal(data);
     })
