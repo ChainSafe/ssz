@@ -12,85 +12,85 @@ function isFullBranch(length: number): boolean {
 }
 
 interface ILeaf<T> {
-  leaf: true;
-  values: T[];
+  edit: {
+    ref: boolean;
+  };
+  array: T[];
 }
 interface IBranch<T> {
-  leaf: false;
-  // We have explicit nulls because when popping we can null old branches on purpose.
-  nodes: (INode<T> | null)[];
+  edit: {
+    ref: boolean;
+  };
+  // We have explicit undefined because when popping we can set old branches to undefined on purpose.
+  array: (INode<T> | undefined)[];
 }
+
 type INode<T> = ILeaf<T> | IBranch<T>;
 
-function emptyBranch<T>(): IBranch<T> {
-  return {leaf: false, nodes: Array<INode<T> | null>(BRANCH_SIZE).fill(null)};
+function emptyNode<T>(edit = {ref: false}): INode<T> {
+  return {edit, array: Array<INode<T> | undefined>(BRANCH_SIZE).fill(undefined)};
 }
 
-function emptyLeaf<T>(): ILeaf<T> {
-  return {leaf: true, values: Array(BRANCH_SIZE).fill(null) as T[]};
-}
-
-function copyNode<T>(vnode: INode<T>): INode<T> {
-  if (vnode.leaf) {
-    return {leaf: true, values: [...vnode.values]};
-  } else {
-    return {leaf: false, nodes: [...vnode.nodes]};
-  }
-}
-
-function copyBranch<T>(vnode: IBranch<T>): IBranch<T> {
-  return {leaf: false, nodes: [...vnode.nodes]};
+function copyNode<T>(node: INode<T>): INode<T> {
+  return {edit: node.edit, array: [...node.array] as (INode<T> | undefined)[]};
 }
 
 /**
- * The main class.
+ * A PersistentVector is a collection of values indexed by contiguous integers.
+ * PersistentVectors support access to items by index in log32N hops.
  */
-export class Vector<T> implements Iterable<T> {
-  private constructor(
-    private readonly root: IBranch<T>,
-    private readonly levelShift: number,
+export class PersistentVector<T> implements Iterable<T> {
+  /**
+   * The empty vector
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static empty: PersistentVector<any> = new PersistentVector<any>(
+    emptyNode(),
+    DEFAULT_LEVEL_SHIFT,
+    Array(BRANCH_SIZE).fill(undefined),
+    0
+  );
+
+  constructor(
+    private readonly root: INode<T>,
+    private readonly shift: number,
     private readonly tail: T[],
     readonly length: number
   ) {}
-
-  /**
-   * Create an empty vector of a certain type.
-   */
-  static empty<T>(): Vector<T> {
-    return new Vector<T>(emptyBranch(), DEFAULT_LEVEL_SHIFT, Array(BRANCH_SIZE).fill(null), 0);
-  }
 
   /**
    * Create a new vector containing certain elements.
    *
    * @param values the values that this vector will contain
    */
-  static from<T>(values: Iterable<T>): Vector<T> {
-    let acc = Vector.empty<T>();
-    for (const v of values) acc = acc.append(v);
+  static from<T>(values: Iterable<T>): PersistentVector<T> {
+    let acc = PersistentVector.empty;
+    for (const v of values) acc = acc.push(v);
     return acc;
   }
 
   /**
    * O(log_32(N)) Return the value at a certain index, if it exists.
    *
-   * This returns null if the index is out of the vector's bounds.
+   * Returns `undefined` if the index is out of the vector's bounds.
    *
    * @param index the index to look up
    */
-  get(index: number): T | null {
-    if (index < 0 || index >= this.length) return null;
+  get(index: number): T | undefined {
+    if (index < 0 || index >= this.length) return undefined;
+
+    let array;
     if (index >= this.getTailOffset()) {
-      return this.tail[index % BRANCH_SIZE];
+      array = this.tail;
+    } else {
+      let cursor: INode<T> = this.root;
+      for (let level = this.shift; level > 0; level -= BIT_WIDTH) {
+        // This cast is fine because we checked the length prior
+        cursor = cursor.array[(index >>> level) & BIT_MASK] as INode<T>;
+      }
+      array = cursor.array;
     }
-    let shift = this.levelShift;
-    let cursor: INode<T> = this.root;
-    while (!cursor.leaf) {
-      // This cast is fine because we checked the length prior
-      cursor = cursor.nodes[(index >>> shift) & BIT_MASK] as INode<T>;
-      shift -= BIT_WIDTH;
-    }
-    return cursor.values[index & BIT_MASK];
+    return array[index & BIT_MASK] as T;
   }
 
   /**
@@ -101,28 +101,27 @@ export class Vector<T> implements Iterable<T> {
    * @param index the index to set
    * @param value the value to set at that index
    */
-  set(index: number, value: T): Vector<T> {
+  set(index: number, value: T): PersistentVector<T> {
     if (index < 0 || index >= this.length) return this;
     if (index >= this.getTailOffset()) {
       const newTail = [...this.tail];
       newTail[index & BIT_MASK] = value;
-      // root is not changed
-      return new Vector(this.root, this.levelShift, newTail, this.length);
+      // The element is updated in the tail
+      // The root is not changed
+      return new PersistentVector(this.root, this.shift, newTail, this.length);
     }
-    const base = copyBranch(this.root);
-    let shift = this.levelShift;
+    const base = copyNode(this.root);
     let cursor: INode<T> = base;
-    while (!cursor.leaf) {
-      const subIndex = (index >>> shift) & BIT_MASK;
+    for (let level = this.shift; level > 0; level -= BIT_WIDTH) {
+      const subIndex = (index >>> level) & BIT_MASK;
       // This cast is fine because we checked the length prior
-      const next: INode<T> = copyNode(cursor.nodes[subIndex] as INode<T>);
-      cursor.nodes[subIndex] = next;
+      const next: INode<T> = copyNode(cursor.array[subIndex] as INode<T>);
+      cursor.array[subIndex] = next;
       cursor = next;
-      shift -= BIT_WIDTH;
     }
-    cursor.values[index & BIT_MASK] = value;
+    cursor.array[index & BIT_MASK] = value;
     // tail is not changed
-    return new Vector(base, this.levelShift, this.tail, this.length);
+    return new PersistentVector(base, this.shift, this.tail, this.length);
   }
 
   /**
@@ -132,43 +131,48 @@ export class Vector<T> implements Iterable<T> {
    *
    * @param value the value to push to the end of the vector
    */
-  append(value: T): Vector<T> {
-    if (this.length - this.getTailOffset() < BRANCH_SIZE) {
+  push(value: T): PersistentVector<T> {
+    if (this.getTailLength() < BRANCH_SIZE) {
       // has space in tail
       const newTail = [...this.tail];
       newTail[this.length % BRANCH_SIZE] = value;
-      // root is not changed
-      return new Vector(this.root, this.levelShift, newTail, this.length + 1);
+      // The element is added to the tail
+      // The root is not changed
+      return new PersistentVector(this.root, this.shift, newTail, this.length + 1);
     }
-    let base: IBranch<T>;
-    let levelShift = this.levelShift;
+    // There's not enough space in the tail
+    let base: INode<T>;
+    let levelShift = this.shift;
     if (isFullBranch(this.length - BRANCH_SIZE)) {
-      base = emptyBranch();
-      base.nodes[0] = this.root;
+      base = emptyNode();
+      base.array[0] = this.root;
       levelShift += BIT_WIDTH;
     } else {
-      base = copyBranch(this.root);
+      base = copyNode(this.root);
     }
     // getTailOffset is actually the 1st item in tail
     // we now move it to the tree
     const index = this.getTailOffset();
-    let shift = levelShift;
     let cursor: INode<T> = base;
-    while (!cursor.leaf) {
-      const subIndex = (index >>> shift) & BIT_MASK;
-      shift -= BIT_WIDTH;
-      let next: INode<T> | null = cursor.nodes[subIndex];
+    for (let level = levelShift; level > 0; level -= BIT_WIDTH) {
+      const subIndex = (index >>> level) & BIT_MASK;
+      let next: INode<T> | undefined = cursor.array[subIndex] as IBranch<T>;
       if (!next) {
-        next = shift === 0 ? emptyLeaf() : emptyBranch();
+        next = emptyNode();
       } else {
         next = copyNode(next);
       }
-      cursor.nodes[subIndex] = next;
+      cursor.array[subIndex] = next;
       cursor = next;
     }
     // it's safe to update cursor bc "next" is a new instance anyway
-    cursor.values = [...this.tail];
-    return new Vector<T>(base, levelShift, [value, ...(Array(BRANCH_SIZE - 1).fill(null) as T[])], this.length + 1);
+    cursor.array = [...this.tail];
+    return new PersistentVector<T>(
+      base,
+      levelShift,
+      [value, ...(Array(BRANCH_SIZE - 1).fill(undefined) as T[])],
+      this.length + 1
+    );
   }
 
   /**
@@ -176,158 +180,120 @@ export class Vector<T> implements Iterable<T> {
    *
    * This does nothing if the Vector contains no elements.
    */
-  pop(): Vector<T> {
+  pop(): PersistentVector<T> {
     if (this.length === 0) return this;
     // we always have a non-empty tail
     const tailLength = this.getTailLength();
     if (tailLength >= 2) {
       // ignore the last item
       const newTailLength = (this.length - 1) % BRANCH_SIZE;
-      const newTail = [...this.tail.slice(0, newTailLength), ...(Array(BRANCH_SIZE - newTailLength).fill(null) as T[])];
-      return new Vector(this.root, this.levelShift, newTail, this.length - 1);
+      const newTail = [
+        ...this.tail.slice(0, newTailLength),
+        ...(Array(BRANCH_SIZE - newTailLength).fill(undefined) as T[]),
+      ];
+      return new PersistentVector(this.root, this.shift, newTail, this.length - 1);
     }
     // tail has exactly 1 item, promote the right most leaf node as tail
     const lastItemIndexInTree = this.getTailOffset() - 1;
     // Tree has no item
     if (lastItemIndexInTree < 0) {
-      return Vector.empty<T>();
+      return PersistentVector.empty;
     }
-    const base = copyBranch(this.root);
-    let shift = this.levelShift;
+    const base = copyNode(this.root);
     let cursor: INode<T> = base;
     // we always have a parent bc we create an empty branch initially
-    let parent: INode<T> | null = null;
-    let subIndex: number | null = null;
-    while (!cursor.leaf) {
-      subIndex = (lastItemIndexInTree >>> shift) & BIT_MASK;
+    let parent: INode<T> | undefined = undefined;
+    let subIndex: number;
+    for (let level = this.shift; level > 0; level -= BIT_WIDTH) {
+      subIndex = (lastItemIndexInTree >>> level) & BIT_MASK;
       // This cast is fine because we checked the length prior
-      const next: INode<T> = copyNode(cursor.nodes[subIndex] as INode<T>);
-      cursor.nodes[subIndex] = next;
+      const next: INode<T> = copyNode(cursor.array[subIndex] as INode<T>);
+      cursor.array[subIndex] = next;
       parent = cursor;
       cursor = next;
-      shift -= BIT_WIDTH;
     }
-    const newTail = [...cursor.values];
-    parent!.nodes[subIndex!] = emptyLeaf<T>();
-    let newLevelShift = this.levelShift;
-    let newRoot: IBranch<T> = base;
+    const newTail = [...cursor.array] as T[];
+    parent!.array[subIndex!] = emptyNode<T>();
+    let newLevelShift = this.shift;
+    let newRoot: INode<T> = base;
     if (isFullBranch(this.length - 1 - BRANCH_SIZE)) {
-      newRoot = base.nodes[0] as IBranch<T>;
+      newRoot = base.array[0] as IBranch<T>;
       newLevelShift -= BIT_WIDTH;
     }
-    return new Vector(copyBranch(newRoot), newLevelShift, newTail, this.length - 1);
+    return new PersistentVector<T>(copyNode(newRoot), newLevelShift, newTail, this.length - 1);
+  }
+
+  *keys(): IterableIterator<number> {
+    yield* Array.from({length: this.length}, (_, i) => i);
+  }
+
+  *values(): IterableIterator<T> {
+    function* iterateNodeValues(node: INode<T>, level: number): Iterable<T> {
+      if (level <= 0) {
+        yield* (node as ILeaf<T>).array.filter((i) => i != null);
+      } else {
+        for (const child of (node as IBranch<T>).array.filter((i) => i != null)) {
+          yield* iterateNodeValues(child as INode<T>, level - BIT_WIDTH);
+        }
+      }
+    }
+    yield* iterateNodeValues(this.root, this.shift);
+    yield* this.tail.slice(0, this.getTailLength());
   }
 
   /**
    * Implement Iterable interface.
    */
-  *[Symbol.iterator](): Generator<T> {
-    let toYield = this.getTailOffset();
-    function* iterNode(node: INode<T>): Generator<T> {
-      if (node.leaf) {
-        for (const v of node.values) {
-          if (toYield <= 0) break;
-          yield v;
-          --toYield;
-        }
-      } else {
-        for (const next of node.nodes) {
-          // This check also assures us that the link won't be null
-          if (toYield <= 0) break;
-          yield* iterNode(next as INode<T>);
-        }
-      }
-    }
-    yield* iterNode(this.root);
-    const tailLength = this.getTailLength();
-    for (let i = 0; i < tailLength; i++) yield this.tail[i];
+  *[Symbol.iterator](): IterableIterator<T> {
+    yield* this.toArray();
   }
 
   /**
-   * Faster way to loop than the regular loop above.
-   * Same to iterator function but this doesn't yield to improve performance.
    */
-  readOnlyForEach(func: (t: T, i: number) => void): void {
-    let index = 0;
-    const tailOffset = this.getTailOffset();
-    const iterNode = (node: INode<T>): void => {
-      if (node.leaf) {
-        for (const v of node.values) {
-          if (index < tailOffset) {
-            func(v, index);
-            index++;
-          } else {
-            break;
-          }
-        }
-      } else {
-        for (const next of node.nodes) {
-          if (index >= tailOffset) break;
-          iterNode(next as INode<T>);
-        }
-      }
-    };
-    iterNode(this.root);
-    const tailLength = this.getTailLength();
-    for (let i = 0; i < tailLength; i++) {
-      const value = this.tail[i];
-      func(value, index);
-      index++;
-    }
+  forEach(func: (t: T, i: number) => void): void {
+    this.toArray().forEach(func);
   }
 
   /**
    * Map to an array of T2.
    */
-  readOnlyMap<T2>(func: (t: T, i: number) => T2): T2[] {
-    const result: T2[] = [];
-    let index = 0;
-    const tailOffset = this.getTailOffset();
-    const iterNode = (node: INode<T>): void => {
-      if (node.leaf) {
-        for (const v of node.values) {
-          if (index < tailOffset) {
-            result.push(func(v, index));
-            index++;
-          } else {
-            break;
-          }
-        }
-      } else {
-        for (const next of node.nodes) {
-          if (index >= tailOffset) break;
-          iterNode(next as INode<T>);
-        }
-      }
-    };
-    iterNode(this.root);
-    const tailLength = this.getTailLength();
-    for (let i = 0; i < tailLength; i++) {
-      const value = this.tail[i];
-      result.push(func(value, index));
-      index++;
-    }
-    return result;
+  map<T2>(func: (t: T, i: number) => T2): T2[] {
+    return this.toArray().map(func);
   }
 
   /**
    * Convert to regular typescript array
    */
-  toTS(): Array<T> {
-    return this.readOnlyMap<T>((v) => v);
+  toArray(): T[] {
+    const values: T[] = [];
+    function iterateNodeValues(node: INode<T>, level: number): void {
+      if (level <= 0) {
+        values.push(...(node as ILeaf<T>).array.filter((i) => i != null));
+      } else {
+        for (const child of (node as IBranch<T>).array.filter((i) => i != null)) {
+          iterateNodeValues(child as INode<T>, level - BIT_WIDTH);
+        }
+      }
+    }
+    iterateNodeValues(this.root, this.shift);
+    values.push(...this.tail.slice(0, this.getTailLength()));
+    return values;
   }
 
   /**
    * Clone to a new vector.
    */
-  clone(): Vector<T> {
-    return new Vector(this.root, this.levelShift, this.tail, this.length);
+  clone(): PersistentVector<T> {
+    return new PersistentVector(this.root, this.shift, this.tail, this.length);
   }
 
   private getTailLength(): number {
     return this.length - this.getTailOffset();
   }
 
+  /**
+   * Returns the first index of the tail, also the number of the leaf elements in the tree
+   */
   private getTailOffset(): number {
     return this.length < BRANCH_SIZE ? 0 : ((this.length - 1) >>> BIT_WIDTH) << BIT_WIDTH;
   }

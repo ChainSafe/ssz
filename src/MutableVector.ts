@@ -1,24 +1,24 @@
-import {Vector} from "./Vector";
+import {PersistentVector} from "./Vector";
 
 /**
- * A mutable reference to a Vector
+ * A mutable reference to a PersistentVector
  */
 export class MutableVector<T> implements Iterable<T> {
-  private constructor(public vector: Vector<T>) {}
+  private constructor(public vector: PersistentVector<T>) {}
 
   static empty<T>(): MutableVector<T> {
-    return new MutableVector(Vector.empty());
+    return new MutableVector(PersistentVector.empty);
   }
 
   static from<T>(values: Iterable<T>): MutableVector<T> {
-    return new MutableVector(Vector.from(values));
+    return new MutableVector(PersistentVector.from(values));
   }
 
   get length(): number {
     return this.vector.length;
   }
 
-  get(index: number): T | null {
+  get(index: number): T | undefined {
     return this.vector.get(index);
   }
 
@@ -36,7 +36,7 @@ export class MutableVector<T> implements Iterable<T> {
   }
 
   push(value: T): void {
-    this.vector = this.vector.append(value);
+    this.vector = this.vector.push(value);
   }
 
   pop(): T | undefined {
@@ -45,19 +45,23 @@ export class MutableVector<T> implements Iterable<T> {
     return last ?? undefined;
   }
 
-  *[Symbol.iterator](): Generator<T> {
+  *[Symbol.iterator](): IterableIterator<T> {
     yield* this.vector[Symbol.iterator]();
   }
 
   forEach(func: (t: T, i: number) => void): void {
-    this.vector.readOnlyForEach(func);
+    this.vector.forEach(func);
   }
 
   map<T2>(func: (t: T, i: number) => T2): T2[] {
-    return this.vector.readOnlyMap(func);
+    return this.vector.map(func);
   }
 
   clone(): MutableVector<T> {
     return new MutableVector(this.vector);
+  }
+
+  toArray(): T[] {
+    return this.vector.toArray();
   }
 }
