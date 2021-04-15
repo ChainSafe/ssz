@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import {expect} from "chai";
-import {PersistentVector} from "../../src/Vector";
+import {PersistentVector, TransientVector} from "../../src/Vector";
 
 it("PersistentVector.empty has a length of 0", () => {
   const empty = PersistentVector.empty;
@@ -148,4 +148,67 @@ it("PersistentVector created from an array will spread to the same array", () =>
       expect(arr).to.be.deep.equal(data);
     })
   );
+});
+
+describe("TransientVector", () => {
+  it("should push/pop elements successfully", () => {
+    let v: TransientVector<number> = TransientVector.empty();
+    let a: number[] = [];
+    for (let i = 0; i < 1025; i++) {
+      v = v.push(i);
+      a.push(i);
+      expect(v.length).to.equal(a.length);
+      expect(v.toArray()).to.deep.equal(a);
+    }
+    for (let i = 0; i < 1025; i++) {
+      v = v.pop();
+      a.pop();
+      expect(v.length).to.equal(a.length);
+      expect(v.toArray()).to.deep.equal(a);
+    }
+  });
+
+  it("should get/set elements successfully", () => {
+    let v: TransientVector<number> = TransientVector.empty();
+    let a: number[] = [];
+    for (let i = 0; i < 1025; i++) {
+      v = v.push(i);
+      a.push(i);
+    }
+    for (let i = 0; i < 1025; i++) {
+      expect(v.get(i)).to.equal(a[i]);
+    }
+    for (let i = 0; i < 1025; i++) {
+      v = v.set(i, 2 * i);
+      a[i] = 2 * i;
+      expect(v.get(i)).to.equal(a[i]);
+    }
+  });
+});
+
+describe("PersistentVector<->TransientVector", () => {
+  it("should convert vectors without mutating PersistentVectors", () => {
+    let pv: PersistentVector<number> = PersistentVector.empty;
+    for (let i = 0; i < 1025; i++) {
+      pv = pv.push(i);
+    }
+    let tv = pv.asTransient();
+    const arr = pv.toArray();
+    expect([...tv]).to.deep.equal(arr);
+    expect([...pv]).to.deep.equal(arr);
+
+    tv.pop();
+    expect(pv.length).to.equal(arr.length);
+
+    for (let i = 0; i < 1025; i++) {
+      tv = tv.set(i, i * 2);
+    }
+    expect([...pv]).to.deep.equal(arr);
+
+    tv.persistent();
+    expect(() => tv.set(0, 0)).to.throw;
+    expect(() => tv.persistent()).to.throw;
+    expect(() => tv.push(0)).to.throw;
+    expect(() => tv.pop()).to.throw;
+  });
 });
