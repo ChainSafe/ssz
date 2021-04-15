@@ -1,10 +1,13 @@
-import {PersistentVector} from "./Vector";
+import {PersistentVector, TransientVector} from "./Vector";
 
 /**
- * A mutable reference to a PersistentVector
+ * A mutable reference to a PersistentVector or TransientVector
  */
 export class MutableVector<T> implements Iterable<T> {
-  private constructor(public vector: PersistentVector<T>) {}
+  public vector: PersistentVector<T> | TransientVector<T>;
+  private constructor(vector: PersistentVector<T>) {
+    this.vector = vector;
+  }
 
   static empty<T>(): MutableVector<T> {
     return new MutableVector(PersistentVector.empty);
@@ -12,6 +15,20 @@ export class MutableVector<T> implements Iterable<T> {
 
   static from<T>(values: Iterable<T>): MutableVector<T> {
     return new MutableVector(PersistentVector.from(values));
+  }
+
+  asTransient(): this {
+    if ((this.vector as PersistentVector<T>).asTransient) {
+      this.vector = (this.vector as PersistentVector<T>).asTransient();
+    }
+    return this;
+  }
+
+  asPersistent(): this {
+    if ((this.vector as TransientVector<T>).persistent) {
+      this.vector = (this.vector as TransientVector<T>).persistent();
+    }
+    return this;
   }
 
   get length(): number {
@@ -58,7 +75,8 @@ export class MutableVector<T> implements Iterable<T> {
   }
 
   clone(): MutableVector<T> {
-    return new MutableVector(this.vector);
+    this.asPersistent();
+    return new MutableVector(this.vector as PersistentVector<T>);
   }
 
   toArray(): T[] {
