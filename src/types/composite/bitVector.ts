@@ -30,14 +30,14 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return Math.ceil(this.length / 8);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getSerializedLength(value: BitVector): number {
+  struct_getSerializedLength(value?: BitVector): number {
     return Math.ceil(this.length / 8);
   }
   getMaxSerializedLength(): number {
-    return this.struct_getSerializedLength(null);
+    return this.struct_getSerializedLength();
   }
   getMinSerializedLength(): number {
-    return this.struct_getSerializedLength(null);
+    return this.struct_getSerializedLength();
   }
   struct_getChunkCount(value: BitVector): number {
     return Math.ceil(this.struct_getLength(value) / 256);
@@ -53,7 +53,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   }
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitVector {
     this.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    if (end - start !== this.size()) {
       throw new Error("Invalid bitvector: length not equal to vector length");
     }
     const value = [];

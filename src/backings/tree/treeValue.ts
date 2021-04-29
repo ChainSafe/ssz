@@ -39,6 +39,8 @@ export function createTreeBacked<T extends CompositeValue>(type: CompositeType<T
   return proxyWrapTreeValue(new TreeValueClass(type, tree));
 }
 
+// @TODO: not sure what TODO here
+// @ts-ignore
 export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<T>): TreeValueConstructor<T> {
   if (isListType(type)) {
     if (isBasicType(type.elementType)) {
@@ -61,6 +63,7 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
  * Wrap a TreeValue in a Proxy that adds ergonomic getter/setter
  */
 export function proxyWrapTreeValue<T extends CompositeValue>(value: TreeValue<T>): TreeBacked<T> {
+  // @ts-ignore
   return (new Proxy(value, TreeProxyHandler as unknown) as unknown) as TreeBacked<T>;
 }
 
@@ -81,7 +84,7 @@ export const TreeProxyHandler: ProxyHandler<TreeValue<CompositeValue>> = {
   ownKeys(target: TreeValue<CompositeValue>): (string | symbol)[] {
     return target.getPropertyNames() as (string | symbol)[];
   },
-  getOwnPropertyDescriptor(target: TreeValue<CompositeValue>, property: PropertyKey): PropertyDescriptor {
+  getOwnPropertyDescriptor(target: TreeValue<CompositeValue>, property: PropertyKey): PropertyDescriptor | undefined {
     if (target.type.getPropertyType(property as keyof CompositeValue)) {
       return {
         configurable: true,
@@ -146,7 +149,7 @@ export abstract class TreeValue<T extends CompositeValue> implements ITreeBacked
   [Symbol.iterator](): IterableIterator<ValueOf<T>> {
     return this.values();
   }
-  abstract getProperty<P extends keyof T>(property: P): ValueOf<T, P>;
+  abstract getProperty<P extends keyof T>(property: P): ValueOf<T, P> | undefined;
   abstract setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean;
   abstract keys(): IterableIterator<string>;
   abstract values(): IterableIterator<ValueOf<T>>;
@@ -266,7 +269,7 @@ export class BasicListTreeValue<T extends List<unknown>> extends BasicArrayTreeV
     this.type = type;
   }
 
-  push(...values: ValueOf<T>[]): number {
+  push(...values: ValueOf<T>[]): number | undefined {
     return this.type.tree_push(this.tree, ...values);
   }
   pop(): ValueOf<T> {
@@ -282,7 +285,7 @@ export class CompositeListTreeValue<T extends List<object>> extends CompositeArr
     this.type = type;
   }
 
-  push(...values: ValueOf<T>[]): number {
+  push(...values: ValueOf<T>[]): number | undefined {
     const convertedValues = values.map((value) =>
       isTreeBacked(value)
         ? value.tree
@@ -302,7 +305,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     this.type = type;
   }
 
-  getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
+  getProperty<P extends keyof T>(property: P): ValueOf<T, P> | undefined {
     if (!this.type.fields[property as string]) {
       return undefined;
     }

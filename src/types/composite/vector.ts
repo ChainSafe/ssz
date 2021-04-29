@@ -58,7 +58,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
   bytes_validate(data: Uint8Array, start: number, end: number): void {
     super.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    if (end - start !== this.size()) {
       throw new Error("Incorrect deserialized vector length");
     }
   }
@@ -98,7 +98,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     return this.length;
   }
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
-    if (end - start !== this.struct_getSerializedLength(null)) {
+    if (end - start !== this.struct_getSerializedLength()) {
       throw new Error("Incorrect deserialized vector length");
     }
     return super.tree_deserializeFromBytes(data, start, end);
@@ -194,7 +194,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
         );
       }
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = this.elementType.struct_getSerializedLength();
       const length = (end - start) / elementSize;
       if (length !== this.length) {
         throw new Error("Incorrect deserialized vector length");

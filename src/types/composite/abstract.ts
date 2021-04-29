@@ -28,8 +28,8 @@ export function isCompositeType(type: Type<unknown>): type is CompositeType<Comp
  *
  */
 export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
-  _chunkDepth: number;
-  _defaultNode: Node;
+  _chunkDepth: number | undefined;
+  _defaultNode: Node | undefined;
 
   constructor() {
     super();
@@ -99,8 +99,8 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       throw new Error(`End param: ${end} is greater than length: ${data.length}`);
     }
     const length = end - start;
-    if (!this.hasVariableSerializedLength() && length !== this.struct_getSerializedLength(null)) {
-      throw new Error(`Incorrect data length ${length}, expect ${this.struct_getSerializedLength(null)}`);
+    if (!this.hasVariableSerializedLength() && length !== this.struct_getSerializedLength()) {
+      throw new Error(`Incorrect data length ${length}, expect ${this.struct_getSerializedLength()}`);
     }
     if (end - start < this.getMinSerializedLength()) {
       throw new Error(`Data length ${length} is too small, expect at least ${this.getMinSerializedLength()}`);
@@ -117,8 +117,8 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
 
   abstract getMinSerializedLength(): number;
   abstract getMaxSerializedLength(): number;
-  abstract struct_getSerializedLength(struct: T): number;
-  abstract tree_getSerializedLength(tree: Tree): number;
+  abstract struct_getSerializedLength(struct?: T): number;
+  abstract tree_getSerializedLength(tree?: Tree): number;
   abstract hasVariableSerializedLength(): boolean;
   abstract bytes_getVariableOffsets(target: Uint8Array): [number, number][];
 
@@ -248,7 +248,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   /**
    * Serialized byte length
    */
-  size(value: T): number {
+  size(value?: T): number {
     if (isBackedValue(value)) {
       return value.size();
     } else {

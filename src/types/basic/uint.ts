@@ -35,7 +35,7 @@ export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
 }
 
 export class NumberUintType extends UintType<number> {
-  _maxBigInt: BigInt;
+  _maxBigInt: BigInt | undefined;
   constructor(options: IUintOptions) {
     super(options);
     this._typeSymbols.add(NUMBER_UINT_TYPE);
@@ -43,7 +43,7 @@ export class NumberUintType extends UintType<number> {
   struct_assertValidValue(value: unknown): asserts value is number {
     if (
       value !== Infinity &&
-      (!Number.isSafeInteger(value as number) || value > BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
+      (!Number.isSafeInteger(value as number) || (value as number) > BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
     ) {
       throw new Error("Uint value is not a number");
     }
