@@ -41,6 +41,21 @@ export default class SHA256 {
     }
     return SHA256.ctx.init().update(data).final();
   }
+
+  static digest64(data) {
+    if (data.length==64) {
+      const input = new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.input.value, SHA256.ctx.INPUT_LENGTH);
+      input.set(data);
+      SHA256.ctx.digest64(SHA256.ctx.input.value,SHA256.ctx.output.value);
+      const output = new Uint8Array(32);
+      output.set(new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.output.value, 32));
+      return output;
+    }
+    throw new Error("InvalidLengthForDigest64");
+  }
+
+
 }
 
-SHA256.ctx = new SHA256();
+const staticInstance = new SHA256();
+SHA256.ctx = staticInstance.ctx;

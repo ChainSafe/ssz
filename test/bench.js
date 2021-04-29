@@ -9,6 +9,7 @@ const randomBuffer = (length) => Buffer.from(Array.from({length}, () => Math.rou
 suite
   .add('input length 32', () => sha256.default.digest(randomBuffer(32)))
   .add('input length 64', () => sha256.default.digest(randomBuffer(64)))
+  .add('input digest-64', () => sha256.default.digest64(randomBuffer(64)))
   .add('input length 128', () => sha256.default.digest(randomBuffer(128)))
   .add('input length 256', () => sha256.default.digest(randomBuffer(256)))
   .add('input length 512', () => sha256.default.digest(randomBuffer(512)))

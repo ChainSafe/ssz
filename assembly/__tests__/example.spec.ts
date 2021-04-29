@@ -1,4 +1,4 @@
-import { init, update, final } from '..';
+import { init, update, final, digest64 } from '..';
 
 export function toHexString(bin: Uint8Array): string {
   let bin_len = bin.length;
@@ -21,6 +21,12 @@ function hash(data: Uint8Array): Uint8Array {
   init();
   update(changetype<usize>(data.buffer), data.length);
   final(changetype<usize>(output.buffer));
+  return output;
+}
+
+function hash64(data: Uint8Array): Uint8Array {
+  const output = new Uint8Array(32);
+  digest64(changetype<usize>(data.buffer),changetype<usize>(output.buffer));
   return output;
 }
 
@@ -47,4 +53,22 @@ describe("example", () => {
     let preImgArrayBuffer = Uint8Array.wrap(String.UTF8.encode(preImgString));
     expect<string>(toHexString(hash(preImgArrayBuffer))).toBe("248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
   });
+
+  it("Hash64: gajindergajindergajindergajindergajindergajindergajindergajinder", () => {
+    let preImgString = "gajindergajindergajindergajindergajindergajindergajindergajinder";
+    let preImgArrayBuffer = Uint8Array.wrap(String.UTF8.encode(preImgString));
+    expect<string>(toHexString(hash64(preImgArrayBuffer))).toBe("be39380ff1d0261e6f37dafe4278b662ef611f1cb2f7c0a18348b2d7eb14cf6e");
+  });
+
+  it("CompareHash64: harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal", () => {
+    let preImgString = "harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal";
+    let preImgArrayBuffer = Uint8Array.wrap(String.UTF8.encode(preImgString));
+
+    const normalHash=toHexString(hash(preImgArrayBuffer));
+    const fastHash64=toHexString(hash64(preImgArrayBuffer));
+    expect<string>(fastHash64).toBe(normalHash);
+
+  });
+
 });
+

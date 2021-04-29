@@ -6,5 +6,6 @@ export default class SHA256 {
 
   static ctx: SHA256;
   static digest(data: Uint8Array): Uint8Array;
+  static digest64(data: Uint8Array): Uint8Array;
 }
 

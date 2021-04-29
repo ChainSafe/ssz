@@ -23,7 +23,19 @@ describe("sha256", function () {
         it('abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu', function () {
             const input = Buffer.from("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", "utf8");
             expect(Buffer.from(sha256.default.digest(input)).toString("hex")).to.be.equal("cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1")
-        })
+        });
+
+        it('gajindergajindergajindergajindergajindergajindergajindergajinder', function () {
+            const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
+            expect(Buffer.from(sha256.default.digest64(input)).toString("hex")).to.be.equal("be39380ff1d0261e6f37dafe4278b662ef611f1cb2f7c0a18348b2d7eb14cf6e")
+        });
+
+        it('harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal', function () {
+            const input = Buffer.from("harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal", "utf8");
+            const output = Buffer.from(sha256.default.digest(input)).toString("hex");
+            const output64 = Buffer.from(sha256.default.digest64(input)).toString("hex")
+            expect(output).to.be.equal(output64)
+        });
     })
 
 });
