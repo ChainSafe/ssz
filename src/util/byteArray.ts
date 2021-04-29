@@ -12,7 +12,7 @@ export function fromHexString(data: string): Uint8Array {
     throw new Error("Expected an even number of characters");
   }
   data = data.replace("0x", "");
-  return new Uint8Array(data.match(/.{1,2}/g).map((b) => parseInt(b, 16)));
+  return new Uint8Array(data.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)));
 }
 
 export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {

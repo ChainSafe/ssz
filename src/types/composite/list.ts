@@ -32,6 +32,8 @@ export const ListType: ListTypeConstructor =
     if (isBasicType(options.elementType)) {
       return new BasicListType(options);
     } else {
+      // @TODO not sure what TODO here
+      // @ts-ignore
       return new CompositeListType(options);
     }
   } as unknown) as ListTypeConstructor;
@@ -152,7 +154,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     this.tree_setLength(target, length + 1);
     return length + 1;
   }
-  tree_push(target: Tree, ...values: T[number][]): number {
+  tree_push(target: Tree, ...values: T[number][]): number | undefined {
     let newLength;
     values.forEach((value) => (newLength = this.tree_pushSingle(target, value)));
     return newLength;
@@ -261,7 +263,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
       }
       this.tree_setLength(target, offsets.length);
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = this.elementType.struct_getSerializedLength();
       const length = (end - start) / elementSize;
       if (!Number.isSafeInteger(length)) {
         throw new Error("Deserialized list byte length must be divisible by element size");
@@ -315,7 +317,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     this.tree_setLength(target, length + 1);
     return length + 1;
   }
-  tree_push(target: Tree, ...values: Tree[]): number {
+  tree_push(target: Tree, ...values: Tree[]): number | undefined {
     let newLength;
     values.forEach((value) => (newLength = this.tree_pushSingle(target, value)));
     return newLength;

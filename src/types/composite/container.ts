@@ -203,7 +203,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     const value = {} as T;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
-      const expectedCase = options ? options.case : null;
+      const expectedCase = options?.case;
       const expectedFieldName = toExpectedCase(fieldName, expectedCase);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
@@ -214,7 +214,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
-    const expectedCase = options ? options.case : null;
+    const expectedCase = options?.case;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
       data[toExpectedCase(fieldName, expectedCase)] = fieldType.toJson(value[fieldName as keyof T], options);
     });
