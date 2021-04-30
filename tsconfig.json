@@ -7,6 +7,7 @@
     "declaration": true,
     "declarationMap": true,
     "strict": true,
+    "strictNullChecks": true,
     "alwaysStrict": true,
     "outDir": "lib",
   }
