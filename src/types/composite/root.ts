@@ -18,11 +18,13 @@ export function isRootType<T extends CompositeValue = CompositeValue>(type: Type
 
 export class RootType<T extends CompositeValue> extends ByteVectorType {
   _expandedType: CompositeType<T> | (() => CompositeType<T>);
+
   constructor(options: IRootOptions<T>) {
     super({length: 32});
     this._expandedType = options.expandedType;
     this._typeSymbols.add(ROOT_TYPE);
   }
+
   get expandedType(): CompositeType<T> {
     if (typeof this._expandedType === "function") {
       this._expandedType = this._expandedType();

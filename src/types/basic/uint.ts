@@ -40,6 +40,7 @@ export class NumberUintType extends UintType<number> {
     super(options);
     this._typeSymbols.add(NUMBER_UINT_TYPE);
   }
+
   struct_assertValidValue(value: unknown): asserts value is number {
     if (
       value !== Infinity &&
@@ -51,15 +52,18 @@ export class NumberUintType extends UintType<number> {
       throw new Error("Uint value must be gte 0");
     }
   }
+
   struct_defaultValue(): number {
     return 0;
   }
+
   struct_getMaxBigInt(): BigInt {
     if (this._maxBigInt === undefined) {
       this._maxBigInt = BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1);
     }
     return this._maxBigInt;
   }
+
   struct_serializeToBytes(value: number, output: Uint8Array, offset: number): number {
     if (this.byteLength > 6 && value === Infinity) {
       for (let i = offset; i < offset + this.byteLength; i++) {
@@ -75,6 +79,7 @@ export class NumberUintType extends UintType<number> {
     }
     return offset + this.byteLength;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, offset: number): number {
     this.bytes_validate(data, offset);
     let isInfinity = true;
@@ -90,6 +95,7 @@ export class NumberUintType extends UintType<number> {
     }
     return Number(output);
   }
+
   struct_convertFromJson(data: Json): number {
     let n: number;
     const bigN = BigInt(data);
@@ -103,6 +109,7 @@ export class NumberUintType extends UintType<number> {
     this.assertValidValue(n);
     return n;
   }
+
   struct_convertToJson(value: number): Json {
     if (this.byteLength > 4) {
       if (value === Infinity) {
@@ -125,6 +132,7 @@ export class BigIntUintType extends UintType<bigint> {
     super(options);
     this._typeSymbols.add(BIGINT_UINT_TYPE);
   }
+
   struct_assertValidValue(value: unknown): asserts value is bigint {
     if (typeof value !== "bigint") {
       throw new Error("Uint value is not a bigint");
@@ -133,9 +141,11 @@ export class BigIntUintType extends UintType<bigint> {
       throw new Error("Uint value must be gte 0");
     }
   }
+
   struct_defaultValue(): bigint {
     return BigInt(0);
   }
+
   struct_serializeToBytes(value: bigint, output: Uint8Array, offset: number): number {
     // Motivation
     // BigInt bit shifting and BigInt allocation is slower compared to number
@@ -154,6 +164,7 @@ export class BigIntUintType extends UintType<bigint> {
     }
     return offset + this.byteLength;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, offset: number): bigint {
     this.bytes_validate(data, offset);
     // Motivation:
@@ -191,11 +202,13 @@ export class BigIntUintType extends UintType<bigint> {
     }
     return output;
   }
+
   struct_convertFromJson(data: Json): bigint {
     const value = BigInt(data);
     this.assertValidValue(value);
     return value;
   }
+
   struct_convertToJson(value: bigint): Json {
     if (this.byteLength > 4) {
       return value.toString();

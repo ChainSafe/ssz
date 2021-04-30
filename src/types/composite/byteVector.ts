@@ -21,9 +21,11 @@ export class ByteVectorType extends BasicVectorType<ByteVector> {
     super({elementType: byteType, ...options});
     this._typeSymbols.add(BYTEVECTOR_TYPE);
   }
+
   struct_defaultValue(): ByteVector {
     return new Uint8Array(this.length);
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
     this.bytes_validate(data, start, end);
     const length = end - start;
@@ -34,10 +36,12 @@ export class ByteVectorType extends BasicVectorType<ByteVector> {
     value.set(data.slice(start, end));
     return value;
   }
+
   struct_serializeToBytes(value: ByteVector, output: Uint8Array, offset: number): number {
     output.set(value, offset);
     return offset + this.length;
   }
+
   struct_convertFromJson(data: Json): ByteVector {
     const value = fromHexString(data as string);
     if (value.length !== this.length) {
@@ -45,9 +49,11 @@ export class ByteVectorType extends BasicVectorType<ByteVector> {
     }
     return value;
   }
+
   struct_convertToJson(value: ByteVector): Json {
     return toHexString(value);
   }
+
   tree_convertToStruct(target: Tree): ByteVector {
     const value = new Uint8Array(this.length);
     const chunkIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());

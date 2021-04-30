@@ -30,11 +30,13 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   // ES6 ensures key order is chronological
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
+
   constructor(options: IContainerOptions) {
     super();
     this.fields = {...options.fields};
     this._typeSymbols.add(CONTAINER_TYPE);
   }
+
   struct_defaultValue(): T {
     const obj = {} as T;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
@@ -42,6 +44,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return obj;
   }
+
   struct_getSerializedLength(value: T): number {
     let s = 0;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
@@ -53,6 +56,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return s;
   }
+
   getMaxSerializedLength(): number {
     const fixedSize = Object.values(this.fields).reduce(
       (total, fieldType) => total + (fieldType.hasVariableSerializedLength() ? 4 : fieldType.getMaxSerializedLength()),
@@ -64,6 +68,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     );
     return fixedSize + maxDynamicSize;
   }
+
   getMinSerializedLength(): number {
     const fixedSize = Object.values(this.fields).reduce(
       (total, fieldType) => total + (fieldType.hasVariableSerializedLength() ? 4 : fieldType.getMinSerializedLength()),
@@ -86,6 +91,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       }
     });
   }
+
   struct_equals(value1: T, value2: T): boolean {
     this.struct_assertValidValue(value1);
     this.struct_assertValidValue(value2);
@@ -93,6 +99,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       return fieldType.struct_equals(value1[fieldName], value2[fieldName]);
     });
   }
+
   struct_clone(value: T): T {
     const newValue = {} as T;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
@@ -100,6 +107,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return newValue;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     let currentIndex = start;
@@ -169,6 +177,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     return value;
   }
+
   struct_serializeToBytes(value: T, output: Uint8Array, offset: number): number {
     let variableIndex =
       offset +
@@ -192,11 +201,13 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return variableIndex;
   }
+
   struct_getRootAtChunkIndex(value: T, index: number): Uint8Array {
     const fieldName = Object.keys(this.fields)[index];
     const fieldType = this.fields[fieldName];
     return fieldType.struct_hashTreeRoot(value[fieldName]);
   }
+
   struct_convertFromJson(data: Json, options?: IJsonOptions): T {
     if (typeof data !== "object") {
       throw new Error("Invalid JSON container: expected Object");
@@ -212,6 +223,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return value;
   }
+
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
     const expectedCase = options ? options.case : null;
@@ -220,6 +232,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return data;
   }
+
   struct_convertToTree(value: T): Tree {
     if (isTreeBacked<T>(value)) return value.tree.clone();
     return new Tree(
@@ -237,9 +250,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       )
     );
   }
-  struct_getPropertyNames(): (string | number)[] {
+
+  struct_getPropertyNames(): string[] {
     return Object.keys(this.fields);
   }
+
   bytes_getVariableOffsets(target: Uint8Array): [number, number][] {
     const offsets: [number, number][] = [];
     // variable-sized values can be interspersed with fixed-sized values
@@ -280,6 +295,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return offsets;
   }
+
   tree_defaultNode(): Node {
     if (!this._defaultNode) {
       this._defaultNode = subtreeFillToContents(
@@ -295,6 +311,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     return this._defaultNode;
   }
+
   tree_convertToStruct(target: Tree): T {
     const value = {} as T;
     Object.entries(this.fields).forEach(([fieldName, fieldType], i) => {
@@ -308,6 +325,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return value;
   }
+
   tree_getSerializedLength(target: Tree): number {
     let s = 0;
     Object.values(this.fields).forEach((fieldType, i) => {
@@ -322,6 +340,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     });
     return s;
   }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
     const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
@@ -380,6 +399,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     return variableIndex;
   }
+
   getPropertyGindex(prop: PropertyKey): Gindex {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
@@ -387,6 +407,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     return this.getGindexAtChunkIndex(chunkIndex);
   }
+
   getPropertyType(prop: PropertyKey): Type<unknown> {
     const type = this.fields[prop as string];
     if (!type) {
@@ -394,9 +415,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     return type;
   }
+
   tree_getPropertyNames(): (string | number)[] {
     return Object.keys(this.fields);
   }
+
   tree_getProperty(target: Tree, prop: PropertyKey): Tree | unknown {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
@@ -410,6 +433,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       return this.tree_getSubtreeAtChunkIndex(target, chunkIndex);
     }
   }
+
   tree_setProperty(target: Tree, property: PropertyKey, value: Tree | unknown): boolean {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === property);
     if (chunkIndex === -1) {
@@ -427,6 +451,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       return true;
     }
   }
+
   tree_deleteProperty(target: Tree, prop: PropertyKey): boolean {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
@@ -439,6 +464,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       return this.tree_setProperty(target, prop, fieldType.tree_defaultValue());
     }
   }
+
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const gindexIterator = iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.getMaxChunkCount()))[
       Symbol.iterator
@@ -456,6 +482,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       }
     }
   }
+
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const chunkIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
     for (const propType of Object.values(this.fields)) {
@@ -475,6 +502,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   hasVariableSerializedLength(): boolean {
     return Object.values(this.fields).some((fieldType) => fieldType.hasVariableSerializedLength());
   }
+
   getMaxChunkCount(): number {
     return Object.keys(this.fields).length;
   }

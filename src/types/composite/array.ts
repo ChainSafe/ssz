@@ -25,12 +25,15 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   struct_getSerializedLength(value: T): number {
     return this.elementType.struct_getSerializedLength() * this.struct_getLength(value);
   }
+
   getMaxSerializedLength(): number {
     return this.getMaxLength() * this.elementType.getMaxSerializedLength();
   }
+
   getMinSerializedLength(): number {
     return this.getMinLength() * this.elementType.getMinSerializedLength();
   }
+
   struct_assertValidValue(value: unknown): asserts value is T {
     for (let i = 0; i < this.struct_getLength(value as T); i++) {
       try {
@@ -40,6 +43,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       }
     }
   }
+
   struct_equals(value1: T, value2: T): boolean {
     if (this.struct_getLength(value1) !== this.struct_getLength(value2)) {
       return false;
@@ -51,6 +55,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return true;
   }
+
   struct_clone(value: T): T {
     const newValue = this.struct_defaultValue();
     for (let i = 0; i < this.struct_getLength(value); i++) {
@@ -58,6 +63,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return newValue;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     const elementSize = this.elementType.struct_getSerializedLength();
@@ -65,6 +71,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       this.elementType.struct_deserializeFromBytes(data, start + i * elementSize)
     ) as unknown) as T;
   }
+
   struct_serializeToBytes(value: T, output: Uint8Array, offset: number): number {
     const length = this.struct_getLength(value);
     let index = offset;
@@ -73,6 +80,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return index;
   }
+
   struct_getRootAtChunkIndex(value: T, index: number): Uint8Array {
     const output = new Uint8Array(32);
     const itemSize = this.elementType.struct_getSerializedLength();
@@ -87,18 +95,22 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return output;
   }
+
   struct_getPropertyNames(value: T): (string | number)[] {
     const length = this.struct_getLength(value);
     return (Array.from({length}, (_, i) => i) as (string | number)[]).concat(["length"]);
   }
+
   struct_convertFromJson(data: Json[]): T {
     return (Array.from({length: data.length}, (_, i) => this.elementType.fromJson(data[i])) as unknown) as T;
   }
+
   struct_convertToJson(value: T): Json {
     return Array.from({length: this.struct_getLength(value)}, (_, i) =>
       this.elementType.struct_convertToJson(value[i])
     );
   }
+
   struct_convertToTree(value: T): Tree {
     if (isTreeBacked<T>(value)) return value.tree.clone();
     const contents: Node[] = [];
@@ -107,6 +119,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return new Tree(subtreeFillToContents(contents, this.getChunkDepth()));
   }
+
   tree_convertToStruct(target: Tree): T {
     const value = this.struct_defaultValue();
     const length = this.tree_getLength(target);
@@ -115,10 +128,12 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return value;
   }
+
   abstract tree_getLength(target: Tree): number;
   tree_getSerializedLength(target: Tree): number {
     return this.elementType.struct_getSerializedLength() * this.tree_getLength(target);
   }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
     const byteLength = end - start;
@@ -142,6 +157,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return target;
   }
+
   tree_serializeToBytes(target: Tree, output: Uint8Array, offset: number): number {
     const size = this.tree_getSerializedLength(target);
     const fullChunkCount = Math.floor(size / 32);
@@ -158,13 +174,16 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return offset + size;
   }
+
   getPropertyGindex(prop: PropertyKey): Gindex {
     return this.getGindexAtChunkIndex(this.getChunkIndex(prop as number));
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getPropertyType(prop: PropertyKey): BasicType<unknown> {
     return this.elementType;
   }
+
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const length = this.tree_getLength(target);
     if (length === 0) {
@@ -186,20 +205,25 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       }
     }
   }
+
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
     yield* this.tree_iterateValues(target);
   }
+
   getChunkOffset(index: number): number {
     const elementSize = this.elementType.struct_getSerializedLength();
     return (index % Math.ceil(32 / elementSize)) * elementSize;
   }
+
   getChunkIndex(index: number): number {
     return Math.floor(index / Math.ceil(32 / this.elementType.struct_getSerializedLength()));
   }
+
   tree_getValueAtIndex(target: Tree, index: number): T[number] {
     const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
     return this.elementType.struct_deserializeFromBytes(chunk, this.getChunkOffset(index));
   }
+
   tree_setValueAtIndex(target: Tree, index: number, value: T[number], expand = false): boolean {
     const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
     // copy data from old chunk, use new memory to set a new chunk
@@ -209,6 +233,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     target.setRoot(chunkGindex, chunk, expand);
     return true;
   }
+
   tree_getProperty(target: Tree, property: keyof T): T[keyof T] {
     const length = this.tree_getLength(target);
     if (property === "length") {
@@ -223,15 +248,19 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
     return this.tree_getValueAtIndex(target, index);
   }
+
   tree_setProperty(target: Tree, property: number, value: T[number], expand = false): boolean {
     return this.tree_setValueAtIndex(target, property as number, value, expand);
   }
+
   tree_deleteProperty(target: Tree, property: number): boolean {
     return this.tree_setProperty(target, property, this.elementType.struct_defaultValue());
   }
+
   tree_getPropertyNames(target: Tree): string[] {
     return Array.from({length: this.tree_getLength(target)}, (_, i) => String(i)).concat("length");
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   bytes_getVariableOffsets(target: Uint8Array): [number, number][] {
     return [];
@@ -240,13 +269,16 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
 
 export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: CompositeType<CompositeValue>;
+
   constructor(options: IArrayOptions) {
     super();
     this.elementType = (options.elementType as unknown) as CompositeType<CompositeValue>;
   }
+
   abstract struct_getLength(value: T): number;
   abstract getMaxLength(): number;
   abstract getMinLength(): number;
+
   struct_getSerializedLength(value: T): number {
     if (this.elementType.hasVariableSerializedLength()) {
       let s = 0;
@@ -258,6 +290,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       return this.elementType.struct_getSerializedLength(null) * this.struct_getLength(value);
     }
   }
+
   getMaxSerializedLength(): number {
     if (this.elementType.hasVariableSerializedLength()) {
       return this.getMaxLength() * 4 + this.getMaxLength() * this.elementType.getMaxSerializedLength();
@@ -265,6 +298,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       return this.getMaxLength() * this.elementType.getMaxSerializedLength();
     }
   }
+
   getMinSerializedLength(): number {
     if (this.elementType.hasVariableSerializedLength()) {
       return this.getMinLength() * 4 + this.getMinLength() * this.elementType.getMinSerializedLength();
@@ -272,6 +306,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       return this.getMinLength() * this.elementType.getMinSerializedLength();
     }
   }
+
   struct_assertValidValue(value: unknown): asserts value is T {
     for (let i = 0; i < this.struct_getLength(value as T); i++) {
       try {
@@ -281,6 +316,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       }
     }
   }
+
   struct_equals(value1: T, value2: T): boolean {
     if (this.struct_getLength(value1) !== this.struct_getLength(value2)) {
       return false;
@@ -292,6 +328,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     }
     return true;
   }
+
   struct_clone(value: T): T {
     const newValue = this.struct_defaultValue();
     for (let i = 0; i < this.struct_getLength(value); i++) {
@@ -299,6 +336,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     }
     return newValue;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     if (start === end) {
@@ -343,6 +381,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       ) as unknown) as T;
     }
   }
+
   struct_serializeToBytes(value: T, output: Uint8Array, offset: number): number {
     const length = this.struct_getLength(value);
     if (this.elementType.hasVariableSerializedLength()) {
@@ -363,23 +402,28 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       return index;
     }
   }
+
   struct_getRootAtChunkIndex(value: T, index: number): Uint8Array {
     return this.elementType.hashTreeRoot(value[index] as CompositeValue);
   }
+
   struct_getPropertyNames(value: T): (string | number)[] {
     const length = this.struct_getLength(value);
     return (Array.from({length}, (_, i) => i) as (string | number)[]).concat(["length"]);
   }
+
   struct_convertFromJson(data: Json[], options?: IJsonOptions): T {
     return (Array.from({length: data.length}, (_, i) =>
       this.elementType.struct_convertFromJson(data[i], options)
     ) as unknown) as T;
   }
+
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     return Array.from({length: this.struct_getLength(value)}, (_, i) =>
       this.elementType.struct_convertToJson(value[i] as CompositeValue, options)
     );
   }
+
   struct_convertToTree(value: T): Tree {
     if (isTreeBacked<T>(value)) return value.tree.clone();
     const contents: Node[] = [];
@@ -388,6 +432,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     }
     return new Tree(subtreeFillToContents(contents, this.getChunkDepth()));
   }
+
   tree_convertToStruct(target: Tree): T {
     const value = this.struct_defaultValue();
     const length = this.tree_getLength(target);
@@ -396,6 +441,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     }
     return value;
   }
+
   abstract tree_getLength(target: Tree): number;
   tree_getSerializedLength(target: Tree): number {
     if (this.elementType.hasVariableSerializedLength()) {
@@ -408,6 +454,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       return this.elementType.tree_getSerializedLength(null) * this.tree_getLength(target);
     }
   }
+
   tree_serializeToBytes(target: Tree, output: Uint8Array, offset: number): number {
     const length = this.tree_getLength(target);
     if (this.elementType.hasVariableSerializedLength()) {
@@ -432,13 +479,16 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       return index;
     }
   }
+
   getPropertyGindex(prop: PropertyKey): Gindex {
     return this.getGindexAtChunkIndex(prop as number);
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getPropertyType(prop: PropertyKey): CompositeType<CompositeValue> {
     return this.elementType;
   }
+
   tree_getProperty<V extends keyof T>(target: Tree, property: V): Tree | unknown {
     const length = this.tree_getLength(target);
     if (property === "length") {
@@ -453,26 +503,32 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     }
     return this.tree_getSubtreeAtChunkIndex(target, index);
   }
+
   tree_setProperty(target: Tree, property: number, value: Tree, expand = false): boolean {
     this.tree_setSubtreeAtChunkIndex(target, property, value, expand);
     return true;
   }
+
   tree_deleteProperty(target: Tree, property: number): boolean {
     return this.tree_setProperty(target, property, this.elementType.tree_defaultValue());
   }
+
   tree_getPropertyNames(target: Tree): (string | number)[] {
     return (Array.from({length: this.tree_getLength(target)}, (_, i) => i) as (string | number)[]).concat(["length"]);
   }
+
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
     for (const gindex of iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.tree_getLength(target)))) {
       yield target.getSubtree(gindex);
     }
   }
+
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
     for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target))) {
       yield new Tree(node);
     }
   }
+
   bytes_getVariableOffsets(target: Uint8Array): [number, number][] {
     if (this.elementType.hasVariableSerializedLength()) {
       if (target.length === 0) {
