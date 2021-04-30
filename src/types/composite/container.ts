@@ -15,9 +15,12 @@ import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
+type ContainerFields<T extends ObjectLike> = {
+  [K in keyof T]: ReturnType<Type<T[K]>["defaultValue"]> extends T[K] ? Type<T[K]> : never;
+};
+
 export interface IContainerOptions<T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: {[K in keyof T]: Type<any>};
+  fields: ContainerFields<T>;
 }
 
 export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
@@ -26,10 +29,9 @@ export function isContainerType<T extends ObjectLike = ObjectLike>(type: Type<un
   return isTypeOf(type, CONTAINER_TYPE);
 }
 
-export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeType<T> {
+export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
   // ES6 ensures key order is chronological
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: {[K in keyof T]: Type<any>};
+  fields: ContainerFields<T>;
 
   constructor(options: IContainerOptions<T>) {
     super();
