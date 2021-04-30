@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {Json, List} from "../../interface";
+import {Json, List, ArrayLike} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType, number32Type} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
@@ -7,28 +7,28 @@ import {mixInLength} from "../../util/compat";
 import {BranchNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
-export interface IListOptions extends IArrayOptions {
+export interface IListOptions<T extends ArrayLike<unknown>> extends IArrayOptions<T> {
   limit: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ListType<T extends List<any> = List<any>> = BasicListType<T> | CompositeListType<T>;
+export type ListType<T extends List<unknown>> = BasicListType<T> | CompositeListType<T>;
 type ListTypeConstructor = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new <T extends List<any>>(options: IListOptions): ListType<T>;
+  new <T extends List<unknown>>(options: IListOptions<T>): ListType<T>;
 };
 
 export const LIST_TYPE = Symbol.for("ssz/ListType");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isListType<T extends List<any> = List<any>>(type: Type<unknown>): type is ListType<T> {
+export function isListType<T extends List<unknown>>(type: Type<unknown>): type is ListType<T> {
   return isTypeOf(type, LIST_TYPE);
 }
 
 // Trick typescript into treating ListType as a constructor
 export const ListType: ListTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
+  (function ListType<T extends List<any>>(options: IListOptions<T>): ListType<T> {
     if (isBasicType(options.elementType)) {
       return new BasicListType(options);
     } else {
@@ -39,7 +39,7 @@ export const ListType: ListTypeConstructor =
 export class BasicListType<T extends List<unknown> = List<unknown>> extends BasicArrayType<T> {
   limit: number;
 
-  constructor(options: IListOptions) {
+  constructor(options: IListOptions<T>) {
     super(options);
     this.limit = options.limit;
     this._typeSymbols.add(LIST_TYPE);

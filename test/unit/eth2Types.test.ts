@@ -1,4 +1,4 @@
-import {ByteVector, ByteVectorType, ContainerType, NumberUintType, IContainerOptions} from "../../src";
+import {ByteVector, ByteVectorType, ContainerType, NumberUintType, IContainerOptions, ListType} from "../../src";
 
 interface BeaconBlock {
   slot: number;
@@ -9,6 +9,7 @@ interface BeaconBlock {
     a: number;
     b: ByteVector;
   };
+  attestations: ByteVector[];
 }
 
 type XX = IContainerOptions<BeaconBlock>;
@@ -27,6 +28,11 @@ describe("Eth2.0 type generators", () => {
     },
   });
 
+  const AttestationsType = new ListType<ByteVector[]>({
+    elementType: Bytes32,
+    limit: 100,
+  });
+
   const BeaconBlockType = new ContainerType<BeaconBlock>({
     fields: {
       slot: Number64,
@@ -34,6 +40,7 @@ describe("Eth2.0 type generators", () => {
       parentRoot: Bytes32,
       stateRoot: Bytes32,
       subType: SubBlockType,
+      attestations: AttestationsType,
     },
   });
 });

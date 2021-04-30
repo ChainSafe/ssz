@@ -2,22 +2,24 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import {ArrayLike, CompositeValue, Json} from "../../interface";
 import {IJsonOptions, Type} from "../type";
-import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
 import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
-export interface IArrayOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  elementType: Type<any>;
+type ArrayElementType<T extends ArrayLike<unknown>> = ReturnType<Type<T[0]>["defaultValue"]> extends T[0]
+  ? Type<T[0]>
+  : never;
+
+export interface IArrayOptions<T extends ArrayLike<unknown>> {
+  elementType: ArrayElementType<T>;
 }
 
 export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
-  elementType: BasicType<unknown>;
-  constructor(options: IArrayOptions) {
+  elementType: ArrayElementType<T>;
+  constructor(options: IArrayOptions<T>) {
     super();
-    this.elementType = options.elementType as BasicType<T>;
+    this.elementType = options.elementType;
   }
   abstract struct_getLength(value: T): number;
   abstract getMaxLength(): number;
@@ -180,7 +182,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getPropertyType(prop: PropertyKey): BasicType<unknown> {
+  getPropertyType(prop: PropertyKey): ArrayElementType<T> {
     return this.elementType;
   }
 
