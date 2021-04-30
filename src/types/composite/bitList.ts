@@ -21,6 +21,7 @@ export class BitListType extends BasicListType<BitList> {
     super({elementType: booleanType, ...options});
     this._typeSymbols.add(BITLIST_TYPE);
   }
+
   struct_getByte(value: BitList, index: number): number {
     const firstBitIndex = index * 8;
     const lastBitIndex = Math.min(firstBitIndex + 7, value.length - 1);
@@ -30,12 +31,15 @@ export class BitListType extends BasicListType<BitList> {
     }
     return Number(bitstring);
   }
+
   struct_getLength(value: BitList): number {
     return value.length;
   }
+
   struct_getByteLength(value: BitList): number {
     return Math.ceil(value.length / 8);
   }
+
   struct_getSerializedLength(value: BitList): number {
     if (value.length % 8 === 0) {
       return this.struct_getByteLength(value) + 1;
@@ -43,15 +47,19 @@ export class BitListType extends BasicListType<BitList> {
       return this.struct_getByteLength(value);
     }
   }
+
   getMaxSerializedLength(): number {
     return Math.ceil(this.limit / 8) + 1;
   }
+
   getMinSerializedLength(): number {
     return 1;
   }
+
   struct_getChunkCount(value: BitList): number {
     return Math.ceil(this.struct_getLength(value) / 256);
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitList {
     this.bytes_validate(data, start, end);
     const value = [];
@@ -76,6 +84,7 @@ export class BitListType extends BasicListType<BitList> {
     }
     return value as BitList;
   }
+
   struct_serializeToBytes(value: BitList, output: Uint8Array, offset: number): number {
     const byteLength = this.struct_getByteLength(value);
     for (let i = 0; i < byteLength; i++) {
@@ -90,6 +99,7 @@ export class BitListType extends BasicListType<BitList> {
       return newOffset;
     }
   }
+
   struct_getRootAtChunkIndex(value: BitList, index: number): Uint8Array {
     const output = new Uint8Array(32);
     const byteLength = Math.min(32, this.struct_getByteLength(value) - index * 32);
@@ -98,16 +108,20 @@ export class BitListType extends BasicListType<BitList> {
     }
     return output;
   }
+
   struct_convertFromJson(data: Json): BitList {
     const bytes = fromHexString(data as string);
     return this.struct_deserializeFromBytes(bytes, 0, bytes.length);
   }
+
   struct_convertToJson(value: BitList): Json {
     return toHexString(this.serialize(value));
   }
+
   tree_getByteLength(target: Tree): number {
     return Math.ceil(this.tree_getLength(target) / 8);
   }
+
   tree_getSerializedLength(target: Tree): number {
     const bitLength = this.tree_getLength(target);
     if (bitLength % 8 === 0) {
@@ -116,6 +130,7 @@ export class BitListType extends BasicListType<BitList> {
       return this.tree_getByteLength(target);
     }
   }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const lastByte = data[end - 1];
     if (lastByte === 0) {
@@ -143,6 +158,7 @@ export class BitListType extends BasicListType<BitList> {
     this.tree_setLength(target, length);
     return target;
   }
+
   tree_serializeToBytes(target: Tree, output: Uint8Array, offset: number): number {
     const newOffset = super.tree_serializeToBytes(target, output, offset);
     const bitLength = this.tree_getLength(target);
@@ -151,18 +167,23 @@ export class BitListType extends BasicListType<BitList> {
     output[offset + size - 1] |= 1 << bitLength % 8;
     return newOffset;
   }
+
   getBitOffset(index: number): number {
     return index % 8;
   }
+
   getChunkOffset(index: number): number {
     return Math.floor((index % 256) / 8);
   }
+
   getChunkIndex(index: number): number {
     return Math.floor(index / 256);
   }
+
   tree_getChunkCount(target: Tree): number {
     return Math.ceil(this.tree_getLength(target) / 256);
   }
+
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const length = this.tree_getLength(target);
     const chunkCount = this.tree_getChunkCount(target);
@@ -176,11 +197,13 @@ export class BitListType extends BasicListType<BitList> {
       }
     }
   }
+
   tree_getValueAtIndex(target: Tree, index: number): boolean {
     const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
     const byte = chunk[this.getChunkOffset(index)];
     return !!(byte & (1 << this.getBitOffset(index)));
   }
+
   tree_setValueAtIndex(target: Tree, property: number, value: boolean, expand = false): boolean {
     const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(property));
     const chunk = new Uint8Array(32);
@@ -194,6 +217,7 @@ export class BitListType extends BasicListType<BitList> {
     target.setRoot(chunkGindex, chunk, expand);
     return true;
   }
+
   getMaxChunkCount(): number {
     return Math.ceil(this.limit / 256);
   }

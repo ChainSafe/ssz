@@ -14,21 +14,26 @@ export class BooleanType extends BasicType<boolean> {
     super();
     this._typeSymbols.add(BOOLEAN_TYPE);
   }
+
   struct_getSerializedLength(): number {
     return 1;
   }
+
   struct_assertValidValue(value: unknown): asserts value is boolean {
     if (value !== true && value !== false) {
       throw new Error("Boolean value must be true or false");
     }
   }
+
   struct_defaultValue(): boolean {
     return false;
   }
+
   struct_serializeToBytes(value: boolean, output: Uint8Array, offset: number): number {
     output[offset] = value ? 1 : 0;
     return offset + 1;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, offset: number): boolean {
     this.bytes_validate(data, offset);
     if (data[offset] === 1) {
@@ -39,10 +44,12 @@ export class BooleanType extends BasicType<boolean> {
       throw new Error("Invalid boolean value");
     }
   }
+
   struct_convertFromJson(data: Json): boolean {
     this.struct_assertValidValue(data);
     return data;
   }
+
   struct_convertToJson(value: boolean): Json {
     return value;
   }

@@ -38,39 +38,49 @@ export const ListType: ListTypeConstructor =
 
 export class BasicListType<T extends List<unknown> = List<unknown>> extends BasicArrayType<T> {
   limit: number;
+
   constructor(options: IListOptions) {
     super(options);
     this.limit = options.limit;
     this._typeSymbols.add(LIST_TYPE);
   }
+
   struct_defaultValue(): T {
     return ([] as unknown) as T;
   }
+
   struct_getLength(value: T): number {
     return value.length;
   }
+
   getMaxLength(): number {
     return this.limit;
   }
+
   getMinLength(): number {
     return 0;
   }
+
   bytes_validate(data: Uint8Array, start: number, end: number): void {
     super.bytes_validate(data, start, end);
     if (end - start > this.getMaxSerializedLength()) {
       throw new Error("Deserialized list length greater than limit");
     }
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     return super.struct_deserializeFromBytes(data, start, end);
   }
+
   struct_getChunkCount(value: T): number {
     return Math.ceil((value.length * this.elementType.struct_getSerializedLength()) / 32);
   }
+
   struct_hashTreeRoot(value: T): Uint8Array {
     return mixInLength(super.struct_hashTreeRoot(value), value.length);
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   struct_convertFromJson(data: Json, options?: IJsonOptions): T {
     if (!Array.isArray(data)) {
@@ -82,29 +92,35 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     }
     return super.struct_convertFromJson(data);
   }
+
   struct_convertToTree(value: T): Tree {
     if (isTreeBacked<T>(value)) return value.tree.clone();
     const tree = super.struct_convertToTree(value);
     this.tree_setLength(tree, value.length);
     return tree;
   }
+
   tree_defaultNode(): Node {
     if (!this._defaultNode) {
       this._defaultNode = new BranchNode(zeroNode(super.getChunkDepth()), zeroNode(0));
     }
     return this._defaultNode;
   }
+
   tree_defaultValue(): Tree {
     return new Tree(this.tree_defaultNode());
   }
+
   tree_getLength(target: Tree): number {
     return number32Type.struct_deserializeFromBytes(target.getRoot(BigInt(3)), 0);
   }
+
   tree_setLength(target: Tree, length: number): void {
     const chunk = new Uint8Array(32);
     number32Type.toBytes(length, chunk, 0);
     target.setRoot(BigInt(3), chunk);
   }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const length = (end - start) / this.elementType.struct_getSerializedLength();
     if (!Number.isSafeInteger(length)) {
@@ -117,12 +133,15 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     this.tree_setLength(value, length);
     return value;
   }
+
   tree_getChunkCount(target: Tree): number {
     return Math.ceil((this.tree_getLength(target) * this.elementType.struct_getSerializedLength()) / 32);
   }
+
   getChunkDepth(): number {
     return super.getChunkDepth() + 1;
   }
+
   tree_setProperty(target: Tree, property: number, value: T[number]): boolean {
     const length = this.tree_getLength(target);
     if (property > length) {
@@ -134,6 +153,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
       return this.tree_setValueAtIndex(target, property, value);
     }
   }
+
   tree_deleteProperty(target: Tree, property: number): boolean {
     const length = this.tree_getLength(target);
     if (property > length) {
@@ -145,6 +165,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
       return super.tree_deleteProperty(target, property);
     }
   }
+
   tree_pushSingle(target: Tree, value: T[number]): number {
     const length = this.tree_getLength(target);
     const expand = this.getChunkIndex(length) != this.getChunkIndex(length + 1);
@@ -152,11 +173,13 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     this.tree_setLength(target, length + 1);
     return length + 1;
   }
+
   tree_push(target: Tree, ...values: T[number][]): number {
     let newLength;
     values.forEach((value) => (newLength = this.tree_pushSingle(target, value)));
     return newLength;
   }
+
   tree_pop(target: Tree): T[number] {
     const length = this.tree_getLength(target);
     const value = this.tree_getProperty(target, length - 1);
@@ -164,9 +187,11 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     this.tree_setLength(target, length - 1);
     return value;
   }
+
   hasVariableSerializedLength(): boolean {
     return true;
   }
+
   getMaxChunkCount(): number {
     return Math.ceil((this.limit * this.elementType.size()) / 32);
   }
@@ -174,29 +199,37 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
 
 export class CompositeListType<T extends List<object> = List<object>> extends CompositeArrayType<T> {
   limit: number;
+
   constructor(options: IListOptions) {
     super(options);
     this.limit = options.limit;
     this._typeSymbols.add(LIST_TYPE);
   }
+
   hasVariableSerializedLength(): boolean {
     return true;
   }
+
   getMaxChunkCount(): number {
     return this.limit;
   }
+
   struct_defaultValue(): T {
     return ([] as unknown) as T;
   }
+
   struct_getLength(value: T): number {
     return value.length;
   }
+
   getMaxLength(): number {
     return this.limit;
   }
+
   getMinLength(): number {
     return 0;
   }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     const value = super.struct_deserializeFromBytes(data, start, end);
@@ -205,12 +238,15 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     }
     return value;
   }
+
   struct_getChunkCount(value: T): number {
     return value.length;
   }
+
   struct_hashTreeRoot(value: T): Uint8Array {
     return mixInLength(super.struct_hashTreeRoot(value), value.length);
   }
+
   struct_convertFromJson(data: Json, options?: IJsonOptions): T {
     if (!Array.isArray(data)) {
       throw new Error("Invalid JSON list: expected an Array");
@@ -221,29 +257,35 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     }
     return super.struct_convertFromJson(data, options);
   }
+
   tree_defaultNode(): Node {
     if (!this._defaultNode) {
       this._defaultNode = new BranchNode(zeroNode(super.getChunkDepth()), zeroNode(0));
     }
     return this._defaultNode;
   }
+
   tree_defaultValue(): Tree {
     return new Tree(this.tree_defaultNode());
   }
+
   struct_convertToTree(value: T): Tree {
     if (isTreeBacked<T>(value)) return value.tree.clone();
     const tree = super.struct_convertToTree(value);
     this.tree_setLength(tree, value.length);
     return tree;
   }
+
   tree_getLength(target: Tree): number {
     return number32Type.struct_deserializeFromBytes(target.getRoot(BigInt(3)), 0);
   }
+
   tree_setLength(target: Tree, length: number): void {
     const chunk = new Uint8Array(32);
     number32Type.struct_serializeToBytes(length, chunk, 0);
     target.setRoot(BigInt(3), chunk);
   }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
     if (this.elementType.hasVariableSerializedLength()) {
@@ -281,12 +323,15 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     }
     return target;
   }
+
   tree_getChunkCount(target: Tree): number {
     return this.tree_getLength(target);
   }
+
   getChunkDepth(): number {
     return super.getChunkDepth() + 1;
   }
+
   tree_setProperty(target: Tree, property: number, value: Tree): boolean {
     const length = this.tree_getLength(target);
     if (property > length) {
@@ -298,6 +343,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     }
     return true;
   }
+
   tree_deleteProperty(target: Tree, property: number): boolean {
     const length = this.tree_getLength(target);
     if (property > length) {
@@ -309,17 +355,20 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
       return super.tree_deleteProperty(target, property);
     }
   }
+
   tree_pushSingle(target: Tree, value: Tree): number {
     const length = this.tree_getLength(target);
     this.tree_setSubtreeAtChunkIndex(target, length, value, true);
     this.tree_setLength(target, length + 1);
     return length + 1;
   }
+
   tree_push(target: Tree, ...values: Tree[]): number {
     let newLength;
     values.forEach((value) => (newLength = this.tree_pushSingle(target, value)));
     return newLength;
   }
+
   tree_pop(target: Tree): T[number] {
     const length = this.tree_getLength(target);
     const value = this.tree_getProperty(target, length - 1);

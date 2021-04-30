@@ -37,11 +37,11 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   }
 
   abstract struct_assertValidValue(value: unknown): asserts value is T;
-
   abstract struct_equals(struct1: T, struct2: T): boolean;
   tree_equals(tree1: Tree, tree2: Tree): boolean {
     return byteArrayEquals(tree1.root, tree2.root);
   }
+
   bytes_equals(bytes1: Uint8Array, bytes2: Uint8Array): boolean {
     return byteArrayEquals(bytes1, bytes2);
   }
@@ -56,6 +56,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   tree_clone(value: Tree): Tree {
     return value.clone();
   }
+
   bytes_clone(value: Uint8Array, start = 0, end = value.length): Uint8Array {
     const bytes = new Uint8Array(end - start);
     value.subarray(start, end).set(bytes);
@@ -74,6 +75,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
     const output = new Uint8Array(this.struct_getSerializedLength(struct));
     return this.struct_serializeToBytes(struct, output, 0);
   }
+
   tree_serialize(tree: Tree, data: Uint8Array): number {
     const output = new Uint8Array(this.tree_getSerializedLength(tree));
     return this.tree_serializeToBytes(tree, output, 0);
@@ -106,11 +108,13 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       throw new Error(`Data length ${length} is too small, expect at least ${this.getMinSerializedLength()}`);
     }
   }
+
   abstract struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T;
   abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree;
   struct_deserialize(data: Uint8Array): T {
     return this.struct_deserializeFromBytes(data, 0, data.length);
   }
+
   tree_deserialize(data: Uint8Array): Tree {
     return this.tree_deserializeFromBytes(data, 0, data.length);
   }
@@ -126,9 +130,11 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   struct_getChunkCount(struct: T): number {
     return this.getMaxChunkCount();
   }
+
   tree_getChunkCount(target: Tree): number {
     return this.getMaxChunkCount();
   }
+
   abstract struct_getRootAtChunkIndex(struct: T, chunkIx: number): Uint8Array;
   *struct_yieldChunkRoots(struct: T): Iterable<Uint8Array> {
     const chunkCount = this.struct_getChunkCount(struct);
@@ -146,15 +152,19 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   getGindexAtChunkIndex(index: number): Gindex {
     return toGindex(this.getChunkDepth(), BigInt(index));
   }
+
   tree_getSubtreeAtChunkIndex(target: Tree, index: number): Tree {
     return target.getSubtree(this.getGindexAtChunkIndex(index));
   }
+
   tree_setSubtreeAtChunkIndex(target: Tree, index: number, value: Tree, expand = false): void {
     target.setSubtree(this.getGindexAtChunkIndex(index), value, expand);
   }
+
   tree_getRootAtChunkIndex(target: Tree, index: number): Uint8Array {
     return target.getRoot(this.getGindexAtChunkIndex(index));
   }
+
   tree_setRootAtChunkIndex(target: Tree, index: number, value: Uint8Array, expand = false): void {
     target.setRoot(this.getGindexAtChunkIndex(index), value, expand);
   }
@@ -175,6 +185,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
     }
     return concatGindices(gindices);
   }
+
   abstract getPropertyType(property: PropertyKey): Type<unknown> | undefined;
   abstract tree_getProperty(tree: Tree, property: PropertyKey): Tree | unknown;
   abstract tree_setProperty(tree: Tree, property: PropertyKey, value: Tree | unknown): boolean;
@@ -188,6 +199,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       gindices,
     });
   }
+
   tree_createFromProof(root: Uint8Array, proof: Proof): Tree {
     const tree = Tree.createFromProof(proof);
     if (!byteArrayEquals(tree.root, root)) {
@@ -195,6 +207,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
     }
     return tree;
   }
+
   tree_createFromProofUnsafe(proof: Proof): Tree {
     return Tree.createFromProof(proof);
   }
@@ -202,6 +215,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   struct_hashTreeRoot(struct: T): Uint8Array {
     return merkleize(this.struct_yieldChunkRoots(struct), this.getMaxChunkCount());
   }
+
   tree_hashTreeRoot(tree: Tree): Uint8Array {
     return tree.root;
   }
@@ -339,21 +353,27 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   createTreeBacked(tree: Tree): TreeBacked<T> {
     return createTreeBacked(this, tree);
   }
+
   createTreeBackedFromStruct(value: T): TreeBacked<T> {
     return this.createTreeBacked(this.struct_convertToTree(value));
   }
+
   createTreeBackedFromBytes(data: Uint8Array): TreeBacked<T> {
     return this.createTreeBacked(this.tree_deserialize(data));
   }
+
   createTreeBackedFromJson(data: Json, options?: IJsonOptions): TreeBacked<T> {
     return this.createTreeBackedFromStruct(this.struct_convertFromJson(data, options));
   }
+
   createTreeBackedFromProof(root: Uint8Array, proof: Proof): TreeBacked<T> {
     return this.createTreeBacked(this.tree_createFromProof(root, proof));
   }
+
   createTreeBackedFromProofUnsafe(proof: Proof): TreeBacked<T> {
     return this.createTreeBacked(this.tree_createFromProofUnsafe(proof));
   }
+
   defaultTreeBacked(): TreeBacked<T> {
     return createTreeBacked(this, this.tree_defaultValue());
   }

@@ -4,6 +4,7 @@ import {ByteVector} from "../interface";
 export function toHexString(target: Uint8Array | ByteVector): string {
   return "0x" + [...target].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+
 export function fromHexString(data: string): Uint8Array {
   if (typeof data !== "string") {
     throw new Error("Expected hex string to be a string");
