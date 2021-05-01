@@ -85,7 +85,6 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
   struct_assertValidValue(value: unknown): asserts value is T {
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
       try {
-        // @ts-ignore
         fieldType.struct_assertValidValue((value as T)[fieldName]);
       } catch (e) {
         throw new Error(`Invalid field ${fieldName}: ${e.message}`);
@@ -215,8 +214,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     }
     const value = {} as T;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
-      const expectedCase = options ? options.case : null;
-      const expectedFieldName = toExpectedCase(fieldName, expectedCase);
+      const expectedFieldName = toExpectedCase(fieldName, options?.case);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
@@ -227,9 +225,8 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
 
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
-    const expectedCase = options ? options.case : null;
     Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
-      data[toExpectedCase(fieldName, expectedCase)] = fieldType.toJson(value[fieldName as keyof T], options);
+      data[toExpectedCase(fieldName, options?.case)] = fieldType.toJson(value[fieldName as keyof T], options);
     });
     return data;
   }
@@ -421,7 +418,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     return Object.keys(this.fields);
   }
 
-  tree_getProperty<K extends keyof T>(target: Tree, prop: K): Tree | T[K] {
+  tree_getProperty<K extends keyof T>(target: Tree, prop: K): Tree | T[K] | undefined {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
       return undefined;

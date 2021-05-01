@@ -233,7 +233,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     return true;
   }
 
-  tree_getProperty(target: Tree, property: keyof T): T[keyof T] {
+  tree_getProperty(target: Tree, property: keyof T): T[keyof T] | undefined {
     const length = this.tree_getLength(target);
     if (property === "length") {
       return length as T[keyof T];

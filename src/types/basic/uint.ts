@@ -42,12 +42,13 @@ export class NumberUintType extends UintType<number> {
 
   struct_assertValidValue(value: unknown): asserts value is number {
     if (
-      value !== Infinity &&
-      (!Number.isSafeInteger(value as number) || value > BigInt(2) ** (BigInt(8) * BigInt(this.byteLength)))
+      typeof value !== "number" ||
+      (value !== Infinity &&
+        (!Number.isSafeInteger(value) || value > BigInt(2) ** (BigInt(8) * BigInt(this.byteLength))))
     ) {
       throw new Error("Uint value is not a number");
     }
-    if ((value as number) < 0) {
+    if (value < 0) {
       throw new Error("Uint value must be gte 0");
     }
   }
