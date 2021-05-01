@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {ByteVector} from "../interface";
 
-export function toHexString(bytes: Uint8Array | ByteVector): string {
+// Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
+const hexByByte: string[] = [];
+
+export function toHexString(bytes: Uint8Array): string {
   let hex = "0x";
   for (const byte of bytes) {
-    if (byte < 16) {
-      hex += "0" + byte.toString(16);
-    } else {
-      hex += byte.toString(16);
+    if (!hexByByte[byte]) {
+      hexByByte[byte] = byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
     }
+    hex += hexByByte[byte];
   }
   return hex;
 }
