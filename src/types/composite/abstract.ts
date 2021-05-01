@@ -172,7 +172,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   abstract struct_getPropertyNames(struct: T): (string | number)[];
   abstract tree_getPropertyNames(tree: Tree): (string | number)[];
 
-  abstract getPropertyGindex(property: PropertyKey): Gindex;
+  abstract getPropertyGindex(property: keyof T): Gindex;
   getPathGindex(path: Path): Gindex {
     const gindices = [];
     let type = this as CompositeType<CompositeValue>;
@@ -180,18 +180,18 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       if (!isCompositeType(type)) {
         throw new Error("Invalid path: cannot navigate beyond a basic type");
       }
-      gindices.push(type.getPropertyGindex(prop));
-      type = type.getPropertyType(prop) as CompositeType<CompositeValue>;
+      gindices.push(type.getPropertyGindex(prop as never));
+      type = (type.getPropertyType(prop as never) as unknown) as CompositeType<CompositeValue>;
     }
     return concatGindices(gindices);
   }
 
-  abstract getPropertyType(property: PropertyKey): Type<unknown> | undefined;
-  abstract tree_getProperty(tree: Tree, property: PropertyKey): Tree | unknown;
-  abstract tree_setProperty(tree: Tree, property: PropertyKey, value: Tree | unknown): boolean;
-  abstract tree_deleteProperty(tree: Tree, property: PropertyKey): boolean;
-  abstract tree_iterateValues(tree: Tree): IterableIterator<Tree | unknown>;
-  abstract tree_readonlyIterateValues(tree: Tree): IterableIterator<Tree | unknown>;
+  abstract getPropertyType<K extends keyof T>(property: K): Type<T[K]> | undefined;
+  abstract tree_getProperty<K extends keyof T>(tree: Tree, property: K): Tree | T[K];
+  abstract tree_setProperty<K extends keyof T>(tree: Tree, property: K, value: Tree | T[K]): boolean;
+  abstract tree_deleteProperty<K extends keyof T>(tree: Tree, property: K): boolean;
+  abstract tree_iterateValues(tree: Tree): IterableIterator<Tree | T[keyof T]>;
+  abstract tree_readonlyIterateValues(tree: Tree): IterableIterator<Tree | T[keyof T]>;
   tree_createProof(target: Tree, paths: Path[]): Proof {
     const gindices = paths.map((path) => this.getPathGindex(path));
     return target.getProof({

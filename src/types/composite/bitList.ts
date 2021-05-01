@@ -184,7 +184,7 @@ export class BitListType extends BasicListType<BitList> {
     return Math.ceil(this.tree_getLength(target) / 256);
   }
 
-  *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
+  *tree_iterateValues(target: Tree): IterableIterator<Tree | boolean> {
     const length = this.tree_getLength(target);
     const chunkCount = this.tree_getChunkCount(target);
     const nodeIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, chunkCount);

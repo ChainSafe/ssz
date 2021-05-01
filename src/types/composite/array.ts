@@ -186,11 +186,11 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getPropertyType(prop: PropertyKey): ArrayElementType<T> {
+  getPropertyType<K extends keyof T>(prop: K): ArrayElementType<T> {
     return this.elementType;
   }
 
-  *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
+  *tree_iterateValues(target: Tree): IterableIterator<Tree | T[keyof T]> {
     const length = this.tree_getLength(target);
     if (length === 0) {
       return;
@@ -212,7 +212,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     }
   }
 
-  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
+  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | T[keyof T]> {
     yield* this.tree_iterateValues(target);
   }
 
@@ -225,41 +225,41 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     return Math.floor(index / Math.ceil(32 / this.elementType.struct_getSerializedLength()));
   }
 
-  tree_getValueAtIndex(target: Tree, index: number): T[number] {
+  tree_getValueAtIndex(target: Tree, index: number): T[keyof T] {
     const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
     return this.elementType.struct_deserializeFromBytes(chunk, this.getChunkOffset(index));
   }
 
-  tree_setValueAtIndex(target: Tree, index: number, value: T[number], expand = false): boolean {
-    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+  tree_setValueAtIndex<K extends keyof T>(target: Tree, index: K, value: T[K], expand = false): boolean {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index as number));
     // copy data from old chunk, use new memory to set a new chunk
     const chunk = new Uint8Array(32);
     chunk.set(target.getRoot(chunkGindex));
-    this.elementType.struct_serializeToBytes(value, chunk, this.getChunkOffset(index));
+    this.elementType.struct_serializeToBytes(value, chunk, this.getChunkOffset(index as number));
     target.setRoot(chunkGindex, chunk, expand);
     return true;
   }
 
-  tree_getProperty(target: Tree, property: keyof T): T[keyof T] {
+  tree_getProperty<K extends keyof T>(target: Tree, property: K): T[K] {
     const length = this.tree_getLength(target);
     if (property === "length") {
-      return length as T[keyof T];
+      return length as T[K];
     }
     const index = Number(property);
-    if (Number.isNaN(index as number)) {
+    if (Number.isNaN(index)) {
       return undefined;
     }
     if (index >= length) {
       return undefined;
     }
-    return this.tree_getValueAtIndex(target, index);
+    return this.tree_getValueAtIndex(target, index) as T[K];
   }
 
-  tree_setProperty(target: Tree, property: number, value: T[number], expand = false): boolean {
-    return this.tree_setValueAtIndex(target, property as number, value, expand);
+  tree_setProperty<K extends keyof T>(target: Tree, property: K, value: T[K], expand = false): boolean {
+    return this.tree_setValueAtIndex(target, property, value, expand);
   }
 
-  tree_deleteProperty(target: Tree, property: number): boolean {
+  tree_deleteProperty(target: Tree, property: keyof T): boolean {
     return this.tree_setProperty(target, property, this.elementType.struct_defaultValue());
   }
 
@@ -495,10 +495,10 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     return this.elementType;
   }
 
-  tree_getProperty<V extends keyof T>(target: Tree, property: V): Tree | unknown {
+  tree_getProperty<K extends keyof T>(target: Tree, property: K): Tree | T[K] {
     const length = this.tree_getLength(target);
     if (property === "length") {
-      return length as unknown;
+      return length as T[K];
     }
     const index = Number(property);
     if (Number.isNaN(index as number)) {
@@ -510,12 +510,12 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     return this.tree_getSubtreeAtChunkIndex(target, index);
   }
 
-  tree_setProperty(target: Tree, property: number, value: Tree, expand = false): boolean {
+  tree_setProperty(target: Tree, property: keyof T, value: Tree, expand = false): boolean {
     this.tree_setSubtreeAtChunkIndex(target, property, value, expand);
     return true;
   }
 
-  tree_deleteProperty(target: Tree, property: number): boolean {
+  tree_deleteProperty(target: Tree, property: keyof T): boolean {
     return this.tree_setProperty(target, property, this.elementType.tree_defaultValue());
   }
 
@@ -523,13 +523,13 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     return (Array.from({length: this.tree_getLength(target)}, (_, i) => i) as (string | number)[]).concat(["length"]);
   }
 
-  *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
+  *tree_iterateValues(target: Tree): IterableIterator<Tree | T[keyof T]> {
     for (const gindex of iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.tree_getLength(target)))) {
       yield target.getSubtree(gindex);
     }
   }
 
-  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
+  *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | T[keyof T]> {
     for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target))) {
       yield new Tree(node);
     }
