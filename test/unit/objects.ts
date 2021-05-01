@@ -10,6 +10,7 @@ import {
   ListType,
   VectorType,
   BooleanType,
+  List,
 } from "../../src";
 
 export const bytes2Type = new ByteVectorType({
@@ -108,7 +109,7 @@ export const OuterObject = new ContainerType({
 
 export const ArrayObject = new ContainerType({
   fields: {
-    v: new ListType({
+    v: new ListType<List<{b: number; a: number}>>({
       elementType: SimpleObject,
       limit: 100,
     }),
