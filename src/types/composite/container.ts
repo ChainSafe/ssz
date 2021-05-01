@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json, ObjectLike} from "../../interface";
 import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {ArrayLike, Json, Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType} from "../basic";
@@ -133,7 +132,9 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 }
 
-export class CompositeVectorType<T extends Vector<object> = Vector<object>> extends CompositeArrayType<T> {
+export class CompositeVectorType<
+  T extends Vector<Record<string, unknown>> = Vector<Record<string, unknown>>
+> extends CompositeArrayType<T> {
   length: number;
 
   constructor(options: IVectorOptions<T>) {

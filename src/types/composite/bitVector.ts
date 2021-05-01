@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {BitVector, Json} from "../../interface";
 import {BasicVectorType} from "./vector";
 import {booleanType} from "../basic";
@@ -12,7 +11,7 @@ export interface IBitVectorOptions {
 
 export const BITVECTOR_TYPE = Symbol.for("ssz/BitVectorType");
 
-export function isBitVectorType<T extends BitVector = BitVector>(type: Type<unknown>): type is BitVectorType {
+export function isBitVectorType(type: Type<unknown>): type is BitVectorType {
   return isTypeOf(type, BITVECTOR_TYPE);
 }
 

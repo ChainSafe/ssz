@@ -301,7 +301,7 @@ export class BasicListTreeValue<T extends List<unknown>> extends BasicArrayTreeV
   }
 }
 
-export class CompositeListTreeValue<T extends List<object>> extends CompositeArrayTreeValue<T> {
+export class CompositeListTreeValue<T extends List<Record<string, unknown>>> extends CompositeArrayTreeValue<T> {
   type: CompositeListType<T>;
 
   constructor(type: CompositeListType<T>, tree: Tree) {

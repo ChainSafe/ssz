@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/camelcase */
 import {ArrayLike, CompositeValue, Json} from "../../interface";
 import {IJsonOptions, Type} from "../type";
 import {CompositeType} from "./abstract";
