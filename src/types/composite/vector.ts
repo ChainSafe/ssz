@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {Json, Vector} from "../../interface";
+import {ArrayLike, Json, Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {Node, subtreeFillToLength, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 
-export interface IVectorOptions extends IArrayOptions {
+export interface IVectorOptions<T extends ArrayLike<unknown>> extends IArrayOptions<T> {
   length: number;
 }
 
@@ -20,13 +20,13 @@ export function isVectorType<T extends Vector<any> = Vector<any>>(type: Type<unk
 export type VectorType<T extends Vector<any> = Vector<any>> = BasicVectorType<T> | CompositeVectorType<T>;
 type VectorTypeConstructor = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new <T extends Vector<any>>(options: IVectorOptions): VectorType<T>;
+  new <T extends Vector<any>>(options: IVectorOptions<T>): VectorType<T>;
 };
 
 // Trick typescript into treating VectorType as a constructor
 export const VectorType: VectorTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions): VectorType<T> {
+  (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions<T>): VectorType<T> {
     if (isBasicType(options.elementType)) {
       return new BasicVectorType(options);
     } else {
@@ -37,7 +37,7 @@ export const VectorType: VectorTypeConstructor =
 export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extends BasicArrayType<T> {
   length: number;
 
-  constructor(options: IVectorOptions) {
+  constructor(options: IVectorOptions<T>) {
     super(options);
     this.length = options.length;
     this._typeSymbols.add(VECTOR_TYPE);
@@ -136,7 +136,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
 export class CompositeVectorType<T extends Vector<object> = Vector<object>> extends CompositeArrayType<T> {
   length: number;
 
-  constructor(options: IVectorOptions) {
+  constructor(options: IVectorOptions<T>) {
     super(options);
     this.length = options.length;
     this._typeSymbols.add(VECTOR_TYPE);

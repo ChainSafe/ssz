@@ -197,10 +197,10 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 }
 
-export class CompositeListType<T extends List<object> = List<object>> extends CompositeArrayType<T> {
+export class CompositeListType<T extends List<unknown> = List<unknown>> extends CompositeArrayType<T> {
   limit: number;
 
-  constructor(options: IListOptions) {
+  constructor(options: IListOptions<T>) {
     super(options);
     this.limit = options.limit;
     this._typeSymbols.add(LIST_TYPE);

@@ -7,9 +7,13 @@ import {SszErrorPath} from "../../util/errorPath";
 import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
-type ArrayElementType<T extends ArrayLike<unknown>> = ReturnType<Type<T[0]>["defaultValue"]> extends T[0]
-  ? Type<T[0]>
-  : never;
+/** Force ArrayElementType to not compile if the extends condition is not correct */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IsType<T extends Type<any>> = T;
+
+type ArrayElementType<T extends ArrayLike<unknown>> = IsType<
+  ReturnType<Type<T[0]>["defaultValue"]> extends T[0] ? Type<T[0]> : never
+>;
 
 export interface IArrayOptions<T extends ArrayLike<unknown>> {
   elementType: ArrayElementType<T>;
@@ -272,7 +276,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
 export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: CompositeType<CompositeValue>;
 
-  constructor(options: IArrayOptions) {
+  constructor(options: IArrayOptions<T>) {
     super();
     this.elementType = (options.elementType as unknown) as CompositeType<CompositeValue>;
   }

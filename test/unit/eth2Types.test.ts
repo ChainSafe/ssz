@@ -1,46 +1,106 @@
+import {expect} from "chai";
 import {ByteVector, ByteVectorType, ContainerType, NumberUintType, IContainerOptions, ListType} from "../../src";
 
-interface BeaconBlock {
-  slot: number;
-  proposerIndex: number;
-  parentRoot: ByteVector;
-  stateRoot: ByteVector;
-  subType: {
-    a: number;
-    b: ByteVector;
-  };
-  attestations: ByteVector[];
-}
-
-type XX = IContainerOptions<BeaconBlock>;
-type YY = XX["fields"]["slot"];
-type NumberUintTypeType = NumberUintType["type"];
-
 describe("Eth2.0 type generators", () => {
-  const Number64 = new NumberUintType({byteLength: 8});
+  it("Should compile", () => {
+    // This test does not run any code but ensures the SSZ types are enforced at compile time
+    interface SampleType {
+      a: number;
+      b: ByteVector;
+      subType: {
+        a: number;
+        b: ByteVector;
+      };
+      list: ByteVector[];
+    }
 
-  const Bytes32 = new ByteVectorType({length: 32});
+    const Number64 = new NumberUintType({byteLength: 8});
+    const Bytes32 = new ByteVectorType({length: 32});
 
-  const SubBlockType = new ContainerType({
-    fields: {
-      a: Number64,
-      b: Bytes32,
-    },
-  });
+    const subType = new ContainerType({
+      fields: {
+        a: Number64,
+        b: Bytes32,
+      },
+    });
 
-  const AttestationsType = new ListType<ByteVector[]>({
-    elementType: Bytes32,
-    limit: 100,
-  });
+    const badSubType = new ContainerType({
+      fields: {
+        b: Bytes32,
+      },
+    });
 
-  const BeaconBlockType = new ContainerType<BeaconBlock>({
-    fields: {
-      slot: Number64,
-      proposerIndex: Number64,
-      parentRoot: Bytes32,
-      stateRoot: Bytes32,
-      subType: SubBlockType,
-      attestations: AttestationsType,
-    },
+    const rootList = new ListType<ByteVector[]>({elementType: Bytes32, limit: 1});
+    const numList = new ListType<number[]>({elementType: Number64, limit: 1});
+
+    const goodType = new ContainerType<SampleType>({
+      fields: {
+        a: Number64,
+        b: Bytes32,
+        subType: subType,
+        list: rootList,
+      },
+    });
+
+    // Illegal type, the subType does not implement an expected property
+    const missingProperty = new ContainerType<SampleType>({
+      // @ts-expect-error
+      fields: {
+        b: Bytes32,
+        subType: subType,
+        list: rootList,
+      },
+    });
+
+    // Illegal type, Declares an extra property
+    const undeclaredExtraProperty = new ContainerType<SampleType>({
+      fields: {
+        a: Number64,
+        b: Bytes32,
+        subType: subType,
+        list: rootList,
+        // @ts-expect-error
+        extraProperty: Number64,
+      },
+    });
+
+    // Illegal type, composite subtype does not implement an expected property
+    const wrongSubpropertyComposite = new ContainerType<SampleType>({
+      fields: {
+        a: Number64,
+        b: Bytes32,
+        // @ts-expect-error
+        subType: badSubType,
+        list: rootList,
+      },
+    });
+
+    // Illegal type, a ListType does not have the expected element type
+    const wrongSubpropertyList = new ContainerType<SampleType>({
+      fields: {
+        a: Number64,
+        b: Bytes32,
+        subType: subType,
+        // @ts-expect-error
+        list: numList,
+      },
+    });
+
+    // Illegal type, the ListType elementType does not match
+    const wrongElementType = new ListType<number[]>({
+      // @ts-expect-error
+      elementType: Bytes32,
+      limit: 1,
+    });
+
+    // Do something with the values to prevent unused variable errors
+    expect([
+      goodType,
+      missingProperty,
+      undeclaredExtraProperty,
+      wrongSubpropertyComposite,
+      wrongSubpropertyList,
+      wrongElementType,
+    ]).to.be.ok;
   });
 });

@@ -15,8 +15,12 @@ import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
+/** Force ContainerFields to not compile if the extends condition is not correct */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IsType<T extends Type<any>> = T;
+
 type ContainerFields<T extends ObjectLike> = {
-  [K in keyof T]: ReturnType<Type<T[K]>["defaultValue"]> extends T[K] ? Type<T[K]> : never;
+  [K in keyof T]: IsType<ReturnType<Type<T[K]>["defaultValue"]> extends T[K] ? Type<T[K]> : never>;
 };
 
 export interface IContainerOptions<T> {
@@ -402,7 +406,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     return variableIndex;
   }
 
-  getPropertyGindex(prop: PropertyKey): Gindex {
+  getPropertyGindex(prop: keyof T): Gindex {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
       throw new Error(`Invalid container field name: ${String(prop)}`);
@@ -410,8 +414,8 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     return this.getGindexAtChunkIndex(chunkIndex);
   }
 
-  getPropertyType(prop: PropertyKey): Type<unknown> {
-    const type = this.fields[prop as string];
+  getPropertyType(prop: keyof T): Type<unknown> {
+    const type = this.fields[prop];
     if (!type) {
       throw new Error(`Invalid container field name: ${String(prop)}`);
     }
@@ -422,7 +426,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     return Object.keys(this.fields);
   }
 
-  tree_getProperty(target: Tree, prop: PropertyKey): Tree | unknown {
+  tree_getProperty<K extends keyof T>(target: Tree, prop: K): Tree | T[K] {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
       return undefined;
@@ -436,16 +440,16 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     }
   }
 
-  tree_setProperty(target: Tree, property: PropertyKey, value: Tree | unknown): boolean {
+  tree_setProperty<K extends keyof T>(target: Tree, property: K, value: Tree | T[K]): boolean {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === property);
     if (chunkIndex === -1) {
       throw new Error("Invalid container field name");
     }
     const chunkGindex = this.getGindexAtChunkIndex(chunkIndex);
-    const fieldType = this.fields[property as string];
+    const fieldType = this.fields[property];
     if (!isCompositeType(fieldType)) {
       const chunk = new Uint8Array(32);
-      fieldType.struct_serializeToBytes(value, chunk, 0);
+      fieldType.struct_serializeToBytes(value as T[K], chunk, 0);
       target.setRoot(chunkGindex, chunk);
       return true;
     } else {
@@ -454,12 +458,12 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     }
   }
 
-  tree_deleteProperty(target: Tree, prop: PropertyKey): boolean {
+  tree_deleteProperty(target: Tree, prop: keyof T): boolean {
     const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
     if (chunkIndex === -1) {
       throw new Error("Invalid container field name");
     }
-    const fieldType = this.fields[prop as string];
+    const fieldType = this.fields[prop];
     if (!isCompositeType(fieldType)) {
       return this.tree_setProperty(target, prop, fieldType.struct_defaultValue());
     } else {

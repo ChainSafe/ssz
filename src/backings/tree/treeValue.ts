@@ -396,7 +396,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     let i = 0;
     for (const value of this.type.tree_readonlyIterateValues(this.tree)) {
       const propName = keys[i] as string;
-      const propType = this.type.getPropertyType(propName);
+      const propType = this.type.getPropertyType(propName as keyof T);
       if (isCompositeType(propType)) {
         yield [propName, createTreeBacked(propType, value as Tree) as ValueOf<T>];
       } else {
