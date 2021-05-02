@@ -159,7 +159,7 @@ function hashBlocks(wPtr: usize, mPtr: usize = 0): void {
   h = H7;
 
   // If mPtr is null, wPtr is assumed to be precomputed
-  if(mPtr){
+  if (mPtr) {
     // Load message blocks into first 16 expanded message blocks
     for (i = 0; i < 16; i++) {
       store32(wPtr, i,
