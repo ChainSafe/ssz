@@ -115,10 +115,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@chainsafe/as-sha256@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.2.0.tgz#3ebe061d59d30af9e95a8c22ff4813cbf0e89dbc"
-  integrity sha512-reKklZhY4jSj7JdxdAjUfsaiMt2pdm8V/IqlOR5c4m6Y4tRCxt4f0HBMfyiE2ZQF4tqPPqRVf/ulXwK+LjLIxw==
+"@chainsafe/as-sha256@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.2.1.tgz#47402cc7a0cfc42999e6d3ec7c9fbd77b494e3c3"
+  integrity sha512-dgLHu3SAGnPTq8y/TelpEs7AEZTF892b3+NYE2uwPs4VmPBa99c/1OLoYevSyn7meeS062Slq+Mp5TZQfH3HyQ==
   dependencies:
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
