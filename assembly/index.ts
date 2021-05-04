@@ -21,6 +21,27 @@ const K: u32[] = [
 ];
 const kPtr = K.dataStart;
 
+//precomputed W for message block representing length 64 bytes for fixed input of 64 bytes for digest64
+const W64: u32[] = [
+  0x80000000, 0x00000000, 0x00000000, 0x00000000,
+  0x00000000, 0x00000000, 0x00000000, 0x00000000,
+  0x00000000, 0x00000000, 0x00000000, 0x00000000,
+  0x00000000, 0x00000000, 0x00000000, 0x00000200,
+  0x80000000, 0x01400000, 0x00205000, 0x00005088,
+  0x22000800, 0x22550014, 0x05089742, 0xa0000020,
+  0x5a880000, 0x005c9400, 0x0016d49d, 0xfa801f00,
+  0xd33225d0, 0x11675959, 0xf6e6bfda, 0xb30c1549,
+  0x08b2b050, 0x9d7c4c27, 0x0ce2a393, 0x88e6e1ea,
+  0xa52b4335, 0x67a16f49, 0xd732016f, 0x4eeb2e91,
+  0x5dbf55e5, 0x8eee2335, 0xe2bc5ec2, 0xa83f4394,
+  0x45ad78f7, 0x36f3d0cd, 0xd99c05e8, 0xb0511dc7,
+  0x69bc7ac4, 0xbd11375b, 0xe3ba71e5, 0x3b209ff2,
+  0x18feee17, 0xe25ad9e7, 0x13375046, 0x0515089d,
+  0x4f0d0f04, 0x2627484e, 0x310128d2, 0xc668b434,
+  0x420841cc, 0x62d311b8, 0xe59ba771, 0x85a7a484
+];
+const w64Ptr = W64.dataStart;
+
 // intermediate hash values stored in H0-H7
 var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
@@ -125,9 +146,9 @@ function SIG1(x: u32): u32 {
  * Apply SHA256 compression function on extended message blocks
  * Update intermediate hash values
  * @param wPtr pointer to expanded message block memory
- * @param mPtr pointer to message block memory
+ * @param mPtr pointer to message block memory, pass 0 if wPtr is precomputed for e.g. in digest64
  */
-function hashBlocks(wPtr: usize, mPtr: usize): void {
+function hashBlocks(wPtr: usize, mPtr: usize = 0): void {
   a = H0;
   b = H1;
   c = H2;
@@ -137,22 +158,23 @@ function hashBlocks(wPtr: usize, mPtr: usize): void {
   g = H6;
   h = H7;
 
-  // Load message blocks into first 16 expanded message blocks
-  for (i = 0; i < 16; i++) {
-    store32(wPtr, i,
-      load32be(mPtr, i)
-    );
-  }
-
-
-  // Expand message blocks 17-64
-  for (i = 16; i < 64; i++) {
-    store32(wPtr, i,
-      SIG1(load32(wPtr, i - 2)) +
-      load32(wPtr, i - 7) +
-      SIG0(load32(wPtr, i - 15)) +
-      load32(wPtr, i - 16)
-    );
+  // If mPtr is null, wPtr is assumed to be precomputed
+  if (mPtr) {
+    // Load message blocks into first 16 expanded message blocks
+    for (i = 0; i < 16; i++) {
+      store32(wPtr, i,
+        load32be(mPtr, i)
+      );
+    }
+    // Expand message blocks 17-64
+    for (i = 16; i < 64; i++) {
+      store32(wPtr, i,
+        SIG1(load32(wPtr, i - 2)) +
+        load32(wPtr, i - 7) +
+        SIG0(load32(wPtr, i - 15)) +
+        load32(wPtr, i - 16)
+      );
+    }
   }
 
   // Apply SHA256 compression function on expanded message blocks
@@ -264,4 +286,18 @@ export function digest(length: i32): void {
   init();
   update(inputPtr, length);
   final(outputPtr)
+}
+
+export function digest64(inPtr: usize, outPtr: usize): void {
+  init();
+  hashBlocks(wPtr,inPtr);
+  hashBlocks(w64Ptr);
+  store32(outPtr, 0, bswap(H0));
+  store32(outPtr, 1, bswap(H1));
+  store32(outPtr, 2, bswap(H2));
+  store32(outPtr, 3, bswap(H3));
+  store32(outPtr, 4, bswap(H4));
+  store32(outPtr, 5, bswap(H5));
+  store32(outPtr, 6, bswap(H6));
+  store32(outPtr, 7, bswap(H7));
 }
