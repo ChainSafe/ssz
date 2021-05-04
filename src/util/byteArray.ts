@@ -1,19 +1,38 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {ByteVector} from "../interface";
 
-export function toHexString(target: Uint8Array | ByteVector): string {
-  return "0x" + [...target].map((b) => b.toString(16).padStart(2, "0")).join("");
+// Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
+const hexByByte: string[] = [];
+
+export function toHexString(bytes: Uint8Array | ByteVector): string {
+  let hex = "0x";
+  for (const byte of bytes) {
+    if (!hexByByte[byte]) {
+      hexByByte[byte] = byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
+    }
+    hex += hexByByte[byte];
+  }
+  return hex;
 }
 
-export function fromHexString(data: string): Uint8Array {
-  if (typeof data !== "string") {
+export function fromHexString(hex: string): Uint8Array {
+  if (typeof hex !== "string") {
     throw new Error("Expected hex string to be a string");
   }
-  if (data.length % 2 !== 0) {
+
+  if (hex.startsWith("0x")) {
+    hex = hex.slice(2);
+  }
+
+  if (hex.length % 2 !== 0) {
     throw new Error("Expected an even number of characters");
   }
-  data = data.replace("0x", "");
-  return new Uint8Array(data.match(/.{1,2}/g).map((b) => parseInt(b, 16)));
+
+  const bytes: number[] = [];
+  for (let i = 0, len = hex.length; i < len; i += 2) {
+    const byte = parseInt(hex.slice(i, i + 2), 16);
+    bytes.push(byte);
+  }
+  return new Uint8Array(bytes);
 }
 
 export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
