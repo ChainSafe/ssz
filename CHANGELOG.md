@@ -1,3 +1,13 @@
+## 0.2.1 (2021-05-04)
+
+### Chores
+
+- Add performance tests ([9621ea](https://github.com/ChainSafe/as-sha256/commit/9621ea))
+
+### Features
+
+- Add optimized digest64 method for 64 byte input ([4acbea](https://github.com/ChainSafe/as-sha256/commit/4acbea))
+
 <a name="0.2.0"></a>
 ## 0.2.0 (2020-02-19)
 
