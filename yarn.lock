@@ -791,20 +791,20 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@chainsafe/as-sha256@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.2.0.tgz#3ebe061d59d30af9e95a8c22ff4813cbf0e89dbc"
-  integrity sha512-reKklZhY4jSj7JdxdAjUfsaiMt2pdm8V/IqlOR5c4m6Y4tRCxt4f0HBMfyiE2ZQF4tqPPqRVf/ulXwK+LjLIxw==
+"@chainsafe/as-sha256@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.2.1.tgz#47402cc7a0cfc42999e6d3ec7c9fbd77b494e3c3"
+  integrity sha512-dgLHu3SAGnPTq8y/TelpEs7AEZTF892b3+NYE2uwPs4VmPBa99c/1OLoYevSyn7meeS062Slq+Mp5TZQfH3HyQ==
   dependencies:
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/persistent-merkle-tree@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.3.0.tgz#a289a0e58dc07f37580c1d3ab70de9a0ebdb0bc8"
-  integrity sha512-iaWCSldEuoJ3wOUxQYAjgXz+4Ry7VvkI+h8LnOdSoci4l81cfmTk6nglEi8WLX7ER4RqvAO/SVPOPovLzoVc6A==
+"@chainsafe/persistent-merkle-tree@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.3.1.tgz#bfe229d3b3941408854740037a5d60b16a771400"
+  integrity sha512-kzye3e7KhDX3TrBI6KOiNxBE56BXh1KJvkI7vky3TLbfjXrtvTGhyMMmg2mciKcVGeZZqYKSe6z3Hg0I8daxtA==
   dependencies:
-    "@chainsafe/as-sha256" "^0.2.0"
+    "@chainsafe/as-sha256" "^0.2.1"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
