@@ -1,3 +1,9 @@
+## 0.3.1 (2021-05-04)
+
+## Features
+
+- Use digest64 instead of digest to hash merkle nodes ([eeea76](https://github.com/chainsafe/persistent-merkle-tree/commit/eeea76))
+
 ## 0.3.0 (2021-03-26)
 
 ## BREAKING CHANGES
