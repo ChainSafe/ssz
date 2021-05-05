@@ -4,8 +4,6 @@ export default class SHA256 {
   update(data: Uint8Array): this;
   final(): Uint8Array;
 
-  static ctx: SHA256;
   static digest(data: Uint8Array): Uint8Array;
   static digest64(data: Uint8Array): Uint8Array;
 }
-

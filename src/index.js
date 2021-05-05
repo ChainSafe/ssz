@@ -31,31 +31,29 @@ export default class SHA256 {
   }
 
   static digest(data) {
-    if (data.length <= SHA256.ctx.INPUT_LENGTH) {
-      const input = new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.input.value, SHA256.ctx.INPUT_LENGTH);
+    if (data.length <= staticInstance.ctx.INPUT_LENGTH) {
+      const input = new Uint8Array(staticInstance.ctx.memory.buffer, staticInstance.ctx.input.value, staticInstance.ctx.INPUT_LENGTH);
       input.set(data);
-      SHA256.ctx.digest(data.length);
+      staticInstance.ctx.digest(data.length);
       const output = new Uint8Array(32);
-      output.set(new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.output.value, 32));
+      output.set(new Uint8Array(staticInstance.ctx.memory.buffer, staticInstance.ctx.output.value, 32));
       return output;
     }
-    return SHA256.ctx.init().update(data).final();
+    return staticInstance.init().update(data).final();
   }
 
   static digest64(data) {
     if (data.length==64) {
-      const input = new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.input.value, SHA256.ctx.INPUT_LENGTH);
+      const input = new Uint8Array(staticInstance.ctx.memory.buffer, staticInstance.ctx.input.value, staticInstance.ctx.INPUT_LENGTH);
       input.set(data);
-      SHA256.ctx.digest64(SHA256.ctx.input.value,SHA256.ctx.output.value);
+      staticInstance.ctx.digest64(staticInstance.ctx.input.value,staticInstance.ctx.output.value);
       const output = new Uint8Array(32);
-      output.set(new Uint8Array(SHA256.ctx.memory.buffer, SHA256.ctx.output.value, 32));
+      output.set(new Uint8Array(staticInstance.ctx.memory.buffer, staticInstance.ctx.output.value, 32));
       return output;
     }
     throw new Error("InvalidLengthForDigest64");
   }
 
-
 }
 
 const staticInstance = new SHA256();
-SHA256.ctx = staticInstance.ctx;
