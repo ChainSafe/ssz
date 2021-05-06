@@ -1,3 +1,9 @@
+## 0.2.1 (2021-05-06)
+
+### Bug Fixes
+
+- Fix static digest method ([a42f89](https://github.com/ChainSafe/as-sha256/commit/a42f89))
+
 ## 0.2.1 (2021-05-04)
 
 ### Chores
