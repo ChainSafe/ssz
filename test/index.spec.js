@@ -36,6 +36,19 @@ describe("sha256", function () {
             const output64 = Buffer.from(sha256.default.digest64(input)).toString("hex")
             expect(output).to.be.equal(output64)
         });
+
+        it('1024 digest test', function () {
+            let input = "12345678";
+            input=`${input}${input}${input}${input}${input}${input}${input}${input}`;//64 length
+            input=`${input}${input}${input}${input}${input}${input}${input}${input}`;//512 length
+            input=`${input}${input}`;//1024 length
+            input=Buffer.from(input,"utf8");
+            expect(input.length).to.be.equal(1024)
+
+            const output = Buffer.from(sha256.default.digest(input)).toString("hex");
+            expect(output).to.be.equal("54c7cb8a82d68145fd5f5da4103f5a66f422dbea23d9fc9f40f59b1dcf5403a9");
+        });
+
     })
 
 });
