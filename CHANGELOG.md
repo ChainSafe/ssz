@@ -1,3 +1,9 @@
+## 0.8.4 (2021-05-07)
+
+## Bug Fixes
+
+- Update as-sha256 ([8d497b](https://github.com/chainsafe/ssz/commit/8d497b))
+
 ## 0.8.3 (2021-05-04)
 
 ## Features
