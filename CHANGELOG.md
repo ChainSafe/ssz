@@ -1,3 +1,9 @@
+## 0.3.2 (2021-05-06)
+
+## Chores
+
+- Update as-sha256 ([116029](https://github.com/chainsafe/persistent-merkle-tree/commit/116029))
+
 ## 0.3.1 (2021-05-04)
 
 ## Features
