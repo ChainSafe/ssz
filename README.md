@@ -21,6 +21,9 @@ hash = sha256.init().update(Buffer.from("Hello world")).final();
 
 // or use a one-pass interface
 hash = SHA256.digest(Buffer.from("Hello world"));
+
+// or use a faster one-pass interface for hashing (only) 64 bytes
+hash = SHA256.digest64(Buffer.from("abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh"));
 ```
 
 ### License
