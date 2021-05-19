@@ -4,8 +4,19 @@ import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType, number32Type} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {mixInLength} from "../../util/compat";
-import {BranchNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {BranchNode, concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
+
+/**
+ * SSZ Lists (variable-length arrays) include the length of the list in the tree
+ * This length is always in the same index in the tree
+ * ```
+ *   1
+ *  / \
+ * 2   3 // <-here
+ * ```
+ */
+export const LENGTH_GINDEX = BigInt(3);
 
 export interface IListOptions extends IArrayOptions {
   limit: number;
@@ -112,13 +123,13 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   tree_getLength(target: Tree): number {
-    return number32Type.struct_deserializeFromBytes(target.getRoot(BigInt(3)), 0);
+    return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
   tree_setLength(target: Tree, length: number): void {
     const chunk = new Uint8Array(32);
     number32Type.toBytes(length, chunk, 0);
-    target.setRoot(BigInt(3), chunk);
+    target.setRoot(LENGTH_GINDEX, chunk);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
@@ -194,6 +205,15 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
 
   getMaxChunkCount(): number {
     return Math.ceil((this.limit * this.elementType.size()) / 32);
+  }
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    if (!target) {
+      throw new Error("variable type requires tree argument to get leaves");
+    }
+    const gindices = super.tree_getLeafGindices(target, root);
+    // include the length chunk
+    gindices.push(concatGindices([root, LENGTH_GINDEX]));
+    return gindices;
   }
 }
 
@@ -277,13 +297,13 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   }
 
   tree_getLength(target: Tree): number {
-    return number32Type.struct_deserializeFromBytes(target.getRoot(BigInt(3)), 0);
+    return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
   tree_setLength(target: Tree, length: number): void {
     const chunk = new Uint8Array(32);
     number32Type.struct_serializeToBytes(length, chunk, 0);
-    target.setRoot(BigInt(3), chunk);
+    target.setRoot(LENGTH_GINDEX, chunk);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
@@ -375,5 +395,14 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     this.tree_setSubtreeAtChunkIndex(target, length - 1, new Tree(zeroNode(0)));
     this.tree_setLength(target, length - 1);
     return value as T[number];
+  }
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    if (!target) {
+      throw new Error("variable type requires tree argument to get leaves");
+    }
+    const gindices = super.tree_getLeafGindices(target, root);
+    // include the length chunk
+    gindices.push(concatGindices([root, LENGTH_GINDEX]));
+    return gindices;
   }
 }
