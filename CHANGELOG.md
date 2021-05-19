@@ -1,3 +1,8 @@
+## 0.8.5 (2021-05-19)
+
+## Features
+
+- Add composite type leaves to proof ([3f1cfd](https://github.com/chainsafe/ssz/commit/3f1cfd))
 ## 0.8.4 (2021-05-07)
 
 ## Bug Fixes
