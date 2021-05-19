@@ -4,7 +4,7 @@ import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType, number32Type} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {mixInLength} from "../../util/compat";
-import {BranchNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {BranchNode, concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
 export interface IListOptions extends IArrayOptions {
@@ -195,6 +195,15 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   getMaxChunkCount(): number {
     return Math.ceil((this.limit * this.elementType.size()) / 32);
   }
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    if (!target) {
+      throw new Error("variable type requires tree argument to get leaves");
+    }
+    const gindices = super.tree_getLeafGindices(target, root);
+    // include the length chunk
+    gindices.push(concatGindices([root, BigInt(3)]));
+    return gindices;
+  }
 }
 
 export class CompositeListType<T extends List<object> = List<object>> extends CompositeArrayType<T> {
@@ -375,5 +384,14 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     this.tree_setSubtreeAtChunkIndex(target, length - 1, new Tree(zeroNode(0)));
     this.tree_setLength(target, length - 1);
     return value as T[number];
+  }
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    if (!target) {
+      throw new Error("variable type requires tree argument to get leaves");
+    }
+    const gindices = super.tree_getLeafGindices(target, root);
+    // include the length chunk
+    gindices.push(concatGindices([root, BigInt(3)]));
+    return gindices;
   }
 }

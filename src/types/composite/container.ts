@@ -3,6 +3,7 @@ import {Json, ObjectLike} from "../../interface";
 import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {
+  concatGindices,
   Gindex,
   iterateAtDepth,
   LeafNode,
@@ -509,5 +510,26 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
   getMaxChunkCount(): number {
     return Object.keys(this.fields).length;
+  }
+
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    const gindices: Gindex[] = [];
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
+      const fieldGindex = this.getPropertyGindex(fieldName);
+      const extendedFieldGindex = concatGindices([root, fieldGindex]);
+      if (!isCompositeType(fieldType)) {
+        gindices.push(extendedFieldGindex);
+      } else {
+        if (fieldType.hasVariableSerializedLength()) {
+          if (!target) {
+            throw new Error("variable type requires tree argument to get leaves");
+          }
+          gindices.push(...fieldType.tree_getLeafGindices(target.getSubtree(fieldGindex), extendedFieldGindex));
+        } else {
+          gindices.push(...fieldType.tree_getLeafGindices(undefined, extendedFieldGindex));
+        }
+      }
+    }
+    return gindices;
   }
 }
