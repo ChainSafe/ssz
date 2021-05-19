@@ -7,6 +7,17 @@ import {mixInLength} from "../../util/compat";
 import {BranchNode, concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
+/**
+ * SSZ Lists (variable-length arrays) include the length of the list in the tree
+ * This length is always in the same index in the tree
+ * ```
+ *   1
+ *  / \
+ * 2   3 // <-here
+ * ```
+ */
+export const LENGTH_GINDEX = BigInt(3);
+
 export interface IListOptions extends IArrayOptions {
   limit: number;
 }
@@ -112,13 +123,13 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   tree_getLength(target: Tree): number {
-    return number32Type.struct_deserializeFromBytes(target.getRoot(BigInt(3)), 0);
+    return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
   tree_setLength(target: Tree, length: number): void {
     const chunk = new Uint8Array(32);
     number32Type.toBytes(length, chunk, 0);
-    target.setRoot(BigInt(3), chunk);
+    target.setRoot(LENGTH_GINDEX, chunk);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
@@ -201,7 +212,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     }
     const gindices = super.tree_getLeafGindices(target, root);
     // include the length chunk
-    gindices.push(concatGindices([root, BigInt(3)]));
+    gindices.push(concatGindices([root, LENGTH_GINDEX]));
     return gindices;
   }
 }
@@ -286,13 +297,13 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   }
 
   tree_getLength(target: Tree): number {
-    return number32Type.struct_deserializeFromBytes(target.getRoot(BigInt(3)), 0);
+    return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
   tree_setLength(target: Tree, length: number): void {
     const chunk = new Uint8Array(32);
     number32Type.struct_serializeToBytes(length, chunk, 0);
-    target.setRoot(BigInt(3), chunk);
+    target.setRoot(LENGTH_GINDEX, chunk);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
@@ -391,7 +402,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
     }
     const gindices = super.tree_getLeafGindices(target, root);
     // include the length chunk
-    gindices.push(concatGindices([root, BigInt(3)]));
+    gindices.push(concatGindices([root, LENGTH_GINDEX]));
     return gindices;
   }
 }
