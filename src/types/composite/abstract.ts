@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {CompositeValue, Json} from "../../interface";
-import {BackedValue, CompositeArrayTreeValue, createTreeBacked, isBackedValue, Path, TreeBacked} from "../../backings";
+import {BackedValue, createTreeBacked, isBackedValue, Path, TreeBacked} from "../../backings";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {
   concatGindices,
