@@ -1,10 +1,10 @@
 import {expect} from "chai";
 
-import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType} from "../../src";
+import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType, Vector, ByteVector} from "../../src";
 
 describe("known issues", () => {
   it("default value of composite vector should be correct", () => {
-    const Vec = new VectorType({
+    const Vec = new VectorType<Vector<ByteVector>>({
       elementType: new ByteVectorType({length: 4}),
       length: 4,
     });

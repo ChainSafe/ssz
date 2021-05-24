@@ -36,7 +36,7 @@ describe("equals", () => {
     {value1: 0, value2: 1, type: byteType, expected: false},
     {value1: 0, value2: 1, type: byteType, expected: false},
     {value1: Infinity, value2: Infinity, type: byteType, expected: true},
-    {value1: 1000n, value2: 1000n, type: bigint16Type, expected: true},
+    {value1: BigInt(1000), value2: BigInt(1000), type: bigint16Type, expected: true},
     {value1: true, value2: true, type: booleanType, expected: true},
     {value1: false, value2: false, type: booleanType, expected: true},
     {value1: false, value2: true, type: booleanType, expected: false},

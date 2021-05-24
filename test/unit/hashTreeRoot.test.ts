@@ -48,12 +48,12 @@ describe("hashTreeRoot", () => {
     {value: 2 ** 52 - 1, type: number64Type, expected: ""},
     {value: 2 ** 32, type: number64Type, expected: ""},
     {value: 2 ** 52 - 1, type: number64Type, expected: ""},
-    {value: 0x1n, type: bigint64Type, expected: ""},
-    {value: 0x1000000000000000n, type: bigint64Type, expected: ""},
-    {value: 0xffffffffffffffffn, type: bigint64Type, expected: ""},
-    {value: 0xffffffffffffffffffffffffffffffffn, type: bigint128Type, expected: ""},
+    {value: BigInt(0x1), type: bigint64Type, expected: ""},
+    {value: BigInt("0x1000000000000000"), type: bigint64Type, expected: ""},
+    {value: BigInt("0xffffffffffffffff"), type: bigint64Type, expected: ""},
+    {value: BigInt("0xffffffffffffffffffffffffffffffff"), type: bigint128Type, expected: ""},
     {
-      value: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn,
+      value: BigInt("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
       type: bigint256Type,
       expected: "",
     },
@@ -111,7 +111,7 @@ describe("hashTreeRoot", () => {
     };
     const count = 2;
     for (let i = 0; i < count; i++) {
-      accountBalances.balances.push(0x32000000000n);
+      accountBalances.balances.push(BigInt("0x32000000000"));
     }
     const accountBalancesType = new ContainerType({
       fields: {
@@ -130,7 +130,7 @@ describe("hashTreeRoot", () => {
     const fork = {
       previousVersion,
       curVersion,
-      epoch: 11971467576204192310n,
+      epoch: BigInt("11971467576204192310"),
     };
     const forkType = new ContainerType({
       fields: {

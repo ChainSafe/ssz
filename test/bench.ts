@@ -14,8 +14,8 @@ const m = mtree;
 // validator registry
 
 interface Validator {
-  pubkey: Uint8Array;
-  withdrawalCredentials: Uint8Array;
+  pubkey: i.ByteVector;
+  withdrawalCredentials: i.ByteVector;
   effectiveBalance: bigint;
   slashed: boolean;
   activationEligibilityEpoch: number;
@@ -68,7 +68,7 @@ const struct10k: ValidatorRegistry = Array.from({length: 10000}, randomValidator
 //const struct100k: ValidatorRegistry = Array.from({length: 100000}, randomValidator);
 //const struct1m: ValidatorRegistry = Array.from({length: 1000000}, randomValidator);
 
-const tree10k: ValidatorRegistry = validatorRegistryType2.tree.createValue(struct10k);
+const tree10k: ValidatorRegistry = validatorRegistryType2.createTreeBackedFromStruct(struct10k);
 //const tree100k: ValidatorRegistry = validatorRegistryType2.tree.createValue(struct100k);
 //const tree1m: ValidatorRegistry = validatorRegistryType2.tree.createValue(struct1m);
 
