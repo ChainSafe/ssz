@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "author": "ChainSafe Systems",
   "homepage": "https://github.com/chainsafe/ssz",
-  "version": "0.8.2",
+  "version": "0.8.5",
   "main": "lib/index.js",
   "files": [
     "lib/**/*.d.ts",
@@ -30,8 +30,8 @@
   },
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@chainsafe/as-sha256": "^0.2.0",
-    "@chainsafe/persistent-merkle-tree": "^0.3.0",
+    "@chainsafe/as-sha256": "^0.2.2",
+    "@chainsafe/persistent-merkle-tree": "^0.3.2",
     "case": "^1.6.3"
   },
   "devDependencies": {

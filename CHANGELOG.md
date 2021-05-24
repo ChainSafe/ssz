@@ -1,3 +1,26 @@
+## 0.8.5 (2021-05-19)
+
+## Features
+
+- Add composite type leaves to proof ([3f1cfd](https://github.com/chainsafe/ssz/commit/3f1cfd))
+## 0.8.4 (2021-05-07)
+
+## Bug Fixes
+
+- Update as-sha256 ([8d497b](https://github.com/chainsafe/ssz/commit/8d497b))
+
+## 0.8.3 (2021-05-04)
+
+## Features
+
+- Improve hexToString performance ([106991](https://github.com/chainsafe/ssz/commit/106991))
+
+## Chores
+
+- Update as-sha256 & persistent-merkle-tree ([212927](https://github.com/chainsafe/ssz/commit/212927))
+- Use for of instead of forEach ([e195df](https://github.com/chainsafe/ssz/commit/e195df))
+- Add whitespace ([516421](https://github.com/chainsafe/ssz/commit/516421))
+
 ## 0.8.2 (2021-04-05)
 
 ## Features

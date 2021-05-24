@@ -3,7 +3,16 @@ import {ArrayLike, CompositeValue, Json} from "../../interface";
 import {IJsonOptions, Type} from "../type";
 import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
-import {Gindex, iterateAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
+import {
+  concatGindices,
+  Gindex,
+  iterateAtDepth,
+  LeafNode,
+  Node,
+  subtreeFillToContents,
+  toGindex,
+  Tree,
+} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
 type ArrayElementType<T extends ArrayLike<unknown>> = T extends ArrayLike<infer E> ? Type<E> : Type<T>;
@@ -263,6 +272,16 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   bytes_getVariableOffsets(target: Uint8Array): [number, number][] {
     return [];
+  }
+
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    const chunkCount = this.tree_getChunkCount(target);
+    const startIndex = concatGindices([root, toGindex(this.getChunkDepth(), BigInt(0))]);
+    const gindices: Gindex[] = [];
+    for (let i = 0, gindex = startIndex; i < chunkCount; i++, gindex++) {
+      gindices.push(gindex);
+    }
+    return gindices;
   }
 }
 
@@ -562,5 +581,32 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     } else {
       return [];
     }
+  }
+
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    // Underlying elements exist one per chunk
+    // Iterate through chunk gindices, recursively fetching leaf gindices from each chunk
+    const chunkCount = this.tree_getChunkCount(target);
+    const gindices: Gindex[] = [];
+    const startIndex = toGindex(this.getChunkDepth(), BigInt(0));
+    const extendedStartIndex = concatGindices([root, startIndex]);
+    if (this.elementType.hasVariableSerializedLength()) {
+      if (!target) {
+        throw new Error("variable type requires tree argument to get leaves");
+      }
+      // variable-length elements must pass the underlying subtrees to determine the length
+      for (
+        let i = 0, gindex = startIndex, extendedGindex = extendedStartIndex;
+        i < chunkCount;
+        i++, gindex++, extendedGindex++
+      ) {
+        gindices.push(...this.elementType.tree_getLeafGindices(target.getSubtree(gindex), extendedGindex));
+      }
+    } else {
+      for (let i = 0, gindex = extendedStartIndex; i < chunkCount; i++, gindex++) {
+        gindices.push(...this.elementType.tree_getLeafGindices(undefined, gindex));
+      }
+    }
+    return gindices;
   }
 }

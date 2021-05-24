@@ -172,7 +172,16 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   abstract tree_getPropertyNames(tree: Tree): (string | number)[];
 
   abstract getPropertyGindex(property: PropertyKey): Gindex;
-  getPathGindex(path: Path): Gindex {
+  abstract getPropertyType(property: PropertyKey): Type<unknown> | undefined;
+  abstract tree_getProperty(tree: Tree, property: PropertyKey): Tree | unknown;
+  abstract tree_setProperty(tree: Tree, property: PropertyKey, value: Tree | unknown): boolean;
+  abstract tree_deleteProperty(tree: Tree, property: PropertyKey): boolean;
+  abstract tree_iterateValues(tree: Tree): IterableIterator<Tree | unknown>;
+  abstract tree_readonlyIterateValues(tree: Tree): IterableIterator<Tree | unknown>;
+  /**
+   * Navigate to a subtype & gindex using a path
+   */
+  getPathInfo(path: Path): {gindex: Gindex; type: Type<unknown>} {
     const gindices = [];
     let type = this as CompositeType<CompositeValue>;
     for (const prop of path) {
@@ -182,17 +191,42 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       gindices.push(type.getPropertyGindex(prop));
       type = type.getPropertyType(prop) as CompositeType<CompositeValue>;
     }
-    return concatGindices(gindices);
+    return {
+      type,
+      gindex: concatGindices(gindices),
+    };
   }
+  getPathGindex(path: Path): Gindex {
+    return this.getPathInfo(path).gindex;
+  }
+  /**
+   * Get leaf gindices
+   *
+   * Note: This is a recursively called method.
+   * Subtypes recursively call this method until basic types / leaf data is hit.
+   *
+   * @param target Used for variable-length types.
+   * @param root Used to anchor the returned gindices to a non-root gindex.
+   * This is used to augment leaf gindices in recursively-called subtypes relative to the type.
+   * @returns The gindices corresponding to leaf data.
+   */
+  abstract tree_getLeafGindices(target?: Tree, root?: Gindex): Gindex[];
 
-  abstract getPropertyType(property: PropertyKey): Type<unknown> | undefined;
-  abstract tree_getProperty(tree: Tree, property: PropertyKey): Tree | unknown;
-  abstract tree_setProperty(tree: Tree, property: PropertyKey, value: Tree | unknown): boolean;
-  abstract tree_deleteProperty(tree: Tree, property: PropertyKey): boolean;
-  abstract tree_iterateValues(tree: Tree): IterableIterator<Tree | unknown>;
-  abstract tree_readonlyIterateValues(tree: Tree): IterableIterator<Tree | unknown>;
   tree_createProof(target: Tree, paths: Path[]): Proof {
-    const gindices = paths.map((path) => this.getPathGindex(path));
+    const gindices = paths
+      .map((path) => {
+        const {type, gindex} = this.getPathInfo(path);
+        if (!isCompositeType(type)) {
+          return gindex;
+        } else {
+          // if the path subtype is composite, include the gindices of all the leaves
+          return type.tree_getLeafGindices(
+            type.hasVariableSerializedLength() ? target.getSubtree(gindex) : undefined,
+            gindex
+          );
+        }
+      })
+      .flat(1);
     return target.getProof({
       type: ProofType.treeOffset,
       gindices,

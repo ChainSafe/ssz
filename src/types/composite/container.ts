@@ -2,6 +2,7 @@ import {Json, ObjectLike} from "../../interface";
 import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {
+  concatGindices,
   Gindex,
   iterateAtDepth,
   LeafNode,
@@ -40,21 +41,21 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
 
   struct_defaultValue(): T {
     const obj = {} as T;
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       obj[fieldName as keyof T] = fieldType.struct_defaultValue() as T[keyof T];
-    });
+    }
     return obj;
   }
 
   struct_getSerializedLength(value: T): number {
     let s = 0;
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       if (fieldType.hasVariableSerializedLength()) {
         s += fieldType.struct_getSerializedLength(value[fieldName]) + 4;
       } else {
         s += fieldType.struct_getSerializedLength(null);
       }
-    });
+    }
     return s;
   }
 
@@ -83,13 +84,13 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
   }
 
   struct_assertValidValue(value: unknown): asserts value is T {
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       try {
         fieldType.struct_assertValidValue((value as T)[fieldName]);
       } catch (e) {
         throw new Error(`Invalid field ${fieldName}: ${e.message}`);
       }
-    });
+    }
   }
 
   struct_equals(value1: T, value2: T): boolean {
@@ -102,9 +103,9 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
 
   struct_clone(value: T): T {
     const newValue = {} as T;
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       newValue[fieldName as keyof T] = fieldType.struct_clone(value[fieldName]);
-    });
+    }
     return newValue;
   }
 
@@ -134,8 +135,9 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     if (fixedEnd !== offsets[0]) {
       throw new Error("Not all variable bytes consumed");
     }
+
     let offsetIndex = 0;
-    Object.entries(this.fields).forEach(([fieldName, fieldType], i) => {
+    for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
       try {
         const fieldSize = fixedSizes[i];
         if (fieldSize === false) {
@@ -162,7 +164,8 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
       } catch (e) {
         throw new SszErrorPath(e, fieldName);
       }
-    });
+    }
+
     if (offsets.length > 1) {
       if (offsetIndex !== offsets.length - 1) {
         throw new Error("Not all variable bytes consumed");
@@ -188,7 +191,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
       );
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       if (fieldType.hasVariableSerializedLength()) {
         // write offset
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
@@ -198,7 +201,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
       } else {
         fixedIndex = fieldType.toBytes(value[fieldName], output, fixedIndex);
       }
-    });
+    }
     return variableIndex;
   }
 
@@ -213,21 +216,21 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
       throw new Error("Invalid JSON container: expected Object");
     }
     const value = {} as T;
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       const expectedFieldName = toExpectedCase(fieldName, options?.case);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
       value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[expectedFieldName], options);
-    });
+    }
     return value;
   }
 
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
-    Object.entries(this.fields).forEach(([fieldName, fieldType]) => {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       data[toExpectedCase(fieldName, options?.case)] = fieldType.toJson(value[fieldName as keyof T], options);
-    });
+    }
     return data;
   }
 
@@ -254,6 +257,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
   }
 
   bytes_getVariableOffsets(target: Uint8Array): [number, number][] {
+    const types = Object.values(this.fields);
     const offsets: [number, number][] = [];
     // variable-sized values can be interspersed with fixed-sized values
     // variable-sized value indices are serialized as offsets, indices deeper in the byte array
@@ -263,7 +267,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     const fixedOffsets: [number, number][] = [];
     const variableOffsets: number[] = [];
     let variableIndex = 0;
-    Object.values(this.fields).forEach((fieldType, i) => {
+    for (const [i, fieldType] of types.entries()) {
       if (fieldType.hasVariableSerializedLength()) {
         const offset = fixedSection.getUint32(currentIndex, true);
         if (offset > target.length) {
@@ -277,10 +281,11 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
         fixedOffsets[i] = [currentIndex, nextIndex];
         currentIndex = nextIndex;
       }
-    });
+    }
+
     variableOffsets.push(target.length);
     variableIndex = 0;
-    Object.values(this.fields).forEach((fieldType, i) => {
+    for (const [i, fieldType] of types.entries()) {
       if (fieldType.hasVariableSerializedLength()) {
         if (variableOffsets[variableIndex] > variableOffsets[variableIndex + 1]) {
           throw new Error("Offsets must be increasing");
@@ -290,7 +295,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
       } else {
         offsets.push(fixedOffsets[i]);
       }
-    });
+    }
     return offsets;
   }
 
@@ -312,7 +317,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
 
   tree_convertToStruct(target: Tree): T {
     const value = {} as T;
-    Object.entries(this.fields).forEach(([fieldName, fieldType], i) => {
+    for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
       if (!isCompositeType(fieldType)) {
         const chunk = this.tree_getRootAtChunkIndex(target, i);
         value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(chunk, 0);
@@ -320,13 +325,13 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
         const subtree = this.tree_getSubtreeAtChunkIndex(target, i);
         value[fieldName as keyof T] = fieldType.tree_convertToStruct(subtree) as T[keyof T];
       }
-    });
+    }
     return value;
   }
 
   tree_getSerializedLength(target: Tree): number {
     let s = 0;
-    Object.values(this.fields).forEach((fieldType, i) => {
+    for (const [i, fieldType] of Object.values(this.fields).entries()) {
       if (fieldType.hasVariableSerializedLength()) {
         s +=
           (fieldType as CompositeType<T[keyof T]>).tree_getSerializedLength(
@@ -335,14 +340,14 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
       } else {
         s += fieldType.struct_getSerializedLength(null);
       }
-    });
+    }
     return s;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
     const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
-    Object.values(this.fields).forEach((fieldType, i) => {
+    for (const [i, fieldType] of Object.values(this.fields).entries()) {
       const [currentOffset, nextOffset] = offsets[i];
       if (!isCompositeType(fieldType)) {
         // view of the chunk, shared buffer from `data`
@@ -362,7 +367,7 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
           fieldType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset)
         );
       }
-    });
+    }
     return target;
   }
 
@@ -503,5 +508,26 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
 
   getMaxChunkCount(): number {
     return Object.keys(this.fields).length;
+  }
+
+  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    const gindices: Gindex[] = [];
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
+      const fieldGindex = this.getPropertyGindex(fieldName);
+      const extendedFieldGindex = concatGindices([root, fieldGindex]);
+      if (!isCompositeType(fieldType)) {
+        gindices.push(extendedFieldGindex);
+      } else {
+        if (fieldType.hasVariableSerializedLength()) {
+          if (!target) {
+            throw new Error("variable type requires tree argument to get leaves");
+          }
+          gindices.push(...fieldType.tree_getLeafGindices(target.getSubtree(fieldGindex), extendedFieldGindex));
+        } else {
+          gindices.push(...fieldType.tree_getLeafGindices(undefined, extendedFieldGindex));
+        }
+      }
+    }
+    return gindices;
   }
 }
