@@ -47,11 +47,14 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     return obj;
   }
 
-  struct_getSerializedLength(value: T): number {
+  struct_getSerializedLength(value?: T): number {
+    if (this.hasVariableSerializedLength() && !value) {
+      throw new Error("variable-size type must include value");
+    }
     let s = 0;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       if (fieldType.hasVariableSerializedLength()) {
-        s += fieldType.struct_getSerializedLength(value[fieldName]) + 4;
+        s += fieldType.struct_getSerializedLength((value as T)[fieldName]) + 4;
       } else {
         s += fieldType.struct_getSerializedLength(null);
       }
@@ -329,13 +332,16 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
     return value;
   }
 
-  tree_getSerializedLength(target: Tree): number {
+  tree_getSerializedLength(target?: Tree): number {
+    if (this.hasVariableSerializedLength() && !target) {
+      throw new Error("variable-size type must include value");
+    }
     let s = 0;
     for (const [i, fieldType] of Object.values(this.fields).entries()) {
       if (fieldType.hasVariableSerializedLength()) {
         s +=
           (fieldType as CompositeType<T[keyof T]>).tree_getSerializedLength(
-            this.tree_getSubtreeAtChunkIndex(target, i)
+            this.tree_getSubtreeAtChunkIndex(target as Tree, i)
           ) + 4;
       } else {
         s += fieldType.struct_getSerializedLength(null);
@@ -511,6 +517,9 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
   }
 
   tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+    if (this.hasVariableSerializedLength() && !target) {
+      throw new Error("variable-size type must include value");
+    }
     const gindices: Gindex[] = [];
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       const fieldGindex = this.getPropertyGindex(fieldName);
@@ -519,10 +528,9 @@ export class ContainerType<T extends ObjectLike> extends CompositeType<T> {
         gindices.push(extendedFieldGindex);
       } else {
         if (fieldType.hasVariableSerializedLength()) {
-          if (!target) {
-            throw new Error("variable type requires tree argument to get leaves");
-          }
-          gindices.push(...fieldType.tree_getLeafGindices(target.getSubtree(fieldGindex), extendedFieldGindex));
+          gindices.push(
+            ...fieldType.tree_getLeafGindices((target as Tree).getSubtree(fieldGindex), extendedFieldGindex)
+          );
         } else {
           gindices.push(...fieldType.tree_getLeafGindices(undefined, extendedFieldGindex));
         }

@@ -27,8 +27,8 @@ export function isCompositeType(type: Type<unknown>): type is CompositeType<Comp
  *
  */
 export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
-  _chunkDepth: number;
-  _defaultNode: Node;
+  _chunkDepth?: number;
+  _defaultNode?: Node;
 
   constructor() {
     super();
@@ -100,8 +100,8 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       throw new Error(`End param: ${end} is greater than length: ${data.length}`);
     }
     const length = end - start;
-    if (!this.hasVariableSerializedLength() && length !== this.struct_getSerializedLength(null)) {
-      throw new Error(`Incorrect data length ${length}, expect ${this.struct_getSerializedLength(null)}`);
+    if (!this.hasVariableSerializedLength() && length !== this.struct_getSerializedLength()) {
+      throw new Error(`Incorrect data length ${length}, expect ${this.struct_getSerializedLength()}`);
     }
     if (end - start < this.getMinSerializedLength()) {
       throw new Error(`Data length ${length} is too small, expect at least ${this.getMinSerializedLength()}`);
@@ -120,17 +120,57 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
 
   abstract getMinSerializedLength(): number;
   abstract getMaxSerializedLength(): number;
-  abstract struct_getSerializedLength(struct: T): number;
-  abstract tree_getSerializedLength(tree: Tree): number;
+
+  /**
+   * Get the serialized length in number of bytes
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param struct value - only needed if the type is variable-length
+   */
+  abstract struct_getSerializedLength(struct?: T): number;
+
+  /**
+   * Get the serialized length in number of bytes
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param tree value - only needed if the type is variable-length
+   */
+  abstract tree_getSerializedLength(tree?: Tree): number;
+
+  /**
+   * Is the type variable-length
+   */
   abstract hasVariableSerializedLength(): boolean;
+
   abstract bytes_getVariableOffsets(target: Uint8Array): [number, number][];
 
   abstract getMaxChunkCount(): number;
-  struct_getChunkCount(struct: T): number {
+
+  /**
+   * Get the number of merkle nodes at `type.getChunkDepth()`
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param struct - value - only needed if the type is variable-length
+   */
+  struct_getChunkCount(struct?: T): number {
     return this.getMaxChunkCount();
   }
 
-  tree_getChunkCount(target: Tree): number {
+  /**
+   * Get the number of merkle nodes at `type.getChunkDepth()`
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param target - value - only needed if the type is variable-length
+   */
+  tree_getChunkCount(target?: Tree): number {
     return this.getMaxChunkCount();
   }
 

@@ -334,7 +334,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
 
   getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
     if (!this.type.fields[property]) {
-      return undefined;
+      return undefined as ValueOf<T, P>;
     }
     const propType = this.type.getPropertyType(property);
     const propValue = this.type.tree_getProperty(this.tree, property);

@@ -21,31 +21,28 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     this._typeSymbols.add(BITVECTOR_TYPE);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getLength(value: BitVector): number {
+  struct_getLength(): number {
     return this.length;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getByteLength(value: BitVector): number {
+  struct_getByteLength(): number {
     return Math.ceil(this.length / 8);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getSerializedLength(value: BitVector): number {
+  struct_getSerializedLength(): number {
     return Math.ceil(this.length / 8);
   }
 
   getMaxSerializedLength(): number {
-    return this.struct_getSerializedLength(null);
+    return this.struct_getSerializedLength();
   }
 
   getMinSerializedLength(): number {
-    return this.struct_getSerializedLength(null);
+    return this.struct_getSerializedLength();
   }
 
-  struct_getChunkCount(value: BitVector): number {
-    return Math.ceil(this.struct_getLength(value) / 256);
+  struct_getChunkCount(): number {
+    return Math.ceil(this.struct_getLength() / 256);
   }
 
   struct_getByte(value: BitVector, index: number): number {
@@ -60,7 +57,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitVector {
     this.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    if (end - start !== this.struct_getSerializedLength()) {
       throw new Error("Invalid bitvector: length not equal to vector length");
     }
     const value = [];
@@ -82,7 +79,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   }
 
   struct_serializeToBytes(value: BitVector, output: Uint8Array, offset: number): number {
-    const byteLength = this.struct_getByteLength(value);
+    const byteLength = this.struct_getByteLength();
     for (let i = 0; i < byteLength; i++) {
       output[offset + i] = this.struct_getByte(value, i);
     }
@@ -91,7 +88,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
 
   struct_getRootAtChunkIndex(value: BitVector, index: number): Uint8Array {
     const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.struct_getByteLength(value) - index);
+    const byteLength = Math.min(32, this.struct_getByteLength() - index);
     for (let i = 0; i < byteLength; i++) {
       output[i] = this.struct_getByte(value, i + index);
     }
@@ -107,12 +104,12 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return toHexString(this.serialize(value));
   }
 
-  tree_getByteLength(target: Tree): number {
-    return Math.ceil(this.tree_getLength(target) / 8);
+  tree_getByteLength(): number {
+    return Math.ceil(this.tree_getLength() / 8);
   }
 
-  tree_getSerializedLength(target: Tree): number {
-    return this.tree_getByteLength(target);
+  tree_getSerializedLength(): number {
+    return this.tree_getByteLength();
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
@@ -137,13 +134,13 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return Math.floor(index / 256);
   }
 
-  tree_getChunkCount(target: Tree): number {
-    return Math.ceil(this.tree_getLength(target) / 256);
+  tree_getChunkCount(): number {
+    return Math.ceil(this.tree_getLength() / 256);
   }
 
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    const length = this.tree_getLength(target);
-    const chunkCount = this.tree_getChunkCount(target);
+    const length = this.tree_getLength();
+    const chunkCount = this.tree_getChunkCount();
     const nodeIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
     let i = 0;
     for (const node of nodeIterator) {

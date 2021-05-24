@@ -13,7 +13,7 @@ export type Vector<T> = ArrayLike<T>;
 
 export interface List<T> extends ArrayLike<T> {
   push(...values: T[]): number;
-  pop(): T;
+  pop(): T | undefined;
 }
 
 export type Container<T extends Record<string, unknown>> = T;

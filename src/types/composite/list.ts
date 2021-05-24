@@ -60,6 +60,9 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   struct_getLength(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return value.length;
   }
 
@@ -84,6 +87,9 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   struct_getChunkCount(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return Math.ceil((value.length * this.elementType.struct_getSerializedLength()) / 32);
   }
 
@@ -122,6 +128,9 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   tree_getLength(target: Tree): number {
+    if (!target) {
+      throw new Error("variable-size type must include value");
+    }
     return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
@@ -192,7 +201,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     return newLength;
   }
 
-  tree_pop(target: Tree): T[number] {
+  tree_pop(target: Tree): T[number] | undefined {
     const length = this.tree_getLength(target);
     const value = this.tree_getProperty(target, length - 1);
     super.tree_deleteProperty(target, length - 1);
@@ -240,6 +249,9 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   }
 
   struct_getLength(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return value.length;
   }
 
@@ -261,6 +273,9 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   }
 
   struct_getChunkCount(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return value.length;
   }
 
@@ -298,6 +313,9 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   }
 
   tree_getLength(target: Tree): number {
+    if (!target) {
+      throw new Error("variable-size type must include value");
+    }
     return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
@@ -324,7 +342,7 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
       }
       this.tree_setLength(target, offsets.length);
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = this.elementType.struct_getSerializedLength();
       const length = (end - start) / elementSize;
       if (!Number.isSafeInteger(length)) {
         throw new Error("Deserialized list byte length must be divisible by element size");
@@ -385,12 +403,12 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   }
 
   tree_push(target: Tree, ...values: Tree[]): number {
-    let newLength;
+    let newLength = 0;
     for (const value of values) newLength = this.tree_pushSingle(target, value);
     return newLength;
   }
 
-  tree_pop(target: Tree): T[number] {
+  tree_pop(target: Tree): T[number] | undefined {
     const length = this.tree_getLength(target);
     const value = this.tree_getProperty(target, length - 1);
     this.tree_setSubtreeAtChunkIndex(target, length - 1, new Tree(zeroNode(0)));

@@ -34,7 +34,7 @@ export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
 }
 
 export class NumberUintType extends UintType<number> {
-  _maxBigInt: BigInt;
+  _maxBigInt?: BigInt;
   constructor(options: IUintOptions) {
     super(options);
     this._typeSymbols.add(NUMBER_UINT_TYPE);
