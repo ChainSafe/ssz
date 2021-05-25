@@ -91,7 +91,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     if (data.length !== expectedLength) {
       throw new Error(`Invalid JSON vector length: expected ${expectedLength}, actual ${data.length}`);
     }
-    return super.fromJson(data);
+    return super.struct_convertFromJson(data);
   }
 
   tree_defaultNode(): Node {
