@@ -1,3 +1,9 @@
+## 0.8.5 (2021-05-25)
+
+## Bug Fixes
+
+- Fix basic vector struct_convertFromJson ([05e7c2](https://github.com/chainsafe/ssz/commit/05e7c2))
+
 ## 0.8.5 (2021-05-19)
 
 ## Features
