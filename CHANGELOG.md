@@ -1,4 +1,10 @@
-## 0.8.5 (2021-05-25)
+## 0.8.7 (2021-06-01)
+
+## Bug Fixes
+
+- Fix BitVector tree_deserializeFromBytes() ([fd2c7d](https://github.com/chainsafe/ssz/commit/fd2c7d))
+
+## 0.8.6 (2021-05-25)
 
 ## Bug Fixes
 
@@ -9,6 +15,7 @@
 ## Features
 
 - Add composite type leaves to proof ([3f1cfd](https://github.com/chainsafe/ssz/commit/3f1cfd))
+
 ## 0.8.4 (2021-05-07)
 
 ## Bug Fixes
