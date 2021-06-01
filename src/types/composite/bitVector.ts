@@ -119,9 +119,14 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     // mask last byte to ensure it doesn't go over length
     const lastByte = data[end - 1];
-    const mask = (0xff << this.length % 8) & 0xff;
-    if (lastByte & mask) {
-      throw new Error("Invalid deserialized bitvector length");
+    // If the data len fits full bytes this check must be skipped.
+    // Otherwise we must ensure that the extra bits are set to zero.
+    const lastByteBitLen = this.length % 8;
+    if (lastByteBitLen > 0) {
+      const mask = (0xff << lastByteBitLen) & 0xff;
+      if ((lastByte & mask) > 0) {
+        throw new Error("Invalid deserialized bitvector length");
+      }
     }
     return super.tree_deserializeFromBytes(data, start, end);
   }

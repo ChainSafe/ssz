@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType, ListType} from "../../src";
+import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType, ListType, fromHexString} from "../../src";
 
 describe("known issues", () => {
   it("default value of composite vector should be correct", () => {
@@ -30,6 +30,20 @@ describe("known issues", () => {
 
     expect(() => CommitteeBits.createTreeBackedFromStruct(bits)).to.not.throw();
     expect(() => CommitteeBitsVector.createTreeBackedFromStruct(bits)).to.not.throw();
+  });
+
+  it("converts Uint8Array to tree", function () {
+    const CommitteeBits = new BitListType({limit: 32});
+    const CommitteeBitsVector = new BitVectorType({length: 32});
+    const validBytes = fromHexString("0xffffffff");
+
+    expect(() => CommitteeBits.createTreeBackedFromBytes(validBytes)).to.not.throw();
+    expect(() => CommitteeBitsVector.createTreeBackedFromBytes(validBytes)).to.not.throw();
+
+    const invalidBytes = fromHexString("0xffffffffff");
+    const CommitteeBitsVector2 = new BitVectorType({length: 33});
+    // all bits after length should be 0 so this should throw error
+    expect(() => CommitteeBitsVector2.createTreeBackedFromBytes(invalidBytes)).to.throw("Invalid deserialized bitvector length");
   });
 
   it("converts basic vector and list from json", function () {
