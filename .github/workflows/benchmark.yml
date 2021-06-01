@@ -39,6 +39,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Enable alert commit comment
           comment-on-alert: true
-          # Push and deploy GitHub pages branch automatically
-          auto-push: true
       # Upload the updated cache file for the next job by actions/cache
