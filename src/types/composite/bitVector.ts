@@ -124,7 +124,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     const lastByteBitLen = this.length % 8;
     if (lastByteBitLen > 0) {
       const mask = (0xff << lastByteBitLen) & 0xff;
-      if (lastByte & mask > 0) {
+      if ((lastByte & mask) > 0) {
         throw new Error("Invalid deserialized bitvector length");
       }
     }
