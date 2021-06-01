@@ -1,14 +1,20 @@
-name: Perf
+name: Tests
 
 on: [pull_request, push]
 
 jobs:
   test:
-    name: Test
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Bootstrap
         run: yarn
-      - name: Run performance tests
-        run: node_modules/.bin/ts-node test/perf/all.ts
+      - name: Check types
+        run: yarn check-types
+      - name: Build
+        run: yarn build
+      - name: Lint
+        run: yarn lint
+      - name: Tests
+        run: yarn test

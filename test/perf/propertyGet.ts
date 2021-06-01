@@ -42,3 +42,5 @@ for (const {id, type} of testCases) {
     },
   });
 }
+
+runner.done();

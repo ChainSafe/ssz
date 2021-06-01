@@ -1,3 +1,5 @@
+import fs from "fs";
+
 /* eslint-disable no-console */
 
 export type BenchmarkOpts = {
@@ -6,8 +8,16 @@ export type BenchmarkOpts = {
   minMs?: number;
 };
 
+export type BenchmarkResult = {
+  id: string;
+  averageNs: number;
+  runsDone: number;
+  factor?: number;
+};
+
 export class BenchmarkRunner {
   opts: BenchmarkOpts;
+  results: BenchmarkResult[] = [];
   constructor(title: string, opts?: BenchmarkOpts) {
     this.opts = opts || {};
     console.log(formatTitle(title));
@@ -15,31 +25,42 @@ export class BenchmarkRunner {
 
   run<T1, T2 = T1, R = void>(opts: RunOpts<T1, T2, R>): number {
     const {averageNs, runsDone} = doRun(opts, this.opts);
-    console.log(formatRow({id: opts.id, averageNs, runsDone})); // ±1.74%
+    this.results.push({id: opts.id, averageNs, runsDone});
+    console.log(formatResultRow({id: opts.id, averageNs, runsDone})); // ±1.74%
 
     return averageNs;
   }
 
   group(): BenchmarkGroupRunner {
-    return new BenchmarkGroupRunner(this.opts);
+    return new BenchmarkGroupRunner(this.opts || {}, this.results);
+  }
+
+  done(): void {
+    const filepath = process.env.BENCHMARK_OUTPUT_PATH;
+    if (filepath) {
+      fs.writeFileSync(filepath, formatAsBenchmarkJs(this.results));
+    }
   }
 }
 
 class BenchmarkGroupRunner {
   averageNs: number | null = null;
   opts: BenchmarkOpts;
-  constructor(opts?: BenchmarkOpts) {
+  results: BenchmarkResult[];
+  constructor(opts: BenchmarkOpts, results: BenchmarkResult[]) {
     this.opts = opts || {};
+    this.results = results;
     console.log("---");
   }
 
   run<T1, T2 = T1, R = void>(opts: RunOpts<T1, T2, R>): number {
     const {averageNs, runsDone} = doRun(opts, this.opts);
+    this.results.push({id: opts.id, averageNs, runsDone});
 
     if (this.averageNs === null) this.averageNs = averageNs;
     const factor = averageNs / this.averageNs;
 
-    console.log(formatRow({id: opts.id, averageNs, runsDone, factor})); // ±1.74%
+    console.log(formatResultRow({id: opts.id, averageNs, runsDone, factor})); // ±1.74%
 
     return averageNs;
   }
@@ -90,17 +111,7 @@ function averageBigint(arr: bigint[]): bigint {
   return total / BigInt(arr.length);
 }
 
-function formatRow({
-  id,
-  averageNs,
-  runsDone,
-  factor,
-}: {
-  id: string;
-  averageNs: number;
-  runsDone: number;
-  factor?: number;
-}): string {
+function formatResultRow({id, averageNs, runsDone, factor}: BenchmarkResult): string {
   const precision = 7;
   const idLen = 64;
 
@@ -118,6 +129,18 @@ function formatRow({
   ].join(" ");
 
   return id.slice(0, idLen).padEnd(idLen) + " " + row;
+}
+
+/**
+ * Return results in benckmark.js output format
+ * ```
+ * fib(10) x 1,431,759 ops/sec ±0.74% (93 runs sampled)
+ * ```
+ */
+function formatAsBenchmarkJs(results: BenchmarkResult[]): string {
+  return results
+    .map(({id, averageNs, runsDone}) => `${id} x ${1e9 / averageNs} ±0.00% (${runsDone} runs sampled)`)
+    .join("\n");
 }
 
 export function formatTitle(title: string): string {

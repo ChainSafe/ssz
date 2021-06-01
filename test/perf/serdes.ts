@@ -85,3 +85,5 @@ for (const {id, type, getValue} of testCases) {
     },
   });
 }
+
+runner.done();
