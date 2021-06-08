@@ -5,6 +5,7 @@ import {booleanType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {fromHexString, toHexString, getByteBits} from "../../util/byteArray";
 import {Tree} from "@chainsafe/persistent-merkle-tree";
+import {BYTES_PER_CHUNK} from "../../util/constants";
 
 export interface IBitVectorOptions {
   length: number;
@@ -90,11 +91,12 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return offset + byteLength;
   }
 
-  struct_getRootAtChunkIndex(value: BitVector, index: number): Uint8Array {
-    const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.struct_getByteLength(value) - index);
+  struct_getRootAtChunkIndex(value: BitVector, chunkIndex: number): Uint8Array {
+    const output = new Uint8Array(BYTES_PER_CHUNK);
+    const byteLength = Math.min(BYTES_PER_CHUNK, this.struct_getByteLength(value) - chunkIndex);
+    const byteOffset = chunkIndex * BYTES_PER_CHUNK;
     for (let i = 0; i < byteLength; i++) {
-      output[i] = this.struct_getByte(value, i + index);
+      output[i] = this.struct_getByte(value, i + byteOffset);
     }
     return output;
   }
