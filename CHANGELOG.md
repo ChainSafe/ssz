@@ -1,3 +1,10 @@
+## 0.8.8 (2021-06-10)
+
+## Bug Fixes
+
+- Fix tree serialize/deserialize in BitList ([ee47a0](https://github.com/chainsafe/ssz/commit/ee47a0))
+- Fix struct_getRootAtChunkIndex for BitVectorType ([ee47a0](https://github.com/chainsafe/ssz/commit/ee47a0))
+
 ## 0.8.7 (2021-06-01)
 
 ## Bug Fixes
