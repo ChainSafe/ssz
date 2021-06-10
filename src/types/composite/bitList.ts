@@ -4,6 +4,7 @@ import {BasicListType} from "./list";
 import {booleanType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {fromHexString, toHexString} from "../../util/byteArray";
+import {BYTES_PER_CHUNK} from "../../util/constants";
 import {Tree} from "@chainsafe/persistent-merkle-tree";
 
 export interface IBitListOptions {
@@ -100,11 +101,12 @@ export class BitListType extends BasicListType<BitList> {
     }
   }
 
-  struct_getRootAtChunkIndex(value: BitList, index: number): Uint8Array {
-    const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.struct_getByteLength(value) - index * 32);
+  struct_getRootAtChunkIndex(value: BitList, chunkIndex: number): Uint8Array {
+    const output = new Uint8Array(BYTES_PER_CHUNK);
+    const byteLength = Math.min(BYTES_PER_CHUNK, this.struct_getByteLength(value) - chunkIndex);
+    const byteOffset = chunkIndex * BYTES_PER_CHUNK;
     for (let i = 0; i < byteLength; i++) {
-      output[i] = this.struct_getByte(value, i + index);
+      output[i] = this.struct_getByte(value, i + byteOffset);
     }
     return output;
   }
@@ -136,31 +138,44 @@ export class BitListType extends BasicListType<BitList> {
     if (lastByte === 0) {
       throw new Error("Invalid deserialized bitlist, padding bit required");
     }
+    if (lastByte === 1) {
+      const target = super.tree_deserializeFromBytes(data, start, end - 1);
+      const length = (end - start - 1) * 8;
+      this.tree_setLength(target, length);
+      return target;
+    }
+    // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
     const target = super.tree_deserializeFromBytes(data, start, end);
     const lastGindex = this.getGindexAtChunkIndex(Math.ceil((end - start) / 32) - 1);
     // copy chunk into new memory
     const lastChunk = new Uint8Array(32);
     lastChunk.set(target.getRoot(lastGindex));
     const lastChunkByte = ((end - start) % 32) - 1;
-    let length;
-    if (lastByte === 1) {
-      // zero lastChunkByte
-      length = (end - start - 1) * 8;
-      lastChunk[lastChunkByte] = 0;
-    } else {
-      // mask lastChunkByte
-      const lastByteBitLength = lastByte.toString(2).length - 1;
-      length = (end - start - 1) * 8 + lastByteBitLength;
-      const mask = 0xff >> (8 - lastByteBitLength);
-      lastChunk[lastChunkByte] &= mask;
-    }
+    // mask lastChunkByte
+    const lastByteBitLength = lastByte.toString(2).length - 1;
+    const length = (end - start - 1) * 8 + lastByteBitLength;
+    const mask = 0xff >> (8 - lastByteBitLength);
+    lastChunk[lastChunkByte] &= mask;
     target.setRoot(lastGindex, lastChunk);
     this.tree_setLength(target, length);
     return target;
   }
 
   tree_serializeToBytes(target: Tree, output: Uint8Array, offset: number): number {
-    const newOffset = super.tree_serializeToBytes(target, output, offset);
+    const sizeNoPadding = this.tree_getByteLength(target);
+    const fullChunkCount = Math.floor(sizeNoPadding / 32);
+    const remainder = sizeNoPadding % 32;
+    let i = 0;
+    if (fullChunkCount > 0) {
+      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount)) {
+        output.set(node.root, offset + i * 32);
+        i++;
+      }
+    }
+    if (remainder) {
+      output.set(this.tree_getRootAtChunkIndex(target, fullChunkCount).slice(0, remainder), offset + i * 32);
+    }
+    const newOffset = offset + sizeNoPadding;
     const bitLength = this.tree_getLength(target);
     const size = this.tree_getSerializedLength(target);
     // set padding bit
