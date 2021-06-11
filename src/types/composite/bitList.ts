@@ -175,11 +175,11 @@ export class BitListType extends BasicListType<BitList> {
     if (remainder) {
       output.set(this.tree_getRootAtChunkIndex(target, fullChunkCount).slice(0, remainder), offset + i * 32);
     }
-    const newOffset = offset + sizeNoPadding;
     const bitLength = this.tree_getLength(target);
     const size = this.tree_getSerializedLength(target);
+    const newOffset = offset + size;
     // set padding bit
-    output[offset + size - 1] |= 1 << bitLength % 8;
+    output[newOffset - 1] |= 1 << bitLength % 8;
     return newOffset;
   }
 
