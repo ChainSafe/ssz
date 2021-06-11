@@ -1,3 +1,9 @@
+## 0.8.9 (2021-06-11)
+
+## Bug Fixes
+
+- Fix tree_serializeToBytes offset in BitList ([7cd2c1](https://github.com/chainsafe/ssz/commit/7cd2c1))
+
 ## 0.8.8 (2021-06-10)
 
 ## Bug Fixes
