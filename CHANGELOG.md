@@ -1,3 +1,9 @@
+## 0.8.10 (2021-06-16)
+
+## Features
+
+- Add fast struct_equals impl for RootType ([a3f4b4](https://github.com/chainsafe/ssz/commit/a3f4b4))
+
 ## 0.8.9 (2021-06-11)
 
 ## Bug Fixes
