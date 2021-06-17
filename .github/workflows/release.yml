@@ -77,7 +77,7 @@ jobs:
           prerelease: true # we can promote to release trough github
 
       - name: Publish to npm registry
-        run: yarn run publish
+        run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
