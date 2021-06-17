@@ -1,3 +1,9 @@
+## 0.3.2 (2021-06-17)
+
+## Chores
+
+- Use singleton uint8array for hash ([219e3a](https://github.com/chainsafe/persistent-merkle-tree/commit/219e3a))
+
 ## 0.3.2 (2021-05-06)
 
 ## Chores
