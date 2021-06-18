@@ -1,3 +1,9 @@
+## 0.8.11 (2021-06-18)
+
+## Chores
+
+- Update persistent-merkle-tree ([f88f15](https://github.com/chainsafe/ssz/commit/f88f15))
+
 ## 0.8.10 (2021-06-16)
 
 ## Features
