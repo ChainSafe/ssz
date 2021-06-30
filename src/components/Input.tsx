@@ -1,5 +1,7 @@
 import * as React from "react";
-import {presets, typeNames, PresetName} from "../util/types";
+import {
+  // presets, typeNames, PresetName, 
+  ForkName, typeNames, forks} from "../util/types";
 import {Type, toHexString} from "@chainsafe/ssz";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
@@ -7,7 +9,9 @@ import {withAlert} from "react-alert";
 import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
 
 type Props<T> = {
-  onProcess: (presetName: PresetName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
+  onProcess: (forkName: ForkName,
+    //  presetName: PresetName, 
+     name: string, input: string | T, type: Type<T>, inputType: string) => void;
   serializeModeOn: boolean;
   sszType: Type<T>;
   serialized: Uint8Array | undefined;
@@ -18,7 +22,7 @@ type Props<T> = {
 
 type State = {
   forkName: ForkName;
-  presetName: PresetName;
+  // presetName: PresetName;
   sszTypeName: string;
   input: string;
   serializeInputType: string;
@@ -29,12 +33,14 @@ type State = {
 const workerInstance = worker();
 
 const DEFAULT_PRESET = "mainnet";
+const DEFAULT_FORK = "phase0";
 
 class Input<T> extends React.Component<Props<T>, State> {
 
   constructor(props: Props<T>) {
     super(props);
-    const types = presets[DEFAULT_PRESET];
+    // const types = presets[DEFAULT_PRESET];
+    const types = forks[DEFAULT_FORK]
     const names = typeNames(types);
     const initialType = names[Math.floor(Math.random() * names.length)];
     const sszType = types[initialType];
@@ -52,8 +58,8 @@ class Input<T> extends React.Component<Props<T>, State> {
       .catch((error: { message: string }) => this.handleError(error));
 
     this.state = {
-      forkName: "allForks",
-      presetName: DEFAULT_PRESET,
+      forkName: DEFAULT_FORK,
+      // presetName: DEFAULT_PRESET,
       input: "",
       sszTypeName: initialType,
       serializeInputType: "yaml",
@@ -106,7 +112,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     return typeNames(this.types());
   }
   types<T>(): Record<string, Type<T>> {
-    return presets[this.state.presetName];
+    return forks[this.state.forkName];
   }
 
   getInputType(): string {
@@ -117,15 +123,17 @@ class Input<T> extends React.Component<Props<T>, State> {
 
   parsedInput(): T {
     const inputType = this.getInputType();
-    return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
+    return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName])
+    // return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
   }
 
   resetWith(inputType: string, sszTypeName: string): void {
     const sszType = this.types()[sszTypeName];
-    const {presetName} = this.state;
+    // const {presetName} = this.state;
+    const {forkName} = this.state;
 
     this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
-    workerInstance.createRandomValueWorker({sszTypeName, presetName})
+    workerInstance.createRandomValueWorker({sszTypeName, forkName})
       .then((value: object | string) => {
         const input = inputTypes[inputType].dump(value, sszType);
         if (this.props.serializeModeOn) {
@@ -147,11 +155,11 @@ class Input<T> extends React.Component<Props<T>, State> {
       .catch((error: { message: string }) => this.handleError(error));
   }
 
-  setPreset(e: ChangeEvent<HTMLSelectElement>): void {
-    this.setState({presetName: e.target.value as PresetName}, () => {
-      this.resetWith(this.getInputType(), this.state.sszTypeName);
-    });
-  }
+  // setPreset(e: ChangeEvent<HTMLSelectElement>): void {
+  //   this.setState({presetName: e.target.value as PresetName}, () => {
+  //     this.resetWith(this.getInputType(), this.state.sszTypeName);
+  //   });
+  // }
 
   setFork(e: ChangeEvent<HTMLSelectElement>): void {
     this.setState({forkName: e.target.value as ForkName}, () => {
@@ -179,10 +187,13 @@ class Input<T> extends React.Component<Props<T>, State> {
   }
 
   doProcess(): void {
-    const {presetName, sszTypeName} = this.state;
+    const {
+      // presetName, 
+      sszTypeName, forkName} = this.state;
     try {
       this.props.onProcess(
-        presetName,
+        forkName,
+        // presetName,
         sszTypeName,
         this.parsedInput(),
         this.types()[sszTypeName],
@@ -220,8 +231,10 @@ class Input<T> extends React.Component<Props<T>, State> {
           processFileContents(e.target.result);
         }
       };
-      reader.onerror = (e) => {
-        handleError(e);
+      reader.onerror = (e: unknown) => {
+        if (e instanceof Error) {
+          handleError(e);
+        }
       };
     }
   }
@@ -243,7 +256,7 @@ class Input<T> extends React.Component<Props<T>, State> {
         <br />
         <div className="field is-horizontal">
           <div className="field-body">
-            <div className='field has-addons'>
+            {/* <div className='field has-addons'>
               <div className='control'>
                 <a className='button is-static'>
                   Preset
@@ -261,7 +274,7 @@ class Input<T> extends React.Component<Props<T>, State> {
                   </select>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className='field has-addons'>
               <div className='control'>
                 <a className='button is-static'>
@@ -271,7 +284,7 @@ class Input<T> extends React.Component<Props<T>, State> {
               <div className='control'>
                 <div className='select'>
                   <select
-                    value={this.state.presetName}
+                    value={this.state.forkName}
                     onChange={this.setFork.bind(this)}>
                     {
                       Object.keys(forks).map(

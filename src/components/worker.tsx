@@ -1,4 +1,5 @@
-import {presets} from "../util/types";
+// import {presets} from "../util/types";
+import {forks} from "../util/types";
 import {
   BasicType,
   CompositeType,
@@ -34,7 +35,7 @@ function randomBooleanArray(length: number): Array<boolean> {
   return Array.from({length}, () => randomBoolean());
 }
 
-function randomByteVector(length): Uint8Array {
+function randomByteVector(length: number): Uint8Array {
   const array = new Uint8Array(length);
   self.crypto.getRandomValues(array);
   return array;
@@ -77,19 +78,19 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   }
 }
 
-function getSSZType(data: {sszTypeName: string; presetName: string; input: object}): 
+function getSSZType(data: {sszTypeName: string; forkName: string; input: object}): 
 BasicType<unknown> | CompositeType<object> {
-  return presets[data.presetName][data.sszTypeName];
+  return forks[data.forkName][data.sszTypeName];
 }
 
-export function createRandomValueWorker(data: {sszTypeName: string; presetName: string; input: object}): 
+export function createRandomValueWorker(data: {sszTypeName: string; forkName: string; input: object}): 
 boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   const sszType = getSSZType(data);
   const value = createRandomValue(sszType);
   return value;
 }
 
-export function serialize<T>(data: {sszTypeName: string; presetName: string; input: object}): object {
+export function serialize<T>(data: {sszTypeName: string; forkName: string; input: object}): object {
   const type = getSSZType(data);
   const serialized = type.serialize(data.input);
   const root = type.hashTreeRoot(data.input);
