@@ -921,7 +921,7 @@
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/lodestar-config@^0.25.1":
+"@chainsafe/lodestar-config@^0.25.0":
   version "0.25.1"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.25.1.tgz#01fdc0816a1e900cf1edbe6951f6d642dd0b8813"
   integrity sha512-8S/C9OUjKqZB7JQ7Metk2VAtHJmmwNs8t3P9BVeSNodU5Gk6PF/YL6EXGppMolC5Nvj/9NbGPdyBbJWroxC6Xg==
@@ -938,7 +938,7 @@
     "@chainsafe/ssz" "^0.8.11"
     js-yaml "^3.13.1"
 
-"@chainsafe/lodestar-types@^0.25.0", "@chainsafe/lodestar-types@^0.25.1":
+"@chainsafe/lodestar-types@^0.25.0":
   version "0.25.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.25.0.tgz#6f3def006a22102aa48c7c2229d5b3081c62e20f"
   integrity sha512-i3FVBmP3GIHHN5mGdQXGonpBNhwt6GtSTeXE/EllP9rUjT9UVKsdQp7pxg2Llwg8cG2mimi1H4EtLl3ut+Z7Hg==
