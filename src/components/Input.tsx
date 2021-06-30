@@ -17,6 +17,7 @@ type Props<T> = {
 };
 
 type State = {
+  forkName: ForkName;
   presetName: PresetName;
   sszTypeName: string;
   input: string;
@@ -51,6 +52,7 @@ class Input<T> extends React.Component<Props<T>, State> {
       .catch((error: { message: string }) => this.handleError(error));
 
     this.state = {
+      forkName: "allForks",
       presetName: DEFAULT_PRESET,
       input: "",
       sszTypeName: initialType,
@@ -147,6 +149,12 @@ class Input<T> extends React.Component<Props<T>, State> {
 
   setPreset(e: ChangeEvent<HTMLSelectElement>): void {
     this.setState({presetName: e.target.value as PresetName}, () => {
+      this.resetWith(this.getInputType(), this.state.sszTypeName);
+    });
+  }
+
+  setFork(e: ChangeEvent<HTMLSelectElement>): void {
+    this.setState({forkName: e.target.value as ForkName}, () => {
       this.resetWith(this.getInputType(), this.state.sszTypeName);
     });
   }
@@ -248,6 +256,25 @@ class Input<T> extends React.Component<Props<T>, State> {
                     onChange={this.setPreset.bind(this)}>
                     {
                       Object.keys(presets).map(
+                        (name) => <option key={name} value={name}>{name}</option>)
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className='field has-addons'>
+              <div className='control'>
+                <a className='button is-static'>
+                  Fork
+                </a>
+              </div>
+              <div className='control'>
+                <div className='select'>
+                  <select
+                    value={this.state.presetName}
+                    onChange={this.setFork.bind(this)}>
+                    {
+                      Object.keys(forks).map(
                         (name) => <option key={name} value={name}>{name}</option>)
                     }
                   </select>

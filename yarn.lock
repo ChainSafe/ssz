@@ -913,51 +913,53 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@chainsafe/as-sha256@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.2.0.tgz#3ebe061d59d30af9e95a8c22ff4813cbf0e89dbc"
-  integrity sha512-reKklZhY4jSj7JdxdAjUfsaiMt2pdm8V/IqlOR5c4m6Y4tRCxt4f0HBMfyiE2ZQF4tqPPqRVf/ulXwK+LjLIxw==
+"@chainsafe/as-sha256@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.2.2.tgz#f76fae7034c463295bdfb722caf2d93c6fb70d8f"
+  integrity sha512-4WGW1e1/+sFFdFozjuYIrrb7nw0kZHFNWs9k5YNhy8N9p0QfH6FUXlPyoHcrRJfROZ6Gy7MnmOoyPyMZfzw/+Q==
   dependencies:
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/lodestar-config@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.9.0.tgz#d7adeebbc24d39fafc07bec9b0bfc4ddc5f7d078"
-  integrity sha512-0hHhPVenA2tQLCZbsfw3PajZgDenzTmXSTVxZ/spSBp2FsRsARxqIkSWOYyQi+I6TlK/ogVOLQkiWsnEiaZbJQ==
+"@chainsafe/lodestar-config@^0.25.1":
+  version "0.25.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-config/-/lodestar-config-0.25.1.tgz#01fdc0816a1e900cf1edbe6951f6d642dd0b8813"
+  integrity sha512-8S/C9OUjKqZB7JQ7Metk2VAtHJmmwNs8t3P9BVeSNodU5Gk6PF/YL6EXGppMolC5Nvj/9NbGPdyBbJWroxC6Xg==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.9.0"
-    "@chainsafe/lodestar-types" "^0.9.0"
+    "@chainsafe/lodestar-params" "^0.25.0"
+    "@chainsafe/lodestar-types" "^0.25.0"
+    "@chainsafe/ssz" "^0.8.11"
 
-"@chainsafe/lodestar-params@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.9.0.tgz#faed708bd2f81691d965341314cf35ce1a7032dd"
-  integrity sha512-CvECm6YEdD7NfDXEW9Od4rmI4CcC9dLWIxt9hCiqxdra5m/dJcdfWA6rL5wYSzc2rF9qTHpwtzYmrmRKJP/v0A==
+"@chainsafe/lodestar-params@^0.25.0":
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.25.0.tgz#385c589172981c1c0e6df672261eefcc70d98e3c"
+  integrity sha512-s3D+LTr76V568qxUsM2bDOU2N9ou9ztuJDqCajLey8bYXSnNpc3l1pvN6D7iIIUDev+c4nsnNcVRWQZgRijsOw==
   dependencies:
+    "@chainsafe/ssz" "^0.8.11"
     js-yaml "^3.13.1"
 
-"@chainsafe/lodestar-types@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.9.0.tgz#5f2d3e3b480c970aa8a4df5eaa346246db70c1e9"
-  integrity sha512-MJQ0D7ljQ7Cv8COs8c9bAh6JZUVjBD4k3+AtNXxe1p/4JAGLf+CGr1zEB2opYNY0aW3F4wrWI416ZIfwh75gLw==
+"@chainsafe/lodestar-types@^0.25.0", "@chainsafe/lodestar-types@^0.25.1":
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.25.0.tgz#6f3def006a22102aa48c7c2229d5b3081c62e20f"
+  integrity sha512-i3FVBmP3GIHHN5mGdQXGonpBNhwt6GtSTeXE/EllP9rUjT9UVKsdQp7pxg2Llwg8cG2mimi1H4EtLl3ut+Z7Hg==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.9.0"
-    "@chainsafe/ssz" "^0.6.5"
+    "@chainsafe/lodestar-params" "^0.25.0"
+    "@chainsafe/ssz" "^0.8.11"
 
-"@chainsafe/persistent-merkle-tree@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.1.3.tgz#95d16f5faefc4d75f2861859ec5474f34767a4f7"
-  integrity sha512-ZFu7Zoxjt1A9W5whMVlwWJ+dGMF6+iL99lI9g7kIaG1JbI37M0F4TszO5Fe758e6/XJdGl5SFLi+923JYVB/ow==
+"@chainsafe/persistent-merkle-tree@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.3.3.tgz#00dab8c2af8fe2943b23bc4ba133a96444d40eb7"
+  integrity sha512-3h6UyHQoT4w9lqQioGiGHs2u+RHxFfX0kjfm8hRZhjFQ7/nG7Cd2dsM9FjAfzop8lzQmH2Z1sXjEPLK45oIqrQ==
   dependencies:
-    "@chainsafe/as-sha256" "^0.2.0"
+    "@chainsafe/as-sha256" "^0.2.2"
 
-"@chainsafe/ssz@^0.6.5", "@chainsafe/ssz@^0.6.7":
-  version "0.6.7"
-  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.6.7.tgz#472683c2d553fbfdb950b7805596f85c0bf46991"
-  integrity sha512-1r6yGc0fa7GMik7xEYKpYm7bTLgSeaLnbER9maS/9PLrpWz794njrwvrREpcUu/yks7SWuKSNJX1b+cAE6x0bA==
+"@chainsafe/ssz@^0.8.11":
+  version "0.8.11"
+  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.8.11.tgz#adbddcc7ace83a3c43f0d46d7401fa8cc7430f8e"
+  integrity sha512-d1P3i9Wook/wBMJlTCOJ0bfzaiQiW7JZfBT06IJPI36KgcYSxRiNuNwH6QiJBS3HESvcb86nQNZSHex2OB8stw==
   dependencies:
-    "@chainsafe/as-sha256" "^0.2.0"
-    "@chainsafe/persistent-merkle-tree" "^0.1.3"
+    "@chainsafe/as-sha256" "^0.2.2"
+    "@chainsafe/persistent-merkle-tree" "^0.3.3"
     case "^1.6.3"
 
 "@emotion/cache@^10.0.27":

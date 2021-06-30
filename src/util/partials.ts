@@ -1,5 +1,4 @@
 import {ListType, Type, isBooleanType, isUintType, isBitListType, isBitVectorType, isContainerType, isVectorType, isByteVectorType, isListType} from "@chainsafe/ssz";
-import BN from "bn.js";
 
 // binary string
 type GenIndex = string
