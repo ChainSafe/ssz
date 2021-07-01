@@ -5,10 +5,7 @@ import * as React from "react";
 import EyzyTree from "eyzy-tree";
 import {Node as SSZNode, getChildNodes, getRootNode, isBottomType} from "../util/partials";
 import {
-  BitVectorType,
-  ByteVectorType,
   Type,
-  UintType,
   isBooleanType,
   isUintType,
   isBitListType,
@@ -17,15 +14,9 @@ import {
   isVectorType,
   isListType,
   isContainerType,
-  VectorType,
-  ListType,
 } from "@chainsafe/ssz";
 import BN from "bn.js";
-import {presets, PresetName} from "../util/types";
-
-// const getTypeName = (typ: FullSSZType, types: Record<string, AnySSZType>): string => typeNames[typ.type](typ, types);
-
-// type TypeNameRecords = Record<Type, (t: FullSSZType, types: Record<string, AnySSZType>) => string>
+import { ForkName, forks } from "../util/types";
 
 function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>, name: string): string | undefined {
   if(isBooleanType(type)) return "bool";
@@ -34,8 +25,8 @@ function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>, name: str
   else if(isBitVectorType(type)) return `BitVector[${type.length}]`;
   else if(isBitListType(type)) return "Bytes";
   else if(isByteVectorType(type)) return `BytesN[${type.length}]`;
-  else if(isVectorType(type)) return "Vector"; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}, ${(type as VectorType).length}]`;
-  else if(isListType(type)) return "List"; //[${getTypeName(type.elementType, types, 'rescursive placeholder')}]`;
+  else if(isVectorType(type)) return "Vector";
+  else if(isListType(type)) return "List";
   else if(isContainerType(type)) return `${name}(Container)`;
   else return "N/A";
 }
@@ -68,10 +59,10 @@ type NodeProps<T> = {
 };
 
 type Props<T> = {
-  presetName: PresetName;
+  forkName: ForkName;
   input: any;
   sszTypeName: string;
-  sszType: Type<T>; // @TODO: is this correct?
+  sszType: Type<T>;
   name: string | undefined;
 };
 
@@ -168,8 +159,10 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
   }
 
   render() {
-    const {presetName, sszTypeName} = this.props;
-    const types = presets[presetName];
+    const {
+      forkName, 
+      sszTypeName} = this.props;
+    const types = forks[forkName];
     const {rootNode, selectedNode} = this.state;
     return (
       <div className='container'>

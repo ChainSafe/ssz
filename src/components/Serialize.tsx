@@ -2,17 +2,16 @@ import * as React from "react";
 import {Type} from "@chainsafe/ssz";
 import Output from "./Output";
 import Input from "./Input";
-import {PresetName} from "../util/types";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
 import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
+import {ForkName} from "../util/types";
 
 type Props = {
   serializeModeOn: boolean;
 };
 
 type State<T> = {
-  presetName: PresetName | undefined;
   name: string;
   input: T;
   sszType: Type<T> | undefined;
@@ -31,7 +30,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      presetName: undefined,
+      forkName: undefined,
       name: "",
       input: undefined,
       deserialized: undefined,
@@ -51,11 +50,15 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     });
   }
 
-  process<T>(presetName: PresetName, name: string, input: T, type: Type<T>): void {
+  process<T>(
+    forkName: ForkName,
+    name: string, input: T, type: Type<T>): void {
 
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    workerInstance.serialize({sszTypeName: name, presetName: presetName, input})
+    workerInstance.serialize({sszTypeName: name, 
+      forkName,
+      input})
       .then((result: { root: Uint8Array | undefined; serialized: Uint8Array | undefined }) => {
         this.setState({
           hashTreeRoot: result.root,
@@ -70,7 +73,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
 
     const deserialized = input;
 
-    this.setState({presetName, name, input, sszType: type, error, deserialized});
+    this.setState({forkName, name, input, sszType: type, error, deserialized});
   }
 
   render(): JSX.Element {
