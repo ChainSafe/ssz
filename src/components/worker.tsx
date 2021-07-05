@@ -1,4 +1,3 @@
-// import {presets} from "../util/types";
 import {forks} from "../util/types";
 import {
   BasicType,
@@ -90,7 +89,7 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   return value;
 }
 
-export function serialize<T>(data: {sszTypeName: string; forkName: string; input: object}): object {
+export function serialize(data: {sszTypeName: string; forkName: string; input: object}): object {
   const type = getSSZType(data);
   const serialized = type.serialize(data.input);
   const root = type.hashTreeRoot(data.input);
