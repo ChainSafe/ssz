@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import * as React from "react";
 import {
   ForkName, typeNames, forks} from "../util/types";
@@ -7,8 +9,7 @@ import {inputTypes} from "../util/input_types";
 import {withAlert} from "react-alert";
 
 type Props<T> = {
-  onProcess: (forkName: ForkName,
-    name: string, input: string | T, type: Type<T>, inputType: string) => void;
+  onProcess: (forkName: ForkName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
   serializeModeOn: boolean;
   sszType: Type<T>;
   serialized: Uint8Array | undefined;

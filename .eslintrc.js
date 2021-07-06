@@ -33,13 +33,11 @@ module.exports = {
   rules: {
     //doesnt work, it reports false errors
     "constructor-super": "off",
-    "@typescript-eslint/class-name-casing": "error",
     "@typescript-eslint/explicit-function-return-type": ["error", {
       "allowExpressions": true
     }],
     "@typescript-eslint/func-call-spacing": "error",
     "@typescript-eslint/indent": ["error", 2],
-    "@typescript-eslint/interface-name-prefix": ["error", "always"],
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-require-imports": "error",

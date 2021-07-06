@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import * as React from "react";
 import NamedOutput from "./display/NamedOutput";
 import ErrorBox from "./display/ErrorBox";

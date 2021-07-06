@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import {forks} from "../util/types";
 import {
   BasicType,
