@@ -5,7 +5,6 @@ import {Type, toHexString} from "@chainsafe/ssz";
 import {ChangeEvent} from "react";
 import {inputTypes} from "../util/input_types";
 import {withAlert} from "react-alert";
-import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
 
 type Props<T> = {
   onProcess: (forkName: ForkName,
@@ -32,7 +31,7 @@ function getRandomType(types: Record<string, Type<unknown>>): string {
   return names[Math.floor(Math.random() * names.length)];
 }
 
-const workerInstance = worker();
+const workerInstance = new Worker(new URL("./worker.tsx", import.meta.url), {name: "input"});
 
 const DEFAULT_FORK = "phase0";
 
@@ -45,16 +44,16 @@ class Input<T> extends React.Component<Props<T>, State> {
     const sszType = types[initialType];
 
     this.props.setOverlay(true, `Generating random ${initialType} value...`);
-    workerInstance.createRandomValueWorker({
+    workerInstance.postMessage({
       sszTypeName: initialType,
       forkName: DEFAULT_FORK
-    })
-      .then((value: object | string) => {
-        const input = inputTypes.yaml.dump(value, sszType);
-        this.setValueAndInput(value, input);
-        this.props.setOverlay(false);
-      })
-      .catch((error: { message: string }) => this.handleError(error));
+    });
+    workerInstance.onmessage = (({data: {value}}) => {
+      const input = inputTypes.yaml.dump(value, sszType);
+      this.setValueAndInput(value, input);
+      this.props.setOverlay(false);
+    });
+    workerInstance.onerror = ((error: { message: string }) => this.handleError(error));
 
     this.state = {
       forkName: DEFAULT_FORK,
@@ -136,26 +135,27 @@ class Input<T> extends React.Component<Props<T>, State> {
     const {forkName} = this.state;
 
     this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
-    workerInstance.createRandomValueWorker({sszTypeName, forkName})
-      .then((value: object | string) => {
-        const input = inputTypes[inputType].dump(value, sszType);
-        if (this.props.serializeModeOn) {
-          this.setState({
-            serializeInputType: inputType,
-          });
-        } else {
-          this.setState({
-            deserializeInputType: inputType,
-          });
-        }
+    workerInstance.postMessage({sszTypeName, forkName});
+
+    workerInstance.onmessage = ({data: {value}}) => {
+      const input = inputTypes[inputType].dump(value, sszType);
+      if (this.props.serializeModeOn) {
         this.setState({
-          sszTypeName,
-          input,
-          value
+          serializeInputType: inputType,
         });
-        this.props.setOverlay(false);
-      })
-      .catch((error: { message: string }) => this.handleError(error));
+      } else {
+        this.setState({
+          deserializeInputType: inputType,
+        });
+      }
+      this.setState({
+        sszTypeName,
+        input,
+        value
+      });
+      this.props.setOverlay(false);
+    };
+    workerInstance.onerror = ((error: { message: string }) => this.handleError(error));
   }
 
   setFork(e: ChangeEvent<HTMLSelectElement>): void {

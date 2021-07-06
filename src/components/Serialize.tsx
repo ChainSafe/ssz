@@ -4,7 +4,6 @@ import Output from "./Output";
 import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
-import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
 import {ForkName} from "../util/types";
 
 type Props = {
@@ -23,7 +22,7 @@ type State<T> = {
   overlayText: string;
 };
 
-const workerInstance = worker();
+const workerInstance = new Worker(new URL("./worker.tsx", import.meta.url), {name: "serialize"});
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
 
@@ -56,17 +55,19 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
 
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    workerInstance.serialize({sszTypeName: name, 
+
+    workerInstance.postMessage({
+      sszTypeName: name,
       forkName,
-      input})
-      .then((result: { root: Uint8Array | undefined; serialized: Uint8Array | undefined }) => {
-        this.setState({
-          hashTreeRoot: result.root,
-          serialized: result.serialized
-        });
-        this.setOverlay(false);
-      })
-      .catch((e: { message: string }) => error = e.message);
+      input});
+    workerInstance.onmessage = ({data: {root, serialized}}) => {
+      this.setState({
+        hashTreeRoot: root,
+        serialized: serialized
+      });
+      this.setOverlay(false);
+    };
+    workerInstance.onerror = (e: { message: string }) => error = e.message;
 
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.

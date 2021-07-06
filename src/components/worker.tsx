@@ -77,21 +77,21 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   }
 }
 
-function getSSZType(data: {sszTypeName: string; forkName: string; input: object}): 
+function getSSZType(data: {sszTypeName: string; forkName: string}):
 BasicType<unknown> | CompositeType<object> {
   return forks[data.forkName][data.sszTypeName];
 }
 
-export function createRandomValueWorker(data: {sszTypeName: string; forkName: string; input: object}): 
-boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
-  const sszType = getSSZType(data);
-  const value = createRandomValue(sszType);
-  return value;
-}
-
-export function serialize(data: {sszTypeName: string; forkName: string; input: object}): object {
-  const type = getSSZType(data);
-  const serialized = type.serialize(data.input);
-  const root = type.hashTreeRoot(data.input);
-  return {serialized, root};
-}
+self.onmessage = ({data: {sszTypeName, forkName, input}}) => {
+  const type = getSSZType({sszTypeName, forkName});
+  // if we have input, serialize
+  if (input) {
+    const serialized = type.serialize(input);
+    const root = type.hashTreeRoot(input);
+    self.postMessage({serialized, root});
+  // else, create random value
+  } else {
+    const value = createRandomValue(type);
+    self.postMessage({value});
+  }
+};
