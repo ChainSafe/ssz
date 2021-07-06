@@ -43,9 +43,6 @@ module.exports = {
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-require-imports": "error",
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "varsIgnorePattern": "^_"
-    }],
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/semi": "error",
     "@typescript-eslint/type-annotation-spacing": "error",
@@ -75,6 +72,12 @@ module.exports = {
       "rules": {
         "import/no-extraneous-dependencies": "off",
         "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["*.tsx"],
+      "rules": {
+        "no-undef": "off"
       }
     },
   ]
