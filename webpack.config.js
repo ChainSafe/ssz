@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const { resolve } = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ThreadsPlugin = require('threads-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -37,8 +38,8 @@ const config = {
       },{
         test: /\.tsx?$/,
         use: 'babel-loader',
-        exclude: /node_modules/,
-      },
+        exclude: [/node_modules/, '/worker.tsx'],
+      }
     ],
   },
   plugins: [
@@ -53,6 +54,7 @@ const config = {
       title: 'Simple Serialize | Chainsafe Systems',
       template: 'src/index.html',
     }),
+    new ThreadsPlugin(),
   ],
 };
 

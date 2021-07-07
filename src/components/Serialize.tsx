@@ -5,6 +5,8 @@ import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
 import {ForkName} from "../util/types";
+import { spawn, Thread } from "threads";
+import * as threads from "threads";
 
 type Props = {
   serializeModeOn: boolean;
@@ -22,10 +24,8 @@ type State<T> = {
   overlayText: string;
 };
 
-const workerInstance = new Worker(new URL("./worker.tsx", import.meta.url), {name: "serialize"});
-
 export default class Serialize<T> extends React.Component<Props, State<T>> {
-
+  worker: threads.Worker;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -40,6 +40,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       showOverlay: false,
       overlayText: "",
     };
+    this.worker = new threads.Worker('./worker.tsx', {type: "module"})
   }
 
   setOverlay(showOverlay: boolean, overlayText = ""): void {
@@ -49,25 +50,21 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     });
   }
 
-  process<T>(
+  async process<T>(
     forkName: ForkName,
-    name: string, input: T, type: Type<T>): void {
+    name: string, input: T, type: Type<T>): Promise<void> {
 
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-
-    workerInstance.postMessage({
-      sszTypeName: name,
-      forkName,
-      input});
-    workerInstance.onmessage = ({data: {root, serialized}}) => {
+    const workerInstance = await spawn(this.worker);
+    await workerInstance.serialize(name, forkName, input).then((data: {root: Uint8Array, serialized: Uint8Array}) => {
       this.setState({
-        hashTreeRoot: root,
-        serialized: serialized
+        hashTreeRoot: data.root,
+        serialized: data.serialized
       });
       this.setOverlay(false);
-    };
-    workerInstance.onerror = (e: { message: string }) => error = e.message;
+    }).catch((e: { message: string }) => error = e.message);
+    await Thread.terminate(workerInstance);
 
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
@@ -100,6 +97,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
                 serialized={serialized}
                 deserialized={deserialized}
                 setOverlay={this.setOverlay.bind(this)}
+                worker={this.worker}
               />
             </div>
             <div className='column'>
