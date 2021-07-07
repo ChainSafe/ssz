@@ -38,7 +38,7 @@ const config = {
       },{
         test: /\.tsx?$/,
         use: 'babel-loader',
-        exclude: [/node_modules/, '/worker.tsx'],
+        exclude: /node_modules/,
       }
     ],
   },
