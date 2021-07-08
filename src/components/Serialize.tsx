@@ -5,8 +5,7 @@ import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
 import {ForkName} from "../util/types";
-import { spawn, Thread } from "threads";
-import * as threads from "threads";
+import {FunctionThread, ModuleThread, spawn, Thread, Worker} from "threads";
 
 type Props = {
   serializeModeOn: boolean;
@@ -25,7 +24,11 @@ type State<T> = {
 };
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
-  worker: threads.Worker;
+  worker: Worker;
+  // TODO: not sure what type to put here
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  workerInstance: any;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -40,7 +43,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       showOverlay: false,
       overlayText: "",
     };
-    this.worker = new threads.Worker('./worker.tsx', {type: "module"})
+    this.worker = new Worker("./worker.js");
   }
 
   setOverlay(showOverlay: boolean, overlayText = ""): void {
@@ -50,21 +53,27 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     });
   }
 
+  async componentDidMount(): Promise<void> {
+    this.workerInstance = await spawn(this.worker);
+  }
+
+  async componentWillUnmount(): Promise<void> {
+    await Thread.terminate(this.workerInstance);
+  }
+
   async process<T>(
     forkName: ForkName,
     name: string, input: T, type: Type<T>): Promise<void> {
 
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    const workerInstance = await spawn(this.worker);
-    await workerInstance.serialize(name, forkName, input).then((data: {root: Uint8Array, serialized: Uint8Array}) => {
+    this.workerInstance.serialize(name, forkName, input).then((data: {root: Uint8Array, serialized: Uint8Array}) => {
       this.setState({
         hashTreeRoot: data.root,
         serialized: data.serialized
       });
       this.setOverlay(false);
     }).catch((e: { message: string }) => error = e.message);
-    await Thread.terminate(workerInstance);
 
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.

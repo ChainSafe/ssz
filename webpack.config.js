@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const { resolve } = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ThreadsPlugin = require('threads-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -54,7 +53,6 @@ const config = {
       title: 'Simple Serialize | Chainsafe Systems',
       template: 'src/index.html',
     }),
-    new ThreadsPlugin(),
   ],
 };
 
@@ -74,4 +72,37 @@ if (isProd) {
   };
 }
 
-module.exports = config;
+const workerConfig = {
+  name: "worker",
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  entry: {
+    index: './src/components/worker/index.ts',
+  },
+  output: {
+    path: resolve(__dirname, 'dist'),
+    filename: 'worker.js',
+  },
+  module: {
+    rules: [
+      {
+        test: /worker?$/,
+        loader: 'threads-webpack-plugin',
+      },
+      {
+        test: /\.ts?$/,
+        use: 'babel-loader',
+        exclude: /node_modules/,
+      }
+    ],
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ]
+}
+
+module.exports = [config, workerConfig];

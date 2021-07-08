@@ -1,6 +1,3 @@
-// /* eslint-disable @typescript-eslint/ban-types */
-
-import { expose } from "threads/worker"
 import {
   BasicType,
   CompositeType,
@@ -14,7 +11,7 @@ import {
   isNumberUintType,
   isBigIntUintType,
 } from "@chainsafe/ssz";
-import {forks} from "../util/types";
+import {forks} from "../../util/types";
 
 function randomNumber(length: number): number {
   return Math.random() * length | 0;
@@ -42,7 +39,7 @@ function randomByteVector(length: number): Uint8Array {
   return array;
 }
 
-function createRandomValue(type: BasicType<unknown> | CompositeType<object>): 
+export function createRandomValue(type: BasicType<unknown> | CompositeType<object>): 
 boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   if(isNumberUintType(type)) {
     return randomNumberUint(type.byteLength);
@@ -79,21 +76,7 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   }
 }
 
-function getSSZType(sszTypeName: string, forkName: string):
+export function getSSZType(sszTypeName: string, forkName: string):
 BasicType<unknown> | CompositeType<object> {
   return forks[forkName][sszTypeName];
 }
-
-expose({
-  createRandomValueFromSSZType(sszTypeName: string, forkName: string) {
-    const type = getSSZType(sszTypeName, forkName);
-    const value = createRandomValue(type);
-    return value;
-  },
-  serialize(sszTypeName: string, forkName: string, input: object) {
-    const type = getSSZType(sszTypeName, forkName);
-    const serialized = type.serialize(input);
-    const root = type.hashTreeRoot(input);
-    return {serialized, root};
-  }
-})
