@@ -5,7 +5,7 @@ import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
 import {ForkName} from "../util/types";
-import {FunctionThread, ModuleThread, spawn, Thread, Worker} from "threads";
+import {spawn, Thread, Worker} from "threads";
 
 type Props = {
   serializeModeOn: boolean;
