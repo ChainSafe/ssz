@@ -7,6 +7,5 @@
     }],
     "@babel/react",
     "@babel/typescript"
-    // "@babel/preset-typescript"
   ]
 }
