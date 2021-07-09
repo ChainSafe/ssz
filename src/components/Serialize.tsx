@@ -26,7 +26,7 @@ type State<T> = {
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
   worker: Worker;
-  workerInstance: ModuleThread<SszWorker> | undefined;
+  serializationWorkerThread: ModuleThread<SszWorker> | undefined;
   
   constructor(props: Props) {
     super(props);
@@ -53,23 +53,24 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   }
 
   async componentDidMount(): Promise<void> {
-    this.workerInstance = await spawn<SszWorker>(this.worker);
+    this.serializationWorkerThread = await spawn<SszWorker>(this.worker);
   }
 
   async componentWillUnmount(): Promise<void> {
-    await Thread.terminate(this.workerInstance as ModuleThread<SszWorker>);
+    await Thread.terminate(this.serializationWorkerThread as ModuleThread<SszWorker>);
   }
 
   async process<T>(forkName: ForkName, name: string, input: T, type: Type<T>): Promise<void> {
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    this.workerInstance?.serialize(name, forkName, input).then((data: {root: Uint8Array, serialized: Uint8Array}) => {
-      this.setState({
-        hashTreeRoot: data.root,
-        serialized: data.serialized
-      });
-      this.setOverlay(false);
-    }).catch((e: { message: string }) => error = e.message);
+    this.serializationWorkerThread?.serialize(name, forkName, input)
+      .then((data: {root: Uint8Array, serialized: Uint8Array}) => {
+        this.setState({
+          hashTreeRoot: data.root,
+          serialized: data.serialized
+        });
+        this.setOverlay(false);
+      }).catch((e: { message: string }) => error = e.message);
 
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.

@@ -39,7 +39,7 @@ const DEFAULT_FORK = "phase0";
 
 class Input<T> extends React.Component<Props<T>, State> {
   worker: Worker;
-  workerInstance: ModuleThread<SszWorker> | undefined;
+  typesWorkerThread: ModuleThread<SszWorker> | undefined;
 
   constructor(props: Props<T>) {
     super(props);
@@ -58,12 +58,12 @@ class Input<T> extends React.Component<Props<T>, State> {
   }
 
   async componentDidMount(): Promise<void> {
-    this.workerInstance = await spawn<SszWorker>(this.worker);
+    this.typesWorkerThread = await spawn<SszWorker>(this.worker);
     await this.resetWith(this.getInputType(), this.state.sszTypeName);
   }
 
   async componentWillUnmount(): Promise<void> {
-    await Thread.terminate(this.workerInstance as ModuleThread<SszWorker>);
+    await Thread.terminate(this.typesWorkerThread as ModuleThread<SszWorker>);
   }
 
   setValueAndInput(value: object | string, input: string): void {
@@ -136,7 +136,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     const {forkName} = this.state;
 
     this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
-    this.workerInstance?.createRandomValueFromSSZType(sszTypeName, forkName).then(async (value) => {
+    this.typesWorkerThread?.createRandomValue(sszTypeName, forkName).then(async (value) => {
       const input = inputTypes[inputType].dump(value, sszType);
       if (this.props.serializeModeOn) {
         this.setState({
