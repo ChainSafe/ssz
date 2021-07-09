@@ -17,4 +17,6 @@ const worker = {
   }
 }
 
+export type SszWorker = typeof worker;
+
 expose(worker)

@@ -5,7 +5,8 @@ import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
 import {ForkName} from "../util/types";
-import {spawn, Thread, Worker} from "threads";
+import {ModuleThread, spawn, Thread, Worker} from "threads";
+import {SszWorker} from "./worker";
 
 type Props = {
   serializeModeOn: boolean;
@@ -25,9 +26,7 @@ type State<T> = {
 
 export default class Serialize<T> extends React.Component<Props, State<T>> {
   worker: Worker;
-  // TODO: not sure what type to put here
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  workerInstance: any;
+  workerInstance: ModuleThread<SszWorker> | undefined;
   
   constructor(props: Props) {
     super(props);
@@ -54,20 +53,17 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
   }
 
   async componentDidMount(): Promise<void> {
-    this.workerInstance = await spawn(this.worker);
+    this.workerInstance = await spawn<SszWorker>(this.worker);
   }
 
   async componentWillUnmount(): Promise<void> {
-    await Thread.terminate(this.workerInstance);
+    await Thread.terminate(this.workerInstance as ModuleThread<SszWorker>);
   }
 
-  async process<T>(
-    forkName: ForkName,
-    name: string, input: T, type: Type<T>): Promise<void> {
-
+  async process<T>(forkName: ForkName, name: string, input: T, type: Type<T>): Promise<void> {
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    this.workerInstance.serialize(name, forkName, input).then((data: {root: Uint8Array, serialized: Uint8Array}) => {
+    this.workerInstance?.serialize(name, forkName, input).then((data: {root: Uint8Array, serialized: Uint8Array}) => {
       this.setState({
         hashTreeRoot: data.root,
         serialized: data.serialized
