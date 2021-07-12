@@ -1,4 +1,3 @@
-import {forks} from "../util/types";
 import {
   BasicType,
   CompositeType,
@@ -12,7 +11,7 @@ import {
   isNumberUintType,
   isBigIntUintType,
 } from "@chainsafe/ssz";
-
+import {forks} from "../../util/types";
 
 function randomNumber(length: number): number {
   return Math.random() * length | 0;
@@ -40,7 +39,7 @@ function randomByteVector(length: number): Uint8Array {
   return array;
 }
 
-function createRandomValue(type: BasicType<unknown> | CompositeType<object>): 
+export function createRandomValue(type: BasicType<unknown> | CompositeType<object>): 
 boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   if(isNumberUintType(type)) {
     return randomNumberUint(type.byteLength);
@@ -77,21 +76,7 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
   }
 }
 
-function getSSZType(data: {sszTypeName: string; forkName: string; input: object}): 
+export function getSSZType(sszTypeName: string, forkName: string):
 BasicType<unknown> | CompositeType<object> {
-  return forks[data.forkName][data.sszTypeName];
-}
-
-export function createRandomValueWorker(data: {sszTypeName: string; forkName: string; input: object}): 
-boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
-  const sszType = getSSZType(data);
-  const value = createRandomValue(sszType);
-  return value;
-}
-
-export function serialize(data: {sszTypeName: string; forkName: string; input: object}): object {
-  const type = getSSZType(data);
-  const serialized = type.serialize(data.input);
-  const root = type.hashTreeRoot(data.input);
-  return {serialized, root};
+  return forks[forkName][sszTypeName];
 }

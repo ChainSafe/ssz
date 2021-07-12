@@ -1,21 +1,24 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import * as React from "react";
-import {
-  ForkName, typeNames, forks} from "../util/types";
 import {Type, toHexString} from "@chainsafe/ssz";
+import {ModuleThread, spawn, Thread, Worker} from "threads";
 import {ChangeEvent} from "react";
-import {inputTypes} from "../util/input_types";
 import {withAlert} from "react-alert";
-import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
+
+import {inputTypes} from "../util/input_types";
+import {ForkName, typeNames, forks} from "../util/types";
+import {SszWorker} from "./worker";
 
 type Props<T> = {
-  onProcess: (forkName: ForkName,
-    name: string, input: string | T, type: Type<T>, inputType: string) => void;
+  onProcess: (forkName: ForkName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
   serializeModeOn: boolean;
   sszType: Type<T>;
   serialized: Uint8Array | undefined;
   deserialized: object;
   alert: {error: Function};
   setOverlay: Function;
+  worker: Worker;
 };
 
 type State = {
@@ -32,29 +35,17 @@ function getRandomType(types: Record<string, Type<unknown>>): string {
   return names[Math.floor(Math.random() * names.length)];
 }
 
-const workerInstance = worker();
-
 const DEFAULT_FORK = "phase0";
 
 class Input<T> extends React.Component<Props<T>, State> {
+  worker: Worker;
+  typesWorkerThread: ModuleThread<SszWorker> | undefined;
 
   constructor(props: Props<T>) {
     super(props);
     const types = forks[DEFAULT_FORK];
     const initialType = getRandomType(types);
-    const sszType = types[initialType];
-
-    this.props.setOverlay(true, `Generating random ${initialType} value...`);
-    workerInstance.createRandomValueWorker({
-      sszTypeName: initialType,
-      forkName: DEFAULT_FORK
-    })
-      .then((value: object | string) => {
-        const input = inputTypes.yaml.dump(value, sszType);
-        this.setValueAndInput(value, input);
-        this.props.setOverlay(false);
-      })
-      .catch((error: { message: string }) => this.handleError(error));
+    this.worker = props.worker;
 
     this.state = {
       forkName: DEFAULT_FORK,
@@ -64,6 +55,15 @@ class Input<T> extends React.Component<Props<T>, State> {
       deserializeInputType: "hex",
       value: "",
     };
+  }
+
+  async componentDidMount(): Promise<void> {
+    this.typesWorkerThread = await spawn<SszWorker>(this.worker);
+    await this.resetWith(this.getInputType(), this.state.sszTypeName);
+  }
+
+  async componentWillUnmount(): Promise<void> {
+    await Thread.terminate(this.typesWorkerThread as ModuleThread<SszWorker>);
   }
 
   setValueAndInput(value: object | string, input: string): void {
@@ -109,7 +109,7 @@ class Input<T> extends React.Component<Props<T>, State> {
   names(): string[] {
     return typeNames(this.types());
   }
-  types<T>(): Record<string, Type<unknown>> {
+  types(): Record<string, Type<unknown>> {
     return forks[this.state.forkName];
   }
 
@@ -124,7 +124,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
   }
 
-  resetWith(inputType: string, sszTypeName: string): void {
+  async resetWith(inputType: string, sszTypeName: string): Promise<void> {
     const types = this.types();
     let sszType = types[sszTypeName];
     
@@ -136,31 +136,29 @@ class Input<T> extends React.Component<Props<T>, State> {
     const {forkName} = this.state;
 
     this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
-    workerInstance.createRandomValueWorker({sszTypeName, forkName})
-      .then((value: object | string) => {
-        const input = inputTypes[inputType].dump(value, sszType);
-        if (this.props.serializeModeOn) {
-          this.setState({
-            serializeInputType: inputType,
-          });
-        } else {
-          this.setState({
-            deserializeInputType: inputType,
-          });
-        }
+    this.typesWorkerThread?.createRandomValue(sszTypeName, forkName).then(async (value) => {
+      const input = inputTypes[inputType].dump(value, sszType);
+      if (this.props.serializeModeOn) {
         this.setState({
-          sszTypeName,
-          input,
-          value
+          serializeInputType: inputType,
         });
-        this.props.setOverlay(false);
-      })
-      .catch((error: { message: string }) => this.handleError(error));
+      } else {
+        this.setState({
+          deserializeInputType: inputType,
+        });
+      }
+      this.setState({
+        sszTypeName,
+        input,
+        value
+      });
+      this.props.setOverlay(false);
+    }).catch((error: { message: string }) => this.handleError(error));
   }
 
   setFork(e: ChangeEvent<HTMLSelectElement>): void {
-    this.setState({forkName: e.target.value as ForkName}, () => {
-      this.resetWith(this.getInputType(), this.state.sszTypeName);
+    this.setState({forkName: e.target.value as ForkName}, async () => {
+      await this.resetWith(this.getInputType(), this.state.sszTypeName);
     });
   }
 
@@ -175,8 +173,8 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
-  setSSZType(e: ChangeEvent<HTMLSelectElement>): void {
-    this.resetWith(this.getInputType(), e.target.value);
+  async setSSZType(e: ChangeEvent<HTMLSelectElement>): Promise<void> {
+    await this.resetWith(this.getInputType(), e.target.value);
   }
 
   setInput(input: string): void {

@@ -125,11 +125,16 @@
     }
 }
 
+._loading_overlay_content {
+  display: grid;
+}
+
 ._loading_overlay_overlay {
   position: fixed !important;
 }
 
 ._loading_overlay_wrapper {
+  display: grid;
   height: 100%;
   width: 0;
   position: fixed;
@@ -137,3 +142,5 @@
   left: 0;
   top: 0;
 }
+
+

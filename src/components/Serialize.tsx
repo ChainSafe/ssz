@@ -4,8 +4,9 @@ import Output from "./Output";
 import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
-import worker from "workerize-loader!./worker"; // eslint-disable-line import/no-unresolved
 import {ForkName} from "../util/types";
+import {ModuleThread, spawn, Thread, Worker} from "threads";
+import {SszWorker} from "./worker";
 
 type Props = {
   serializeModeOn: boolean;
@@ -23,10 +24,10 @@ type State<T> = {
   overlayText: string;
 };
 
-const workerInstance = worker();
-
 export default class Serialize<T> extends React.Component<Props, State<T>> {
-
+  worker: Worker;
+  serializationWorkerThread: ModuleThread<SszWorker> | undefined;
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -41,6 +42,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
       showOverlay: false,
       overlayText: "",
     };
+    this.worker = new Worker("./worker.js");
   }
 
   setOverlay(showOverlay: boolean, overlayText = ""): void {
@@ -50,23 +52,25 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     });
   }
 
-  process<T>(
-    forkName: ForkName,
-    name: string, input: T, type: Type<T>): void {
+  async componentDidMount(): Promise<void> {
+    this.serializationWorkerThread = await spawn<SszWorker>(this.worker);
+  }
 
+  async componentWillUnmount(): Promise<void> {
+    await Thread.terminate(this.serializationWorkerThread as ModuleThread<SszWorker>);
+  }
+
+  async process<T>(forkName: ForkName, name: string, input: T, type: Type<T>): Promise<void> {
     let error;
     this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    workerInstance.serialize({sszTypeName: name, 
-      forkName,
-      input})
-      .then((result: { root: Uint8Array | undefined; serialized: Uint8Array | undefined }) => {
+    this.serializationWorkerThread?.serialize(name, forkName, input)
+      .then((data: {root: Uint8Array, serialized: Uint8Array}) => {
         this.setState({
-          hashTreeRoot: result.root,
-          serialized: result.serialized
+          hashTreeRoot: data.root,
+          serialized: data.serialized
         });
         this.setOverlay(false);
-      })
-      .catch((e: { message: string }) => error = e.message);
+      }).catch((e: { message: string }) => error = e.message);
 
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.
@@ -99,6 +103,7 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
                 serialized={serialized}
                 deserialized={deserialized}
                 setOverlay={this.setOverlay.bind(this)}
+                worker={this.worker}
               />
             </div>
             <div className='column'>
