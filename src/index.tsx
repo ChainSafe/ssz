@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import {transitions, Provider as AlertProvider} from "react-alert";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import AlertTemplate from "react-alert-template-basic";
 
 import "./styles.scss";

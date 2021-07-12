@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {ListType, Type, isBooleanType, isUintType, isBitListType, isBitVectorType, isContainerType, isVectorType, isByteVectorType, isListType} from "@chainsafe/ssz";
 
 // binary string

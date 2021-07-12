@@ -1,6 +1,4 @@
 import {
-  BasicType,
-  CompositeType,
   isBooleanType,
   isListType,
   isVectorType,
@@ -10,6 +8,7 @@ import {
   isByteVectorType,
   isNumberUintType,
   isBigIntUintType,
+  Type,
 } from "@chainsafe/ssz";
 import {forks} from "../../util/types";
 
@@ -39,8 +38,10 @@ function randomByteVector(length: number): Uint8Array {
   return array;
 }
 
-export function createRandomValue(type: BasicType<unknown> | CompositeType<object>): 
-boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
+// type primitiveType = boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined;
+
+export function createRandomValue(type: Type<unknown>): 
+unknown {
   if(isNumberUintType(type)) {
     return randomNumberUint(type.byteLength);
   }
@@ -68,7 +69,7 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
     return Array.from({length: type.length}, () => createRandomValue(type.elementType));
   }
   else if(isContainerType(type)) {
-    const obj = {};
+    const obj: Record<string, unknown> = {};
     Object.entries(type.fields).forEach(([fieldName, fieldType]) => {
       obj[fieldName] = createRandomValue(fieldType);
     });
@@ -77,6 +78,6 @@ boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined {
 }
 
 export function getSSZType(sszTypeName: string, forkName: string):
-BasicType<unknown> | CompositeType<object> {
+Type<unknown> {
   return forks[forkName][sszTypeName];
 }
