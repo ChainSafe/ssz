@@ -186,9 +186,7 @@ class Input extends React.Component<Props, State> {
   }
 
   async doProcess(): Promise<void> {
-    const {
-      sszTypeName, forkName} = this.state;
-    if (!this.props.serializeModeOn) this.props.setOverlay(true, "Deserializing...");
+    const {sszTypeName, forkName} = this.state;
     const parsedInput = await this.parsedInput();
     try {
       this.props.onProcess(
@@ -201,7 +199,6 @@ class Input extends React.Component<Props, State> {
     } catch(e) {
       this.handleError(e);
     }
-    // if (!this.props.serializeModeOn) this.props.setOverlay(false)
   }
 
   processFileContents(contents: string | ArrayBuffer): void {
