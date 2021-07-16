@@ -1,10 +1,10 @@
-import {NumberUintType, ContainerType, VectorType, CompositeType} from "../../src";
+import {NumberUintType, ContainerType, VectorType, CompositeType, Type, Vector} from "../../src";
 import {BenchmarkRunner} from "./utils/runner";
 
 const runner = new BenchmarkRunner("SSZ get property");
 
 const Gwei = new NumberUintType({byteLength: 8});
-const Vec = new VectorType({elementType: Gwei, length: 1e5});
+const Vec = new VectorType<any>({elementType: Gwei, length: 1e5});
 
 const testCases: {id: string; type: CompositeType<any>}[] = [
   {

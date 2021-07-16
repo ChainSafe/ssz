@@ -1,4 +1,4 @@
-import {BigIntUintType, BitListType, CompositeType, ContainerType, ListType} from "../../src";
+import {BigIntUintType, BitListType, CompositeType, ContainerType, List, ListType} from "../../src";
 import {BenchmarkRunner} from "./utils/runner";
 
 const runner = new BenchmarkRunner("SSZ (de)serialize");
@@ -7,14 +7,14 @@ const Gwei = new BigIntUintType({byteLength: 8});
 
 type TestCase<T> = {
   id: string;
-  type: CompositeType<T>;
+  type: CompositeType<any>;
   getValue?: () => T;
 };
 
 function getBigListTestCase(arrLen: number): TestCase<bigint[]> {
   return {
     id: `List(BigInt) ${arrLen}`,
-    type: new ListType({elementType: Gwei, limit: arrLen}),
+    type: new ListType<bigint[]>({elementType: Gwei, limit: arrLen}),
     getValue: () => Array.from({length: arrLen}, () => BigInt(31217089836)),
   };
 }

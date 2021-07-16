@@ -76,7 +76,7 @@ function doRun<T1, T2 = T1, R = void>(
 
   const diffsNanoSec: bigint[] = [];
 
-  const inputAll = before ? before() : (undefined as T1);
+  const inputAll = before ? before() : (undefined as unknown as T1);
 
   let start = Date.now();
   let i = 0;
