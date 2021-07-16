@@ -1,8 +1,46 @@
+## 0.8.11 (2021-06-18)
+
+## Chores
+
+- Update persistent-merkle-tree ([f88f15](https://github.com/chainsafe/ssz/commit/f88f15))
+
+## 0.8.10 (2021-06-16)
+
+## Features
+
+- Add fast struct_equals impl for RootType ([a3f4b4](https://github.com/chainsafe/ssz/commit/a3f4b4))
+
+## 0.8.9 (2021-06-11)
+
+## Bug Fixes
+
+- Fix tree_serializeToBytes offset in BitList ([7cd2c1](https://github.com/chainsafe/ssz/commit/7cd2c1))
+
+## 0.8.8 (2021-06-10)
+
+## Bug Fixes
+
+- Fix tree serialize/deserialize in BitList ([ee47a0](https://github.com/chainsafe/ssz/commit/ee47a0))
+- Fix struct_getRootAtChunkIndex for BitVectorType ([ee47a0](https://github.com/chainsafe/ssz/commit/ee47a0))
+
+## 0.8.7 (2021-06-01)
+
+## Bug Fixes
+
+- Fix BitVector tree_deserializeFromBytes() ([fd2c7d](https://github.com/chainsafe/ssz/commit/fd2c7d))
+
+## 0.8.6 (2021-05-25)
+
+## Bug Fixes
+
+- Fix basic vector struct_convertFromJson ([05e7c2](https://github.com/chainsafe/ssz/commit/05e7c2))
+
 ## 0.8.5 (2021-05-19)
 
 ## Features
 
 - Add composite type leaves to proof ([3f1cfd](https://github.com/chainsafe/ssz/commit/3f1cfd))
+
 ## 0.8.4 (2021-05-07)
 
 ## Bug Fixes

@@ -4,6 +4,7 @@ import {booleanType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {fromHexString, toHexString, getByteBits} from "../../util/byteArray";
 import {Tree} from "@chainsafe/persistent-merkle-tree";
+import {BYTES_PER_CHUNK} from "../../util/constants";
 
 export interface IBitVectorOptions {
   length: number;
@@ -86,11 +87,12 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return offset + byteLength;
   }
 
-  struct_getRootAtChunkIndex(value: BitVector, index: number): Uint8Array {
-    const output = new Uint8Array(32);
-    const byteLength = Math.min(32, this.struct_getByteLength() - index);
+  struct_getRootAtChunkIndex(value: BitVector, chunkIndex: number): Uint8Array {
+    const output = new Uint8Array(BYTES_PER_CHUNK);
+    const byteLength = Math.min(BYTES_PER_CHUNK, this.struct_getByteLength() - chunkIndex);
+    const byteOffset = chunkIndex * BYTES_PER_CHUNK;
     for (let i = 0; i < byteLength; i++) {
-      output[i] = this.struct_getByte(value, i + index);
+      output[i] = this.struct_getByte(value, i + byteOffset);
     }
     return output;
   }
@@ -115,9 +117,14 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     // mask last byte to ensure it doesn't go over length
     const lastByte = data[end - 1];
-    const mask = (0xff << this.length % 8) & 0xff;
-    if (lastByte & mask) {
-      throw new Error("Invalid deserialized bitvector length");
+    // If the data len fits full bytes this check must be skipped.
+    // Otherwise we must ensure that the extra bits are set to zero.
+    const lastByteBitLen = this.length % 8;
+    if (lastByteBitLen > 0) {
+      const mask = (0xff << lastByteBitLen) & 0xff;
+      if ((lastByte & mask) > 0) {
+        throw new Error("Invalid deserialized bitvector length");
+      }
     }
     return super.tree_deserializeFromBytes(data, start, end);
   }
