@@ -11,7 +11,7 @@ describe("clone", () => {
   }[] = [
     {value: 1, type: byteType, expected: true},
     {value: Infinity, type: byteType, expected: true},
-    {value: 1000n, type: bigint16Type, expected: true},
+    {value: BigInt(1000), type: bigint16Type, expected: true},
     {value: true, type: booleanType, expected: true},
     {value: false, type: booleanType, expected: true},
     {value: Buffer.from("abcd", "hex"), type: bytes2Type, expected: true},

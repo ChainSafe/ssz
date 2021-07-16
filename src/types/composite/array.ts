@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/camelcase */
 import {ArrayLike, CompositeValue, Json} from "../../interface";
 import {IJsonOptions, Type} from "../type";
-import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
 import {
@@ -17,21 +15,33 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
-export interface IArrayOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  elementType: Type<any>;
+type ArrayElementType<T extends ArrayLike<unknown>> = T extends ArrayLike<infer E> ? Type<E> : Type<T>;
+
+export interface IArrayOptions<T extends ArrayLike<unknown>> {
+  elementType: ArrayElementType<T>;
 }
 
 export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
-  elementType: BasicType<unknown>;
-  constructor(options: IArrayOptions) {
+  elementType: ArrayElementType<T>;
+  constructor(options: IArrayOptions<T>) {
     super();
-    this.elementType = options.elementType as BasicType<T>;
+    this.elementType = options.elementType;
   }
-  abstract struct_getLength(value: T): number;
+  /**
+   * Get the length, ie number of elements
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param value - only needed if the type is variable-length
+   */
+  abstract struct_getLength(value?: T): number;
+
   abstract getMaxLength(): number;
+
   abstract getMinLength(): number;
-  struct_getSerializedLength(value: T): number {
+
+  struct_getSerializedLength(value?: T): number {
     return this.elementType.struct_getSerializedLength() * this.struct_getLength(value);
   }
 
@@ -138,8 +148,17 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     return value;
   }
 
-  abstract tree_getLength(target: Tree): number;
-  tree_getSerializedLength(target: Tree): number {
+  /**
+   * Get the length, ie number of elements
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param target - only needed if the type is variable-length
+   */
+  abstract tree_getLength(target?: Tree): number;
+
+  tree_getSerializedLength(target?: Tree): number {
     return this.elementType.struct_getSerializedLength() * this.tree_getLength(target);
   }
 
@@ -189,7 +208,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getPropertyType(prop: PropertyKey): BasicType<unknown> {
+  getPropertyType(prop: PropertyKey): ArrayElementType<T> {
     return this.elementType;
   }
 
@@ -243,7 +262,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     return true;
   }
 
-  tree_getProperty(target: Tree, property: keyof T): T[keyof T] {
+  tree_getProperty(target: Tree, property: keyof T): T[keyof T] | undefined {
     const length = this.tree_getLength(target);
     if (property === "length") {
       return length as T[keyof T];
@@ -289,24 +308,35 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
 export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: CompositeType<CompositeValue>;
 
-  constructor(options: IArrayOptions) {
+  constructor(options: IArrayOptions<T>) {
     super();
     this.elementType = (options.elementType as unknown) as CompositeType<CompositeValue>;
   }
 
-  abstract struct_getLength(value: T): number;
+  /**
+   * Get the length, ie number of elements
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param value - only needed if the type is variable-length
+   */
+  abstract struct_getLength(value?: T): number;
   abstract getMaxLength(): number;
   abstract getMinLength(): number;
 
-  struct_getSerializedLength(value: T): number {
+  struct_getSerializedLength(value?: T): number {
     if (this.elementType.hasVariableSerializedLength()) {
+      if (!value) {
+        throw new Error("variable-size type must include value");
+      }
       let s = 0;
       for (let i = 0; i < this.struct_getLength(value); i++) {
         s += this.elementType.struct_getSerializedLength(value[i] as CompositeValue) + 4;
       }
       return s;
     } else {
-      return this.elementType.struct_getSerializedLength(null) * this.struct_getLength(value);
+      return this.elementType.struct_getSerializedLength() * this.struct_getLength(value);
     }
   }
 
@@ -394,7 +424,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       }
       return (value as unknown) as T;
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = this.elementType.struct_getSerializedLength();
       return (Array.from({length: (end - start) / elementSize}, (_, i) =>
         this.elementType.struct_deserializeFromBytes(data, start + i * elementSize, start + (i + 1) * elementSize)
       ) as unknown) as T;
@@ -461,16 +491,28 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     return value;
   }
 
-  abstract tree_getLength(target: Tree): number;
-  tree_getSerializedLength(target: Tree): number {
+  /**
+   * Get the length, ie number of elements
+   *
+   * For fixed-length types, the type alone is sufficient
+   * For variable-length types, the underlying data is required
+   *
+   * @param target - only needed if the type is variable-length
+   */
+  abstract tree_getLength(target?: Tree): number;
+
+  tree_getSerializedLength(target?: Tree): number {
     if (this.elementType.hasVariableSerializedLength()) {
+      if (!target) {
+        throw new Error("variable-size type must include value");
+      }
       let s = 0;
       for (let i = 0; i < this.tree_getLength(target); i++) {
         s += this.elementType.tree_getSerializedLength(this.tree_getSubtreeAtChunkIndex(target, i)) + 4;
       }
       return s;
     } else {
-      return this.elementType.tree_getSerializedLength(null) * this.tree_getLength(target);
+      return this.elementType.tree_getSerializedLength() * this.tree_getLength(target);
     }
   }
 

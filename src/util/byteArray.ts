@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {ByteVector} from "../interface";
 
 // Caching this info costs about ~1000 bytes and speeds up toHexString() by x6

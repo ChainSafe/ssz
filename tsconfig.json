@@ -1,12 +1,9 @@
 {
-  "include": ["src"],
+  "extends": "./tsconfig.build.json",
+  "include": ["src", "test"],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "pretty": true,
-     "declaration": true,
-    "strict": true,
-    "strictNullChecks": false,
-    "esModuleInterop": true
+    "emitDeclarationOnly": false,
+    "incremental": false,
+    "noEmit": true
   }
 }

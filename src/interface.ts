@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
 /**
  * These interfaces are consistent across all backings.
  * As long as these interfaces are respected, the backing can be abstracted entirely.
@@ -15,10 +13,10 @@ export type Vector<T> = ArrayLike<T>;
 
 export interface List<T> extends ArrayLike<T> {
   push(...values: T[]): number;
-  pop(): T;
+  pop(): T | undefined;
 }
 
-export type Container<T extends object> = T;
+export type Container<T extends Record<string, unknown>> = T;
 
 export type ByteVector = Vector<number>;
 
@@ -31,7 +29,7 @@ export interface ObjectLike {
   [fieldName: string]: any;
 }
 
-export type CompositeValue = Record<string, unknown> | ArrayLike<unknown> | {};
+export type CompositeValue = Record<string, unknown> | ArrayLike<unknown> | Record<string, never>;
 
 /**
  * The Json interface is used for json-serializable input

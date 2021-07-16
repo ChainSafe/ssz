@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import {Json, Vector} from "../../interface";
+import {ArrayLike, Json, Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {Node, subtreeFillToLength, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 
-export interface IVectorOptions extends IArrayOptions {
+export interface IVectorOptions<T extends ArrayLike<unknown>> extends IArrayOptions<T> {
   length: number;
 }
 
@@ -20,13 +19,13 @@ export function isVectorType<T extends Vector<any> = Vector<any>>(type: Type<unk
 export type VectorType<T extends Vector<any> = Vector<any>> = BasicVectorType<T> | CompositeVectorType<T>;
 type VectorTypeConstructor = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new <T extends Vector<any>>(options: IVectorOptions): VectorType<T>;
+  new <T extends Vector<any>>(options: IVectorOptions<T>): VectorType<T>;
 };
 
 // Trick typescript into treating VectorType as a constructor
 export const VectorType: VectorTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions): VectorType<T> {
+  (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions<T>): VectorType<T> {
     if (isBasicType(options.elementType)) {
       return new BasicVectorType(options);
     } else {
@@ -37,7 +36,7 @@ export const VectorType: VectorTypeConstructor =
 export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extends BasicArrayType<T> {
   length: number;
 
-  constructor(options: IVectorOptions) {
+  constructor(options: IVectorOptions<T>) {
     super(options);
     this.length = options.length;
     this._typeSymbols.add(VECTOR_TYPE);
@@ -49,8 +48,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     }) as unknown) as T;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getLength(value?: T): number {
+  struct_getLength(): number {
     return this.length;
   }
 
@@ -64,7 +62,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
 
   bytes_validate(data: Uint8Array, start: number, end: number): void {
     super.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    if (end - start !== this.struct_getSerializedLength()) {
       throw new Error("Incorrect deserialized vector length");
     }
   }
@@ -76,7 +74,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
 
   struct_assertValidValue(value: unknown): asserts value is T {
     const actualLength = (value as T).length;
-    const expectedLength = this.struct_getLength(value as T);
+    const expectedLength = this.struct_getLength();
     if (actualLength !== expectedLength) {
       throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
     }
@@ -105,20 +103,19 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
     return new Tree(this.tree_defaultNode());
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tree_getLength(target: Tree): number {
+  tree_getLength(): number {
     return this.length;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
-    if (end - start !== this.struct_getSerializedLength(null)) {
+    if (end - start !== this.struct_getSerializedLength()) {
       throw new Error("Incorrect deserialized vector length");
     }
     return super.tree_deserializeFromBytes(data, start, end);
   }
 
   tree_setProperty(target: Tree, property: number, value: T[number]): boolean {
-    if (property >= this.tree_getLength(target)) {
+    if (property >= this.tree_getLength()) {
       throw new Error("Invalid array index");
     }
     return super.tree_setProperty(target, property, value, false);
@@ -133,10 +130,12 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 }
 
-export class CompositeVectorType<T extends Vector<object> = Vector<object>> extends CompositeArrayType<T> {
+export class CompositeVectorType<
+  T extends Vector<Record<string, unknown>> = Vector<Record<string, unknown>>
+> extends CompositeArrayType<T> {
   length: number;
 
-  constructor(options: IVectorOptions) {
+  constructor(options: IVectorOptions<T>) {
     super(options);
     this.length = options.length;
     this._typeSymbols.add(VECTOR_TYPE);
@@ -148,8 +147,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
     }) as unknown) as T;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getLength(value: T): number {
+  struct_getLength(): number {
     return this.length;
   }
 
@@ -172,7 +170,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
 
   struct_assertValidValue(value: unknown): asserts value is T {
     const actualLength = (value as T).length;
-    const expectedLength = this.struct_getLength(value as T);
+    const expectedLength = this.struct_getLength();
     if (actualLength !== expectedLength) {
       throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
     }
@@ -201,8 +199,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
     return new Tree(this.tree_defaultNode());
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tree_getLength(target: Tree): number {
+  tree_getLength(): number {
     return this.length;
   }
 
@@ -222,7 +219,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
         );
       }
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = this.elementType.struct_getSerializedLength();
       const length = (end - start) / elementSize;
       if (length !== this.length) {
         throw new Error("Incorrect deserialized vector length");
@@ -239,7 +236,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
   }
 
   setProperty(target: Tree, property: number, value: Tree): boolean {
-    if (property >= this.tree_getLength(target)) {
+    if (property >= this.tree_getLength()) {
       throw new Error("Invalid array index");
     }
     return super.tree_setProperty(target, property, value, false);

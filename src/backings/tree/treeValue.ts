@@ -22,7 +22,7 @@ import {ITreeBacked, TreeBacked, ValueOf} from "./interface";
 // There exists circular dependencies here that prevent easy separation
 // In this file, there's proxy logic that wraps TreeValue and TreeValue and its subclasses
 
-type TreeValueConstructor<T> = {
+type TreeValueConstructor<T extends CompositeValue> = {
   new (type: CompositeType<T>, tree: Tree): TreeValue<T>;
 };
 
@@ -54,6 +54,8 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
     }
   } else if (isContainerType(type)) {
     return (ContainerTreeValue as unknown) as TreeValueConstructor<T>;
+  } else {
+    throw Error("Unknown type class");
   }
 }
 
@@ -61,7 +63,7 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
  * Wrap a TreeValue in a Proxy that adds ergonomic getter/setter
  */
 export function proxyWrapTreeValue<T extends CompositeValue>(value: TreeValue<T>): TreeBacked<T> {
-  return (new Proxy(value, TreeProxyHandler as unknown) as unknown) as TreeBacked<T>;
+  return (new Proxy(value, (TreeProxyHandler as unknown) as ProxyHandler<TreeValue<T>>) as unknown) as TreeBacked<T>;
 }
 
 /**
@@ -84,7 +86,7 @@ export const TreeProxyHandler: ProxyHandler<TreeValue<CompositeValue>> = {
     return target.getPropertyNames() as (string | symbol)[];
   },
 
-  getOwnPropertyDescriptor(target: TreeValue<CompositeValue>, property: PropertyKey): PropertyDescriptor {
+  getOwnPropertyDescriptor(target: TreeValue<CompositeValue>, property: PropertyKey): PropertyDescriptor | undefined {
     if (target.type.getPropertyType(property as keyof CompositeValue)) {
       return {
         configurable: true,
@@ -301,7 +303,7 @@ export class BasicListTreeValue<T extends List<unknown>> extends BasicArrayTreeV
   }
 }
 
-export class CompositeListTreeValue<T extends List<object>> extends CompositeArrayTreeValue<T> {
+export class CompositeListTreeValue<T extends List<Record<string, unknown>>> extends CompositeArrayTreeValue<T> {
   type: CompositeListType<T>;
 
   constructor(type: CompositeListType<T>, tree: Tree) {
@@ -331,8 +333,8 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
   }
 
   getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
-    if (!this.type.fields[property as string]) {
-      return undefined;
+    if (!this.type.fields[property]) {
+      return undefined as ValueOf<T, P>;
     }
     const propType = this.type.getPropertyType(property);
     const propValue = this.type.tree_getProperty(this.tree, property);
@@ -396,7 +398,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     let i = 0;
     for (const value of this.type.tree_readonlyIterateValues(this.tree)) {
       const propName = keys[i] as string;
-      const propType = this.type.getPropertyType(propName);
+      const propType = this.type.getPropertyType(propName as keyof T);
       if (isCompositeType(propType)) {
         yield [propName, createTreeBacked(propType, value as Tree) as ValueOf<T>];
       } else {

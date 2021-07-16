@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType, ListType, fromHexString, toHexString} from "../../src";
+import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType, Vector, ByteVector, ListType, fromHexString, toHexString} from "../../src";
 
 describe("known issues", () => {
   it("SyncCommitteeBits hashTreeRoot consistency", function () {
@@ -16,7 +16,7 @@ describe("known issues", () => {
   });
 
   it("default value of composite vector should be correct", () => {
-    const Vec = new VectorType({
+    const Vec = new VectorType<Vector<ByteVector>>({
       elementType: new ByteVectorType({length: 4}),
       length: 4,
     });

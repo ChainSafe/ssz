@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import {Json, List} from "../../interface";
+import {Json, List, ArrayLike} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType, number32Type} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
@@ -18,28 +17,28 @@ import {isTreeBacked} from "../../backings/tree/treeValue";
  */
 export const LENGTH_GINDEX = BigInt(3);
 
-export interface IListOptions extends IArrayOptions {
+export interface IListOptions<T extends ArrayLike<unknown>> extends IArrayOptions<T> {
   limit: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ListType<T extends List<any> = List<any>> = BasicListType<T> | CompositeListType<T>;
+export type ListType<T extends List<unknown>> = BasicListType<T> | CompositeListType<T>;
 type ListTypeConstructor = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new <T extends List<any>>(options: IListOptions): ListType<T>;
+  new <T extends List<unknown>>(options: IListOptions<T>): ListType<T>;
 };
 
 export const LIST_TYPE = Symbol.for("ssz/ListType");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isListType<T extends List<any> = List<any>>(type: Type<unknown>): type is ListType<T> {
+export function isListType<T extends List<unknown>>(type: Type<unknown>): type is ListType<T> {
   return isTypeOf(type, LIST_TYPE);
 }
 
 // Trick typescript into treating ListType as a constructor
 export const ListType: ListTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
+  (function ListType<T extends List<any>>(options: IListOptions<T>): ListType<T> {
     if (isBasicType(options.elementType)) {
       return new BasicListType(options);
     } else {
@@ -50,7 +49,7 @@ export const ListType: ListTypeConstructor =
 export class BasicListType<T extends List<unknown> = List<unknown>> extends BasicArrayType<T> {
   limit: number;
 
-  constructor(options: IListOptions) {
+  constructor(options: IListOptions<T>) {
     super(options);
     this.limit = options.limit;
     this._typeSymbols.add(LIST_TYPE);
@@ -61,6 +60,9 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   struct_getLength(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return value.length;
   }
 
@@ -85,6 +87,9 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   struct_getChunkCount(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return Math.ceil((value.length * this.elementType.struct_getSerializedLength()) / 32);
   }
 
@@ -123,6 +128,9 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   tree_getLength(target: Tree): number {
+    if (!target) {
+      throw new Error("variable-size type must include value");
+    }
     return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
@@ -186,12 +194,14 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   tree_push(target: Tree, ...values: T[number][]): number {
-    let newLength;
-    for (const value of values) newLength = this.tree_pushSingle(target, value);
+    let newLength = 0;
+    for (const value of values) {
+      newLength = this.tree_pushSingle(target, value);
+    }
     return newLength;
   }
 
-  tree_pop(target: Tree): T[number] {
+  tree_pop(target: Tree): T[number] | undefined {
     const length = this.tree_getLength(target);
     const value = this.tree_getProperty(target, length - 1);
     super.tree_deleteProperty(target, length - 1);
@@ -217,10 +227,10 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 }
 
-export class CompositeListType<T extends List<object> = List<object>> extends CompositeArrayType<T> {
+export class CompositeListType<T extends List<unknown> = List<unknown>> extends CompositeArrayType<T> {
   limit: number;
 
-  constructor(options: IListOptions) {
+  constructor(options: IListOptions<T>) {
     super(options);
     this.limit = options.limit;
     this._typeSymbols.add(LIST_TYPE);
@@ -239,6 +249,9 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   }
 
   struct_getLength(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return value.length;
   }
 
@@ -260,6 +273,9 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   }
 
   struct_getChunkCount(value: T): number {
+    if (!value) {
+      throw new Error("variable-size type must include value");
+    }
     return value.length;
   }
 
@@ -297,6 +313,9 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   }
 
   tree_getLength(target: Tree): number {
+    if (!target) {
+      throw new Error("variable-size type must include value");
+    }
     return number32Type.struct_deserializeFromBytes(target.getRoot(LENGTH_GINDEX), 0);
   }
 
@@ -323,7 +342,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
       }
       this.tree_setLength(target, offsets.length);
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = this.elementType.struct_getSerializedLength();
       const length = (end - start) / elementSize;
       if (!Number.isSafeInteger(length)) {
         throw new Error("Deserialized list byte length must be divisible by element size");
@@ -384,12 +403,12 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
   }
 
   tree_push(target: Tree, ...values: Tree[]): number {
-    let newLength;
+    let newLength = 0;
     for (const value of values) newLength = this.tree_pushSingle(target, value);
     return newLength;
   }
 
-  tree_pop(target: Tree): T[number] {
+  tree_pop(target: Tree): T[number] | undefined {
     const length = this.tree_getLength(target);
     const value = this.tree_getProperty(target, length - 1);
     this.tree_setSubtreeAtChunkIndex(target, length - 1, new Tree(zeroNode(0)));
