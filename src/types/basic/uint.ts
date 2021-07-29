@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../../interface";
+import {bigIntPow} from "../../util/bigInt";
 import {isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";
 
@@ -59,7 +60,7 @@ export class NumberUintType extends UintType<number> {
 
   struct_getMaxBigInt(): BigInt {
     if (this._maxBigInt === undefined) {
-      this._maxBigInt = BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1);
+      this._maxBigInt = bigIntPow(BigInt(2), BigInt(this.byteLength * 8)) - BigInt(1);
     }
     return this._maxBigInt;
   }
