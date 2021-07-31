@@ -1,3 +1,9 @@
+## 0.8.12 (2021-07-30)
+
+## Features
+
+- Use utility function for bigint exponentiation ([fbb671](https://github.com/chainsafe/ssz/commit/fbb671))
+
 ## 0.8.11 (2021-06-18)
 
 ## Chores
