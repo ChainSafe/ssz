@@ -19,17 +19,17 @@ describe("Tree", () => {
     });
   }
 
-  for (const depth of [8, 16, 32]) {
+  for (const depth of [8, 16, 32, 40]) {
     const n = subtreeFillToDepth(new LeafNode(Buffer.alloc(32, 1)), depth);
     const backing = new Tree(n);
     const startIndex = 0;
     const count = Math.min(250_000, 2 ** depth);
 
-    itBench(`iterateNodesAtDepth ${depth}`, () => {
+    itBench(`iterateNodesAtDepth ${depth} ${count}`, () => {
       Array.from(backing.iterateNodesAtDepth(depth, startIndex, count));
     });
 
-    itBench(`getNodesAtDepth ${depth}`, () => {
+    itBench(`getNodesAtDepth ${depth} ${count}`, () => {
       backing.getNodesAtDepth(depth, startIndex, count);
     });
   }
