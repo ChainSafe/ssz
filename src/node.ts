@@ -1,34 +1,14 @@
 import {hash} from "./hash";
 
 const ERR_INVALID_TREE = "Invalid tree";
-const ERR_NOT_IMPLEMENTED = "Not implemented";
 
 export abstract class Node {
-  get root(): Uint8Array {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-
-  isLeaf(): boolean {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-
-  get left(): Node {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-
-  get right(): Node {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  rebindLeft(left: Node): Node {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  rebindRight(right: Node): Node {
-    throw new Error(ERR_NOT_IMPLEMENTED);
-  }
+  abstract root: Uint8Array;
+  abstract left: Node;
+  abstract right: Node;
+  abstract isLeaf(): boolean;
+  abstract rebindLeft(left: Node): Node;
+  abstract rebindRight(right: Node): Node;
 }
 
 export class BranchNode extends Node {
@@ -54,16 +34,8 @@ export class BranchNode extends Node {
     return this._left;
   }
 
-  set left(n: Node) {
-    this._left = n;
-  }
-
   get right(): Node {
     return this._right;
-  }
-
-  set right(n: Node) {
-    this._right = n;
   }
 
   rebindLeft(left: Node): Node {
@@ -87,6 +59,22 @@ export class LeafNode extends Node {
 
   isLeaf(): boolean {
     return true;
+  }
+
+  get left(): Node {
+    throw Error("LeafNode has no left node");
+  }
+
+  get right(): Node {
+    throw Error("LeafNode has no right node");
+  }
+
+  rebindLeft(): Node {
+    throw Error("LeafNode has no left node");
+  }
+
+  rebindRight(): Node {
+    throw Error("LeafNode has no right node");
   }
 }
 
