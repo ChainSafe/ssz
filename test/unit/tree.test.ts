@@ -57,7 +57,7 @@ describe("subtree mutation", () => {
   });
 });
 
-describe("tree correctness", () => {
+describe("Tree.setNode", () => {
   it("Should compute root correctly after setting a leaf", () => {
     const depth = 4;
     const tree = new Tree(zeroNode(depth));
@@ -72,6 +72,11 @@ describe("tree correctness", () => {
     tree.setNode(BigInt(46), new LeafNode(Buffer.alloc(32, 2)));
     tree.setNode(BigInt(60), new LeafNode(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
+  });
+
+  it("Should throw for gindex 0", () => {
+    const tree = new Tree(zeroNode(2));
+    expect(() => tree.setNode(BigInt(0), zeroNode(1))).to.throw("Invalid gindex < 1");
   });
 });
 

@@ -71,11 +71,14 @@ export class Tree {
     return node;
   }
 
-  setNode(index: Gindex, n: Node, expand = false): void {
+  setNode(gindex: Gindex, n: Node, expand = false): void {
     let node = this.rootNode;
 
     // Pre-compute entire bitstring instead of using an iterator (25% faster)
-    const bitstring = index.toString(2);
+    if (gindex < 1) {
+      throw new Error("Invalid gindex < 1");
+    }
+    const bitstring = gindex.toString(2);
 
     // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
     // backwards to rebind them "recursively" with the new nodes without using functions
