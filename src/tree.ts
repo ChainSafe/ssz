@@ -71,38 +71,34 @@ export class Tree {
     return node;
   }
 
-  setter(index: Gindex, expand = false): Link {
-    let link = identity;
+  setNode(index: Gindex, n: Node, expand = false): void {
     let node = this.rootNode;
-    const iterator = gindexIterator(index);
-    for (const i of iterator) {
-      if (i) {
-        if (node.isLeaf()) {
-          if (!expand) throw new Error(ERR_INVALID_TREE);
-          else {
-            const child = zeroNode(iterator.remainingBitLength() - 1);
-            node = new BranchNode(child, child);
-          }
+    const bitstring = index.toString(2);
+    const nodes: Node[] = [this.rootNode];
+    for (let i = 1; i < bitstring.length - 1; i++) {
+      if (node.isLeaf()) {
+        if (!expand) {
+          throw new Error(ERR_INVALID_TREE);
+        } else {
+          node = zeroNode(bitstring.length - i);
         }
-        link = compose(node.rebindRight.bind(node), link);
-        node = node.right;
+      }
+
+      node = bitstring[i] === "1" ? node.right : node.left;
+      nodes.push(node);
+    }
+
+    node = n;
+
+    for (let i = bitstring.length - 1; i >= 1; i--) {
+      if (bitstring[i] === "1") {
+        node = nodes[i - 1].rebindRight(node);
       } else {
-        if (node.isLeaf()) {
-          if (!expand) throw new Error(ERR_INVALID_TREE);
-          else {
-            const child = zeroNode(iterator.remainingBitLength() - 1);
-            node = new BranchNode(child, child);
-          }
-        }
-        link = compose(node.rebindLeft.bind(node), link);
-        node = node.left;
+        node = nodes[i - 1].rebindLeft(node);
       }
     }
-    return compose(identity, link);
-  }
 
-  setNode(index: Gindex, n: Node, expand = false): void {
-    this.rootNode = this.setter(index, expand)(n);
+    this.rootNode = node;
   }
 
   getRoot(index: Gindex): Uint8Array {
