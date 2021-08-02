@@ -1,5 +1,7 @@
 const sha256 = require("../src");
 const {expect} = require("chai");
+const {byteArrToObj} = require("../src");
+const {objToByteArr} = require("../src");
 
 describe("sha256", function () {
 
@@ -26,8 +28,33 @@ describe("sha256", function () {
         });
 
         it('gajindergajindergajindergajindergajindergajindergajindergajinder', function () {
-            const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
-            expect(Buffer.from(sha256.default.digest64(input)).toString("hex")).to.be.equal("be39380ff1d0261e6f37dafe4278b662ef611f1cb2f7c0a18348b2d7eb14cf6e")
+            const input1 = "gajindergajindergajindergajinder";
+            const input2 = "gajindergajindergajindergajinder";
+            const input = Buffer.from(input1 + input2, "utf8");
+            const output = sha256.default.digest64(input);
+            const expectedOutput = new Uint8Array([
+              190, 57,  56,  15, 241, 208,  38,  30,
+              111, 55, 218, 254,  66, 120, 182,  98,
+              239, 97,  31,  28, 178, 247, 192, 161,
+              131, 72, 178, 215, 235,  20, 207, 110
+            ]);
+            expect(output).to.be.deep.equal(expectedOutput, "incorrect digest64 result");
+            expect(Buffer.from(output).toString("hex")).to.be.equal("be39380ff1d0261e6f37dafe4278b662ef611f1cb2f7c0a18348b2d7eb14cf6e")
+            // digest232 should be the same to digest64
+            const buffer1 = Buffer.from(input1, "utf-8");
+            const buffer2 = Buffer.from(input2, "utf-8");
+            // each object has properties "0" to "7", each is a number of 4 byte => equal to 32 bytes in Uint8Array
+            const obj1 = byteArrToObj(buffer1);
+            const obj2 = byteArrToObj(buffer2);
+            console.log("@@@ typeof obj1", (typeof obj1), (typeof obj2));
+            const obj = sha256.default.digestObjects(obj1, obj2);
+            const result = new Uint8Array(32);
+            objToByteArr(obj, result, 0);
+            for (let i = 0; i < 32; i++) {
+              expect(result[i]).to.be.equal(output[i], "failed at index" + i);
+            }
+            expect(result).to.be.deep.equal(expectedOutput, "incorrect digestObjects result");
+            console.log("@@@ done");
         });
 
         it('harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal', function () {
@@ -48,7 +75,37 @@ describe("sha256", function () {
             const output = Buffer.from(sha256.default.digest(input)).toString("hex");
             expect(output).to.be.equal("54c7cb8a82d68145fd5f5da4103f5a66f422dbea23d9fc9f40f59b1dcf5403a9");
         });
-
     })
 
+});
+
+describe("objToByteArr and byteArrToObj", function () {
+  const tcs = [
+    new Uint8Array([
+      190, 57,  56,  15, 241, 208,  38,  30,
+      111, 55, 218, 254,  66, 120, 182,  98,
+      239, 97,  31,  28, 178, 247, 192, 161,
+      131, 72, 178, 215, 235,  20, 207, 110,
+    ]),
+    new Uint8Array([
+      255, 255,  255,  255, 255, 255,  255, 255,
+      255, 255,  255,  255, 255, 255,  255, 255,
+      255, 255,  255,  255, 255, 255,  255, 255,
+      255, 255,  255,  255, 255, 255,  255, 255,
+    ]),
+    new Uint8Array([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+    ]),
+  ];
+  for (const [i, byteArr] of tcs.entries()) {
+    it("test case " + i, function () {
+      const obj = byteArrToObj(byteArr);
+      const newByteArr = new Uint8Array(32);
+      objToByteArr(obj, newByteArr, 0);
+      expect(newByteArr).to.be.deep.equal(byteArr, "failed test case" + i);
+    });
+  }
 });
