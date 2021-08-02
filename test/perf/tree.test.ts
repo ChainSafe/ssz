@@ -15,7 +15,7 @@ describe("set", () => {
     const gindex = Array.from(iterateAtDepth(depth, BigInt(0), BigInt(1)))[0];
 
     itBench(`set at depth ${depth}`, () => {
-      backing.setNode2(gindex, n2);
+      backing.setNode(gindex, n2);
     });
   }
 });
