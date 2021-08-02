@@ -24,6 +24,7 @@
     "lint:fix": "eslint --color --fix --ext .ts src/",
     "prepublishOnly": "yarn build",
     "pretest": "yarn check-types",
+    "memTracker": "node --inspect -r ts-node/register  test/perf/testMemTracker.ts",
     "test": "yarn test:unit",
     "test:perf": "mocha --colors -r ts-node/register \"test/perf/**/*.test.ts\"",
     "test:unit": "nyc -e .ts mocha --colors -r ts-node/register \"test/unit/**/*.test.ts\""
@@ -31,7 +32,7 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@chainsafe/as-sha256": "^0.2.2",
-    "@chainsafe/persistent-merkle-tree": "^0.3.3",
+    "@chainsafe/persistent-merkle-tree": "/Users/tuyennguyen/Projects/workshop/persistent-merkle-tree",
     "case": "^1.6.3"
   },
   "devDependencies": {
