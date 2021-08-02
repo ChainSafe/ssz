@@ -5,11 +5,8 @@ const {byteArrToObj} = require("../src");
 describe("sha256", function () {
   it('hash 50000 times', function () {
     this.timeout(0);
-    const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
-    const input1 = "gajindergajindergajindergajinder";
-    const input2 = "gajindergajindergajindergajinder";
-    const buffer1 = Buffer.from(input1, "utf-8");
-    const buffer2 = Buffer.from(input2, "utf-8");
+    const buffer1 = Buffer.from("gajindergajindergajindergajinder", "utf-8");
+    const buffer2 = Buffer.from("gajindergajindergajindergajinder", "utf-8");
     const obj1 = byteArrToObj(buffer1);
     const obj2 = byteArrToObj(buffer2);
     // total number of time running hash for 200000 balances
@@ -17,11 +14,9 @@ describe("sha256", function () {
     const begin = process.hrtime.bigint();
     let minTime = Number.MAX_SAFE_INTEGER;
     let maxTime = 0;
-    const MAX_TRY = 10;
+    const MAX_TRY = 100;
     for (let i = 0; i < MAX_TRY; i++) {
       const start = Date.now();
-      // for (let j = 0; j < iterations; j++) sha256.default.digest64(input);
-      // for (let j = 0; j < iterations; j++) sha256.default.digest642(input);
       for (let j = 0; j < iterations; j++) sha256.default.digestObjects(obj1, obj2);
       const duration = Date.now() - start;
       if (duration < minTime) minTime = duration;

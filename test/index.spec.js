@@ -40,21 +40,18 @@ describe("sha256", function () {
             ]);
             expect(output).to.be.deep.equal(expectedOutput, "incorrect digest64 result");
             expect(Buffer.from(output).toString("hex")).to.be.equal("be39380ff1d0261e6f37dafe4278b662ef611f1cb2f7c0a18348b2d7eb14cf6e")
-            // digest232 should be the same to digest64
+            // digestObjects should be the same to digest64
             const buffer1 = Buffer.from(input1, "utf-8");
             const buffer2 = Buffer.from(input2, "utf-8");
-            // each object has properties "0" to "7", each is a number of 4 byte => equal to 32 bytes in Uint8Array
             const obj1 = byteArrToObj(buffer1);
             const obj2 = byteArrToObj(buffer2);
-            console.log("@@@ typeof obj1", (typeof obj1), (typeof obj2));
             const obj = sha256.default.digestObjects(obj1, obj2);
-            const result = new Uint8Array(32);
-            objToByteArr(obj, result, 0);
+            const output2 = new Uint8Array(32);
+            objToByteArr(obj, output2, 0);
             for (let i = 0; i < 32; i++) {
-              expect(result[i]).to.be.equal(output[i], "failed at index" + i);
+              expect(output2[i]).to.be.equal(output[i], "failed at index" + i);
             }
-            expect(result).to.be.deep.equal(expectedOutput, "incorrect digestObjects result");
-            console.log("@@@ done");
+            expect(output2).to.be.deep.equal(expectedOutput, "incorrect digestObjects result");
         });
 
         it('harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal', function () {

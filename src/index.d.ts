@@ -1,13 +1,13 @@
 
 export interface IHashObject {
-  "0": number;
-  "1": number;
-  "2": number;
-  "3": number;
-  "4": number;
-  "5": number;
-  "6": number;
-  "7": number;
+  h0: number;
+  h1: number;
+  h2: number;
+  h3: number;
+  h4: number;
+  h5: number;
+  h6: number;
+  h7: number;
 }
 
 export default class SHA256 {
