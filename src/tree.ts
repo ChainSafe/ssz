@@ -1,5 +1,5 @@
 import {Gindex, gindexIterator, Bit, toGindexBitstring} from "./gindex";
-import {Node, BranchNode, Link, compose, identity, LeafNode} from "./node";
+import {Node, LeafNode} from "./node";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 import {zeroNode} from "./zeroNode";
@@ -73,8 +73,16 @@ export class Tree {
 
   setNode(index: Gindex, n: Node, expand = false): void {
     let node = this.rootNode;
+
+    // Pre-compute entire bitstring instead of using an iterator (25% faster)
     const bitstring = index.toString(2);
-    const nodes: Node[] = [this.rootNode];
+
+    // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
+    // backwards to rebind them "recursively" with the new nodes without using functions
+    const parentNodes: Node[] = [this.rootNode];
+
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Ignore the last bit, no need to push the target node to the parentNodes array
     for (let i = 1; i < bitstring.length - 1; i++) {
       if (node.isLeaf()) {
         if (!expand) {
@@ -84,17 +92,26 @@ export class Tree {
         }
       }
 
-      node = bitstring[i] === "1" ? node.right : node.left;
-      nodes.push(node);
+      // Compare to string directly to prevent unnecessary type conversions
+      if (bitstring[i] === "1") {
+        node = node.right;
+      } else {
+        node = node.left;
+      }
+
+      parentNodes.push(node);
     }
 
     node = n;
 
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Iterate the list backwards including the last bit, but offset the parentNodes array
+    // by one since the first bit in bitstring was ignored in the previous loop
     for (let i = bitstring.length - 1; i >= 1; i--) {
       if (bitstring[i] === "1") {
-        node = nodes[i - 1].rebindRight(node);
+        node = parentNodes[i - 1].rebindRight(node);
       } else {
-        node = nodes[i - 1].rebindLeft(node);
+        node = parentNodes[i - 1].rebindLeft(node);
       }
     }
 
