@@ -14,23 +14,22 @@ export default class SHA256 {
   }
   update(data) {
     const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
-    const input = new Uint8Array(this.ctx.memory.buffer, this.ctx.input.value, INPUT_LENGTH);
     if (data.length > INPUT_LENGTH) {
       for (let i = 0; i < data.length; i += INPUT_LENGTH) {
         const sliced = data.slice(i, i + INPUT_LENGTH);
-        input.set(sliced);
-        this.ctx.update(this.ctx.input.value, sliced.length);
+        this.inputArray.set(sliced);
+        this.ctx.update(this.wasmInputValue, sliced.length);
       }
     } else {
-      input.set(data)
-      this.ctx.update(this.ctx.input.value, data.length);
+      this.inputArray.set(data);
+      this.ctx.update(this.wasmInputValue, data.length);
     }
     return this;
   }
   final() {
-    this.ctx.final(this.ctx.output.value);
+    this.ctx.final(this.wasmOutputValue);
     const output = new Uint8Array(32);
-    output.set(new Uint8Array(this.ctx.memory.buffer, this.ctx.output.value, 32));
+    output.set(this.outputArray);
     return output;
   }
 
