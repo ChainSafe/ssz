@@ -69,80 +69,143 @@ export default class SHA256 {
   }
 }
 
+/**
+ * Pass 8 numbers in an object and set that to inputArray.
+ * This function contains multiple same for loop but we intentionally
+ * do it step by step to improve performance a bit.
+ * TODO: move this to wasm by passing 8 numbers to inputArray.
+ **/
 export function objToByteArr(obj, byteArr, offset) {
-  let tmp;
-  for (let index = 0; index < 8; index++) {
-    switch (index) {
-      case 0:
-        tmp = obj.h0;
-        break;
-      case 1:
-        tmp = obj.h1;
-        break;
-      case 2:
-        tmp = obj.h2;
-        break;
-      case 3:
-        tmp = obj.h3;
-        break;
-      case 4:
-        tmp = obj.h4;
-        break;
-      case 5:
-        tmp = obj.h5;
-        break;
-      case 6:
-        tmp = obj.h6;
-        break;
-      case 7:
-        tmp = obj.h7;
-        break;
-    }
-    for (let byte = 0; byte < 4; byte++) {
-      byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
-      if (byte < 3) tmp = tmp >> 8;
-    }
+  let index = 0;
+  let tmp = obj.h0;
+  // this for loop is the same for every step
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 1;
+  tmp = obj.h1;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 2;
+  tmp = obj.h2;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 3;
+  tmp = obj.h3;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 4;
+  tmp = obj.h4;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 5;
+  tmp = obj.h5;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 6;
+  tmp = obj.h6;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
+  }
+
+  index = 7;
+  tmp = obj.h7;
+  for (let byte = 0; byte < 4; byte++) {
+    byteArr[index * 4 + (3 - byte) + offset] = tmp & 0xff;
+    if (byte < 3) tmp = tmp >> 8;
   }
 }
 
-
-
+/**
+ * Parse outputArray into an object of 8 numbers.
+ * This function contains multiple same for loop but we intentionally
+ * do it step by step to improve performance a bit.
+ * TODO: move this part to wasm by passing 8 numbers to output array.
+ **/
 export function byteArrToObj(byteArr) {
-  let h0, h1, h2, h3, h4, h5, h6, h7;
-  for (let index = 0; index < 8; index++) {
-    let tmp = 0;
-    // 4 byte = 1 number
-    for (let byte = 0; byte < 4; byte++) {
-      tmp |= byteArr[index * 4 + byte] & 0xff;
-      if (byte < 3) tmp = tmp << 8;
-    }
-    switch(index) {
-      case 0:
-        h0 = tmp;
-        break;
-      case 1:
-        h1 = tmp;
-        break;
-      case 2:
-        h2 = tmp;
-        break;
-      case 3:
-        h3 = tmp;
-        break;
-      case 4:
-        h4 = tmp;
-        break;
-      case 5:
-        h5 = tmp;
-        break;
-      case 6:
-        h6 = tmp;
-        break;
-      case 7:
-        h7 = tmp;
-        break;
-    }
+  let index = 0;
+  let tmp = 0;
+  // this for loop is the same for every step
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
   }
+  const h0 = tmp;
+
+  index = 1;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h1 = tmp;
+
+  index = 2;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h2 = tmp;
+
+  index = 3;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h3 = tmp;
+
+  index = 4;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h4 = tmp;
+
+  index = 5;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h5 = tmp;
+
+  index = 6;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h6 = tmp;
+
+  index = 7;
+  tmp = 0;
+  for (let byte = 0; byte < 4; byte++) {
+    tmp |= byteArr[index * 4 + byte] & 0xff;
+    if (byte < 3) tmp = tmp << 8;
+  }
+  const h7 = tmp;
+
   return {
     h0,
     h1,
