@@ -1,3 +1,9 @@
+## 0.8.13 (2021-08-04)
+
+## Features
+
+- Use utility function for bigint exponentiation ([c2d3a7](https://github.com/chainsafe/ssz/commit/c2d3a7))
+
 ## 0.8.12 (2021-07-30)
 
 ## Features
