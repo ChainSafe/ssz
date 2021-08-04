@@ -1,10 +1,10 @@
 const sha256 = require("../src");
 const {expect} = require("chai");
-const {byteArrToObj} = require("../src");
+const {byteArrToObj} = require("./utils");
 
 describe("sha256", function () {
-  // As of Aug 08 2021, the performance of digestObjects is the same to digest64
-  // hash minTime: 53 maxTime: 68 average: 55 MAX_TRY: 100
+  // As of Aug 04 2021, the performance of digestObjects is the same to digest64
+  // hash minTime: 51 maxTime: 63 average: 53 MAX_TRY: 100
   it('hash 50000 times', function () {
     this.timeout(0);
     const buffer1 = Buffer.from("gajindergajindergajindergajinder", "utf-8");

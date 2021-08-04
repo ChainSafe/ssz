@@ -1,7 +1,7 @@
 const sha256 = require("../src");
 const {expect} = require("chai");
-const {byteArrToObj} = require("../src");
-const {objToByteArr} = require("../src");
+const {byteArrToObj} = require("./utils");
+const {objToByteArr} = require("./utils");
 
 describe("sha256", function () {
 
