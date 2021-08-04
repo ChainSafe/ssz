@@ -3,7 +3,7 @@
  * This function contains multiple same procedures but we intentionally
  * do it step by step to improve performance a bit.
  **/
- export function objToByteArr(obj, byteArr, offset) {
+ function objToByteArr(obj, byteArr, offset) {
   let tmp;
   for (let index = 0; index < 8; index++) {
     switch (index) {
@@ -45,7 +45,7 @@
  * This function contains multiple same procedures but we intentionally
  * do it step by step to improve performance a bit.
  **/
-export function byteArrToObj(byteArr) {
+function byteArrToObj(byteArr) {
   let h0, h1, h2, h3, h4, h5, h6, h7;
 
   for (let index = 0; index < 8; index++) {
@@ -93,3 +93,6 @@ export function byteArrToObj(byteArr) {
     h7,
   };;
 }
+
+exports.objToByteArr = objToByteArr;
+exports.byteArrToObj = byteArrToObj;
