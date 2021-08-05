@@ -25,8 +25,8 @@
     "prepublishOnly": "yarn build",
     "pretest": "yarn check-types",
     "test": "yarn test:unit",
-    "test:perf": "mocha --colors -r ts-node/register \"test/perf/**/*.test.ts\"",
-    "test:unit": "nyc -e .ts mocha --colors -r ts-node/register \"test/unit/**/*.test.ts\""
+    "test:unit": "nyc -e .ts mocha --colors -r ts-node/register \"test/unit/**/*.test.ts\"",
+    "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/**/*.test.ts'"
   },
   "types": "lib/index.d.ts",
   "dependencies": {
@@ -43,6 +43,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@babel/register": "^7.8.3",
+    "@dapplion/benchmark": "^0.1.6",
     "@types/chai": "^4.2.9",
     "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.4",
@@ -52,7 +53,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.4",
-    "mocha": "^7.0.1",
+    "mocha": "^8.3.0",
     "nyc": "^15.0.0",
     "prettier": "^2.0.5",
     "ts-node": "^8.6.2",

@@ -4,3 +4,5 @@ dist/
 lib/
 node_modules/
 .idea/
+
+benchmark_data/
