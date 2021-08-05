@@ -8,7 +8,8 @@ export default class SHA256 {
     this.uint8InputArray = new Uint8Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
     this.uint8OutputArray = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
     this.uint32InputArray = new Uint32Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
-    this.uint32OutputArray = new Uint32Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
+    // extracting numbers from Uint32Array causes more memory
+    // this.uint32OutputArray = new Uint32Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
   }
   init() {
     this.ctx.init();
@@ -85,16 +86,8 @@ export default class SHA256 {
 
     staticInstance.ctx.digest64(staticInstance.wasmInputValue, staticInstance.wasmOutputValue);
 
-    return {
-      h0: staticInstance.uint32OutputArray[0],
-      h1: staticInstance.uint32OutputArray[1],
-      h2: staticInstance.uint32OutputArray[2],
-      h3: staticInstance.uint32OutputArray[3],
-      h4: staticInstance.uint32OutputArray[4],
-      h5: staticInstance.uint32OutputArray[5],
-      h6: staticInstance.uint32OutputArray[6],
-      h7: staticInstance.uint32OutputArray[7],
-    };
+    // extracting numbers from Uint32Array causes more memory
+    return byteArrayToHashObject(staticInstance.uint8OutputArray);
   }
 }
 

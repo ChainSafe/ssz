@@ -3,8 +3,10 @@ const sha256 = require("../lib/index");
 
 // As of Aug 05 2021
 // hash
-//     ✓ digestTwoHashObjects 50023 times                                    18.56678 ops/s    53.85965 ms/op        -       1114 runs   60.0 s
-//     ✓ digest64 50023 times                                                17.20804 ops/s    58.11236 ms/op        -       1033 runs   60.0 s
+// ✓ digestTwoHashObjects 50023 times                                    17.64902 ops/s    56.66037 ms/op        -       1059 runs   60.0 s
+// ✓ digest64 50023 times                                                16.99958 ops/s    58.82497 ms/op        -       1020 runs   60.0 s
+// ✓ hashObjectToByteArray 50023 times                                   646.1493 ops/s    1.547630 ms/op        -      38649 runs   60.0 s
+// ✓ byteArrayToHashObject 50023 times                                   554.0949 ops/s    1.804745 ms/op        -      33179 runs   60.0 s
 
 describe("hash", () => {
   setBenchOpts({
@@ -28,6 +30,15 @@ describe("hash", () => {
 
   itBench(`digest64 ${iterations} times`, () => {
     for (let j = 0; j < iterations; j++) sha256.default.digest64(input);
+  });
+
+  itBench(`hashObjectToByteArray ${iterations} times`, () => {
+    const byteArr = new Uint8Array(32);
+    for (let j = 0; j < iterations; j++) sha256.hashObjectToByteArray(obj1, byteArr, 0);
+  });
+
+  itBench(`byteArrayToHashObject ${iterations} times`, () => {
+    for (let j = 0; j < iterations; j++) sha256.byteArrayToHashObject(buffer1);
   });
 
 });
