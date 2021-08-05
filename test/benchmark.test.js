@@ -1,11 +1,11 @@
 const {itBench, setBenchOpts} = require("@dapplion/benchmark");
-const {byteArrToObj} = require("./utils");
 const sha256 = require("../lib/index");
 
-// As of Aug 04 2021
+// As of Aug 05 2021
 // hash
-//     ✓ digestObjects 50023 times                                           18.37785 ops/s    54.41333 ms/op        -       1103 runs   60.0 s
-//     ✓ digest64 50023 times                                                17.54145 ops/s    57.00782 ms/op        -       1053 runs   60.0 s
+//     ✓ digestTwoHashObjects 50023 times                                    18.56678 ops/s    53.85965 ms/op        -       1114 runs   60.0 s
+//     ✓ digest64 50023 times                                                17.20804 ops/s    58.11236 ms/op        -       1033 runs   60.0 s
+
 describe("hash", () => {
   setBenchOpts({
     maxMs: 100 * 1000,
@@ -18,12 +18,12 @@ describe("hash", () => {
   const input2 = "gajindergajindergajindergajinder";
   const buffer1 = Buffer.from(input1, "utf-8");
   const buffer2 = Buffer.from(input2, "utf-8");
-  const obj1 = byteArrToObj(buffer1);
-  const obj2 = byteArrToObj(buffer2);
+  const obj1 = sha256.byteArrayToHashObject(buffer1);
+  const obj2 = sha256.byteArrayToHashObject(buffer2);
   // total number of time running hash for 200000 balances
   const iterations = 50023;
-  itBench(`digestObjects ${iterations} times`, () => {
-    for (let j = 0; j < iterations; j++) sha256.default.digestObjects(obj1, obj2);
+  itBench(`digestTwoHashObjects ${iterations} times`, () => {
+    for (let j = 0; j < iterations; j++) sha256.default.digestTwoHashObjects(obj1, obj2);
   });
 
   itBench(`digest64 ${iterations} times`, () => {

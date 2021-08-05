@@ -1,7 +1,5 @@
 const sha256 = require("../src");
 const {expect} = require("chai");
-const {byteArrToObj} = require("./utils");
-const {objToByteArr} = require("./utils");
 
 describe("sha256", function () {
 
@@ -40,18 +38,18 @@ describe("sha256", function () {
             ]);
             expect(output).to.be.deep.equal(expectedOutput, "incorrect digest64 result");
             expect(Buffer.from(output).toString("hex")).to.be.equal("be39380ff1d0261e6f37dafe4278b662ef611f1cb2f7c0a18348b2d7eb14cf6e")
-            // digestObjects should be the same to digest64
+            // digestTwoHashObjects should be the same to digest64
             const buffer1 = Buffer.from(input1, "utf-8");
             const buffer2 = Buffer.from(input2, "utf-8");
-            const obj1 = byteArrToObj(buffer1);
-            const obj2 = byteArrToObj(buffer2);
-            const obj = sha256.default.digestObjects(obj1, obj2);
+            const obj1 = sha256.byteArrayToHashObject(buffer1);
+            const obj2 = sha256.byteArrayToHashObject(buffer2);
+            const obj = sha256.default.digestTwoHashObjects(obj1, obj2);
             const output2 = new Uint8Array(32);
-            objToByteArr(obj, output2, 0);
+            sha256.hashObjectToByteArray(obj, output2, 0);
             for (let i = 0; i < 32; i++) {
               expect(output2[i]).to.be.equal(output[i], "failed at index" + i);
             }
-            expect(output2).to.be.deep.equal(expectedOutput, "incorrect digestObjects result");
+            expect(output2).to.be.deep.equal(expectedOutput, "incorrect digestTwoHashObjects result");
         });
 
         it('harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal', function () {
@@ -76,7 +74,7 @@ describe("sha256", function () {
 
 });
 
-describe("objToByteArr and byteArrToObj", function () {
+describe("sha256.hashObjectToByteArray and sha256.byteArrayToHashObject", function () {
   const tcs = [
     new Uint8Array([
       190, 57,  56,  15, 241, 208,  38,  30,
@@ -99,9 +97,9 @@ describe("objToByteArr and byteArrToObj", function () {
   ];
   for (const [i, byteArr] of tcs.entries()) {
     it("test case " + i, function () {
-      const obj = byteArrToObj(byteArr);
+      const obj = sha256.byteArrayToHashObject(byteArr);
       const newByteArr = new Uint8Array(32);
-      objToByteArr(obj, newByteArr, 0);
+      sha256.hashObjectToByteArray(obj, newByteArr, 0);
       expect(newByteArr).to.be.deep.equal(byteArr, "failed test case" + i);
     });
   }
