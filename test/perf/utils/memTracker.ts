@@ -4,7 +4,7 @@ export class MemoryTracker {
   logDiff(id: string): void {
     const curr = process.memoryUsage();
     const parts: string[] = [];
-    console.log("@@@ logDiff", id, "heapUsed", curr.heapUsed);
+    console.log("@@@ logDiff", id, "heapUsed", formatBytes(curr.heapUsed));
     for (const key of Object.keys(this.prev) as (keyof NodeJS.MemoryUsage)[]) {
       const prevVal = this.prev[key];
       const currVal = curr[key];
