@@ -799,16 +799,12 @@
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/as-sha256@file:../as-sha256":
-  version "0.2.2"
-  dependencies:
-    "@assemblyscript/loader" "^0.9.2"
-    buffer "^5.4.3"
-
-"@chainsafe/persistent-merkle-tree@file:../persistent-merkle-tree":
+"@chainsafe/persistent-merkle-tree@file:../../persistent-merkle-tree":
   version "0.3.3"
   dependencies:
-    "@chainsafe/as-sha256" "file:../as-sha256"
+    "@chainsafe/as-sha256" "^0.2.2"
+    bigint-buffer "^1.1.5"
+    bigint-hash "^0.2.2"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
@@ -1100,6 +1096,22 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
+bigint-buffer@^1.1.2, bigint-buffer@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/bigint-buffer/-/bigint-buffer-1.1.5.tgz#d038f31c8e4534c1f8d0015209bf34b4fa6dd442"
+  integrity sha512-trfYco6AoZ+rKhKnxA0hgX0HAbVP/s808/EuDSe2JDzUnCp/xAsli35Orvk67UrTEcwuxZqYZDmfA2RXJgxVvA==
+  dependencies:
+    bindings "^1.3.0"
+
+bigint-hash@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/bigint-hash/-/bigint-hash-0.2.2.tgz#6aa50a0d9a441ac37dcbfdb4913c44158740ae02"
+  integrity sha512-GKbYUs3tUurQUAPTdSVFHwiZJLfqOrNOehuIJ63ghOqHFUcv+h6eWgVdwYFjIehDTfPWrLHE57G5kzYfl/biqg==
+  dependencies:
+    bigint-buffer "^1.1.2"
+    bindings "^1.3.0"
+    xxhashjs "^0.2.2"
+
 binary-extensions@^1.0.0:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.13.1.tgz#598afe54755b2868a5330d2aff9d4ebb53209b65"
@@ -1110,7 +1122,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.0.0.tgz#23c0df14f6a88077f5f986c0d167ec03c3d5537c"
   integrity sha512-Phlt0plgpIIBOGTT/ehfFnbNlfsDEiqmzE2KRXoX1bLIlir4X/MR+zSyBEkL05ffWgnRSf/DXv+WrUAVr93/ow==
 
-bindings@^1.5.0:
+bindings@^1.3.0, bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -1431,6 +1443,11 @@ cross-spawn@^7.0.0:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+cuint@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/cuint/-/cuint-0.2.2.tgz#408086d409550c2631155619e9fa7bcadc3b991b"
+  integrity sha1-QICG1AlVDCYxFVYZ6fp7ytw7mRs=
 
 debug@3.2.6:
   version "3.2.6"
@@ -3975,6 +3992,13 @@ write@1.0.3:
   integrity sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==
   dependencies:
     mkdirp "^0.5.1"
+
+xxhashjs@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/xxhashjs/-/xxhashjs-0.2.2.tgz#8a6251567621a1c46a5ae204da0249c7f8caa9d8"
+  integrity sha512-AkTuIuVTET12tpsVIQo+ZU6f/qDmKuRUcjaqR+OIvm+aCBsZ95i7UVY5WJ9TMsSaZ0DA2WxoZ4acu0sPH+OKAw==
+  dependencies:
+    cuint "^0.2.2"
 
 y18n@^4.0.0:
   version "4.0.1"

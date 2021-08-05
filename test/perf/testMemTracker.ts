@@ -61,6 +61,11 @@ const value = Array.from({length: numValidator}, (_, i) => ({
   exitEpoch: Infinity,
   withdrawableEpoch: Infinity,
 }));
+
+if (global.gc) {
+  global.gc();
+  console.log("@@@ called gc");
+}
 const treeBacked = ValidatorListType.createTreeBackedFromStruct(value);
 const tracker = new MemoryTracker();
 tracker.logDiff("start");
