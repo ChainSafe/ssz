@@ -1,34 +1,58 @@
-name: Benchmark.js Example
+name: Benchmark
+
+# only one can tun at a time.
+# Actions access a common cache entry and may corrupt it.
+concurrency: cd-benchmark-${{ github.ref }}
+
 on:
   push:
     branches:
       - master
-      - benchmark
+      - benchmark # For debugging
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  benchmark:
-    name: Run JavaScript benchmark example
+  run:
     runs-on: ubuntu-latest
+    # Don't run on forks. Forks don't have access to the S3 credentials and the workflow will fail
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+
     steps:
+      # <common-build> - Uses YAML anchors in the future
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: "12.14.1"
-      - name: Build
-        run: yarn
-      - name: Run benchmark
-        run: node test/bench.js | tee benchmark.txt
-      - name: Store benchmark result
-        uses: rhysd/github-action-benchmark@v1
+          node-version: "14.16.0"
+      - name: Restore dependencies
+        uses: actions/cache@master
+        id: cache-deps
         with:
-          name: as-sha256 Benchmark
-          tool: "benchmarkjs"
-          output-file-path: benchmark.txt
-          # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t5/GitHub-Actions/Github-action-not-triggering-gh-pages-upon-push/td-p/26869/highlight/false
-          github-token: ${{ secrets.GH_PAGES_TOKEN }}
-          auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
-          alert-threshold: "200%"
-          comment-on-alert: true
-          fail-on-alert: true
-          alert-comment-cc-users: "@wemeetagain"
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-ignore-optional-14.16.0
+      - name: Install & build
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile --ignore-optional
+      - name: Build
+        run: yarn build
+        if: steps.cache-deps.outputs.cache-hit == 'true'
+      # </common-build>
+
+      - name: Run benchmarks
+        run: yarn benchmark
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # benchmark options
+          BENCHMARK_S3: true
+          BENCHMARK_threshold: 3
+          # S3 credentials
+          S3_ACCESS_KEY: ${{ secrets.S3_BENCH_LODESTAR_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_BENCH_LODESTAR_SECRET_KEY }}
+          S3_REGION: ${{ secrets.S3_BENCH_LODESTAR_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BENCH_LODESTAR_BUCKET }}
+          S3_ENDPOINT: ${{ secrets.S3_BENCH_LODESTAR_ENDPOINT }}
+          # Key prefix to separate benchmark data from multiple repositories
+          S3_KEY_PREFIX: ${{ github.repository }}/${{ runner.os }}
