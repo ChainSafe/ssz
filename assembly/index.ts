@@ -21,24 +21,24 @@ const K: u32[] = [
 ];
 const kPtr = K.dataStart;
 
-//precomputed W for message block representing length 64 bytes for fixed input of 64 bytes for digest64
+//precomputed W + K for message block representing length 64 bytes for fixed input of 64 bytes for digest64
 const W64: u32[] = [
-  0x80000000, 0x00000000, 0x00000000, 0x00000000,
-  0x00000000, 0x00000000, 0x00000000, 0x00000000,
-  0x00000000, 0x00000000, 0x00000000, 0x00000000,
-  0x00000000, 0x00000000, 0x00000000, 0x00000200,
-  0x80000000, 0x01400000, 0x00205000, 0x00005088,
-  0x22000800, 0x22550014, 0x05089742, 0xa0000020,
-  0x5a880000, 0x005c9400, 0x0016d49d, 0xfa801f00,
-  0xd33225d0, 0x11675959, 0xf6e6bfda, 0xb30c1549,
-  0x08b2b050, 0x9d7c4c27, 0x0ce2a393, 0x88e6e1ea,
-  0xa52b4335, 0x67a16f49, 0xd732016f, 0x4eeb2e91,
-  0x5dbf55e5, 0x8eee2335, 0xe2bc5ec2, 0xa83f4394,
-  0x45ad78f7, 0x36f3d0cd, 0xd99c05e8, 0xb0511dc7,
-  0x69bc7ac4, 0xbd11375b, 0xe3ba71e5, 0x3b209ff2,
-  0x18feee17, 0xe25ad9e7, 0x13375046, 0x0515089d,
-  0x4f0d0f04, 0x2627484e, 0x310128d2, 0xc668b434,
-  0x420841cc, 0x62d311b8, 0xe59ba771, 0x85a7a484
+  0xc28a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
+  0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+  0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf374,
+  0x649b69c1, 0xf0fe4786, 0x0fe1edc6, 0x240cf254,
+  0x4fe9346f, 0x6cc984be, 0x61b9411e, 0x16f988fa,
+  0xf2c65152, 0xa88e5a6d, 0xb019fc65, 0xb9d99ec7,
+  0x9a1231c3, 0xe70eeaa0, 0xfdb1232b, 0xc7353eb0,
+  0x3069bad5, 0xcb976d5f, 0x5a0f118f, 0xdc1eeefd,
+  0x0a35b689, 0xde0b7a04, 0x58f4ca9d, 0xe15d5b16,
+  0x007f3e86, 0x37088980, 0xa507ea32, 0x6fab9537,
+  0x17406110, 0x0d8cd6f1, 0xcdaa3b6d, 0xc0bbbe37,
+  0x83613bda, 0xdb48a363, 0x0b02e931, 0x6fd15ca7,
+  0x521afaca, 0x31338431, 0x6ed41a95, 0x6d437890,
+  0xc39c91f2, 0x9eccabbd, 0xb5c9a0e6, 0x532fb63c,
+  0xd2c741c6, 0x07237ea3, 0xa4954b68, 0x4c191d76,
 ];
 const w64Ptr = W64.dataStart;
 
@@ -148,7 +148,7 @@ function SIG1(x: u32): u32 {
  * @param wPtr pointer to expanded message block memory
  * @param mPtr pointer to message block memory, pass 0 if wPtr is precomputed for e.g. in digest64
  */
-function hashBlocks(wPtr: usize, mPtr: usize = 0): void {
+function hashBlocks(wPtr: usize, mPtr: usize): void {
   a = H0;
   b = H1;
   c = H2;
@@ -158,28 +158,59 @@ function hashBlocks(wPtr: usize, mPtr: usize = 0): void {
   g = H6;
   h = H7;
 
-  // If mPtr is null, wPtr is assumed to be precomputed
-  if (mPtr) {
-    // Load message blocks into first 16 expanded message blocks
-    for (i = 0; i < 16; i++) {
-      store32(wPtr, i,
-        load32be(mPtr, i)
-      );
-    }
-    // Expand message blocks 17-64
-    for (i = 16; i < 64; i++) {
-      store32(wPtr, i,
-        SIG1(load32(wPtr, i - 2)) +
-        load32(wPtr, i - 7) +
-        SIG0(load32(wPtr, i - 15)) +
-        load32(wPtr, i - 16)
-      );
-    }
+  // Load message blocks into first 16 expanded message blocks
+  for (i = 0; i < 16; i++) {
+    store32(wPtr, i,
+      load32be(mPtr, i)
+    );
+  }
+  // Expand message blocks 17-64
+  for (i = 16; i < 64; i++) {
+    store32(wPtr, i,
+      SIG1(load32(wPtr, i - 2)) +
+      load32(wPtr, i - 7) +
+      SIG0(load32(wPtr, i - 15)) +
+      load32(wPtr, i - 16)
+    );
   }
 
   // Apply SHA256 compression function on expanded message blocks
   for (i = 0; i < 64; i++) {
     t1 = h + EP1(e) + CH(e, f, g) + load32(kPtr, i) + load32(wPtr, i);
+    t2 = EP0(a) + MAJ(a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + t1;
+    d = c;
+    c = b;
+    b = a;
+    a = t1 + t2;
+  }
+
+  H0 += a;
+  H1 += b;
+  H2 += c;
+  H3 += d;
+  H4 += e;
+  H5 += f;
+  H6 += g;
+  H7 += h;
+}
+
+function hashPreCompW(wPtr: usize): void {
+  a = H0;
+  b = H1;
+  c = H2;
+  d = H3;
+  e = H4;
+  f = H5;
+  g = H6;
+  h = H7;
+
+  // Apply SHA256 compression function on expanded message blocks
+  for (i = 0; i < 64; i++) {
+    t1 = h + EP1(e) + CH(e, f, g) + load32(wPtr, i);
     t2 = EP0(a) + MAJ(a, b, c);
     h = g;
     g = f;
@@ -291,7 +322,7 @@ export function digest(length: i32): void {
 export function digest64(inPtr: usize, outPtr: usize): void {
   init();
   hashBlocks(wPtr,inPtr);
-  hashBlocks(w64Ptr);
+  hashPreCompW(w64Ptr);
   store32(outPtr, 0, bswap(H0));
   store32(outPtr, 1, bswap(H1));
   store32(outPtr, 2, bswap(H2));
