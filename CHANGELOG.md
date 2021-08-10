@@ -1,4 +1,9 @@
-## 0.2.1 (2021-05-06)
+## 0.2.3 (2021-08-10)
+
+- Add digestObjects method ([da5d82](https://github.com/ChainSafe/as-sha256/commit/da5d82))
+- Optimised w+k for digest64 ([359555](https://github.com/ChainSafe/as-sha256/commit/359555))
+
+## 0.2.2 (2021-05-06)
 
 ### Bug Fixes
 
