@@ -5,7 +5,6 @@ import {
   concatGindices,
   Gindex,
   iterateAtDepth,
-  LeafNode,
   Node,
   subtreeFillToContents,
   Tree,
@@ -14,6 +13,7 @@ import {
 import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 import {isTreeBacked} from "../../backings/tree/treeValue";
+import {basicTypeToLeafNode} from "../../util/basic";
 
 export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -263,9 +263,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       subtreeFillToContents(
         Object.entries(this.fields).map(([fieldName, fieldType]) => {
           if (!isCompositeType(fieldType)) {
-            const chunk = new Uint8Array(32);
-            fieldType.toBytes(value[fieldName], chunk, 0);
-            return new LeafNode(chunk);
+            return basicTypeToLeafNode(fieldType, value[fieldName]);
           } else {
             return fieldType.struct_convertToTree(value[fieldName]).rootNode;
           }

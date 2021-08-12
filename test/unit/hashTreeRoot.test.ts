@@ -1,7 +1,7 @@
-import {assert} from "chai";
+import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType, ContainerType, ListType} from "../../src";
+import {booleanType, byteType, CompositeType, ContainerType, getTreeValueClass, ListType} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -15,6 +15,7 @@ import {
   number16List100Type,
   OuterObject,
   SimpleObject,
+  UnionObject,
 } from "./objects";
 
 describe("hashTreeRoot", () => {
@@ -72,11 +73,18 @@ describe("hashTreeRoot", () => {
     },
     {value: [], type: number16List100Type, expected: ""},
     {value: [], type: ArrayObject2, expected: ""},
+    {value: {selector: 0, value: null}, type: UnionObject, expected: ""},
+    {value: {selector: 1, value: {a: 1, b: 2}}, type: UnionObject, expected: ""},
+    {value: {selector: 2, value: 1000}, type: UnionObject, expected: ""},
   ];
   for (const {type, value} of testCases) {
     it(`should correctly hash ${type.constructor.name}`, () => {
-      const actual = Buffer.from(type.hashTreeRoot(value)).toString("hex");
-      assert(actual);
+      const actualStructRoot = Buffer.from(type.hashTreeRoot(value)).toString("hex");
+      assert(actualStructRoot);
+      if (getTreeValueClass(type)) {
+        const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromStruct(value);
+        expect(Buffer.from(treeBackedActual.hashTreeRoot()).toString("hex")).to.be.equal(actualStructRoot, "TreeBacked root is different from struct root");
+      }
     });
   }
 
