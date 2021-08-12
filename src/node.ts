@@ -1,29 +1,55 @@
-import {hash} from "./hash";
+import {HashObject} from "@chainsafe/as-sha256";
+import {hashObjectToUint8Array, hashTwoObjects, uint8ArrayToHashObject} from "./hash";
 
 const ERR_INVALID_TREE = "Invalid tree";
 
-export abstract class Node {
+export abstract class Node implements HashObject {
+  // this is to save an extra variable to check if a node has a root or not
+  h0 = (null as unknown) as number;
+  h1 = 0;
+  h2 = 0;
+  h3 = 0;
+  h4 = 0;
+  h5 = 0;
+  h6 = 0;
+  h7 = 0;
+
   abstract root: Uint8Array;
+  abstract rootHashObject: HashObject;
   abstract left: Node;
   abstract right: Node;
+
+  applyHash(root: HashObject): void {
+    this.h0 = root.h0;
+    this.h1 = root.h1;
+    this.h2 = root.h2;
+    this.h3 = root.h3;
+    this.h4 = root.h4;
+    this.h5 = root.h5;
+    this.h6 = root.h6;
+    this.h7 = root.h7;
+  }
+
   abstract isLeaf(): boolean;
   abstract rebindLeft(left: Node): Node;
   abstract rebindRight(right: Node): Node;
 }
 
 export class BranchNode extends Node {
-  private _root: Uint8Array | null = null;
-
   constructor(private _left: Node, private _right: Node) {
     super();
     if (!_left || !_right) throw new Error(ERR_INVALID_TREE);
   }
 
-  get root(): Uint8Array {
-    if (!this._root) {
-      this._root = hash(this.left.root, this.right.root);
+  get rootHashObject(): HashObject {
+    if (this.h0 === null) {
+      super.applyHash(hashTwoObjects(this.left.rootHashObject, this.right.rootHashObject));
     }
-    return this._root as Uint8Array;
+    return this;
+  }
+
+  get root(): Uint8Array {
+    return hashObjectToUint8Array(this.rootHashObject);
   }
 
   isLeaf(): boolean {
@@ -48,13 +74,18 @@ export class BranchNode extends Node {
 }
 
 export class LeafNode extends Node {
-  constructor(private _root: Uint8Array) {
+  constructor(_root: Uint8Array) {
     super();
     if (_root.length !== 32) throw new Error(ERR_INVALID_TREE);
+    this.applyHash(uint8ArrayToHashObject(_root));
+  }
+
+  get rootHashObject(): HashObject {
+    return this;
   }
 
   get root(): Uint8Array {
-    return this._root;
+    return hashObjectToUint8Array(this);
   }
 
   isLeaf(): boolean {
