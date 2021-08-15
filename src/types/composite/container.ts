@@ -26,16 +26,30 @@ export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
 export function isContainerType<T extends ObjectLike = ObjectLike>(type: Type<unknown>): type is ContainerType<T> {
   return isTypeOf(type, CONTAINER_TYPE);
 }
+type FieldInfo = {
+  isBasic: boolean;
+  gindex: bigint;
+};
 
 export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeType<T> {
   // ES6 ensures key order is chronological
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
+  fieldInfos: Map<string, FieldInfo>;
 
   constructor(options: IContainerOptions) {
     super();
     this.fields = {...options.fields};
     this._typeSymbols.add(CONTAINER_TYPE);
+    this.fieldInfos = new Map<string, FieldInfo>();
+    let chunkIndex = 0;
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
+      this.fieldInfos.set(fieldName, {
+        isBasic: !isCompositeType(fieldType),
+        gindex: this.getGindexAtChunkIndex(chunkIndex),
+      });
+      chunkIndex++;
+    }
   }
 
   struct_defaultValue(): T {
@@ -319,13 +333,15 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
   tree_convertToStruct(target: Tree): T {
     const value = {} as T;
-    for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
-      if (!isCompositeType(fieldType)) {
-        const chunk = this.tree_getRootAtChunkIndex(target, i);
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
+      const fieldInfo = this.fieldInfos.get(fieldName);
+      if (fieldInfo.isBasic) {
+        const chunk = target.getRoot(fieldInfo.gindex);
         value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(chunk, 0);
       } else {
-        const subtree = this.tree_getSubtreeAtChunkIndex(target, i);
-        value[fieldName as keyof T] = fieldType.tree_convertToStruct(subtree) as T[keyof T];
+        const compositeType = fieldType as CompositeType<unknown>;
+        const subtree = target.getSubtree(fieldInfo.gindex);
+        value[fieldName as keyof T] = compositeType.tree_convertToStruct(subtree) as T[keyof T];
       }
     }
     return value;
@@ -333,11 +349,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
   tree_getSerializedLength(target: Tree): number {
     let s = 0;
-    for (const [i, fieldType] of Object.values(this.fields).entries()) {
+    for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       if (fieldType.hasVariableSerializedLength()) {
         s +=
           (fieldType as CompositeType<T[keyof T]>).tree_getSerializedLength(
-            this.tree_getSubtreeAtChunkIndex(target, i)
+            target.getSubtree(this.fieldInfos.get(fieldName).gindex)
           ) + 4;
       } else {
         s += fieldType.struct_getSerializedLength(null);
@@ -349,9 +365,10 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
     const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
-    for (const [i, fieldType] of Object.values(this.fields).entries()) {
+    for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
       const [currentOffset, nextOffset] = offsets[i];
-      if (!isCompositeType(fieldType)) {
+      const {isBasic, gindex} = this.fieldInfos.get(fieldName);
+      if (isBasic) {
         // view of the chunk, shared buffer from `data`
         const dataChunk = new Uint8Array(
           data.buffer,
@@ -361,12 +378,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         const chunk = new Uint8Array(32);
         // copy chunk into new memory
         chunk.set(dataChunk);
-        this.tree_setRootAtChunkIndex(target, i, chunk);
+        target.setRoot(gindex, chunk);
       } else {
-        this.tree_setSubtreeAtChunkIndex(
-          target,
-          i,
-          fieldType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset)
+        const compositeType = fieldType as CompositeType<unknown>;
+        target.setSubtree(
+          gindex,
+          compositeType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset)
         );
       }
     }
@@ -406,11 +423,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
 
   getPropertyGindex(prop: PropertyKey): Gindex {
-    const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
-    if (chunkIndex === -1) {
+    const fieldInfo = this.fieldInfos.get(prop as string);
+    if (!fieldInfo) {
       throw new Error(`Invalid container field name: ${String(prop)}`);
     }
-    return this.getGindexAtChunkIndex(chunkIndex);
+    return fieldInfo.gindex;
   }
 
   getPropertyType(prop: PropertyKey): Type<unknown> {
@@ -426,47 +443,44 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
 
   tree_getProperty(target: Tree, prop: PropertyKey): Tree | unknown {
-    const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
-    if (chunkIndex === -1) {
-      return undefined;
-    }
     const fieldType = this.fields[prop as string];
-    if (!isCompositeType(fieldType)) {
-      const chunk = this.tree_getRootAtChunkIndex(target, chunkIndex);
+    const {isBasic, gindex} = this.fieldInfos.get(prop as string);
+    if (isBasic) {
+      const chunk = target.getRoot(gindex);
       return fieldType.struct_deserializeFromBytes(chunk, 0);
     } else {
-      return this.tree_getSubtreeAtChunkIndex(target, chunkIndex);
+      return target.getSubtree(gindex);
     }
   }
 
   tree_setProperty(target: Tree, property: PropertyKey, value: Tree | unknown): boolean {
-    const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === property);
-    if (chunkIndex === -1) {
+    const fieldType = this.fields[property as string];
+    const fieldInfo = this.fieldInfos.get(property as string);
+    if (!fieldInfo) {
       throw new Error("Invalid container field name");
     }
-    const chunkGindex = this.getGindexAtChunkIndex(chunkIndex);
-    const fieldType = this.fields[property as string];
-    if (!isCompositeType(fieldType)) {
+    if (fieldInfo.isBasic) {
       const chunk = new Uint8Array(32);
       fieldType.struct_serializeToBytes(value, chunk, 0);
-      target.setRoot(chunkGindex, chunk);
+      target.setRoot(fieldInfo.gindex, chunk);
       return true;
     } else {
-      target.setSubtree(chunkGindex, value as Tree);
+      target.setSubtree(fieldInfo.gindex, value as Tree);
       return true;
     }
   }
 
   tree_deleteProperty(target: Tree, prop: PropertyKey): boolean {
-    const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
-    if (chunkIndex === -1) {
+    const fieldInfo = this.fieldInfos.get(prop as string);
+    if (!fieldInfo) {
       throw new Error("Invalid container field name");
     }
     const fieldType = this.fields[prop as string];
-    if (!isCompositeType(fieldType)) {
+    if (fieldInfo.isBasic) {
       return this.tree_setProperty(target, prop, fieldType.struct_defaultValue());
     } else {
-      return this.tree_setProperty(target, prop, fieldType.tree_defaultValue());
+      const compositeType = fieldType as CompositeType<unknown>;
+      return this.tree_setProperty(target, prop, compositeType.tree_defaultValue());
     }
   }
 
@@ -515,18 +529,19 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
     const gindices: Gindex[] = [];
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      const fieldGindex = this.getPropertyGindex(fieldName);
+      const {gindex: fieldGindex, isBasic} = this.fieldInfos.get(fieldName);
       const extendedFieldGindex = concatGindices([root, fieldGindex]);
-      if (!isCompositeType(fieldType)) {
+      if (isBasic) {
         gindices.push(extendedFieldGindex);
       } else {
+        const compositeType = fieldType as CompositeType<unknown>;
         if (fieldType.hasVariableSerializedLength()) {
           if (!target) {
             throw new Error("variable type requires tree argument to get leaves");
           }
-          gindices.push(...fieldType.tree_getLeafGindices(target.getSubtree(fieldGindex), extendedFieldGindex));
+          gindices.push(...compositeType.tree_getLeafGindices(target.getSubtree(fieldGindex), extendedFieldGindex));
         } else {
-          gindices.push(...fieldType.tree_getLeafGindices(undefined, extendedFieldGindex));
+          gindices.push(...compositeType.tree_getLeafGindices(undefined, extendedFieldGindex));
         }
       }
     }
