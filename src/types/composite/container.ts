@@ -444,7 +444,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
   tree_getProperty(target: Tree, prop: PropertyKey): Tree | unknown {
     const fieldType = this.fields[prop as string];
-    const {isBasic, gindex} = this.fieldInfos.get(prop as string);
+    const fieldInfo = this.fieldInfos.get(prop as string);
+    if (!fieldInfo) {
+      return undefined;
+    }
+    const {isBasic, gindex} = fieldInfo;
     if (isBasic) {
       const chunk = target.getRoot(gindex);
       return fieldType.struct_deserializeFromBytes(chunk, 0);
@@ -459,13 +463,14 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (!fieldInfo) {
       throw new Error("Invalid container field name");
     }
-    if (fieldInfo.isBasic) {
+    const {isBasic, gindex} = fieldInfo;
+    if (isBasic) {
       const chunk = new Uint8Array(32);
       fieldType.struct_serializeToBytes(value, chunk, 0);
-      target.setRoot(fieldInfo.gindex, chunk);
+      target.setRoot(gindex, chunk);
       return true;
     } else {
-      target.setSubtree(fieldInfo.gindex, value as Tree);
+      target.setSubtree(gindex, value as Tree);
       return true;
     }
   }
