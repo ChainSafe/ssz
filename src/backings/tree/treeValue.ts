@@ -63,6 +63,7 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
  * Wrap a TreeValue in a Proxy that adds ergonomic getter/setter
  */
 export function proxyWrapTreeValue<T extends CompositeValue>(value: TreeValue<T>): TreeBacked<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (new Proxy(value, TreeProxyHandler as any) as unknown) as TreeBacked<T>;
 }
 
@@ -339,6 +340,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     const propType = this.type.getPropertyType(property);
     const propValue = this.type.tree_getProperty(this.tree, property);
     if (!this.type.fieldInfos.get(property as string)?.isBasic) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (createTreeBacked(propType as CompositeType<any>, propValue as Tree) as unknown) as ValueOf<T, P>;
     } else {
       return propValue as ValueOf<T, P>;
@@ -350,6 +352,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
       if (isTreeBacked(value)) {
         return this.type.tree_setProperty(this.tree, property, value.tree);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const propType = this.type.getPropertyType(property) as CompositeType<any>;
         return this.type.tree_setProperty(
           this.tree,
