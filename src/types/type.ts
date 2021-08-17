@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/camelcase */
+
 import {Json} from "../interface";
 export interface IJsonOptions {
   case: "camel" | "snake";

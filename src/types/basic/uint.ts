@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../../interface";
 import {bigIntPow} from "../../util/bigInt";
 import {isTypeOf, Type} from "../type";

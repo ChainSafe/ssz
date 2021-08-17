@@ -22,7 +22,7 @@ import {ITreeBacked, TreeBacked, ValueOf} from "./interface";
 // There exists circular dependencies here that prevent easy separation
 // In this file, there's proxy logic that wraps TreeValue and TreeValue and its subclasses
 
-type TreeValueConstructor<T> = {
+type TreeValueConstructor<T extends CompositeValue> = {
   new (type: CompositeType<T>, tree: Tree): TreeValue<T>;
 };
 
@@ -304,7 +304,7 @@ export class BasicListTreeValue<T extends List<unknown>> extends BasicArrayTreeV
   }
 }
 
-export class CompositeListTreeValue<T extends List<object>> extends CompositeArrayTreeValue<T> {
+export class CompositeListTreeValue<T extends List<unknown>> extends CompositeArrayTreeValue<T> {
   type: CompositeListType<T>;
 
   constructor(type: CompositeListType<T>, tree: Tree) {

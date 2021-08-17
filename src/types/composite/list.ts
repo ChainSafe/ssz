@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json, List} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType, number32Type} from "../basic";
@@ -221,7 +220,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 }
 
-export class CompositeListType<T extends List<object> = List<object>> extends CompositeArrayType<T> {
+export class CompositeListType<T extends List<unknown> = List<unknown>> extends CompositeArrayType<T> {
   limit: number;
 
   constructor(options: IListOptions) {

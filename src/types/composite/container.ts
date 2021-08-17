@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json, ObjectLike} from "../../interface";
 import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";
@@ -109,8 +108,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   struct_assertValidValue(value: unknown): asserts value is T {
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       try {
-        // @ts-ignore
-        fieldType.struct_assertValidValue((value as T)[fieldName]);
+        ((fieldType as unknown) as T).struct_assertValidValue((value as T)[fieldName]);
       } catch (e) {
         throw new Error(`Invalid field ${fieldName}: ${e.message}`);
       }
@@ -349,6 +347,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         const chunk = target.getRoot(fieldInfo.gindex);
         value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(chunk, 0);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const compositeType = fieldType as CompositeType<any>;
         const subtree = target.getSubtree(fieldInfo.gindex);
         value[fieldName as keyof T] = compositeType.tree_convertToStruct(subtree) as T[keyof T];
@@ -391,6 +390,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         chunk.set(dataChunk);
         target.setRoot(gindex, chunk);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const compositeType = fieldType as CompositeType<any>;
         target.setSubtree(
           gindex,
@@ -494,6 +494,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (fieldInfo.isBasic) {
       return this.tree_setProperty(target, prop, fieldType.struct_defaultValue());
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const compositeType = fieldType as CompositeType<any>;
       return this.tree_setProperty(target, prop, compositeType.tree_defaultValue());
     }
@@ -562,6 +563,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       if (isBasic) {
         gindices.push(extendedFieldGindex);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const compositeType = fieldType as CompositeType<any>;
         if (fieldType.hasVariableSerializedLength()) {
           if (!target) {

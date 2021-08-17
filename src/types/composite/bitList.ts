@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {BitList, Json} from "../../interface";
 import {BasicListType} from "./list";
 import {booleanType} from "../basic";
@@ -13,6 +12,7 @@ export interface IBitListOptions {
 
 export const BITLIST_TYPE = Symbol.for("ssz/BitListType");
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function isBitListType<T extends BitList = BitList>(type: Type<unknown>): type is BitListType {
   return isTypeOf(type, BITLIST_TYPE);
 }

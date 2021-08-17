@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {ByteVectorType} from "./byteVector";
 import {CompositeType} from "./abstract";
 import {isTypeOf, Type} from "../type";

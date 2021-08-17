@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {ByteVector, Json} from "../../interface";
 import {BasicVectorType} from "./vector";
 import {byteType} from "../basic";
@@ -12,6 +11,7 @@ export interface IByteVectorOptions {
 
 export const BYTEVECTOR_TYPE = Symbol.for("ssz/ByteVectorType");
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function isByteVectorType<T extends ByteVector = ByteVector>(type: Type<unknown>): type is ByteVectorType {
   return isTypeOf(type, BYTEVECTOR_TYPE);
 }

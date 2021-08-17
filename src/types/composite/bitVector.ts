@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {BitVector, Json} from "../../interface";
 import {BasicVectorType} from "./vector";
 import {booleanType} from "../basic";
@@ -13,6 +12,7 @@ export interface IBitVectorOptions {
 
 export const BITVECTOR_TYPE = Symbol.for("ssz/BitVectorType");
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function isBitVectorType<T extends BitVector = BitVector>(type: Type<unknown>): type is BitVectorType {
   return isTypeOf(type, BITVECTOR_TYPE);
 }
@@ -68,6 +68,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitVector {
     this.bytes_validate(data, start, end);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (end - start !== this.size(null as any)) {
       throw new Error("Invalid bitvector: length not equal to vector length");
     }
