@@ -336,19 +336,19 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     }
     const propType = this.type.getPropertyType(property);
     const propValue = this.type.tree_getProperty(this.tree, property);
-    if (isCompositeType(propType)) {
-      return (createTreeBacked(propType, propValue as Tree) as unknown) as ValueOf<T, P>;
+    if (!this.type.fieldInfos.get(property as string).isBasic) {
+      return (createTreeBacked(propType as CompositeType<unknown>, propValue as Tree) as unknown) as ValueOf<T, P>;
     } else {
       return propValue as ValueOf<T, P>;
     }
   }
 
   setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean {
-    const propType = this.type.getPropertyType(property);
-    if (isCompositeType(propType)) {
+    if (!this.type.fieldInfos.get(property as string).isBasic) {
       if (isTreeBacked(value)) {
         return this.type.tree_setProperty(this.tree, property, value.tree);
       } else {
+        const propType = this.type.getPropertyType(property) as CompositeType<unknown>;
         return this.type.tree_setProperty(
           this.tree,
           property,
