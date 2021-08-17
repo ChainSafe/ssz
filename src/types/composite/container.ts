@@ -240,7 +240,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     const value = {} as T;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      const expectedCase = options ? options.case : null;
+      const expectedCase = options?.case;
       const expectedFieldName = toExpectedCase(fieldName, expectedCase);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
@@ -252,7 +252,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
-    const expectedCase = options ? options.case : null;
+    const expectedCase = options?.case;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       data[toExpectedCase(fieldName, expectedCase)] = fieldType.toJson(value[fieldName as keyof T], options);
     }
@@ -344,12 +344,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   tree_convertToStruct(target: Tree): T {
     const value = {} as T;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      const fieldInfo = this.fieldInfos.get(fieldName);
+      const fieldInfo = this.fieldInfos.get(fieldName)!;
       if (fieldInfo.isBasic) {
         const chunk = target.getRoot(fieldInfo.gindex);
         value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(chunk, 0);
       } else {
-        const compositeType = fieldType as CompositeType<unknown>;
+        const compositeType = fieldType as CompositeType<any>;
         const subtree = target.getSubtree(fieldInfo.gindex);
         value[fieldName as keyof T] = compositeType.tree_convertToStruct(subtree) as T[keyof T];
       }
@@ -364,7 +364,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       if (fixedLen === null) {
         s +=
           (fieldType as CompositeType<T[keyof T]>).tree_getSerializedLength(
-            target.getSubtree(this.fieldInfos.get(fieldName).gindex)
+            target.getSubtree(this.fieldInfos.get(fieldName)!.gindex)
           ) + 4;
       } else {
         s += fixedLen;
@@ -378,7 +378,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
     for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
       const [currentOffset, nextOffset] = offsets[i];
-      const {isBasic, gindex} = this.fieldInfos.get(fieldName);
+      const {isBasic, gindex} = this.fieldInfos.get(fieldName)!;
       if (isBasic) {
         // view of the chunk, shared buffer from `data`
         const dataChunk = new Uint8Array(
@@ -391,7 +391,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         chunk.set(dataChunk);
         target.setRoot(gindex, chunk);
       } else {
-        const compositeType = fieldType as CompositeType<unknown>;
+        const compositeType = fieldType as CompositeType<any>;
         target.setSubtree(
           gindex,
           compositeType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset)
@@ -494,7 +494,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (fieldInfo.isBasic) {
       return this.tree_setProperty(target, prop, fieldType.struct_defaultValue());
     } else {
-      const compositeType = fieldType as CompositeType<unknown>;
+      const compositeType = fieldType as CompositeType<any>;
       return this.tree_setProperty(target, prop, compositeType.tree_defaultValue());
     }
   }
@@ -557,12 +557,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
     const gindices: Gindex[] = [];
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      const {gindex: fieldGindex, isBasic} = this.fieldInfos.get(fieldName);
+      const {gindex: fieldGindex, isBasic} = this.fieldInfos.get(fieldName)!;
       const extendedFieldGindex = concatGindices([root, fieldGindex]);
       if (isBasic) {
         gindices.push(extendedFieldGindex);
       } else {
-        const compositeType = fieldType as CompositeType<unknown>;
+        const compositeType = fieldType as CompositeType<any>;
         if (fieldType.hasVariableSerializedLength()) {
           if (!target) {
             throw new Error("variable type requires tree argument to get leaves");

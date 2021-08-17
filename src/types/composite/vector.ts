@@ -64,7 +64,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
 
   bytes_validate(data: Uint8Array, start: number, end: number): void {
     super.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    if (end - start !== this.size(null as any)) {
       throw new Error("Incorrect deserialized vector length");
     }
   }

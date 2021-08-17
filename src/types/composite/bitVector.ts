@@ -68,7 +68,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitVector {
     this.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    if (end - start !== this.size(null as any)) {
       throw new Error("Invalid bitvector: length not equal to vector length");
     }
     const value = [];
