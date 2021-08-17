@@ -18,7 +18,7 @@ export function isRootType<T extends CompositeValue = CompositeValue>(type: Type
   return isTypeOf(type, ROOT_TYPE);
 }
 
-function convertRootToUint8Array<T>(value: BackedValue<T> | T): Uint8Array {
+function convertRootToUint8Array<T extends CompositeValue>(value: BackedValue<T> | T): Uint8Array {
   if (value instanceof Uint8Array) {
     return value;
   } else if (isTreeBacked(value)) {

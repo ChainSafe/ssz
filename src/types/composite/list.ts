@@ -187,7 +187,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   tree_push(target: Tree, ...values: T[number][]): number {
     let newLength;
     for (const value of values) newLength = this.tree_pushSingle(target, value);
-    return newLength ?? this.tree_getLength(target);
+    return newLength || this.tree_getLength(target);
   }
 
   tree_pop(target: Tree): T[number] {
@@ -395,7 +395,7 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   tree_push(target: Tree, ...values: Tree[]): number {
     let newLength;
     for (const value of values) newLength = this.tree_pushSingle(target, value);
-    return newLength ?? this.tree_getLength(target);
+    return newLength || this.tree_getLength(target);
   }
 
   tree_pop(target: Tree): T[number] {

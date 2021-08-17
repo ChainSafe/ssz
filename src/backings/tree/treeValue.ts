@@ -339,7 +339,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     }
     const propType = this.type.getPropertyType(property);
     const propValue = this.type.tree_getProperty(this.tree, property);
-    if (!this.type.fieldInfos.get(property as string)?.isBasic) {
+    if (!this.type.fieldInfos.get(property as string)!.isBasic) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (createTreeBacked(propType as CompositeType<any>, propValue as Tree) as unknown) as ValueOf<T, P>;
     } else {
@@ -348,7 +348,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
   }
 
   setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean {
-    if (!this.type.fieldInfos.get(property as string)?.isBasic) {
+    if (!this.type.fieldInfos.get(property as string)!.isBasic) {
       if (isTreeBacked(value)) {
         return this.type.tree_setProperty(this.tree, property, value.tree);
       } else {
