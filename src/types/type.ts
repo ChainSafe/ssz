@@ -78,6 +78,11 @@ export abstract class Type<T> {
   abstract hasVariableSerializedLength(): boolean;
 
   /**
+   * if hasVariableSerializedLength() === true, returns null. Otherwise returns a length value
+   */
+  abstract getFixedSerializedLength(): null | number;
+
+  /**
    * Maximal serialized byte length
    */
   abstract getMaxSerializedLength(): number;

@@ -299,30 +299,33 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
   abstract getMinLength(): number;
 
   struct_getSerializedLength(value: T): number {
-    if (this.elementType.hasVariableSerializedLength()) {
+    const fixedLen = this.elementType.getFixedSerializedLength();
+    if (fixedLen === null) {
       let s = 0;
       for (let i = 0; i < this.struct_getLength(value); i++) {
         s += this.elementType.struct_getSerializedLength(value[i] as CompositeValue) + 4;
       }
       return s;
     } else {
-      return this.elementType.struct_getSerializedLength(null) * this.struct_getLength(value);
+      return fixedLen * this.struct_getLength(value);
     }
   }
 
   getMaxSerializedLength(): number {
-    if (this.elementType.hasVariableSerializedLength()) {
+    const elementFixedLen = this.elementType.getFixedSerializedLength();
+    if (elementFixedLen === null) {
       return this.getMaxLength() * 4 + this.getMaxLength() * this.elementType.getMaxSerializedLength();
     } else {
-      return this.getMaxLength() * this.elementType.getMaxSerializedLength();
+      return this.getMaxLength() * elementFixedLen;
     }
   }
 
   getMinSerializedLength(): number {
-    if (this.elementType.hasVariableSerializedLength()) {
+    const elementFixedLen = this.elementType.getFixedSerializedLength();
+    if (elementFixedLen === null) {
       return this.getMinLength() * 4 + this.getMinLength() * this.elementType.getMinSerializedLength();
     } else {
-      return this.getMinLength() * this.elementType.getMinSerializedLength();
+      return this.getMinLength() * elementFixedLen;
     }
   }
 
@@ -361,7 +364,9 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     if (start === end) {
       return ([] as unknown) as T;
     }
-    if (this.elementType.hasVariableSerializedLength()) {
+
+    const fixedLen = this.elementType.getFixedSerializedLength();
+    if (fixedLen === null) {
       const value = [];
       // all elements variable-sized
       // indices contain offsets
@@ -394,7 +399,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       }
       return (value as unknown) as T;
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = fixedLen;
       return (Array.from({length: (end - start) / elementSize}, (_, i) =>
         this.elementType.struct_deserializeFromBytes(data, start + i * elementSize, start + (i + 1) * elementSize)
       ) as unknown) as T;
@@ -463,14 +468,15 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
 
   abstract tree_getLength(target: Tree): number;
   tree_getSerializedLength(target: Tree): number {
-    if (this.elementType.hasVariableSerializedLength()) {
+    const fixedLen = this.elementType.getFixedSerializedLength();
+    if (fixedLen === null) {
       let s = 0;
       for (let i = 0; i < this.tree_getLength(target); i++) {
         s += this.elementType.tree_getSerializedLength(this.tree_getSubtreeAtChunkIndex(target, i)) + 4;
       }
       return s;
     } else {
-      return this.elementType.tree_getSerializedLength(null) * this.tree_getLength(target);
+      return fixedLen * this.tree_getLength(target);
     }
   }
 
