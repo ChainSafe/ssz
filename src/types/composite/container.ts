@@ -35,6 +35,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   // ES6 ensures key order is chronological
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
+  /**
+   * This caches FieldInfo by field name so that we don't have to query this same data in a lot of apis.
+   * This helps speed up 30% with a simple test of increasing state.slot from 0 to 1_000_000 as shown in the
+   * performance test of uint.test.ts.
+   **/
   fieldInfos: Map<string, FieldInfo>;
 
   constructor(options: IContainerOptions) {
