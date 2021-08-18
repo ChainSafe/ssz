@@ -1,4 +1,4 @@
-import {Gindex, gindexIterator, Bit, toGindexBitstring} from "./gindex";
+import {Gindex, gindexIterator, Bit, toGindexBitstring, GindexBitstring} from "./gindex";
 import {Node, LeafNode} from "./node";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
@@ -57,7 +57,7 @@ export class Tree {
     return this.rootNode.root;
   }
 
-  getNode(index: Gindex): Node {
+  getNode(index: Gindex | GindexBitstring): Node {
     let node = this.rootNode;
     for (const i of gindexIterator(index)) {
       if (i) {
@@ -71,14 +71,19 @@ export class Tree {
     return node;
   }
 
-  setNode(gindex: Gindex, n: Node, expand = false): void {
+  setNode(gindex: Gindex | GindexBitstring, n: Node, expand = false): void {
     let node = this.rootNode;
 
     // Pre-compute entire bitstring instead of using an iterator (25% faster)
-    if (gindex < 1) {
-      throw new Error("Invalid gindex < 1");
+    let bitstring;
+    if (typeof gindex === "string") {
+      bitstring = gindex;
+    } else {
+      if (gindex < 1) {
+        throw new Error("Invalid gindex < 1");
+      }
+      bitstring = gindex.toString(2);
     }
-    const bitstring = gindex.toString(2);
 
     // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
     // backwards to rebind them "recursively" with the new nodes without using functions
@@ -121,19 +126,19 @@ export class Tree {
     this.rootNode = node;
   }
 
-  getRoot(index: Gindex): Uint8Array {
+  getRoot(index: Gindex | GindexBitstring): Uint8Array {
     return this.getNode(index).root;
   }
 
-  setRoot(index: Gindex, root: Uint8Array, expand = false): void {
+  setRoot(index: Gindex | GindexBitstring, root: Uint8Array, expand = false): void {
     this.setNode(index, new LeafNode(root), expand);
   }
 
-  getSubtree(index: Gindex): Tree {
+  getSubtree(index: Gindex | GindexBitstring): Tree {
     return new Tree(this.getNode(index), (v: Tree): void => this.setNode(index, v.rootNode));
   }
 
-  setSubtree(index: Gindex, v: Tree, expand = false): void {
+  setSubtree(index: Gindex | GindexBitstring, v: Tree, expand = false): void {
     this.setNode(index, v.rootNode, expand);
   }
 
@@ -184,7 +189,7 @@ export class Tree {
 
     let node = this.rootNode;
     let currCount = 0;
-    const startGindex = toGindexBitstring(depth, BigInt(startIndex));
+    const startGindex = toGindexBitstring(depth, startIndex);
     const nav: [Node, Bit][] = [];
     for (const i of gindexIterator(startGindex)) {
       nav.push([node, i]);

@@ -13,8 +13,8 @@ export function toGindex(depth: number, index: bigint): Gindex {
   return anchor | index;
 }
 
-export function toGindexBitstring(depth: number, index: bigint): GindexBitstring {
-  const str = index ? index.toString(2) : "";
+export function toGindexBitstring(depth: number, index: number): GindexBitstring {
+  const str = index ? Number(index).toString(2) : "";
   if (str.length > depth) {
     throw new Error("index too large for depth");
   } else {
