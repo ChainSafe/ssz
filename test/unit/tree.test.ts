@@ -79,7 +79,7 @@ describe("Tree.setNode", () => {
     expect(() => tree.setNode(BigInt(0), zeroNode(1))).to.throw("Invalid gindex < 1");
   });
 
-  it("Should expand a subtree", () => {
+  it.skip("Should expand a subtree", () => {
     const depth = 2;
     const tree = new Tree(zeroNode(depth));
     tree.setNode(BigInt(15), zeroNode(0), true);
