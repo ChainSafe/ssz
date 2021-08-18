@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {Tree, zeroNode, LeafNode, subtreeFillToContents} from "../src";
+import {Tree, zeroNode, LeafNode, subtreeFillToContents, iterateAtDepth} from "../../src";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
@@ -54,6 +54,36 @@ describe("subtree mutation", () => {
     const rootAfter = tree.root;
 
     expect(toHex(rootBefore)).to.not.equal(rootAfter);
+  });
+});
+
+describe("Tree.setNode", () => {
+  it("Should compute root correctly after setting a leaf", () => {
+    const depth = 4;
+    const tree = new Tree(zeroNode(depth));
+    tree.setNode(BigInt(18), new LeafNode(Buffer.alloc(32, 2)));
+    expect(toHex(tree.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
+  });
+
+  it("Should compute root correctly after setting 3 leafs", () => {
+    const depth = 5;
+    const tree = new Tree(zeroNode(depth));
+    tree.setNode(BigInt(18), new LeafNode(Buffer.alloc(32, 2)));
+    tree.setNode(BigInt(46), new LeafNode(Buffer.alloc(32, 2)));
+    tree.setNode(BigInt(60), new LeafNode(Buffer.alloc(32, 2)));
+    expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
+  });
+
+  it("Should throw for gindex 0", () => {
+    const tree = new Tree(zeroNode(2));
+    expect(() => tree.setNode(BigInt(0), zeroNode(1))).to.throw("Invalid gindex < 1");
+  });
+
+  it.skip("Should expand a subtree", () => {
+    const depth = 2;
+    const tree = new Tree(zeroNode(depth));
+    tree.setNode(BigInt(15), zeroNode(0), true);
+    expect(tree.getRoot(BigInt(14))).to.deep.equal(zeroNode(0));
   });
 });
 

@@ -6,7 +6,7 @@ import {
   sortInOrderBitstrings,
   filterParentBitstrings,
   computeMultiProofBitstrings,
-} from "../../src/proof/util";
+} from "../../../src/proof/util";
 
 describe("computeProofGindices", () => {
   it("simple implementation should match bitstring implementation", () => {

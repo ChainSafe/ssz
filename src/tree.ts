@@ -1,5 +1,5 @@
 import {Gindex, gindexIterator, Bit, toGindexBitstring, GindexBitstring} from "./gindex";
-import {Node, BranchNode, Link, compose, identity, LeafNode} from "./node";
+import {Node, LeafNode} from "./node";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 import {zeroNode} from "./zeroNode";
@@ -71,38 +71,59 @@ export class Tree {
     return node;
   }
 
-  setter(index: Gindex | GindexBitstring, expand = false): Link {
-    let link = identity;
+  setNode(gindex: Gindex | GindexBitstring, n: Node, expand = false): void {
     let node = this.rootNode;
-    const iterator = gindexIterator(index);
-    for (const i of iterator) {
-      if (i) {
-        if (node.isLeaf()) {
-          if (!expand) throw new Error(ERR_INVALID_TREE);
-          else {
-            const child = zeroNode(iterator.remainingBitLength() - 1);
-            node = new BranchNode(child, child);
-          }
+
+    // Pre-compute entire bitstring instead of using an iterator (25% faster)
+    let bitstring;
+    if (typeof gindex === "string") {
+      bitstring = gindex;
+    } else {
+      if (gindex < 1) {
+        throw new Error("Invalid gindex < 1");
+      }
+      bitstring = gindex.toString(2);
+    }
+
+    // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
+    // backwards to rebind them "recursively" with the new nodes without using functions
+    const parentNodes: Node[] = [this.rootNode];
+
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Ignore the last bit, no need to push the target node to the parentNodes array
+    for (let i = 1; i < bitstring.length - 1; i++) {
+      if (node.isLeaf()) {
+        if (!expand) {
+          throw new Error(ERR_INVALID_TREE);
+        } else {
+          node = zeroNode(bitstring.length - i);
         }
-        link = compose(node.rebindRight.bind(node), link);
+      }
+
+      // Compare to string directly to prevent unnecessary type conversions
+      if (bitstring[i] === "1") {
         node = node.right;
       } else {
-        if (node.isLeaf()) {
-          if (!expand) throw new Error(ERR_INVALID_TREE);
-          else {
-            const child = zeroNode(iterator.remainingBitLength() - 1);
-            node = new BranchNode(child, child);
-          }
-        }
-        link = compose(node.rebindLeft.bind(node), link);
         node = node.left;
       }
-    }
-    return compose(identity, link);
-  }
 
-  setNode(index: Gindex | GindexBitstring, n: Node, expand = false): void {
-    this.rootNode = this.setter(index, expand)(n);
+      parentNodes.push(node);
+    }
+
+    node = n;
+
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Iterate the list backwards including the last bit, but offset the parentNodes array
+    // by one since the first bit in bitstring was ignored in the previous loop
+    for (let i = bitstring.length - 1; i >= 1; i--) {
+      if (bitstring[i] === "1") {
+        node = parentNodes[i - 1].rebindRight(node);
+      } else {
+        node = parentNodes[i - 1].rebindLeft(node);
+      }
+    }
+
+    this.rootNode = node;
   }
 
   getRoot(index: Gindex | GindexBitstring): Uint8Array {

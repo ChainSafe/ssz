@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {createNodeFromProof, createProof, deserializeProof, ProofType, serializeProof} from "../../src/proof";
-import {Node, LeafNode, BranchNode} from "../../src/node";
+import {createNodeFromProof, createProof, deserializeProof, ProofType, serializeProof} from "../../../src/proof";
+import {Node, LeafNode, BranchNode} from "../../../src/node";
 
 // Create a tree with leaves of different values
 function createTree(depth: number, index = 0): Node {

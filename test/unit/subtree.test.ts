@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {subtreeFillToContents, LeafNode} from "../src";
+import {subtreeFillToContents, LeafNode} from "../../src";
 
 describe("subtreeFillToContents", () => {
   it("should not error on contents length 1", () => {

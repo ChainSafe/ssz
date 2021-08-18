@@ -1,6 +1,6 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
-import {Tree, subtreeFillToDepth, BranchNode, LeafNode} from "../src";
+import {Tree, subtreeFillToDepth, BranchNode, LeafNode} from "../../src";
 
 describe("get", () => {
   it("should return the right node", () => {
