@@ -41,7 +41,7 @@ describe("error path", () => {
     },
   ];
 
-  for (const {type, value, expected} of testCases) {
+  for (const {type, value} of testCases) {
     it(`should print the error path deserializing ${type.constructor.name}`, () => {
       assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v[1]: Not all variable bytes consumed");
     });

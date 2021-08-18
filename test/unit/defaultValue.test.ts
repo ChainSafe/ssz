@@ -9,8 +9,6 @@ import {
   bitVector100Type,
   byteVector100Type,
   bytes2Type,
-  number16Type,
-  number16Vector6Type,
   number16List100Type,
 } from "./objects";
 
