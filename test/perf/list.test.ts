@@ -10,7 +10,9 @@ describe("list", () => {
 
   const numBalances = 250_000;
   const tbBalances = createBalanceList(numBalances);
-  // access balances list                                                1.296884 ops/s    771.0793 ms/op        -         38 runs   30.1 s
+
+  // access balances list     1.296884 ops/s    771.0793 ms/op        -         38 runs   30.1 s
+
   itBench("get balances list", () => {
     for (let i = 0; i < numBalances; i++) {
       tbBalances[i];

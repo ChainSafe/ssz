@@ -12,13 +12,16 @@ import {
   BitList,
 } from "../../src";
 
+/* eslint-disable max-len */
+
 describe("known issues", () => {
   it("SyncCommitteeBits hashTreeRoot consistency", function () {
     const SyncCommitteeBits = new BitVectorType({
       length: 512,
     });
-    const biStr = "00001110011100101010100110111001111011110111001110110010101000010010011110000110001101111100100100011011001001010000111010010011100100111010111101110110001000000011011001011000011101010111111011000110000101100111111000110011110010010110101011111110111010101111110010011111101001011110001101111110111001100110110001100010100010101110110010100100001011000101101000011010111010111000100100101000101100001100011001110100100111110011100111001100101001011011111001111010111011000100100000010000000111010010100000000111";
-    const arr = Array.from({length: 512}, (_, i) => biStr.charAt(i) === "0" ? false: true);
+    const biStr =
+      "00001110011100101010100110111001111011110111001110110010101000010010011110000110001101111100100100011011001001010000111010010011100100111010111101110110001000000011011001011000011101010111111011000110000101100111111000110011110010010110101011111110111010101111110010011111101001011110001101111110111001100110110001100010100010101110110010100100001011000101101000011010111010111000100100101000101100001100011001110100100111110011100111001100101001011011111001111010111011000100100000010000000111010010100000000111";
+    const arr = Array.from({length: 512}, (_, i) => (biStr.charAt(i) === "0" ? false : true));
     const rootByStruct = SyncCommitteeBits.hashTreeRoot(arr);
     const bytes = SyncCommitteeBits.serialize(arr);
     const rootByTreeBacked = SyncCommitteeBits.createTreeBackedFromBytes(bytes).hashTreeRoot();
@@ -65,7 +68,9 @@ describe("known issues", () => {
     const invalidBytes = fromHexString("0xffffffffff");
     const CommitteeBitsVector2 = new BitVectorType({length: 33});
     // all bits after length should be 0 so this should throw error
-    expect(() => CommitteeBitsVector2.createTreeBackedFromBytes(invalidBytes)).to.throw("Invalid deserialized bitvector length");
+    expect(() => CommitteeBitsVector2.createTreeBackedFromBytes(invalidBytes)).to.throw(
+      "Invalid deserialized bitvector length"
+    );
   });
 
   it("converts basic vector and list from json", function () {

@@ -1,5 +1,5 @@
-import { expect } from "chai";
-import { ArrayObject, SimpleObject } from "./objects";
+import {expect} from "chai";
+import {ArrayObject, SimpleObject} from "./objects";
 
 describe("create proof", () => {
   it("should include all leaves of path to composite type", () => {

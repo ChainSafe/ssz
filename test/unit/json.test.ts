@@ -1,6 +1,6 @@
 import {CamelCaseFieldObject, ComplexCamelCaseFieldObject} from "./objects";
 import {expect} from "chai";
-import {BasicListType, CompositeListType} from "../../src/types/composite";
+import {CompositeListType} from "../../src/types/composite";
 
 describe("json serialization", function () {
   it("should do round trip - container", function () {
