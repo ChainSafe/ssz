@@ -1,7 +1,7 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {Tree, subtreeFillToDepth, BranchNode, iterateAtDepth, LeafNode} from "../../src";
+import {Tree, subtreeFillToDepth, iterateAtDepth, LeafNode} from "../../src";
 
-describe("set", () => {
+describe("Tree", () => {
   setBenchOpts({
     maxMs: 60 * 1000,
     minMs: 1 * 1000,
@@ -16,6 +16,21 @@ describe("set", () => {
 
     itBench(`set at depth ${depth}`, () => {
       backing.setNode(gindex, n2);
+    });
+  }
+
+  for (const depth of [8, 16, 32, 40]) {
+    const n = subtreeFillToDepth(new LeafNode(Buffer.alloc(32, 1)), depth);
+    const backing = new Tree(n);
+    const startIndex = 0;
+    const count = Math.min(250_000, 2 ** depth);
+
+    itBench(`iterateNodesAtDepth ${depth} ${count}`, () => {
+      Array.from(backing.iterateNodesAtDepth(depth, startIndex, count));
+    });
+
+    itBench(`getNodesAtDepth ${depth} ${count}`, () => {
+      backing.getNodesAtDepth(depth, startIndex, count);
     });
   }
 });
