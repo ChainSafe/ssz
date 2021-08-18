@@ -1,3 +1,7 @@
+## 0.2.4 (2021-08-18)
+
+- normal digest mem opt for < 512 bytes ([30f7ec](https://github.com/ChainSafe/as-sha256/commit/30f7ec))
+
 ## 0.2.3 (2021-08-10)
 
 - Add digestObjects method ([da5d82](https://github.com/ChainSafe/as-sha256/commit/da5d82))
