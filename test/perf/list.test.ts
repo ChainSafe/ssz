@@ -1,6 +1,5 @@
-import { itBench, setBenchOpts } from "@dapplion/benchmark";
-import { List, ListType, NumberUintType } from "../../src";
-
+import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {List, ListType, NumberUintType} from "../../src";
 
 describe("list", () => {
   setBenchOpts({
