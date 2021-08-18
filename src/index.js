@@ -1,4 +1,4 @@
-import {newInstance} from './wasm';
+import {newInstance} from "./wasm";
 
 export default class SHA256 {
   constructor() {
@@ -37,19 +37,21 @@ export default class SHA256 {
   }
 
   static digest(data) {
+    if (data.length === 64) {
+      return SHA256.digest64(data);
+    }
     if (data.length <= staticInstance.ctx.INPUT_LENGTH) {
-      const input = new Uint8Array(staticInstance.ctx.memory.buffer, staticInstance.ctx.input.value, staticInstance.ctx.INPUT_LENGTH);
-      input.set(data);
+      staticInstance.uint8InputArray.set(data);
       staticInstance.ctx.digest(data.length);
       const output = new Uint8Array(32);
-      output.set(new Uint8Array(staticInstance.ctx.memory.buffer, staticInstance.ctx.output.value, 32));
+      output.set(staticInstance.uint8OutputArray);
       return output;
     }
     return staticInstance.init().update(data).final();
   }
 
   static digest64(data) {
-    if (data.length==64) {
+    if (data.length === 64) {
       staticInstance.uint8InputArray.set(data);
       staticInstance.ctx.digest64(staticInstance.wasmInputValue, staticInstance.wasmOutputValue);
       const output = new Uint8Array(32);
@@ -98,7 +100,7 @@ const staticInstance = new SHA256();
  * This function contains multiple same procedures but we intentionally
  * do it step by step to improve performance a bit.
  **/
- export function hashObjectToByteArray(obj, byteArr, offset) {
+export function hashObjectToByteArray(obj, byteArr, offset) {
   let tmp = obj.h0;
   byteArr[0 + offset] = tmp & 0xff;
   tmp = tmp >> 8;
