@@ -1,6 +1,16 @@
 import {expect} from "chai";
 
-import {VectorType, ByteVectorType, NumberUintType, BitListType, BitVectorType, ListType, fromHexString, toHexString} from "../../src";
+import {
+  VectorType,
+  ByteVectorType,
+  NumberUintType,
+  BitListType,
+  BitVectorType,
+  ListType,
+  fromHexString,
+  toHexString,
+  BitList,
+} from "../../src";
 
 describe("known issues", () => {
   it("SyncCommitteeBits hashTreeRoot consistency", function () {
@@ -38,7 +48,7 @@ describe("known issues", () => {
   it("converts bit arrays to tree", function () {
     const CommitteeBits = new BitListType({limit: 2048});
     const CommitteeBitsVector = new BitVectorType({length: 2048});
-    const bits = Array.from({length: 2048}, () => true);
+    const bits = Array.from({length: 2048}, () => true) as BitList;
 
     expect(() => CommitteeBits.createTreeBackedFromStruct(bits)).to.not.throw();
     expect(() => CommitteeBitsVector.createTreeBackedFromStruct(bits)).to.not.throw();

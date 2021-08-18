@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json, Vector} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType} from "../basic";
@@ -64,7 +63,8 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
 
   bytes_validate(data: Uint8Array, start: number, end: number): void {
     super.bytes_validate(data, start, end);
-    if (end - start !== this.size(null)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (end - start !== this.size(null as any)) {
       throw new Error("Incorrect deserialized vector length");
     }
   }
@@ -138,7 +138,7 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 }
 
-export class CompositeVectorType<T extends Vector<object> = Vector<object>> extends CompositeArrayType<T> {
+export class CompositeVectorType<T extends Vector<unknown> = Vector<unknown>> extends CompositeArrayType<T> {
   length: number;
 
   constructor(options: IVectorOptions) {

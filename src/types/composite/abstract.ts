@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {CompositeValue, Json} from "../../interface";
@@ -28,8 +27,8 @@ export function isCompositeType(type: Type<unknown>): type is CompositeType<Comp
  *
  */
 export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
-  _chunkDepth: number;
-  _defaultNode: Node;
+  _chunkDepth?: number;
+  _defaultNode?: Node;
 
   constructor() {
     super();

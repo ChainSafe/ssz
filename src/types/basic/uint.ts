@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../../interface";
 import {bigIntPow} from "../../util/bigInt";
 import {isTypeOf, Type} from "../type";
@@ -36,7 +35,8 @@ export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
 }
 
 export class NumberUintType extends UintType<number> {
-  _maxBigInt: BigInt;
+  _maxBigInt?: BigInt;
+
   constructor(options: IUintOptions) {
     super(options);
     this._typeSymbols.add(NUMBER_UINT_TYPE);
@@ -45,7 +45,8 @@ export class NumberUintType extends UintType<number> {
   struct_assertValidValue(value: unknown): asserts value is number {
     if (
       value !== Infinity &&
-      (!Number.isSafeInteger(value as number) || value > bigIntPow(BigInt(2), BigInt(8) * BigInt(this.byteLength)))
+      (!Number.isSafeInteger(value as number) ||
+        (value as number) > bigIntPow(BigInt(2), BigInt(8) * BigInt(this.byteLength)))
     ) {
       throw new Error("Uint value is not a number");
     }
@@ -99,7 +100,7 @@ export class NumberUintType extends UintType<number> {
 
   struct_convertFromJson(data: Json): number {
     let n: number;
-    const bigN = BigInt(data);
+    const bigN = BigInt(data as string);
     if (bigN === this.struct_getMaxBigInt()) {
       n = Infinity;
     } else if (bigN < Number.MAX_SAFE_INTEGER) {
@@ -205,7 +206,7 @@ export class BigIntUintType extends UintType<bigint> {
   }
 
   struct_convertFromJson(data: Json): bigint {
-    const value = BigInt(data);
+    const value = BigInt(data as string);
     this.assertValidValue(value);
     return value;
   }

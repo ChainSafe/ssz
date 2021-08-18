@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/camelcase */
+
 import {ArrayLike, CompositeValue, Json} from "../../interface";
 import {IJsonOptions, Type} from "../type";
 import {BasicType} from "../basic";
@@ -249,11 +249,8 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       return length as T[keyof T];
     }
     const index = Number(property);
-    if (Number.isNaN(index as number)) {
-      return undefined;
-    }
-    if (index >= length) {
-      return undefined;
+    if (Number.isNaN(index as number) || index >= length) {
+      return undefined as T[keyof T];
     }
     return this.tree_getValueAtIndex(target, index);
   }
@@ -276,7 +273,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
-    const chunkCount = this.tree_getChunkCount(target);
+    const chunkCount = this.tree_getChunkCount(target!);
     const startIndex = concatGindices([root, toGindex(this.getChunkDepth(), BigInt(0))]);
     const gindices: Gindex[] = [];
     for (let i = 0, gindex = startIndex; i < chunkCount; i++, gindex++) {
@@ -593,7 +590,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
   tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
     // Underlying elements exist one per chunk
     // Iterate through chunk gindices, recursively fetching leaf gindices from each chunk
-    const chunkCount = this.tree_getChunkCount(target);
+    const chunkCount = this.tree_getChunkCount(target!);
     const gindices: Gindex[] = [];
     const startIndex = toGindex(this.getChunkDepth(), BigInt(0));
     const extendedStartIndex = concatGindices([root, startIndex]);

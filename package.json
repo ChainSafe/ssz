@@ -12,9 +12,7 @@
     "lib/**/*.js.map"
   ],
   "scripts": {
-    "build": "yarn build-lib && yarn build-types",
-    "build-lib": "babel src -x .ts -d lib --source-maps",
-    "build-types": "tsc --incremental --declaration --outDir lib --emitDeclarationOnly",
+    "build": "tsc -p tsconfig.build.json",
     "build-web": "webpack --mode production --entry ./lib/web.js --output ./dist/ssz.min.js",
     "build:docs": "typedoc --exclude src/index.ts,src/web.ts --out docs src",
     "build:release": "yarn clean && yarn run build && yarn build-web && yarn run build:docs",
@@ -37,29 +35,21 @@
     "case": "^1.6.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
-    "@babel/plugin-syntax-bigint": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-typescript": "^7.8.3",
-    "@babel/register": "^7.8.3",
     "@types/chai": "^4.2.9",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^13.7.4",
+    "@types/node": "^14.14.17",
     "@dapplion/benchmark": "^0.1.6",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+    "@typescript-eslint/eslint-plugin": "4.9.0",
+    "@typescript-eslint/parser": "4.9.0",
     "chai": "^4.2.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.14.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.4",
     "mocha": "^8.3.0",
     "nyc": "^15.0.0",
     "prettier": "^2.0.5",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.8.2"
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.0"
   },
   "keywords": [
     "ethereum",
