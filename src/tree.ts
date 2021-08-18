@@ -270,7 +270,7 @@ export class Tree {
 
     let node = this.rootNode;
     let currCount = 0;
-    const startGindex = toGindexBitstring(depth, BigInt(startIndex));
+    const startGindex = toGindexBitstring(depth, startIndex);
     const nav: [Node, Bit][] = [];
     for (const i of gindexIterator(startGindex)) {
       nav.push([node, i]);
