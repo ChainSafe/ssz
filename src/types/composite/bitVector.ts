@@ -28,6 +28,8 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return this.length;
   }
 
+  // Override all length methods to understand .length as bits not bytes
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   struct_getByteLength(value: BitVector): number {
     return Math.ceil(this.length / 8);
@@ -38,12 +40,16 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     return Math.ceil(this.length / 8);
   }
 
+  getFixedSerializedLength(): null | number {
+    return Math.ceil(this.length / 8);
+  }
+
   getMaxSerializedLength(): number {
-    return this.struct_getSerializedLength(null);
+    return Math.ceil(this.length / 8);
   }
 
   getMinSerializedLength(): number {
-    return this.struct_getSerializedLength(null);
+    return Math.ceil(this.length / 8);
   }
 
   struct_getChunkCount(value: BitVector): number {

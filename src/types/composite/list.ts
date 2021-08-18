@@ -203,6 +203,10 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     return true;
   }
 
+  getFixedSerializedLength(): null | number {
+    return null;
+  }
+
   getMaxChunkCount(): number {
     return Math.ceil((this.limit * this.elementType.size()) / 32);
   }
@@ -228,6 +232,10 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
 
   hasVariableSerializedLength(): boolean {
     return true;
+  }
+
+  getFixedSerializedLength(): null | number {
+    return null;
   }
 
   getMaxChunkCount(): number {
@@ -308,7 +316,9 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
-    if (this.elementType.hasVariableSerializedLength()) {
+
+    const fixedLen = this.elementType.getFixedSerializedLength();
+    if (fixedLen === null) {
       const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
       if (offsets.length > this.limit) {
         throw new Error("Deserialized list length greater than limit");
@@ -323,7 +333,7 @@ export class CompositeListType<T extends List<object> = List<object>> extends Co
       }
       this.tree_setLength(target, offsets.length);
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = fixedLen;
       const length = (end - start) / elementSize;
       if (!Number.isSafeInteger(length)) {
         throw new Error("Deserialized list byte length must be divisible by element size");

@@ -101,8 +101,10 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
       throw new Error(`End param: ${end} is greater than length: ${data.length}`);
     }
     const length = end - start;
-    if (!this.hasVariableSerializedLength() && length !== this.struct_getSerializedLength(null)) {
-      throw new Error(`Incorrect data length ${length}, expect ${this.struct_getSerializedLength(null)}`);
+
+    const fixedLen = this.getFixedSerializedLength();
+    if (fixedLen !== null && length !== fixedLen) {
+      throw new Error(`Incorrect data length ${length}, expect ${fixedLen}`);
     }
     if (end - start < this.getMinSerializedLength()) {
       throw new Error(`Data length ${length} is too small, expect at least ${this.getMinSerializedLength()}`);

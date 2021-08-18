@@ -39,6 +39,10 @@ export abstract class BasicType<T> extends Type<T> {
     return false;
   }
 
+  getFixedSerializedLength(): number {
+    return this.struct_getSerializedLength();
+  }
+
   getMaxSerializedLength(): number {
     return this.struct_getSerializedLength();
   }

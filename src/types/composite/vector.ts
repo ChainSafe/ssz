@@ -111,7 +111,8 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
-    if (end - start !== this.struct_getSerializedLength(null)) {
+    const fixedLen = this.getFixedSerializedLength();
+    if (end - start !== fixedLen) {
       throw new Error("Incorrect deserialized vector length");
     }
     return super.tree_deserializeFromBytes(data, start, end);
@@ -126,6 +127,10 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
 
   hasVariableSerializedLength(): boolean {
     return false;
+  }
+
+  getFixedSerializedLength(): null | number {
+    return this.length * this.elementType.size();
   }
 
   getMaxChunkCount(): number {
@@ -208,7 +213,9 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const target = this.tree_defaultValue();
-    if (this.elementType.hasVariableSerializedLength()) {
+
+    const fixedLen = this.elementType.getFixedSerializedLength();
+    if (fixedLen === null) {
       const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
       if (offsets.length !== this.length) {
         throw new Error("Incorrect deserialized vector length");
@@ -222,7 +229,7 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
         );
       }
     } else {
-      const elementSize = this.elementType.struct_getSerializedLength(null);
+      const elementSize = fixedLen;
       const length = (end - start) / elementSize;
       if (length !== this.length) {
         throw new Error("Incorrect deserialized vector length");
@@ -247,6 +254,15 @@ export class CompositeVectorType<T extends Vector<object> = Vector<object>> exte
 
   hasVariableSerializedLength(): boolean {
     return this.elementType.hasVariableSerializedLength();
+  }
+
+  getFixedSerializedLength(): null | number {
+    const elementFixedLen = this.elementType.getFixedSerializedLength();
+    if (elementFixedLen === null) {
+      return null;
+    } else {
+      return this.length * elementFixedLen;
+    }
   }
 
   getMaxChunkCount(): number {

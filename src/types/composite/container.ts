@@ -68,37 +68,42 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   struct_getSerializedLength(value: T): number {
     let s = 0;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      if (fieldType.hasVariableSerializedLength()) {
+      const fixedLen = fieldType.getFixedSerializedLength();
+      if (fixedLen === null) {
         s += fieldType.struct_getSerializedLength(value[fieldName]) + 4;
       } else {
-        s += fieldType.struct_getSerializedLength(null);
+        s += fixedLen;
       }
     }
     return s;
   }
 
   getMaxSerializedLength(): number {
-    const fixedSize = Object.values(this.fields).reduce(
-      (total, fieldType) => total + (fieldType.hasVariableSerializedLength() ? 4 : fieldType.getMaxSerializedLength()),
-      0
-    );
-    const maxDynamicSize = Object.values(this.fields).reduce(
-      (total, fieldType) => (total += fieldType.hasVariableSerializedLength() ? fieldType.getMaxSerializedLength() : 0),
-      0
-    );
-    return fixedSize + maxDynamicSize;
+    let maxSize = 0;
+    for (const fieldType of Object.values(this.fields)) {
+      const fieldFixedLen = fieldType.getFixedSerializedLength();
+      if (fieldFixedLen === null) {
+        // +4 for the offset
+        maxSize += 4 + fieldType.getMaxSerializedLength();
+      } else {
+        maxSize += fieldFixedLen;
+      }
+    }
+    return maxSize;
   }
 
   getMinSerializedLength(): number {
-    const fixedSize = Object.values(this.fields).reduce(
-      (total, fieldType) => total + (fieldType.hasVariableSerializedLength() ? 4 : fieldType.getMinSerializedLength()),
-      0
-    );
-    const minDynamicSize = Object.values(this.fields).reduce(
-      (total, fieldType) => (total += fieldType.hasVariableSerializedLength() ? fieldType.getMinSerializedLength() : 0),
-      0
-    );
-    return fixedSize + minDynamicSize;
+    let maxSize = 0;
+    for (const fieldType of Object.values(this.fields)) {
+      const fieldFixedLen = fieldType.getFixedSerializedLength();
+      if (fieldFixedLen === null) {
+        // +4 for the offset
+        maxSize += 4 + fieldType.getMinSerializedLength();
+      } else {
+        maxSize += fieldFixedLen;
+      }
+    }
+    return maxSize;
   }
 
   struct_assertValidValue(value: unknown): asserts value is T {
@@ -133,17 +138,17 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     let currentIndex = start;
     let nextIndex = currentIndex;
     const value = {} as T;
+
     // Since variable-sized values can be interspersed with fixed-sized values, we precalculate
-    // the offset indices so we can more easily deserialize the fields in once pass
-    // first we get the fixed sizes
-    const fixedSizes: (number | false)[] = Object.values(this.fields).map(
-      (fieldType) => !fieldType.hasVariableSerializedLength() && fieldType.struct_getSerializedLength(null)
-    );
+    // the offset indices so we can more easily deserialize the fields in once pass first we get the fixed sizes
+    // Note: `fixedSizes[i] = null` if that field has variable length
+    const fixedSizes = Object.values(this.fields).map((fieldType) => fieldType.getFixedSerializedLength());
+
     // with the fixed sizes, we can read the offsets, and store for our single pass
     const offsets: number[] = [];
     const fixedSection = new DataView(data.buffer, data.byteOffset);
     const fixedEnd = fixedSizes.reduce((index: number, size) => {
-      if (size === false) {
+      if (size === null) {
         offsets.push(start + fixedSection.getUint32(index, true));
         return index + 4;
       } else {
@@ -159,7 +164,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
       try {
         const fieldSize = fixedSizes[i];
-        if (fieldSize === false) {
+        if (fieldSize === null) {
           // variable-sized field
           if (offsets[offsetIndex] > end) {
             throw new Error("Offset out of bounds");
@@ -201,13 +206,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
 
   struct_serializeToBytes(value: T, output: Uint8Array, offset: number): number {
-    let variableIndex =
-      offset +
-      Object.values(this.fields).reduce(
-        (total, fieldType) =>
-          total + (fieldType.hasVariableSerializedLength() ? 4 : fieldType.struct_getSerializedLength(null)),
-        0
-      );
+    let variableIndex = offset;
+    for (const fieldType of Object.values(this.fields)) {
+      const fixedLen = fieldType.getFixedSerializedLength();
+      variableIndex += fixedLen === null ? 4 : fixedLen;
+    }
+
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
@@ -289,7 +293,8 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     const variableOffsets: number[] = [];
     let variableIndex = 0;
     for (const [i, fieldType] of types.entries()) {
-      if (fieldType.hasVariableSerializedLength()) {
+      const fixedLen = fieldType.getFixedSerializedLength();
+      if (fixedLen === null) {
         const offset = fixedSection.getUint32(currentIndex, true);
         if (offset > target.length) {
           throw new Error("Offset out of bounds");
@@ -298,7 +303,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         currentIndex = nextIndex = currentIndex + 4;
         variableIndex++;
       } else {
-        nextIndex = currentIndex + fieldType.struct_getSerializedLength(null);
+        nextIndex = currentIndex + fixedLen;
         fixedOffsets[i] = [currentIndex, nextIndex];
         currentIndex = nextIndex;
       }
@@ -355,13 +360,14 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   tree_getSerializedLength(target: Tree): number {
     let s = 0;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      if (fieldType.hasVariableSerializedLength()) {
+      const fixedLen = fieldType.getFixedSerializedLength();
+      if (fixedLen === null) {
         s +=
           (fieldType as CompositeType<T[keyof T]>).tree_getSerializedLength(
             target.getSubtree(this.fieldInfos.get(fieldName).gindex)
           ) + 4;
       } else {
-        s += fieldType.struct_getSerializedLength(null);
+        s += fixedLen;
       }
     }
     return s;
@@ -396,13 +402,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
 
   tree_serializeToBytes(target: Tree, output: Uint8Array, offset: number): number {
-    let variableIndex =
-      offset +
-      Object.values(this.fields).reduce(
-        (total, fieldType) =>
-          total + (fieldType.hasVariableSerializedLength() ? 4 : fieldType.struct_getSerializedLength(null)),
-        0
-      );
+    let variableIndex = offset;
+    for (const fieldType of Object.values(this.fields)) {
+      const fixedLen = fieldType.getFixedSerializedLength();
+      variableIndex += fixedLen === null ? 4 : fixedLen;
+    }
+
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
     let i = 0;
@@ -530,6 +535,19 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
   hasVariableSerializedLength(): boolean {
     return Object.values(this.fields).some((fieldType) => fieldType.hasVariableSerializedLength());
+  }
+
+  getFixedSerializedLength(): null | number {
+    let fixedLen = 0;
+    for (const fieldType of Object.values(this.fields)) {
+      const fieldFixedLen = fieldType.getFixedSerializedLength();
+      if (fieldFixedLen === null) {
+        return null;
+      } else {
+        fixedLen += fieldFixedLen;
+      }
+    }
+    return fixedLen;
   }
 
   getMaxChunkCount(): number {
