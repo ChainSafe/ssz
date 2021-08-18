@@ -78,6 +78,13 @@ describe("Tree.setNode", () => {
     const tree = new Tree(zeroNode(2));
     expect(() => tree.setNode(BigInt(0), zeroNode(1))).to.throw("Invalid gindex < 1");
   });
+
+  it.skip("Should expand a subtree", () => {
+    const depth = 2;
+    const tree = new Tree(zeroNode(depth));
+    tree.setNode(BigInt(15), zeroNode(0), true);
+    expect(tree.getRoot(BigInt(14))).to.deep.equal(zeroNode(0));
+  });
 });
 
 function toHex(bytes: Buffer | Uint8Array): string {
