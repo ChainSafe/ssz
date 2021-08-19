@@ -19,6 +19,7 @@ import {
   SimpleObject,
   VariableSizeSimpleObject,
   UnionObject,
+  number64Type2,
 } from "./objects";
 
 describe("deserialize", () => {
@@ -58,6 +59,9 @@ describe("deserialize", () => {
     {value: "0000000001000000", type: number64Type, expected: 2 ** 32},
     {value: "ffffffffffff0f00", type: number64Type, expected: 2 ** 52 - 1},
     {value: "ffffffffffffffff", type: number64Type, expected: Infinity},
+    {value: "0000000001000000", type: number64Type2, expected: 2 ** 32},
+    {value: "ffffffffffff0f00", type: number64Type2, expected: 2 ** 52 - 1},
+    {value: "ffffffffffffffff", type: number64Type2, expected: Infinity},
     {value: "deadbeefdeadbeef", type: bytes8Type, expected: Buffer.from("deadbeefdeadbeef", "hex")},
     {
       value: "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",

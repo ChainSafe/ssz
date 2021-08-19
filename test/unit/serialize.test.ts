@@ -15,6 +15,7 @@ import {
   OuterObject,
   SimpleObject,
   UnionObject,
+  number64Type2,
 } from "./objects";
 
 describe("serialize", () => {
@@ -41,6 +42,11 @@ describe("serialize", () => {
     {value: 2 ** 32, type: number64Type, expected: "0000000001000000"},
     {value: 2 ** 52 - 1, type: number64Type, expected: "ffffffffffff0f00"},
     {value: Infinity, type: number64Type, expected: "ffffffffffffffff"},
+    {value: 2 ** 32, type: number64Type2, expected: "0000000001000000"},
+    {value: 2 ** 52 - 1, type: number64Type2, expected: "ffffffffffff0f00"},
+    {value: 2 ** 32, type: number64Type2, expected: "0000000001000000"},
+    {value: 2 ** 52 - 1, type: number64Type2, expected: "ffffffffffff0f00"},
+    {value: Infinity, type: number64Type2, expected: "ffffffffffffffff"},
     {value: 0x01n, type: bigint64Type, expected: "0100000000000000"},
     {value: 0x1000000000000000n, type: bigint64Type, expected: "0000000000000010"},
     {value: 0xffffffffffffffffn, type: bigint64Type, expected: "ffffffffffffffff"},

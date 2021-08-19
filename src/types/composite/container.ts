@@ -14,6 +14,8 @@ import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 import {basicTypeToLeafNode} from "../../util/basic";
+import {isNumber64UintType, Number64UintType} from "../basic";
+import {newHashObject} from "../../util/hash";
 
 export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,6 +28,7 @@ export function isContainerType<T extends ObjectLike = ObjectLike>(type: Type<un
   return isTypeOf(type, CONTAINER_TYPE);
 }
 type FieldInfo = {
+  isNumber64UintType: boolean;
   isBasic: boolean;
   gindex: bigint;
 };
@@ -49,6 +52,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     let chunkIndex = 0;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       this.fieldInfos.set(fieldName, {
+        isNumber64UintType: isNumber64UintType(fieldType),
         isBasic: !isCompositeType(fieldType),
         gindex: this.getGindexAtChunkIndex(chunkIndex),
       });
@@ -456,12 +460,15 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (!fieldInfo) {
       return undefined;
     }
-    const {isBasic, gindex} = fieldInfo;
-    if (isBasic) {
-      const chunk = target.getRoot(gindex);
+    // Number64Uint wants to work on HashObject to improve performance
+    if (fieldInfo.isNumber64UintType) {
+      const hashObject = target.getHashObject(fieldInfo.gindex);
+      return (fieldType as Number64UintType).struct_deserializeFromHashObject(hashObject, 0);
+    } else if (fieldInfo.isBasic) {
+      const chunk = target.getRoot(fieldInfo.gindex);
       return fieldType.struct_deserializeFromBytes(chunk, 0);
     } else {
-      return target.getSubtree(gindex);
+      return target.getSubtree(fieldInfo.gindex);
     }
   }
 
@@ -471,14 +478,19 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (!fieldInfo) {
       throw new Error("Invalid container field name");
     }
-    const {isBasic, gindex} = fieldInfo;
-    if (isBasic) {
+    // Number64Uint wants to work on HashObject to improve performance
+    if (fieldInfo.isNumber64UintType) {
+      const hashObject = newHashObject();
+      (fieldType as Number64UintType).struct_serializeToHashObject(value as number, hashObject, 0);
+      target.setHashObject(fieldInfo.gindex, hashObject);
+      return true;
+    } else if (fieldInfo.isBasic) {
       const chunk = new Uint8Array(32);
       fieldType.struct_serializeToBytes(value, chunk, 0);
-      target.setRoot(gindex, chunk);
+      target.setRoot(fieldInfo.gindex, chunk);
       return true;
     } else {
-      target.setSubtree(gindex, value as Tree);
+      target.setSubtree(fieldInfo.gindex, value as Tree);
       return true;
     }
   }

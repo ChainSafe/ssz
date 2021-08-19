@@ -10,6 +10,7 @@ import {
   ListType,
   VectorType,
   BooleanType,
+  Number64UintType,
 } from "../../src";
 import {NoneType} from "../../src/types/basic/none";
 import {UnionType} from "../../src/types/composite/union";
@@ -49,6 +50,8 @@ export const number16Type = new NumberUintType({byteLength: 2});
 export const number32Type = new NumberUintType({byteLength: 4});
 
 export const number64Type = new NumberUintType({byteLength: 8});
+
+export const number64Type2 = new Number64UintType();
 
 export const number16Vector6Type = new VectorType({
   elementType: number16Type,
@@ -123,3 +126,4 @@ export const ArrayObject2 = new ListType({
 });
 
 export const UnionObject = new UnionType({types: [new NoneType(), SimpleObject, number16Type]});
+export const balancesType = new ListType({elementType: number64Type, limit: 100});
