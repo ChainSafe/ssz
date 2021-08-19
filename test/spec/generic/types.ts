@@ -1,5 +1,4 @@
 import {
-  UintType,
   BigIntUintType,
   BitListType,
   BitVectorType,
@@ -7,7 +6,6 @@ import {
   byteType,
   ContainerType,
   ListType,
-  ByteVectorType,
   Type,
   VectorType,
 } from "../../../src";
