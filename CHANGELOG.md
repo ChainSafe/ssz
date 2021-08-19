@@ -1,3 +1,10 @@
+## 0.8.14 (2021-08-19)
+
+## Features
+
+- Add getFixedSerializedLength() [#148](https://github.com/ChainSafe/ssz/pull/148)
+- Cache field information for Container type [#146](https://github.com/ChainSafe/ssz/pull/146)
+
 ## 0.8.13 (2021-08-04)
 
 ## Features
@@ -102,6 +109,7 @@
 ## 0.7.0 (2021-03-01)
 
 ## BREAKING CHANGES
+
 - Use abstract class Type/BasicType/CompositeType ([c91b19](https://github.com/chainsafe/ssz/commit/c91b19))
 - Remove TreeBacked<T>#gindexOfProperty ([d4b141](https://github.com/chainsafe/ssz/commit/d4b141))
 
