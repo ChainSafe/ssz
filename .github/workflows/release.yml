@@ -74,7 +74,7 @@ jobs:
           tag_name: ${{ needs.tag.outputs.tag }}
           body_path: "CHANGELOG.md"
           release_name: Release ${{ needs.tag.outputs.tag }}
-          prerelease: true # we can promote to release trough github
+          prerelease: false
 
       - name: Publish to npm registry
         run: yarn publish --access public
