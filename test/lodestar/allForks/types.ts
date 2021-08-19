@@ -1,7 +1,7 @@
 import {ContainerType} from "../../../src";
 
-import {ts as phase0} from "../phase0";
-import {ts as altair} from "../altair";
+import * as phase0 from "../phase0/types";
+import * as altair from "../altair/types";
 
 // Re-export union types for types that are _known_ to differ
 

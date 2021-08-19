@@ -2,8 +2,8 @@
 import {ForkName} from "@chainsafe/lodestar-params";
 
 import {AllForksSSZTypes} from "./types";
-import {ssz as phase0} from "../phase0";
-import {ssz as altair} from "../altair";
+import * as phase0 from "../phase0/sszTypes";
+import * as altair from "../altair/sszTypes";
 
 /**
  * Index the ssz types that differ by fork

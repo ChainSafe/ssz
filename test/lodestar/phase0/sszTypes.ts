@@ -18,10 +18,10 @@ import {
   VALIDATOR_REGISTRY_LIMIT,
 } from "@chainsafe/lodestar-params";
 import {BitListType, BitVectorType, ContainerType, List, ListType, RootType, Vector, VectorType} from "../../../src";
-import {ssz as primitiveSsz} from "../primitive";
-import {LazyVariable} from "../lazyVar";
-import * as phase0 from "./types";
+import * as primitiveSsz from "../primitive/sszTypes";
 import * as primitive from "../primitive/types";
+import * as phase0 from "./types";
+import {LazyVariable} from "../lazyVar";
 
 const {
   Boolean,

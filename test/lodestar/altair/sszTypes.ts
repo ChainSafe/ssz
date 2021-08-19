@@ -14,8 +14,8 @@ import {
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
 } from "@chainsafe/lodestar-params";
 import {BitVectorType, ContainerType, VectorType, ListType, RootType, Vector} from "../../../src";
-import {ssz as phase0Ssz} from "../phase0";
-import {ssz as primitiveSsz} from "../primitive";
+import * as phase0Ssz from "../phase0/sszTypes";
+import * as primitiveSsz from "../primitive/sszTypes";
 import * as phase0 from "../phase0/types";
 import {Root} from "../primitive/types";
 import {LazyVariable} from "../lazyVar";
