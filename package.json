@@ -1,6 +1,6 @@
 {
   "name": "@chainsafe/persistent-merkle-tree",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Merkle tree implemented as a persistent datastructure",
   "main": "lib/index.js",
   "files": [
