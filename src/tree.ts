@@ -1,5 +1,6 @@
 import {Gindex, gindexIterator, Bit, toGindexBitstring, GindexBitstring} from "./gindex";
 import {Node, LeafNode} from "./node";
+import {HashObject} from "@chainsafe/as-sha256";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 import {zeroNode} from "./zeroNode";
@@ -130,11 +131,19 @@ export class Tree {
     return this.getNode(index).root;
   }
 
+  getHashObject(index: Gindex | GindexBitstring): HashObject {
+    return this.getNode(index);
+  }
+
   setRoot(index: Gindex | GindexBitstring, root: Uint8Array, expand = false): void {
     this.setNode(index, new LeafNode(root), expand);
   }
 
-  getSubtree(index: Gindex | GindexBitstring): Tree {
+  setHashObject(index: Gindex | GindexBitstring, hashObject: HashObject, expand = false): void {
+    this.setNode(index, new LeafNode(hashObject), expand);
+  }
+
+  getSubtree(index: Gindex): Tree {
     return new Tree(this.getNode(index), (v: Tree): void => this.setNode(index, v.rootNode));
   }
 

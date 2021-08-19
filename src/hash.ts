@@ -27,3 +27,8 @@ export function hashObjectToUint8Array(obj: HashObject): Uint8Array {
 export function uint8ArrayToHashObject(byteArr: Uint8Array): HashObject {
   return byteArrayToHashObject(byteArr);
 }
+
+export function isHashObject(hash: HashObject | Uint8Array): hash is HashObject {
+  // @ts-ignore
+  return hash.length === undefined;
+}

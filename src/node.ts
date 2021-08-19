@@ -1,5 +1,5 @@
 import {HashObject} from "@chainsafe/as-sha256";
-import {hashObjectToUint8Array, hashTwoObjects, uint8ArrayToHashObject} from "./hash";
+import {hashObjectToUint8Array, hashTwoObjects, isHashObject, uint8ArrayToHashObject} from "./hash";
 
 const ERR_INVALID_TREE = "Invalid tree";
 
@@ -74,10 +74,14 @@ export class BranchNode extends Node {
 }
 
 export class LeafNode extends Node {
-  constructor(_root: Uint8Array) {
+  constructor(_root: Uint8Array | HashObject) {
     super();
-    if (_root.length !== 32) throw new Error(ERR_INVALID_TREE);
-    this.applyHash(uint8ArrayToHashObject(_root));
+    if (isHashObject(_root)) {
+      this.applyHash(_root);
+    } else {
+      if (_root.length !== 32) throw new Error(ERR_INVALID_TREE);
+      this.applyHash(uint8ArrayToHashObject(_root));
+    }
   }
 
   get rootHashObject(): HashObject {

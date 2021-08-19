@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import {Tree, zeroNode, LeafNode, subtreeFillToContents, iterateAtDepth} from "../../src";
+import {Tree, zeroNode, LeafNode, subtreeFillToContents, uint8ArrayToHashObject} from "../../src";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
@@ -38,15 +38,19 @@ describe("fixed-depth tree iteration", () => {
 });
 
 describe("subtree mutation", () => {
-  it("changing a subtree should change the parent root", () => {
+  let tree: Tree;
+  beforeEach(() => {
     const depth = 2;
-    const tree = new Tree(zeroNode(depth));
+    tree = new Tree(zeroNode(depth));
     // Get the subtree with "X"s
     //       0
     //      /  \
     //    0      X
     //   / \    / \
     //  0   0  X   X
+  });
+
+  it("changing a subtree should change the parent root", () => {
     const subtree = tree.getSubtree(BigInt(3));
 
     const rootBefore = tree.root;
@@ -54,6 +58,16 @@ describe("subtree mutation", () => {
     const rootAfter = tree.root;
 
     expect(toHex(rootBefore)).to.not.equal(rootAfter);
+  });
+
+  it("setRoot vs setHashObject", () => {
+    const newRoot = new Uint8Array(Array.from({length: 32}, () => 1));
+    const newHashObject = uint8ArrayToHashObject(newRoot);
+    const tree1 = tree.clone();
+    tree1.setRoot(BigInt(4), newRoot);
+    const tree2 = tree.clone();
+    tree2.setHashObject(BigInt(4), newHashObject);
+    expect(toHex(tree1.root)).to.be.equal(toHex(tree2.root));
   });
 });
 
