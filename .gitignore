@@ -4,3 +4,6 @@ dist/
 lib/
 node_modules/
 .idea/
+yarn-error.log
+
+test/spec-tests-data

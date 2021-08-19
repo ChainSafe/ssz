@@ -18,3 +18,7 @@ jobs:
         run: yarn lint
       - name: Tests
         run: yarn test
+      - name: Download spec tests
+        run: yarn download-spec-tests
+      - name: Spec tests
+        run: yarn test:spec
