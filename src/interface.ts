@@ -29,7 +29,8 @@ export interface ObjectLike {
   [fieldName: string]: any;
 }
 
-export type CompositeValue = Record<string, unknown> | ArrayLike<unknown> | Record<string, never>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CompositeValue = Record<string, any> | ArrayLike<unknown> | Record<string, never>;
 
 /**
  * The Json interface is used for json-serializable input
