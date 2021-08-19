@@ -4,6 +4,7 @@
 
 - Add getFixedSerializedLength() [#148](https://github.com/ChainSafe/ssz/pull/148)
 - Cache field information for Container type [#146](https://github.com/ChainSafe/ssz/pull/146)
+- Use persistent-merkle-tree 0.3.5 and as-sha256 0.2.4 [#165](https://github.com/ChainSafe/ssz/pull/165)
 
 ## 0.8.13 (2021-08-04)
 
