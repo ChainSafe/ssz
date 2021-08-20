@@ -5,6 +5,7 @@ import {BasicType} from "./abstract";
 
 export interface IUintOptions {
   byteLength: number;
+  infinityWhenBig?: boolean;
 }
 
 export const UINT_TYPE = Symbol.for("ssz/UintType");
@@ -16,9 +17,13 @@ export function isUintType<T>(type: Type<unknown>): type is UintType<T> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export abstract class UintType<T> extends BasicType<T> {
   byteLength: number;
+  infinityWhenBig: boolean;
+
   constructor(options: IUintOptions) {
     super();
     this.byteLength = options.byteLength;
+    this.infinityWhenBig = options.infinityWhenBig === true ? true : this.byteLength > 6;
+
     this._typeSymbols.add(UINT_TYPE);
   }
   struct_getSerializedLength(): number {
@@ -92,7 +97,7 @@ export class NumberUintType extends UintType<number> {
         isInfinity = false;
       }
     }
-    if (this.byteLength > 6 && isInfinity) {
+    if (this.infinityWhenBig && isInfinity) {
       return Infinity;
     }
     return Number(output);
@@ -101,7 +106,7 @@ export class NumberUintType extends UintType<number> {
   struct_convertFromJson(data: Json): number {
     let n: number;
     const bigN = BigInt(data as string);
-    if (bigN === this.struct_getMaxBigInt()) {
+    if (this.infinityWhenBig && bigN === this.struct_getMaxBigInt()) {
       n = Infinity;
     } else if (bigN < Number.MAX_SAFE_INTEGER) {
       n = Number(bigN);
