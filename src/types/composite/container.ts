@@ -412,7 +412,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     let fixedIndex = offset;
     let i = 0;
     const fieldTypes = Object.values(this.fields);
-    for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), i, fieldTypes.length)) {
+    for (const node of target.getNodesAtDepth(this.getChunkDepth(), i, fieldTypes.length)) {
       const fieldType = fieldTypes[i];
       if (!isCompositeType(fieldType)) {
         const s = fieldType.struct_getSerializedLength();
@@ -519,10 +519,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
 
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    const chunkIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
+    const chunks = target.getNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
+    let i = 0;
     for (const propType of Object.values(this.fields)) {
-      const {value, done} = chunkIterator.next();
-      if (done) {
+      const value = chunks[i];
+      i++;
+      if (!value) {
         return;
       } else {
         if (!isCompositeType(propType)) {

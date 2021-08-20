@@ -159,7 +159,7 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const length = this.tree_getLength(target);
     const chunkCount = this.tree_getChunkCount(target);
-    const nodeIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
+    const nodeIterator = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
     let i = 0;
     for (const node of nodeIterator) {
       const chunk = node.root;

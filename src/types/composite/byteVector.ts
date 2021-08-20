@@ -56,17 +56,20 @@ export class ByteVectorType extends BasicVectorType<ByteVector> {
 
   tree_convertToStruct(target: Tree): ByteVector {
     const value = new Uint8Array(this.length);
-    const chunkIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
+    const chunks = target.getNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
+    let chunkIx = 0;
     if (this.length % 32 === 0) {
       for (let i = 0; i < this.length; i += 32) {
-        value.set((chunkIterator.next() as IteratorYieldResult<Node>).value.root, i);
+        value.set(chunks[chunkIx].root, i);
+        chunkIx++;
       }
     } else {
       let i;
       for (i = 0; i < this.length - 32; i += 32) {
-        value.set((chunkIterator.next() as IteratorYieldResult<Node>).value.root, i);
+        value.set(chunks[chunkIx].root, i);
+        chunkIx++;
       }
-      value.set((chunkIterator.next() as IteratorYieldResult<Node>).value.root.subarray(0, this.length - i), i);
+      value.set(chunks[chunkIx].root.subarray(0, this.length - i), i);
     }
     return value;
   }

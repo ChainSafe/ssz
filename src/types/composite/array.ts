@@ -173,7 +173,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     const remainder = size % 32;
     let i = 0;
     if (fullChunkCount > 0) {
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount)) {
+      for (const node of target.getNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount)) {
         output.set(node.root, offset + i * 32);
         i++;
       }
@@ -203,7 +203,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       throw new Error("cannot handle a non-chunk-alignable elementType");
     }
     let left = length;
-    for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target))) {
+    for (const node of target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target))) {
       const chunk = node.root;
       for (let offset = 0; offset < 32; offset += elementSize) {
         yield this.elementType.struct_deserializeFromBytes(chunk, offset);
@@ -483,7 +483,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       let variableIndex = offset + length * 4;
       const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
       let i = 0;
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), i, length)) {
+      for (const node of target.getNodesAtDepth(this.getChunkDepth(), i, length)) {
         // write offset
         fixedSection.setUint32(i * 4, variableIndex - offset, true);
         // write serialized element to variable section
@@ -494,7 +494,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     } else {
       let index = offset;
       let i = 0;
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), i, length)) {
+      for (const node of target.getNodesAtDepth(this.getChunkDepth(), i, length)) {
         index = this.elementType.tree_serializeToBytes(new Tree(node), output, index);
         i++;
       }
@@ -546,7 +546,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
   }
 
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target))) {
+    for (const node of target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target))) {
       yield new Tree(node);
     }
   }
