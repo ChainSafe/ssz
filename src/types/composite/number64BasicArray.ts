@@ -6,7 +6,7 @@ export function number64_getValueAtIndex(
   target: Tree,
   chunkGindex: Gindex,
   numberOffsetInChunk: number,
-  elementType: Number64UintType,
+  elementType: Number64UintType
 ): number {
   // a special optimization for uint64
   // const hashObject = this.tree_getHashObjectAtChunkIndex(target, this.getChunkIndex(index));
