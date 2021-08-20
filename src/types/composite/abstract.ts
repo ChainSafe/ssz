@@ -15,7 +15,6 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {merkleize} from "../../util/compat";
 import {byteArrayEquals} from "../../util/byteArray";
-import {HashObject} from "@chainsafe/as-sha256";
 
 export const COMPOSITE_TYPE = Symbol.for("ssz/CompositeType");
 
@@ -165,10 +164,6 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
 
   tree_getRootAtChunkIndex(target: Tree, index: number): Uint8Array {
     return target.getRoot(this.getGindexAtChunkIndex(index));
-  }
-
-  tree_getHashObjectAtChunkIndex(target: Tree, chunkIndex: number): HashObject {
-    return target.getHashObject(this.getGindexAtChunkIndex(chunkIndex));
   }
 
   tree_setRootAtChunkIndex(target: Tree, index: number, value: Uint8Array, expand = false): void {

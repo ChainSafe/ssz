@@ -1,10 +1,16 @@
 import {Json, List} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isBasicType, number32Type} from "../basic";
+import {isBasicType, isNumber64UintType, number32Type, Number64UintType} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {mixInLength} from "../../util/compat";
 import {BranchNode, concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
+import {
+  number64_applyUint64Delta,
+  number64_getValueAtIndex,
+  number64_newTreeFromUint64Deltas,
+  number64_setValueAtIndex,
+} from "./number64BasicArray";
 
 /**
  * SSZ Lists (variable-length arrays) include the length of the list in the tree
@@ -39,7 +45,9 @@ export function isListType<T extends List<any> = List<any>>(type: Type<unknown>)
 export const ListType: ListTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
-    if (isBasicType(options.elementType)) {
+    if (isNumber64UintType(options.elementType)) {
+      return new Number64ListType(options);
+    } else if (isBasicType(options.elementType)) {
       return new BasicListType(options);
     } else {
       return new CompositeListType(options);
@@ -217,6 +225,64 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     // include the length chunk
     gindices.push(concatGindices([root, LENGTH_GINDEX]));
     return gindices;
+  }
+}
+
+/**
+ * An optimization for Number64 using HashObject and new method to work with deltas.
+ */
+export class Number64ListType<T extends List<number> = List<number>> extends BasicListType<T> {
+  constructor(options: IListOptions) {
+    super(options);
+  }
+
+  /** Overwrite BasicArrayType for Number64UintType */
+  tree_getValueAtIndex(target: Tree, index: number): number {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    // 4 items per chunk
+    const numberOffsetInChunk = index % 4;
+    return number64_getValueAtIndex(target, chunkGindex, numberOffsetInChunk, this.elementType as Number64UintType);
+  }
+
+  /** Overwrite BasicArrayType for Number64UintType */
+  tree_setValueAtIndex(target: Tree, index: number, value: number, expand = false): boolean {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    // 4 items per chunk
+    const numberOffsetInChunk = index % 4;
+    return number64_setValueAtIndex(
+      target,
+      chunkGindex,
+      numberOffsetInChunk,
+      value,
+      this.elementType as Number64UintType,
+      expand
+    );
+  }
+
+  /**
+   * delta > 0 means an increasement, delta < 0 means a decreasement
+   * returns the new value
+   **/
+  tree_applyUint64Delta(target: Tree, index: number, delta: number): number {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    // 4 items per chunk
+    const numberOffsetInChunk = index % 4;
+    return number64_applyUint64Delta(
+      target,
+      chunkGindex,
+      numberOffsetInChunk,
+      delta,
+      this.elementType as Number64UintType
+    );
+  }
+
+  /**
+   * delta > 0 means an increasement, delta < 0 means a decreasement
+   * returns the new root node and new values
+   **/
+  tree_newTreeFromUint64Deltas(target: Tree, deltas: number[]): [Node, number[]] {
+    const chunkDepth = this.getChunkDepth();
+    return number64_newTreeFromUint64Deltas(target, deltas, chunkDepth, this.elementType as Number64UintType);
   }
 }
 

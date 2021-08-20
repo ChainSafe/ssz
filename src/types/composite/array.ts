@@ -2,7 +2,7 @@
 
 import {ArrayLike, CompositeValue, Json} from "../../interface";
 import {IJsonOptions, Type} from "../type";
-import {BasicType, isNumber64UintType, Number64UintType} from "../basic";
+import {BasicType} from "../basic";
 import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
 import {
@@ -16,7 +16,6 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
-import {cloneHashObject} from "../../util/hash";
 
 export interface IArrayOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,13 +24,10 @@ export interface IArrayOptions {
 
 export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends CompositeType<T> {
   elementType: BasicType<unknown>;
-  isNumber64UintType: boolean;
   constructor(options: IArrayOptions) {
     super();
     this.elementType = options.elementType as BasicType<T>;
-    this.isNumber64UintType = isNumber64UintType(this.elementType);
   }
-
   abstract struct_getLength(value: T): number;
   abstract getMaxLength(): number;
   abstract getMinLength(): number;
@@ -234,94 +230,18 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   tree_getValueAtIndex(target: Tree, index: number): T[number] {
-    // a special optimization for uint64
-    if (this.isNumber64UintType) {
-      const hashObject = this.tree_getHashObjectAtChunkIndex(target, this.getChunkIndex(index));
-      // 4 items per chunk
-      const offset = index % 4;
-      return (this.elementType as Number64UintType).struct_deserializeFromHashObject(hashObject, offset);
-    }
-    // for other types
     const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
     return this.elementType.struct_deserializeFromBytes(chunk, this.getChunkOffset(index));
   }
 
   tree_setValueAtIndex(target: Tree, index: number, value: T[number], expand = false): boolean {
     const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
-    // a special optimization for uint64
-    if (this.isNumber64UintType) {
-      const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
-      // 4 items per chunk
-      const offset = index % 4;
-      (this.elementType as Number64UintType).struct_serializeToHashObject(value as number, hashObject, offset);
-      target.setHashObject(chunkGindex, hashObject, expand);
-      return true;
-    }
-    // for other types
     // copy data from old chunk, use new memory to set a new chunk
     const chunk = new Uint8Array(32);
     chunk.set(target.getRoot(chunkGindex));
     this.elementType.struct_serializeToBytes(value, chunk, this.getChunkOffset(index));
     target.setRoot(chunkGindex, chunk, expand);
     return true;
-  }
-
-  /**
-   * delta > 0 means an increasement, delta < 0 means a decreasement
-   * returns the new value
-   **/
-  tree_applyUint64Delta(target: Tree, index: number, delta: number): number {
-    if (!this.isNumber64UintType) {
-      throw new Error("tree_increaseUint64 is only for Number64UintArray type");
-    }
-    const elementType = this.elementType as Number64UintType;
-    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
-    const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
-    // 4 items per chunk
-    const offset = index % 4;
-    let value = elementType.struct_deserializeFromHashObject(hashObject, offset);
-    value += delta;
-    if (value < 0) value = 0;
-    elementType.struct_serializeToHashObject(value as number, hashObject, offset);
-    target.setHashObject(chunkGindex, hashObject);
-    return value;
-  }
-
-  /**
-   * delta > 0 means an increasement, delta < 0 means a decreasement
-   * returns the new root node and new values
-   **/
-  tree_newTreeFromUint64Deltas(target: Tree, deltas: number[]): [Node, number[]] {
-    if (!this.isNumber64UintType) {
-      throw new Error("tree_newTreeFromUint64Deltas is only for Number64UintArray type");
-    }
-    const length = deltas.length;
-    if (length !== this.tree_getLength(target)) {
-      throw new Error(`Expect delta length ${this.tree_getLength(target)}, actual ${deltas.length}`);
-    }
-    const elementType = this.elementType as Number64UintType;
-    let nodeIdx = 0;
-    const newLeafNodes: Node[] = [];
-    const newValues: number[] = [];
-    const chunkCount = Math.ceil(length / 4);
-    const currentNodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
-    for (const node of currentNodes) {
-      const hashObject = cloneHashObject(node);
-      // 4 items per chunk
-      for (let offset = 0; offset < 4; offset++) {
-        const index = nodeIdx * 4 + offset;
-        if (index >= length) break;
-        let value = elementType.struct_deserializeFromHashObject(hashObject, offset) + deltas[index];
-        if (value < 0) value = 0;
-        newValues.push(value);
-        // mutate hashObject at offset
-        elementType.struct_serializeToHashObject(value, hashObject, offset);
-      }
-      newLeafNodes.push(new LeafNode(hashObject));
-      nodeIdx++;
-    }
-    const newRootNode = subtreeFillToContents(newLeafNodes, this.getChunkDepth());
-    return [newRootNode, newValues];
   }
 
   tree_getProperty(target: Tree, property: keyof T): T[keyof T] {

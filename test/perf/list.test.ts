@@ -1,15 +1,6 @@
 import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {
-  BasicArrayType,
-  BasicListType,
-  List,
-  ListType,
-  Number64UintType,
-  NumberUintType,
-  TreeBacked,
-  Type,
-} from "../../src";
+import {List, ListType, Number64ListType, Number64UintType, NumberUintType, TreeBacked, Type} from "../../src";
 
 describe("list", () => {
   setBenchOpts({
@@ -58,7 +49,7 @@ describe("list", () => {
 
   // using applyDelta gives 70% - 100% improvement
   itBench("Number64UintType - increase 10 using applyDelta", () => {
-    const basicArrayType = tbBalances64.type as BasicArrayType<List<number>>;
+    const basicArrayType = tbBalances64.type as Number64ListType;
     const tree = tbBalances64.tree.clone();
     for (let i = 0; i < numBalances; i++) {
       basicArrayType.tree_applyUint64Delta(tree, i, 10);
@@ -79,7 +70,7 @@ describe("subtreeFillToContents", function () {
   const delta = 100;
   const deltas = Array.from({length: numBalances}, () => delta);
   const tree = tbBalances64.tree;
-  const type = tbBalances64.type as BasicListType<List<number>>;
+  const type = tbBalances64.type as Number64ListType;
 
   /** tree_newTreeFromUint64Deltas is 20x faster than unsafeUint8ArrayToTree */
   itBench("tree_newTreeFromUint64Deltas", () => {
