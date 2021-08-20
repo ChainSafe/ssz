@@ -3,7 +3,7 @@ import {BasicVectorType} from "./vector";
 import {byteType} from "../basic";
 import {isTypeOf, Type} from "../type";
 import {fromHexString, toHexString} from "../../util/byteArray";
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Tree} from "@chainsafe/persistent-merkle-tree";
 
 export interface IByteVectorOptions {
   length: number;
