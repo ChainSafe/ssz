@@ -1,3 +1,9 @@
+## 0.8.15 (2021-08-23)
+
+## Features
+
+- Avoid iterateNodesAtDepth [#167](https://github.com/ChainSafe/ssz/pull/167)
+
 ## 0.8.14 (2021-08-19)
 
 ## Features
