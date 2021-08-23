@@ -167,9 +167,9 @@ export class BitListType extends BasicListType<BitList> {
     const remainder = sizeNoPadding % 32;
     let i = 0;
     if (fullChunkCount > 0) {
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount)) {
-        output.set(node.root, offset + i * 32);
-        i++;
+      const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount);
+      for (; i < nodes.length; i++) {
+        output.set(nodes[i].root, offset + i * 32);
       }
     }
     if (remainder) {
@@ -202,10 +202,10 @@ export class BitListType extends BasicListType<BitList> {
   *tree_iterateValues(target: Tree): IterableIterator<Tree | unknown> {
     const length = this.tree_getLength(target);
     const chunkCount = this.tree_getChunkCount(target);
-    const nodeIterator = target.iterateNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
     let i = 0;
-    for (const node of nodeIterator) {
-      const chunk = node.root;
+    for (let nodeIx = 0; nodeIx < nodes.length; nodeIx++) {
+      const chunk = nodes[nodeIx].root;
       for (let j = 0; j < 256 && i < length; i++, j++) {
         const byte = chunk[this.getChunkOffset(i)];
         yield !!(byte & (1 << this.getBitOffset(i)));

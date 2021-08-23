@@ -173,9 +173,9 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     const remainder = size % 32;
     let i = 0;
     if (fullChunkCount > 0) {
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount)) {
-        output.set(node.root, offset + i * 32);
-        i++;
+      const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount);
+      for (; i < nodes.length; i++) {
+        output.set(nodes[i].root, offset + i * 32);
       }
     }
     if (remainder) {
@@ -203,8 +203,9 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       throw new Error("cannot handle a non-chunk-alignable elementType");
     }
     let left = length;
-    for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target))) {
-      const chunk = node.root;
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target));
+    for (let i = 0; i < nodes.length; i++) {
+      const chunk = nodes[i].root;
       for (let offset = 0; offset < 32; offset += elementSize) {
         yield this.elementType.struct_deserializeFromBytes(chunk, offset);
         left--;
@@ -479,24 +480,21 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
 
   tree_serializeToBytes(target: Tree, output: Uint8Array, offset: number): number {
     const length = this.tree_getLength(target);
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, length);
     if (this.elementType.hasVariableSerializedLength()) {
       let variableIndex = offset + length * 4;
       const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
-      let i = 0;
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), i, length)) {
+      for (let i = 0; i < nodes.length; i++) {
         // write offset
         fixedSection.setUint32(i * 4, variableIndex - offset, true);
         // write serialized element to variable section
-        variableIndex = this.elementType.tree_serializeToBytes(new Tree(node), output, variableIndex);
-        i++;
+        variableIndex = this.elementType.tree_serializeToBytes(new Tree(nodes[i]), output, variableIndex);
       }
       return variableIndex;
     } else {
       let index = offset;
-      let i = 0;
-      for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), i, length)) {
-        index = this.elementType.tree_serializeToBytes(new Tree(node), output, index);
-        i++;
+      for (let i = 0; i < nodes.length; i++) {
+        index = this.elementType.tree_serializeToBytes(new Tree(nodes[i]), output, index);
       }
       return index;
     }
@@ -546,8 +544,9 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
   }
 
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    for (const node of target.iterateNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target))) {
-      yield new Tree(node);
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target));
+    for (let i = 0; i < nodes.length; i++) {
+      yield new Tree(nodes[i]);
     }
   }
 
