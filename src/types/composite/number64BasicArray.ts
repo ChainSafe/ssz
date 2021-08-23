@@ -2,6 +2,9 @@ import {LeafNode, subtreeFillToContents, Tree, Node, Gindex} from "@chainsafe/pe
 import {cloneHashObject} from "../../util/hash";
 import {Number64UintType} from "../basic";
 
+/** For Number64UintType, it takes 64 / 8 = 8 bytes per item, each chunk has 32 bytes = 4 items */
+const NUM_ITEMS_PER_CHUNK = 4;
+
 export function number64_getValueAtIndex(
   target: Tree,
   chunkGindex: Gindex,
@@ -9,7 +12,6 @@ export function number64_getValueAtIndex(
   elementType: Number64UintType
 ): number {
   // a special optimization for uint64
-  // const hashObject = this.tree_getHashObjectAtChunkIndex(target, this.getChunkIndex(index));
   const hashObject = target.getHashObject(chunkGindex);
   return elementType.struct_deserializeFromHashObject(hashObject, numberOffsetInChunk);
 }
@@ -22,11 +24,8 @@ export function number64_setValueAtIndex(
   elementType: Number64UintType,
   expand = false
 ): boolean {
-  // const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
   // a special optimization for uint64
   const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
-  // // 4 items per chunk
-  // const offset = index % 4;
   elementType.struct_serializeToHashObject(value as number, hashObject, numberOffsetInChunk);
   target.setHashObject(chunkGindex, hashObject, expand);
   return true;
@@ -43,15 +42,7 @@ export function number64_applyUint64Delta(
   delta: number,
   elementType: Number64UintType
 ): number {
-  // NO NEED
-  // if (!this.isNumber64UintType) {
-  //   throw new Error("tree_increaseUint64 is only for Number64UintArray type");
-  // }
-  // const elementType = this.elementType as Number64UintType;
-  // const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
   const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
-  // 4 items per chunk
-  // const offset = index % 4;
   let value = elementType.struct_deserializeFromHashObject(hashObject, numberOffsetInChunk);
   value += delta;
   if (value < 0) value = 0;
@@ -70,26 +61,16 @@ export function number64_newTreeFromUint64Deltas(
   chunkDepth: number,
   elementType: Number64UintType
 ): [Node, number[]] {
-  // NONEED
-  // if (!this.isNumber64UintType) {
-  //   throw new Error("tree_newTreeFromUint64Deltas is only for Number64UintArray type");
-  // }
   const length = deltas.length;
-  // TODO: validate in main class
-  // if (length !== this.tree_getLength(target)) {
-  //   throw new Error(`Expect delta length ${this.tree_getLength(target)}, actual ${deltas.length}`);
-  // }
-  // const elementType = this.elementType as Number64UintType;
   let nodeIdx = 0;
   const newLeafNodes: LeafNode[] = [];
   const newValues: number[] = [];
-  const chunkCount = Math.ceil(length / 4);
+  const chunkCount = Math.ceil(length / NUM_ITEMS_PER_CHUNK);
   const currentNodes = target.getNodesAtDepth(chunkDepth, 0, chunkCount);
   for (const node of currentNodes) {
     const hashObject = cloneHashObject(node);
-    // 4 items per chunk
-    for (let offset = 0; offset < 4; offset++) {
-      const index = nodeIdx * 4 + offset;
+    for (let offset = 0; offset < NUM_ITEMS_PER_CHUNK; offset++) {
+      const index = nodeIdx * NUM_ITEMS_PER_CHUNK + offset;
       if (index >= length) break;
       let value = elementType.struct_deserializeFromHashObject(hashObject, offset) + deltas[index];
       if (value < 0) value = 0;

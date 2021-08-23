@@ -281,6 +281,9 @@ export class Number64ListType<T extends List<number> = List<number>> extends Bas
    * returns the new root node and new values
    **/
   tree_newTreeFromUint64Deltas(target: Tree, deltas: number[]): [Node, number[]] {
+    if (deltas.length !== this.tree_getLength(target)) {
+      throw new Error(`Expect delta length ${this.tree_getLength(target)}, actual ${deltas.length}`);
+    }
     const chunkDepth = this.getChunkDepth();
     return number64_newTreeFromUint64Deltas(target, deltas, chunkDepth, this.elementType as Number64UintType);
   }

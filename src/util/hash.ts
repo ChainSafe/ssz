@@ -8,7 +8,13 @@ export function hash(...inputs: Uint8Array[]): Uint8Array {
   return SHA256.digest(Buffer.concat(inputs));
 }
 
-/** To save memory, we don't want to always allocate a new HashObject */
+/**
+ * A temporary HashObject is needed in a lot of places, this HashObject is then
+ * applied to persistent-merkle-tree, it'll make a copy so it's safe to mutate it after that.
+ * It means that we could use a shared HashObject instead of having to always allocate
+ * a new one to save memory. This temporary HashObject is always allocated by cloneHashObject()
+ * or newHashObject() below.
+ **/
 const sharedHashObject: HashObject = {
   h0: 0,
   h1: 0,
@@ -20,7 +26,11 @@ const sharedHashObject: HashObject = {
   h7: 0,
 };
 
-/** Clone a hash object using sharedHashObject */
+/**
+ * Clone a hash object using sharedHashObject, after doing this we usually
+ * apply HashObject to the Tree which make a copy there so it's safe to mutate
+ * this HashObject after that.
+ **/
 export function cloneHashObject(hashObject: HashObject): HashObject {
   sharedHashObject.h0 = hashObject.h0;
   sharedHashObject.h1 = hashObject.h1;
@@ -33,7 +43,11 @@ export function cloneHashObject(hashObject: HashObject): HashObject {
   return sharedHashObject;
 }
 
-/** Reset and return sharedHashObject */
+/**
+ * Reset and return sharedHashObject, after doing this we usually
+ * apply HashObject to the Tree which make a copy there so it's safe to mutate
+ * this HashObject after that.
+ **/
 export function newHashObject(): HashObject {
   sharedHashObject.h0 = 0;
   sharedHashObject.h1 = 0;
