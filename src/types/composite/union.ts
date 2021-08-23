@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {BranchNode, concatGindices, Gindex, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings";
-import {Json, Union} from "../../interface";
+import {CompositeValue, Json, ObjectLike, Union} from "../../interface";
 import {basicTypeToLeafNode} from "../../util/basic";
 import {isNoneType} from "../basic/none";
 import {byteType, number32Type} from "../basic/wellKnown";
@@ -65,10 +64,9 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
       }
     } else {
       try {
-        // @ts-ignore
-        this.types[selector].struct_assertValidValue(value);
+        ((this.types[selector] as unknown) as ObjectLike).struct_assertValidValue(value);
       } catch (e) {
-        throw new Error(`Invalid value for selector ${selector}`);
+        throw new Error(`Invalid value ${value} for selector ${selector}`);
       }
     }
   }
@@ -115,13 +113,13 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
   struct_convertFromJson(json: Json, options?: IJsonOptions): T {
     const {selector, value} = json as {[property: string]: Json};
 
-    if (!(selector >= 0)) {
+    if (selector === null || (selector !== null && !(selector >= 0))) {
       throw new Error("Invalid JSON Union: invalid selector" + selector);
     }
-    return {
+    return ({
       selector,
       value: this.types[selector as number].struct_convertFromJson(value, options),
-    } as T;
+    } as unknown) as T;
   }
 
   struct_convertToTree(wrappedValue: T): Tree {
@@ -129,7 +127,7 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
     const {selector, value} = wrappedValue;
     const type = this.types[selector];
     const valueNode = isCompositeType(type)
-      ? type.struct_convertToTree(value).rootNode
+      ? type.struct_convertToTree(value as CompositeValue).rootNode
       : basicTypeToLeafNode(type, value);
     // mix_in_selector
     const selectorNode = basicTypeToLeafNode(number32Type, selector);
@@ -227,6 +225,10 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
   hasVariableSerializedLength(): boolean {
     // Is always considered a variable-length type, even if all type options have an equal fixed-length.
     return true;
+  }
+
+  getFixedSerializedLength(): null | number {
+    return null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -328,7 +330,7 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
     throw new Error("Method not implemented for Union type");
   }
 
-  tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
+  tree_getLeafGindices(target: Tree, root: Gindex = BigInt(1)): Gindex[] {
     const gindices: Gindex[] = [concatGindices([root, SELECTOR_GINDEX])];
     const type = this.getType(target);
     const extendedFieldGindex = concatGindices([root, VALUE_GINDEX]);

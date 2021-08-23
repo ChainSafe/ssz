@@ -11,8 +11,8 @@ import {
   VectorType,
   BooleanType,
 } from "../../src";
-import { NoneType } from "../../src/types/basic/none";
-import { UnionType } from "../../src/types/composite/union";
+import {NoneType} from "../../src/types/basic/none";
+import {UnionType} from "../../src/types/composite/union";
 
 export const bytes2Type = new ByteVectorType({
   length: 2,

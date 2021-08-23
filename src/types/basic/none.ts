@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import {Json} from "../../interface";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";

@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteArrayEquals, byteType, CompositeType, ContainerType, getTreeValueClass} from "../../src";
+import {booleanType, byteArrayEquals, byteType, CompositeType, ContainerType, isCompositeType} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -91,7 +91,7 @@ describe("deserialize", () => {
       expected: {
         selector: 0,
         value: null,
-      }
+      },
     },
     {
       value: "01020001", // 1st byte has selector = 1 => SimpleObject type
@@ -99,7 +99,7 @@ describe("deserialize", () => {
       expected: {
         selector: 1,
         value: {b: 2, a: 1},
-      }
+      },
     },
     {
       value: "02ffff", // 1st byte has selector = 2 => number16 type
@@ -107,7 +107,7 @@ describe("deserialize", () => {
       expected: {
         selector: 2,
         value: 2 ** 16 - 1,
-      }
+      },
     },
   ];
   for (const {type, value, expected} of testCases) {
@@ -115,11 +115,17 @@ describe("deserialize", () => {
       const bytes = Buffer.from(value, "hex");
       const actual = type.deserialize(bytes);
       assert.deepEqual(actual, expected);
-      if (getTreeValueClass(type)) {
+      if (isCompositeType(type)) {
         const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromBytes(bytes);
-        expect(byteArrayEquals(type.hashTreeRoot(treeBackedActual), type.hashTreeRoot(expected))).to.be.equal(true, "Deserialized TreeBacked is incorrect");
+        expect(byteArrayEquals(type.hashTreeRoot(treeBackedActual), type.hashTreeRoot(expected))).to.be.equal(
+          true,
+          "Deserialized TreeBacked is incorrect"
+        );
         const treeBackedActual2 = (type as CompositeType<any>).createTreeBackedFromStruct(actual);
-        expect(type.equals(treeBackedActual2, treeBackedActual)).to.be.equal(true, "Deserialized from struct and bytes are not same");
+        expect(type.equals(treeBackedActual2, treeBackedActual)).to.be.equal(
+          true,
+          "Deserialized from struct and bytes are not same"
+        );
       }
     });
   }

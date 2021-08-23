@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType, CompositeType, getTreeValueClass} from "../../src";
+import {booleanType, byteType, CompositeType, isCompositeType} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -86,7 +86,7 @@ describe("serialize", () => {
     it(`should correctly serialize ${type.constructor.name}`, () => {
       const actual = Buffer.from(type.serialize(value)).toString("hex");
       assert.equal(actual, expected);
-      if (getTreeValueClass(type)) {
+      if (isCompositeType(type)) {
         const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromStruct(value);
         expect(Buffer.from(type.serialize(treeBackedActual)).toString("hex")).to.be.equal(
           expected,

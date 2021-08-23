@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType, CompositeType, ContainerType, getTreeValueClass, ListType} from "../../src";
+import {booleanType, byteType, CompositeType, ContainerType, isCompositeType, ListType} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -81,9 +81,12 @@ describe("hashTreeRoot", () => {
     it(`should correctly hash ${type.constructor.name}`, () => {
       const actualStructRoot = Buffer.from(type.hashTreeRoot(value)).toString("hex");
       assert(actualStructRoot);
-      if (getTreeValueClass(type)) {
+      if (isCompositeType(type)) {
         const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromStruct(value);
-        expect(Buffer.from(treeBackedActual.hashTreeRoot()).toString("hex")).to.be.equal(actualStructRoot, "TreeBacked root is different from struct root");
+        expect(Buffer.from(treeBackedActual.hashTreeRoot()).toString("hex")).to.be.equal(
+          actualStructRoot,
+          "TreeBacked root is different from struct root"
+        );
       }
     });
   }

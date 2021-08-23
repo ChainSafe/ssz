@@ -426,7 +426,7 @@ export class UnionTreeValue<T extends Union<unknown>> extends TreeValue<T> {
 
   getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
     if (property !== "selector" && property !== "value") {
-      return undefined;
+      throw new Error(`property ${property} does not exist in Union type`);
     }
     const propType = this.type.getPropertyTypeFromTree(this.tree, property);
     const propValue = this.type.tree_getProperty(this.tree, property);

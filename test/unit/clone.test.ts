@@ -40,7 +40,7 @@ describe("clone", () => {
     {
       value: {
         selector: 1,
-        value: {a: 1, b: 2}
+        value: {a: 1, b: 2},
       },
       type: UnionObject,
       expected: true,
