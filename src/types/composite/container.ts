@@ -410,10 +410,11 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
 
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     let fixedIndex = offset;
-    let i = 0;
     const fieldTypes = Object.values(this.fields);
-    for (const node of target.getNodesAtDepth(this.getChunkDepth(), i, fieldTypes.length)) {
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
+    for (let i = 0; i < fieldTypes.length; i++) {
       const fieldType = fieldTypes[i];
+      const node = nodes[i];
       if (!isCompositeType(fieldType)) {
         const s = fieldType.struct_getSerializedLength();
         output.set(node.root.slice(0, s), fixedIndex);
@@ -427,7 +428,6 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       } else {
         fixedIndex = fieldType.tree_serializeToBytes(new Tree(node), output, fixedIndex);
       }
-      i++;
     }
     return variableIndex;
   }
@@ -519,19 +519,15 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   }
 
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    const chunks = target.getNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
-    let i = 0;
-    for (const propType of Object.values(this.fields)) {
-      const value = chunks[i];
-      i++;
-      if (!value) {
-        return;
+    const fieldTypes = Object.values(this.fields);
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
+    for (let i = 0; i < fieldTypes.length; i++) {
+      const fieldType = fieldTypes[i];
+      const node = nodes[i];
+      if (!isCompositeType(fieldType)) {
+        yield fieldType.struct_deserializeFromBytes(node.root, 0);
       } else {
-        if (!isCompositeType(propType)) {
-          yield propType.struct_deserializeFromBytes(value.root as Uint8Array, 0);
-        } else {
-          yield new Tree(value);
-        }
+        yield new Tree(node);
       }
     }
   }
