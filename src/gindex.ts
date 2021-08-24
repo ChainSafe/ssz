@@ -22,6 +22,22 @@ export function toGindexBitstring(depth: number, index: number): GindexBitstring
   }
 }
 
+export function convertGindexToBitstring(gindex: Gindex | GindexBitstring): GindexBitstring {
+  let bitstring: string;
+  if (typeof gindex === "string") {
+    if (!gindex.length) {
+      throw new Error(ERR_INVALID_GINDEX);
+    }
+    bitstring = gindex;
+  } else {
+    if (gindex < 1) {
+      throw new Error(ERR_INVALID_GINDEX);
+    }
+    bitstring = gindex.toString(2);
+  }
+  return bitstring;
+}
+
 // Get the depth (root starting at 0) necessary to cover a subtree of `count` elements.
 // (in out): (0 0), (1 0), (2 1), (3 2), (4 2), (5 3), (6 3), (7 3), (8 3), (9 4)
 export function countToDepth(count: bigint): number {
@@ -56,6 +72,22 @@ export function iterateAtDepth(depth: number, startIndex: bigint, count: bigint)
       };
     },
   };
+}
+
+/**
+ * Return Gindexes at a certain depth
+ */
+export function getGindicesAtDepth(depth: number, startIndex: number, count: number): Gindex[] {
+  const anchor = BigInt(1) << BigInt(depth);
+  if (startIndex + count > anchor) {
+    throw new Error("Too large for depth");
+  }
+  let gindex = toGindex(depth, BigInt(startIndex));
+  const gindices = [];
+  for (let i = 0; i < count; i++) {
+    gindices.push(gindex++);
+  }
+  return gindices;
 }
 
 const ERR_INVALID_GINDEX = "Invalid gindex";
@@ -97,6 +129,26 @@ export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator
       return bitstring.length - i;
     },
   };
+}
+
+export function getGindexBits(gindex: Gindex | GindexBitstring): Bit[] {
+  let bitstring: string;
+  if (typeof gindex === "string") {
+    if (!gindex.length) {
+      throw new Error(ERR_INVALID_GINDEX);
+    }
+    bitstring = gindex;
+  } else {
+    if (gindex < 1) {
+      throw new Error(ERR_INVALID_GINDEX);
+    }
+    bitstring = gindex.toString(2);
+  }
+  const bits: Bit[] = [];
+  for (let i = 1; i < bitstring.length; i++) {
+    bits.push(Number(bitstring[i]) as Bit);
+  }
+  return bits;
 }
 
 /**

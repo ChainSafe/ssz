@@ -1,4 +1,4 @@
-import {Gindex, gindexIterator, Bit, toGindexBitstring, GindexBitstring} from "./gindex";
+import {Gindex, Bit, toGindexBitstring, GindexBitstring, convertGindexToBitstring} from "./gindex";
 import {Node, LeafNode} from "./node";
 import {HashObject} from "@chainsafe/as-sha256";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
@@ -60,8 +60,9 @@ export class Tree {
 
   getNode(index: Gindex | GindexBitstring): Node {
     let node = this.rootNode;
-    for (const i of gindexIterator(index)) {
-      if (i) {
+    const bitstring = convertGindexToBitstring(index);
+    for (let i = 1; i < bitstring.length; i++) {
+      if (bitstring[i] === "1") {
         if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
         node = node.right;
       } else {
@@ -200,9 +201,10 @@ export class Tree {
     let currCount = 0;
     const startGindex = toGindexBitstring(depth, startIndex);
     const nav: [Node, Bit][] = [];
-    for (const i of gindexIterator(startGindex)) {
-      nav.push([node, i]);
-      if (i) {
+    for (let i = 1; i < startGindex.length; i++) {
+      const bit = Number(startGindex[i]) as Bit;
+      nav.push([node, bit]);
+      if (bit) {
         if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
         node = node.right;
       } else {
@@ -281,9 +283,10 @@ export class Tree {
     let currCount = 0;
     const startGindex = toGindexBitstring(depth, startIndex);
     const nav: [Node, Bit][] = [];
-    for (const i of gindexIterator(startGindex)) {
-      nav.push([node, i]);
-      if (i) {
+    for (let i = 1; i < startGindex.length; i++) {
+      const bit = Number(startGindex[i]) as Bit;
+      nav.push([node, bit]);
+      if (bit) {
         if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
         node = node.right;
       } else {
