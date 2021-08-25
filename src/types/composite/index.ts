@@ -7,3 +7,4 @@ export * from "./bitList";
 export * from "./byteVector";
 export * from "./root";
 export * from "./container";
+export * from "./union";

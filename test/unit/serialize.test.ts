@@ -1,7 +1,7 @@
-import {assert} from "chai";
+import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType} from "../../src";
+import {booleanType, byteType, CompositeType, isCompositeType} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -14,6 +14,7 @@ import {
   number64Type,
   OuterObject,
   SimpleObject,
+  UnionObject,
 } from "./objects";
 
 describe("serialize", () => {
@@ -77,11 +78,21 @@ describe("serialize", () => {
       expected: "030600050700",
     },
     {value: [], type: ArrayObject2, expected: ""},
+    {value: {selector: 0, value: null}, type: UnionObject, expected: "00"},
+    {value: {selector: 1, value: {a: 1, b: 2}}, type: UnionObject, expected: "01020001"},
+    {value: {selector: 2, value: 2 ** 16 - 1}, type: UnionObject, expected: "02ffff"},
   ];
   for (const {type, value, expected} of testCases) {
     it(`should correctly serialize ${type.constructor.name}`, () => {
       const actual = Buffer.from(type.serialize(value)).toString("hex");
       assert.equal(actual, expected);
+      if (isCompositeType(type)) {
+        const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromStruct(value);
+        expect(Buffer.from(type.serialize(treeBackedActual)).toString("hex")).to.be.equal(
+          expected,
+          "wrong serialize() from TreeBacked"
+        );
+      }
     });
   }
 });

@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
 import {booleanType, byteType} from "../../src";
-import {ArrayObject, bigint16Type, bytes2Type, number16Vector6Type, number16List100Type} from "./objects";
+import {ArrayObject, bigint16Type, bytes2Type, number16Vector6Type, number16List100Type, UnionObject} from "./objects";
 
 describe("clone", () => {
   const testCases: {
@@ -35,6 +35,22 @@ describe("clone", () => {
         ],
       },
       type: ArrayObject,
+      expected: true,
+    },
+    {
+      value: {
+        selector: 1,
+        value: {a: 1, b: 2},
+      },
+      type: UnionObject,
+      expected: true,
+    },
+    {
+      value: {
+        selector: 2,
+        value: 120,
+      },
+      type: UnionObject,
       expected: true,
     },
   ];

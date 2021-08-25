@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType, ContainerType} from "../../src";
+import {booleanType, byteArrayEquals, byteType, CompositeType, ContainerType, isCompositeType} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -18,6 +18,7 @@ import {
   OuterObject,
   SimpleObject,
   VariableSizeSimpleObject,
+  UnionObject,
 } from "./objects";
 
 describe("deserialize", () => {
@@ -84,11 +85,48 @@ describe("deserialize", () => {
         {v: 5, subV: {v: 7}},
       ],
     },
+    {
+      value: "00", // 1st byte has selector = 0 => None type
+      type: UnionObject,
+      expected: {
+        selector: 0,
+        value: null,
+      },
+    },
+    {
+      value: "01020001", // 1st byte has selector = 1 => SimpleObject type
+      type: UnionObject,
+      expected: {
+        selector: 1,
+        value: {b: 2, a: 1},
+      },
+    },
+    {
+      value: "02ffff", // 1st byte has selector = 2 => number16 type
+      type: UnionObject,
+      expected: {
+        selector: 2,
+        value: 2 ** 16 - 1,
+      },
+    },
   ];
   for (const {type, value, expected} of testCases) {
     it(`should correctly deserialize ${type.constructor.name}`, () => {
-      const actual = type.deserialize(Buffer.from(value, "hex"));
+      const bytes = Buffer.from(value, "hex");
+      const actual = type.deserialize(bytes);
       assert.deepEqual(actual, expected);
+      if (isCompositeType(type)) {
+        const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromBytes(bytes);
+        expect(byteArrayEquals(type.hashTreeRoot(treeBackedActual), type.hashTreeRoot(expected))).to.be.equal(
+          true,
+          "Deserialized TreeBacked is incorrect"
+        );
+        const treeBackedActual2 = (type as CompositeType<any>).createTreeBackedFromStruct(actual);
+        expect(type.equals(treeBackedActual2, treeBackedActual)).to.be.equal(
+          true,
+          "Deserialized from struct and bytes are not same"
+        );
+      }
     });
   }
   const invalidDataTestCases: {

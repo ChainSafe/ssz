@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 
 import {booleanType, byteType} from "../../src";
-import {ArrayObject, bigint16Type, bytes2Type, number16List100Type} from "./objects";
+import {ArrayObject, bigint16Type, bytes2Type, number16List100Type, UnionObject} from "./objects";
 
 describe("equals", () => {
   const testCases: {
@@ -81,6 +81,24 @@ describe("equals", () => {
       },
       type: ArrayObject,
       expected: false,
+    },
+    {
+      value1: {selector: 0, value: null},
+      value2: {selector: 0, value: null},
+      type: UnionObject,
+      expected: true,
+    },
+    {
+      value1: {selector: 1, value: {a: 1, b: 2}},
+      value2: {selector: 1, value: {b: 2, a: 1}},
+      type: UnionObject,
+      expected: true,
+    },
+    {
+      value1: {selector: 2, value: 1000},
+      value2: {selector: 2, value: 1000},
+      type: UnionObject,
+      expected: true,
     },
   ];
   for (const {type, value1, value2, expected} of testCases) {

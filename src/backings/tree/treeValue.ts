@@ -1,5 +1,5 @@
 import {Proof, Tree} from "@chainsafe/persistent-merkle-tree";
-import {ArrayLike, CompositeValue, List} from "../../interface";
+import {ArrayLike, CompositeValue, List, Union} from "../../interface";
 import {
   BasicArrayType,
   BasicListType,
@@ -12,6 +12,8 @@ import {
   isContainerType,
   isListType,
   isVectorType,
+  isUnionType,
+  UnionType,
 } from "../../types";
 import {byteArrayEquals} from "../../util/byteArray";
 import {isTree} from "../../util/tree";
@@ -54,6 +56,8 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
     }
   } else if (isContainerType(type)) {
     return (ContainerTreeValue as unknown) as TreeValueConstructor<T>;
+  } else if (isUnionType(type)) {
+    return (UnionTreeValue as unknown) as TreeValueConstructor<T>;
   }
 
   throw Error("No TreeValueClass for type");
@@ -409,5 +413,54 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
       }
       i++;
     }
+  }
+}
+
+export class UnionTreeValue<T extends Union<unknown>> extends TreeValue<T> {
+  type: UnionType<T>;
+
+  constructor(type: UnionType<T>, tree: Tree) {
+    super(type, tree);
+    this.type = type;
+  }
+
+  getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
+    if (property !== "selector" && property !== "value") {
+      throw new Error(`property ${property} does not exist in Union type`);
+    }
+    const propType = this.type.getPropertyTypeFromTree(this.tree, property);
+    const propValue = this.type.tree_getProperty(this.tree, property);
+    if (isCompositeType(propType)) {
+      return (createTreeBacked(propType, propValue as Tree) as unknown) as ValueOf<T, P>;
+    } else {
+      return propValue as ValueOf<T, P>;
+    }
+  }
+
+  setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean {
+    if (property !== "value") {
+      throw new Error(`Unsupport setting property ${property} for Union`);
+    }
+    return this.type.tree_setProperty(this.tree, property, value);
+  }
+
+  *keys(): IterableIterator<string> {
+    yield* this.getPropertyNames() as string[];
+  }
+
+  *values(): IterableIterator<ValueOf<T>> {
+    for (const [_key, value] of this.entries()) {
+      yield value;
+    }
+  }
+
+  entries(): IterableIterator<[string, ValueOf<T, keyof T>]> {
+    throw new Error("Method not implemented for Union type");
+  }
+  readonlyValues(): IterableIterator<ValueOf<T, keyof T>> {
+    throw new Error("Method not implemented for Union type");
+  }
+  readonlyEntries(): IterableIterator<[string, ValueOf<T, keyof T>]> {
+    throw new Error("Method not implemented for Union type");
   }
 }
