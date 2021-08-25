@@ -49,11 +49,18 @@ describe("readonly values - iterator vs array", () => {
   const balances = createBalanceList(length);
 
   itBench("basicListValue.readonlyValues()", () => {
+    Array.from(balances.readonlyValues());
+  });
+  itBench("basicListValue.readonlyValuesArray()", () => {
+    balances.readonlyValuesArray();
+  });
+
+  itBench("basicListValue.readonlyValues() + iterate all", () => {
     for (const balance of balances.readonlyValues()) {
       balance + 1;
     }
   });
-  itBench("basicListValue.readonlyValuesArray()", () => {
+  itBench("basicListValue.readonlyValuesArray() + loop all", () => {
     const balancesArray = balances.readonlyValuesArray();
     for (let i = 0; i < balancesArray.length; i++) {
       balancesArray[i] + 1;
@@ -63,14 +70,20 @@ describe("readonly values - iterator vs array", () => {
   const validators = createValidatorList(length);
 
   itBench("compositeListValue.readonlyValues()", () => {
-    for (const v of validators.readonlyValues()) {
-      v.exitEpoch;
-    }
+    Array.from(validators.readonlyValues());
   });
   itBench("compositeListValue.readonlyValuesArray()", () => {
+    validators.readonlyValuesArray();
+  });
+  itBench("compositeListValue.readonlyValues() + iterate all", () => {
+    for (const v of validators.readonlyValues()) {
+      v;
+    }
+  });
+  itBench("compositeListValue.readonlyValuesArray() + loop all", () => {
     const validatorsArray = validators.readonlyValuesArray();
     for (let i = 0; i < validatorsArray.length; i++) {
-      validatorsArray[i].exitEpoch;
+      validatorsArray[i];
     }
   });
 });
