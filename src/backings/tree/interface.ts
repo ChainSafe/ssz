@@ -60,4 +60,10 @@ export interface ITreeBacked<T extends CompositeValue> {
   entries(): IterableIterator<[string, ValueOf<T>]>;
   readonlyValues(): IterableIterator<ValueOf<T>>;
   readonlyEntries(): IterableIterator<[string, ValueOf<T>]>;
+
+  keysArray(): string[];
+  valuesArray(): ValueOf<T>[];
+  entriesArray(): [string, ValueOf<T>][];
+  readonlyValuesArray(): ValueOf<T>[];
+  readonlyEntriesArray(): [string, ValueOf<T>][];
 }

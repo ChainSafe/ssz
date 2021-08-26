@@ -180,6 +180,8 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
   abstract tree_deleteProperty(tree: Tree, property: PropertyKey): boolean;
   abstract tree_iterateValues(tree: Tree): IterableIterator<Tree | unknown>;
   abstract tree_readonlyIterateValues(tree: Tree): IterableIterator<Tree | unknown>;
+  abstract tree_getValues(tree: Tree): (Tree | unknown)[];
+  abstract tree_readonlyGetValues(tree: Tree): (Tree | unknown)[];
   /**
    * Navigate to a subtype & gindex using a path
    */
