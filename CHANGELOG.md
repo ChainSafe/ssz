@@ -1,3 +1,7 @@
+## 0.3.7 (2021-08-26)
+
+- Support setHashObjectFn ([35bad6](https://github.com/chainsafe/persistent-merkle-tree/commit/35bad6))
+
 ## 0.3.2 (2021-06-17)
 
 ## Chores
