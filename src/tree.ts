@@ -129,7 +129,7 @@ export class Tree {
     this.rebindNodeToRoot(bitstring, parentNodes, newNode);
   }
 
-  getSubtree(index: Gindex): Tree {
+  getSubtree(index: Gindex | GindexBitstring): Tree {
     return new Tree(this.getNode(index), (v: Tree): void => this.setNode(index, v.rootNode));
   }
 
