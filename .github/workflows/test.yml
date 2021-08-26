@@ -1,0 +1,16 @@
+name: CI Tests
+
+on: [pull_request, push]
+
+jobs:
+  lint:
+    name: Quick tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Bootstrap
+      run: yarn
+    - name: Lint
+      run: yarn lint
+    - name: Tests
+      run: yarn test:unit
