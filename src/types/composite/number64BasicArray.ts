@@ -67,7 +67,8 @@ export function number64_newTreeFromUint64Deltas(
   const newValues: number[] = [];
   const chunkCount = Math.ceil(length / NUM_ITEMS_PER_CHUNK);
   const currentNodes = target.getNodesAtDepth(chunkDepth, 0, chunkCount);
-  for (const node of currentNodes) {
+  for (let i = 0; i < currentNodes.length; i++) {
+    const node = currentNodes[i];
     const hashObject = cloneHashObject(node);
     for (let offset = 0; offset < NUM_ITEMS_PER_CHUNK; offset++) {
       const index = nodeIdx * NUM_ITEMS_PER_CHUNK + offset;

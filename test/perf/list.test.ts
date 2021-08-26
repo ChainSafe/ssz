@@ -59,9 +59,9 @@ describe("list", () => {
 
 describe("subtreeFillToContents", function () {
   setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 20 * 1000,
-    runs: 100,
+    maxMs: 60 * 1000,
+    minMs: 40 * 1000,
+    runs: 500,
   });
 
   const numBalances = 250_000;
@@ -72,15 +72,21 @@ describe("subtreeFillToContents", function () {
   const tree = tbBalances64.tree;
   const type = tbBalances64.type as Number64ListType;
 
-  /** tree_newTreeFromUint64Deltas is 20x faster than unsafeUint8ArrayToTree */
+  /** tree_newTreeFromUint64Deltas is 17% faster than unsafeUint8ArrayToTree */
+  /** ✓ tree_newTreeFromUint64Deltas    28.72705 ops/s    34.81040 ms/op        -       1149 runs   40.0 s */
   itBench("tree_newTreeFromUint64Deltas", () => {
     type.tree_newTreeFromUint64Deltas(tree, deltas);
   });
 
+  const newBalances = new BigUint64Array(numBalances);
+  const cachedBalances64: number[] = [];
+  for (let i = 0; i < tbBalances64.length; i++) {
+    cachedBalances64.push(tbBalances64[i]);
+  }
+  /** ✓ unsafeUint8ArrayToTree    24.51560 ops/s    40.79035 ms/op        -        981 runs   40.0 s */
   itBench("unsafeUint8ArrayToTree", () => {
-    const newBalances = new BigUint64Array(numBalances);
     for (let i = 0; i < numBalances; i++) {
-      newBalances[i] = BigInt(tbBalances64[i] + deltas[i]);
+      newBalances[i] = BigInt(cachedBalances64[i] + deltas[i]);
     }
     unsafeUint8ArrayToTree(
       new Uint8Array(newBalances.buffer, newBalances.byteOffset, newBalances.byteLength),
