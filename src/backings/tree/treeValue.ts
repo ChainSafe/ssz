@@ -604,4 +604,20 @@ export class UnionTreeValue<T extends Union<unknown>> extends TreeValue<T> {
   readonlyEntries(): IterableIterator<[string, ValueOf<T, keyof T>]> {
     throw new Error("Method not implemented for Union type");
   }
+
+  keysArray(): string[] {
+    throw new Error("Method not implemented for Union type");
+  }
+  valuesArray(): ValueOf<T>[] {
+    throw new Error("Method not implemented for Union type");
+  }
+  entriesArray(): [string, ValueOf<T>][] {
+    throw new Error("Method not implemented for Union type");
+  }
+  readonlyValuesArray(): ValueOf<T>[] {
+    throw new Error("Method not implemented for Union type");
+  }
+  readonlyEntriesArray(): [string, ValueOf<T>][] {
+    throw new Error("Method not implemented for Union type");
+  }
 }
