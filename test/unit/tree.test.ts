@@ -1,3 +1,4 @@
+import {byteArrayToHashObject, HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
 
 import {Tree, zeroNode, LeafNode, subtreeFillToContents, uint8ArrayToHashObject} from "../../src";
@@ -71,12 +72,17 @@ describe("subtree mutation", () => {
   });
 });
 
-describe("Tree.setNode", () => {
+describe("Tree.setNode vs Tree.setHashObjectFn", () => {
   it("Should compute root correctly after setting a leaf", () => {
     const depth = 4;
     const tree = new Tree(zeroNode(depth));
     tree.setNode(BigInt(18), new LeafNode(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
+    // setHashObjectFn
+    const hashObjectFn = (hashObject: HashObject): HashObject => byteArrayToHashObject(Buffer.alloc(32, 2));
+    const tree2 = new Tree(zeroNode(depth));
+    tree2.setHashObjectFn(BigInt(18), hashObjectFn);
+    expect(toHex(tree2.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
   });
 
   it("Should compute root correctly after setting 3 leafs", () => {
@@ -86,6 +92,13 @@ describe("Tree.setNode", () => {
     tree.setNode(BigInt(46), new LeafNode(Buffer.alloc(32, 2)));
     tree.setNode(BigInt(60), new LeafNode(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
+    // setHashObjectFn
+    const hashObjectFn = (hashObject: HashObject): HashObject => byteArrayToHashObject(Buffer.alloc(32, 2));
+    const tree2 = new Tree(zeroNode(depth));
+    tree2.setHashObjectFn(BigInt(18), hashObjectFn);
+    tree2.setHashObjectFn(BigInt(46), hashObjectFn);
+    tree2.setHashObjectFn(BigInt(60), hashObjectFn);
+    expect(toHex(tree2.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
   });
 
   it("Should throw for gindex 0", () => {

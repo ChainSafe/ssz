@@ -1,3 +1,4 @@
+import { HashObject } from "@chainsafe/as-sha256";
 import { itBench, setBenchOpts } from "@dapplion/benchmark";
 import { LeafNode, subtreeFillToContents, Node, countToDepth, Tree, toGindex, uint8ArrayToHashObject, toGindexBitstring } from "../../src";
 
@@ -59,6 +60,21 @@ describe("Track the performance of different Tree methods", () => {
   itBench("setHashObject - gindex", () => {
     for (let i = 0; i < numLoop; i++) {
       tree.setHashObject(gindex, newHashObject);
+    }
+  });
+
+  itBench("getHashObject then setHashObject", () => {
+    for (let i = 0; i < numLoop; i++) {
+      tree.getHashObject(gindex);
+      tree.setHashObject(gindex, newHashObject);
+    }
+  });
+
+  /* Double the speed compared to getHashObject then setHashObject */
+  itBench("hashObjectFn", () => {
+    const hashObjectFn = (hashObject: HashObject) => newHashObject;
+    for (let i = 0; i < numLoop; i++) {
+      tree.setHashObjectFn(gindex, hashObjectFn);
     }
   });
 

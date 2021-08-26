@@ -6,6 +6,7 @@ import {createSingleProof} from "./proof/single";
 import {zeroNode} from "./zeroNode";
 
 export type Hook = (v: Tree) => void;
+export type HashObjectFn = (hashObject: HashObject) => HashObject;
 
 const ERR_INVALID_TREE = "Invalid tree operation";
 const ERR_PARAM_LT_ZERO = "Param must be >= 0";
@@ -74,8 +75,6 @@ export class Tree {
   }
 
   setNode(gindex: Gindex | GindexBitstring, n: Node, expand = false): void {
-    let node = this.rootNode;
-
     // Pre-compute entire bitstring instead of using an iterator (25% faster)
     let bitstring;
     if (typeof gindex === "string") {
@@ -86,46 +85,8 @@ export class Tree {
       }
       bitstring = gindex.toString(2);
     }
-
-    // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
-    // backwards to rebind them "recursively" with the new nodes without using functions
-    const parentNodes: Node[] = [this.rootNode];
-
-    // Ignore the first bit, left right directions are at bits [1,..]
-    // Ignore the last bit, no need to push the target node to the parentNodes array
-    for (let i = 1; i < bitstring.length - 1; i++) {
-      if (node.isLeaf()) {
-        if (!expand) {
-          throw new Error(ERR_INVALID_TREE);
-        } else {
-          node = zeroNode(bitstring.length - i);
-        }
-      }
-
-      // Compare to string directly to prevent unnecessary type conversions
-      if (bitstring[i] === "1") {
-        node = node.right;
-      } else {
-        node = node.left;
-      }
-
-      parentNodes.push(node);
-    }
-
-    node = n;
-
-    // Ignore the first bit, left right directions are at bits [1,..]
-    // Iterate the list backwards including the last bit, but offset the parentNodes array
-    // by one since the first bit in bitstring was ignored in the previous loop
-    for (let i = bitstring.length - 1; i >= 1; i--) {
-      if (bitstring[i] === "1") {
-        node = parentNodes[i - 1].rebindRight(node);
-      } else {
-        node = parentNodes[i - 1].rebindLeft(node);
-      }
-    }
-
-    this.rootNode = node;
+    const parentNodes = this.getParentNodes(bitstring, expand);
+    this.rebindNodeToRoot(bitstring, parentNodes, n);
   }
 
   getRoot(index: Gindex | GindexBitstring): Uint8Array {
@@ -142,6 +103,30 @@ export class Tree {
 
   setHashObject(index: Gindex | GindexBitstring, hashObject: HashObject, expand = false): void {
     this.setNode(index, new LeafNode(hashObject), expand);
+  }
+
+  /**
+   * Traverse from root node to node, get hash object, then apply the function to get new node
+   * and set the new node. This is a convenient method to avoid traversing the tree 2 times to
+   * get and set.
+   */
+  setHashObjectFn(gindex: Gindex | GindexBitstring, hashObjectFn: HashObjectFn, expand = false): void {
+    // Pre-compute entire bitstring instead of using an iterator (25% faster)
+    let bitstring;
+    if (typeof gindex === "string") {
+      bitstring = gindex;
+    } else {
+      if (gindex < 1) {
+        throw new Error("Invalid gindex < 1");
+      }
+      bitstring = gindex.toString(2);
+    }
+    const parentNodes = this.getParentNodes(bitstring, expand);
+    const lastParentNode = parentNodes[parentNodes.length - 1];
+    const lastBit = bitstring[bitstring.length - 1];
+    const oldNode = lastBit === "1" ? lastParentNode.right : lastParentNode.left;
+    const newNode = new LeafNode(hashObjectFn(oldNode));
+    this.rebindNodeToRoot(bitstring, parentNodes, newNode);
   }
 
   getSubtree(index: Gindex): Tree {
@@ -327,5 +312,60 @@ export class Tree {
 
   getProof(input: ProofInput): Proof {
     return createProof(this.rootNode, input);
+  }
+
+  /**
+   * Traverse the tree from root node, ignore the last bit to get all parent nodes
+   * of the specified bitstring.
+   */
+  private getParentNodes(bitstring: GindexBitstring, expand = false): Node[] {
+    let node = this.rootNode;
+
+    // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
+    // backwards to rebind them "recursively" with the new nodes without using functions
+    const parentNodes: Node[] = [this.rootNode];
+
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Ignore the last bit, no need to push the target node to the parentNodes array
+    for (let i = 1; i < bitstring.length - 1; i++) {
+      if (node.isLeaf()) {
+        if (!expand) {
+          throw new Error(ERR_INVALID_TREE);
+        } else {
+          node = zeroNode(bitstring.length - i);
+        }
+      }
+
+      // Compare to string directly to prevent unnecessary type conversions
+      if (bitstring[i] === "1") {
+        node = node.right;
+      } else {
+        node = node.left;
+      }
+
+      parentNodes.push(node);
+    }
+
+    return parentNodes;
+  }
+
+  /**
+   * Build a new tree structure from bitstring, parentNodes and a new node.
+   * Note: keep the same Tree, just mutate the root node.
+   */
+  private rebindNodeToRoot(bitstring: GindexBitstring, parentNodes: Node[], newNode: Node): void {
+    let node = newNode;
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Iterate the list backwards including the last bit, but offset the parentNodes array
+    // by one since the first bit in bitstring was ignored in the previous loop
+    for (let i = bitstring.length - 1; i >= 1; i--) {
+      if (bitstring[i] === "1") {
+        node = parentNodes[i - 1].rebindRight(node);
+      } else {
+        node = parentNodes[i - 1].rebindLeft(node);
+      }
+    }
+
+    this.rootNode = node;
   }
 }
