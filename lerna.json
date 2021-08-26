@@ -1,0 +1,14 @@
+{
+  "command": {
+    "version": {
+      "message": "chore(release): %s"
+    }
+  },
+  "npmClient": "yarn",
+  "packages": [
+    "packages/*"
+  ],
+  "stream": true,
+  "useWorkspaces": true,
+  "version": "independent"
+}
