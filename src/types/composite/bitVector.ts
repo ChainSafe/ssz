@@ -193,16 +193,16 @@ export class BitVectorType extends BasicVectorType<BitVector> {
   }
 
   tree_setProperty(target: Tree, property: number, value: boolean): boolean {
-    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(property));
+    const chunkGindexBitString = this.getGindexBitStringAtChunkIndex(this.getChunkIndex(property));
     const chunk = new Uint8Array(32);
-    chunk.set(target.getRoot(chunkGindex));
+    chunk.set(target.getRoot(chunkGindexBitString));
     const byteOffset = this.getChunkOffset(property);
     if (value) {
       chunk[byteOffset] |= 1 << this.getBitOffset(property);
     } else {
       chunk[byteOffset] &= 0xff ^ (1 << this.getBitOffset(property));
     }
-    target.setRoot(chunkGindex, chunk);
+    target.setRoot(chunkGindexBitString, chunk);
     return true;
   }
 
