@@ -52,7 +52,7 @@ describe("list", () => {
     const basicArrayType = tbBalances64.type as Number64ListType;
     const tree = tbBalances64.tree.clone();
     for (let i = 0; i < numBalances; i++) {
-      basicArrayType.tree_applyUint64Delta(tree, i, 10);
+      basicArrayType.tree_applyDeltaAtIndex(tree, i, 10);
     }
   });
 });
@@ -75,7 +75,7 @@ describe("subtreeFillToContents", function () {
   /** tree_newTreeFromUint64Deltas is 17% faster than unsafeUint8ArrayToTree */
   /** ✓ tree_newTreeFromUint64Deltas    28.72705 ops/s    34.81040 ms/op        -       1149 runs   40.0 s */
   itBench("tree_newTreeFromUint64Deltas", () => {
-    type.tree_newTreeFromUint64Deltas(tree, deltas);
+    type.tree_newTreeFromDeltas(tree, deltas);
   });
 
   const newBalances = new BigUint64Array(numBalances);

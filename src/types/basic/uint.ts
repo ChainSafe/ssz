@@ -150,7 +150,8 @@ export class Number64UintType extends NumberUintType {
    * TODO: move this logic all the way to persistent-merkle-tree?
    * That's save us 1 time to traverse the tree in the applyDelta scenario
    */
-  struct_deserializeFromHashObject(data: HashObject, numberOffset: number): number {
+  struct_deserializeFromHashObject(data: HashObject, byteOffset: number): number {
+    const numberOffset = Math.floor(byteOffset / 8);
     // a chunk contains 4 items
     if (numberOffset < 0 || numberOffset > 3) {
       throw new Error(`Invalid numberOffset ${numberOffset}`);
@@ -190,9 +191,10 @@ export class Number64UintType extends NumberUintType {
     return high32Number * TWO_POWER_32 + low32Number;
   }
 
-  struct_serializeToHashObject(value: number, output: HashObject, numberOffset: number): number {
-    let low32Number;
-    let high32Number;
+  struct_serializeToHashObject(value: number, output: HashObject, byteOffset: number): number {
+    const numberOffset = Math.floor(byteOffset / 8);
+    let low32Number: number;
+    let high32Number: number;
     if (value !== Infinity) {
       low32Number = value & 0xffffffff;
       high32Number = Math.floor(value / TWO_POWER_32) & 0xffffffff;

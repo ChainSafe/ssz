@@ -1,4 +1,3 @@
-import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
 import {
   BasicListType,
@@ -96,7 +95,7 @@ describe("tree simple list/vector", () => {
     const deltas = [1_000_000_000_000, 999, 0, -1_000_000];
     for (const delta of deltas) {
       tbBalancesList64[100] = 31217089836;
-      const newBalance = (tbBalancesList64.type as Number64ListType).tree_applyUint64Delta(
+      const newBalance = (tbBalancesList64.type as Number64ListType).tree_applyDeltaAtIndex(
         tbBalancesList64.tree,
         100,
         delta
@@ -114,14 +113,13 @@ describe("tree simple list/vector", () => {
       const tbBalancesList64 = BalancesList64.createTreeBackedFromStruct(struct);
       const delta = 100;
       const deltas = struct.map(() => delta);
-      const [newNode, newValues] = (tbBalancesList64.type as Number64ListType).tree_newTreeFromUint64Deltas(
+      const [newTree, newValues] = (tbBalancesList64.type as Number64ListType).tree_newTreeFromDeltas(
         tbBalancesList64.tree,
         deltas
       );
       for (let i = 0; i < length; i++) {
         expect(newValues[i]).to.be.equal(31217089836 + delta);
       }
-      const newTree = new Tree(newNode);
       (tbBalancesList64.type as BasicListType<List<number>>).tree_setLength(newTree, length);
       const newTBalancesList64 = BalancesList64.createTreeBacked(newTree);
       for (let i = 0; i < length; i++) {
