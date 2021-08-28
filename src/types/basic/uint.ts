@@ -2,6 +2,7 @@ import {Json} from "../../interface";
 import {bigIntPow} from "../../util/bigInt";
 import {isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";
+import {HashObject} from "@chainsafe/as-sha256";
 
 export interface IUintOptions {
   byteLength: number;
@@ -32,11 +33,16 @@ export abstract class UintType<T> extends BasicType<T> {
 }
 
 export const NUMBER_UINT_TYPE = Symbol.for("ssz/NumberUintType");
+export const NUMBER_64_UINT_TYPE = Symbol.for("ssz/Number64UintType");
 
 const BIGINT_4_BYTES = BigInt(32);
 
 export function isNumberUintType(type: Type<unknown>): type is NumberUintType {
   return isTypeOf(type, NUMBER_UINT_TYPE);
+}
+
+export function isNumber64UintType(type: Type<unknown>): type is Number64UintType {
+  return isTypeOf(type, NUMBER_64_UINT_TYPE);
 }
 
 export class NumberUintType extends UintType<number> {
@@ -125,6 +131,98 @@ export class NumberUintType extends UintType<number> {
       return String(value);
     }
     return value;
+  }
+}
+
+const TWO_POWER_32 = 2 ** 32;
+
+/**
+ * For 64 bit number, we want to operator on HashObject
+ * over bytes to improve performance.
+ */
+export class Number64UintType extends NumberUintType {
+  constructor() {
+    super({byteLength: 8});
+    this._typeSymbols.add(NUMBER_64_UINT_TYPE);
+  }
+
+  /**
+   * TODO: move this logic all the way to persistent-merkle-tree?
+   * That's save us 1 time to traverse the tree in the applyDelta scenario
+   */
+  struct_deserializeFromHashObject(data: HashObject, byteOffset: number): number {
+    const numberOffset = Math.floor(byteOffset / 8);
+    // a chunk contains 4 items
+    if (numberOffset < 0 || numberOffset > 3) {
+      throw new Error(`Invalid numberOffset ${numberOffset}`);
+    }
+    let low32Number = 0;
+    let high32Number = 0;
+
+    switch (numberOffset) {
+      case 0:
+        low32Number = data.h0 & 0xffffffff;
+        high32Number = data.h1 & 0xffffffff;
+        break;
+      case 1:
+        low32Number = data.h2 & 0xffffffff;
+        high32Number = data.h3 & 0xffffffff;
+        break;
+      case 2:
+        low32Number = data.h4 & 0xffffffff;
+        high32Number = data.h5 & 0xffffffff;
+        break;
+      case 3:
+        low32Number = data.h6 & 0xffffffff;
+        high32Number = data.h7 & 0xffffffff;
+        break;
+      default:
+        throw new Error(`Invalid offset ${numberOffset}`);
+    }
+    if (low32Number < 0) low32Number = low32Number >>> 0;
+    if (high32Number === 0) {
+      return low32Number;
+    } else if (high32Number < 0) {
+      high32Number = high32Number >>> 0;
+    }
+    if (low32Number === 0xffffffff && high32Number === 0xffffffff) {
+      return Infinity;
+    }
+    return high32Number * TWO_POWER_32 + low32Number;
+  }
+
+  struct_serializeToHashObject(value: number, output: HashObject, byteOffset: number): number {
+    const numberOffset = Math.floor(byteOffset / 8);
+    let low32Number: number;
+    let high32Number: number;
+    if (value !== Infinity) {
+      low32Number = value & 0xffffffff;
+      high32Number = Math.floor(value / TWO_POWER_32) & 0xffffffff;
+    } else {
+      low32Number = 0xffffffff;
+      high32Number = 0xffffffff;
+    }
+    switch (numberOffset) {
+      case 0:
+        output.h0 = low32Number;
+        output.h1 = high32Number;
+        break;
+      case 1:
+        output.h2 = low32Number;
+        output.h3 = high32Number;
+        break;
+      case 2:
+        output.h4 = low32Number;
+        output.h5 = high32Number;
+        break;
+      case 3:
+        output.h6 = low32Number;
+        output.h7 = high32Number;
+        break;
+      default:
+        throw new Error(`Invalid offset ${numberOffset}`);
+    }
+    return numberOffset + 1;
   }
 }
 

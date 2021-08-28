@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import {HashObject} from "@chainsafe/as-sha256";
 import {isTypeOf, Type} from "../type";
 
 export const BASIC_TYPE = Symbol.for("ssz/BasicType");
@@ -65,6 +66,8 @@ export abstract class BasicType<T> extends Type<T> {
   }
 
   abstract struct_deserializeFromBytes(data: Uint8Array, offset: number): T;
+  struct_deserializeFromHashObject?(data: HashObject, byteOffset: number): T;
+  struct_serializeToHashObject?(value: T, output: HashObject, byteOffset: number): number;
 
   struct_hashTreeRoot(value: T): Uint8Array {
     const output = new Uint8Array(32);

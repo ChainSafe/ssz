@@ -15,6 +15,8 @@ import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 import {basicTypeToLeafNode} from "../../util/basic";
+import {Number64UintType, NumberUintType} from "../basic";
+import {newHashObject} from "../../util/hash";
 
 export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -457,12 +459,16 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (!fieldInfo) {
       return undefined;
     }
-    const {isBasic, gindex} = fieldInfo;
-    if (isBasic) {
-      const chunk = target.getRoot(gindex);
+    if (fieldInfo.isBasic) {
+      // Number64Uint wants to work on HashObject to improve performance
+      if ((fieldType as NumberUintType).struct_deserializeFromHashObject) {
+        const hashObject = target.getHashObject(fieldInfo.gindex);
+        return (fieldType as Number64UintType).struct_deserializeFromHashObject(hashObject, 0);
+      }
+      const chunk = target.getRoot(fieldInfo.gindex);
       return fieldType.struct_deserializeFromBytes(chunk, 0);
     } else {
-      return target.getSubtree(gindex);
+      return target.getSubtree(fieldInfo.gindex);
     }
   }
 
@@ -472,14 +478,20 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (!fieldInfo) {
       throw new Error("Invalid container field name");
     }
-    const {isBasic, gindex} = fieldInfo;
-    if (isBasic) {
+    if (fieldInfo.isBasic) {
+      // Number64Uint wants to work on HashObject to improve performance
+      if ((fieldType as Number64UintType).struct_serializeToHashObject) {
+        const hashObject = newHashObject();
+        (fieldType as Number64UintType).struct_serializeToHashObject(value as number, hashObject, 0);
+        target.setHashObject(fieldInfo.gindex, hashObject);
+        return true;
+      }
       const chunk = new Uint8Array(32);
       fieldType.struct_serializeToBytes(value, chunk, 0);
-      target.setRoot(gindex, chunk);
+      target.setRoot(fieldInfo.gindex, chunk);
       return true;
     } else {
-      target.setSubtree(gindex, value as Tree);
+      target.setSubtree(fieldInfo.gindex, value as Tree);
       return true;
     }
   }

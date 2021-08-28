@@ -1,9 +1,19 @@
 import {Json, List} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
-import {isBasicType, number32Type} from "../basic";
+import {isBasicType, isNumber64UintType, number32Type} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {mixInLength} from "../../util/compat";
-import {BranchNode, concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {cloneHashObject} from "../../util/hash";
+import {
+  BranchNode,
+  concatGindices,
+  Gindex,
+  LeafNode,
+  Node,
+  subtreeFillToContents,
+  Tree,
+  zeroNode,
+} from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 
 /**
@@ -39,7 +49,9 @@ export function isListType<T extends List<any> = List<any>>(type: Type<unknown>)
 export const ListType: ListTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
-    if (isBasicType(options.elementType)) {
+    if (isNumber64UintType(options.elementType)) {
+      return new Number64ListType(options);
+    } else if (isBasicType(options.elementType)) {
       return new BasicListType(options);
     } else {
       return new CompositeListType(options);
@@ -217,6 +229,92 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
     // include the length chunk
     gindices.push(concatGindices([root, LENGTH_GINDEX]));
     return gindices;
+  }
+}
+
+/** For Number64UintType, it takes 64 / 8 = 8 bytes per item, each chunk has 32 bytes = 4 items */
+const NUMBER64_LIST_NUM_ITEMS_PER_CHUNK = 4;
+
+/**
+ * An optimization for Number64 using HashObject and new method to work with deltas.
+ */
+export class Number64ListType<T extends List<number> = List<number>> extends BasicListType<T> {
+  constructor(options: IListOptions) {
+    super(options);
+  }
+
+  /** @override */
+  tree_getValueAtIndex(target: Tree, index: number): number {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    const hashObject = target.getHashObject(chunkGindex);
+    // 4 items per chunk
+    const offsetInChunk = (index % 4) * 8;
+    return this.elementType.struct_deserializeFromHashObject!(hashObject, offsetInChunk) as number;
+  }
+
+  /** @override */
+  tree_setValueAtIndex(target: Tree, index: number, value: number, expand = false): boolean {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
+    // 4 items per chunk
+    const offsetInChunk = (index % 4) * 8;
+    this.elementType.struct_serializeToHashObject!(value as number, hashObject, offsetInChunk);
+    target.setHashObject(chunkGindex, hashObject, expand);
+    return true;
+  }
+
+  /**
+   * delta > 0 increments the underlying value, delta < 0 decrements the underlying value
+   * returns the new value
+   **/
+  tree_applyDeltaAtIndex(target: Tree, index: number, delta: number): number {
+    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
+    // 4 items per chunk
+    const offsetInChunk = (index % 4) * 8;
+
+    let value = this.elementType.struct_deserializeFromHashObject!(hashObject, offsetInChunk) as number;
+    value += delta;
+    if (value < 0) value = 0;
+    this.elementType.struct_serializeToHashObject!(value as number, hashObject, offsetInChunk);
+    target.setHashObject(chunkGindex, hashObject);
+
+    return value;
+  }
+
+  /**
+   * delta > 0 means an increasement, delta < 0 means a decreasement
+   * returns the new tree and new values
+   **/
+  tree_newTreeFromDeltas(target: Tree, deltas: number[]): [Tree, number[]] {
+    if (deltas.length !== this.tree_getLength(target)) {
+      throw new Error(`Expect delta length ${this.tree_getLength(target)}, actual ${deltas.length}`);
+    }
+    const chunkDepth = this.getChunkDepth();
+    const length = deltas.length;
+    let nodeIdx = 0;
+    const newLeafNodes: LeafNode[] = [];
+    const newValues: number[] = [];
+    const chunkCount = Math.ceil(length / NUMBER64_LIST_NUM_ITEMS_PER_CHUNK);
+    const currentNodes = target.getNodesAtDepth(chunkDepth, 0, chunkCount);
+    for (let i = 0; i < currentNodes.length; i++) {
+      const node = currentNodes[i];
+      const hashObject = cloneHashObject(node);
+      for (let offset = 0; offset < NUMBER64_LIST_NUM_ITEMS_PER_CHUNK; offset++) {
+        const index = nodeIdx * NUMBER64_LIST_NUM_ITEMS_PER_CHUNK + offset;
+        if (index >= length) break;
+        let value =
+          (this.elementType.struct_deserializeFromHashObject!(hashObject, offset * 8) as number) + deltas[index];
+        if (value < 0) value = 0;
+        newValues.push(value);
+        // mutate hashObject at offset
+        this.elementType.struct_serializeToHashObject!(value, hashObject, offset * 8);
+      }
+      newLeafNodes.push(new LeafNode(hashObject));
+      nodeIdx++;
+    }
+    const newRootNode = subtreeFillToContents(newLeafNodes, chunkDepth);
+    return [new Tree(newRootNode), newValues];
   }
 }
 

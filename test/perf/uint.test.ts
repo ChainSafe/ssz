@@ -1,6 +1,6 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import {expect} from "chai";
-import {ContainerType, NumberUintType} from "../../src";
+import {ContainerType, Number64UintType, NumberUintType} from "../../src";
 
 describe("Uint64 types", () => {
   setBenchOpts({
@@ -14,6 +14,13 @@ describe("Uint64 types", () => {
       slot: new NumberUintType({byteLength: 8}),
     },
   });
+
+  const BeaconState2 = new ContainerType({
+    fields: {
+      slot: new Number64UintType(),
+    },
+  });
+
   type IBeaconState = {
     slot: number;
   };
@@ -31,6 +38,14 @@ describe("Uint64 types", () => {
 
   itBench(`NumberUintType - increase slot to ${numLoop}`, () => {
     const tbState = BeaconState.createTreeBackedFromStruct({slot: 0});
+    for (let i = 0; i < numLoop; i++) {
+      tbState.slot++;
+    }
+    expect(tbState.slot).to.be.equal(numLoop);
+  });
+
+  itBench(`Number64UintType - increase slot to ${numLoop}`, () => {
+    const tbState = BeaconState2.createTreeBackedFromStruct({slot: 0});
     for (let i = 0; i < numLoop; i++) {
       tbState.slot++;
     }
