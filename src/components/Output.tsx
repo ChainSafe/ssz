@@ -15,7 +15,7 @@ type Props<T> = {
   hashTreeRoot: Uint8Array | undefined;
   serializeModeOn: boolean;
   deserialized: T;
-  sszType: Type<T>;
+  sszType: Type<unknown> | undefined;
   sszTypeName: string;
 };
 
@@ -73,7 +73,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
       hashTreeRootStr = (hashTreeRoot && serializedOutput) ? serializedOutput.dump(hashTreeRoot) : "";
     } else {
       const deserializedOuput = deserializeOutputTypes[outputType];
-      deserializedStr = ((deserialized !== undefined) && deserializedOuput) ? 
+      deserializedStr = ((deserialized !== undefined) && deserializedOuput && sszType) ? 
         deserializedOuput.dump(deserialized, sszType)
         : "";
     }
@@ -112,7 +112,12 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                 <NamedOutput name="Serialized" value={serializedStr} textarea />
                 <button
                   disabled={!this.props.serialized}
-                  onClick={() => this.downloadFile(this.props.serialized, "ssz")}
+                  onClick={() => {
+                    if (!this.props.serialized) {
+                      throw new Error("Missing serialized data.");
+                    }
+                    this.downloadFile(this.props.serialized, "ssz");
+                  }}
                 >{"Download data as .ssz file"}</button>
               </>
               :
@@ -124,7 +129,12 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                 />
                 <button
                   disabled={!deserializedStr}
-                  onClick={() => this.downloadFile(deserializedStr, this.state.outputType)}
+                  onClick={() => {
+                    if (!deserializedStr) {
+                      throw new Error("Missing deserialized data.");
+                    }
+                    this.downloadFile(deserializedStr, this.state.outputType);
+                  }}
                 >{"Download data as ." + this.state.outputType + " file"}</button>
               </>
             }

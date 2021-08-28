@@ -4,21 +4,21 @@ import * as React from "react";
 import {Type, toHexString} from "@chainsafe/ssz";
 import {ModuleThread, spawn, Thread, Worker} from "threads";
 import {ChangeEvent} from "react";
-import {withAlert} from "react-alert";
+import {AlertManager, withAlert} from "react-alert";
 
 import {inputTypes} from "../util/input_types";
 import {ForkName, typeNames, forks} from "../util/types";
 import {SszWorker} from "./worker";
 
-type Props<T> = {
-  onProcess: (forkName: ForkName, name: string, input: string | T, type: Type<T>, inputType: string) => void;
+type Props = {
+  onProcess: (forkName: ForkName, name: string, input: unknown, type: Type<unknown>, inputType: string) => void;
   serializeModeOn: boolean;
-  sszType: Type<T>;
-  serialized: Uint8Array | undefined;
+  sszType: Type<unknown>;
+  serialized?: Uint8Array;
   deserialized: object;
-  alert: {error: Function};
   setOverlay: Function;
   worker: Worker;
+  alert: AlertManager;
 };
 
 type State = {
@@ -27,7 +27,7 @@ type State = {
   input: string;
   serializeInputType: string;
   deserializeInputType: string;
-  value: object | string;
+  value: unknown;
 };
 
 function getRandomType(types: Record<string, Type<unknown>>): string {
@@ -37,11 +37,11 @@ function getRandomType(types: Record<string, Type<unknown>>): string {
 
 const DEFAULT_FORK = "phase0";
 
-class Input<T> extends React.Component<Props<T>, State> {
+class Input extends React.Component<Props, State> {
   worker: Worker;
   typesWorkerThread: ModuleThread<SszWorker> | undefined;
 
-  constructor(props: Props<T>) {
+  constructor(props: Props) {
     super(props);
     const types = forks[DEFAULT_FORK];
     const initialType = getRandomType(types);
@@ -66,7 +66,7 @@ class Input<T> extends React.Component<Props<T>, State> {
     await Thread.terminate(this.typesWorkerThread as ModuleThread<SszWorker>);
   }
 
-  setValueAndInput(value: object | string, input: string): void {
+  setValueAndInput(value: unknown, input: string): void {
     this.setState({value, input});
   }
 
@@ -119,9 +119,13 @@ class Input<T> extends React.Component<Props<T>, State> {
     return serializeModeOn ? serializeInputType : deserializeInputType;
   }
 
-  parsedInput(): T {
-    const inputType = this.getInputType();
-    return inputTypes[inputType].parse(this.state.input, this.types()[this.state.sszTypeName]);
+  async parsedInput(): Promise<unknown> {
+    const inputTypeStr = this.getInputType();
+    const type = this.types()[this.state.sszTypeName];
+    const inputType = inputTypes[inputTypeStr];
+    const parsed = inputType.parse(this.state.input, type);
+    this.props.setOverlay(false);
+    return parsed;
   }
 
   async resetWith(inputType: string, sszTypeName: string): Promise<void> {
@@ -181,14 +185,14 @@ class Input<T> extends React.Component<Props<T>, State> {
     this.setState({input});
   }
 
-  doProcess(): void {
-    const {
-      sszTypeName, forkName} = this.state;
+  async doProcess(): Promise<void> {
+    const {sszTypeName, forkName} = this.state;
+    const parsedInput = await this.parsedInput();
     try {
       this.props.onProcess(
         forkName,
         sszTypeName,
-        this.parsedInput(),
+        parsedInput,
         this.types()[sszTypeName],
         this.getInputType(),
       );
@@ -197,12 +201,12 @@ class Input<T> extends React.Component<Props<T>, State> {
     }
   }
 
-  processFileContents(contents: string | ArrayBuffer | null): void {
+  processFileContents(contents: string | ArrayBuffer): void {
     try {
-      if (!this.props.serializeModeOn) {
+      if (!this.props.serializeModeOn && contents instanceof ArrayBuffer) {
         this.setInput(toHexString(new Uint8Array(contents)));
       } else {
-        this.setInput(contents);
+        this.setInput(contents as string);
       }
     } catch(error) {
       this.handleError(error);
@@ -220,8 +224,8 @@ class Input<T> extends React.Component<Props<T>, State> {
         reader.readAsArrayBuffer(file);
       }
       reader.onload = (e) => {
-        if (e.target) {
-          processFileContents(e.target.result);
+        if (e.target?.result) {
+          if (e.target !== null) processFileContents(e.target.result);
         }
       };
       reader.onerror = (e: unknown) => {
@@ -312,14 +316,14 @@ class Input<T> extends React.Component<Props<T>, State> {
         </div>
         <textarea
           className="textarea"
-          rows={this.state.input && this.getRows()}
+          rows={this.getRows()}
           value={this.state.input}
           onChange={(e) => this.setInput(e.target.value)}
         />
         <button
           className="button is-primary is-medium is-fullwidth is-uppercase is-family-code submit"
           disabled={!(this.state.sszTypeName && this.state.input)}
-          onClick={this.doProcess.bind(this)}
+          onClick={async () => await this.doProcess()}
         >
           {serializeModeOn ? "Serialize" : "Deserialize"}
         </button>
@@ -328,4 +332,6 @@ class Input<T> extends React.Component<Props<T>, State> {
   }
 }
 
-export default withAlert()(Input);
+// @TODO: not sure what to put here instead of any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withAlert<any>()(Input);

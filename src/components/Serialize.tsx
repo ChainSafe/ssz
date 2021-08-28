@@ -12,28 +12,29 @@ type Props = {
   serializeModeOn: boolean;
 };
 
-type State<T> = {
+type State = {
   name: string;
-  input: T;
-  sszType: Type<T> | undefined;
-  error: string | undefined;
-  serialized: Uint8Array | undefined;
-  hashTreeRoot: Uint8Array | undefined;
-  deserialized: string | undefined;
+  input: unknown;
+  sszType?: Type<unknown>;
+  error?: string;
+  serialized?: Uint8Array;
+  hashTreeRoot?: Uint8Array;
+  deserialized: unknown;
   showOverlay: boolean;
   overlayText: string;
+  forkName?: ForkName;
 };
 
-export default class Serialize<T> extends React.Component<Props, State<T>> {
+export default class Serialize extends React.Component<Props, State> {
   worker: Worker;
   serializationWorkerThread: ModuleThread<SszWorker> | undefined;
   
   constructor(props: Props) {
     super(props);
     this.state = {
+      input: undefined,
       forkName: undefined,
       name: "",
-      input: undefined,
       deserialized: undefined,
       sszType: undefined,
       error: undefined,
@@ -60,17 +61,21 @@ export default class Serialize<T> extends React.Component<Props, State<T>> {
     await Thread.terminate(this.serializationWorkerThread as ModuleThread<SszWorker>);
   }
 
-  async process<T>(forkName: ForkName, name: string, input: T, type: Type<T>): Promise<void> {
+  async process(forkName: ForkName, name: string, input: unknown, type: Type<unknown>): Promise<void> {
     let error;
-    this.setOverlay(true, this.props.serializeModeOn ? "Serializing..." : "Deserializing...");
-    this.serializationWorkerThread?.serialize(name, forkName, input)
-      .then((data: {root: Uint8Array, serialized: Uint8Array}) => {
-        this.setState({
-          hashTreeRoot: data.root,
-          serialized: data.serialized
-        });
-        this.setOverlay(false);
-      }).catch((e: { message: string }) => error = e.message);
+    if (this.props.serializeModeOn) {
+      this.setOverlay(true, "Serializing...");
+      this.serializationWorkerThread?.serialize(name, forkName, input)
+        .then((data: {root: Uint8Array, serialized: Uint8Array}) => {
+          this.setState({
+            hashTreeRoot: data.root,
+            serialized: data.serialized
+          });
+          this.setOverlay(false);
+        }).catch((e: { message: string }) => error = e.message);
+    } else {
+      this.setOverlay(false);
+    }
 
     // note that all bottom nodes are converted to strings, so that they do not have to be formatted,
     // and can be passed through React component properties.

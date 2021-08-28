@@ -1215,10 +1215,24 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
 
+"@types/react-alert@^5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@types/react-alert/-/react-alert-5.2.1.tgz#be10b4e4c0c1cf3223771285de851706dee5b879"
+  integrity sha512-sJBDIBupmbPFLHutwrKwBW2SY+LQJTcVpp6CxxsEYIt2YmLgW7+U1AZzfcFK+f/6sIB38vSrtMOneY3auJ0LYA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@^17.0.8":
   version "17.0.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.9.tgz#441a981da9d7be117042e1a6fd3dac4b30f55add"
   integrity sha512-wIvGxLfgpVDSAMH5utdL9Ngm5Owu0VsGmldro3ORLXV8CShrL8awVj06NuEXFQ5xyaYfdca7Sgbk/50Ri1GdPg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-loading-overlay@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-loading-overlay/-/react-loading-overlay-1.0.0.tgz#afe2c6aeb2c00d726001208d4d697e3a2cea041e"
+  integrity sha512-hSWL7z2viHV2zfyDwGdMlVLmqo/fm9io3LF6eE1Db26e7pCpspP2VX5gY2zE/OwUZvj+pYX6kUAL6alFUFbBLQ==
   dependencies:
     "@types/react" "*"
 

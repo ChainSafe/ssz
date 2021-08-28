@@ -9,7 +9,7 @@ const worker = {
     const value = createRandomValue(type);
     return value;
   },
-  serialize(sszTypeName: string, forkName: string, input: object) {
+  serialize(sszTypeName: string, forkName: string, input: unknown) {
     const type = getSSZType(sszTypeName, forkName);
     const serialized = type.serialize(input);
     const root = type.hashTreeRoot(input);
