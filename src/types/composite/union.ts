@@ -330,6 +330,16 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
     throw new Error("Method not implemented for Union type");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tree_getValues(tree: Tree): unknown[] {
+    throw new Error("Method not implemented for Union type");
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tree_readonlyGetValues(tree: Tree): unknown[] {
+    throw new Error("Method not implemented for Union type");
+  }
+
   tree_getLeafGindices(target: Tree, root: Gindex = BigInt(1)): Gindex[] {
     const gindices: Gindex[] = [concatGindices([root, SELECTOR_GINDEX])];
     const type = this.getType(target);

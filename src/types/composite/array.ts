@@ -7,6 +7,7 @@ import {CompositeType} from "./abstract";
 import {SszErrorPath} from "../../util/errorPath";
 import {
   concatGindices,
+  getGindicesAtDepth,
   Gindex,
   iterateAtDepth,
   LeafNode,
@@ -218,6 +219,35 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
 
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
     yield* this.tree_iterateValues(target);
+  }
+
+  tree_getValues(target: Tree): (Tree | unknown)[] {
+    const length = this.tree_getLength(target);
+    if (length === 0) {
+      return [];
+    }
+    const elementSize = this.elementType.struct_getSerializedLength();
+    if (32 % elementSize !== 0) {
+      throw new Error("cannot handle a non-chunk-alignable elementType");
+    }
+    let left = length;
+    const values = [];
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target));
+    out: for (let i = 0; i < nodes.length; i++) {
+      const chunk = nodes[i].root;
+      for (let offset = 0; offset < 32; offset += elementSize) {
+        values.push(this.elementType.struct_deserializeFromBytes(chunk, offset));
+        left--;
+        if (left === 0) {
+          break out;
+        }
+      }
+    }
+    return values;
+  }
+
+  tree_readonlyGetValues(target: Tree): (Tree | unknown)[] {
+    return this.tree_getValues(target);
   }
 
   getChunkOffset(index: number): number {
@@ -548,6 +578,24 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     for (let i = 0; i < nodes.length; i++) {
       yield new Tree(nodes[i]);
     }
+  }
+
+  tree_getValues(target: Tree): (Tree | unknown)[] {
+    const values = [];
+    const gindices = getGindicesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target));
+    for (let i = 0; i < gindices.length; i++) {
+      values.push(target.getSubtree(gindices[i]));
+    }
+    return values;
+  }
+
+  tree_readonlyGetValues(target: Tree): (Tree | unknown)[] {
+    const values = [];
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target));
+    for (let i = 0; i < nodes.length; i++) {
+      values.push(new Tree(nodes[i]));
+    }
+    return values;
   }
 
   bytes_getVariableOffsets(target: Uint8Array): [number, number][] {

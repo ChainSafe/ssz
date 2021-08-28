@@ -170,6 +170,22 @@ export class BitVectorType extends BasicVectorType<BitVector> {
     }
   }
 
+  tree_getValues(target: Tree): (Tree | unknown)[] {
+    const length = this.tree_getLength(target);
+    const chunkCount = this.tree_getChunkCount(target);
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
+    let i = 0;
+    const values = [];
+    for (let nodeIx = 0; nodeIx < nodes.length; nodeIx++) {
+      const chunk = nodes[nodeIx].root;
+      for (let j = 0; j < 256 && i < length; i++, j++) {
+        const byte = chunk[this.getChunkOffset(i)];
+        values.push(!!(byte & (1 << this.getBitOffset(i))));
+      }
+    }
+    return values;
+  }
+
   tree_getValueAtIndex(target: Tree, index: number): boolean {
     const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
     const byte = chunk[this.getChunkOffset(index)];

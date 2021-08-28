@@ -3,6 +3,7 @@ import {CompositeType, isCompositeType} from "./abstract";
 import {IJsonOptions, isTypeOf, Type} from "../type";
 import {
   concatGindices,
+  getGindicesAtDepth,
   Gindex,
   iterateAtDepth,
   Node,
@@ -540,6 +541,37 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         yield new Tree(node);
       }
     }
+  }
+
+  tree_getValues(target: Tree): (Tree | unknown)[] {
+    const fieldTypes = Object.values(this.fields);
+    const gindices = getGindicesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
+    const values = [];
+    for (let i = 0; i < fieldTypes.length; i++) {
+      const fieldType = fieldTypes[i];
+      if (!isCompositeType(fieldType)) {
+        values.push(fieldType.struct_deserializeFromBytes(target.getRoot(gindices[i]), 0));
+      } else {
+        values.push(target.getSubtree(gindices[i]));
+      }
+    }
+    return values;
+  }
+
+  tree_readonlyGetValues(target: Tree): (Tree | unknown)[] {
+    const fieldTypes = Object.values(this.fields);
+    const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
+    const values = [];
+    for (let i = 0; i < fieldTypes.length; i++) {
+      const fieldType = fieldTypes[i];
+      const node = nodes[i];
+      if (!isCompositeType(fieldType)) {
+        values.push(fieldType.struct_deserializeFromBytes(node.root, 0));
+      } else {
+        values.push(new Tree(node));
+      }
+    }
+    return values;
   }
 
   hasVariableSerializedLength(): boolean {

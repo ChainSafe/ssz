@@ -169,11 +169,18 @@ export abstract class TreeValue<T extends CompositeValue> implements ITreeBacked
 
   abstract getProperty<P extends keyof T>(property: P): ValueOf<T, P>;
   abstract setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean;
+
   abstract keys(): IterableIterator<string>;
   abstract values(): IterableIterator<ValueOf<T>>;
   abstract entries(): IterableIterator<[string, ValueOf<T>]>;
   abstract readonlyValues(): IterableIterator<ValueOf<T>>;
   abstract readonlyEntries(): IterableIterator<[string, ValueOf<T>]>;
+
+  abstract keysArray(): string[];
+  abstract valuesArray(): ValueOf<T>[];
+  abstract entriesArray(): [string, ValueOf<T>][];
+  abstract readonlyValuesArray(): ValueOf<T>[];
+  abstract readonlyEntriesArray(): [string, ValueOf<T>][];
 }
 
 export class BasicArrayTreeValue<T extends ArrayLike<unknown>> extends TreeValue<T> {
@@ -223,6 +230,40 @@ export class BasicArrayTreeValue<T extends ArrayLike<unknown>> extends TreeValue
       yield [String(keys[i]), value];
       i++;
     }
+  }
+  keysArray(): string[] {
+    const propNames = this.getPropertyNames();
+    // pop off "length"
+    propNames.pop();
+    return propNames.map(String);
+  }
+
+  valuesArray(): ValueOf<T>[] {
+    return this.type.tree_getValues(this.tree) as ValueOf<T>[];
+  }
+
+  entriesArray(): [string, ValueOf<T>][] {
+    const keys = this.getPropertyNames();
+    const values = this.valuesArray();
+    const entries: [string, ValueOf<T>][] = [];
+    for (let i = 0; i < values.length; i++) {
+      entries.push([String(keys[i]), values[i]]);
+    }
+    return entries;
+  }
+
+  readonlyValuesArray(): ValueOf<T>[] {
+    return this.type.tree_readonlyGetValues(this.tree) as ValueOf<T>[];
+  }
+
+  readonlyEntriesArray(): [string, ValueOf<T>][] {
+    const keys = this.getPropertyNames();
+    const values = this.readonlyValuesArray();
+    const entries: [string, ValueOf<T>][] = [];
+    for (let i = 0; i < values.length; i++) {
+      entries.push([String(keys[i]), values[i]]);
+    }
+    return entries;
   }
 }
 export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeValue<T> {
@@ -288,6 +329,51 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
       yield [String(keys[i]), value];
       i++;
     }
+  }
+
+  keysArray(): string[] {
+    const propNames = this.getPropertyNames();
+    // pop off "length"
+    propNames.pop();
+    return propNames.map(String);
+  }
+
+  valuesArray(): ValueOf<T>[] {
+    const values = [];
+    const rawValues = this.type.tree_getValues(this.tree);
+    for (let i = 0; i < rawValues.length; i++) {
+      values.push(createTreeBacked(this.type.elementType, rawValues[i] as Tree) as ValueOf<T>);
+    }
+    return values;
+  }
+
+  entriesArray(): [string, ValueOf<T>][] {
+    const keys = this.getPropertyNames();
+    const values = this.valuesArray();
+    const entries: [string, ValueOf<T>][] = [];
+    for (let i = 0; i < values.length; i++) {
+      entries.push([String(keys[i]), values[i]]);
+    }
+    return entries;
+  }
+
+  readonlyValuesArray(): ValueOf<T>[] {
+    const values = [];
+    const rawValues = this.type.tree_readonlyGetValues(this.tree);
+    for (let i = 0; i < rawValues.length; i++) {
+      values.push(createTreeBacked(this.type.elementType, rawValues[i] as Tree) as ValueOf<T>);
+    }
+    return values;
+  }
+
+  readonlyEntriesArray(): [string, ValueOf<T>][] {
+    const keys = this.getPropertyNames();
+    const values = this.valuesArray();
+    const entries: [string, ValueOf<T>][] = [];
+    for (let i = 0; i < values.length; i++) {
+      entries.push([String(keys[i]), values[i]]);
+    }
+    return entries;
   }
 }
 
@@ -414,6 +500,61 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
       i++;
     }
   }
+  keysArray(): string[] {
+    return this.getPropertyNames() as string[];
+  }
+
+  valuesArray(): ValueOf<T>[] {
+    const values = [];
+    const entries = this.entriesArray();
+    for (let i = 0; i < entries.length; i++) {
+      values.push(entries[i][1]);
+    }
+    return values;
+  }
+
+  entriesArray(): [string, ValueOf<T>][] {
+    const keys = this.keysArray();
+    const values = this.valuesArray();
+    const entries: [string, ValueOf<T>][] = [];
+    for (let i = 0; i < values.length; i++) {
+      const key = keys[i];
+      const value = values[i];
+      const fieldType = this.type.getPropertyType(key);
+      if (isCompositeType(fieldType)) {
+        entries.push([key, createTreeBacked(fieldType, value as Tree) as ValueOf<T>]);
+      } else {
+        entries.push([key, value as ValueOf<T>]);
+      }
+    }
+    return entries;
+  }
+
+  readonlyValuesArray(): ValueOf<T>[] {
+    const values = [];
+    const entries = this.readonlyEntriesArray();
+    for (let i = 0; i < entries.length; i++) {
+      values.push(entries[i][1]);
+    }
+    return values;
+  }
+
+  readonlyEntriesArray(): [string, ValueOf<T>][] {
+    const keys = this.keysArray();
+    const values = this.readonlyValuesArray();
+    const entries: [string, ValueOf<T>][] = [];
+    for (let i = 0; i < values.length; i++) {
+      const key = keys[i];
+      const value = values[i];
+      const fieldType = this.type.getPropertyType(key);
+      if (isCompositeType(fieldType)) {
+        entries.push([key, createTreeBacked(fieldType, value as Tree) as ValueOf<T>]);
+      } else {
+        entries.push([key, value as ValueOf<T>]);
+      }
+    }
+    return entries;
+  }
 }
 
 export class UnionTreeValue<T extends Union<unknown>> extends TreeValue<T> {
@@ -461,6 +602,22 @@ export class UnionTreeValue<T extends Union<unknown>> extends TreeValue<T> {
     throw new Error("Method not implemented for Union type");
   }
   readonlyEntries(): IterableIterator<[string, ValueOf<T, keyof T>]> {
+    throw new Error("Method not implemented for Union type");
+  }
+
+  keysArray(): string[] {
+    throw new Error("Method not implemented for Union type");
+  }
+  valuesArray(): ValueOf<T>[] {
+    throw new Error("Method not implemented for Union type");
+  }
+  entriesArray(): [string, ValueOf<T>][] {
+    throw new Error("Method not implemented for Union type");
+  }
+  readonlyValuesArray(): ValueOf<T>[] {
+    throw new Error("Method not implemented for Union type");
+  }
+  readonlyEntriesArray(): [string, ValueOf<T>][] {
     throw new Error("Method not implemented for Union type");
   }
 }
