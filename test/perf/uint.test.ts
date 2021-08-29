@@ -51,4 +51,32 @@ describe("Uint64 types", () => {
     }
     expect(tbState.slot).to.be.equal(numLoop);
   });
+
+  const TWO_POWER_32 = 2 ** 32;
+  const numTwoPower32Loop = TWO_POWER_32 + numLoop;
+  itBench(`struct - increase slot from 2**32 to 2**32 + ${numLoop}`, () => {
+    const state: IBeaconState = {
+      slot: TWO_POWER_32,
+    };
+    for (let i = TWO_POWER_32; i < numTwoPower32Loop; i++) {
+      state.slot++;
+    }
+    expect(state.slot).to.be.equal(numTwoPower32Loop);
+  });
+
+  itBench(`NumberUintType - increase slot from 2**32 to 2**32 + ${numLoop}`, () => {
+    const tbState = BeaconState.createTreeBackedFromStruct({slot: TWO_POWER_32});
+    for (let i = TWO_POWER_32; i < numTwoPower32Loop; i++) {
+      tbState.slot++;
+    }
+    expect(tbState.slot).to.be.equal(numTwoPower32Loop);
+  });
+
+  itBench(`Number64UintType - increase slot from 2**32 to 2**32 + ${numLoop}`, () => {
+    const tbState = BeaconState2.createTreeBackedFromStruct({slot: TWO_POWER_32});
+    for (let i = TWO_POWER_32; i < numTwoPower32Loop; i++) {
+      tbState.slot++;
+    }
+    expect(tbState.slot).to.be.equal(numTwoPower32Loop);
+  });
 });

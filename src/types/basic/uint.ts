@@ -3,6 +3,12 @@ import {bigIntPow} from "../../util/bigInt";
 import {isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";
 import {HashObject} from "@chainsafe/as-sha256";
+import {
+  getNumberFromBytesLE,
+  getBytesFromNumberLE,
+  getNumberFromBytesLE32,
+  getBytesFromNumberLE32,
+} from "../../util/numhelper";
 
 export interface IUintOptions {
   byteLength: number;
@@ -83,12 +89,7 @@ export class NumberUintType extends UintType<number> {
         output[i] = 0xff;
       }
     } else {
-      let v = value;
-      const MAX_BYTE = 0xff;
-      for (let i = 0; i < this.byteLength; i++) {
-        output[offset + i] = v & MAX_BYTE;
-        v = Math.floor(v / 256);
-      }
+      getBytesFromNumberLE(value, output, this.byteLength, offset);
     }
     return offset + this.byteLength;
   }
@@ -96,9 +97,7 @@ export class NumberUintType extends UintType<number> {
   struct_deserializeFromBytes(data: Uint8Array, offset: number): number {
     this.bytes_validate(data, offset);
     let isInfinity = true;
-    let output = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      output += data[offset + i] * 2 ** (8 * i);
       if (data[offset + i] !== 0xff) {
         isInfinity = false;
       }
@@ -106,7 +105,8 @@ export class NumberUintType extends UintType<number> {
     if (this.infinityWhenBig && isInfinity) {
       return Infinity;
     }
-    return Number(output);
+
+    return getNumberFromBytesLE(data, this.byteLength, offset);
   }
 
   struct_convertFromJson(data: Json): number {
@@ -258,15 +258,15 @@ export class BigIntUintType extends UintType<bigint> {
     // and do bit shifting on the number
     let v = value;
     let groupedBytes = Number(BigInt.asUintN(32, v));
-    for (let i = 0; i < this.byteLength; i++) {
-      output[offset + i] = Number(groupedBytes & 0xff);
-      if ((i + 1) % 4 !== 0) {
-        groupedBytes >>= 8;
-      } else {
-        v >>= BIGINT_4_BYTES;
-        groupedBytes = Number(BigInt.asUintN(32, v));
-      }
+
+    let i;
+    for (i = 0; i < this.byteLength - 4; i += 4) {
+      getBytesFromNumberLE32(groupedBytes, output, offset + i);
+      v >>= BIGINT_4_BYTES;
+      groupedBytes = Number(BigInt.asUintN(32, v));
     }
+    getBytesFromNumberLE(groupedBytes, output, this.byteLength - i, offset + i);
+
     return offset + this.byteLength;
   }
 
@@ -283,28 +283,29 @@ export class BigIntUintType extends UintType<bigint> {
     let output = BigInt(0);
     let groupIndex = 0,
       groupOutput = 0;
-    for (let i = 0; i < this.byteLength; i++) {
-      groupOutput += data[offset + i] << (8 * (i % 4));
-      if ((i + 1) % 4 === 0) {
-        // Left shift returns a signed integer and the output may have become negative
-        // In that case, the output needs to be converted to unsigned integer
-        if (groupOutput < 0) {
-          groupOutput >>>= 0;
-        }
-        // Optimization to set the output the first time, forgoing BigInt addition
+
+    let i;
+    for (i = 0; i < this.byteLength - 4; i += 4) {
+      groupOutput = getNumberFromBytesLE32(data, offset + i);
+      // Optimization to set the output the first time, forgoing BigInt addition
+      if (groupOutput > 0) {
         if (groupIndex === 0) {
           output = BigInt(groupOutput);
         } else {
           output += BigInt(groupOutput) << BigInt(32 * groupIndex);
         }
-        groupIndex++;
-        groupOutput = 0;
+      }
+      groupIndex++;
+    }
+    groupOutput = getNumberFromBytesLE(data, this.byteLength - i, offset + i);
+    if (groupOutput > 0) {
+      if (groupIndex === 0) {
+        output = BigInt(groupOutput);
+      } else {
+        output += BigInt(groupOutput) << BigInt(32 * groupIndex);
       }
     }
-    // if this.byteLength isn't a multiple of 4, there will be additional data
-    if (groupOutput) {
-      output += BigInt(groupOutput >>> 0) << BigInt(32 * groupIndex);
-    }
+
     return output;
   }
 
