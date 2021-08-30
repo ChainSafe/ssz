@@ -47,13 +47,26 @@ describe("list", () => {
     }
   });
 
-  // using applyDelta gives 70% - 100% improvement
+  // using applyDelta gives 4x improvement to get and set
+  // 2.7x improvement compared to set only
   itBench("Number64UintType - increase 10 using applyDelta", () => {
     const basicArrayType = tbBalances64.type as Number64ListType;
     const tree = tbBalances64.tree.clone();
     for (let i = 0; i < numBalances; i++) {
       basicArrayType.tree_applyDeltaAtIndex(tree, i, 10);
     }
+  });
+
+  const deltaByIndex = new Map<number, number>();
+  for (let i = 0; i < numBalances; i++) {
+    deltaByIndex.set(i, 10);
+  }
+  // same performance to tree_applyUint64Delta, should be a little faster
+  // if it operates on a subtree with hook
+  itBench("Number64UintType - increase 10 using applyDeltaInBatch", () => {
+    const basicArrayType = tbBalances64.type as Number64ListType;
+    const tree = tbBalances64.tree.clone();
+    basicArrayType.tree_applyDeltaInBatch(tree, deltaByIndex);
   });
 });
 

@@ -371,10 +371,10 @@
   dependencies:
     "@chainsafe/as-sha256" "^0.2.2"
 
-"@chainsafe/persistent-merkle-tree@^0.3.6":
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.3.6.tgz#a1b3b9d08e9cdae58304d0729760e5ac986056f5"
-  integrity sha512-fQn/wGBraRqpJsYbVeHEAE38XkPzW6AKqPBDswTVlbTxV4aXkpxajYQVGU+mEJ97Eh5yKm/cEtN4HudlUqUQcQ==
+"@chainsafe/persistent-merkle-tree@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.3.7.tgz#d257674fcacf1770e54df1e7e476bb55efcb3ed4"
+  integrity sha512-UXXzvCN8P4eQWCsaTaHRrNa+2sTwY3NB0Vf+uWgM4cU1qf8LOsTU7aU2CeXFAGJag5W/xEQfVGNh463kXTYAgg==
   dependencies:
     "@chainsafe/as-sha256" "^0.2.3"
 
