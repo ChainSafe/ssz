@@ -1,13 +1,7 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {BigIntUintType, BitListType, CompositeType, CompositeValue, ContainerType, ListType} from "../../src";
 
 describe("SSZ (de)serialize", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 10 * 1000,
-    runs: 1000,
-  });
-
   const Gwei = new BigIntUintType({byteLength: 8});
 
   type TestCase<T extends CompositeValue> = {

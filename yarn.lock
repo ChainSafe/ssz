@@ -396,10 +396,10 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@dapplion/benchmark@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@dapplion/benchmark/-/benchmark-0.1.6.tgz#d58cc150732a2d743089b9462cdfef9339ef81fa"
-  integrity sha512-qBNXvktHxqnfql2dtjdYqPVj+6OZriuKYNB/ZOdZv58kov9/vEVxFstlXQKCnmxVgC3q4NNmvWXIemTAPZah/A==
+"@dapplion/benchmark@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@dapplion/benchmark/-/benchmark-0.2.2.tgz#cc9c78e5b8d2d04311bcf30cbc4c67783e2efc6f"
+  integrity sha512-1wkplmCOVo5U3vv6Vej9MkQ1KtWtTT7WIpwVKyZdNIPnLHG82X4JwySuaaXeAKwiMs0kQzE/+ax5gNwsfqqYpQ==
   dependencies:
     "@actions/cache" "^1.0.7"
     "@actions/github" "^5.0.0"
@@ -407,7 +407,7 @@
     aws-sdk "^2.932.0"
     csv-parse "^4.16.0"
     csv-stringify "^5.6.2"
-    yargs "^17.0.1"
+    yargs "^17.1.1"
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
@@ -3499,7 +3499,7 @@ yargs@^15.0.2:
     y18n "^4.0.0"
     yargs-parser "^16.1.0"
 
-yargs@^17.0.1:
+yargs@^17.1.1:
   version "17.1.1"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-17.1.1.tgz#c2a8091564bdb196f7c0a67c1d12e5b85b8067ba"
   integrity sha512-c2k48R0PwKIqKhPMWjeiF6y2xY/gPMUlro0sgxqXpbOIohWiLNXWslsootttv7E1e73QPAMQSg5FeySbVcpsPQ==

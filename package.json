@@ -23,7 +23,7 @@
     "prepublishOnly": "yarn build",
     "pretest": "yarn check-types",
     "test": "yarn test:unit",
-    "benchmark": "node --max-old-space-size=4096 --expose-gc -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
+    "benchmark": "node --max-old-space-size=4096 --expose-gc ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:perf": "mocha  \"test/perf/**/*.test.ts\"",
     "test:unit": "nyc -e .ts mocha  \"test/unit/**/*.test.ts\"",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "@chainsafe/lodestar-params": "^0.28.1",
     "@chainsafe/lodestar-spec-test-util": "^0.28.1",
-    "@dapplion/benchmark": "^0.1.6",
+    "@dapplion/benchmark": "^0.2.2",
     "@types/chai": "^4.2.9",
     "@types/mocha": "^9.0.0",
     "@types/node": "^14.14.17",

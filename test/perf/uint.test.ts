@@ -1,14 +1,8 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {expect} from "chai";
 import {ContainerType, Number64UintType, NumberUintType} from "../../src";
 
 describe("Uint64 types", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 20 * 1000,
-    runs: 100_000,
-  });
-
   const BeaconState = new ContainerType({
     fields: {
       slot: new NumberUintType({byteLength: 8}),

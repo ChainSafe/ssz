@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {
   booleanType,
   ByteVectorType,
@@ -11,12 +11,6 @@ import {
 } from "../../src";
 
 describe("iterate", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 10 * 1000,
-    runs: 1000,
-  });
-
   const N = 5000;
   const arr = Array.from({length: N}, () => ({foo: "bar"}));
 
@@ -39,12 +33,6 @@ describe("iterate", () => {
 });
 
 describe("readonly values - iterator vs array", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 10 * 1000,
-    runs: 1000,
-  });
-
   const length = 250_000;
   const balances = createBalanceList(length);
 
