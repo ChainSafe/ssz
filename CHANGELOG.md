@@ -1,4 +1,10 @@
-## 0.8.16
+## 0.8.17 (2021-08-30)
+
+## Bug fixes
+
+- Fix ContainerLeafNodeStructTreeValue [#179](https://github.com/ChainSafe/ssz/pull/179)
+
+## 0.8.16 (2021-08-30)
 
 ## Features
 
