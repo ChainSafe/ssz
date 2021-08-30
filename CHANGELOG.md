@@ -1,3 +1,12 @@
+## 0.8.16
+
+## Features
+
+- Implement Number64UintType and Number64ListType [#159](https://github.com/ChainSafe/ssz/pull/159)
+- Add ContainerLeafNodeStructType for memory efficiency [#168](https://github.com/ChainSafe/ssz/pull/168)
+- Union type [#145](https://github.com/ChainSafe/ssz/pull/145)
+- Add alternative to iterator interface [#171](https://github.com/ChainSafe/ssz/pull/171)
+
 ## 0.8.15 (2021-08-23)
 
 ## Features
