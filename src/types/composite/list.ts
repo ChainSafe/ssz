@@ -8,6 +8,7 @@ import {
   BranchNode,
   concatGindices,
   Gindex,
+  HashObjectFn,
   LeafNode,
   Node,
   subtreeFillToContents,
@@ -15,6 +16,7 @@ import {
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
+import {HashObject} from "@chainsafe/as-sha256";
 
 /**
  * SSZ Lists (variable-length arrays) include the length of the list in the tree
@@ -269,17 +271,38 @@ export class Number64ListType<T extends List<number> = List<number>> extends Bas
    **/
   tree_applyDeltaAtIndex(target: Tree, index: number, delta: number): number {
     const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
-    const hashObject = cloneHashObject(target.getHashObject(chunkGindex));
     // 4 items per chunk
     const offsetInChunk = (index % 4) * 8;
 
-    let value = this.elementType.struct_deserializeFromHashObject!(hashObject, offsetInChunk) as number;
-    value += delta;
-    if (value < 0) value = 0;
-    this.elementType.struct_serializeToHashObject!(value as number, hashObject, offsetInChunk);
-    target.setHashObject(chunkGindex, hashObject);
+    let value = 0;
+    const hashObjectFn: HashObjectFn = (hashObject: HashObject) => {
+      const newHashObject = cloneHashObject(hashObject);
+      value = this.elementType.struct_deserializeFromHashObject!(newHashObject, offsetInChunk) as number;
+      value += delta;
+      if (value < 0) value = 0;
+      this.elementType.struct_serializeToHashObject!(value as number, newHashObject, offsetInChunk);
+      return newHashObject;
+    };
+    // it's 1.8x faster to use setHashObjectFn instead of getHashObject and setHashObject
+    target.setHashObjectFn(chunkGindex, hashObjectFn);
 
     return value;
+  }
+
+  /**
+   * The same to tree_applyUint64Delta but we do it in batch.
+   * returns the new value
+   **/
+  tree_applyDeltaInBatch(target: Tree, deltaByIndex: Map<number, number>): number[] {
+    // work on the new tree to avoid the hook
+    const newTree = target.clone();
+    const newValues: number[] = [];
+    for (const [index, delta] of deltaByIndex.entries()) {
+      this.tree_applyDeltaAtIndex(newTree, index, delta);
+    }
+    // update target, the hook should run 1 time only
+    target.rootNode = newTree.rootNode;
+    return newValues;
   }
 
   /**

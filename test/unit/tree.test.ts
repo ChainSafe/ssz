@@ -105,7 +105,37 @@ describe("tree simple list/vector", () => {
     }
   });
 
-  it("tree_newTreeFromUint64Deltas", () => {
+  it("tree_applyDeltaInBatch", () => {
+    const BalancesList = new ListType({elementType: new NumberUintType({byteLength: 8}), limit: 1000});
+    const BalancesList64 = new ListType({elementType: new Number64UintType(), limit: 1000});
+    const length = 200;
+    const struct = Array.from({length}, () => 31217089836);
+    const tbBalancesList = BalancesList.createTreeBackedFromStruct(struct);
+    const tbBalancesList64 = BalancesList64.createTreeBackedFromStruct(struct);
+    const delta = 100;
+    // increase delta for BalancesList
+    for (let i = 0; i < length; i++) {
+      tbBalancesList[i] = tbBalancesList[i] + delta;
+    }
+    // same operation for BalancesList64 using tree_applyDeltaInBatch
+    const deltaByIndex = new Map<number, number>();
+    for (let i = 0; i < length; i++) {
+      deltaByIndex.set(i, delta);
+    }
+    const newValues = (tbBalancesList64.type as Number64ListType).tree_applyDeltaInBatch(
+      tbBalancesList64.tree,
+      deltaByIndex
+    );
+    for (const value of newValues) {
+      expect(value).to.be.equal(31217089836 + delta);
+    }
+    expect(toHexString(tbBalancesList.tree.root)).to.be.equal(
+      toHexString(tbBalancesList64.tree.root),
+      "incorrect result from tree_applyDeltaInBatch"
+    );
+  });
+
+  it("tree_newTreeFromDeltas", () => {
     const lengths = [200, 201, 202, 203];
     for (const length of lengths) {
       const BalancesList64 = new ListType({elementType: new Number64UintType(), limit: 1000});
