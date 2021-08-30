@@ -1,13 +1,7 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {NumberUintType, ContainerType, VectorType, CompositeType} from "../../src";
 
 describe("SSZ get property", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 10 * 1000,
-    runs: 1000,
-  });
-
   const Gwei = new NumberUintType({byteLength: 8});
   const Vec = new VectorType({elementType: Gwei, length: 1e5});
 

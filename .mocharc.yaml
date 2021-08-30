@@ -1,2 +1,5 @@
 colors: true
 require: ts-node/register
+# benchmark
+maxMs: 30_000
+threshold: 3

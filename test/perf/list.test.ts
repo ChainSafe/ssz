@@ -1,14 +1,8 @@
 import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {List, ListType, Number64ListType, Number64UintType, NumberUintType, TreeBacked, Type} from "../../src";
 
 describe("list", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 20 * 1000,
-    runs: 1000,
-  });
-
   const numBalances = 250_000;
 
   const tbBalances = createBalanceList(numBalances, new NumberUintType({byteLength: 8}));
@@ -71,12 +65,6 @@ describe("list", () => {
 });
 
 describe("subtreeFillToContents", function () {
-  setBenchOpts({
-    maxMs: 60 * 1000,
-    minMs: 40 * 1000,
-    runs: 500,
-  });
-
   const numBalances = 250_000;
 
   const tbBalances64 = createBalanceList(numBalances, new Number64UintType());

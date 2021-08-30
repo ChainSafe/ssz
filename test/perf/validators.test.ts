@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {Validator} from "../lodestar/phase0/types";
 import {Validator as ValidatorType} from "../lodestar/phase0/sszTypes";
 import {ContainerLeafNodeStructType, ContainerType, TreeBacked} from "../../src";
@@ -17,8 +17,6 @@ const validatorStruct: Validator = {
 };
 
 describe("Validator vs ValidatorLeafNodeStruct", () => {
-  setBenchOpts({maxMs: 30 * 1000, minMs: 1 * 1000});
-
   const validatorTB = ValidatorType.createTreeBackedFromStruct(validatorStruct);
   const validatorLeafNodeStructTB = ValidatorLeafNodeStructType.createTreeBackedFromStruct(validatorStruct);
   validatorTB.hashTreeRoot();
