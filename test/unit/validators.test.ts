@@ -1,3 +1,4 @@
+import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
 import {expect} from "chai";
 import {describe, it} from "mocha";
 import {
@@ -9,6 +10,9 @@ import {
   NumberUintType,
   toHexString,
   TreeBacked,
+  ListType,
+  readonlyValuesListOfLeafNodeStruct,
+  List,
 } from "../../src";
 
 describe("Container with BranchNodeStruct", function () {
@@ -83,4 +87,38 @@ describe("Container with BranchNodeStruct", function () {
       expect(res).to.deep.equal(resLeafNodeStruct);
     });
   }
+
+  describe("ValidatorLeafNodeStructType in List", () => {
+    const ValidtorsListType = new ListType<List<Validator>>({
+      elementType: ValidatorLeafNodeStructType,
+      limit: VALIDATOR_REGISTRY_LIMIT,
+    });
+
+    it("edit then read", () => {
+      const validatorListTB = ValidtorsListType.defaultTreeBacked();
+      for (let i = 0; i < 10; i++) {
+        const validator_ = {...validator, withdrawableEpoch: i};
+        validatorListTB.push(validator_);
+      }
+
+      expect(validatorListTB[3].withdrawableEpoch).to.equal(3, "Wrong [3] value before mutating");
+      expect(validatorListTB[4].withdrawableEpoch).to.equal(4, "Wrong [3] value before mutating");
+      validatorListTB[3].withdrawableEpoch = 33;
+      validatorListTB[4].withdrawableEpoch = 44;
+      expect(validatorListTB[3].withdrawableEpoch).to.equal(33, "Wrong [3] value after mutating");
+      expect(validatorListTB[4].withdrawableEpoch).to.equal(44, "Wrong [4] value after mutating");
+    });
+
+    it("readonlyValuesListOfLeafNodeStruct", () => {
+      const validatorListTB = ValidtorsListType.defaultTreeBacked();
+      const validatorsFlat: Validator[] = [];
+      for (let i = 0; i < 10; i++) {
+        const validator_ = {...validator, withdrawableEpoch: i};
+        validatorsFlat.push(validator_);
+        validatorListTB.push(validator_);
+      }
+
+      expect(readonlyValuesListOfLeafNodeStruct(validatorListTB)).to.deep.equal(validatorsFlat);
+    });
+  });
 });

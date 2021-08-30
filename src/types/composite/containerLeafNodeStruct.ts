@@ -1,6 +1,6 @@
-import {CompositeValue, ObjectLike} from "../../interface";
+import {CompositeValue, List, ObjectLike} from "../../interface";
 import {Node, BranchNode, Tree, hashObjectToUint8Array} from "@chainsafe/persistent-merkle-tree";
-import {TreeProxyHandler, TreeValue} from "../../backings/tree/treeValue";
+import {CompositeArrayTreeValue, TreeProxyHandler, TreeValue} from "../../backings/tree/treeValue";
 import {TreeBacked, ValueOf} from "../../backings";
 import {HashObject} from "@chainsafe/as-sha256";
 import {ContainerType} from "./container";
@@ -26,7 +26,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
     return (new Proxy(value, TreeProxyHandler as any) as unknown) as TreeBacked<T>;
   }
 
-  // struct_defaultValue
+  // struct_defaultValue   -> these comments acknowledge that this functions do not need to be overwritten
   // struct_getSerializedLength
   // getMaxSerializedLength
   // getMinSerializedLength
@@ -232,4 +232,26 @@ export class ContainerLeafNodeStructTreeValue<T extends CompositeValue> extends 
   readonlyEntriesArray(): [string, ValueOf<T>][] {
     return this.entriesArray();
   }
+}
+
+/**
+ * Custom readonlyValues to return non-tree backed values, but the raw struct inside BranchNodeStruct nodes.
+ *
+ * This function allows very efficient reads and iteration over the entire validators registry in Lodestar.
+ */
+export function readonlyValuesListOfLeafNodeStruct<T extends CompositeValue>(objArr: List<T>): T[] {
+  const treeValue = (objArr as unknown) as CompositeArrayTreeValue<T[]>;
+  const {tree, type} = treeValue;
+  const nodes = tree.getNodesAtDepth(type.getChunkDepth(), 0, type.tree_getChunkCount(tree));
+
+  const values: T[] = [];
+  for (let i = 0, len = nodes.length; i < len; i++) {
+    const value = (nodes[i] as BranchNodeStruct<T>).value;
+    if (value === undefined) {
+      throw Error("node is not a BranchNodeStruct");
+    }
+    values.push(value);
+  }
+
+  return values;
 }
