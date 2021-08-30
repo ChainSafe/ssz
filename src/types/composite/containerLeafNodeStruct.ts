@@ -1,9 +1,22 @@
 import {CompositeValue, List, ObjectLike} from "../../interface";
 import {Node, BranchNode, Tree, hashObjectToUint8Array} from "@chainsafe/persistent-merkle-tree";
-import {CompositeArrayTreeValue, TreeProxyHandler, TreeValue} from "../../backings/tree/treeValue";
-import {TreeBacked, ValueOf} from "../../backings";
+import {
+  CompositeArrayTreeValue,
+  ContainerLeafNodeStructTreeValue,
+  TreeProxyHandler,
+} from "../../backings/tree/treeValue";
+import {TreeBacked} from "../../backings";
 import {HashObject} from "@chainsafe/as-sha256";
-import {ContainerType} from "./container";
+import {ContainerType, IContainerOptions} from "./container";
+import {isTypeOf, Type} from "../type";
+
+export const CONTAINER_LEAF_NODE_STRUCT_TYPE = Symbol.for("ssz/ContainerLeafNodeStructType");
+
+export function isContainerLeafNodeStructType<T extends ObjectLike = ObjectLike>(
+  type: Type<unknown>
+): type is ContainerLeafNodeStructType<T> {
+  return isTypeOf(type, CONTAINER_LEAF_NODE_STRUCT_TYPE);
+}
 
 /**
  * Container that when represented as a Tree its children's data is represented as a struct, not a tree.
@@ -13,6 +26,11 @@ import {ContainerType} from "./container";
  * expensive because the tree has to be recreated every time.
  */
 export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> extends ContainerType<T> {
+  constructor(options: IContainerOptions) {
+    super(options);
+    this._typeSymbols.add(CONTAINER_LEAF_NODE_STRUCT_TYPE);
+  }
+
   /** Method to allow the Node to merkelize the struct */
   toFullTree(value: T): Tree {
     return super.struct_convertToTree(value);
@@ -162,75 +180,6 @@ export class BranchNodeStruct<T> extends Node {
 
   rebindRight(right: Node): Node {
     return new BranchNode(this.left, right);
-  }
-}
-
-/**
- * Custom TreeValue to be used in `ContainerLeafNodeStructType`.
- *
- * It skips extra work done in `ContainerTreeValue` since all data is represented as struct and should be returned
- * as struct, not as TreeBacked.
- */
-export class ContainerLeafNodeStructTreeValue<T extends CompositeValue> extends TreeValue<T> {
-  type: ContainerType<T>;
-
-  constructor(type: ContainerType<T>, tree: Tree) {
-    super(type, tree);
-    this.type = type;
-  }
-
-  getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
-    return this.type.tree_getProperty(this.tree, property) as ValueOf<T, P>;
-  }
-
-  setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean {
-    return this.type.tree_setProperty(this.tree, property, value);
-  }
-
-  *keys(): IterableIterator<string> {
-    yield* this.getPropertyNames() as string[];
-  }
-
-  *values(): IterableIterator<ValueOf<T>> {
-    for (const [_key, value] of this.entries()) {
-      yield value;
-    }
-  }
-
-  *entries(): IterableIterator<[string, ValueOf<T>]> {
-    const keys = this.getPropertyNames();
-    let i = 0;
-    for (const value of this.type.tree_iterateValues(this.tree)) {
-      const propName = keys[i] as keyof T;
-      yield [propName as string, value as ValueOf<T>];
-      i++;
-    }
-  }
-
-  *readonlyValues(): IterableIterator<ValueOf<T>> {
-    return yield* this.values();
-  }
-
-  *readonlyEntries(): IterableIterator<[string, ValueOf<T>]> {
-    return yield* this.entries();
-  }
-
-  keysArray(): string[] {
-    return this.getPropertyNames() as string[];
-  }
-  valuesArray(): ValueOf<T>[] {
-    return this.type.tree_getValues(this.tree) as ValueOf<T>[];
-  }
-  entriesArray(): [string, ValueOf<T>][] {
-    const keys = this.getPropertyNames();
-    const values = this.type.tree_getValues(this.tree);
-    return keys.map((key, i) => [key as string, values[i] as ValueOf<T>]);
-  }
-  readonlyValuesArray(): ValueOf<T>[] {
-    return this.valuesArray();
-  }
-  readonlyEntriesArray(): [string, ValueOf<T>][] {
-    return this.entriesArray();
   }
 }
 

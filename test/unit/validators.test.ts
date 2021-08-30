@@ -120,5 +120,13 @@ describe("Container with BranchNodeStruct", function () {
 
       expect(readonlyValuesListOfLeafNodeStruct(validatorListTB)).to.deep.equal(validatorsFlat);
     });
+
+    it("return each property as struct backed", () => {
+      const validatorListTB = ValidtorsListType.defaultTreeBacked();
+      validatorListTB.push(validator);
+      for (const key of Object.keys(validator) as (keyof typeof validator)[]) {
+        expect(validatorListTB[0][key].valueOf()).to.deep.equal(validator[key], `wrong ${key} value`);
+      }
+    });
   });
 });
