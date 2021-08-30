@@ -128,5 +128,11 @@ describe("Container with BranchNodeStruct", function () {
         expect(validatorListTB[0][key].valueOf()).to.deep.equal(validator[key], `wrong ${key} value`);
       }
     });
+
+    it("validator.valueOf()", () => {
+      const validatorListTB = ValidtorsListType.defaultTreeBacked();
+      validatorListTB.push(validator);
+      expect(validatorListTB[0].valueOf()).to.deep.equal(validator);
+    });
   });
 });
