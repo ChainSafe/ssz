@@ -14,6 +14,7 @@ import {
   isVectorType,
   isUnionType,
   UnionType,
+  isContainerLeafNodeStructType,
 } from "../../types";
 import {byteArrayEquals} from "../../util/byteArray";
 import {isTree} from "../../util/tree";
@@ -55,7 +56,11 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
       return (CompositeArrayTreeValue as unknown) as TreeValueConstructor<T>;
     }
   } else if (isContainerType(type)) {
-    return (ContainerTreeValue as unknown) as TreeValueConstructor<T>;
+    if (isContainerLeafNodeStructType(type)) {
+      return (ContainerLeafNodeStructTreeValue as unknown) as TreeValueConstructor<T>;
+    } else {
+      return (ContainerTreeValue as unknown) as TreeValueConstructor<T>;
+    }
   } else if (isUnionType(type)) {
     return (UnionTreeValue as unknown) as TreeValueConstructor<T>;
   }
@@ -554,6 +559,75 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
       }
     }
     return entries;
+  }
+}
+
+/**
+ * Custom TreeValue to be used in `ContainerLeafNodeStructType`.
+ *
+ * It skips extra work done in `ContainerTreeValue` since all data is represented as struct and should be returned
+ * as struct, not as TreeBacked.
+ */
+export class ContainerLeafNodeStructTreeValue<T extends CompositeValue> extends TreeValue<T> {
+  type: ContainerType<T>;
+
+  constructor(type: ContainerType<T>, tree: Tree) {
+    super(type, tree);
+    this.type = type;
+  }
+
+  getProperty<P extends keyof T>(property: P): ValueOf<T, P> {
+    return this.type.tree_getProperty(this.tree, property) as ValueOf<T, P>;
+  }
+
+  setProperty<P extends keyof T>(property: P, value: ValueOf<T, P>): boolean {
+    return this.type.tree_setProperty(this.tree, property, value);
+  }
+
+  *keys(): IterableIterator<string> {
+    yield* this.getPropertyNames() as string[];
+  }
+
+  *values(): IterableIterator<ValueOf<T>> {
+    for (const [_key, value] of this.entries()) {
+      yield value;
+    }
+  }
+
+  *entries(): IterableIterator<[string, ValueOf<T>]> {
+    const keys = this.getPropertyNames();
+    let i = 0;
+    for (const value of this.type.tree_iterateValues(this.tree)) {
+      const propName = keys[i] as keyof T;
+      yield [propName as string, value as ValueOf<T>];
+      i++;
+    }
+  }
+
+  *readonlyValues(): IterableIterator<ValueOf<T>> {
+    return yield* this.values();
+  }
+
+  *readonlyEntries(): IterableIterator<[string, ValueOf<T>]> {
+    return yield* this.entries();
+  }
+
+  keysArray(): string[] {
+    return this.getPropertyNames() as string[];
+  }
+  valuesArray(): ValueOf<T>[] {
+    return this.type.tree_getValues(this.tree) as ValueOf<T>[];
+  }
+  entriesArray(): [string, ValueOf<T>][] {
+    const keys = this.getPropertyNames();
+    const values = this.type.tree_getValues(this.tree);
+    return keys.map((key, i) => [key as string, values[i] as ValueOf<T>]);
+  }
+  readonlyValuesArray(): ValueOf<T>[] {
+    return this.valuesArray();
+  }
+  readonlyEntriesArray(): [string, ValueOf<T>][] {
+    return this.entriesArray();
   }
 }
 
