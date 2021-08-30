@@ -7,10 +7,12 @@ import {
   concatGindices,
   countToDepth,
   Gindex,
+  GindexBitstring,
   Node,
   Proof,
   ProofType,
   toGindex,
+  toGindexBitstring,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {merkleize} from "../../util/compat";
@@ -150,24 +152,29 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
     }
     return this._chunkDepth;
   }
+
   getGindexAtChunkIndex(index: number): Gindex {
     return toGindex(this.getChunkDepth(), BigInt(index));
   }
 
+  getGindexBitStringAtChunkIndex(index: number): GindexBitstring {
+    return toGindexBitstring(this.getChunkDepth(), index);
+  }
+
   tree_getSubtreeAtChunkIndex(target: Tree, index: number): Tree {
-    return target.getSubtree(this.getGindexAtChunkIndex(index));
+    return target.getSubtree(this.getGindexBitStringAtChunkIndex(index));
   }
 
   tree_setSubtreeAtChunkIndex(target: Tree, index: number, value: Tree, expand = false): void {
-    target.setSubtree(this.getGindexAtChunkIndex(index), value, expand);
+    target.setSubtree(this.getGindexBitStringAtChunkIndex(index), value, expand);
   }
 
   tree_getRootAtChunkIndex(target: Tree, index: number): Uint8Array {
-    return target.getRoot(this.getGindexAtChunkIndex(index));
+    return target.getRoot(this.getGindexBitStringAtChunkIndex(index));
   }
 
   tree_setRootAtChunkIndex(target: Tree, index: number, value: Uint8Array, expand = false): void {
-    target.setRoot(this.getGindexAtChunkIndex(index), value, expand);
+    target.setRoot(this.getGindexBitStringAtChunkIndex(index), value, expand);
   }
 
   abstract struct_getPropertyNames(struct: T): (string | number)[];

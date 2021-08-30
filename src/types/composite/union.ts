@@ -260,7 +260,7 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
     return ["value", "selector"];
   }
 
-  getPropertyGindex(property: PropertyKey): bigint {
+  getPropertyGindex(property: PropertyKey): Gindex {
     switch (property) {
       case "value":
         return VALUE_GINDEX;

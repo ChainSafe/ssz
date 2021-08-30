@@ -265,12 +265,12 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   tree_setValueAtIndex(target: Tree, index: number, value: T[number], expand = false): boolean {
-    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
+    const chunkGindexBitString = this.getGindexBitStringAtChunkIndex(this.getChunkIndex(index));
     // copy data from old chunk, use new memory to set a new chunk
     const chunk = new Uint8Array(32);
-    chunk.set(target.getRoot(chunkGindex));
+    chunk.set(target.getRoot(chunkGindexBitString));
     this.elementType.struct_serializeToBytes(value, chunk, this.getChunkOffset(index));
-    target.setRoot(chunkGindex, chunk, expand);
+    target.setRoot(chunkGindexBitString, chunk, expand);
     return true;
   }
 

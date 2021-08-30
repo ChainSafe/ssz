@@ -5,6 +5,7 @@ import {
   concatGindices,
   getGindicesAtDepth,
   Gindex,
+  GindexBitstring,
   iterateAtDepth,
   Node,
   subtreeFillToContents,
@@ -30,7 +31,8 @@ export function isContainerType<T extends ObjectLike = ObjectLike>(type: Type<un
 }
 type FieldInfo = {
   isBasic: boolean;
-  gindex: bigint;
+  gIndexBitString: GindexBitstring;
+  gIndex: bigint;
 };
 
 export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeType<T> {
@@ -53,7 +55,8 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       this.fieldInfos.set(fieldName, {
         isBasic: !isCompositeType(fieldType),
-        gindex: this.getGindexAtChunkIndex(chunkIndex),
+        gIndexBitString: this.getGindexBitStringAtChunkIndex(chunkIndex),
+        gIndex: this.getGindexAtChunkIndex(chunkIndex),
       });
       chunkIndex++;
     }
@@ -345,12 +348,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       const fieldInfo = this.fieldInfos.get(fieldName)!;
       if (fieldInfo.isBasic) {
-        const chunk = target.getRoot(fieldInfo.gindex);
+        const chunk = target.getRoot(fieldInfo.gIndexBitString);
         value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(chunk, 0);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const compositeType = fieldType as CompositeType<any>;
-        const subtree = target.getSubtree(fieldInfo.gindex);
+        const subtree = target.getSubtree(fieldInfo.gIndexBitString);
         value[fieldName as keyof T] = compositeType.tree_convertToStruct(subtree) as T[keyof T];
       }
     }
@@ -364,7 +367,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       if (fixedLen === null) {
         s +=
           (fieldType as CompositeType<T[keyof T]>).tree_getSerializedLength(
-            target.getSubtree(this.fieldInfos.get(fieldName)!.gindex)
+            target.getSubtree(this.fieldInfos.get(fieldName)!.gIndexBitString)
           ) + 4;
       } else {
         s += fixedLen;
@@ -378,7 +381,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
     for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
       const [currentOffset, nextOffset] = offsets[i];
-      const {isBasic, gindex} = this.fieldInfos.get(fieldName)!;
+      const {isBasic, gIndex: gindex} = this.fieldInfos.get(fieldName)!;
       if (isBasic) {
         // view of the chunk, shared buffer from `data`
         const dataChunk = new Uint8Array(
@@ -438,7 +441,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (!fieldInfo) {
       throw new Error(`Invalid container field name: ${String(prop)}`);
     }
-    return fieldInfo.gindex;
+    return fieldInfo.gIndex;
   }
 
   getPropertyType(prop: PropertyKey): Type<unknown> {
@@ -462,13 +465,13 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     if (fieldInfo.isBasic) {
       // Number64Uint wants to work on HashObject to improve performance
       if ((fieldType as NumberUintType).struct_deserializeFromHashObject) {
-        const hashObject = target.getHashObject(fieldInfo.gindex);
+        const hashObject = target.getHashObject(fieldInfo.gIndexBitString);
         return (fieldType as Number64UintType).struct_deserializeFromHashObject(hashObject, 0);
       }
-      const chunk = target.getRoot(fieldInfo.gindex);
+      const chunk = target.getRoot(fieldInfo.gIndexBitString);
       return fieldType.struct_deserializeFromBytes(chunk, 0);
     } else {
-      return target.getSubtree(fieldInfo.gindex);
+      return target.getSubtree(fieldInfo.gIndexBitString);
     }
   }
 
@@ -483,15 +486,15 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       if ((fieldType as Number64UintType).struct_serializeToHashObject) {
         const hashObject = newHashObject();
         (fieldType as Number64UintType).struct_serializeToHashObject(value as number, hashObject, 0);
-        target.setHashObject(fieldInfo.gindex, hashObject);
+        target.setHashObject(fieldInfo.gIndexBitString, hashObject);
         return true;
       }
       const chunk = new Uint8Array(32);
       fieldType.struct_serializeToBytes(value, chunk, 0);
-      target.setRoot(fieldInfo.gindex, chunk);
+      target.setRoot(fieldInfo.gIndexBitString, chunk);
       return true;
     } else {
-      target.setSubtree(fieldInfo.gindex, value as Tree);
+      target.setSubtree(fieldInfo.gIndexBitString, value as Tree);
       return true;
     }
   }
@@ -598,7 +601,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   tree_getLeafGindices(target?: Tree, root: Gindex = BigInt(1)): Gindex[] {
     const gindices: Gindex[] = [];
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      const {gindex: fieldGindex, isBasic} = this.fieldInfos.get(fieldName)!;
+      const {isBasic, gIndex: fieldGindex, gIndexBitString: gindexbitstring} = this.fieldInfos.get(fieldName)!;
       const extendedFieldGindex = concatGindices([root, fieldGindex]);
       if (isBasic) {
         gindices.push(extendedFieldGindex);
@@ -609,7 +612,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
           if (!target) {
             throw new Error("variable type requires tree argument to get leaves");
           }
-          gindices.push(...compositeType.tree_getLeafGindices(target.getSubtree(fieldGindex), extendedFieldGindex));
+          gindices.push(...compositeType.tree_getLeafGindices(target.getSubtree(gindexbitstring), extendedFieldGindex));
         } else {
           gindices.push(...compositeType.tree_getLeafGindices(undefined, extendedFieldGindex));
         }

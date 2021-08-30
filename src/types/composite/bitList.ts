@@ -146,17 +146,17 @@ export class BitListType extends BasicListType<BitList> {
     }
     // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
     const target = super.tree_deserializeFromBytes(data, start, end);
-    const lastGindex = this.getGindexAtChunkIndex(Math.ceil((end - start) / 32) - 1);
+    const lastGindexBitString = this.getGindexBitStringAtChunkIndex(Math.ceil((end - start) / 32) - 1);
     // copy chunk into new memory
     const lastChunk = new Uint8Array(32);
-    lastChunk.set(target.getRoot(lastGindex));
+    lastChunk.set(target.getRoot(lastGindexBitString));
     const lastChunkByte = ((end - start) % 32) - 1;
     // mask lastChunkByte
     const lastByteBitLength = lastByte.toString(2).length - 1;
     const length = (end - start - 1) * 8 + lastByteBitLength;
     const mask = 0xff >> (8 - lastByteBitLength);
     lastChunk[lastChunkByte] &= mask;
-    target.setRoot(lastGindex, lastChunk);
+    target.setRoot(lastGindexBitString, lastChunk);
     this.tree_setLength(target, length);
     return target;
   }
@@ -236,16 +236,16 @@ export class BitListType extends BasicListType<BitList> {
   }
 
   tree_setValueAtIndex(target: Tree, property: number, value: boolean, expand = false): boolean {
-    const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(property));
+    const chunkGindexBitString = this.getGindexBitStringAtChunkIndex(this.getChunkIndex(property));
     const chunk = new Uint8Array(32);
-    chunk.set(target.getRoot(chunkGindex));
+    chunk.set(target.getRoot(chunkGindexBitString));
     const byteOffset = this.getChunkOffset(property);
     if (value) {
       chunk[byteOffset] |= 1 << this.getBitOffset(property);
     } else {
       chunk[byteOffset] &= 0xff ^ (1 << this.getBitOffset(property));
     }
-    target.setRoot(chunkGindex, chunk, expand);
+    target.setRoot(chunkGindexBitString, chunk, expand);
     return true;
   }
 
