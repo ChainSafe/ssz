@@ -14,10 +14,10 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {SszErrorPath} from "../../util/errorPath";
 import {toExpectedCase} from "../../util/json";
-import {isTreeBacked} from "../../backings/tree/treeValue";
 import {basicTypeToLeafNode} from "../../util/basic";
 import {Number64UintType, NumberUintType} from "../basic";
 import {newHashObject} from "../../util/hash";
+import {isTreeBacked} from "../../backings/tree/treeValue";
 
 export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
