@@ -90,6 +90,13 @@ export const CamelCaseFieldObject = new ContainerType({
   },
 });
 
+export const NoTransformFieldObject = new ContainerType({
+  fields: {
+    someValue_RandOM: new NumberUintType({byteLength: 4}),
+    someOtherValue_1Random2: new BooleanType(),
+  },
+});
+
 export const ComplexCamelCaseFieldObject = new ContainerType({
   fields: {
     someValue: new NumberUintType({byteLength: 4}),

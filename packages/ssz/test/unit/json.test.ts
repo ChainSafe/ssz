@@ -1,4 +1,4 @@
-import {CamelCaseFieldObject, ComplexCamelCaseFieldObject} from "./objects";
+import {CamelCaseFieldObject, ComplexCamelCaseFieldObject, NoTransformFieldObject} from "./objects";
 import {expect} from "chai";
 import {CompositeListType} from "../../src/types/composite";
 
@@ -8,6 +8,15 @@ describe("json serialization", function () {
     const json = CamelCaseFieldObject.toJson(test);
     const result = CamelCaseFieldObject.fromJson(json);
     expect(CamelCaseFieldObject.equals(result, test)).to.be.true;
+  });
+
+  it("should deserialize without case transformation", function () {
+    const test = {someValue_RandOM: 4, someOtherValue_1Random2: true};
+    const json = {someValue_RandOM: 4, someOtherValue_1Random2: true};
+    let result = NoTransformFieldObject.fromJson(json, {case: "notransform"});
+    expect(NoTransformFieldObject.equals(test, result)).to.be.true;
+    result = NoTransformFieldObject.fromJson(json); //should do no transform by default
+    expect(NoTransformFieldObject.equals(test, result)).to.be.true;
   });
 
   it("should deserialize from snake case", function () {
