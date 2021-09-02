@@ -1,0 +1,14 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "pretty": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "outDir": "lib",
+  }
+}
