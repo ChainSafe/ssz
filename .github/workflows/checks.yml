@@ -1,0 +1,13 @@
+name: Checks
+
+on: [pull_request, push]
+
+jobs:
+  Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: yarn install
+      - run: yarn build
+      - run: yarn check-types
+      - run: yarn lint
