@@ -116,7 +116,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       try {
         ((fieldType as unknown) as T).struct_assertValidValue((value as T)[fieldName]);
       } catch (e) {
-        throw new Error(`Invalid field ${fieldName}: ${e.message}`);
+        throw new Error(`Invalid field ${fieldName}: ${(e as Error).message}`);
       }
     }
   }
@@ -190,7 +190,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
           currentIndex = nextIndex;
         }
       } catch (e) {
-        throw new SszErrorPath(e, fieldName);
+        throw new SszErrorPath((e as Error), fieldName);
       }
     }
 

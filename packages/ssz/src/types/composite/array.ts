@@ -49,7 +49,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
       try {
         this.elementType.struct_assertValidValue((value as T)[i]);
       } catch (e) {
-        throw new Error(`Invalid element ${i}: ${e.message}`);
+        throw new Error(`Invalid element ${i}: ${(e as Error).message}`);
       }
     }
   }
@@ -362,7 +362,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       try {
         this.elementType.struct_assertValidValue((value as T)[i]);
       } catch (e) {
-        throw new Error(`Invalid element ${i}: ${e.message}`);
+        throw new Error(`Invalid element ${i}: ${(e as Error).message}`);
       }
     }
   }
@@ -417,7 +417,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
         try {
           value.push(this.elementType.struct_deserializeFromBytes(data, currentOffset, nextOffset));
         } catch (e) {
-          throw new SszErrorPath(e, value.length);
+          throw new SszErrorPath(e as Error, value.length);
         }
         currentIndex = nextIndex;
         currentOffset = nextOffset;

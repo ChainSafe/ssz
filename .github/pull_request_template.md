@@ -1,6 +1,6 @@
 **Motivation**
 
-<!-- Why is this PR exists? What are the goals of the pull request? -->
+<!-- Why does this PR exist? What are the goals of the pull request? -->
 
 **Description**
 
