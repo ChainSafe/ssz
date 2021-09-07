@@ -16,7 +16,6 @@
     "benchmark:local": "yarn benchmark --local",
     "publish:release": "lerna publish from-package --yes --no-verify-access",
     "release": "lerna version --no-push --sign-git-commit",
-    "postrelease": "git tag -d $(git describe --abbrev=0)",
     "check-readme": "lerna run check-readme"
   },
   "devDependencies": {
