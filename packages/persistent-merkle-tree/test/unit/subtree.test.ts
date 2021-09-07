@@ -7,7 +7,7 @@ describe("subtreeFillToContents", () => {
     try {
       subtreeFillToContents([new LeafNode(new Uint8Array(32))], 1);
     } catch (e) {
-      expect.fail(e);
+      expect.fail((e as Error).message);
     }
   });
 
@@ -16,7 +16,7 @@ describe("subtreeFillToContents", () => {
       subtreeFillToContents([], 0);
       subtreeFillToContents([], 1);
     } catch (e) {
-      expect.fail(e);
+      expect.fail((e as Error).message);
     }
   });
 
@@ -24,7 +24,7 @@ describe("subtreeFillToContents", () => {
     try {
       subtreeFillToContents([], 31);
     } catch (e) {
-      expect.fail(e);
+      expect.fail((e as Error).message);
     }
   });
 });
