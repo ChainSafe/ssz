@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType} from "../../src";
+import {booleanType, byteType, Type} from "../../src";
 import {
   ArrayObject,
   bigint16Type,
@@ -14,7 +14,7 @@ import {
 
 describe("defaultValue", () => {
   const testCases: {
-    type: any;
+    type: Type<any>;
     expected: any;
   }[] = [
     {type: byteType, expected: 0},
@@ -29,6 +29,7 @@ describe("defaultValue", () => {
   ];
   for (const {type, expected} of testCases) {
     it(`should correctly get the defaultValue for ${type.constructor.name}`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const actual = type.defaultValue();
       expect(type.equals(actual, expected));
     });

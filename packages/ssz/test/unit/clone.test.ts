@@ -1,12 +1,12 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {booleanType, byteType} from "../../src";
+import {booleanType, byteType, Type} from "../../src";
 import {ArrayObject, bigint16Type, bytes2Type, number16Vector6Type, number16List100Type, UnionObject} from "./objects";
 
 describe("clone", () => {
   const testCases: {
     value: any;
-    type: any;
+    type: Type<any>;
     expected: boolean;
   }[] = [
     {value: 1, type: byteType, expected: true},
@@ -56,6 +56,7 @@ describe("clone", () => {
   ];
   for (const {type, value} of testCases) {
     it(`should correctly perform clone for ${type.constructor.name}`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const actual = type.clone(value);
       expect(type.equals(actual, value));
     });

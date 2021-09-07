@@ -1,12 +1,12 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType} from "../../src";
+import {booleanType, byteType, Type} from "../../src";
 import {ArrayObject, bigint16Type, bytes2Type, number16List100Type, UnionObject} from "./objects";
 
 describe("equals", () => {
   const testCases: {
-    type: any;
+    type: Type<any>;
     value1: any;
     value2: any;
     expected: boolean;

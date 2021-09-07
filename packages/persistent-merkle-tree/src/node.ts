@@ -5,7 +5,7 @@ const ERR_INVALID_TREE = "Invalid tree";
 
 export abstract class Node implements HashObject {
   // this is to save an extra variable to check if a node has a root or not
-  h0 = (null as unknown) as number;
+  h0 = null as unknown as number;
   h1 = 0;
   h2 = 0;
   h3 = 0;

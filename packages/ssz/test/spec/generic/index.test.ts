@@ -71,15 +71,21 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         expect(toHexString(root)).to.equal(testDataRoot, "struct hashTreeRoot");
 
         // If the type is composite, test tree-backed ops
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (!isCompositeType(type as Type<any>)) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const compositeType = type as CompositeType<any>;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const treebackedValue = compositeType.createTreeBackedFromStruct(testData.value);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const treeToStruct = compositeType.tree_convertToStruct(treebackedValue.tree);
 
         expect(treeToStruct).to.deep.equal(testData.value, "tree-backed to struct");
         expect(type.equals(testData.value, treebackedValue), "struct - tree-backed type.equals()").to.be.true;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         expect(toHexString(treebackedValue.serialize())).to.equal(testDataSerialized, "tree-backed serialize");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         expect(toHexString(treebackedValue.hashTreeRoot())).to.equal(testDataRoot, "tree-backed hashTreeRoot");
       });
     }

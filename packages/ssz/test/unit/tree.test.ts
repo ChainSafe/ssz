@@ -106,12 +106,12 @@ describe("tree simple list/vector", () => {
   });
 
   it("tree_applyDeltaInBatch", () => {
-    const BalancesList = new ListType({elementType: new NumberUintType({byteLength: 8}), limit: 1000});
-    const BalancesList64 = new ListType({elementType: new Number64UintType(), limit: 1000});
+    const BalancesList = new ListType<List<number>>({elementType: new NumberUintType({byteLength: 8}), limit: 1000});
+    const BalancesList64 = new ListType<List<number>>({elementType: new Number64UintType(), limit: 1000});
     const length = 200;
     const struct = Array.from({length}, () => 31217089836);
-    const tbBalancesList = BalancesList.createTreeBackedFromStruct(struct);
-    const tbBalancesList64 = BalancesList64.createTreeBackedFromStruct(struct);
+    const tbBalancesList = BalancesList.createTreeBackedFromStruct(struct as List<number>);
+    const tbBalancesList64 = BalancesList64.createTreeBackedFromStruct(struct as List<number>);
     const delta = 100;
     // increase delta for BalancesList
     for (let i = 0; i < length; i++) {

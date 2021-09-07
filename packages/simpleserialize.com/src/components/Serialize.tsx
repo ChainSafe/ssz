@@ -28,7 +28,7 @@ type State = {
 export default class Serialize extends React.Component<Props, State> {
   worker: Worker;
   serializationWorkerThread: ModuleThread<SszWorker> | undefined;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -65,14 +65,16 @@ export default class Serialize extends React.Component<Props, State> {
     let error;
     if (this.props.serializeModeOn) {
       this.setOverlay(true, "Serializing...");
-      this.serializationWorkerThread?.serialize(name, forkName, input)
-        .then((data: {root: Uint8Array, serialized: Uint8Array}) => {
+      this.serializationWorkerThread
+        ?.serialize(name, forkName, input)
+        .then((data: {root: Uint8Array; serialized: Uint8Array}) => {
           this.setState({
             hashTreeRoot: data.root,
-            serialized: data.serialized
+            serialized: data.serialized,
           });
           this.setOverlay(false);
-        }).catch((e: { message: string }) => error = e.message);
+        })
+        .catch((e: {message: string}) => (error = e.message));
     } else {
       this.setOverlay(false);
     }
@@ -82,7 +84,14 @@ export default class Serialize extends React.Component<Props, State> {
 
     const deserialized = input;
 
-    this.setState({forkName, name, input, sszType: type, error, deserialized});
+    this.setState({
+      forkName,
+      name,
+      input,
+      sszType: type,
+      error,
+      deserialized,
+    });
   }
 
   render(): JSX.Element {
@@ -91,16 +100,15 @@ export default class Serialize extends React.Component<Props, State> {
     const bounceLoader = <BounceLoader css="margin: auto;" />;
 
     return (
-      <div className='section serialize-section is-family-code'>
+      <div className="section serialize-section is-family-code">
         <LoadingOverlay
           active={this.state.showOverlay}
           spinner={bounceLoader}
           text={this.state.overlayText}
-        >
-        </LoadingOverlay>
-        <div className='container'>
-          <div className='columns is-desktop'>
-            <div className='column'>
+        ></LoadingOverlay>
+        <div className="container">
+          <div className="columns is-desktop">
+            <div className="column">
               <Input
                 serializeModeOn={serializeModeOn}
                 onProcess={this.process.bind(this)}
@@ -111,7 +119,7 @@ export default class Serialize extends React.Component<Props, State> {
                 worker={this.worker}
               />
             </div>
-            <div className='column'>
+            <div className="column">
               <Output
                 deserialized={deserialized}
                 serializeModeOn={serializeModeOn}

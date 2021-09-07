@@ -1,11 +1,17 @@
 import {itBench} from "@dapplion/benchmark";
 import {NumberUintType, ContainerType, VectorType, CompositeType} from "../../src";
 
+type TestObj = {
+  a: number;
+  b: number;
+  vec: number[];
+};
+
 describe("SSZ get property", () => {
   const Gwei = new NumberUintType({byteLength: 8});
   const Vec = new VectorType({elementType: Gwei, length: 1e5});
 
-  const testCases: {id: string; type: CompositeType<any>}[] = [
+  const testCases: {id: string; type: CompositeType<TestObj>}[] = [
     {
       id: "Container {a,b,vec}",
       type: new ContainerType<{a: number; b: number; vec: number[]}>({

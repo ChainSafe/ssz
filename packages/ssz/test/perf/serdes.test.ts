@@ -18,6 +18,7 @@ describe("SSZ (de)serialize", () => {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const testCases: TestCase<any>[] = [
     {
       id: "Simple object",
@@ -37,8 +38,10 @@ describe("SSZ (de)serialize", () => {
   ];
 
   for (const {id, type, getValue} of testCases) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const struct = getValue ? getValue() : type.defaultValue();
     const binary = type.serialize(struct);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const treeBacked = type.createTreeBackedFromStruct(struct);
 
     itBench(`${id} binary -> struct`, () => {
@@ -54,6 +57,7 @@ describe("SSZ (de)serialize", () => {
     });
 
     itBench(`${id} tree_backed -> struct`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       type.tree_convertToStruct(treeBacked.tree);
     });
 

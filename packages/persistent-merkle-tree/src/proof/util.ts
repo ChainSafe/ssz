@@ -25,9 +25,10 @@ export function computeProofGindices(gindex: Gindex): {path: Set<Gindex>; branch
  * Path indices are parent indices upwards toward the root
  * Branch indices are witnesses required for a merkle proof
  */
-export function computeProofBitstrings(
-  gindex: GindexBitstring
-): {path: Set<GindexBitstring>; branch: Set<GindexBitstring>} {
+export function computeProofBitstrings(gindex: GindexBitstring): {
+  path: Set<GindexBitstring>;
+  branch: Set<GindexBitstring>;
+} {
   const path = new Set<GindexBitstring>();
   const branch = new Set<GindexBitstring>();
   let g = gindex;

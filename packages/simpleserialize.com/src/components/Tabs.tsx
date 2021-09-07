@@ -1,9 +1,7 @@
 import React from "react";
 import Serialize from "./Serialize";
 
-type Props = {
-
-};
+type Props = Record<string, never>;
 
 type State = {
   serializeModeOn: boolean;
@@ -31,14 +29,12 @@ export default class Tabs extends React.Component<Props, State> {
       <>
         <div className="tabs is-centered">
           <ul>
-            <li
-              className={serializeModeOn ? "is-active" : "is-inactive"}
-              onClick={() => this.showSerialize()}
-            ><a>Serialize</a></li>
-            <li
-              className={serializeModeOn ? "is-inactive" : "is-active"}
-              onClick={() => this.showDeserialize()}
-            ><a>Deserialize</a></li>
+            <li className={serializeModeOn ? "is-active" : "is-inactive"} onClick={() => this.showSerialize()}>
+              <a>Serialize</a>
+            </li>
+            <li className={serializeModeOn ? "is-inactive" : "is-active"} onClick={() => this.showDeserialize()}>
+              <a>Deserialize</a>
+            </li>
           </ul>
         </div>
         <Serialize serializeModeOn={serializeModeOn} />

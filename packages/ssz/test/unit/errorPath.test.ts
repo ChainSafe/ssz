@@ -1,7 +1,7 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
 
-import {byteType, ContainerType, ListType} from "../../src";
+import {byteType, ContainerType, ListType, Type} from "../../src";
 
 const SimpleObject = new ContainerType({
   fields: {
@@ -26,7 +26,7 @@ const ArrayObject = new ContainerType({
 describe("error path", () => {
   const testCases: {
     value: string;
-    type: any;
+    type: Type<any>;
     expected: any;
   }[] = [
     {
@@ -43,6 +43,7 @@ describe("error path", () => {
 
   for (const {type, value} of testCases) {
     it(`should print the error path deserializing ${type.constructor.name}`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v[1]: Not all variable bytes consumed");
     });
   }

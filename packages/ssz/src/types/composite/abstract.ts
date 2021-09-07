@@ -295,7 +295,7 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
    */
   clone(value: T): T {
     if (isBackedValue(value)) {
-      return (value.clone() as unknown) as T;
+      return value.clone() as unknown as T;
     } else {
       return this.struct_clone(value);
     }

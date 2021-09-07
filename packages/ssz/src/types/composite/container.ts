@@ -114,7 +114,8 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   struct_assertValidValue(value: unknown): asserts value is T {
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       try {
-        ((fieldType as unknown) as T).struct_assertValidValue((value as T)[fieldName]);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        (fieldType as unknown as T).struct_assertValidValue((value as T)[fieldName]);
       } catch (e) {
         throw new Error(`Invalid field ${fieldName}: ${(e as Error).message}`);
       }
@@ -132,6 +133,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   struct_clone(value: T): T {
     const newValue = {} as T;
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       newValue[fieldName as keyof T] = fieldType.struct_clone(value[fieldName]);
     }
     return newValue;
@@ -186,11 +188,12 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         } else {
           // fixed-sized field
           nextIndex = currentIndex + fieldSize;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(data, currentIndex, nextIndex);
           currentIndex = nextIndex;
         }
       } catch (e) {
-        throw new SszErrorPath((e as Error), fieldName);
+        throw new SszErrorPath(e as Error, fieldName);
       }
     }
 
@@ -249,6 +252,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       value[fieldName as keyof T] = fieldType.fromJson((data as Record<string, Json>)[expectedFieldName], options);
     }
     return value;
@@ -349,6 +353,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       const fieldInfo = this.fieldInfos.get(fieldName)!;
       if (fieldInfo.isBasic) {
         const chunk = target.getRoot(fieldInfo.gIndexBitString);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         value[fieldName as keyof T] = fieldType.struct_deserializeFromBytes(chunk, 0);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -519,11 +524,13 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       Symbol.iterator
     ]();
     for (const propType of Object.values(this.fields)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const {value, done} = gindexIterator.next();
       if (done) {
         return;
       } else {
         if (!isCompositeType(propType)) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           yield propType.struct_deserializeFromBytes(value.root as Uint8Array, 0);
         } else {
           yield target.getSubtree(value);

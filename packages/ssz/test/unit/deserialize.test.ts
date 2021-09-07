@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteArrayEquals, byteType, CompositeType, ContainerType, isCompositeType} from "../../src";
+import {booleanType, byteArrayEquals, byteType, CompositeType, ContainerType, isCompositeType, Type} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -25,7 +25,7 @@ import {
 describe("deserialize", () => {
   const testCases: {
     value: string;
-    type: any;
+    type: Type<any>;
     expected: any;
   }[] = [
     {value: "01", type: booleanType, expected: true},
@@ -117,14 +117,17 @@ describe("deserialize", () => {
   for (const {type, value, expected} of testCases) {
     it(`should correctly deserialize ${type.constructor.name}`, () => {
       const bytes = Buffer.from(value, "hex");
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const actual = type.deserialize(bytes);
       assert.deepEqual(actual, expected);
       if (isCompositeType(type)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromBytes(bytes);
         expect(byteArrayEquals(type.hashTreeRoot(treeBackedActual), type.hashTreeRoot(expected))).to.be.equal(
           true,
           "Deserialized TreeBacked is incorrect"
         );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const treeBackedActual2 = (type as CompositeType<any>).createTreeBackedFromStruct(actual);
         expect(type.equals(treeBackedActual2, treeBackedActual)).to.be.equal(
           true,
@@ -135,7 +138,7 @@ describe("deserialize", () => {
   }
   const invalidDataTestCases: {
     value: string;
-    type: any;
+    type: Type<any>;
     expectedError: string;
   }[] = [
     {value: "", type: number16Type, expectedError: "Data is empty"},

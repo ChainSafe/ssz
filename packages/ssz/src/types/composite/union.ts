@@ -64,7 +64,8 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
       }
     } else {
       try {
-        ((this.types[selector] as unknown) as ObjectLike).struct_assertValidValue(value);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        (this.types[selector] as unknown as ObjectLike).struct_assertValidValue(value);
       } catch (e) {
         throw new Error(`Invalid value ${value} for selector ${selector}`);
       }
@@ -116,10 +117,11 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
     if (selector === null || (selector !== null && !(selector >= 0))) {
       throw new Error("Invalid JSON Union: invalid selector" + selector);
     }
-    return ({
+    return {
       selector,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       value: this.types[selector as number].struct_convertFromJson(value, options),
-    } as unknown) as T;
+    } as unknown as T;
   }
 
   struct_convertToTree(wrappedValue: T): Tree {
@@ -178,7 +180,8 @@ export class UnionType<T extends Union<unknown>> extends CompositeType<T> {
     const selector = byteType.fromBytes(data, start);
     const type = this.types[selector];
     // remainning bytes are for value
-    const value = type.struct_deserializeFromBytes(data, start + 1, end);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const value = type.struct_deserializeFromBytes(data, start + 1, end) as T["value"];
     return {selector, value} as T;
   }
 

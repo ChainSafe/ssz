@@ -6,9 +6,8 @@ type Props = {
 };
 
 const ErrorBox = ({error, hideError}: Props): JSX.Element => (
-  <div className='notification'>
-    <a className='delete'
-      onClick={hideError}/>
+  <div className="notification">
+    <a className="delete" onClick={hideError} />
     {error}
   </div>
 );

@@ -11,11 +11,13 @@ import "./styles.scss";
 const options = {
   timeout: 3000,
   offset: "30px",
-  transition: transitions.SCALE
+  transition: transitions.SCALE,
 };
 
 ReactDOM.render(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   <AlertProvider template={AlertTemplate} {...options}>
     <App />
   </AlertProvider>,
-  document.getElementById("app"));
+  document.getElementById("app")
+);

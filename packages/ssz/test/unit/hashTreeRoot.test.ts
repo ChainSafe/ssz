@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType, CompositeType, ContainerType, isCompositeType, ListType} from "../../src";
+import {booleanType, byteType, CompositeType, ContainerType, isCompositeType, ListType, Type} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -21,7 +21,7 @@ import {
 describe("hashTreeRoot", () => {
   const testCases: {
     value: any;
-    type: any;
+    type: Type<any>;
     expected: string;
   }[] = [
     {value: true, type: booleanType, expected: ""},
@@ -82,7 +82,9 @@ describe("hashTreeRoot", () => {
       const actualStructRoot = Buffer.from(type.hashTreeRoot(value)).toString("hex");
       assert(actualStructRoot);
       if (isCompositeType(type)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromStruct(value);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         expect(Buffer.from(treeBackedActual.hashTreeRoot()).toString("hex")).to.be.equal(
           actualStructRoot,
           "TreeBacked root is different from struct root"

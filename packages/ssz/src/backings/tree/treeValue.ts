@@ -30,7 +30,7 @@ type TreeValueConstructor<T extends CompositeValue> = {
 };
 
 export function isTreeBacked<T extends CompositeValue>(value: unknown): value is ITreeBacked<T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
   return value && (value as any).type && (value as any).tree && isTree((value as any).tree);
 }
 
@@ -45,24 +45,24 @@ export function createTreeBacked<T extends CompositeValue>(type: CompositeType<T
 export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<T>): TreeValueConstructor<T> {
   if (isListType(type)) {
     if (isBasicType(type.elementType)) {
-      return (BasicListTreeValue as unknown) as TreeValueConstructor<T>;
+      return BasicListTreeValue as unknown as TreeValueConstructor<T>;
     } else {
-      return (CompositeListTreeValue as unknown) as TreeValueConstructor<T>;
+      return CompositeListTreeValue as unknown as TreeValueConstructor<T>;
     }
   } else if (isVectorType(type)) {
     if (isBasicType(type.elementType)) {
-      return (BasicArrayTreeValue as unknown) as TreeValueConstructor<T>;
+      return BasicArrayTreeValue as unknown as TreeValueConstructor<T>;
     } else {
-      return (CompositeArrayTreeValue as unknown) as TreeValueConstructor<T>;
+      return CompositeArrayTreeValue as unknown as TreeValueConstructor<T>;
     }
   } else if (isContainerType(type)) {
     if (isContainerLeafNodeStructType(type)) {
-      return (ContainerLeafNodeStructTreeValue as unknown) as TreeValueConstructor<T>;
+      return ContainerLeafNodeStructTreeValue as unknown as TreeValueConstructor<T>;
     } else {
-      return (ContainerTreeValue as unknown) as TreeValueConstructor<T>;
+      return ContainerTreeValue as unknown as TreeValueConstructor<T>;
     }
   } else if (isUnionType(type)) {
-    return (UnionTreeValue as unknown) as TreeValueConstructor<T>;
+    return UnionTreeValue as unknown as TreeValueConstructor<T>;
   }
 
   throw Error("No TreeValueClass for type");
@@ -73,7 +73,7 @@ export function getTreeValueClass<T extends CompositeValue>(type: CompositeType<
  */
 export function proxyWrapTreeValue<T extends CompositeValue>(value: TreeValue<T>): TreeBacked<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (new Proxy(value, TreeProxyHandler as any) as unknown) as TreeBacked<T>;
+  return new Proxy(value, TreeProxyHandler as any) as unknown as TreeBacked<T>;
 }
 
 /**
@@ -89,7 +89,7 @@ export const TreeProxyHandler: ProxyHandler<TreeValue<CompositeValue>> = {
   },
 
   set(target: TreeValue<CompositeValue>, property: PropertyKey, value: unknown): boolean {
-    return target.setProperty(property as keyof CompositeValue, (value as unknown) as never);
+    return target.setProperty(property as keyof CompositeValue, value as unknown as never);
   },
 
   ownKeys(target: TreeValue<CompositeValue>): (string | symbol)[] {
@@ -122,6 +122,7 @@ export abstract class TreeValue<T extends CompositeValue> implements ITreeBacked
   }
 
   clone(): TreeBacked<T> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const TreeValueClass = Object.getPrototypeOf(this).constructor as {new (...args: unknown[]): TreeValue<T>};
     return proxyWrapTreeValue(new TreeValueClass(this.type, this.tree.clone()));
   }
@@ -293,9 +294,7 @@ export class CompositeArrayTreeValue<T extends ArrayLike<unknown>> extends TreeV
     return this.type.tree_setProperty(
       this.tree,
       property as number,
-      isTreeBacked(value)
-        ? value.tree
-        : this.type.elementType.struct_convertToTree((value as unknown) as CompositeValue)
+      isTreeBacked(value) ? value.tree : this.type.elementType.struct_convertToTree(value as unknown as CompositeValue)
     );
   }
 
@@ -409,9 +408,7 @@ export class CompositeListTreeValue<T extends List<unknown>> extends CompositeAr
 
   push(...values: ValueOf<T>[]): number {
     const convertedValues = values.map((value) =>
-      isTreeBacked(value)
-        ? value.tree
-        : this.type.elementType.struct_convertToTree((value as unknown) as CompositeValue)
+      isTreeBacked(value) ? value.tree : this.type.elementType.struct_convertToTree(value as unknown as CompositeValue)
     );
     return this.type.tree_push(this.tree, ...convertedValues);
   }
@@ -436,7 +433,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
     const propValue = this.type.tree_getProperty(this.tree, property);
     if (!this.type.fieldInfos.get(property as string)!.isBasic) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (createTreeBacked(propType as CompositeType<any>, propValue as Tree) as unknown) as ValueOf<T, P>;
+      return createTreeBacked(propType as CompositeType<any>, propValue as Tree) as unknown as ValueOf<T, P>;
     } else {
       return propValue as ValueOf<T, P>;
     }
@@ -452,7 +449,7 @@ export class ContainerTreeValue<T extends CompositeValue> extends TreeValue<T> {
         return this.type.tree_setProperty(
           this.tree,
           property,
-          propType.struct_convertToTree((value as unknown) as CompositeValue)
+          propType.struct_convertToTree(value as unknown as CompositeValue)
         );
       }
     } else {
@@ -605,11 +602,11 @@ export class ContainerLeafNodeStructTreeValue<T extends CompositeValue> extends 
   }
 
   *readonlyValues(): IterableIterator<ValueOf<T>> {
-    return yield* this.values();
+    yield* this.values();
   }
 
   *readonlyEntries(): IterableIterator<[string, ValueOf<T>]> {
-    return yield* this.entries();
+    yield* this.entries();
   }
 
   keysArray(): string[] {
@@ -646,7 +643,7 @@ export class UnionTreeValue<T extends Union<unknown>> extends TreeValue<T> {
     const propType = this.type.getPropertyTypeFromTree(this.tree, property);
     const propValue = this.type.tree_getProperty(this.tree, property);
     if (isCompositeType(propType)) {
-      return (createTreeBacked(propType, propValue as Tree) as unknown) as ValueOf<T, P>;
+      return createTreeBacked(propType, propValue as Tree) as unknown as ValueOf<T, P>;
     } else {
       return propValue as ValueOf<T, P>;
     }

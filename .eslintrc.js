@@ -82,4 +82,24 @@ module.exports = {
     // Prevents accidentally pushing a commit with .only in Mocha tests
     "no-only-tests/no-only-tests": "error",
   },
+  overrides: [
+    {
+      files: ["**/test/**/*.ts"],
+      rules: {
+        "import/no-extraneous-dependencies": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "func-names": "off",
+      },
+    },
+    {
+      files: ["**/types/**/*.ts"],
+      rules: {
+        "@typescript-eslint/naming-convention": [
+          "off",
+          {selector: "interface", prefix: ["I"]},
+          {selector: "interface", format: ["PascalCase"], prefix: ["I"]},
+        ],
+      },
+    },
+  ],
 };

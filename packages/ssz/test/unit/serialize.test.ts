@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 
-import {booleanType, byteType, CompositeType, isCompositeType} from "../../src";
+import {booleanType, byteType, CompositeType, isCompositeType, Type} from "../../src";
 import {
   ArrayObject,
   ArrayObject2,
@@ -21,7 +21,7 @@ import {
 describe("serialize", () => {
   const testCases: {
     value: any;
-    type: any;
+    type: Type<any>;
     expected: string;
   }[] = [
     {value: true, type: booleanType, expected: "01"},
@@ -93,6 +93,7 @@ describe("serialize", () => {
       const actual = Buffer.from(type.serialize(value)).toString("hex");
       assert.equal(actual, expected);
       if (isCompositeType(type)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const treeBackedActual = (type as CompositeType<any>).createTreeBackedFromStruct(value);
         expect(Buffer.from(type.serialize(treeBackedActual)).toString("hex")).to.be.equal(
           expected,

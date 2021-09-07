@@ -41,7 +41,6 @@ class Input extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const types = forks[DEFAULT_FORK];
     this.worker = props.worker;
 
     this.state = {
@@ -68,8 +67,8 @@ class Input extends React.Component<Props, State> {
     this.setState({value, input});
   }
 
-  componentDidUpdate(prevProps: { serializeModeOn: boolean }): void {
-    if(prevProps.serializeModeOn !== this.props.serializeModeOn) {
+  componentDidUpdate(prevProps: {serializeModeOn: boolean}): void {
+    if (prevProps.serializeModeOn !== this.props.serializeModeOn) {
       if (!this.props.serializeModeOn) {
         this.setInputType("hex");
         if (this.props.serialized) {
@@ -85,7 +84,7 @@ class Input extends React.Component<Props, State> {
     }
   }
 
-  handleError(error: { message: string }): void {
+  handleError(error: {message: string}): void {
     this.showError(error.message);
     this.props.setOverlay(false);
   }
@@ -95,13 +94,7 @@ class Input extends React.Component<Props, State> {
   }
 
   getRows(): number {
-    return Math.min(
-      16,
-      Math.max(
-        4,
-        Math.floor((this.state.input.match(/\n/g) || []).length * 1.5)
-      )
-    );
+    return Math.min(16, Math.max(4, Math.floor((this.state.input.match(/\n/g) || []).length * 1.5)));
   }
 
   names(): string[] {
@@ -129,7 +122,7 @@ class Input extends React.Component<Props, State> {
   async resetWith(inputType: string, sszTypeName: string): Promise<void> {
     const types = this.types();
     let sszType = types[sszTypeName];
-    
+
     // get a new ssz type if it's not in our fork
     if (!sszType) {
       sszTypeName = initialType;
@@ -154,14 +147,17 @@ class Input extends React.Component<Props, State> {
       this.doProcess.bind(this);
     } else {
       this.props.setOverlay(true, `Generating random ${sszTypeName} value...`);
-      this.typesWorkerThread?.createRandomValue(sszTypeName, forkName).then(async (value) => {
-        const input = inputTypes[inputType].dump(value, sszType);
-        this.setState({
-          input,
-          value
-        });
-        this.props.setOverlay(false);
-      }).catch((error: { message: string }) => this.handleError(error));
+      this.typesWorkerThread
+        ?.createRandomValue(sszTypeName, forkName)
+        .then(async (value) => {
+          const input = inputTypes[inputType].dump(value, sszType);
+          this.setState({
+            input,
+            value,
+          });
+          this.props.setOverlay(false);
+        })
+        .catch((error: {message: string}) => this.handleError(error));
     }
   }
 
@@ -194,14 +190,8 @@ class Input extends React.Component<Props, State> {
     const {sszTypeName, forkName} = this.state;
     const parsedInput = await this.parsedInput();
     try {
-      this.props.onProcess(
-        forkName,
-        sszTypeName,
-        parsedInput,
-        this.types()[sszTypeName],
-        this.getInputType(),
-      );
-    } catch(e) {
+      this.props.onProcess(forkName, sszTypeName, parsedInput, this.types()[sszTypeName], this.getInputType());
+    } catch (e) {
       this.handleError(e as Error);
     }
   }
@@ -213,7 +203,7 @@ class Input extends React.Component<Props, State> {
       } else {
         this.setInput(contents as string);
       }
-    } catch(error) {
+    } catch (error) {
       this.handleError(error as Error);
     }
   }
@@ -245,8 +235,8 @@ class Input extends React.Component<Props, State> {
     const {serializeModeOn} = this.props;
     const {serializeInputType} = this.state;
     return (
-      <div className='container'>
-        <h3 className='subtitle'>Input</h3>
+      <div className="container">
+        <h3 className="subtitle">Input</h3>
         <div>
           <div>Upload a file to populate field below (optional)</div>
           <input
@@ -258,65 +248,56 @@ class Input extends React.Component<Props, State> {
         <br />
         <div className="field is-horizontal">
           <div className="field-body">
-            <div className='field has-addons'>
-              <div className='control'>
-                <a className='button is-static'>
-                  Fork
-                </a>
+            <div className="field has-addons">
+              <div className="control">
+                <a className="button is-static">Fork</a>
               </div>
-              <div className='control'>
-                <div className='select'>
-                  <select
-                    value={this.state.forkName}
-                    onChange={this.setFork.bind(this)}>
-                    {
-                      Object.keys(forks).map(
-                        (name) => <option key={name} value={name}>{name}</option>)
-                    }
+              <div className="control">
+                <div className="select">
+                  <select value={this.state.forkName} onChange={this.setFork.bind(this)}>
+                    {Object.keys(forks).map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
             </div>
-            <div className='field has-addons'>
-              <div className='control'>
-                <a className='button is-static'>
-                  SSZ Type
-                </a>
+            <div className="field has-addons">
+              <div className="control">
+                <a className="button is-static">SSZ Type</a>
               </div>
-              <div className='control'>
-                <div className='select'>
-                  <select
-                    value={this.state.sszTypeName}
-                    onChange={this.setSSZType.bind(this)}>
-                    {
-                      this.names().map(
-                        (name) => <option key={name} value={name}>{name}</option>)
-                    }
+              <div className="control">
+                <div className="select">
+                  <select value={this.state.sszTypeName} onChange={this.setSSZType.bind(this)}>
+                    {this.names().map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
             </div>
-            {serializeModeOn &&
-              <div className='field has-addons'>
-                <div className='control'>
-                  <a className='button is-static'>
-                    Input Type
-                  </a>
+            {serializeModeOn && (
+              <div className="field has-addons">
+                <div className="control">
+                  <a className="button is-static">Input Type</a>
                 </div>
-                <div className='control'>
-                  <div className='select'>
-                    <select
-                      value={this.getInputType()}
-                      onChange={(e) => this.setInputType(e.target.value)}>
-                      {
-                        Object.keys(inputTypes).map(
-                          (name) => <option key={name} value={name}>{name}</option>)
-                      }
+                <div className="control">
+                  <div className="select">
+                    <select value={this.getInputType()} onChange={(e) => this.setInputType(e.target.value)}>
+                      {Object.keys(inputTypes).map((name) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
               </div>
-            }
+            )}
           </div>
         </div>
         <textarea

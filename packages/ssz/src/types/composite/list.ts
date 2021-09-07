@@ -50,7 +50,7 @@ export function isListType<T extends List<any> = List<any>>(type: Type<unknown>)
 // Trick typescript into treating ListType as a constructor
 export const ListType: ListTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
+  function ListType<T extends List<any> = List<any>>(options: IListOptions): ListType<T> {
     if (isNumber64UintType(options.elementType)) {
       return new Number64ListType(options);
     } else if (isBasicType(options.elementType)) {
@@ -58,7 +58,7 @@ export const ListType: ListTypeConstructor =
     } else {
       return new CompositeListType(options);
     }
-  } as unknown) as ListTypeConstructor;
+  } as unknown as ListTypeConstructor;
 
 export class BasicListType<T extends List<unknown> = List<unknown>> extends BasicArrayType<T> {
   limit: number;
@@ -70,7 +70,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   struct_defaultValue(): T {
-    return ([] as unknown) as T;
+    return [] as unknown as T;
   }
 
   struct_getLength(value: T): number {
@@ -363,7 +363,7 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   }
 
   struct_defaultValue(): T {
-    return ([] as unknown) as T;
+    return [] as unknown as T;
   }
 
   struct_getLength(value: T): number {

@@ -7,7 +7,7 @@ import {Type, BitListType, toHexString} from "../../src";
 describe.skip("deserialize errors", () => {
   const testCases: {
     value: string;
-    type: any;
+    type: Type<any>;
     error: string;
   }[] = [
     // Correct serialization "04000000020001040003"
@@ -21,6 +21,7 @@ describe.skip("deserialize errors", () => {
   ];
   for (const {type, value, error} of testCases) {
     it(`should correctly deserialize ${type.constructor.name}`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       expect(() => type.deserialize(Buffer.from(value, "hex"))).to.throw(error);
     });
   }
@@ -40,6 +41,7 @@ describe("hashTreeRoot errors", () => {
   ];
   for (const {type, value, hashTreeRoot} of testCases) {
     it(`should correctly hashTreeRoot ${type.constructor.name}`, () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const v = type.fromJson(value);
       expect(toHexString(type.hashTreeRoot(v))).to.equal(hashTreeRoot);
     });

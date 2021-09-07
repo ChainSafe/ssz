@@ -41,7 +41,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
   createTreeBacked(tree: Tree): TreeBacked<T> {
     const value = new ContainerLeafNodeStructTreeValue(this, tree);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (new Proxy(value, TreeProxyHandler as any) as unknown) as TreeBacked<T>;
+    return new Proxy(value, TreeProxyHandler as any) as unknown as TreeBacked<T>;
   }
 
   // struct_defaultValue   -> these comments acknowledge that this functions do not need to be overwritten
@@ -119,7 +119,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
   }
 
   *tree_readonlyIterateValues(target: Tree): IterableIterator<Tree | unknown> {
-    return yield* this.tree_iterateValues(target);
+    yield* this.tree_iterateValues(target);
   }
 
   tree_getValues(target: Tree): (Tree | unknown)[] {
@@ -189,7 +189,7 @@ export class BranchNodeStruct<T> extends Node {
  * This function allows very efficient reads and iteration over the entire validators registry in Lodestar.
  */
 export function readonlyValuesListOfLeafNodeStruct<T extends CompositeValue>(objArr: List<T>): T[] {
-  const treeValue = (objArr as unknown) as CompositeArrayTreeValue<T[]>;
+  const treeValue = objArr as unknown as CompositeArrayTreeValue<T[]>;
   const {tree, type} = treeValue;
   const nodes = tree.getNodesAtDepth(type.getChunkDepth(), 0, type.tree_getChunkCount(tree));
 

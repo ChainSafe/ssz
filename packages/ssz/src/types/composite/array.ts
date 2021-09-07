@@ -77,9 +77,9 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     const elementSize = this.elementType.struct_getSerializedLength();
-    return (Array.from({length: (end - start) / elementSize}, (_, i) =>
+    return Array.from({length: (end - start) / elementSize}, (_, i) =>
       this.elementType.struct_deserializeFromBytes(data, start + i * elementSize)
-    ) as unknown) as T;
+    ) as unknown as T;
   }
 
   struct_serializeToBytes(value: T, output: Uint8Array, offset: number): number {
@@ -112,7 +112,7 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
   }
 
   struct_convertFromJson(data: Json[]): T {
-    return (Array.from({length: data.length}, (_, i) => this.elementType.fromJson(data[i])) as unknown) as T;
+    return Array.from({length: data.length}, (_, i) => this.elementType.fromJson(data[i])) as unknown as T;
   }
 
   struct_convertToJson(value: T): Json {
@@ -319,7 +319,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
 
   constructor(options: IArrayOptions) {
     super();
-    this.elementType = (options.elementType as unknown) as CompositeType<CompositeValue>;
+    this.elementType = options.elementType as unknown as CompositeType<CompositeValue>;
   }
 
   abstract struct_getLength(value: T): number;
@@ -390,7 +390,7 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
     if (start === end) {
-      return ([] as unknown) as T;
+      return [] as unknown as T;
     }
 
     const fixedLen = this.elementType.getFixedSerializedLength();
@@ -425,12 +425,12 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
       if (firstOffset !== currentIndex) {
         throw new Error("First offset skips variable data");
       }
-      return (value as unknown) as T;
+      return value as unknown as T;
     } else {
       const elementSize = fixedLen;
-      return (Array.from({length: (end - start) / elementSize}, (_, i) =>
+      return Array.from({length: (end - start) / elementSize}, (_, i) =>
         this.elementType.struct_deserializeFromBytes(data, start + i * elementSize, start + (i + 1) * elementSize)
-      ) as unknown) as T;
+      ) as unknown as T;
     }
   }
 
@@ -465,9 +465,9 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
   }
 
   struct_convertFromJson(data: Json[], options?: IJsonOptions): T {
-    return (Array.from({length: data.length}, (_, i) =>
+    return Array.from({length: data.length}, (_, i) =>
       this.elementType.struct_convertFromJson(data[i], options)
-    ) as unknown) as T;
+    ) as unknown as T;
   }
 
   struct_convertToJson(value: T, options?: IJsonOptions): Json {

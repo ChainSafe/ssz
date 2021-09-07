@@ -25,13 +25,13 @@ type VectorTypeConstructor = {
 // Trick typescript into treating VectorType as a constructor
 export const VectorType: VectorTypeConstructor =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions): VectorType<T> {
+  function VectorType<T extends Vector<any> = Vector<any>>(options: IVectorOptions): VectorType<T> {
     if (isBasicType(options.elementType)) {
       return new BasicVectorType(options);
     } else {
       return new CompositeVectorType(options);
     }
-  } as unknown) as VectorTypeConstructor;
+  } as unknown as VectorTypeConstructor;
 
 export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extends BasicArrayType<T> {
   length: number;
@@ -43,9 +43,9 @@ export class BasicVectorType<T extends Vector<unknown> = Vector<unknown>> extend
   }
 
   struct_defaultValue(): T {
-    return (Array.from({length: this.length}, () => {
+    return Array.from({length: this.length}, () => {
       return this.elementType.struct_defaultValue();
-    }) as unknown) as T;
+    }) as unknown as T;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -148,9 +148,9 @@ export class CompositeVectorType<T extends Vector<unknown> = Vector<unknown>> ex
   }
 
   struct_defaultValue(): T {
-    return (Array.from({length: this.length}, () => {
+    return Array.from({length: this.length}, () => {
       return this.elementType.struct_defaultValue();
-    }) as unknown) as T;
+    }) as unknown as T;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
