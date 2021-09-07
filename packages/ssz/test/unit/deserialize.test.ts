@@ -154,7 +154,7 @@ describe("deserialize", () => {
         type.deserialize(Buffer.from(value, "hex"));
         assert.fail("Expect error here");
       } catch (e) {
-        expect(e.message).to.be.equal(expectedError);
+        expect((e as Error).message).to.be.equal(expectedError);
       }
     });
   }

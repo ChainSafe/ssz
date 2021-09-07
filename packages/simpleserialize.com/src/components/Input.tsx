@@ -202,7 +202,7 @@ class Input extends React.Component<Props, State> {
         this.getInputType(),
       );
     } catch(e) {
-      this.handleError(e);
+      this.handleError(e as Error);
     }
   }
 
@@ -214,7 +214,7 @@ class Input extends React.Component<Props, State> {
         this.setInput(contents as string);
       }
     } catch(error) {
-      this.handleError(error);
+      this.handleError(error as Error);
     }
   }
 
