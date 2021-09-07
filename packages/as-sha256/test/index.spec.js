@@ -1,3 +1,4 @@
+const {Buffer} = require("buffer");
 const sha256 = require("../src");
 const {expect} = require("chai");
 
