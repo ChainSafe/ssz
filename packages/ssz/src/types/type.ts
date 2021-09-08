@@ -3,17 +3,13 @@
 import {Json} from "../interface";
 export interface IJsonOptions {
   case:
-    | "lower"
     | "snake"
     | "constant"
     | "camel"
-    | "kebab"
-    | "upper"
-    | "capital"
+    | "param"
     | "header"
     | "pascal" //Same as squish
-    | "title"
-    | "sentence"
+    | "dot"
     | "notransform";
 }
 
