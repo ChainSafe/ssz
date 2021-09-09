@@ -1,0 +1,146 @@
+@charset "utf-8";
+@import "~bulma/bulma";
+
+.serialize-section textarea,
+.serialize-section .submit {
+    margin-bottom: 0.75rem;
+}
+.serialize-section {
+    flex-grow: 1;
+}
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.definition {
+    code {
+        font-size: 0.8em;
+        word-wrap: break-word;
+        word-break: break-all;
+        display: inline-block;
+    }
+    .field-label {
+        text-align: left;
+
+        .label {
+            color: #777;
+
+            &.def-header {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.ssz-tree {
+    display: flex;
+    padding: 10px;
+    border: none;
+
+    .tree-node {
+        display: block;
+    }
+    .node-content {
+        display: block;
+        &.selected {
+            background: #f2f2f2;
+        }
+    }
+    .node-noop {
+        width: 0;
+        height: 0;
+    }
+    .node-child {
+        padding-left: 18px;
+        border-left: 1px dotted #555;
+        margin-left: 6px;
+    }
+    .node-arrow {
+        width: 10px;
+        height: 24px;
+        display: inline-block;
+        float: left;
+        margin-right: 10px;
+    }
+    .node-arrow:after {
+        content: '>';
+        display: block;
+        cursor: pointer;
+        height: 100%;
+        -webkit-transition-duration: 0.5s;
+        -moz-transition-duration: 0.5s;
+        -o-transition-duration: 0.5s;
+        transition-duration: 0.5s;
+
+        -webkit-transition-property: -webkit-transform;
+        -moz-transition-property: -moz-transform;
+        -o-transition-property: -o-transform;
+        transition-property: transform;
+    }
+    .expanded .node-arrow:after {
+        -webkit-transform:rotate(90deg);
+        -moz-transform:rotate(90deg);
+        -o-transform:rotate(90deg);
+        transform: rotate(90deg);
+    }
+    .node-text {
+        cursor: default;
+        display: inline-block;
+        font-family: Consolas, "Lucida Console", Menlo, "dejavu sans mono", monospace;
+
+        .node-type {
+            display: inline-block;
+            font-size: 0.7em;
+            margin-right: 16px;
+            text-align: right;
+        }
+
+        .sszContainer, .sszList .sszVector {
+            text-decoration: underline;
+        }
+        .node-key {
+            &.normal-key {
+                color: #881391;
+            }
+            &.list-key {
+                color: #ac7eb1;
+            }
+            display: inline-block;
+            font-size: 0.9em;
+            &:after {
+                content: ":";
+            }
+            margin-right: 10px;
+        }
+
+        .node-value {
+            color: #C41A16;
+            font-size: 0.9em;
+            word-wrap: break-word;
+            word-break: break-all;
+            display: inline-block;
+        }
+    }
+}
+
+._loading_overlay_content {
+  display: grid;
+}
+
+._loading_overlay_overlay {
+  position: fixed !important;
+}
+
+._loading_overlay_wrapper {
+  display: grid;
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+}
+
+

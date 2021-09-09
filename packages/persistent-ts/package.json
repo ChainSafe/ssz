@@ -1,0 +1,50 @@
+{
+  "name": "@chainsafe/persistent-ts",
+  "version": "0.19.0",
+  "description": "Persistent data structures for TypeScript.",
+  "main": "lib/index.js",
+  "files": [
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.js.map"
+  ],
+  "scripts": {
+    "clean": "rm -rf lib && rm -f *.tsbuildinfo",
+    "build": "tsc",
+    "lint": "eslint --color --ext .ts src/",
+    "prepublishOnly": "yarn build",
+    "test:unit": "mocha 'test/unit/**/*.test.ts'",
+    "test:perf": "mocha 'test/perf/**/*.test.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cronokirby/persistent-ts.git"
+  },
+  "keywords": [
+    "persistent",
+    "functional",
+    "typescript"
+  ],
+  "author": "Lúcás Meier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cronokirby/persistent-ts/issues"
+  },
+  "homepage": "https://github.com/cronokirby/persistent-ts#readme",
+  "devDependencies": {
+    "fast-check": "^1.15.1"
+  },
+  "jest": {
+    "transform": {
+      ".ts": "ts-jest"
+    },
+    "testRegex": "\\.test.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

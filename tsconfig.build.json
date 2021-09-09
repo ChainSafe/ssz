@@ -1,10 +1,9 @@
 {
-  "include": ["src"],
   "compilerOptions": {
-    "outDir": "lib",
-    "target": "esnext",
+    "target": "es2019",
     "module": "commonjs",
     "pretty": true,
+    "lib": ["es2020", "esnext.bigint", "es2020.string", "es2020.symbol.wellknown"],
 
     "strict": true,
     "sourceMap": true,
@@ -20,7 +19,7 @@
     "esModuleInterop": true,
     "declaration": true,
     "declarationMap": true,
-    "incremental": false,
+    "incremental": true,
     "preserveWatchOutput": true
   }
 }

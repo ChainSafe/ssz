@@ -1,0 +1,9 @@
+# Mocha opts
+colors: true
+require:
+  - ts-node/register
+
+# benchmark opts
+threshold: 3
+maxMs: 60_000
+minRuns: 10

@@ -1,10 +1,5 @@
+node_modules
+yarn-error.log
 .nyc_output/
-coverage/
-dist/
-lib/
-node_modules/
 .idea/
 .vscode
-yarn-error.log
-
-test/spec-tests-data

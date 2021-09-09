@@ -19,6 +19,6 @@ jobs:
       - name: Tests
         run: yarn test
       - name: Download spec tests
-        run: yarn download-spec-tests
+        run: lerna run download-spec-tests
       - name: Spec tests
-        run: yarn test:spec
+        run: lerna run test:spec

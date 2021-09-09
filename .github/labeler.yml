@@ -1,0 +1,17 @@
+as-sha256:
+  - packages/as-sha256/**/*
+
+persistent-merkle-tree:
+  - packages/persistent-merkle-tree/**/*
+
+persistent-ts:
+  - packages/persistent-ts/**/*
+
+ssz:
+  - packages/ssz/**/*
+
+simpleserialize.com:
+  - packages/simpleserialize.com/**/*
+
+CI:
+  - .github/**/*
