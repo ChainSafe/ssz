@@ -106,6 +106,7 @@ export const RandomTransformFieldObject = new ContainerType({
 
 export const SlashingTransformFieldObject = new ContainerType({
   fields: {
+    eth1Data: new NumberUintType({byteLength: 4}),
     signedHeader1: new NumberUintType({byteLength: 4}),
     signedHeader2: new NumberUintType({byteLength: 4}),
     attestation1: new BooleanType(),
