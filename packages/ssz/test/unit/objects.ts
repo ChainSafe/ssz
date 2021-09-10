@@ -90,6 +90,30 @@ export const CamelCaseFieldObject = new ContainerType({
   },
 });
 
+export const NoTransformFieldObject = new ContainerType({
+  fields: {
+    someValue_RandOM: new NumberUintType({byteLength: 4}),
+    someOtherValue_1Random2: new BooleanType(),
+  },
+});
+
+export const RandomTransformFieldObject = new ContainerType({
+  fields: {
+    someValueRandOM: new NumberUintType({byteLength: 4}),
+    someOtherValue1Random2: new BooleanType(),
+  },
+});
+
+export const SlashingTransformFieldObject = new ContainerType({
+  fields: {
+    eth1Data: new NumberUintType({byteLength: 4}),
+    signedHeader1: new NumberUintType({byteLength: 4}),
+    signedHeader2: new NumberUintType({byteLength: 4}),
+    attestation1: new BooleanType(),
+    attestation2: new BooleanType(),
+  },
+});
+
 export const ComplexCamelCaseFieldObject = new ContainerType({
   fields: {
     someValue: new NumberUintType({byteLength: 4}),

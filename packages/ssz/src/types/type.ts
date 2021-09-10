@@ -2,7 +2,16 @@
 
 import {Json} from "../interface";
 export interface IJsonOptions {
-  case: "camel" | "snake";
+  case:
+    | "snake"
+    | "constant"
+    | "camel"
+    | "param"
+    | "header"
+    | "pascal" //Same as squish
+    | "dot"
+    | "notransform";
+  casingMap?: Record<string, string>;
 }
 
 /**
