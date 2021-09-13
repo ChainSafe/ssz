@@ -1,6 +1,15 @@
-import { HashObject } from "@chainsafe/as-sha256";
-import { itBench, setBenchOpts } from "@dapplion/benchmark";
-import { LeafNode, subtreeFillToContents, Node, countToDepth, Tree, toGindex, uint8ArrayToHashObject, toGindexBitstring } from "../../src";
+import {HashObject} from "@chainsafe/as-sha256";
+import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {
+  LeafNode,
+  subtreeFillToContents,
+  Node,
+  countToDepth,
+  Tree,
+  toGindex,
+  uint8ArrayToHashObject,
+  toGindexBitstring,
+} from "../../src";
 
 describe("Track the performance of different Tree methods", () => {
   setBenchOpts({
@@ -77,7 +86,6 @@ describe("Track the performance of different Tree methods", () => {
       tree.setHashObjectFn(gindex, hashObjectFn);
     }
   });
-
 });
 
 function createBalanceList(count: number, depth: number): Node {
@@ -85,7 +93,7 @@ function createBalanceList(count: number, depth: number): Node {
   const numChunk = Math.ceil(count / 4);
   const nodes: Node[] = [];
   for (let i = 0; i < numChunk; i++) {
-    nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => (i % 10)))));
+    nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
   }
 
   return subtreeFillToContents(nodes, depth);

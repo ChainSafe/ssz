@@ -8,7 +8,7 @@ import {
   WithCasingDeclarationFieldObject,
 } from "./testTypes";
 import {expect} from "chai";
-import {CompositeListType} from "../../src/types/composite";
+import {CompositeListType} from "../../src/types_old/composite";
 
 describe("json serialization", function () {
   it("should do round trip - container", function () {

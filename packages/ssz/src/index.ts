@@ -1,6 +1,18 @@
-export * from "./interface";
-export * from "./types";
-export * from "./backings";
-export {hash} from "./util/compat";
-export * from "./util/byteArray";
-export * from "./util/tree";
+// Types
+export {BitListType} from "./type/bitList";
+export {BitVectorType} from "./type/bitVector";
+export {BooleanType} from "./type/boolean";
+export {ByteVectorType} from "./type/byteVector";
+export {ContainerType} from "./type/container";
+export {ListBasicType} from "./type/listBasic";
+export {ListCompositeType} from "./type/listComposite";
+export {UintBigintType, UintNumberType} from "./type/uint";
+export {VectorBasicType} from "./type/vectorBasic";
+export {VectorCompositeType} from "./type/vectorComposite";
+
+// Base type clases
+export {Type, BasicType, ValueOf} from "./type/abstract";
+export {CompositeType, TreeView, TreeViewDU, CompositeView, CompositeViewDU} from "./type/composite";
+
+// Values
+export {BitArray} from "./value/bitArray";

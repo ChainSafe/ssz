@@ -1,4 +1,4 @@
-import {IJsonOptions} from "../types";
+import {IJsonOptions} from "../types_old";
 import Case from "case";
 
 export function toExpectedCase(

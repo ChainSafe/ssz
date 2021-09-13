@@ -1,37 +1,120 @@
-/** @module ssz */
 import {hash} from "./hash";
-import {nextPowerOf2, bitLength} from "./math";
-import {zeroHashes} from "./zeros";
+import {zeroNode} from "./zeros";
 
-/** @ignore */
-export function merkleize(chunks: Buffer[], padFor = 0): Buffer {
-  const layerCount = bitLength(nextPowerOf2(padFor || chunks.length) - 1);
-  if (chunks.length == 0) {
-    return zeroHashes[layerCount];
+export function merkleizeSingleBuff(chunksBuff: Uint8Array, padFor?: number): Uint8Array {
+  // TODO: Optimize
+  const chunkCount = Math.ceil(chunksBuff.length / 32);
+  const chunks: Uint8Array[] = [];
+  for (let i = 0; i < chunkCount; i++) {
+    const chunk = new Uint8Array(32);
+    chunk.set(chunksBuff.slice(i * 32, (i + 1) * 32));
+    chunks.push(chunk);
   }
+
+  return merkleize(chunks, padFor);
+
+  // TODO:
+  // let chunkCount = Math.ceil(chunksBuff.length / 32);
+  // console.log({chunkCount, padFor, len: chunksBuff.length});
+
+  // const layerCount = bitLength(nextPowerOf2(padFor ?? chunkCount) - 1);
+  // if (chunkCount == 0) {
+  //   return zeroNode(layerCount);
+  // }
+
+  // const roots: Uint8Array[] = [];
+
+  // // Instead of pushing on all padding zero chunks at the leaf level
+  // // we push on zero hash chunks at the highest possible level to avoid over-hashing
+  // for (let l = 0; l < layerCount; l++) {
+  //   const padCount = chunkCount % 2;
+
+  //   for (let i = 0; i < chunkCount; i += 2) {
+  //     roots.push(SHA256.digest(chunksBuff.slice(32 * i, 32 * (i + 2))));
+  //   }
+
+  //   // if the chunks.length is odd
+  //   // we need to push on the zero-hash of that level to merkleize that level
+  //   if (padCount > 0) {
+  //     roots.push(SHA256.digest(Buffer.concat([chunksBuff.slice(32 * chunkCount, 32 * (chunkCount + 1)), zeroNode(l)])));
+  //   }
+  //   console.log({l, padCount, chunkCount}, roots);
+
+  //   chunkCount = (chunkCount + padCount) / 2;
+  // }
+
+  // // If output is too small, pad to 32. hash .concat() assumes all inputs are exactly 32 bytes
+  // // TODO: Make hash() accept output of <= 32 and autopad on copy.
+  // if (chunksBuff.length < 32) {
+  //   const out = new Uint8Array(32);
+  //   out.set(chunksBuff);
+  //   return out;
+  // } else {
+  //   return chunksBuff.slice(0, 32);
+  // }
+}
+
+export function merkleize(chunks: Uint8Array[], padFor?: number): Uint8Array {
+  const layerCount = bitLength(nextPowerOf2(padFor ?? chunks.length) - 1);
+  if (chunks.length == 0) {
+    return zeroNode(layerCount);
+  }
+
+  let chunkCount = chunks.length;
+
   // Instead of pushing on all padding zero chunks at the leaf level
   // we push on zero hash chunks at the highest possible level to avoid over-hashing
-  let layer = 0;
-  while (layer < layerCount) {
+  for (let l = 0; l < layerCount; l++) {
+    const padCount = chunkCount % 2;
+    const paddedChunkCount = chunkCount + padCount;
+
     // if the chunks.length is odd
     // we need to push on the zero-hash of that level to merkleize that level
-    if (chunks.length % 2 == 1) {
-      chunks.push(zeroHashes[layer]);
+    for (let i = 0; i < padCount; i++) {
+      chunks[chunkCount + i] = zeroNode(l);
     }
-    for (let i = 0; i < chunks.length; i += 2) {
-      const h = hash(chunks[i], chunks[i + 1]);
-      chunks[i / 2] = Buffer.from(h.buffer, h.byteOffset, h.byteLength);
+
+    for (let i = 0; i < paddedChunkCount; i += 2) {
+      chunks[i / 2] = hash(chunks[i], chunks[i + 1]);
     }
-    chunks.splice(chunks.length / 2, chunks.length / 2);
-    layer++;
+
+    chunkCount = paddedChunkCount / 2;
   }
+
   return chunks[0];
 }
 
 /** @ignore */
-export function mixInLength(root: Buffer, length: number): Buffer {
+export function mixInLength(root: Uint8Array, length: number): Uint8Array {
   const lengthBuf = Buffer.alloc(32);
   lengthBuf.writeUIntLE(length, 0, 6);
-  const h = hash(root, lengthBuf);
-  return Buffer.from(h.buffer, h.byteOffset, h.byteLength);
+  return hash(root, lengthBuf);
+}
+
+// x2 faster than bitLengthStr()
+export function bitLength(i: number): number {
+  if (i === 0) {
+    return 0;
+  }
+
+  return Math.floor(Math.log2(i)) + 1;
+}
+
+export function bitLengthStr(n: number): number {
+  // Make this more efficient
+  const bitstring = n.toString(2);
+  if (bitstring === "0") {
+    return 0;
+  }
+  return bitstring.length;
+}
+
+/** @ignore */
+export function nextPowerOf2(n: number): number {
+  return n <= 0 ? 1 : Math.pow(2, bitLength(n - 1));
+}
+
+/** @ignore */
+export function previousPowerOf2(n: number): number {
+  return n === 0 ? 1 : Math.pow(2, bitLength(n) - 1);
 }
