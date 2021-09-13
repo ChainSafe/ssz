@@ -1,121 +1,114 @@
 import fs from "fs";
 import path from "path";
-import {expect} from "chai";
-import {describeDirectorySpecTest, InputType} from "@chainsafe/lodestar-spec-test-util";
-import {ACTIVE_PRESET, ForkName, PresetName} from "@chainsafe/lodestar-params";
-import {CompositeType, ContainerType, Type} from "../../src";
-import {Bytes32, ssz} from "../lodestarTypes";
+import {isCompositeType, Type} from "../../src";
+import {ssz} from "../lodestarTypes";
 import {SPEC_TEST_LOCATION} from "../specTestVersioning";
-import {safeType} from "./safeType";
+import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType";
+import {parseSszStaticTestcase} from "./testRunner";
+import {runValidSszTest} from "./runValidTest";
+import {ForkName} from "../utils/fork";
+import {ACTIVE_PRESET} from "../lodestarTypes/params";
+import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest";
 
-/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, no-console */
+// ssz_static
+// | Attestation
+//   | case_0
+//     | roots.yaml
+//     | serialized.ssz_snappy
+//     | value.yaml
+//
+// Docs: https://github.com/ethereum/consensus-specs/blob/master/tests/formats/ssz_static/core.md
+
+/* eslint-disable
+  @typescript-eslint/naming-convention,
+  @typescript-eslint/no-unsafe-assignment,
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unsafe-member-access,
+  no-console
+*/
 
 // eslint-disable-next-line
 type Types = Record<string, Type<any>>;
 
-const extraTypes = {
-  Eth1Block: new ContainerType({
-    fields: {
-      timestamp: ssz.Number64,
-      depositRoot: ssz.Root,
-      depositCount: ssz.Number64,
-    },
-  }),
-};
-
-interface IBaseSSZStaticTestCase<T> {
-  meta?: {blsSetting?: BigInt};
-  roots: {root: string};
-  serialized: T;
-  serialized_raw: Uint8Array;
-  value: T;
-}
-
 export function sszStatic(fork: ForkName): void {
   const rootDir = path.join(SPEC_TEST_LOCATION, `tests/${ACTIVE_PRESET}/${fork}/ssz_static`);
   for (const typeName of fs.readdirSync(rootDir)) {
-    const type =
-      (ssz[fork] as Types)[typeName] ||
-      (ssz.altair as Types)[typeName] ||
-      (ssz.phase0 as Types)[typeName] ||
-      (extraTypes as Types)[typeName];
+    const type = (ssz[fork] as Types)[typeName] || (ssz.altair as Types)[typeName] || (ssz.phase0 as Types)[typeName];
     if (!type) {
       throw Error(`No type for ${typeName}`);
     }
 
-    const sszType = safeType(type) as CompositeType<any>;
-    testStatic(typeName, sszType, fork, ACTIVE_PRESET);
+    testStatic(typeName, type, fork, ACTIVE_PRESET);
   }
 }
 
-interface IResult {
-  root: Bytes32;
-  serialized: Uint8Array;
+// RUN_ONLY_FAILED_TEST mode:
+// - Runs spec tests until 1 test fails. Then it persists its name
+// - On the next run of the command it will solo that test such that's easily debuggable
+// - Once that tests pass it will remove the flag file and allow to run all tests again in the next run
+//
+// example:
+// $ RUN_ONLY_FAILED_TEST=true RENDER_JSON=true LODESTAR_FORK=bellatrix yarn test:spec-static-minimal
+//
+const failedTestFilepath = ".failedTest.txt";
+const failedTestExists = fs.existsSync(failedTestFilepath);
+const failedTestStr = failedTestExists ? fs.readFileSync(failedTestFilepath, "utf8") : "";
+if (failedTestExists) {
+  console.log("failedTestStr", failedTestStr);
 }
 
-function testStatic(typeName: string, sszType: CompositeType<any>, forkName: ForkName, preset: PresetName): void {
+const {RUN_ONLY_FAILED_TEST} = process.env;
+if (RUN_ONLY_FAILED_TEST) {
+  process.env.ONLY_CASE = failedTestStr.split(":")[0];
+  process.env.ONLY_ID = failedTestStr.split(":")[1] ?? "";
+}
+
+function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName, preset: string): void {
   const typeDir = path.join(SPEC_TEST_LOCATION, `tests/${preset}/${forkName}/ssz_static/${typeName}`);
 
   for (const caseName of fs.readdirSync(typeDir)) {
-    describeDirectorySpecTest<IBaseSSZStaticTestCase<any>, IResult>(
-      `${preset}/${forkName}/ssz_static/${typeName}/${caseName}`,
-      path.join(typeDir, caseName),
-      (testcase) => {
-        //debugger;
-        const serialized = sszType.serialize(testcase.serialized);
-        const root = sszType.hashTreeRoot(testcase.serialized);
-        return {
-          serialized,
-          root,
-        };
-      },
-      {
-        inputTypes: {
-          roots: InputType.YAML,
-          serialized: InputType.SSZ_SNAPPY,
-        },
-        sszTypes: {
-          serialized: sszType,
-        },
-        getExpected: (testCase) => {
-          return {
-            root: Buffer.from(testCase.roots.root.replace("0x", ""), "hex"),
-            serialized: testCase.serialized_raw,
-          };
-        },
-        expectFunc: (testCase, expected, actual) => {
-          if (true && (!expected.serialized.equals(actual.serialized) || !expected.root.equals(actual.root))) {
-            console.log("testCase", testCase);
-            console.log("serialize expected", expected.serialized.toString("hex"));
-            console.log("serialize actual  ", Buffer.from(actual.serialized).toString("hex"));
-            console.log("hashTreeRoot expected", expected.root.toString("hex"));
-            console.log("hashTreeRoot actual  ", Buffer.from(actual.root).toString("hex"));
-            /*
-            const bbroot = Type.fields[2][1]
-            console.log("s bbroot hash", bbroot.hashTreeRoot(structural.beaconBlockRoot))
-            console.log("t bbroot hash", bbroot.hashTreeRoot(tree.beaconBlockRoot))
-               */
-            // debugger;
+    const caseId = `${preset}/${forkName}/ssz_static/${typeName}/${caseName}`;
+    const onlyCase = process.env.ONLY_CASE;
+    if (onlyCase && !caseId.includes(onlyCase)) {
+      continue;
+    }
+
+    describe(caseId, () => {
+      const sszTypeNoUint = replaceUintTypeWithUintBigintType(sszType);
+      const caseDir = path.join(typeDir, caseName);
+      for (const testId of fs.readdirSync(caseDir)) {
+        const onlyId = process.env.ONLY_ID;
+        if (onlyId && !testId.includes(onlyId)) {
+          continue;
+        }
+
+        it(testId, function () {
+          // Mainnet must deal with big full states and hash each one multiple times
+          if (preset === "mainnet") {
+            this.timeout(30 * 1000);
           }
-          const structural = sszType.deserialize(testCase.serialized_raw);
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const tree = sszType.createTreeBackedFromBytes(testCase.serialized_raw);
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const treeFromStructural = sszType.createTreeBackedFromStruct(structural);
-          expect(tree.serialize(), "tree serialization != structural serialization").to.deep.equal(
-            sszType.serialize(structural)
-          );
-          expect(sszType.equals(tree, treeFromStructural), "tree != treeFromStructural");
-          expect(expected.serialized.equals(sszType.serialize(structural)));
-          expect(expected.root.equals(sszType.hashTreeRoot(structural)));
-          expect(expected.serialized.equals(actual.serialized), "incorrect serialize").to.be.true;
-          expect(expected.root.equals(actual.root), "incorrect hashTreeRoot").to.be.true;
-        },
-        //shouldSkip: (a, b, i) => i !== 0,
-        //shouldSkip: (a, b, i) => b !== 'case_10',
+
+          try {
+            const testData = parseSszStaticTestcase(path.join(caseDir, testId));
+            const {node, json} = runValidSszTest(sszTypeNoUint, testData);
+
+            // Run auto-generated proof tests only for minimal
+            if (isCompositeType(sszTypeNoUint) && preset !== "mainnet") {
+              runProofTestOnAllJsonPaths({type: sszTypeNoUint, node, json, rootHex: testData.root});
+            }
+
+            if (RUN_ONLY_FAILED_TEST && failedTestExists) {
+              fs.unlinkSync(failedTestFilepath);
+            }
+          } catch (e) {
+            if (RUN_ONLY_FAILED_TEST && !failedTestExists) {
+              fs.writeFileSync(failedTestFilepath, `${caseId}:${testId}`);
+              process.exit(666);
+            }
+            throw e;
+          }
+        });
       }
-    );
+    });
   }
 }

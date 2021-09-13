@@ -1,10 +1,13 @@
-/** @module ssz */
-import {BYTES_PER_CHUNK} from "./constants";
-import {hash} from "./hash";
+import SHA256 from "@chainsafe/as-sha256";
 
 // create array of "zero hashes", successively hashed zero chunks
-export const zeroHashes = [Buffer.alloc(BYTES_PER_CHUNK)];
-for (let i = 0; i < 52; i++) {
-  const h = hash(zeroHashes[i], zeroHashes[i]);
-  zeroHashes.push(Buffer.from(h.buffer, h.byteOffset, h.byteLength));
+const zeroHashes = [new Uint8Array(32)];
+
+export function zeroHash(depth: number): Uint8Array {
+  if (depth >= zeroHashes.length) {
+    for (let i = zeroHashes.length; i <= depth; i++) {
+      zeroHashes[i] = SHA256.digest64(Buffer.concat([zeroHashes[i - 1], zeroHashes[i - 1]]));
+    }
+  }
+  return zeroHashes[depth];
 }

@@ -23,19 +23,17 @@ export function toGindexBitstring(depth: number, index: number): GindexBitstring
 }
 
 export function convertGindexToBitstring(gindex: Gindex | GindexBitstring): GindexBitstring {
-  let bitstring: string;
   if (typeof gindex === "string") {
-    if (!gindex.length) {
+    if (gindex.length === 0) {
       throw new Error(ERR_INVALID_GINDEX);
     }
-    bitstring = gindex;
+    return gindex;
   } else {
     if (gindex < 1) {
       throw new Error(ERR_INVALID_GINDEX);
     }
-    bitstring = gindex.toString(2);
+    return gindex.toString(2);
   }
-  return bitstring;
 }
 
 // Get the depth (root starting at 0) necessary to cover a subtree of `count` elements.

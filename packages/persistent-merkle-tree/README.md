@@ -14,8 +14,8 @@ A binary merkle tree implemented as a [persistent data structure](https://en.wik
 
 import {LeafNode, BranchNode} from "@chainsafe/persistent-merkle-tree";
 
-const leaf = new LeafNode(Uint8Array.from([...]));
-const otherLeaf = new LeafNode(Uint8Array.from([...]));
+const leaf = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
+const otherLeaf = LeafNode.fromRoot(Buffer.alloc(32, 0xbb));
 
 const branch = new BranchNode(leaf, otherLeaf);
 
@@ -61,7 +61,7 @@ const gindex = BigInt(...);
 
 const n: Node = tree.getNode(gindex); // the Node at gindex
 const rrr: Uint8Array = tree.getRoot(gindex); // the Uint8Array root at gindex
-const subtree: Tree = tree.getSubtree(gindex); // the Tree wrapping the Node at gindex
+const subtree: Tree = tree.getSubtree(gindex); // the Tree wrapping the Node at gindex. Updates to `subtree` will be propagated to `tree`
 
 // A merkle proof for a gindex can be generated
 
@@ -114,6 +114,46 @@ Any update to a tree (either to a leaf or intermediate node) is performed as a r
 #### Mutable wrapper for the persistent core
 
 A `Tree` object wraps `Node` and provides an API for tree navigation and transparent rebinding on updates.
+
+#### Navigation by gindex or (depth, index)
+
+Many tree methods allow navigation with a gindex. A gindex (or generalized index) describes a path through the tree, starting from the root and nagivating downwards.
+
+```
+     1
+   /   \
+  2     3
+/  \   /  \
+4  5   6  7
+```
+
+It can also be interpreted as a bitstring, starting with "1", then appending "0" for each navigation left, or "1" for each navigation right.
+
+```
+        1
+    /      \
+   10       11
+ /    \    /    \
+100  101  110  111
+```
+
+Alternatively, several tree methods, with names ending with `AtDepth`, allow navigation by (depth, index). Depth and index navigation works by first navigating down levels into the tree from the top, starting at 0 (depth), and indexing nodes from the left, starting at 0 (index).
+
+```
+     0          <- depth 0
+   /   \
+  0     1       <- depth 1
+/  \   /  \
+0  1   2  3     <- depth 2
+```
+
+#### Memory efficiency
+
+As an implementation detail, nodes hold their values as a `HashObject` (a javascript object with `h0`, ... `h7` uint32 `number` values) internally, rather than as a 32 byte `Uint8Array`. Memory benchmarking shows that this results in a ~3x reduction in memory over `Uint8Array`. This optimization allows this library to practically scale to trees with millions of nodes.
+
+#### Navigation efficiency
+
+In performance-critical applications performing many reads and writes to trees, being smart with tree navigation is crucial. This library correctly provides tree navigation methods that handle several important optimized cases: multi-node get and set, and get-then-set operations.
 
 ## See also:
 

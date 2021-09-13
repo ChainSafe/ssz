@@ -1,9 +1,9 @@
-import {SimpleObject, VariableSizeSimpleObject} from "../../testTypes";
-import {runTypeTestInvalid} from "../testRunners";
+import {ContainerType, ListBasicType, UintNumberType} from "../../../../src";
+import {uint16NumType} from "../../../utils/primitiveTypes";
+import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
 runTypeTestInvalid({
-  typeName: "SimpleObject",
-  type: SimpleObject,
+  type: new ContainerType({a: uint16NumType}, {typeName: "FixedSizeObject"}),
   values: [
     // error is empty because struct and tree throw different errors
     {serialized: "", error: ""},
@@ -12,11 +12,59 @@ runTypeTestInvalid({
 });
 
 runTypeTestInvalid({
-  typeName: "VariableSizeSimpleObject",
-  type: VariableSizeSimpleObject,
+  type: new ContainerType(
+    {a: uint16NumType, list: new ListBasicType(uint16NumType, 100)},
+    {typeName: "VariableSizeObject"}
+  ),
   values: [
     // error is empty because struct and tree throw different errors
     {serialized: "", error: ""},
     {serialized: "00", error: ""},
+  ],
+});
+
+const uint16 = new UintNumberType(2);
+const uint16List = new ListBasicType(uint16, 2);
+
+runTypeTestInvalid({
+  type: new ContainerType({a: uint16List, b: uint16List}),
+  values: [
+    {id: "Length over limit", serialized: "0100".repeat(3), json: Array(3).fill([1])},
+    {
+      id: "Length not multiple of fixed size - end",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0x080000000c00000001000200030004",
+      error: "not multiple of",
+    },
+    {
+      id: "Length not multiple of fixed size - start",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0x080000000b00000001000203000400",
+      error: "not multiple of",
+    },
+    {
+      id: "Offset decreasing",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0x08000000070000000100020003000400",
+      error: "Offsets must be increasing",
+    },
+    {
+      id: "Offset out of bounds",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0x08000000180000000100020003000400",
+      error: "Offset out of bounds",
+    },
+    {
+      id: "First offset less than fixedEnd",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0x070000000c0000000100020003000400",
+      error: "First offset must equal to fixedEnd",
+    },
+    {
+      id: "First offset equals 0",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0x000000000c0000000100020003000400",
+      error: "First offset must equal to fixedEnd",
+    },
   ],
 });

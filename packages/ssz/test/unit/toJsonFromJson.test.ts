@@ -1,162 +1,133 @@
-import {
-  CamelCaseFieldObject,
-  ComplexCamelCaseFieldObject,
-  RandomTransformFieldObject,
-  NoTransformFieldObject,
-  NoTransformFieldObjectWithDeclaredExpectedCase,
-  SlashingTransformFieldObject,
-  WithCasingDeclarationFieldObject,
-} from "./testTypes";
 import {expect} from "chai";
-import {CompositeListType} from "../../src/types/composite";
+import {BooleanType, ContainerType, ListCompositeType, Type, ValueOf} from "../../src";
 
 describe("json serialization", function () {
-  it("should do round trip - container", function () {
-    const test = {someValue: 4, someOtherValue: true};
-    const json = CamelCaseFieldObject.toJson(test);
-    const result = CamelCaseFieldObject.fromJson(json);
-    expect(CamelCaseFieldObject.equals(result, test)).to.be.true;
+  const runJsonTest = getRunJsonTest();
+
+  const bool = new BooleanType();
+  const SimpleCamelCase = new ContainerType({someValue: bool, someOtherValue: bool}, {jsonCase: "snake"});
+  const SimpleNoTransform = new ContainerType({someValue: bool, someOtherValue: bool});
+
+  const RandomSnake = new ContainerType({someValueRandOM: bool, someOtherValue1Random2: bool}, {jsonCase: "snake"});
+  const RandomNoTransform = new ContainerType({someValueRandOM: bool, someOtherValue1Random2: bool});
+
+  const eth2Fields = {
+    eth1Data: bool,
+    signedHeader1: bool,
+    signedHeader2: bool,
+    attestation1: bool,
+    attestation2: bool,
+  };
+
+  const Eth2FieldsSnakeCase = new ContainerType(eth2Fields, {jsonCase: "snake"});
+  const Eth2FieldsCasingMap = new ContainerType(eth2Fields, {
+    casingMap: {
+      eth1Data: "eth1_data",
+      signedHeader1: "signed_header_1",
+      signedHeader2: "signed_header_2",
+      attestation1: "attestation_1",
+      attestation2: "attestation_2",
+    },
   });
 
-  it("should deserialize without case transformation", function () {
-    const test = {someValue_RandOM: 4, someOtherValue_1Random2: true};
-    const json = {someValue_RandOM: 4, someOtherValue_1Random2: true};
-    const result = NoTransformFieldObject.fromJson(json, {case: "notransform"});
-    expect(NoTransformFieldObject.equals(test, result)).to.be.true;
-  });
+  const ComplexCamelCaseFieldObject = new ContainerType(
+    {
+      someValue: bool,
+      someOtherValue: bool,
+      container: SimpleCamelCase,
+    },
+    {jsonCase: "snake"}
+  );
 
-  it("should deserialize/deserialize without case transformation with notransform declared expectedCase", function () {
-    const test = {someValue_RandOM: 4, someOtherValue_1Random2: true};
-    const json = {someValue_RandOM: 4, someOtherValue_1Random2: true};
+  runJsonTest(
+    "SimpleCamelCase",
+    SimpleCamelCase,
+    {someValue: false, someOtherValue: true},
+    {some_value: false, some_other_value: true}
+  );
 
-    const result = NoTransformFieldObjectWithDeclaredExpectedCase.fromJson(json);
-    expect(NoTransformFieldObjectWithDeclaredExpectedCase.equals(test, result)).to.be.true;
+  runJsonTest(
+    "SimpleNoTransform",
+    SimpleNoTransform,
+    {someValue: false, someOtherValue: true},
+    {someValue: false, someOtherValue: true}
+  );
 
-    const back = NoTransformFieldObjectWithDeclaredExpectedCase.toJson(result);
-    expect(back).to.be.deep.equal(json);
-  });
+  runJsonTest(
+    "RandomSnake",
+    RandomSnake,
+    {someValueRandOM: false, someOtherValue1Random2: true},
+    {some_value_rand_o_m: false, some_other_value1_random2: true}
+  );
 
-  it("should deserialize from snake case with numbers", function () {
-    const test = {someValueRandOM: 4, someOtherValue1Random2: true};
-    const json = {some_value_rand_o_m: 4, some_other_value1_random2: true};
-    const result = RandomTransformFieldObject.fromJson(json, {case: "snake"});
-    expect(RandomTransformFieldObject.equals(test, result)).to.be.true;
-  });
+  runJsonTest(
+    "RandomNoTransform",
+    RandomNoTransform,
+    {someValueRandOM: false, someOtherValue1Random2: true},
+    {someValueRandOM: false, someOtherValue1Random2: true}
+  );
 
-  it("should deserialize from snake case", function () {
-    const test = {someValue: 4, someOtherValue: true};
-    const json = {some_value: 4, some_other_value: true};
-    const result = CamelCaseFieldObject.fromJson(json, {case: "snake"});
-    expect(CamelCaseFieldObject.equals(test, result)).to.be.true;
-  });
+  runJsonTest(
+    "Eth2FieldsSnakeCase",
+    Eth2FieldsSnakeCase,
+    {eth1Data: true, signedHeader1: false, signedHeader2: false, attestation1: true, attestation2: false},
+    {eth1_data: true, signed_header1: false, signed_header2: false, attestation1: true, attestation2: false}
+  );
 
-  it("test eth2 spec slashing fields from snake case", function () {
-    const test = {eth1Data: 11, signedHeader1: 4, signedHeader2: 5, attestation1: true, attestation2: false};
-    const json = {eth1_data: 11, signed_header_1: 4, signed_header_2: 5, attestation_1: true, attestation_2: false};
-    const result = SlashingTransformFieldObject.fromJson(json, {
-      case: "snake",
-      casingMap: {
-        signedHeader1: "signed_header_1",
-        signedHeader2: "signed_header_2",
-        attestation1: "attestation_1",
-        attestation2: "attestation_2",
-      },
-    });
-    expect(SlashingTransformFieldObject.equals(test, result)).to.be.true;
-    const back = SlashingTransformFieldObject.toJson(result, {
-      case: "snake",
-      casingMap: {
-        signedHeader1: "signed_header_1",
-        signedHeader2: "signed_header_2",
-        attestation1: "attestation_1",
-        attestation2: "attestation_2",
-      },
-    });
-    expect(back).to.be.deep.equal(json);
-  });
+  runJsonTest(
+    "Eth2FieldsCasingMap",
+    Eth2FieldsCasingMap,
+    {eth1Data: true, signedHeader1: false, signedHeader2: false, attestation1: true, attestation2: false},
+    {eth1_data: true, signed_header_1: false, signed_header_2: false, attestation_1: true, attestation_2: false}
+  );
 
-  it("test eth2 spec with casing declared", function () {
-    const test = {eth1Data: 11, signedHeader1: 4, signedHeader2: 5, attestation1: true, attestation2: false};
-    const json = {eth1_data: 11, signed_header_1: 4, signed_header_2: 5, attestation_1: true, attestation_2: false};
-    const result = WithCasingDeclarationFieldObject.fromJson(json, {
-      case: "snake",
-    });
-    expect(WithCasingDeclarationFieldObject.equals(test, result)).to.be.true;
-    const back = WithCasingDeclarationFieldObject.toJson(result, {
-      case: "snake",
-    });
-    expect(back).to.be.deep.equal(json);
-  });
+  runJsonTest(
+    "ListCompositeType(SimpleCamelCase)",
+    new ListCompositeType(SimpleCamelCase, 2),
+    [{someValue: false, someOtherValue: true}],
+    [{some_value: false, some_other_value: true}]
+  );
 
-  it("test eth2 spec slashing fields from constant case ", function () {
-    const test = {eth1Data: 11, signedHeader1: 4, signedHeader2: 5, attestation1: true, attestation2: false};
-    const json = {ETH1_DATA: 11, SIGNED_HEADER_1: 4, SIGNED_HEADER_2: 5, ATTESTATION_1: true, ATTESTATION_2: false};
-    const result = SlashingTransformFieldObject.fromJson(json, {
-      case: "constant",
-      casingMap: {
-        signedHeader1: "SIGNED_HEADER_1",
-        signedHeader2: "SIGNED_HEADER_2",
-        attestation1: "ATTESTATION_1",
-        attestation2: "ATTESTATION_2",
-      },
-    });
-    expect(SlashingTransformFieldObject.equals(test, result)).to.be.true;
-    const back = SlashingTransformFieldObject.toJson(result, {
-      case: "constant",
-      casingMap: {
-        signedHeader1: "SIGNED_HEADER_1",
-        signedHeader2: "SIGNED_HEADER_2",
-        attestation1: "ATTESTATION_1",
-        attestation2: "ATTESTATION_2",
-      },
-    });
-    expect(back).to.be.deep.equal(json);
-  });
-
-  it("should deserialize array of containers from snake case", function () {
-    const CamelCaseObjectArray = new CompositeListType({
-      elementType: CamelCaseFieldObject,
-      limit: 2,
-    });
-    const test = {someValue: 4, someOtherValue: true};
-    const json = {some_value: 4, some_other_value: true};
-    const result = CamelCaseObjectArray.fromJson([json, json], {case: "snake"});
-    expect(CamelCaseObjectArray.equals([test, test], result)).to.be.true;
-  });
-
-  it("should deserialize complex from snake case", function () {
-    const innerTest = {someValue: 4, someOtherValue: true};
-    const test = {someValue: 4, someOtherValue: true, container: innerTest};
-    const innerJson = {some_value: 4, some_other_value: true};
-    const json = {some_value: 4, some_other_value: true, container: innerJson};
-    const result = ComplexCamelCaseFieldObject.fromJson(json, {case: "snake"});
-    expect(ComplexCamelCaseFieldObject.equals(test, result)).to.be.true;
-  });
-
-  it("should serialize to snake case", function () {
-    const test = {someValue: 4, someOtherValue: true};
-    const json = {some_value: 4, some_other_value: true};
-    const result = CamelCaseFieldObject.toJson(test, {case: "snake"});
-    expect(result).to.be.deep.equal(json);
-  });
-
-  it("should serialize array of containers to snake case", function () {
-    const CamelCaseObjectArray = new CompositeListType({
-      elementType: CamelCaseFieldObject,
-      limit: 2,
-    });
-    const test = {someValue: 4, someOtherValue: true};
-    const json = {some_value: 4, some_other_value: true};
-    const result = CamelCaseObjectArray.toJson([test, test], {case: "snake"});
-    expect(result).to.be.deep.equal([json, json]);
-  });
-
-  it("should serialize complex object to snake case", function () {
-    const innerTest = {someValue: 4, someOtherValue: true};
-    const test = {someValue: 4, someOtherValue: true, container: innerTest};
-    const innerJson = {some_value: 4, some_other_value: true};
-    const json = {some_value: 4, some_other_value: true, container: innerJson};
-    const result = ComplexCamelCaseFieldObject.toJson(test, {case: "snake"});
-    expect(result).to.be.deep.equal(json);
-  });
+  runJsonTest(
+    "ComplexCamelCaseFieldObject",
+    ComplexCamelCaseFieldObject,
+    {someValue: false, someOtherValue: true, container: {someValue: false, someOtherValue: true}},
+    {some_value: false, some_other_value: true, container: {some_value: false, some_other_value: true}}
+  );
 });
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function getRunJsonTest() {
+  const runJsonTestFn = function runJsonTest<T extends Type<unknown>>(
+    id: string,
+    type: T,
+    value: ValueOf<T>,
+    json: unknown,
+    opts?: {only?: boolean; skip?: boolean}
+  ): void {
+    // eslint-disable-next-line no-only-tests/no-only-tests
+    const itFn = (opts?.only ? it.only : opts?.skip ? it.skip : it) as Mocha.TestFunction;
+
+    itFn(id, function () {
+      expect(type.toJson(value)).to.deep.equal(json, "Wrong json");
+      expect(type.fromJson(json)).to.deep.equal(value, "Wrong value");
+    });
+  };
+
+  const runJsonTest = runJsonTestFn as typeof runJsonTestFn & {
+    only: typeof runJsonTestFn;
+    skip: typeof runJsonTestFn;
+  };
+
+  runJsonTest.only = function runJsonTest(a, b, c, d, opts = {}): void {
+    opts.only = true;
+    runJsonTestFn(a, b, c, d, opts);
+  } as typeof runJsonTestFn;
+
+  runJsonTest.skip = function runJsonTest(a, b, c, d, opts = {}): void {
+    opts.skip = true;
+    runJsonTestFn(a, b, c, d, opts);
+  } as typeof runJsonTestFn;
+
+  return runJsonTest;
+}

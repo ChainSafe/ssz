@@ -8,6 +8,10 @@ export function hash(...inputs: Uint8Array[]): Uint8Array {
   return SHA256.digest(Buffer.concat(inputs));
 }
 
+export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
+  return SHA256.digest64(Buffer.concat([bytes32A, bytes32B]));
+}
+
 /**
  * A temporary HashObject is needed in a lot of places, this HashObject is then
  * applied to persistent-merkle-tree, it'll make a copy so it's safe to mutate it after that.

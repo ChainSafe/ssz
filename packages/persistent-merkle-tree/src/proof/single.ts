@@ -21,10 +21,10 @@ export function createSingleProof(rootNode: Node, index: Gindex): [Uint8Array, U
 }
 
 export function createNodeFromSingleProof(gindex: Gindex, leaf: Uint8Array, witnesses: Uint8Array[]): Node {
-  let node: Node = new LeafNode(leaf);
+  let node: Node = LeafNode.fromRoot(leaf);
   const w = witnesses.reverse();
   while (gindex > 1) {
-    const sibling = new LeafNode(w.pop() as Uint8Array);
+    const sibling = LeafNode.fromRoot(w.pop() as Uint8Array);
     if (gindex % BigInt(2) === BigInt(0)) {
       node = new BranchNode(node, sibling);
     } else {

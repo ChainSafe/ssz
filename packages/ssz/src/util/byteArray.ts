@@ -16,7 +16,7 @@ export function toHexString(bytes: Uint8Array | ByteVector): string {
 
 export function fromHexString(hex: string): Uint8Array {
   if (typeof hex !== "string") {
-    throw new Error("Expected hex string to be a string");
+    throw new Error(`hex argument type ${typeof hex} must be of type string`);
   }
 
   if (hex.startsWith("0x")) {
@@ -24,7 +24,7 @@ export function fromHexString(hex: string): Uint8Array {
   }
 
   if (hex.length % 2 !== 0) {
-    throw new Error("Expected an even number of characters");
+    throw new Error(`hex string length ${hex.length} must be multiple of 2`);
   }
 
   const bytes: number[] = [];
@@ -43,15 +43,4 @@ export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
     if (a[i] !== b[i]) return false;
   }
   return true;
-}
-
-export function getByteBits(target: Uint8Array, offset: number): boolean[] {
-  const byte = target[offset];
-  if (!byte) {
-    return [false, false, false, false, false, false, false, false];
-  }
-  const bits = Array.prototype.map
-    .call(byte.toString(2).padStart(8, "0"), (c) => (c === "1" ? true : false))
-    .reverse() as boolean[];
-  return bits;
 }

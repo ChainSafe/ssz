@@ -1,29 +1,21 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
 
-import {byteType, ContainerType, ListType, Type} from "../../../src";
+import {ContainerType, ListBasicType, ListCompositeType, Type} from "../../../src";
+import {byteType} from "../../utils/primitiveTypes";
 
 const SimpleObject = new ContainerType({
-  fields: {
-    b: byteType,
-    a: byteType,
-    c: new ListType({
-      elementType: byteType,
-      limit: 100,
-    }),
-  },
+  b: byteType,
+  a: byteType,
+  c: new ListBasicType(byteType, 100),
 });
 
 const ArrayObject = new ContainerType({
-  fields: {
-    v: new ListType({
-      elementType: SimpleObject,
-      limit: 100,
-    }),
-  },
+  v: new ListCompositeType(SimpleObject, 100),
 });
 
-describe("error path", () => {
+// ErrorPath functionality is disabled
+describe.skip("error path", () => {
   const testCases: {
     value: string;
     type: Type<any>;
@@ -44,7 +36,7 @@ describe("error path", () => {
   for (const {type, value} of testCases) {
     it(`should print the error path deserializing ${type.constructor.name}`, () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v[1]: Not all variable bytes consumed");
+      assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v: Offset out of bounds");
     });
   }
 });

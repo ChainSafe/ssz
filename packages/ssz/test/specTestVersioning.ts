@@ -7,6 +7,6 @@ import path from "path";
 //
 // The contents of this file MUST include the URL, version and target path, and nothing else.
 
-export const SPEC_TEST_REPO_URL = "https://github.com/ethereum/eth2.0-spec-tests";
-export const SPEC_TEST_VERSION = "v1.1.2";
+export const SPEC_TEST_REPO_URL = "https://github.com/ethereum/consensus-spec-tests";
+export const SPEC_TEST_VERSION = "v1.1.8";
 export const SPEC_TEST_LOCATION = path.join(__dirname, "../spec-tests");
