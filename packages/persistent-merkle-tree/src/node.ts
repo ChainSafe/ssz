@@ -111,6 +111,26 @@ export class LeafNode extends Node {
   rebindRight(): Node {
     throw Error("LeafNode has no right node");
   }
+
+  getUint(uintBytes: number, offsetBytes: number): number {
+    if (uintBytes < 4) {
+      // number has to be masked from an h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      const bIndex = 3 - (offsetBytes % 4);
+      const h = getLeafNodeH(this, hIndex);
+      if (uintBytes === 1) {
+        return h & (0xff << bIndex);
+      } else {
+        return h & (0xffff << (bIndex / 2));
+      }
+    } else if (uintBytes === 4) {
+      // number equals the h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      return getLeafNodeH(this, hIndex);
+    } else {
+      throw Error("getUint does not support uintBytes > 4");
+    }
+  }
 }
 
 // setter helpers
@@ -125,4 +145,16 @@ export function compose(inner: Link, outer: Link): Link {
   return function (n: Node): Node {
     return outer(inner(n));
   };
+}
+
+export function getLeafNodeH(leafNode: LeafNode, hIndex: number): number {
+  if (hIndex === 0) return leafNode.h0;
+  if (hIndex === 1) return leafNode.h1;
+  if (hIndex === 2) return leafNode.h2;
+  if (hIndex === 3) return leafNode.h3;
+  if (hIndex === 4) return leafNode.h4;
+  if (hIndex === 5) return leafNode.h5;
+  if (hIndex === 6) return leafNode.h6;
+  if (hIndex === 7) return leafNode.h7;
+  throw Error("hIndex > 7");
 }
