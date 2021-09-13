@@ -45,7 +45,7 @@ export function treeOffsetProofToNode(offsets: number[], leaves: Uint8Array[]): 
   if (!leaves.length) {
     throw new Error("Proof must contain gt 0 leaves");
   } else if (leaves.length === 1) {
-    return new LeafNode(leaves[0]);
+    return LeafNode.fromRoot(leaves[0]);
   } else {
     // the offset popped from the list is the # of leaves in the left subtree
     const pivot = offsets[0];

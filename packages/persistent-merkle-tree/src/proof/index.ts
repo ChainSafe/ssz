@@ -22,12 +22,21 @@ export const ProofTypeSerialized = [
   ProofType.treeOffset, // 1
 ];
 
+/**
+ * A common merkle proof.
+ * A proof for a single leaf in a tree.
+ */
 export interface SingleProof {
   type: ProofType.single;
   gindex: Gindex;
   leaf: Uint8Array;
   witnesses: Uint8Array[];
 }
+/**
+ * A proof for possibly multiple leaves in a tree.
+ *
+ * See https://github.com/protolambda/eth-merkle-trees/blob/master/tree_offsets.md
+ */
 export interface TreeOffsetProof {
   type: ProofType.treeOffset;
   offsets: number[];

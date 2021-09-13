@@ -1,30 +1,50 @@
-import {expect} from "chai";
-
-import {subtreeFillToContents, LeafNode} from "../../src";
+import {subtreeFillToContents, LeafNode, getNodesAtDepth} from "../../src";
 
 describe("subtreeFillToContents", () => {
-  it("should not error on contents length 1", () => {
-    try {
-      subtreeFillToContents([new LeafNode(new Uint8Array(32))], 1);
-    } catch (e) {
-      expect.fail((e as Error).message);
+  it("Simple case", () => {
+    function nodeNum(num: number): LeafNode {
+      return LeafNode.fromUint32(num);
     }
+    const nodes = [nodeNum(1), nodeNum(2), nodeNum(3), nodeNum(4)];
+    subtreeFillToContents(nodes, 2);
+  });
+
+  it("should not error on contents length 1", () => {
+    subtreeFillToContents([LeafNode.fromZero()], 1);
   });
 
   it("should not error on empty contents", () => {
-    try {
-      subtreeFillToContents([], 0);
-      subtreeFillToContents([], 1);
-    } catch (e) {
-      expect.fail((e as Error).message);
-    }
+    subtreeFillToContents([], 0);
+    subtreeFillToContents([], 1);
   });
 
   it("should not error on depth 31", () => {
-    try {
-      subtreeFillToContents([], 31);
-    } catch (e) {
-      expect.fail((e as Error).message);
-    }
+    subtreeFillToContents([], 31);
   });
+
+  for (let depth = 1; depth <= 32; depth *= 2) {
+    const maxIndex = Math.min(2 ** depth, 200_000);
+
+    for (let count = 1; count <= maxIndex; count *= 2) {
+      it(`subtreeFillToContents depth ${depth} count ${count}`, () => {
+        const nodes = new Array<LeafNode>(count);
+        const expectedNodes = new Array<LeafNode>(count);
+        for (let i = 0; i < count; i++) {
+          const node = LeafNode.fromZero();
+          nodes[i] = node;
+          expectedNodes[i] = node;
+        }
+
+        const node = subtreeFillToContents(nodes, depth);
+        const retrievedNodes = getNodesAtDepth(node, depth, 0, count);
+
+        // Assert correct
+        for (let i = 0; i < count; i++) {
+          if (retrievedNodes[i] !== expectedNodes[i]) {
+            throw Error(`Wrong node at index ${i}`);
+          }
+        }
+      });
+    }
+  }
 });

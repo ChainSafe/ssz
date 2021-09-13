@@ -4,6 +4,10 @@ yarn-error.log
 .idea/
 .vscode
 
+coverage
+lib
+packages/*/package-lock.json
 packages/ssz/spec-tests
 
 benchmark_data/
+.failedTest.txt

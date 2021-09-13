@@ -1,7 +1,7 @@
 import * as sszAltair from "../lodestarTypes/altair/sszTypes";
-import {Attestation, SignedAggregateAndProof, SignedBeaconBlock} from "../lodestarTypes/phase0/types";
-import {SignedContributionAndProof, BeaconState} from "../lodestarTypes/altair/types";
-import {BitList} from "../../src";
+import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types";
+import {SignedContributionAndProof, BeaconState, SyncCommitteeMessage} from "../lodestarTypes/altair/types";
+import {BitArray} from "../../src";
 
 // Typical mainnet numbers
 const BITS_PER_ATTESTATION = 90;
@@ -54,6 +54,15 @@ export function getSignedAggregateAndProof(i: number): SignedAggregateAndProof {
   };
 }
 
+export function getSyncCommitteeMessage(i: number): SyncCommitteeMessage {
+  return {
+    slot: 1234567 + i,
+    beaconBlockRoot: randomBytes(32),
+    validatorIndex: 1e6 + i,
+    signature: randomBytes(96),
+  };
+}
+
 export function getSignedContributionAndProof(i: number): SignedContributionAndProof {
   return {
     message: {
@@ -61,7 +70,7 @@ export function getSignedContributionAndProof(i: number): SignedContributionAndP
       contribution: {
         slot: 1234567 + i,
         beaconBlockRoot: randomBytes(32),
-        subCommitteeIndex: i % 16,
+        subcommitteeIndex: i % 16,
         aggregationBits: getBitsMany(120, BITS_PER_ATTESTATION),
         signature: randomBytes(96),
       },
@@ -105,20 +114,31 @@ export function getSignedBeaconBlockPhase0(i: number): SignedBeaconBlock {
   };
 }
 
-export function getBitsSingle(len: number, bitSet: number): BitList {
-  const bits: boolean[] = [];
-  for (let i = 0; i < len; i++) {
-    bits.push(i === bitSet);
-  }
-  return bits as BitList;
+export function getValidator(i: number): Validator {
+  return {
+    pubkey: randomBytes(48),
+    withdrawalCredentials: randomBytes(32),
+    effectiveBalance: 32e9 + i,
+    slashed: false,
+    activationEligibilityEpoch: 1e6 + i,
+    activationEpoch: 1e6 + i,
+    exitEpoch: Infinity,
+    withdrawableEpoch: Infinity,
+  };
 }
 
-function getBitsMany(len: number, bitsSet: number): BitList {
-  const bits: boolean[] = [];
-  for (let i = 0; i < len; i++) {
-    bits.push(i <= bitsSet);
+export function getBitsSingle(len: number, bitSet: number): BitArray {
+  const bits = BitArray.fromBitLen(len);
+  bits.set(bitSet, true);
+  return bits;
+}
+
+function getBitsMany(len: number, bitsSet: number): BitArray {
+  const bits = BitArray.fromBitLen(len);
+  for (let i = 0; i <= bitsSet; i++) {
+    bits.set(i, true);
   }
-  return bits as BitList;
+  return bits;
 }
 
 function randomBytes(bytes: number): Uint8Array {

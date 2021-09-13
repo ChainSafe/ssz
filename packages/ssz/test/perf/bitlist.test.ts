@@ -1,15 +1,13 @@
-import {MAX_VALIDATORS_PER_COMMITTEE} from "@chainsafe/lodestar-params";
 import {itBench} from "@dapplion/benchmark";
-import {BitList, BitListType} from "../../src";
+import {BitArray, BitListType} from "../../src";
 
 // running zipIndexesCommitteeBits() on `bitLen: 2048, bitsSet: 2048` takes 50.904 us/op
 // However deserializing a BitList to struct `len 2048, set 2048` takes 560.4670 us/op,
 // so it's far more efficient to keep bitlists as Uint8Arrays and also save memory.
 
 describe("BitListType types", () => {
-  const CommitteeBits = new BitListType({
-    limit: MAX_VALIDATORS_PER_COMMITTEE,
-  });
+  const MAX_VALIDATORS_PER_COMMITTEE = 2048;
+  const CommitteeBits = new BitListType(MAX_VALIDATORS_PER_COMMITTEE);
 
   const testCases: {bitLen: number; bitsSet: number}[] = [
     // Realistic mainnet case
@@ -19,7 +17,7 @@ describe("BitListType types", () => {
   ];
 
   for (const {bitLen, bitsSet} of testCases) {
-    const bitlistStruct = getBitsMany(bitLen, bitsSet) as BitList;
+    const bitlistStruct = getBitsMany(bitLen, bitsSet);
     const bytes = CommitteeBits.serialize(bitlistStruct);
 
     itBench(`bitlist bytes to struct (${bitLen},${bitsSet})`, () => {
@@ -27,15 +25,15 @@ describe("BitListType types", () => {
     });
 
     itBench(`bitlist bytes to tree (${bitLen},${bitsSet})`, () => {
-      CommitteeBits.createTreeBackedFromBytes(bytes);
+      CommitteeBits.deserializeToView(bytes);
     });
   }
 });
 
-function getBitsMany(len: number, bitsSet: number): boolean[] {
-  const bits: boolean[] = [];
-  for (let i = 0; i < len; i++) {
-    bits.push(i <= bitsSet);
+function getBitsMany(len: number, bitsSet: number): BitArray {
+  const bits = BitArray.fromBitLen(len);
+  for (let i = 0; i < bitsSet; i++) {
+    bits.set(i, true);
   }
   return bits;
 }

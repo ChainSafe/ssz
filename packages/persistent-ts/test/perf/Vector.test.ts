@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import {PersistentVector, TransientVector} from "../../src/Vector";
 
-it("PersistentVector - should be able to handle 10M elements", function () {
+// TODO: @tuyennhv re-write with common benchmark runner
+it.skip("PersistentVector - should be able to handle 10M elements", function () {
   this.timeout(0);
   let start = Date.now();
   let acc: PersistentVector<number> = PersistentVector.empty;
@@ -51,7 +52,8 @@ it("PersistentVector - should be able to handle 10M elements", function () {
   expect(newArr).to.be.deep.equal(newArr2);
 });
 
-it("TransientVector - should be able to handle 10M elements", function () {
+// TODO: @tuyennhv re-write with common benchmark runner
+it.skip("TransientVector - should be able to handle 10M elements", function () {
   this.timeout(0);
   let start = Date.now();
   let acc: TransientVector<number> = TransientVector.empty();

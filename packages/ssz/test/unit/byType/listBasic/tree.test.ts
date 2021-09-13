@@ -1,0 +1,212 @@
+import {expect} from "chai";
+import {ListBasicType, toHexString, UintNumberType} from "../../../../src";
+import {runViewTestMutation, TreeMutation} from "../runViewTestMutation";
+
+const limit = 100;
+const uint64NumInf = new UintNumberType(8, {clipInfinity: true});
+const ListN64Uint64NumberType = new ListBasicType(uint64NumInf, limit);
+
+for (const listBasicUintType of [
+  ListN64Uint64NumberType,
+  new ListBasicType(new UintNumberType(8), limit),
+  new ListBasicType(new UintNumberType(1), limit),
+]) {
+  runViewTestMutation({
+    type: listBasicUintType,
+    mutations: [
+      {
+        id: "push basic",
+        valueBefore: [],
+        valueAfter: [100],
+        fn: (tv) => {
+          tv.push(100);
+        },
+      },
+      {
+        // push 5 times to increase depth and create 2 new nodes (uint64, 4 items per chunk)
+        id: "push basic x5",
+        valueBefore: [],
+        valueAfter: [1, 2, 3, 4, 5],
+        assertFn: (tv) => expect(tv.length).equals(5, "Wrong length"),
+        fn: (tv) => {
+          for (let i = 1; i <= 5; i++) {
+            tv.push(i);
+          }
+        },
+      },
+      {
+        id: "set basic",
+        valueBefore: [1, 2],
+        valueAfter: [1, 20],
+        fn: (tv) => {
+          tv.set(1, 20);
+        },
+      },
+      {
+        id: "set basic x2",
+        valueBefore: [1, 2],
+        valueAfter: [10, 20],
+        fn: (tv) => {
+          tv.set(0, 10);
+          tv.set(1, 20);
+        },
+      },
+      {
+        id: "swap two indexes",
+        valueBefore: [10, 20],
+        valueAfter: [20, 10],
+        fn: (tv) => {
+          const i0 = tv.get(0);
+          const i1 = tv.get(1);
+          tv.set(0, i1);
+          tv.set(1, i0);
+        },
+      },
+    ],
+  });
+}
+
+runViewTestMutation({
+  type: new ListBasicType(new UintNumberType(1, {setBitwiseOR: true}), limit),
+  mutations: [
+    {
+      // push 5 times to increase depth and create 2 new nodes (uint64, 4 items per chunk)
+      id: "push basic x5",
+      valueBefore: [],
+      valueAfter: [1, 2, 3, 4, 5],
+      fn: (tv) => {
+        for (let i = 1; i <= 5; i++) {
+          tv.push(i);
+        }
+      },
+    },
+    {
+      id: "set basic x2",
+      valueBefore: [0b1000, 0b0100],
+      valueAfter: [0b1010, 0b0101],
+      fn: (tv) => {
+        tv.set(0, 0b0010);
+        tv.set(1, 0b0001);
+      },
+    },
+  ],
+});
+
+const deltaValues = [1_000_000_000_000, 999, 0, -1_000_000];
+const initBalance = 31217089836; // Must be greater than the negative delta
+
+runViewTestMutation({
+  type: ListN64Uint64NumberType,
+  mutations: [
+    // For each delta test mutating a single item of a List
+    ...deltaValues.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
+      const valueBefore = Array.from({length: limit}, () => initBalance);
+      const valueAfter = [...valueBefore];
+      const i = Math.floor(limit / 2); // Mutate the middle value
+      valueAfter[i] = valueBefore[i] + delta;
+
+      return {
+        id: `applyDeltaAtIndex ${delta}`,
+        valueBefore,
+        valueAfter,
+        fn: (tv) => {
+          tv.set(i, tv.get(i) + delta);
+        },
+      };
+    }),
+
+    // For each delta test mutating half of the List items in batch
+    ...deltaValues.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
+      const valueBefore = Array.from({length: limit}, () => initBalance);
+      const valueAfter = [...valueBefore];
+
+      // same operation for BalancesList64 using tree_applyDeltaInBatch
+      const deltaByIndex = new Map<number, number>();
+      // `i += 2` to only apply the delta to half the values
+      for (let i = 0; i < limit; i += 2) {
+        valueAfter[i] += delta;
+        deltaByIndex.set(i, delta);
+      }
+
+      return {
+        id: `applyDeltaInBatch ${delta}`,
+        valueBefore,
+        valueAfter,
+        fn: (tv) => {
+          for (const [i, _delta] of deltaByIndex) {
+            tv.set(i, tv.get(i) + _delta);
+          }
+        },
+      };
+    }),
+
+    // For each delta create a new tree applying half of the List items in batch
+    // Since the tree is re-created `fn()` returns a new tree that is used to compare `valueAfter`
+    ...deltaValues.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
+      const valueBefore = Array.from({length: limit}, () => initBalance);
+      const valueAfter: number[] = [];
+      const deltasByIdx: number[] = [];
+
+      for (let i = 0; i < limit; i++) {
+        // `i % 2 === 0` to only apply the delta to half the values
+        const d = i % 2 === 0 ? delta : 0;
+        valueAfter[i] = valueBefore[i] + d;
+        deltasByIdx[i] = d;
+      }
+
+      return {
+        id: `newTreeFromDeltas ${delta}`,
+        valueBefore,
+        valueAfter,
+        // Skip since the returned viewDU is already committed, can't drop changes
+        skipCloneMutabilityViewDU: true,
+        fn: (tv) => {
+          const values = tv.getAll();
+          for (let i = 0; i < values.length; i++) {
+            values[i] += deltasByIdx[i];
+          }
+          return ListN64Uint64NumberType.toViewDU(values as number[]);
+        },
+      };
+    }),
+  ],
+});
+
+describe("ListBasicType tree reads", () => {
+  for (const [id, view] of Object.entries({
+    view: ListN64Uint64NumberType.defaultView(),
+    viewDU: ListN64Uint64NumberType.defaultViewDU(),
+  })) {
+    it(`ListN64Uint64NumberType ${id} .getAll`, () => {
+      const values: number[] = [];
+
+      for (let i = 0; i < view.type.limit; i++) {
+        view.push(i);
+        values.push(i);
+      }
+
+      expect(() => view.push(0)).to.throw("Error pushing over limit");
+      expect(() => view.set(view.type.limit, 0)).to.throw("Error setting index over length");
+
+      for (let i = 0; i < view.type.limit; i++) {
+        expect(view.get(i)).equals(values[i], `Wrong get(${i})`);
+      }
+
+      expect(view.getAll()).deep.equals(values, "Wrong getAll()");
+    });
+  }
+});
+
+describe("ListBasicType drop caches", () => {
+  it("Make some changes then get previous value", () => {
+    const view = ListN64Uint64NumberType.defaultViewDU();
+    const bytesBefore = toHexString(view.serialize());
+
+    // Make changes to view and clone them to new view
+    view.push(1);
+    view.clone();
+
+    const bytesAfter = toHexString(view.serialize());
+    expect(bytesAfter).to.equal(bytesBefore, "view retained changes");
+  });
+});

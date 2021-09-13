@@ -1,29 +1,19 @@
 import {itBench} from "@dapplion/benchmark";
-import {NumberUintType, ContainerType, VectorType, CompositeType} from "../../src";
-
-type TestObj = {
-  a: number;
-  b: number;
-  vec: number[];
-};
+import {UintNumberType, ContainerType, VectorBasicType} from "../../src";
 
 describe("SSZ get property", () => {
-  const Gwei = new NumberUintType({byteLength: 8});
-  const Vec = new VectorType({elementType: Gwei, length: 1e5});
+  const Gwei = new UintNumberType(8);
+  const Vec = new VectorBasicType(Gwei, 1e5);
 
-  const testCases: {id: string; type: CompositeType<TestObj>}[] = [
+  const testCases = [
     {
       id: "Container {a,b,vec}",
-      type: new ContainerType<{a: number; b: number; vec: number[]}>({
-        fields: {a: Gwei, b: Gwei, vec: Vec},
-      }),
+      type: new ContainerType({a: Gwei, b: Gwei, vec: Vec}),
     },
     // Put a Vector in the middle to test having a bigger tree to traverse
     {
       id: "Container {a,vec,b}",
-      type: new ContainerType<{a: number; vec: number[]; b: number}>({
-        fields: {a: Gwei, vec: Vec, b: Gwei},
-      }),
+      type: new ContainerType({a: Gwei, vec: Vec, b: Gwei}),
     },
   ];
 
@@ -32,7 +22,7 @@ describe("SSZ get property", () => {
   for (const {id, type} of testCases) {
     const stateStruct = type.defaultValue();
     stateStruct.b = 1400;
-    const stateTree = type.createTreeBackedFromStruct(stateStruct);
+    const stateTree = type.toViewDU(stateStruct);
 
     itBench(`${id} - as struct x${times}`, () => {
       for (let i = 0; i < times; i++) {

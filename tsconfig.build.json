@@ -3,7 +3,14 @@
     "target": "es2019",
     "module": "commonjs",
     "pretty": true,
-    "lib": ["dom", "es2020", "esnext.bigint", "es2020.string", "es2020.symbol.wellknown"],
+    "lib": [
+      "dom",
+      "ESNext",
+      "es2020",
+      "esnext.bigint",
+      "es2020.string",
+      "es2020.symbol.wellknown"
+    ],
 
     "strict": true,
     "sourceMap": true,

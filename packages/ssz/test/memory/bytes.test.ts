@@ -28,7 +28,7 @@ import {testRunnerMemory} from "./testRunnerMemory";
 // Buffer.alloc            256 bytes - 441.3 bytes / instance
 // Buffer.alloc            512 bytes - 697.3 bytes / instance
 
-const bpiLeafNode = testRunnerMemory({getInstance: () => new LeafNode(randomBytes(32))});
+const bpiLeafNode = testRunnerMemory({getInstance: () => LeafNode.fromRoot(randomBytes(32))});
 console.log(`LeafNode() 32 bytes - ${bpiLeafNode} bytes / instance`);
 
 testRunnerMemoryBpi([

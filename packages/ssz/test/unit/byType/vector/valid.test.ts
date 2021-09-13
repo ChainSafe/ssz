@@ -1,12 +1,19 @@
-import {CompositeType, ContainerType, VectorType, Number64UintType, RootType} from "../../../../src";
-import {zeroHashes} from "../../../../src/util/zeros";
-import {runTypeTestValid} from "../testRunners";
+import {
+  ContainerType,
+  VectorBasicType,
+  VectorCompositeType,
+  UintNumberType,
+  ByteVectorType,
+  ListBasicType,
+} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
-const uint64Type = new Number64UintType();
+const rootType = new ByteVectorType(32);
+const uint64Type = new UintNumberType(8);
+const zeroHash = Buffer.alloc(32, 0);
 
 runTypeTestValid({
-  typeName: "Vector(Number64UintType)",
-  type: new VectorType({elementType: uint64Type, length: 4}),
+  type: new VectorBasicType(uint64Type, 4),
   defaultValue: [0, 0, 0, 0],
   values: [
     {
@@ -19,9 +26,8 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Vector(Root)",
-  type: new VectorType({elementType: new RootType({expandedType: {} as CompositeType<any>}), length: 4}),
-  defaultValue: [zeroHashes[0], zeroHashes[0], zeroHashes[0], zeroHashes[0]],
+  type: new VectorCompositeType(rootType, 4),
+  defaultValue: [zeroHash, zeroHash, zeroHash, zeroHash],
   values: [
     {
       id: "4 roots",
@@ -39,11 +45,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Vector(ContainerType)",
-  type: new VectorType({
-    elementType: new ContainerType({fields: {a: uint64Type, b: uint64Type}}),
-    length: 4,
-  }),
+  type: new VectorCompositeType(new ContainerType({a: uint64Type, b: uint64Type}), 4),
   defaultValue: [
     {a: 0, b: 0},
     {a: 0, b: 0},
@@ -52,7 +54,7 @@ runTypeTestValid({
   ],
   values: [
     {
-      id: "4 values",
+      id: "4 arrays",
       serialized:
         "0x0000000000000000000000000000000040e2010000000000f1fb0900000000004794030000000000f8ad0b00000000004e46050000000000ff5f0d0000000000",
       json: [
@@ -62,6 +64,22 @@ runTypeTestValid({
         {a: "345678", b: "876543"},
       ],
       root: "0xb1a797eb50654748ba239010edccea7b46b55bf740730b700684f48b0c478372",
+    },
+  ],
+});
+
+runTypeTestValid({
+  type: new VectorCompositeType(new ListBasicType(uint64Type, 8), 2),
+  defaultValue: [[], []],
+  values: [
+    {
+      id: "[1,2],[5,6]",
+      serialized: "0x08000000180000000100000000000000020000000000000005000000000000000600000000000000",
+      json: [
+        ["1", "2"],
+        ["5", "6"],
+      ],
+      root: "0x0014c485ce39c8071f69631566b1d1ad51e2b0b5abc3c7a299a6fac1abce9e49",
     },
   ],
 });

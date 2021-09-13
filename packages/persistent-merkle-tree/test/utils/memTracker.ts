@@ -14,8 +14,8 @@ export class MemoryTracker {
     this.prev = curr;
     console.log(id.padEnd(20), parts.join(" "));
   }
-  }
+}
 
-  function formatBytes(numBytes: number): string {
-    return numBytes/1000000 + "MB";
-  }
+function formatBytes(numBytes: number): string {
+  return numBytes / 1000000 + "MB";
+}

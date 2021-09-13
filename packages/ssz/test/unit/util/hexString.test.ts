@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 import {fromHexString, toHexString} from "../../../src";
 
-describe("util / byteArray", () => {
+describe("util / byteArray / toHexString + fromHexString", () => {
   const testCases: string[] = [
     "0x",
     "0x00",
@@ -17,4 +17,12 @@ describe("util / byteArray", () => {
       expect(hexRes).to.equal(hex);
     });
   }
+
+  it("fromHexString throw for non hex string", () => {
+    expect(() => fromHexString(new Uint8Array() as unknown as string)).to.throw();
+  });
+
+  it("fromHexString throw for odd hex string", () => {
+    expect(() => fromHexString("0x1")).to.throw();
+  });
 });
