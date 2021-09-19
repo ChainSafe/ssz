@@ -114,6 +114,23 @@ export const SlashingTransformFieldObject = new ContainerType({
   },
 });
 
+export const WithCasingDeclarationFieldObject = new ContainerType({
+  fields: {
+    eth1Data: new NumberUintType({byteLength: 4}),
+    signedHeader1: new NumberUintType({byteLength: 4}),
+    signedHeader2: new NumberUintType({byteLength: 4}),
+    attestation1: new BooleanType(),
+    attestation2: new BooleanType(),
+  },
+  casingMap: {
+    eth1Data: "eth1_data",
+    signedHeader1: "signed_header_1",
+    signedHeader2: "signed_header_2",
+    attestation1: "attestation_1",
+    attestation2: "attestation_2",
+  },
+});
+
 export const ComplexCamelCaseFieldObject = new ContainerType({
   fields: {
     someValue: new NumberUintType({byteLength: 4}),
