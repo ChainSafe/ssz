@@ -10,7 +10,7 @@ export interface IJsonOptions {
     | "header"
     | "pascal" //Same as squish
     | "dot"
-    | "declared";
+    | "notransform";
   casingMap?: Record<string, string>;
 }
 

@@ -20,7 +20,7 @@ describe("json serialization", function () {
   it("should deserialize without case transformation", function () {
     const test = {someValue_RandOM: 4, someOtherValue_1Random2: true};
     const json = {someValue_RandOM: 4, someOtherValue_1Random2: true};
-    const result = NoTransformFieldObject.fromJson(json, {case: "declared"});
+    const result = NoTransformFieldObject.fromJson(json, {case: "notransform"});
     expect(NoTransformFieldObject.equals(test, result)).to.be.true;
   });
 
@@ -67,11 +67,11 @@ describe("json serialization", function () {
     const test = {eth1Data: 11, signedHeader1: 4, signedHeader2: 5, attestation1: true, attestation2: false};
     const json = {eth1_data: 11, signed_header_1: 4, signed_header_2: 5, attestation_1: true, attestation_2: false};
     const result = WithCasingDeclarationFieldObject.fromJson(json, {
-      case: "declared",
+      case: "snake",
     });
     expect(WithCasingDeclarationFieldObject.equals(test, result)).to.be.true;
     const back = WithCasingDeclarationFieldObject.toJson(result, {
-      case: "declared",
+      case: "snake",
     });
     expect(back).to.be.deep.equal(json);
   });

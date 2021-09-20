@@ -8,7 +8,7 @@ export function toExpectedCase(
 ): string {
   if (customCasingMap && customCasingMap[value]) return customCasingMap[value];
   switch (expectedCase) {
-    case "declared":
+    case "notransform":
       return value;
     case "param":
       return Case.kebab(value);

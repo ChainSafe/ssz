@@ -250,7 +250,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
     }
     const value = {} as T;
     const expectedCase = options && options.case;
-    const customCasingMap = expectedCase === "declared" ? this.casingMap : options && options.casingMap;
+    const customCasingMap = this.casingMap || (options && options.casingMap);
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       const expectedFieldName = toExpectedCase(fieldName, expectedCase, customCasingMap);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
@@ -265,7 +265,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
     const expectedCase = options && options.case;
-    const customCasingMap = expectedCase === "declared" ? this.casingMap : options && options.casingMap;
+    const customCasingMap = this.casingMap || (options && options.casingMap);
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       data[toExpectedCase(fieldName, expectedCase, customCasingMap)] = fieldType.toJson(
         value[fieldName as keyof T],

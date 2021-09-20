@@ -123,7 +123,6 @@ export const WithCasingDeclarationFieldObject = new ContainerType({
     attestation2: new BooleanType(),
   },
   casingMap: {
-    eth1Data: "eth1_data",
     signedHeader1: "signed_header_1",
     signedHeader2: "signed_header_2",
     attestation1: "attestation_1",
