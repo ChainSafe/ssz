@@ -30,7 +30,7 @@ jobs:
       - name: Deploy Website
         uses: peaceiris/actions-gh-pages@v2
         env:
-          PERSONAL_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: packages/simpleserialize.com/dist
 
@@ -39,7 +39,7 @@ jobs:
         if: failure()
         uses: author/action-rollback@9ec72a6af74774e00343c6de3e946b0901c23013
         with:
-          id: ${{ steps.create_release.outputs.id }}
+          release_id: ${{ steps.create_release.outputs.id }}
           tag: ${{ needs.tag.outputs.tag }}
           delete_orphan_tag: true
         env:
