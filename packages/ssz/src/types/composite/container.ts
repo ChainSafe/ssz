@@ -22,6 +22,7 @@ import {isTreeBacked} from "../../backings/tree/treeValue";
 export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
+  casingMap?: Record<string, string>;
 }
 
 export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
@@ -39,6 +40,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   // ES6 ensures key order is chronological
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
+  casingMap?: Record<string, string>;
   /**
    * This caches FieldInfo by field name so that we don't have to query this same data in a lot of apis.
    * This helps speed up 30% with a simple test of increasing state.slot from 0 to 1_000_000 as shown in the
@@ -49,6 +51,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   constructor(options: IContainerOptions) {
     super();
     this.fields = {...options.fields};
+    this.casingMap = options.casingMap;
     this._typeSymbols.add(CONTAINER_TYPE);
     this.fieldInfos = new Map<string, FieldInfo>();
     let chunkIndex = 0;
@@ -246,9 +249,9 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
       throw new Error("Invalid JSON container: expected Object");
     }
     const value = {} as T;
+    const expectedCase = options && options.case;
+    const customCasingMap = this.casingMap || (options && options.casingMap);
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-      const expectedCase = options && options.case;
-      const customCasingMap = options && options.casingMap;
       const expectedFieldName = toExpectedCase(fieldName, expectedCase, customCasingMap);
       if ((data as Record<string, Json>)[expectedFieldName] === undefined) {
         throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
@@ -262,7 +265,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   struct_convertToJson(value: T, options?: IJsonOptions): Json {
     const data = {} as Record<string, Json>;
     const expectedCase = options && options.case;
-    const customCasingMap = options && options.casingMap;
+    const customCasingMap = this.casingMap || (options && options.casingMap);
     for (const [fieldName, fieldType] of Object.entries(this.fields)) {
       data[toExpectedCase(fieldName, expectedCase, customCasingMap)] = fieldType.toJson(
         value[fieldName as keyof T],
