@@ -1,3 +1,12 @@
+## 0.8.18 (2021-09-25)
+
+## Features
+
+- Ability to specify casingMap declaration time for Container's toJson/fromJson [#198](https://github.com/ChainSafe/ssz/pull/198)
+- Extending case matching in Container's toJson/fromJson with a range of case types [#184](https://github.com/ChainSafe/ssz/pull/184)
+- Ability to provide casingMap in toJson/fromJson interface for aiding case matching [#184](https://github.com/ChainSafe/ssz/pull/184)
+
+
 ## 0.8.17 (2021-08-30)
 
 ## Bug fixes
