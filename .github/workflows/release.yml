@@ -22,10 +22,14 @@ jobs:
       - run: yarn install --frozen-lockfile --ignore-optional && yarn build
       - run: yarn build
 
+      - run: git config user.email $(git --no-pager show -s --format='%ae' HEAD)
+      - run: git config user.name $(git --no-pager show -s --format='%an' HEAD)
+
       - name: Publish to npm registry
         run: yarn publish:release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy Website
         uses: peaceiris/actions-gh-pages@v2
