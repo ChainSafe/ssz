@@ -561,11 +561,21 @@ export class TransientVector<T> implements Iterable<T> {
  * Recursively loop through the nodes and push node to values array.
  */
 function iterateNodeValues<T>(node: INode<T>, level: number, values: T[]): void {
+  if (!node) {
+    return;
+  }
+
   if (level <= 0) {
-    values.push(...(node as ILeaf<T>).array.filter((i) => i != null));
+    for (const t of (node as ILeaf<T>).array) {
+      if (t != null) {
+        values.push(t);
+      }
+    }
   } else {
-    for (const child of (node as IBranch<T>).array.filter((i) => i != null)) {
-      iterateNodeValues(child as INode<T>, level - BIT_WIDTH, values);
+    for (const child of (node as IBranch<T>).array) {
+      if (child !== null) {
+        iterateNodeValues(child as INode<T>, level - BIT_WIDTH, values);
+      }
     }
   }
 }
