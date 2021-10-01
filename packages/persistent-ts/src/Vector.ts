@@ -275,16 +275,7 @@ export class PersistentVector<T> implements Iterable<T> {
    */
   toArray(): T[] {
     const values: T[] = [];
-    function iterateNodeValues(node: INode<T>, level: number): void {
-      if (level <= 0) {
-        values.push(...(node as ILeaf<T>).array.filter((i) => i != null));
-      } else {
-        for (const child of (node as IBranch<T>).array.filter((i) => i != null)) {
-          iterateNodeValues(child as INode<T>, level - BIT_WIDTH);
-        }
-      }
-    }
-    iterateNodeValues(this.root, this.shift);
+    iterateNodeValues(this.root, this.shift, values);
     values.push(...this.tail.slice(0, this.getTailLength()));
     return values;
   }
@@ -542,16 +533,7 @@ export class TransientVector<T> implements Iterable<T> {
    */
   toArray(): T[] {
     const values: T[] = [];
-    function iterateNodeValues(node: INode<T>, level: number): void {
-      if (level <= 0) {
-        values.push(...(node as ILeaf<T>).array.filter((i) => i != null));
-      } else {
-        for (const child of (node as IBranch<T>).array.filter((i) => i != null)) {
-          iterateNodeValues(child as INode<T>, level - BIT_WIDTH);
-        }
-      }
-    }
-    iterateNodeValues(this.root, this.shift);
+    iterateNodeValues(this.root, this.shift, values);
     values.push(...this.tail.slice(0, this.getTailLength()));
     return values;
   }
@@ -572,5 +554,28 @@ export class TransientVector<T> implements Iterable<T> {
    */
   private getTailOffset(): number {
     return this.length < BRANCH_SIZE ? 0 : ((this.length - 1) >>> BIT_WIDTH) << BIT_WIDTH;
+  }
+}
+
+/**
+ * Recursively loop through the nodes and push node to values array.
+ */
+function iterateNodeValues<T>(node: INode<T>, level: number, values: T[]): void {
+  if (!node) {
+    return;
+  }
+
+  if (level <= 0) {
+    for (const t of (node as ILeaf<T>).array) {
+      if (t != null) {
+        values.push(t);
+      }
+    }
+  } else {
+    for (const child of (node as IBranch<T>).array) {
+      if (child !== null) {
+        iterateNodeValues(child as INode<T>, level - BIT_WIDTH, values);
+      }
+    }
   }
 }
