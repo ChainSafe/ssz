@@ -23,6 +23,7 @@ export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fields: Record<string, Type<any>>;
   casingMap?: Record<string, string>;
+  expectedCase?: IJsonOptions["case"];
 }
 
 export const CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
@@ -51,7 +52,7 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
   constructor(options: IContainerOptions) {
     super();
     this.fields = {...options.fields};
-    this.casingMap = options.casingMap;
+    this.casingMap = options.casingMap || (options.expectedCase && {});
     this._typeSymbols.add(CONTAINER_TYPE);
     this.fieldInfos = new Map<string, FieldInfo>();
     let chunkIndex = 0;
@@ -62,6 +63,10 @@ export class ContainerType<T extends ObjectLike = ObjectLike> extends CompositeT
         gIndex: this.getGindexAtChunkIndex(chunkIndex),
       });
       chunkIndex++;
+
+      if (options.expectedCase && this.casingMap) {
+        this.casingMap[fieldName] = toExpectedCase(fieldName, options.expectedCase, options.casingMap);
+      }
     }
   }
 

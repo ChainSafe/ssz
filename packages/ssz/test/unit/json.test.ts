@@ -5,6 +5,7 @@ import {
   NoTransformFieldObject,
   SlashingTransformFieldObject,
   WithCasingDeclarationFieldObject,
+  WithCasingMapConstructionFieldObject,
 } from "./objects";
 import {expect} from "chai";
 import {CompositeListType} from "../../src/types/composite";
@@ -98,6 +99,15 @@ describe("json serialization", function () {
         attestation2: "ATTESTATION_2",
       },
     });
+    expect(back).to.be.deep.equal(json);
+  });
+
+  it("test eth2 spec with declaration time casingMap construction", function () {
+    const test = {eth1Data: 11, signedHeader1: 4, signedHeader2: 5, attestation1: true, attestation2: false};
+    const json = {eth1_data: 11, signed_header_1: 4, signed_header_2: 5, attestation_1: true, attestation_2: false};
+    const result = WithCasingMapConstructionFieldObject.fromJson(json);
+    expect(WithCasingMapConstructionFieldObject.equals(test, result)).to.be.true;
+    const back = WithCasingMapConstructionFieldObject.toJson(result);
     expect(back).to.be.deep.equal(json);
   });
 

@@ -130,6 +130,24 @@ export const WithCasingDeclarationFieldObject = new ContainerType({
   },
 });
 
+export const WithCasingMapConstructionFieldObject = new ContainerType({
+  fields: {
+    eth1Data: new NumberUintType({byteLength: 4}),
+    signedHeader1: new NumberUintType({byteLength: 4}),
+    signedHeader2: new NumberUintType({byteLength: 4}),
+    attestation1: new BooleanType(),
+    attestation2: new BooleanType(),
+  },
+  casingMap: {
+    signedHeader1: "signed_header_1",
+    signedHeader2: "signed_header_2",
+    attestation1: "attestation_1",
+    attestation2: "attestation_2",
+  },
+  //for rest of the fields not covered by casingMap, in this case eth1Data which snake casing converstion correctly maps to eth1_data
+  expectedCase: "snake",
+});
+
 export const ComplexCamelCaseFieldObject = new ContainerType({
   fields: {
     someValue: new NumberUintType({byteLength: 4}),
