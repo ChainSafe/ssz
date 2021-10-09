@@ -1,6 +1,12 @@
 import {LeafNode, Tree} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX} from "../types/composite";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
+import {
+  struct_deserializeFromBytesArrayComposite,
+  struct_serializeToBytesArrayComposite,
+  tree_deserializeFromBytesArrayComposite,
+  tree_serializeToBytesArrayComposite,
+} from "./array";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -8,18 +14,19 @@ import {BasicType, CompositeType, ValueOf} from "./abstract";
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class ListBasicType<ElementType extends BasicType<any>> extends CompositeType<ValueOf<ElementType>[]> {
+export class ListCompositeType<ElementType extends CompositeType<any>> extends CompositeType<ValueOf<ElementType>[]> {
   // Immutable characteristics
   readonly itemsPerChunk: number;
   readonly isBasic = false;
   readonly depth: number;
   readonly maxChunkCount: number;
+  readonly fixedLen = null;
 
   constructor(readonly elementType: ElementType, readonly limit: number) {
     super();
 
     if (!elementType.isBasic) {
-      throw Error("ListBasicType can only have a basic type as elementType");
+      throw Error("ListCompositeType can only have a basic type as elementType");
     }
 
     // TODO Check that itemsPerChunk is an integer
@@ -31,6 +38,24 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
 
   get defaultValue(): ValueOf<ElementType>[] {
     return [];
+  }
+
+  // Serialization + deserialization
+
+  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return struct_deserializeFromBytesArrayComposite(this.elementType, data, start, end, {listLimit: this.limit});
+  }
+
+  struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+    return struct_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
+    return tree_deserializeFromBytesArrayComposite(this.elementType, data, start, end, {listLimit: this.limit});
+  }
+
+  tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
+    return tree_serializeToBytesArrayComposite(this.elementType, this.tree_getLength(tree), tree, output, offset);
   }
 
   tree_getLength(tree: Tree): number {
@@ -53,7 +78,7 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> implement
   private inMutableMode = false;
   private allLeafNodesPopulated = false;
 
-  constructor(protected type: ListBasicType<ElementType>, protected tree: Tree) {}
+  constructor(protected type: ListCompositeType<ElementType>, protected tree: Tree) {}
 
   get length(): number {
     return this.type.tree_getLength(this.tree);

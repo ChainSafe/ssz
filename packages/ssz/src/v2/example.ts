@@ -1,6 +1,6 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree/lib";
 import {ContainerType} from "./container";
-import {ListBasicType} from "./list";
+import {ListBasicType} from "./listBasic";
 import {UintType} from "./uint";
 
 function example(): void {

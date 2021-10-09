@@ -7,9 +7,6 @@ export class UintType extends BasicType<number> {
   // Immutable characteristics
   readonly byteLength: number;
   readonly itemsPerChunk: number;
-  readonly isBasic = true;
-  readonly depth = 0;
-  readonly chunkCount = 1;
 
   constructor(byteLength: number) {
     super();
