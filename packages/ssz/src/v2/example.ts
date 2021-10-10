@@ -1,10 +1,11 @@
-import {Tree} from "@chainsafe/persistent-merkle-tree/lib";
+import {Tree, zeroNode} from "@chainsafe/persistent-merkle-tree/lib";
 import {ContainerType} from "./container";
 import {ListBasicType} from "./listBasic";
 import {UintType} from "./uint";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function example(): void {
-  const tree = new Tree({} as any);
+  const tree = new Tree(zeroNode(0));
   const uintType = new UintType(1);
   const epochPartipationType = new ListBasicType(uintType, 1e8);
   const containerType = new ContainerType({
@@ -12,8 +13,8 @@ function example(): void {
     slot: uintType,
   });
 
-  const epochPartipationView = epochPartipationType.getView(tree);
-  const containerView = containerType.getView(tree);
+  const epochPartipationView = epochPartipationType.getView(tree.rootNode);
+  const containerView = containerType.getView(tree.rootNode);
 
   containerView.epochPartipation; // Typed as 'ListBasicTreeView<UintType>'
   containerView.slot; // Typed as 'number'

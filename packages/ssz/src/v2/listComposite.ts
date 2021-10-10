@@ -1,7 +1,8 @@
-import {LeafNode, Tree} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX} from "../types/composite";
-import {BasicType, CompositeType, ValueOf} from "./abstract";
+import {CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
 import {
+  getLengthFromRootNode,
   struct_deserializeFromBytesArrayComposite,
   struct_serializeToBytesArrayComposite,
   tree_deserializeFromBytesArrayComposite,
@@ -16,11 +17,13 @@ import {
  */
 export class ListCompositeType<ElementType extends CompositeType<any>> extends CompositeType<ValueOf<ElementType>[]> {
   // Immutable characteristics
-  readonly itemsPerChunk: number;
+  readonly itemsPerChunk = 1;
   readonly isBasic = false;
   readonly depth: number;
   readonly maxChunkCount: number;
   readonly fixedLen = null;
+  readonly minLen = 0;
+  readonly maxLen: number;
 
   constructor(readonly elementType: ElementType, readonly limit: number) {
     super();
@@ -30,10 +33,10 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
     }
 
     // TODO Check that itemsPerChunk is an integer
-    this.itemsPerChunk = 32 / elementType.byteLength;
-    this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
+    this.maxChunkCount = Math.ceil((this.limit * 1) / 32);
     // TODO: Review math
     this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    this.maxLen = this.limit * elementType.maxLen;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
@@ -43,37 +46,33 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
   // Serialization + deserialization
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return struct_deserializeFromBytesArrayComposite(this.elementType, data, start, end, {listLimit: this.limit});
+    return struct_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
   }
 
   struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
     return struct_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
-    return tree_deserializeFromBytesArrayComposite(this.elementType, data, start, end, {listLimit: this.limit});
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
-    return tree_serializeToBytesArrayComposite(this.elementType, this.tree_getLength(tree), tree, output, offset);
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+    const length = getLengthFromRootNode(node);
+    return tree_serializeToBytesArrayComposite(this.elementType, length, this.depth, node, output, offset);
   }
 
   tree_getLength(tree: Tree): number {
     return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
   }
 
-  getView(tree: Tree): ListBasicTreeView<ElementType> {
-    return new ListBasicTreeView(this, tree);
+  getView(node: Node): ListCompositeTreeView<ElementType> {
+    return new ListCompositeTreeView(this, new Tree(node));
   }
 }
 
-interface TreeView {
-  toMutable(): void;
-  commit(): void;
-}
-
-export class ListBasicTreeView<ElementType extends BasicType<unknown>> implements TreeView {
-  private readonly leafNodes: LeafNode[] = [];
+export class ListCompositeTreeView<ElementType extends CompositeType<any>> implements TreeView {
+  private readonly views: ViewOf<ElementType>[] = [];
   private readonly dirtyNodes = new Set<number>();
   private inMutableMode = false;
   private allLeafNodesPopulated = false;
@@ -87,49 +86,30 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> implement
   /**
    * Get element at index `i`. Returns the primitive element directly
    */
-  get(index: number): ValueOf<ElementType> {
-    // TODO
-    const itemsPerChunk = this.type.itemsPerChunk;
-
-    // First walk through the tree to get the root node for that index
-    const chunkIndex = Math.floor(index / itemsPerChunk);
-    let leafNode = this.leafNodes[chunkIndex];
-    if (this.leafNodes[chunkIndex] === undefined) {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
-      leafNode = this.tree.getNode(gindex) as LeafNode;
-      this.leafNodes[chunkIndex] = leafNode;
+  get(index: number): ViewOfComposite<ElementType> {
+    let view = this.views[index];
+    if (view === undefined) {
+      const gindex = this.type.getGindexBitStringAtChunkIndex(index);
+      const node = this.tree.getNode(gindex);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      view = this.type.elementType.getView(node, this.inMutableMode) as ViewOf<ElementType>;
+      this.views[index] = view;
     }
 
-    return this.type.elementType.getValueFromPackedNode(leafNode, index) as ValueOf<ElementType>;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return view;
   }
 
-  set(index: number, value: ValueOf<ElementType>): void {
-    const itemsPerChunk = this.type.elementType.itemsPerChunk;
+  set(index: number, value: ViewOf<ElementType>): void {
+    this.views[index] = value;
 
-    const chunkIndex = Math.floor(index / itemsPerChunk);
-
-    // TODO, deduplicate with above
-    let leafNode = this.leafNodes[chunkIndex];
-    if (this.leafNodes[chunkIndex] === undefined) {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
-      leafNode = this.tree.getNode(gindex) as LeafNode;
-      this.leafNodes[chunkIndex] = leafNode;
-    }
-
-    // Create new node if current leafNode is not dirty
-    if (!this.inMutableMode || !this.dirtyNodes.has(chunkIndex)) {
-      leafNode = new LeafNode(leafNode);
-      this.leafNodes[chunkIndex] = leafNode;
-    }
-
-    this.type.elementType.setValueToNode(leafNode, index, value);
-
+    // Commit immediately
     if (this.inMutableMode) {
       // Do not commit to the tree, but update the node in leafNodes
-      this.dirtyNodes.add(chunkIndex);
+      this.dirtyNodes.add(index);
     } else {
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, leafNode);
+      this.tree.setNode(gindex, value.node);
     }
   }
 
@@ -145,7 +125,7 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> implement
     // TODO: Use fast setNodes() method
     for (const index of this.dirtyNodes) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, this.leafNodes[index]);
+      this.tree.setNode(gindex, this.views[index]);
     }
 
     this.dirtyNodes.clear();

@@ -1,7 +1,8 @@
-import {LeafNode, Tree} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX} from "../types/composite";
-import {BasicType, CompositeType, ValueOf} from "./abstract";
+import {BasicType, CompositeType, TreeView, ValueOf} from "./abstract";
 import {
+  getLengthFromRootNode,
   struct_deserializeFromBytesArrayBasic,
   struct_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
@@ -21,6 +22,8 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
   readonly depth: number;
   readonly maxChunkCount: number;
   readonly fixedLen = null;
+  readonly minLen = 0;
+  readonly maxLen: number;
 
   constructor(readonly elementType: ElementType, readonly limit: number) {
     super();
@@ -34,6 +37,7 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
     // TODO: Review math
     this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    this.maxLen = this.limit * elementType.maxLen;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
@@ -43,34 +47,29 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
   // Serialization + deserialization
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return struct_deserializeFromBytesArrayBasic(this.elementType, data, start, end, {listLimit: this.limit});
+    return struct_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
   struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
     return struct_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
-    return tree_deserializeFromBytesArrayBasic(this.elementType, data, start, end, {listLimit: this.limit});
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
-    const length = this.tree_getLength(tree);
-    return tree_serializeToBytesArrayBasic(this.elementType, this.depth, length, output, offset, tree);
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+    const length = getLengthFromRootNode(node);
+    return tree_serializeToBytesArrayBasic(this.elementType, this.depth, length, output, offset, node);
   }
 
   tree_getLength(tree: Tree): number {
     return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
   }
 
-  getView(tree: Tree): ListBasicTreeView<ElementType> {
-    return new ListBasicTreeView(this, tree);
+  getView(node: Node): ListBasicTreeView<ElementType> {
+    return new ListBasicTreeView(this, new Tree(node));
   }
-}
-
-interface TreeView {
-  toMutable(): void;
-  commit(): void;
 }
 
 export class ListBasicTreeView<ElementType extends BasicType<unknown>> implements TreeView {
@@ -95,7 +94,7 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> implement
     // First walk through the tree to get the root node for that index
     const chunkIndex = Math.floor(index / itemsPerChunk);
     let leafNode = this.leafNodes[chunkIndex];
-    if (this.leafNodes[chunkIndex] === undefined) {
+    if (leafNode === undefined) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
       leafNode = this.tree.getNode(gindex) as LeafNode;
       this.leafNodes[chunkIndex] = leafNode;
@@ -123,7 +122,7 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> implement
       this.leafNodes[chunkIndex] = leafNode;
     }
 
-    this.type.elementType.setValueToNode(leafNode, index, value);
+    this.type.elementType.setValueToPackedNode(leafNode, index, value);
 
     if (this.inMutableMode) {
       // Do not commit to the tree, but update the node in leafNodes

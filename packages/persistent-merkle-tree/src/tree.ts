@@ -233,81 +233,7 @@ export class Tree {
    * iterating through `count` nodes
    */
   getNodesAtDepth(depth: number, startIndex: number, count: number): Node[] {
-    // Strategy:
-    // First nagivate to the starting Gindex node,
-    // At each level record the tuple (current node, the navigation direction) in a list (Left=0, Right=1)
-    // Once we reach the starting Gindex node, the list will be length == depth
-    // Begin emitting nodes: Outer loop:
-    //   Yield the current node
-    //   Inner loop
-    //     pop off the end of the list
-    //     If its (N, Left) (we've nav'd the left subtree, but not the right subtree)
-    //       push (N, Right) and set set node as the n.right
-    //       push (N, Left) and set node as n.left until list length == depth
-    //   Inner loop until the list length == depth
-    // Outer loop until the list is empty or the yield count == count
-    if (startIndex < 0 || count < 0 || depth < 0) {
-      throw new Error(ERR_PARAM_LT_ZERO);
-    }
-
-    if (BigInt(1) << BigInt(depth) < startIndex + count) {
-      throw new Error(ERR_COUNT_GT_DEPTH);
-    }
-
-    if (count === 0) {
-      return [];
-    }
-
-    if (depth === 0) {
-      return [this.rootNode];
-    }
-
-    const nodes: Node[] = [];
-
-    let node = this.rootNode;
-    let currCount = 0;
-    const startGindex = toGindexBitstring(depth, startIndex);
-    const nav: [Node, Bit][] = [];
-    for (let i = 1; i < startGindex.length; i++) {
-      const bit = Number(startGindex[i]) as Bit;
-      nav.push([node, bit]);
-      if (bit) {
-        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
-        node = node.right;
-      } else {
-        if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
-        node = node.left;
-      }
-    }
-
-    while (nav.length && currCount < count) {
-      nodes.push(node);
-
-      currCount++;
-      if (currCount === count) {
-        break;
-      }
-
-      do {
-        const [parentNode, direction] = nav.pop()!;
-        // if direction was left
-        if (!direction) {
-          // now navigate right
-          nav.push([parentNode, 1]);
-          if (parentNode.isLeaf()) throw new Error(ERR_INVALID_TREE);
-          node = parentNode.right;
-
-          // and then left as far as possible
-          while (nav.length !== depth) {
-            nav.push([node, 0]);
-            if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
-            node = node.left;
-          }
-        }
-      } while (nav.length && nav.length !== depth);
-    }
-
-    return nodes;
+    return getNodesAtDepth(this.rootNode, depth, startIndex, count);
   }
 
   getProof(input: ProofInput): Proof {
@@ -368,4 +294,88 @@ export class Tree {
 
     this.rootNode = node;
   }
+}
+
+/**
+ * Fast read-only iteration
+ * In-order traversal of nodes at `depth`
+ * starting from the `startIndex`-indexed node
+ * iterating through `count` nodes
+ */
+export function getNodesAtDepth(rootNode: Node, depth: number, startIndex: number, count: number): Node[] {
+  // Strategy:
+  // First nagivate to the starting Gindex node,
+  // At each level record the tuple (current node, the navigation direction) in a list (Left=0, Right=1)
+  // Once we reach the starting Gindex node, the list will be length == depth
+  // Begin emitting nodes: Outer loop:
+  //   Yield the current node
+  //   Inner loop
+  //     pop off the end of the list
+  //     If its (N, Left) (we've nav'd the left subtree, but not the right subtree)
+  //       push (N, Right) and set set node as the n.right
+  //       push (N, Left) and set node as n.left until list length == depth
+  //   Inner loop until the list length == depth
+  // Outer loop until the list is empty or the yield count == count
+  if (startIndex < 0 || count < 0 || depth < 0) {
+    throw new Error(ERR_PARAM_LT_ZERO);
+  }
+
+  if (BigInt(1) << BigInt(depth) < startIndex + count) {
+    throw new Error(ERR_COUNT_GT_DEPTH);
+  }
+
+  if (count === 0) {
+    return [];
+  }
+
+  if (depth === 0) {
+    return [rootNode];
+  }
+
+  const nodes: Node[] = [];
+
+  let node = rootNode;
+  let currCount = 0;
+  const startGindex = toGindexBitstring(depth, startIndex);
+  const nav: [Node, Bit][] = [];
+  for (let i = 1; i < startGindex.length; i++) {
+    const bit = Number(startGindex[i]) as Bit;
+    nav.push([node, bit]);
+    if (bit) {
+      if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+      node = node.right;
+    } else {
+      if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+      node = node.left;
+    }
+  }
+
+  while (nav.length && currCount < count) {
+    nodes.push(node);
+
+    currCount++;
+    if (currCount === count) {
+      break;
+    }
+
+    do {
+      const [parentNode, direction] = nav.pop()!;
+      // if direction was left
+      if (!direction) {
+        // now navigate right
+        nav.push([parentNode, 1]);
+        if (parentNode.isLeaf()) throw new Error(ERR_INVALID_TREE);
+        node = parentNode.right;
+
+        // and then left as far as possible
+        while (nav.length !== depth) {
+          nav.push([node, 0]);
+          if (node.isLeaf()) throw new Error(ERR_INVALID_TREE);
+          node = node.left;
+        }
+      }
+    } while (nav.length && nav.length !== depth);
+  }
+
+  return nodes;
 }

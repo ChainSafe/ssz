@@ -1,4 +1,4 @@
-import {LeafNode, Tree} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 import {SszErrorPath} from "../util/errorPath";
 import {BasicType, CompositeType, TreeView, Type, ValueOf} from "./abstract";
 
@@ -19,6 +19,10 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
   readonly fixedLen: number | null;
   readonly minLen: number;
   readonly maxLen: number;
+
+  /** Reverse indexing: fieldName -> index in fields */
+  readonly fieldIndex: Record<keyof Fields, number>;
+
   // Precalculated data for faster serdes
   readonly fieldsEntries: [keyof Fields, Fields[keyof Fields]][];
   readonly isFixedLen: boolean[];
@@ -27,8 +31,6 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
   readonly variableOffsetsPosition: number[];
   /** End of fixed section of serialized Container */
   readonly fixedEnd: number;
-
-  readonly fieldsFixedLen: (number | null)[] = [];
 
   constructor(readonly fields: Fields) {
     super();
@@ -53,6 +55,12 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
     this.variableOffsetsPosition = variableOffsetsPosition;
     this.fixedEnd = fixedEnd;
     this.fixedLen = fixedLen;
+
+    // Reverse indexing: fieldName -> index in fields
+    this.fieldIndex = {} as Record<keyof Fields, number>;
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      this.fieldIndex[this.fieldsEntries[i][0]] = i;
+    }
   }
 
   get defaultValue(): ValueOfFields<Fields> {
@@ -108,39 +116,25 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
     return variableIndex;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
     const fieldRanges = this.getFieldRanges(data, start, end);
-    const target = new Tree();
+    const nodes: Node[] = [];
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const [, fieldType] = this.fieldsEntries[i];
       const [startField, endField] = fieldRanges[i];
-
-      // Basic element will always take a single chunk / LeafNode
-      if (fieldType.isBasic) {
-        // view of the chunk, shared buffer from `data`
-        const dataChunk = new Uint8Array(data.buffer, data.byteOffset + start + startField, endField - startField);
-        const chunk = new Uint8Array(32);
-        // copy chunk into new memory
-        chunk.set(dataChunk);
-        target.setRoot(gindex, chunk);
-      }
-
-      // Composite elements may take more than one chunk
-      else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const compositeType = fieldType as CompositeType<any>;
-        target.setSubtree(gindex, compositeType.tree_deserializeFromBytes(data, start + startField, start + endField));
-      }
+      nodes.push(fieldType.tree_deserializeFromBytes(data, start + startField, start + endField));
     }
+
+    return subtreeFillToContents(nodes, this.depth);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     let fixedIndex = offset;
     let variableIndex = this.fixedEnd;
 
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
-    const nodes = tree.getNodesAtDepth(this.depth, 0, this.fieldsEntries.length);
+    const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const [, fieldType] = this.fieldsEntries[i];
@@ -150,19 +144,19 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
-        variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, new Tree(node));
+        variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
       } else {
         // TODO: Previous implementation had an optimization to directly grab the node's root for basic types.
         // I've omitted this optimization since it makes un-performant assumptions about how the root is represented.
         // Consider optimizing tree_serializeToBytes() directly of types that are shorter than 32 bytes.
-        fixedIndex = fieldType.tree_serializeToBytes(output, fixedIndex, new Tree(node));
+        fixedIndex = fieldType.tree_serializeToBytes(output, fixedIndex, node);
       }
     }
     return variableIndex;
   }
 
-  getView(tree: Tree): ViewOfFields<Fields> {
-    return getContainerTreeView<Fields>(this, tree, false);
+  getView(node: Node): ViewOfFields<Fields> {
+    return getContainerTreeView<Fields>(this, node, false);
   }
 
   /** Deserializer helper */
@@ -242,7 +236,7 @@ function getContainerTreeView<Fields extends Record<string, Type<any>>>(
         },
         set: function (value) {
           const leafNode = tree.getNode(gindex) as LeafNode;
-          (keyType as BasicType<any>).setValueToNode(leafNode, 0, value);
+          (keyType as BasicType<any>).setValueToNode(leafNode, value);
         },
       };
     } else {
@@ -251,10 +245,12 @@ function getContainerTreeView<Fields extends Record<string, Type<any>>>(
         enumerable: true,
         get: function () {
           // In current ssz it returns a Tree with its hook
-          const keyTree = tree.getSubtree(gindex);
-          return (keyType as CompositeType<any>).getView(keyTree, view["inMutableMode"]) as unknown;
+          const nodeField = tree.getNode(gindex);
+          return (keyType as CompositeType<any>).getView(nodeField, view["inMutableMode"]) as unknown;
         },
-        set: function (value) {},
+        set: function (value) {
+          value;
+        },
       };
     }
   }

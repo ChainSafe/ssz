@@ -1,4 +1,4 @@
-import {GindexBitstring, LeafNode, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {GindexBitstring, LeafNode, Node, toGindexBitstring} from "@chainsafe/persistent-merkle-tree";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -10,6 +10,9 @@ export interface TreeView {
 export type ValueOf<T extends Type<any>> = T["defaultValue"];
 // type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
 
+export type ViewOf<T extends Type<any>> = T["isBasic"] extends true ? T["defaultValue"] : ReturnType<T["getView"]>;
+export type ViewOfComposite<T extends CompositeType<any>> = ReturnType<T["getView"]>;
+
 export abstract class Type<V> {
   abstract defaultValue: V;
   abstract isBasic: boolean;
@@ -19,7 +22,7 @@ export abstract class Type<V> {
   abstract readonly minLen: number;
   abstract readonly maxLen: number;
 
-  abstract getView(tree: Tree, inMutableMode: boolean): any;
+  abstract getView(node: Node, inMutableMode: boolean): unknown;
 
   getGindexBitStringAtChunkIndex(index: number): GindexBitstring {
     return toGindexBitstring(this.depth, index);
@@ -27,8 +30,8 @@ export abstract class Type<V> {
 
   abstract struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): V;
   abstract struct_serializeToBytes(output: Uint8Array, offset: number, struct: V): number;
-  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree;
-  abstract tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number;
+  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node;
+  abstract tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number;
 }
 
 export abstract class BasicType<V> extends Type<V> {
@@ -39,7 +42,7 @@ export abstract class BasicType<V> extends Type<V> {
   abstract readonly itemsPerChunk: number;
 
   // TODO: Consider just returning `Type<V>`, to make the API consistent in Container ViewOfFields
-  getView(): never {
+  getView(): unknown {
     throw Error("Basic types do not return views");
   }
 
@@ -47,11 +50,10 @@ export abstract class BasicType<V> extends Type<V> {
   abstract setValueToNode(leafNode: LeafNode, value: V): void;
   abstract getValueFromPackedNode(leafNode: LeafNode, index: number): V;
   abstract setValueToPackedNode(leafNode: LeafNode, index: number, value: V): void;
-  /** Basic types are always fixed size, no need for `end` param */
-  abstract struct_deserializeFromBytes(data: Uint8Array, start: number): V;
-  abstract struct_serializeToBytes(data: Uint8Array, start: number, value: V): number;
 }
 
 export abstract class CompositeType<V> extends Type<V> {
   readonly isBasic = false;
+
+  abstract getView(node: Node, inMutableMode: boolean): unknown;
 }

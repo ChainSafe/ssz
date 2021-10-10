@@ -112,12 +112,17 @@ export class LeafNode extends Node {
     throw Error("LeafNode has no right node");
   }
 
+  writeToBytes(data: Uint8Array, start: number, size: number): void {
+    // TODO: Optimize
+    data.set(this.root.slice(0, size), start);
+  }
+
   getUint(uintBytes: number, offsetBytes: number): number {
     if (uintBytes < 4) {
       // number has to be masked from an h value
       const hIndex = Math.floor(offsetBytes / 4);
       const bIndex = 3 - (offsetBytes % 4);
-      const h = getLeafNodeH(this, hIndex);
+      const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         return h & (0xff << bIndex);
       } else {
@@ -126,9 +131,61 @@ export class LeafNode extends Node {
     } else if (uintBytes === 4) {
       // number equals the h value
       const hIndex = Math.floor(offsetBytes / 4);
-      return getLeafNodeH(this, hIndex);
+      return getNodeH(this, hIndex);
     } else {
       throw Error("getUint does not support uintBytes > 4");
+    }
+  }
+
+  getUintBigint(uintBytes: number, offsetBytes: number): bigint {
+    if (uintBytes < 4) {
+      // number has to be masked from an h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      const bIndex = 3 - (offsetBytes % 4);
+      const h = getNodeH(this, hIndex);
+      if (uintBytes === 1) {
+        return BigInt(h & (0xff << bIndex));
+      } else {
+        return BigInt(h & (0xffff << (bIndex / 2)));
+      }
+    } else if (uintBytes === 4) {
+      // number equals the h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      return BigInt(getNodeH(this, hIndex));
+    } else if (uintBytes === 8) {
+      const hIndex1 = Math.floor(offsetBytes / 4);
+      const hIndex2 = hIndex1 + 1;
+      const h1 = BigInt(getNodeH(this, hIndex1));
+      const h2 = BigInt(getNodeH(this, hIndex2));
+      return (h1 << BigInt(32)) + h2;
+    } else {
+      throw Error("getUint does not support uintBytes > 8");
+    }
+  }
+
+  setUint(uintBytes: number, offsetBytes: number, value: number): void {
+    if (uintBytes === 4) {
+      // number equals the h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      setNodeH(this, hIndex, value);
+    } else {
+      throw Error("Does not support uintBytes !== 4");
+    }
+  }
+
+  bitwiseOrUint(uintBytes: number, offsetBytes: number, value: number): void {
+    if (uintBytes < 4) {
+      // number has to be masked from an h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      const bIndex = 3 - (offsetBytes % 4);
+      bitwiseOrNodeH(this, hIndex, value << bIndex);
+    } else if (uintBytes === 4) {
+      // number equals the h value
+      const hIndex = Math.floor(offsetBytes / 4);
+      setNodeH(this, hIndex, value);
+    } else {
+      // TODO
+      throw Error("Not supports byteLength > 4");
     }
   }
 }
@@ -147,14 +204,38 @@ export function compose(inner: Link, outer: Link): Link {
   };
 }
 
-export function getLeafNodeH(leafNode: LeafNode, hIndex: number): number {
-  if (hIndex === 0) return leafNode.h0;
-  if (hIndex === 1) return leafNode.h1;
-  if (hIndex === 2) return leafNode.h2;
-  if (hIndex === 3) return leafNode.h3;
-  if (hIndex === 4) return leafNode.h4;
-  if (hIndex === 5) return leafNode.h5;
-  if (hIndex === 6) return leafNode.h6;
-  if (hIndex === 7) return leafNode.h7;
+export function getNodeH(node: Node, hIndex: number): number {
+  if (hIndex === 0) return node.h0;
+  if (hIndex === 1) return node.h1;
+  if (hIndex === 2) return node.h2;
+  if (hIndex === 3) return node.h3;
+  if (hIndex === 4) return node.h4;
+  if (hIndex === 5) return node.h5;
+  if (hIndex === 6) return node.h6;
+  if (hIndex === 7) return node.h7;
+  throw Error("hIndex > 7");
+}
+
+export function setNodeH(node: Node, hIndex: number, value: number): number {
+  if (hIndex === 0) node.h0 = value;
+  if (hIndex === 1) node.h1 = value;
+  if (hIndex === 2) node.h2 = value;
+  if (hIndex === 3) node.h3 = value;
+  if (hIndex === 4) node.h4 = value;
+  if (hIndex === 5) node.h5 = value;
+  if (hIndex === 6) node.h6 = value;
+  if (hIndex === 7) node.h7 = value;
+  throw Error("hIndex > 7");
+}
+
+export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): number {
+  if (hIndex === 0) node.h0 |= value;
+  if (hIndex === 1) node.h1 |= value;
+  if (hIndex === 2) node.h2 |= value;
+  if (hIndex === 3) node.h3 |= value;
+  if (hIndex === 4) node.h4 |= value;
+  if (hIndex === 5) node.h5 |= value;
+  if (hIndex === 6) node.h6 |= value;
+  if (hIndex === 7) node.h7 |= value;
   throw Error("hIndex > 7");
 }

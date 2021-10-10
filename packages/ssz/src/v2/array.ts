@@ -1,11 +1,38 @@
-import {Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {
+  LeafNode,
+  Node,
+  Tree,
+  zeroNode,
+  getNodesAtDepth,
+  subtreeFillToContents,
+  BranchNode,
+} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../backings";
-import {LENGTH_GINDEX} from "../types";
 import {BasicType, CompositeType} from "./abstract";
+
+/**
+ * SSZ Lists (variable-length arrays) include the length of the list in the tree
+ * This length is always in the same index in the tree
+ * ```
+ *   1
+ *  / \
+ * 2   3 // <-here
+ * ```
+ */
+export const LENGTH_GINDEX = BigInt(3);
+
+export function getLengthFromRootNode(node: Node): number {
+  return (node.right as LeafNode).getUint(4, 0);
+}
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export type ArrayProps = {vectorLength?: number; listLimit?: number};
+export type ArrayProps = {
+  /** Vector length */
+  length?: number;
+  /** List limit */
+  limit?: number;
+};
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -33,7 +60,8 @@ export function struct_deserializeFromBytesArrayBasic<ElementType extends BasicT
   assertValidArrayLength(length, arrayProps);
 
   for (let i = 0; i < length; i++) {
-    values.push(elementType.struct_deserializeFromBytes(data, start + i * elSize));
+    // Last arguemnt is 0 because basic types don't need and `end` param
+    values.push(elementType.struct_deserializeFromBytes(data, start + i * elSize, 0));
   }
 
   return values;
@@ -59,11 +87,12 @@ export function struct_serializeToBytesArrayBasic<ElementType extends BasicType<
 // List of basic elements will pack them in merkelized form
 export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
   elementType: ElementType,
+  depth: number,
   data: Uint8Array,
   start: number,
   end: number,
   arrayProps: ArrayProps
-): Tree {
+): Node {
   // TODO: Check length is non-decimal
   const length = (end - start) / elementType.byteLength;
 
@@ -71,14 +100,14 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   assertValidArrayLength(length, arrayProps);
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const tree = packedRootsBytesToTree(data, start, end);
+  const tree = packedRootsBytesToTree(depth, data, start, end);
 
   // TODO: Add LeafNode.fromUint()
   const lengthNode = zeroNode(0);
   lengthNode.h0 = length;
   tree.setNode(LENGTH_GINDEX, lengthNode);
 
-  return tree;
+  return tree.rootNode;
 }
 
 /**
@@ -90,12 +119,12 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
   depth: number,
   output: Uint8Array,
   offset: number,
-  tree: Tree
+  node: Node
 ): number {
   const size = elementType.byteLength * length;
   const chunkCount = Math.ceil(size / 32);
 
-  const nodes = tree.getNodesAtDepth(depth, 0, chunkCount);
+  const nodes = getNodesAtDepth(node, depth, 0, chunkCount);
   packedNodeRootsToBytes(output, offset, size, nodes);
 
   return offset + size;
@@ -160,11 +189,12 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
 
 export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any>>(
   elementType: ElementType,
+  depth: number,
   data: Uint8Array,
   start: number,
   end: number,
   arrayProps: ArrayProps
-): Tree {
+): Node {
   const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
 
   const nodes: Node[] = [];
@@ -174,18 +204,17 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   for (let i = 0; i < offsets.length - 1; i++) {
     const startEl = offsets[i];
     const endEl = offsets[i + 1];
-    nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl).rootNode);
+    nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl));
   }
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const tree: Tree = treeFillContents(nodes);
+  const rootNodeItems = subtreeFillToContents(nodes, depth);
 
   // TODO: Add LeafNode.fromUint()
-  const lengthNode = zeroNode(0);
-  lengthNode.h0 = length;
-  tree.setNode(LENGTH_GINDEX, lengthNode);
+  const lengthNode = new LeafNode(zeroNode(0));
+  lengthNode.setUint(4, 0, length);
 
-  return tree;
+  return new BranchNode(rootNodeItems, lengthNode);
 }
 
 /**
@@ -195,11 +224,11 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   elementType: ElementType,
   length: number,
   depth: number,
-  target: Tree,
+  node: Node,
   output: Uint8Array,
   offset: number
 ): number {
-  const nodes = target.getNodesAtDepth(depth, 0, length);
+  const nodes = getNodesAtDepth(node, depth, 0, length);
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
@@ -210,7 +239,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
       // write offset
       fixedSection.setUint32(i * 4, variableIndex - offset, true);
       // write serialized element to variable section
-      variableIndex = elementType.tree_serializeToBytes(output, variableIndex, new Tree(nodes[i]));
+      variableIndex = elementType.tree_serializeToBytes(output, variableIndex, nodes[i]);
     }
     return variableIndex;
   }
@@ -219,7 +248,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   else {
     let index = offset;
     for (let i = 0; i < nodes.length; i++) {
-      index = elementType.tree_serializeToBytes(output, index, new Tree(nodes[i]));
+      index = elementType.tree_serializeToBytes(output, index, nodes[i]);
     }
     return index;
   }
@@ -294,25 +323,25 @@ function getVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: n
   return offsets;
 }
 
-function assertValidArrayLength(length: number, {vectorLength, listLimit}: ArrayProps): void {
+function assertValidArrayLength(length: number, arrayProps: ArrayProps): void {
   // Vector + List length validation
-  if (vectorLength !== undefined) {
-    if (length !== vectorLength) {
-      throw new Error(`Incorrect vector length ${length} expected ${vectorLength}`);
+  if (arrayProps.length !== undefined) {
+    if (length !== arrayProps.length) {
+      throw new Error(`Incorrect vector length ${length} expected ${arrayProps.length}`);
     }
-  } else if (listLimit !== undefined) {
-    if (length > listLimit) {
-      throw new Error(`List length too big ${length} limit ${listLimit}`);
+  } else if (arrayProps.limit !== undefined) {
+    if (length > arrayProps.limit) {
+      throw new Error(`List length too big ${length} limit ${arrayProps.limit}`);
     }
   } else {
-    throw Error("Must set either vectorLength or listLimit");
+    throw Error("Must set either length or limit");
   }
 }
 
 /**
  * TODO: Move to persistent-merkle-tree
  */
-export function packedRootsBytesToTree(data: Uint8Array, start: number, end: number): Tree {
+export function packedRootsBytesToTree(depth: number, data: Uint8Array, start: number, end: number): Tree {
   const uint32Arr = new Uint32Array(data.buffer, start, end - start);
   // Efficiently construct the tree writing to hashObjects directly
 }
