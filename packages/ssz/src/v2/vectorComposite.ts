@@ -56,7 +56,8 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
-    return tree_serializeToBytesArrayComposite(this.elementType, this.tree_getLength(tree), tree, output, offset);
+    const length = this.tree_getLength(tree);
+    return tree_serializeToBytesArrayComposite(this.elementType, length, this.depth, tree, output, offset);
   }
 
   tree_getLength(tree: Tree): number {

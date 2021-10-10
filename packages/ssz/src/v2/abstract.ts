@@ -14,12 +14,21 @@ export abstract class Type<V> {
   abstract defaultValue: V;
   abstract isBasic: boolean;
   abstract depth: number;
+  /** if fixedLen === null has variable length. Otherwise is fixed len of value `fixedLen` */
+  abstract readonly fixedLen: number | null;
+  abstract readonly minLen: number;
+  abstract readonly maxLen: number;
 
   abstract getView(tree: Tree, inMutableMode: boolean): any;
 
   getGindexBitStringAtChunkIndex(index: number): GindexBitstring {
     return toGindexBitstring(this.depth, index);
   }
+
+  abstract struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): V;
+  abstract struct_serializeToBytes(output: Uint8Array, offset: number, struct: V): number;
+  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree;
+  abstract tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number;
 }
 
 export abstract class BasicType<V> extends Type<V> {
@@ -40,16 +49,9 @@ export abstract class BasicType<V> extends Type<V> {
   abstract setValueToPackedNode(leafNode: LeafNode, index: number, value: V): void;
   /** Basic types are always fixed size, no need for `end` param */
   abstract struct_deserializeFromBytes(data: Uint8Array, start: number): V;
-  abstract struct_serializeToBytes(data: Uint8Array, start: number, value: V): void;
+  abstract struct_serializeToBytes(data: Uint8Array, start: number, value: V): number;
 }
 
 export abstract class CompositeType<V> extends Type<V> {
   readonly isBasic = false;
-  /** if fixedLen === null has variable length. Otherwise is fixed len of value `fixedLen` */
-  abstract readonly fixedLen: number | null;
-
-  abstract struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): V;
-  abstract struct_serializeToBytes(output: Uint8Array, offset: number, struct: V): number;
-  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree;
-  abstract tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number;
 }

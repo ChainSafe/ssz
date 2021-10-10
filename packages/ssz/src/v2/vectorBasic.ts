@@ -56,7 +56,8 @@ export class VectorBasicType<ElementType extends BasicType<any>> extends Composi
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
-    return tree_serializeToBytesArrayBasic(this.elementType, this.tree_getLength(tree), output, offset, tree);
+    const length = this.tree_getLength(tree);
+    return tree_serializeToBytesArrayBasic(this.elementType, length, this.depth, output, offset, tree);
   }
 
   tree_getLength(tree: Tree): number {

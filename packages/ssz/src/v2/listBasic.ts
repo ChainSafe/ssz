@@ -55,7 +55,8 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, tree: Tree): number {
-    return tree_serializeToBytesArrayBasic(this.elementType, this.tree_getLength(tree), output, offset, tree);
+    const length = this.tree_getLength(tree);
+    return tree_serializeToBytesArrayBasic(this.elementType, this.depth, length, output, offset, tree);
   }
 
   tree_getLength(tree: Tree): number {

@@ -87,6 +87,7 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
 export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
   elementType: ElementType,
   length: number,
+  depth: number,
   output: Uint8Array,
   offset: number,
   tree: Tree
@@ -94,7 +95,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
   const size = elementType.byteLength * length;
   const chunkCount = Math.ceil(size / 32);
 
-  const nodes = tree.getNodesAtDepth(this.depth, 0, chunkCount);
+  const nodes = tree.getNodesAtDepth(depth, 0, chunkCount);
   packedNodeRootsToBytes(output, offset, size, nodes);
 
   return offset + size;
@@ -110,8 +111,7 @@ export function struct_deserializeFromBytesArrayComposite<ElementType extends Co
   end: number,
   arrayProps: ArrayProps
 ): ValueOf<ElementType>[] {
-  const fixedLen = elementType.getFixedSerializedLength();
-  const offsets = getOffsetsArrayComposite(fixedLen, data, start, end, arrayProps);
+  const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
 
   const values: ValueOf<ElementType>[] = [];
 
@@ -136,10 +136,8 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
   offset: number,
   value: ValueOf<ElementType>[]
 ): number {
-  const fixedLen = elementType.getFixedSerializedLength();
-
   // Variable length
-  if (fixedLen === null) {
+  if (elementType.fixedLen === null) {
     let variableIndex = offset + length * 4;
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     for (let i = 0; i < length; i++) {
@@ -154,9 +152,9 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
   // Fixed length
   else {
     for (let i = 0; i < length; i++) {
-      elementType.struct_serializeToBytes(output, offset + i * fixedLen, value[i]);
+      elementType.struct_serializeToBytes(output, offset + i * elementType.fixedLen, value[i]);
     }
-    return offset + length * fixedLen;
+    return offset + length * elementType.fixedLen;
   }
 }
 
@@ -167,8 +165,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   end: number,
   arrayProps: ArrayProps
 ): Tree {
-  const fixedLen = elementType.getFixedSerializedLength();
-  const offsets = getOffsetsArrayComposite(fixedLen, data, start, end, arrayProps);
+  const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
 
   const nodes: Node[] = [];
 
@@ -197,15 +194,16 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 export function tree_serializeToBytesArrayComposite<ElementType extends CompositeType<any>>(
   elementType: ElementType,
   length: number,
+  depth: number,
   target: Tree,
   output: Uint8Array,
   offset: number
 ): number {
-  const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, length);
+  const nodes = target.getNodesAtDepth(depth, 0, length);
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
-  if (elementType.getFixedSerializedLength() === null) {
+  if (elementType.fixedLen === null) {
     let variableIndex = offset + length * 4;
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
     for (let i = 0; i < nodes.length; i++) {
