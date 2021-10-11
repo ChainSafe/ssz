@@ -8,6 +8,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
 } from "./array";
+import {ArrayCompositeTreeView} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -44,9 +45,8 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
     return [];
   }
 
-  getView(tree: Tree): never {
-    tree;
-    throw Error("TODO");
+  getView(tree: Tree, inMutableMode?: boolean): ArrayCompositeTreeView<ElementType> {
+    return new ArrayCompositeTreeView(this, tree, inMutableMode);
   }
 
   // Serialization + deserialization

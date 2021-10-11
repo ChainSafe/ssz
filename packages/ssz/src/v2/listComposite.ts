@@ -1,6 +1,5 @@
 import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {LENGTH_GINDEX} from "../types/composite";
-import {CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
+import {CompositeType, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayComposite,
@@ -8,6 +7,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
 } from "./array";
+import {ArrayCompositeTreeView} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -43,8 +43,8 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
     return [];
   }
 
-  getView(tree: Tree): ListCompositeTreeView<ElementType> {
-    return new ListCompositeTreeView(this, tree);
+  getView(tree: Tree, inMutableMode?: boolean): ArrayCompositeTreeView<ElementType> {
+    return new ArrayCompositeTreeView(this, tree, inMutableMode);
   }
 
   // Serialization + deserialization
@@ -67,83 +67,6 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
   }
 
   tree_getLength(tree: Tree): number {
-    return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
+    return (tree.rootNode.right as LeafNode).getUint(4, 0);
   }
-}
-
-export class ListCompositeTreeView<ElementType extends CompositeType<any>> implements TreeView {
-  private readonly views: TreeView[] = [];
-  private readonly dirtyNodes = new Set<number>();
-  private inMutableMode = false;
-  private allLeafNodesPopulated = false;
-
-  constructor(protected type: ListCompositeType<ElementType>, protected tree: Tree) {}
-
-  get length(): number {
-    return this.type.tree_getLength(this.tree);
-  }
-
-  get node(): Node {
-    return this.tree.rootNode;
-  }
-
-  /**
-   * Get element at index `i`. Returns the primitive element directly
-   */
-  get(index: number): ViewOfComposite<ElementType> {
-    let view = this.views[index];
-    if (view === undefined) {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      const subtree = this.tree.getSubtree(gindex);
-      view = this.type.elementType.getView(subtree, this.inMutableMode) as TreeView;
-      this.views[index] = view;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return view as ViewOf<ElementType>;
-  }
-
-  set(index: number, value: ViewOf<ElementType>): void {
-    this.views[index] = value as TreeView;
-
-    // Commit immediately
-    if (this.inMutableMode) {
-      // Do not commit to the tree, but update the node in leafNodes
-      this.dirtyNodes.add(index);
-    } else {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, value.node);
-    }
-  }
-
-  toMutable(): void {
-    this.inMutableMode = true;
-  }
-
-  commit(): void {
-    if (this.dirtyNodes.size === 0) {
-      return;
-    }
-
-    // TODO: Use fast setNodes() method
-    for (const index of this.dirtyNodes) {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, this.views[index].node);
-    }
-
-    this.dirtyNodes.clear();
-    this.inMutableMode = false;
-  }
-
-  // push(value: T): void {
-  //   this.type.tree_push(this.tree, value);
-  // }
-
-  // getAll(): T[] {
-  //   if (this.allElementViewsPopulated) {
-  //     return this.elementViews;
-  //   } else {
-  //     const values = this.type.tree_getValues(this.tree);
-  //   }
-  // }
 }

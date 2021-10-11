@@ -12,7 +12,7 @@ type ViewOfFields<Fields extends Record<string, Type<any>>> = {
 
 type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeView;
 type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, tree: Tree, inMutableMode: boolean): ContainerTreeViewType<Fields>;
+  new (type: ContainerType<Fields>, tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields>;
 };
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<ValueOfFields<Fields>> {
@@ -81,7 +81,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return obj;
   }
 
-  getView(tree: Tree, inMutableMode: boolean): ContainerTreeViewType<Fields> {
+  getView(tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields> {
     return new this.TreeView(this, tree, inMutableMode);
   }
 
@@ -201,7 +201,7 @@ export class ContainerTreeView<Fields extends Record<string, Type<any>>> impleme
   protected readonly leafNodes: LeafNode[] = [];
   protected readonly dirtyNodes = new Set<number>();
 
-  constructor(readonly type: ContainerType<Fields>, readonly tree: Tree, protected inMutableMode: boolean) {}
+  constructor(readonly type: ContainerType<Fields>, readonly tree: Tree, protected inMutableMode = false) {}
 
   get node(): Node {
     return this.tree.rootNode;
