@@ -44,8 +44,8 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
     return [];
   }
 
-  getView(node: Node): ListBasicTreeView<ElementType> {
-    return new ListBasicTreeView(this, new Tree(node));
+  getView(tree: Tree): ListBasicTreeView<ElementType> {
+    return new ListBasicTreeView(this, tree);
   }
 
   // Serialization + deserialization

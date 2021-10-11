@@ -44,8 +44,8 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
     return [];
   }
 
-  getView(node: Node): never {
-    node;
+  getView(tree: Tree): never {
+    tree;
     throw Error("TODO");
   }
 

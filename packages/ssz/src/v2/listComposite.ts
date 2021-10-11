@@ -43,8 +43,8 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
     return [];
   }
 
-  getView(node: Node): ListCompositeTreeView<ElementType> {
-    return new ListCompositeTreeView(this, new Tree(node));
+  getView(tree: Tree): ListCompositeTreeView<ElementType> {
+    return new ListCompositeTreeView(this, tree);
   }
 
   // Serialization + deserialization
@@ -72,7 +72,7 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
 }
 
 export class ListCompositeTreeView<ElementType extends CompositeType<any>> implements TreeView {
-  private readonly views: ViewOf<ElementType>[] = [];
+  private readonly views: TreeView[] = [];
   private readonly dirtyNodes = new Set<number>();
   private inMutableMode = false;
   private allLeafNodesPopulated = false;
@@ -94,18 +94,17 @@ export class ListCompositeTreeView<ElementType extends CompositeType<any>> imple
     let view = this.views[index];
     if (view === undefined) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      const node = this.tree.getNode(gindex);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      view = this.type.elementType.getView(node, this.inMutableMode) as ViewOf<ElementType>;
+      const subtree = this.tree.getSubtree(gindex);
+      view = this.type.elementType.getView(subtree, this.inMutableMode) as TreeView;
       this.views[index] = view;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return view;
+    return view as ViewOf<ElementType>;
   }
 
   set(index: number, value: ViewOf<ElementType>): void {
-    this.views[index] = value;
+    this.views[index] = value as TreeView;
 
     // Commit immediately
     if (this.inMutableMode) {
@@ -129,7 +128,7 @@ export class ListCompositeTreeView<ElementType extends CompositeType<any>> imple
     // TODO: Use fast setNodes() method
     for (const index of this.dirtyNodes) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, this.views[index]);
+      this.tree.setNode(gindex, this.views[index].node);
     }
 
     this.dirtyNodes.clear();

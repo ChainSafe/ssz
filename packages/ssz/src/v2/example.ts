@@ -13,8 +13,8 @@ function example(): void {
     slot: uintType,
   });
 
-  const epochPartipationView = epochPartipationType.getView(tree.rootNode);
-  const containerView = containerType.getView(tree.rootNode);
+  const epochPartipationView = epochPartipationType.getView(tree);
+  const containerView = containerType.getView(tree, false);
 
   containerView.epochPartipation; // Typed as 'ListBasicTreeView<UintType>'
   containerView.slot; // Typed as 'number'

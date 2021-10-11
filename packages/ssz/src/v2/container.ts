@@ -12,10 +12,10 @@ type ViewOfFields<Fields extends Record<string, Type<any>>> = {
 
 type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeView;
 type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, node: Node, inMutableMode: boolean): ContainerTreeViewType<Fields>;
+  new (type: ContainerType<Fields>, tree: Tree, inMutableMode: boolean): ContainerTreeViewType<Fields>;
 };
 
-export class ContainerType<Fields extends Record<string, Type<any>>> extends Type<ValueOfFields<Fields>> {
+export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<ValueOfFields<Fields>> {
   // Immutable characteristics
   readonly itemsPerChunk = 1;
   readonly isBasic = false;
@@ -81,8 +81,8 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
     return obj;
   }
 
-  getView(node: Node, inMutableMode: boolean): ContainerTreeViewType<Fields> {
-    return new this.TreeView(this, node, inMutableMode);
+  getView(tree: Tree, inMutableMode: boolean): ContainerTreeViewType<Fields> {
+    return new this.TreeView(this, tree, inMutableMode);
   }
 
   // Serialization + deserialization
@@ -122,9 +122,9 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
-        variableIndex = fieldType.struct_serializeToBytes(output, value[fieldName], variableIndex);
+        variableIndex = fieldType.struct_serializeToBytes(output, variableIndex, value[fieldName]);
       } else {
-        fixedIndex = fieldType.struct_serializeToBytes(output, value[fieldName], fixedIndex);
+        fixedIndex = fieldType.struct_serializeToBytes(output, fixedIndex, value[fieldName]);
       }
     }
     return variableIndex;
@@ -302,8 +302,8 @@ function getContainerTreeViewClass<Fields extends Record<string, Type<any>>>(
         get: function (this: CustomContainerTreeView) {
           let view = this.views[i];
           if (view === undefined) {
-            const node = this.tree.getNode(gindex);
-            view = fieldTypeComposite.getView(node, this.inMutableMode) as TreeView;
+            const subtree = this.tree.getSubtree(gindex);
+            view = fieldTypeComposite.getView(subtree, this.inMutableMode) as TreeView;
             this.views[i] = view;
           }
 
@@ -313,12 +313,11 @@ function getContainerTreeViewClass<Fields extends Record<string, Type<any>>>(
         set: function (this: CustomContainerTreeView, value: TreeView) {
           this.views[i] = value;
 
-          // Commit immediately
           if (this.inMutableMode) {
             // Do not commit to the tree, but update the node in leafNodes
             this.dirtyNodes.add(i);
           } else {
-            const gindex = this.type.getGindexBitStringAtChunkIndex(i);
+            // Commit immediately
             this.tree.setNode(gindex, value.node);
           }
         },

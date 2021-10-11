@@ -69,7 +69,9 @@ export class UintType extends BasicType<number> {
     }
 
     // TODO: Optimize
-    return new LeafNode(data.slice(start, end));
+    const chunk = new Uint8Array(32);
+    chunk.set(data.slice(start, end));
+    return new LeafNode(chunk);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {

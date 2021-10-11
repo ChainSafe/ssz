@@ -45,8 +45,8 @@ export class VectorBasicType<ElementType extends BasicType<any>> extends Composi
     return [];
   }
 
-  getView(node: Node): VectorBasicTreeView<ElementType> {
-    return new VectorBasicTreeView(this, new Tree(node));
+  getView(tree: Tree): VectorBasicTreeView<ElementType> {
+    return new VectorBasicTreeView(this, tree);
   }
 
   // Serialization + deserialization
@@ -83,6 +83,10 @@ export class VectorBasicTreeView<ElementType extends BasicType<unknown>> impleme
 
   get length(): number {
     return this.type.tree_getLength(this.tree);
+  }
+
+  get node(): Node {
+    return this.tree.rootNode;
   }
 
   /**

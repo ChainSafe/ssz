@@ -1,4 +1,4 @@
-import {GindexBitstring, LeafNode, Node, toGindexBitstring} from "@chainsafe/persistent-merkle-tree";
+import {GindexBitstring, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -23,7 +23,7 @@ export abstract class Type<V> {
   abstract readonly minLen: number;
   abstract readonly maxLen: number;
 
-  abstract getView(node: Node, inMutableMode: boolean): unknown;
+  abstract getView(tree: Tree, inMutableMode: boolean): unknown;
 
   getGindexBitStringAtChunkIndex(index: number): GindexBitstring {
     return toGindexBitstring(this.depth, index);
@@ -55,6 +55,4 @@ export abstract class BasicType<V> extends Type<V> {
 
 export abstract class CompositeType<V> extends Type<V> {
   readonly isBasic = false;
-
-  abstract getView(node: Node, inMutableMode: boolean): unknown;
 }
