@@ -142,6 +142,19 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
 // Composite
 ////////////
 
+export function struct_serializedSizeArrayComposite<ElementType extends CompositeType<any>>(
+  elementType: ElementType,
+  value: ValueOf<ElementType>[],
+  arrayProps: ArrayProps
+): number {
+  const length = arrayProps.length ? arrayProps.length : value.length;
+  let totalSize = 0;
+  for (let i = 0; i < length; i++) {
+    totalSize += elementType.struct_serializedSize(value[i]);
+  }
+  return totalSize;
+}
+
 export function struct_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any>>(
   elementType: ElementType,
   data: Uint8Array,

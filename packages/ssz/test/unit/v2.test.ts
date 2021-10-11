@@ -70,18 +70,14 @@ describe.only("Container views", () => {
       genesisTime: uint32Type,
     });
 
-    const size = 4 + 4 + 4 + 4 * 8;
     const stateStruct: typeof stateType.defaultValue = {
       slot: 8,
       balances: [1, 2, 3, 4, 5, 6, 7, 8],
       genesisTime: 9,
     };
 
-    const serialized = new Uint8Array(size);
-    stateType.struct_serializeToBytes(serialized, 0, stateStruct);
-    const rootNode = stateType.tree_deserializeFromBytes(serialized, 0, size);
-
-    const view = stateType.getView(new Tree(rootNode), false);
+    const serialized = stateType.serialize(stateStruct);
+    const view = stateType.deserializeToTreeView(serialized);
 
     console.log(view.balances.get(5), toHexString(view.node.root));
     view.balances.set(5, 123);

@@ -53,6 +53,10 @@ export class VectorBasicType<ElementType extends BasicType<any>>
 
   // Serialization + deserialization
 
+  struct_serializedSize(): number {
+    return this.fixedLen;
+  }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
     return struct_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }

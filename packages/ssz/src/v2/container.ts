@@ -94,6 +94,19 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   // [field1 offset][field2 data       ][field1 data               ]
   // [0x000000c]    [0xaabbaabbaabbaabb][0xffffffffffffffffffffffff]
 
+  struct_serializedSize(value: ValueOfFields<Fields>): number {
+    let totalSize = 0;
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const [fieldName, fieldType] = this.fieldsEntries[i];
+      totalSize +=
+        fieldType.fixedLen === null
+          ? // Offset + size
+            4 + fieldType.struct_serializedSize(value[fieldName])
+          : fieldType.fixedLen;
+    }
+    return totalSize;
+  }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
     const fieldRanges = this.getFieldRanges(data, start, end);
     const value = {} as ValueOfFields<Fields>;

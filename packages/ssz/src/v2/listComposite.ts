@@ -3,6 +3,7 @@ import {CompositeType, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayComposite,
+  struct_serializedSizeArrayComposite,
   struct_serializeToBytesArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
@@ -51,6 +52,10 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
   }
 
   // Serialization + deserialization
+
+  struct_serializedSize(value: ValueOf<ElementType>[]): number {
+    return struct_serializedSizeArrayComposite(this.elementType, value, this);
+  }
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
     return struct_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);

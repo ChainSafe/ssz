@@ -53,6 +53,10 @@ export class ListBasicType<ElementType extends BasicType<any>>
 
   // Serialization + deserialization
 
+  struct_serializedSize(value: ValueOf<ElementType>[]): number {
+    return value.length * this.elementType.byteLength;
+  }
+
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
     return struct_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
