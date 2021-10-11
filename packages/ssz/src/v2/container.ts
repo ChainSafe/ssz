@@ -1,4 +1,4 @@
-import {LeafNode, Node, Tree, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 import {SszErrorPath} from "../util/errorPath";
 import {BasicType, CompositeType, TreeView, Type, ValueOf} from "./abstract";
 
@@ -8,6 +8,11 @@ type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fiel
 
 type ViewOfFields<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K]["isBasic"] extends true ? Fields[K]["defaultValue"] : ReturnType<Fields[K]["getView"]>;
+};
+
+type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeView;
+type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
+  new (type: ContainerType<Fields>, node: Node, inMutableMode: boolean): ContainerTreeViewType<Fields>;
 };
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends Type<ValueOfFields<Fields>> {
@@ -31,6 +36,9 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
   readonly variableOffsetsPosition: number[];
   /** End of fixed section of serialized Container */
   readonly fixedEnd: number;
+
+  /** Cached TreeView constuctor with custom prototype for this Type's properties */
+  readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
 
   constructor(readonly fields: Fields) {
     super();
@@ -61,6 +69,8 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       this.fieldIndex[this.fieldsEntries[i][0]] = i;
     }
+
+    this.TreeView = getContainerTreeViewClass(this);
   }
 
   get defaultValue(): ValueOfFields<Fields> {
@@ -69,6 +79,10 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
       obj[key as keyof ValueOfFields<Fields>] = type.defaultValue as unknown;
     }
     return obj;
+  }
+
+  getView(node: Node, inMutableMode: boolean): ContainerTreeViewType<Fields> {
+    return new this.TreeView(this, node, inMutableMode);
   }
 
   // Serialization + deserialization
@@ -155,10 +169,6 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
     return variableIndex;
   }
 
-  getView(node: Node): ViewOfFields<Fields> {
-    return getContainerTreeView<Fields>(this, node, false);
-  }
-
   /** Deserializer helper */
   private getFieldRanges(data: Uint8Array, start: number, end: number): [number, number][] {
     if (this.variableOffsetsPosition.length === 0) {
@@ -187,11 +197,15 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Typ
 }
 
 export class ContainerTreeView<Fields extends Record<string, Type<any>>> implements TreeView {
-  private readonly fieldViews: ViewOfFields<Fields>;
-  private readonly fieldBasicLeafNodes: {[K in keyof Fields]: LeafNode};
-  private readonly dirtyNodes = new Set<string>();
+  protected readonly views: TreeView[] = [];
+  protected readonly leafNodes: LeafNode[] = [];
+  protected readonly dirtyNodes = new Set<number>();
 
-  constructor(protected type: ContainerType<Fields>, protected tree: Tree, private inMutableMode = false) {}
+  constructor(readonly type: ContainerType<Fields>, readonly tree: Tree, protected inMutableMode: boolean) {}
+
+  get node(): Node {
+    return this.tree.rootNode;
+  }
 
   toMutable(): void {
     this.inMutableMode = true;
@@ -203,59 +217,120 @@ export class ContainerTreeView<Fields extends Record<string, Type<any>>> impleme
     }
 
     // TODO: Use fast setNodes() method
-    for (const key of this.dirtyNodes) {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, this.fieldBasicLeafNodes[key]);
+    for (const i of this.dirtyNodes) {
+      const gindex = this.type.getGindexBitStringAtChunkIndex(i);
+      if (this.type.fieldsEntries[i][1].isBasic) {
+        this.tree.setNode(gindex, this.leafNodes[i]);
+      } else {
+        this.views[i].commit();
+        this.tree.setNode(gindex, this.views[i].node);
+      }
     }
 
-    for (const [key, view] of Object.entries(this.fieldViews)) {
-      (view as TreeView).commit();
-    }
-
+    this.dirtyNodes.clear();
     this.inMutableMode = false;
   }
 }
 
-function getContainerTreeView<Fields extends Record<string, Type<any>>>(
-  type: ContainerType<Fields>,
-  tree: Tree,
-  inMutableMode: boolean
-): ViewOfFields<Fields> {
-  const view = new ContainerTreeView(type, tree, inMutableMode);
+function getContainerTreeViewClass<Fields extends Record<string, Type<any>>>(
+  type: ContainerType<Fields>
+): ContainerTreeViewTypeConstructor<Fields> {
+  class CustomContainerTreeView extends ContainerTreeView<Fields> {}
 
-  const propertyDescriptors: PropertyDescriptorMap = {};
-  for (const [key, keyType] of Object.entries(type.fields)) {
+  // Dynamically define prototype methods
+  for (let i = 0; i < type.fieldsEntries.length; i++) {
+    const [fieldName, fieldType] = type.fieldsEntries[i];
     const gindex = type.getGindexBitStringAtChunkIndex(i);
-    if (keyType.isBasic) {
-      propertyDescriptors[key] = {
+
+    // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
+    // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
+    // and use the cached views array to store the new node.
+    if (fieldType.isBasic) {
+      const fieldTypeBasic = fieldType as unknown as BasicType<any>;
+      Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
-        get: function () {
-          const leafNode = tree.getNode(gindex) as LeafNode;
-          return (keyType as BasicType<any>).getValueFromNode(leafNode) as unknown;
+
+        // TODO: Review the memory cost of this closures
+        get: function (this: CustomContainerTreeView) {
+          // First walk through the tree to get the root node for that index
+          let leafNode = this.leafNodes[i];
+          if (leafNode === undefined) {
+            const gindex = this.type.getGindexBitStringAtChunkIndex(i);
+            leafNode = this.tree.getNode(gindex) as LeafNode;
+            this.leafNodes[i] = leafNode;
+          }
+
+          return fieldTypeBasic.getValueFromNode(leafNode) as unknown;
         },
-        set: function (value) {
-          const leafNode = tree.getNode(gindex) as LeafNode;
-          (keyType as BasicType<any>).setValueToNode(leafNode, value);
+
+        set: function (this: CustomContainerTreeView, value) {
+          // TODO, deduplicate with above
+          let leafNode = this.leafNodes[i];
+          if (this.leafNodes[i] === undefined) {
+            leafNode = this.tree.getNode(gindex) as LeafNode;
+            this.leafNodes[i] = leafNode;
+          }
+
+          // Create new node if current leafNode is not dirty
+          if (!this.inMutableMode || !this.dirtyNodes.has(i)) {
+            leafNode = new LeafNode(leafNode);
+            this.leafNodes[i] = leafNode;
+          }
+
+          fieldTypeBasic.setValueToNode(leafNode, value);
+
+          if (this.inMutableMode) {
+            // Do not commit to the tree, but update the node in leafNodes
+            this.dirtyNodes.add(i);
+          } else {
+            this.tree.setNode(gindex, leafNode);
+          }
         },
-      };
-    } else {
-      propertyDescriptors[key] = {
+      });
+    }
+
+    // If the field type is composite, the value to get and set will be another TreeView. The parent TreeView must
+    // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
+    // set it to the parent tree in the field gindex.
+    else {
+      const fieldTypeComposite = fieldType as unknown as CompositeType<any>;
+      Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
-        get: function () {
-          // In current ssz it returns a Tree with its hook
-          const nodeField = tree.getNode(gindex);
-          return (keyType as CompositeType<any>).getView(nodeField, view["inMutableMode"]) as unknown;
+
+        get: function (this: CustomContainerTreeView) {
+          let view = this.views[i];
+          if (view === undefined) {
+            const node = this.tree.getNode(gindex);
+            view = fieldTypeComposite.getView(node, this.inMutableMode) as TreeView;
+            this.views[i] = view;
+          }
+
+          return view;
         },
-        set: function (value) {
-          value;
+
+        set: function (this: CustomContainerTreeView, value: TreeView) {
+          this.views[i] = value;
+
+          // Commit immediately
+          if (this.inMutableMode) {
+            // Do not commit to the tree, but update the node in leafNodes
+            this.dirtyNodes.add(i);
+          } else {
+            const gindex = this.type.getGindexBitStringAtChunkIndex(i);
+            this.tree.setNode(gindex, value.node);
+          }
         },
-      };
+      });
     }
   }
 
-  return Object.create(view, propertyDescriptors) as {[K in keyof Fields]: ValueOf<Fields[K]>};
+  // TODO:
+  // Change class name
+  // Object.defineProperty(CustomContainerTreeView, "name", {value: typeName, writable: false});
+
+  return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
 }
 
 function getContainerFixedLen(fields: Record<string, Type<any>>): null | number {

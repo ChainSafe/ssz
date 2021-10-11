@@ -34,8 +34,7 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
 
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((length * 1) / 32);
-    // TODO: Review math
-    this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    this.depth = Math.ceil(Math.log2(this.maxChunkCount));
     this.fixedLen = elementType.fixedLen === null ? null : length * elementType.fixedLen;
     this.minLen = length * elementType.minLen;
     this.maxLen = length * elementType.maxLen;
@@ -43,6 +42,11 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
 
   get defaultValue(): ValueOf<ElementType>[] {
     return [];
+  }
+
+  getView(node: Node): never {
+    node;
+    throw Error("TODO");
   }
 
   // Serialization + deserialization
@@ -66,10 +70,5 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
 
   tree_getLength(tree: Tree): number {
     return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
-  }
-
-  getView(node: Node): never {
-    node;
-    throw Error("TODO");
   }
 }

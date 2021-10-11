@@ -121,12 +121,13 @@ export class LeafNode extends Node {
     if (uintBytes < 4) {
       // number has to be masked from an h value
       const hIndex = Math.floor(offsetBytes / 4);
-      const bIndex = 3 - (offsetBytes % 4);
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        return h & (0xff << bIndex);
+        const bIndex = 3 - (offsetBytes % 4);
+        return 0xff & (h >> (bIndex * 8));
       } else {
-        return h & (0xffff << (bIndex / 2));
+        const bIndex = 2 - (offsetBytes % 4);
+        return 0xffff & (h >> (bIndex * 8));
       }
     } else if (uintBytes === 4) {
       // number equals the h value
@@ -141,12 +142,12 @@ export class LeafNode extends Node {
     if (uintBytes < 4) {
       // number has to be masked from an h value
       const hIndex = Math.floor(offsetBytes / 4);
-      const bIndex = 3 - (offsetBytes % 4);
+      const bIndex = 4 - uintBytes - (offsetBytes % 4);
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        return BigInt(h & (0xff << bIndex));
+        return BigInt(0xff & (h >> (bIndex * 8)));
       } else {
-        return BigInt(h & (0xffff << (bIndex / 2)));
+        return BigInt(0xffff & (h >> (bIndex * 8)));
       }
     } else if (uintBytes === 4) {
       // number equals the h value
@@ -177,7 +178,7 @@ export class LeafNode extends Node {
     if (uintBytes < 4) {
       // number has to be masked from an h value
       const hIndex = Math.floor(offsetBytes / 4);
-      const bIndex = 3 - (offsetBytes % 4);
+      const bIndex = 4 - uintBytes - (offsetBytes % 4);
       bitwiseOrNodeH(this, hIndex, value << bIndex);
     } else if (uintBytes === 4) {
       // number equals the h value
@@ -206,36 +207,36 @@ export function compose(inner: Link, outer: Link): Link {
 
 export function getNodeH(node: Node, hIndex: number): number {
   if (hIndex === 0) return node.h0;
-  if (hIndex === 1) return node.h1;
-  if (hIndex === 2) return node.h2;
-  if (hIndex === 3) return node.h3;
-  if (hIndex === 4) return node.h4;
-  if (hIndex === 5) return node.h5;
-  if (hIndex === 6) return node.h6;
-  if (hIndex === 7) return node.h7;
-  throw Error("hIndex > 7");
+  else if (hIndex === 1) return node.h1;
+  else if (hIndex === 2) return node.h2;
+  else if (hIndex === 3) return node.h3;
+  else if (hIndex === 4) return node.h4;
+  else if (hIndex === 5) return node.h5;
+  else if (hIndex === 6) return node.h6;
+  else if (hIndex === 7) return node.h7;
+  else throw Error("hIndex > 7");
 }
 
-export function setNodeH(node: Node, hIndex: number, value: number): number {
+export function setNodeH(node: Node, hIndex: number, value: number): void {
   if (hIndex === 0) node.h0 = value;
-  if (hIndex === 1) node.h1 = value;
-  if (hIndex === 2) node.h2 = value;
-  if (hIndex === 3) node.h3 = value;
-  if (hIndex === 4) node.h4 = value;
-  if (hIndex === 5) node.h5 = value;
-  if (hIndex === 6) node.h6 = value;
-  if (hIndex === 7) node.h7 = value;
-  throw Error("hIndex > 7");
+  else if (hIndex === 1) node.h1 = value;
+  else if (hIndex === 2) node.h2 = value;
+  else if (hIndex === 3) node.h3 = value;
+  else if (hIndex === 4) node.h4 = value;
+  else if (hIndex === 5) node.h5 = value;
+  else if (hIndex === 6) node.h6 = value;
+  else if (hIndex === 7) node.h7 = value;
+  else throw Error("hIndex > 7");
 }
 
-export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): number {
+export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void {
   if (hIndex === 0) node.h0 |= value;
-  if (hIndex === 1) node.h1 |= value;
-  if (hIndex === 2) node.h2 |= value;
-  if (hIndex === 3) node.h3 |= value;
-  if (hIndex === 4) node.h4 |= value;
-  if (hIndex === 5) node.h5 |= value;
-  if (hIndex === 6) node.h6 |= value;
-  if (hIndex === 7) node.h7 |= value;
-  throw Error("hIndex > 7");
+  else if (hIndex === 1) node.h1 |= value;
+  else if (hIndex === 2) node.h2 |= value;
+  else if (hIndex === 3) node.h3 |= value;
+  else if (hIndex === 4) node.h4 |= value;
+  else if (hIndex === 5) node.h5 |= value;
+  else if (hIndex === 6) node.h6 |= value;
+  else if (hIndex === 7) node.h7 |= value;
+  else throw Error("hIndex > 7");
 }

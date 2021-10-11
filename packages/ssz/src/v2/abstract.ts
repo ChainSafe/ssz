@@ -5,6 +5,7 @@ import {GindexBitstring, LeafNode, Node, toGindexBitstring} from "@chainsafe/per
 export interface TreeView {
   toMutable(): void;
   commit(): void;
+  node: Node;
 }
 
 export type ValueOf<T extends Type<any>> = T["defaultValue"];

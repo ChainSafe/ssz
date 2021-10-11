@@ -34,13 +34,17 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
 
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((this.limit * 1) / 32);
-    // TODO: Review math
+    // Depth includes the extra level for the length node
     this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
     this.maxLen = this.limit * elementType.maxLen;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
     return [];
+  }
+
+  getView(node: Node): ListCompositeTreeView<ElementType> {
+    return new ListCompositeTreeView(this, new Tree(node));
   }
 
   // Serialization + deserialization
@@ -65,10 +69,6 @@ export class ListCompositeType<ElementType extends CompositeType<any>> extends C
   tree_getLength(tree: Tree): number {
     return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
   }
-
-  getView(node: Node): ListCompositeTreeView<ElementType> {
-    return new ListCompositeTreeView(this, new Tree(node));
-  }
 }
 
 export class ListCompositeTreeView<ElementType extends CompositeType<any>> implements TreeView {
@@ -81,6 +81,10 @@ export class ListCompositeTreeView<ElementType extends CompositeType<any>> imple
 
   get length(): number {
     return this.type.tree_getLength(this.tree);
+  }
+
+  get node(): Node {
+    return this.tree.rootNode;
   }
 
   /**

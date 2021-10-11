@@ -35,13 +35,17 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
-    // TODO: Review math
+    // Depth includes the extra level for the length node
     this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
     this.maxLen = this.limit * elementType.maxLen;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
     return [];
+  }
+
+  getView(node: Node): ListBasicTreeView<ElementType> {
+    return new ListBasicTreeView(this, new Tree(node));
   }
 
   // Serialization + deserialization
@@ -66,10 +70,6 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
   tree_getLength(tree: Tree): number {
     return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
   }
-
-  getView(node: Node): ListBasicTreeView<ElementType> {
-    return new ListBasicTreeView(this, new Tree(node));
-  }
 }
 
 export class ListBasicTreeView<ElementType extends BasicType<unknown>> implements TreeView {
@@ -82,6 +82,10 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> implement
 
   get length(): number {
     return this.type.tree_getLength(this.tree);
+  }
+
+  get node(): Node {
+    return this.tree.rootNode;
   }
 
   /**

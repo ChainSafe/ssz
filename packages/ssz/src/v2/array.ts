@@ -1,11 +1,12 @@
 import {
+  BranchNode,
   LeafNode,
   Node,
-  Tree,
   zeroNode,
   getNodesAtDepth,
   subtreeFillToContents,
-  BranchNode,
+  packedNodeRootsToBytes,
+  packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../backings";
 import {BasicType, CompositeType} from "./abstract";
@@ -100,14 +101,22 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   assertValidArrayLength(length, arrayProps);
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const tree = packedRootsBytesToTree(depth, data, start, end);
+  const chunkDepth = arrayProps.limit ? depth - 1 : depth;
+  const chunksNode = packedRootsBytesToNode(chunkDepth, data, start, end);
 
+  if (arrayProps.limit) {
+    return addLengthNode(chunksNode, length);
+  } else {
+    return chunksNode;
+  }
+}
+
+export function addLengthNode(chunksNode: Node, length: number): Node {
   // TODO: Add LeafNode.fromUint()
-  const lengthNode = zeroNode(0);
-  lengthNode.h0 = length;
-  tree.setNode(LENGTH_GINDEX, lengthNode);
+  const lengthNode = new LeafNode(zeroNode(0));
+  lengthNode.setUint(4, 0, length);
 
-  return tree.rootNode;
+  return new BranchNode(chunksNode, lengthNode);
 }
 
 /**
@@ -208,13 +217,15 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   }
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const rootNodeItems = subtreeFillToContents(nodes, depth);
+  const chunkDepth = arrayProps.limit ? depth - 1 : depth;
+  const chunksNode = subtreeFillToContents(nodes, chunkDepth);
 
   // TODO: Add LeafNode.fromUint()
-  const lengthNode = new LeafNode(zeroNode(0));
-  lengthNode.setUint(4, 0, length);
-
-  return new BranchNode(rootNodeItems, lengthNode);
+  if (arrayProps.limit) {
+    return addLengthNode(chunksNode, length);
+  } else {
+    return chunksNode;
+  }
 }
 
 /**
@@ -336,23 +347,4 @@ function assertValidArrayLength(length: number, arrayProps: ArrayProps): void {
   } else {
     throw Error("Must set either length or limit");
   }
-}
-
-/**
- * TODO: Move to persistent-merkle-tree
- */
-export function packedRootsBytesToTree(depth: number, data: Uint8Array, start: number, end: number): Tree {
-  const uint32Arr = new Uint32Array(data.buffer, start, end - start);
-  // Efficiently construct the tree writing to hashObjects directly
-}
-
-/**
- * TODO: Move to persistent-merkle-tree
- */
-export function packedNodeRootsToBytes(data: Uint8Array, start: number, size: number, nodes: Node[]): void {
-  const uint32Arr = new Uint32Array(data.buffer, start, size);
-  // Efficiently get hashObjects data into data
-
-  // Consider that the last node may only include partial data
-  const remainder = size % 32;
 }

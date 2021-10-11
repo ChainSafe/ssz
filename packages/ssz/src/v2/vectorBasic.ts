@@ -35,8 +35,7 @@ export class VectorBasicType<ElementType extends BasicType<any>> extends Composi
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.length * elementType.byteLength) / 32);
-    // TODO: Review math
-    this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    this.depth = Math.ceil(Math.log2(this.maxChunkCount));
     this.fixedLen = this.length * elementType.byteLength;
     this.minLen = this.fixedLen;
     this.maxLen = this.fixedLen;
@@ -44,6 +43,10 @@ export class VectorBasicType<ElementType extends BasicType<any>> extends Composi
 
   get defaultValue(): ValueOf<ElementType>[] {
     return [];
+  }
+
+  getView(node: Node): VectorBasicTreeView<ElementType> {
+    return new VectorBasicTreeView(this, new Tree(node));
   }
 
   // Serialization + deserialization
@@ -67,10 +70,6 @@ export class VectorBasicType<ElementType extends BasicType<any>> extends Composi
 
   tree_getLength(tree: Tree): number {
     return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
-  }
-
-  getView(node: Node): VectorBasicTreeView<ElementType> {
-    return new VectorBasicTreeView(this, new Tree(node));
   }
 }
 
