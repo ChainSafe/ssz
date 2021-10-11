@@ -86,7 +86,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
   }
 
   bytes_validate(data: Uint8Array, start: number, end: number): void {
-    super.bytes_validate(data, start, end);
+    super.bytes_validate(data, start, end, true);
     if (end - start > this.getMaxSerializedLength()) {
       throw new Error("Deserialized list length greater than limit");
     }
