@@ -6,7 +6,7 @@ import {
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./array";
-import {ArrayBasicTreeView} from "./arrayTreeView";
+import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -14,7 +14,10 @@ import {ArrayBasicTreeView} from "./arrayTreeView";
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class VectorBasicType<ElementType extends BasicType<any>> extends CompositeType<ValueOf<ElementType>[]> {
+export class VectorBasicType<ElementType extends BasicType<any>>
+  extends CompositeType<ValueOf<ElementType>[]>
+  implements ArrayBasicType<ElementType>
+{
   // Immutable characteristics
   readonly itemsPerChunk: number;
   readonly isBasic = false;

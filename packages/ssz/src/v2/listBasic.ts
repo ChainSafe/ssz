@@ -1,6 +1,6 @@
 import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
-import {ArrayBasicTreeView} from "./arrayTreeView";
+import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayBasic,
@@ -15,7 +15,10 @@ import {
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class ListBasicType<ElementType extends BasicType<any>> extends CompositeType<ValueOf<ElementType>[]> {
+export class ListBasicType<ElementType extends BasicType<any>>
+  extends CompositeType<ValueOf<ElementType>[]>
+  implements ArrayBasicType<ElementType>
+{
   // Immutable characteristics
   readonly itemsPerChunk: number;
   readonly isBasic = false;
@@ -67,7 +70,7 @@ export class ListBasicType<ElementType extends BasicType<any>> extends Composite
     return tree_serializeToBytesArrayBasic(this.elementType, this.depth, length, output, offset, node);
   }
 
-  tree_getLength(tree: Tree): number {
-    return (tree.rootNode.right as LeafNode).getUint(4, 0);
+  tree_getLength(node: Node): number {
+    return (node.right as LeafNode).getUint(4, 0);
   }
 }

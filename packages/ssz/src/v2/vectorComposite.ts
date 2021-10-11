@@ -1,5 +1,4 @@
-import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {LENGTH_GINDEX} from "../types/composite";
+import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {CompositeType, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
@@ -8,7 +7,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
 } from "./array";
-import {ArrayCompositeTreeView} from "./arrayTreeView";
+import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -16,7 +15,10 @@ import {ArrayCompositeTreeView} from "./arrayTreeView";
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class VectorCompositeType<ElementType extends CompositeType<any>> extends CompositeType<ValueOf<ElementType>[]> {
+export class VectorCompositeType<ElementType extends CompositeType<any>>
+  extends CompositeType<ValueOf<ElementType>[]>
+  implements ArrayCompositeType<ElementType>
+{
   // Immutable characteristics
   readonly itemsPerChunk = 1;
   readonly isBasic = false;
@@ -68,7 +70,7 @@ export class VectorCompositeType<ElementType extends CompositeType<any>> extends
     return tree_serializeToBytesArrayComposite(this.elementType, length, this.depth, node, output, offset);
   }
 
-  tree_getLength(tree: Tree): number {
-    return (tree.getNode(LENGTH_GINDEX) as LeafNode).getUint(4, 0);
+  tree_getLength(): number {
+    return this.length;
   }
 }

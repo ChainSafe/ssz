@@ -1,18 +1,20 @@
 import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {BasicType, CompositeType, TreeView, TreeViewArray, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
+import {BasicType, CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
 
-type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeType<ElementType> & {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+export type ArrayBasicType<ElementType extends BasicType<any>> = CompositeType<ValueOf<ElementType>[]> & {
   readonly elementType: ElementType;
   readonly itemsPerChunk: number;
   tree_getLength(node: Node): number;
 };
 
-type ArrayCompositeType<ElementType extends CompositeType<unknown>> = CompositeType<ElementType> & {
+export type ArrayCompositeType<ElementType extends CompositeType<any>> = CompositeType<ValueOf<ElementType>[]> & {
   readonly elementType: ElementType;
   tree_getLength(node: Node): number;
 };
 
-export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> implements TreeViewArray<ElementType> {
+export class ArrayBasicTreeView<ElementType extends BasicType<any>> implements TreeView {
   private readonly leafNodes: LeafNode[] = [];
   private readonly dirtyNodes = new Set<number>();
   private allLeafNodesPopulated = false;
@@ -43,6 +45,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> implemen
       this.leafNodes[chunkIndex] = leafNode;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.type.elementType.getValueFromPackedNode(leafNode, index) as ValueOf<ElementType>;
   }
 
@@ -108,7 +111,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> implemen
   // }
 }
 
-export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> implements TreeViewArray<ElementType> {
+export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> implements TreeView {
   private readonly views: TreeView[] = [];
   private readonly dirtyNodes = new Set<number>();
   private allLeafNodesPopulated = false;
@@ -136,7 +139,7 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> impl
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return view as ViewOf<ElementType>;
+    return view as ViewOfComposite<ElementType>;
   }
 
   set(index: number, value: ViewOf<ElementType>): void {

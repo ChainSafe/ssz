@@ -14,12 +14,6 @@ export type ValueOf<T extends Type<any>> = T["defaultValue"];
 export type ViewOf<T extends Type<any>> = T["isBasic"] extends true ? T["defaultValue"] : ReturnType<T["getView"]>;
 export type ViewOfComposite<T extends CompositeType<any>> = ReturnType<T["getView"]>;
 
-export interface TreeViewArray<ElementType extends Type<any>> extends TreeView {
-  length: number;
-  get(index: number): ViewOf<ElementType>;
-  set(index: number, value: ValueOf<ElementType>): void;
-}
-
 export abstract class Type<V> {
   abstract defaultValue: V;
   abstract isBasic: boolean;
