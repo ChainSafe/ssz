@@ -82,11 +82,11 @@ export abstract class CompositeType<T extends CompositeValue> extends Type<T> {
     return this.tree_serializeToBytes(tree, output, 0);
   }
 
-  bytes_validate(data: Uint8Array, start: number, end: number): void {
+  bytes_validate(data: Uint8Array, start: number, end: number, emptyOk?: boolean): void {
     if (!data) {
       throw new Error("Data is null or undefined");
     }
-    if (data.length === 0) {
+    if (data.length === 0 && !emptyOk) {
       throw new Error("Data is empty");
     }
     if (start < 0) {

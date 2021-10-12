@@ -18,7 +18,38 @@ jobs:
         run: yarn lint
       - name: Tests
         run: yarn test
+
+      # Download spec tests with cache
+      - name: Restore spec tests cache
+        uses: actions/cache@master
+        with:
+          path: packages/ssz/spec-tests
+          key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
       - name: Download spec tests
-        run: lerna run download-spec-tests
-      - name: Spec tests
-        run: lerna run test:spec
+        run: yarn download-spec-tests
+        working-directory: packages/ssz
+
+      # Run them in different steps to quickly identifying which command failed
+      # Otherwise just doing `yarn test:spec` you can't tell which specific suite failed
+      # many of the suites have identical names for minimal and mainnet
+      - name: Spec tests general
+        run: ../../node_modules/.bin/mocha test/spec/generic/index.test.ts
+        working-directory: packages/ssz
+      - name: Spec tests phase0-minimal
+        run: LODESTAR_PRESET=minimal LODESTAR_FORK=phase0 ../../node_modules/.bin/mocha test/spec/ssz_static.test.ts
+        working-directory: packages/ssz
+      - name: Spec tests phase0-mainnet
+        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=phase0 ../../node_modules/.bin/mocha test/spec/ssz_static.test.ts
+        working-directory: packages/ssz
+      - name: Spec tests altair-minimal
+        run: LODESTAR_PRESET=minimal LODESTAR_FORK=altair ../../node_modules/.bin/mocha test/spec/ssz_static.test.ts
+        working-directory: packages/ssz
+      - name: Spec tests altair-mainnet
+        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=altair ../../node_modules/.bin/mocha test/spec/ssz_static.test.ts
+        working-directory: packages/ssz
+      - name: Spec tests merge-minimal
+        run: LODESTAR_PRESET=minimal LODESTAR_FORK=merge ../../node_modules/.bin/mocha test/spec/ssz_static.test.ts
+        working-directory: packages/ssz
+      - name: Spec tests merge-mainnet
+        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=merge ../../node_modules/.bin/mocha test/spec/ssz_static.test.ts
+        working-directory: packages/ssz

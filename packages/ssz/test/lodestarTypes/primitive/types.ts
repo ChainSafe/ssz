@@ -1,8 +1,8 @@
+import {ByteVector} from "../../../src";
+
 // Each type exported here contains both a compile-time type
 // (a typescript interface) and a run-time ssz type (a javascript variable)
 // For more information, see ./index.ts
-
-import {ByteVector} from "../../../src";
 
 export type Bytes4 = ByteVector;
 export type Bytes8 = ByteVector;
@@ -35,6 +35,8 @@ export type Domain = Bytes32;
 export type BLSPubkey = Bytes48;
 export type BLSSecretKey = Bytes32;
 export type BLSSignature = Bytes96;
-export type BlockRootHex = string;
-export type AttestationRootHex = string;
 export type ParticipationFlags = Uint8;
+export type ExecutionAddress = Bytes20;
+
+/** Common non-spec type to represent roots as strings */
+export type RootHex = string;

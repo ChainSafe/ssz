@@ -1193,21 +1193,22 @@
     "@chainsafe/ssz" "^0.8.11"
     js-yaml "^3.13.1"
 
-"@chainsafe/lodestar-params@^0.28.1":
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.28.1.tgz#9ae6469746b2fe61420fe5e78f86c4b6961af076"
-  integrity sha512-g5+Nu69Eik1kq3OfUwIte9p/SN+Kkv+6r05VymfM1tCVb5yaoGVvO3rl0EL+e1zNA4A1tQBNTI4/CKLqVZEOgA==
+"@chainsafe/lodestar-params@^0.31.0":
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.31.0.tgz#fbce7d33ac6c448796208c8f4da1f3073680af99"
+  integrity sha512-fZOYLj2W6YERWIAWwlV9q/7xGjms4P5G40ASnsxdRgePaa/7n60QG6EgUioHb29syL16zJ1Gh4/djYVJUyEI9Q==
   dependencies:
-    "@chainsafe/ssz" "^0.8.13"
-    js-yaml "^3.13.1"
+    "@chainsafe/ssz" "^0.8.17"
+    js-yaml "^4.1.0"
 
-"@chainsafe/lodestar-spec-test-util@^0.28.1":
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-spec-test-util/-/lodestar-spec-test-util-0.28.1.tgz#6879a940a88d5429392393f1ec767c5dc0c0b4c2"
-  integrity sha512-glcUT5VzF60pLSf73X5CtH9wpoxHNDbCTgFeoknV8dBtFNe3xfRPbDk9/LbZZWUYy4tgVWLgJ38/ZJkGcyrv8w==
+"@chainsafe/lodestar-spec-test-util@^0.31.0":
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-spec-test-util/-/lodestar-spec-test-util-0.31.0.tgz#0bc30cd70cca4a1b1f1b24ad60e3dfb58f5b46fb"
+  integrity sha512-eKMMmctfJwA9cmedcrzbQ+GPUoJt8fenVRpg/Q1Uo/lQMR+hg11SRb+LSGzhJY8mKMLV7Zxo0mnoANhPIr05sg==
   dependencies:
-    "@chainsafe/lodestar-utils" "^0.28.1"
-    "@chainsafe/ssz" "^0.8.13"
+    "@chainsafe/lodestar-utils" "^0.31.0"
+    "@chainsafe/ssz" "^0.8.17"
+    async-retry "^1.3.3"
     axios "^0.21.0"
     chai "^4.2.0"
     mocha "^8.1.1"
@@ -1223,16 +1224,16 @@
     "@chainsafe/lodestar-params" "^0.26.0"
     "@chainsafe/ssz" "^0.8.11"
 
-"@chainsafe/lodestar-utils@^0.28.1":
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-utils/-/lodestar-utils-0.28.1.tgz#30285855bd18cc88f16accbe0390b9c0c34c8638"
-  integrity sha512-8VD+406nTNl2eXdtPoE6dFOZUw0eWo2sNLN02MieoTAUlGFnPQuaO1O6iUVGJf8fmsudbDu1Y0syA+lTPOZdXQ==
+"@chainsafe/lodestar-utils@^0.31.0":
+  version "0.31.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-utils/-/lodestar-utils-0.31.0.tgz#7dbd06851a0c6b2a19e6fa365458f53d493cbdc3"
+  integrity sha512-lxzIlPvnww5ECFv1krjBU+j+tSJVaNnVRBwaCG4DEuSLqYnn9yWMJ146GHdzbFGXjxHjmPDSUdx/wqJ1m6Ps0A==
   dependencies:
     "@chainsafe/abort-controller" "^3.0.1"
-    "@chainsafe/ssz" "^0.8.13"
-    any-signal "2.1.1"
+    "@chainsafe/ssz" "^0.8.17"
+    any-signal "2.1.2"
     bigint-buffer "^1.1.5"
-    chalk "^2.4.2"
+    chalk "^4.1.2"
     js-yaml "^3.13.1"
     winston "^3.3.3"
     winston-daily-rotate-file "^4.5.5"
@@ -3081,13 +3082,13 @@ any-promise@^1.0.0:
   resolved "https://registry.yarnpkg.com/any-promise/-/any-promise-1.3.0.tgz#abc6afeedcea52e809cdc0376aed3ce39635d17f"
   integrity sha1-q8av7tzqUugJzcA3au0845Y10X8=
 
-any-signal@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/any-signal/-/any-signal-2.1.1.tgz#6458f7ce08cfdd8df21953016ae03ca129b07e35"
-  integrity sha512-kjyMTtHQsB3yZAVDZlLVucPJnmnrXhamB/rm3Td3jse5Q+16FXXolP4elWU0yLFDyrxTkjjDXtIdjSPiEznf3w==
+any-signal@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/any-signal/-/any-signal-2.1.2.tgz#8d48270de0605f8b218cf9abe8e9c6a0e7418102"
+  integrity sha512-B+rDnWasMi/eWcajPcCWSlYc7muXOrcYrqgyzcdKisl2H/WTlQ0gip1KyQfr0ZlxJdsuWCj/LWwQm7fhyhRfIQ==
   dependencies:
     abort-controller "^3.0.0"
-    native-abort-controller "0.0.3"
+    native-abort-controller "^1.0.3"
 
 anymatch@^2.0.0:
   version "2.0.0"
@@ -3336,6 +3337,13 @@ async-limiter@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
+
+async-retry@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/async-retry/-/async-retry-1.3.3.tgz#0e7f36c04d8478e7a58bdbed80cedf977785f280"
+  integrity sha512-wfr/jstw9xNi/0teMHrRW7dsz3Lt5ARhYNZ2ewpadnhaIp5mbALhOAP+EAdsC7t4Z6wqsDVv9+W6gm1Dk9mEyw==
+  dependencies:
+    retry "0.13.1"
 
 async@^2.6.2:
   version "2.6.3"
@@ -4054,7 +4062,7 @@ chalk@^3.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^4.0.0:
+chalk@^4.0.0, chalk@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -6548,13 +6556,6 @@ globals@^13.6.0, globals@^13.9.0:
   dependencies:
     type-fest "^0.20.2"
 
-globalthis@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/globalthis/-/globalthis-1.0.2.tgz#2a235d34f4d8036219f7e34929b5de9e18166b8b"
-  integrity sha512-ZQnSFO1la8P7auIOQECnm0sSuoMeaSq0EEdXMBFF2QJO4uNcwbyhSgG3MruWNbFTqCLmxVwGOl7LZ9kASvHdeQ==
-  dependencies:
-    define-properties "^1.1.3"
-
 globby@^11.0.3:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/globby/-/globby-11.0.4.tgz#2cbaff77c2f2a62e71e9b2813a67b97a3a3001a5"
@@ -8699,12 +8700,10 @@ nanomatch@^1.2.9:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-native-abort-controller@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/native-abort-controller/-/native-abort-controller-0.0.3.tgz#4c528a6c9c7d3eafefdc2c196ac9deb1a5edf2f8"
-  integrity sha512-YIxU5nWqSHG1Xbu3eOu3pdFRD882ivQpIcu6AiPVe2oSVoRbfYW63DVkZm3g1gHiMtZSvZzF6THSzTGEBYl8YA==
-  dependencies:
-    globalthis "^1.0.1"
+native-abort-controller@^1.0.3:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/native-abort-controller/-/native-abort-controller-1.0.4.tgz#39920155cc0c18209ff93af5bc90be856143f251"
+  integrity sha512-zp8yev7nxczDJMoP6pDxyD20IU0T22eX8VwN2ztDccKvSZhRaV33yP1BGwKSZfXuqWUzsXopVFjBdau9OOAwMQ==
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -10543,6 +10542,11 @@ ret@~0.1.10:
   version "0.1.15"
   resolved "https://registry.yarnpkg.com/ret/-/ret-0.1.15.tgz#b8a4825d5bdb1fc3f6f53c2bc33f81388681c7bc"
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
+
+retry@0.13.1:
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/retry/-/retry-0.13.1.tgz#185b1587acf67919d63b357349e03537b2484658"
+  integrity sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==
 
 retry@^0.10.0:
   version "0.10.1"

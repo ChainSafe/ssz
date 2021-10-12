@@ -1,14 +1,17 @@
 import {itBench} from "@dapplion/benchmark";
-import {Validator} from "../lodestar/phase0/types";
-import {Validator as ValidatorType} from "../lodestar/phase0/sszTypes";
+import {Validator} from "../lodestarTypes/phase0/types";
+import {Validator as ValidatorType} from "../lodestarTypes/phase0/sszTypes";
 import {ContainerLeafNodeStructType, ContainerType, TreeBacked} from "../../src";
 
+// Fully tree-backed ContainerType
+const ValidatorContainerType = new ContainerType<Validator>({fields: ValidatorType.fields});
+// Container caches only root hash + represents all data as a struct
 const ValidatorLeafNodeStructType = new ContainerLeafNodeStructType<Validator>({fields: ValidatorType.fields});
 
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),
   withdrawalCredentials: Buffer.alloc(32, 0xdd),
-  effectiveBalance: BigInt(32e9),
+  effectiveBalance: 32e9,
   slashed: false,
   activationEligibilityEpoch: 134530,
   activationEpoch: 134532,
@@ -17,13 +20,13 @@ const validatorStruct: Validator = {
 };
 
 describe("Validator vs ValidatorLeafNodeStruct", () => {
-  const validatorTB = ValidatorType.createTreeBackedFromStruct(validatorStruct);
+  const validatorTB = ValidatorContainerType.createTreeBackedFromStruct(validatorStruct);
   const validatorLeafNodeStructTB = ValidatorLeafNodeStructType.createTreeBackedFromStruct(validatorStruct);
   validatorTB.hashTreeRoot();
   validatorLeafNodeStructTB.hashTreeRoot();
 
   const values = [
-    {id: "ContainerType", value: validatorTB, type: ValidatorType},
+    {id: "ContainerType", value: validatorTB, type: ValidatorContainerType},
     {id: "ContainerLeafNodeStructType", value: validatorLeafNodeStructTB, type: ValidatorLeafNodeStructType},
   ];
 

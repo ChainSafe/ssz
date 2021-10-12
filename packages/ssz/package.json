@@ -27,7 +27,11 @@
     "benchmark:local": "yarn benchmark --local",
     "test:perf": "mocha  \"test/perf/**/*.test.ts\"",
     "test:unit": "nyc -e .ts mocha  \"test/unit/**/*.test.ts\"",
-    "test:spec": "mocha  \"test/spec/**/*.test.ts\"",
+    "test:spec": "yarn test:spec-generic && yarn test:spec-static",
+    "test:spec-generic": "mocha  \"test/spec/generic/**/*.test.ts\"",
+    "test:spec-static": "yarn test:spec-static-minimal && yarn test:spec-static-mainnet",
+    "test:spec-static-minimal": "LODESTAR_PRESET=minimal mocha test/spec/ssz_static.test.ts",
+    "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet mocha test/spec/ssz_static.test.ts",
     "download-spec-tests": "node -r ts-node/register test/spec/downloadTests.ts"
   },
   "types": "lib/index.d.ts",
@@ -37,8 +41,8 @@
     "case": "^1.6.3"
   },
   "devDependencies": {
-    "@chainsafe/lodestar-params": "^0.28.1",
-    "@chainsafe/lodestar-spec-test-util": "^0.28.1"
+    "@chainsafe/lodestar-params": "^0.31.0",
+    "@chainsafe/lodestar-spec-test-util": "^0.31.0"
   },
   "keywords": [
     "ethereum",
