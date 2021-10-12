@@ -14,6 +14,8 @@ import {CompositeType, fromHexString, toHexString, Type} from "../../../src";
 
 // Generate various types of types
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 export function runTypeTest<T>({
   typeName,
   type,
@@ -22,53 +24,56 @@ export function runTypeTest<T>({
 }: {
   typeName: string;
   type: Type<T>;
-  defaultValue: T;
+  defaultValue?: T;
   values: {
-    id: string | number;
+    id?: string;
     serialized: string;
     json: any;
-    root: string;
+    root?: string;
     skipToJsonTest?: boolean;
   }[];
 }): void {
   describe(typeName, () => {
-    it("defaultValue", () => {
-      const actual = type.defaultValue();
-      expect(type.equals(actual, defaultValue));
-    });
+    if (defaultValue !== undefined) {
+      it("defaultValue", () => {
+        const actual = type.defaultValue();
+        expect(type.equals(actual, defaultValue));
+      });
+    }
 
-    for (const {id, serialized, json, root, skipToJsonTest} of values) {
-      describe(String(id), () => {
-        let struct: any;
+    for (const testCase of values) {
+      const {id, serialized, json, root, skipToJsonTest} = testCase;
+      let value: any;
 
+      describe(id ?? serialized, () => {
         before("fromJson", () => {
-          struct = type.fromJson(json);
+          value = type.fromJson(json);
         });
 
         if (!skipToJsonTest) {
           it("struct toJson", () => {
-            expect(type.toJson(struct)).to.deep.equal(json);
+            expect(type.toJson(value)).to.deep.equal(json);
           });
         }
 
         it("struct deserialize", () => {
           if (skipToJsonTest) {
-            expect(type.deserialize(fromHexString(serialized))).to.deep.equal(struct);
+            expect(type.deserialize(fromHexString(serialized))).to.deep.equal(value);
           } else {
             expect(type.toJson(type.deserialize(fromHexString(serialized)))).to.deep.equal(json);
           }
         });
 
         it("struct serialize", () => {
-          expect(toHexString(type.serialize(struct))).to.equal(serialized);
+          expect(toHexString(type.serialize(value))).to.equal(serialized);
         });
 
         it("struct hashTreeRoot", () => {
-          expect(toHexString(type.hashTreeRoot(struct))).to.equal(root);
+          expect(toHexString(type.hashTreeRoot(value))).to.equal(root);
         });
 
         it("struct clone + equals", () => {
-          expect(type.equals(type.clone(struct), struct));
+          expect(type.equals(type.clone(value), value));
         });
 
         const typeComposite = type as CompositeType<Record<string, any>>;
@@ -83,6 +88,47 @@ export function runTypeTest<T>({
             expect(toHexString(tree.hashTreeRoot())).to.equal(root);
           });
         }
+      });
+    }
+  });
+}
+
+/**
+ * Shorter version of runTypeTest with only serialized test
+ */
+export function runTypeValueTest<T>({
+  typeName,
+  type,
+  defaultValue,
+  values,
+}: {
+  typeName: string;
+  type: Type<T>;
+  defaultValue?: T;
+  values: {
+    serialized: string;
+    value: any;
+  }[];
+}): void {
+  describe(typeName, () => {
+    if (defaultValue !== undefined) {
+      it("defaultValue", () => {
+        const actual = type.defaultValue();
+        expect(type.equals(actual, defaultValue));
+      });
+    }
+
+    for (const testCase of values) {
+      const {serialized, value} = testCase;
+
+      describe(serialized, () => {
+        it("struct deserialize", () => {
+          expect(type.deserialize(fromHexString(serialized))).to.deep.equal(value);
+        });
+
+        it("struct serialize", () => {
+          expect(toHexString(type.serialize(value))).to.equal(serialized);
+        });
       });
     }
   });
