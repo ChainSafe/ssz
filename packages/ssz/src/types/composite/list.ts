@@ -94,7 +94,7 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
     this.bytes_validate(data, start, end);
-    return super.struct_deserializeFromBytes(data, start, end);
+    return super.struct_deserializeFromBytes(data, start, end, true);
   }
 
   struct_getChunkCount(value: T): number {
@@ -379,8 +379,8 @@ export class CompositeListType<T extends List<unknown> = List<unknown>> extends 
   }
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
-    this.bytes_validate(data, start, end);
-    const value = super.struct_deserializeFromBytes(data, start, end);
+    this.bytes_validate(data, start, end, true);
+    const value = super.struct_deserializeFromBytes(data, start, end, true);
     if (value.length > this.limit) {
       throw new Error(`Deserialized list length greater than limit: ${value.length} ${this.limit}`);
     }

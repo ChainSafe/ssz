@@ -1,13 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
 import {booleanType, byteType, ContainerType, Type} from "../../src";
-import {
-  number16Type,
-  number16Vector6Type,
-  number16List100Type,
-  SimpleObject,
-  VariableSizeSimpleObject,
-} from "./objects";
+import {number16Type, number16Vector6Type, SimpleObject, VariableSizeSimpleObject} from "./objects";
 
 describe("deserialize", () => {
   const invalidDataTestCases: {
@@ -19,7 +13,6 @@ describe("deserialize", () => {
     {value: "00", type: number16Type, expectedError: "Data length of 1 is too small, expect 2"},
     {value: "", type: number16Vector6Type, expectedError: "Data is empty"},
     {value: "00", type: number16Vector6Type, expectedError: "Incorrect data length 1, expect 12"},
-    {value: "", type: number16List100Type, expectedError: "Data is empty"},
     {value: "", type: SimpleObject, expectedError: "Data is empty"},
     {value: "00", type: SimpleObject, expectedError: "Incorrect data length 1, expect 3"},
     {value: "00", type: VariableSizeSimpleObject, expectedError: "Data length 1 is too small, expect at least 7"},

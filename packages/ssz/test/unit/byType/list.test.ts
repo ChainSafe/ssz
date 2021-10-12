@@ -37,7 +37,7 @@ runTypeTest({
       id: "empty",
       serialized: "0x",
       json: [],
-      root: "0x52e2647abc3d0c9d3be0387f3f0d925422c7a4e98cf4489066f0f43281a899f3",
+      root: "0x96559674a79656e540871e1f39c9b91e152aa8cddb71493e754827c4cc809d57",
     },
     {
       id: "2 roots",
@@ -60,6 +60,12 @@ runTypeTest({
   }),
   defaultValue: [],
   values: [
+    {
+      id: "empty",
+      serialized: "0x",
+      json: [],
+      root: "0x96559674a79656e540871e1f39c9b91e152aa8cddb71493e754827c4cc809d57",
+    },
     {
       id: "2 values",
       serialized: "0x0000000000000000000000000000000040e2010000000000f1fb090000000000",

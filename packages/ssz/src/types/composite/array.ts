@@ -74,8 +74,8 @@ export abstract class BasicArrayType<T extends ArrayLike<unknown>> extends Compo
     return newValue;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
-    this.bytes_validate(data, start, end);
+  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number, emptyOk?: boolean): T {
+    this.bytes_validate(data, start, end, emptyOk);
     const elementSize = this.elementType.struct_getSerializedLength();
     return Array.from({length: (end - start) / elementSize}, (_, i) =>
       this.elementType.struct_deserializeFromBytes(data, start + i * elementSize)
@@ -387,8 +387,8 @@ export abstract class CompositeArrayType<T extends ArrayLike<unknown>> extends C
     return newValue;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
-    this.bytes_validate(data, start, end);
+  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number, emptyOk?: boolean): T {
+    this.bytes_validate(data, start, end, emptyOk);
     if (start === end) {
       return [] as unknown as T;
     }
