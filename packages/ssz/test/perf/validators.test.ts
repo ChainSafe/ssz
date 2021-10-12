@@ -1,6 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
-import {Validator} from "../lodestar/phase0/types";
-import {Validator as ValidatorType} from "../lodestar/phase0/sszTypes";
+import {Validator} from "../lodestarTypes/phase0/types";
+import {Validator as ValidatorType} from "../lodestarTypes/phase0/sszTypes";
 import {ContainerLeafNodeStructType, ContainerType, TreeBacked} from "../../src";
 
 const ValidatorLeafNodeStructType = new ContainerLeafNodeStructType<Validator>({fields: ValidatorType.fields});
@@ -8,7 +8,7 @@ const ValidatorLeafNodeStructType = new ContainerLeafNodeStructType<Validator>({
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),
   withdrawalCredentials: Buffer.alloc(32, 0xdd),
-  effectiveBalance: BigInt(32e9),
+  effectiveBalance: 32e9,
   slashed: false,
   activationEligibilityEpoch: 134530,
   activationEpoch: 134532,

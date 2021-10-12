@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import {itBench} from "@dapplion/benchmark";
-import * as sszPhase0 from "../lodestar/phase0/sszTypes";
-import * as sszAltair from "../lodestar/altair/sszTypes";
-import {Attestation, SignedAggregateAndProof} from "../lodestar/phase0/types";
-import {SignedContributionAndProof} from "../lodestar/altair/types";
+import * as sszPhase0 from "../lodestarTypes/phase0/sszTypes";
+import * as sszAltair from "../lodestarTypes/altair/sszTypes";
+import {Attestation, SignedAggregateAndProof} from "../lodestarTypes/phase0/types";
+import {SignedContributionAndProof} from "../lodestarTypes/altair/types";
 import {BitList} from "../../src";
 
 describe("Deserialization of frequent eth2 objects", () => {

@@ -1,3 +1,4 @@
+import {BitVectorType, ContainerType, VectorType, ListType, RootType, Vector} from "../../../src";
 import {
   JUSTIFICATION_BITS_LENGTH,
   FINALIZED_ROOT_INDEX_FLOORLOG2,
@@ -6,19 +7,16 @@ import {
   SYNC_COMMITTEE_SIZE,
   SLOTS_PER_HISTORICAL_ROOT,
   HISTORICAL_ROOTS_LIMIT,
-  EPOCHS_PER_ETH1_VOTING_PERIOD,
   SLOTS_PER_EPOCH,
   VALIDATOR_REGISTRY_LIMIT,
   EPOCHS_PER_HISTORICAL_VECTOR,
   EPOCHS_PER_SLASHINGS_VECTOR,
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
 } from "@chainsafe/lodestar-params";
-import {BitVectorType, ContainerType, VectorType, ListType, RootType, Vector} from "../../../src";
-import * as phase0Ssz from "../phase0/sszTypes";
-import * as primitiveSsz from "../primitive/sszTypes";
-import * as phase0 from "../phase0/types";
 import {Root} from "../primitive/types";
-import {LazyVariable} from "../lazyVar";
+import {ssz as phase0Ssz, ts as phase0Types} from "../phase0";
+import {ssz as primitiveSsz} from "../primitive";
+import {LazyVariable} from "../utils/lazyVar";
 import * as altair from "./types";
 
 const {
@@ -124,7 +122,7 @@ export const HistoricalStateRoots = new VectorType<Vector<Root>>({
   length: SLOTS_PER_HISTORICAL_ROOT,
 });
 
-export const HistoricalBatch = new ContainerType<phase0.HistoricalBatch>({
+export const HistoricalBatch = new ContainerType<phase0Types.HistoricalBatch>({
   fields: {
     blockRoots: HistoricalBlockRoots,
     stateRoots: HistoricalStateRoots,
@@ -156,8 +154,11 @@ export const SignedBeaconBlock = new ContainerType<altair.SignedBeaconBlock>({
   },
 });
 
-//we don't reuse phase0.BeaconState fields since we need to replace some keys
-//and we cannot keep order doing that
+export const EpochParticipation = new ListType({elementType: ParticipationFlags, limit: VALIDATOR_REGISTRY_LIMIT});
+export const InactivityScores = new ListType({elementType: Number64, limit: VALIDATOR_REGISTRY_LIMIT});
+
+// we don't reuse phase0.BeaconState fields since we need to replace some keys
+// and we cannot keep order doing that
 export const BeaconState = new ContainerType<altair.BeaconState>({
   fields: {
     genesisTime: Number64,
@@ -174,33 +175,24 @@ export const BeaconState = new ContainerType<altair.BeaconState>({
     }),
     // Eth1
     eth1Data: phase0Ssz.Eth1Data,
-    eth1DataVotes: new ListType({
-      elementType: phase0Ssz.Eth1Data,
-      limit: EPOCHS_PER_ETH1_VOTING_PERIOD * SLOTS_PER_EPOCH,
-    }),
+    eth1DataVotes: phase0Ssz.Eth1DataVotes,
     eth1DepositIndex: Number64,
     // Registry
     validators: new ListType({elementType: phase0Ssz.Validator, limit: VALIDATOR_REGISTRY_LIMIT}),
-    balances: new ListType({elementType: Gwei, limit: VALIDATOR_REGISTRY_LIMIT}),
+    balances: new ListType({elementType: Number64, limit: VALIDATOR_REGISTRY_LIMIT}),
     randaoMixes: new VectorType({elementType: Bytes32, length: EPOCHS_PER_HISTORICAL_VECTOR}),
     // Slashings
     slashings: new VectorType({elementType: Gwei, length: EPOCHS_PER_SLASHINGS_VECTOR}),
     // Participation
-    previousEpochParticipation: new ListType({
-      elementType: ParticipationFlags,
-      limit: VALIDATOR_REGISTRY_LIMIT,
-    }),
-    currentEpochParticipation: new ListType({
-      elementType: ParticipationFlags,
-      limit: VALIDATOR_REGISTRY_LIMIT,
-    }),
+    previousEpochParticipation: EpochParticipation,
+    currentEpochParticipation: EpochParticipation,
     // Finality
     justificationBits: new BitVectorType({length: JUSTIFICATION_BITS_LENGTH}),
     previousJustifiedCheckpoint: phase0Ssz.Checkpoint,
     currentJustifiedCheckpoint: phase0Ssz.Checkpoint,
     finalizedCheckpoint: phase0Ssz.Checkpoint,
     // Inactivity
-    inactivityScores: new ListType({elementType: Number64, limit: VALIDATOR_REGISTRY_LIMIT}),
+    inactivityScores: InactivityScores,
     // Sync
     currentSyncCommittee: SyncCommittee,
     nextSyncCommittee: SyncCommittee,

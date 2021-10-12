@@ -1,4 +1,15 @@
 import {
+  BitListType,
+  BitVectorType,
+  ContainerLeafNodeStructType,
+  ContainerType,
+  List,
+  ListType,
+  RootType,
+  Vector,
+  VectorType,
+} from "../../../src";
+import {
   ATTESTATION_SUBNET_COUNT,
   DEPOSIT_CONTRACT_TREE_DEPTH,
   EPOCHS_PER_ETH1_VOTING_PERIOD,
@@ -17,11 +28,9 @@ import {
   SLOTS_PER_HISTORICAL_ROOT,
   VALIDATOR_REGISTRY_LIMIT,
 } from "@chainsafe/lodestar-params";
-import {BitListType, BitVectorType, ContainerType, List, ListType, RootType, Vector, VectorType} from "../../../src";
-import * as primitiveSsz from "../primitive/sszTypes";
-import * as primitive from "../primitive/types";
+import {ssz as primitiveSsz, ts as primitiveTs} from "../primitive";
+import {LazyVariable} from "../utils/lazyVar";
 import * as phase0 from "./types";
-import {LazyVariable} from "../lazyVar";
 
 const {
   Boolean,
@@ -82,7 +91,7 @@ export const CommitteeBits = new BitListType({
   limit: MAX_VALIDATORS_PER_COMMITTEE,
 });
 
-export const CommitteeIndices = new ListType<List<primitive.ValidatorIndex>>({
+export const CommitteeIndices = new ListType<List<primitiveTs.ValidatorIndex>>({
   elementType: ValidatorIndex,
   limit: MAX_VALIDATORS_PER_COMMITTEE,
 });
@@ -91,7 +100,7 @@ export const DepositMessage = new ContainerType<phase0.DepositMessage>({
   fields: {
     pubkey: BLSPubkey,
     withdrawalCredentials: Bytes32,
-    amount: Gwei,
+    amount: Number64,
   },
 });
 
@@ -99,12 +108,12 @@ export const DepositData = new ContainerType<phase0.DepositData>({
   fields: {
     pubkey: BLSPubkey,
     withdrawalCredentials: Bytes32,
-    amount: Gwei,
+    amount: Number64,
     signature: BLSSignature,
   },
 });
 
-export const DepositDataRootList = new ListType<List<primitive.Root>>({
+export const DepositDataRootList = new ListType<List<primitiveTs.Root>>({
   elementType: new RootType({expandedType: DepositData}),
   limit: 2 ** DEPOSIT_CONTRACT_TREE_DEPTH,
 });
@@ -123,6 +132,11 @@ export const Eth1Data = new ContainerType<phase0.Eth1Data>({
     depositCount: Number64,
     blockHash: Bytes32,
   },
+});
+
+export const Eth1DataVotes = new ListType({
+  elementType: Eth1Data,
+  limit: EPOCHS_PER_ETH1_VOTING_PERIOD * SLOTS_PER_EPOCH,
 });
 
 export const Eth1DataOrdered = new ContainerType<phase0.Eth1DataOrdered>({
@@ -157,12 +171,12 @@ export const ENRForkID = new ContainerType<phase0.ENRForkID>({
   },
 });
 
-export const HistoricalBlockRoots = new VectorType<Vector<primitive.Root>>({
+export const HistoricalBlockRoots = new VectorType<Vector<primitiveTs.Root>>({
   elementType: new RootType({expandedType: () => typesRef.get().BeaconBlock}),
   length: SLOTS_PER_HISTORICAL_ROOT,
 });
 
-export const HistoricalStateRoots = new VectorType<Vector<primitive.Root>>({
+export const HistoricalStateRoots = new VectorType<Vector<primitiveTs.Root>>({
   elementType: new RootType({expandedType: () => typesRef.get().BeaconState}),
   length: SLOTS_PER_HISTORICAL_ROOT,
 });
@@ -174,11 +188,11 @@ export const HistoricalBatch = new ContainerType<phase0.HistoricalBatch>({
   },
 });
 
-export const Validator = new ContainerType<phase0.Validator>({
+export const Validator = new ContainerLeafNodeStructType<phase0.Validator>({
   fields: {
     pubkey: BLSPubkey,
     withdrawalCredentials: Bytes32,
-    effectiveBalance: Gwei,
+    effectiveBalance: Number64,
     slashed: Boolean,
     activationEligibilityEpoch: Epoch,
     activationEpoch: Epoch,
@@ -186,6 +200,13 @@ export const Validator = new ContainerType<phase0.Validator>({
     withdrawableEpoch: Epoch,
   },
 });
+
+// Export as stand-alone for direct tree optimizations
+export const Validators = new ListType({elementType: Validator, limit: VALIDATOR_REGISTRY_LIMIT});
+export const Balances = new ListType({elementType: Number64, limit: VALIDATOR_REGISTRY_LIMIT});
+export const RandaoMixes = new VectorType({elementType: Bytes32, length: EPOCHS_PER_HISTORICAL_VECTOR});
+export const Slashings = new VectorType({elementType: Gwei, length: EPOCHS_PER_SLASHINGS_VECTOR});
+export const JustificationBits = new BitVectorType({length: JUSTIFICATION_BITS_LENGTH});
 
 // Misc dependants
 
@@ -239,6 +260,11 @@ export const AttesterSlashing = new ContainerType<phase0.AttesterSlashing>({
     attestation1: IndexedAttestation,
     attestation2: IndexedAttestation,
   },
+  // Declaration time casingMap for toJson/fromJson for container <=> json data
+  casingMap: {
+    attestation1: "attestation_1",
+    attestation2: "attestation_2",
+  },
 });
 
 export const Deposit = new ContainerType<phase0.Deposit>({
@@ -252,6 +278,11 @@ export const ProposerSlashing = new ContainerType<phase0.ProposerSlashing>({
   fields: {
     signedHeader1: SignedBeaconBlockHeader,
     signedHeader2: SignedBeaconBlockHeader,
+  },
+  // Declaration time casingMap for toJson/fromJson for container <=> json data
+  casingMap: {
+    signedHeader1: "signed_header_1",
+    signedHeader2: "signed_header_2",
   },
 });
 
@@ -327,22 +358,19 @@ export const BeaconState = new ContainerType<phase0.BeaconState>({
     }),
     // Eth1
     eth1Data: Eth1Data,
-    eth1DataVotes: new ListType({
-      elementType: Eth1Data,
-      limit: EPOCHS_PER_ETH1_VOTING_PERIOD * SLOTS_PER_EPOCH,
-    }),
+    eth1DataVotes: Eth1DataVotes,
     eth1DepositIndex: Number64,
     // Registry
-    validators: new ListType({elementType: Validator, limit: VALIDATOR_REGISTRY_LIMIT}),
-    balances: new ListType({elementType: Gwei, limit: VALIDATOR_REGISTRY_LIMIT}),
-    randaoMixes: new VectorType({elementType: Bytes32, length: EPOCHS_PER_HISTORICAL_VECTOR}),
+    validators: Validators,
+    balances: Balances,
+    randaoMixes: RandaoMixes,
     // Slashings
-    slashings: new VectorType({elementType: Gwei, length: EPOCHS_PER_SLASHINGS_VECTOR}),
+    slashings: Slashings,
     // Attestations
     previousEpochAttestations: EpochAttestations,
     currentEpochAttestations: EpochAttestations,
     // Finality
-    justificationBits: new BitVectorType({length: JUSTIFICATION_BITS_LENGTH}),
+    justificationBits: JustificationBits,
     previousJustifiedCheckpoint: Checkpoint,
     currentJustifiedCheckpoint: Checkpoint,
     finalizedCheckpoint: Checkpoint,

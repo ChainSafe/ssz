@@ -1,46 +1,25 @@
-import {BitList, BitVector, List, Vector} from "../../../src";
-import * as phase0 from "../phase0/types";
+import {BitVector, List, BitList, Vector} from "../../../src";
 import {
-  BLSPubkey,
-  BLSSignature,
-  Bytes32,
   Number64,
-  Root,
-  Slot,
   Uint64,
-  ValidatorIndex,
-  Version,
   ParticipationFlags,
+  Bytes32,
+  BLSSignature,
+  Version,
+  BLSPubkey,
+  Slot,
+  Root,
+  ValidatorIndex,
   SubCommitteeIndex,
 } from "../primitive/types";
+import * as phase0 from "../phase0/types";
 
-export interface SyncAggregate {
-  syncCommitteeBits: BitVector;
-  syncCommitteeSignature: BLSSignature;
-}
+export type SyncSubnets = BitVector;
 
-export interface BeaconBlockBody extends phase0.BeaconBlockBody {
-  syncAggregate: SyncAggregate;
-}
-
-export interface BeaconBlock extends phase0.BeaconBlock {
-  body: BeaconBlockBody;
-}
-
-export interface SignedBeaconBlock extends phase0.SignedBeaconBlock {
-  message: BeaconBlock;
-}
-
-export interface BeaconState
-  extends Omit<phase0.BeaconState, "previousEpochAttestations" | "currentEpochAttestations"> {
-  // Participation
-  previousEpochParticipation: List<ParticipationFlags>;
-  currentEpochParticipation: List<ParticipationFlags>;
-  // Inactivity
-  inactivityScores: List<Number64>;
-  // Sync
-  currentSyncCommittee: SyncCommittee;
-  nextSyncCommittee: SyncCommittee;
+export interface Metadata {
+  seqNumber: Uint64;
+  attnets: phase0.AttestationSubnets;
+  syncnets: SyncSubnets;
 }
 
 export interface SyncCommittee {
@@ -79,6 +58,35 @@ export interface SyncAggregatorSelectionData {
   subCommitteeIndex: SubCommitteeIndex;
 }
 
+export interface SyncAggregate {
+  syncCommitteeBits: BitVector;
+  syncCommitteeSignature: BLSSignature;
+}
+
+export interface BeaconBlockBody extends phase0.BeaconBlockBody {
+  syncAggregate: SyncAggregate;
+}
+
+export interface BeaconBlock extends phase0.BeaconBlock {
+  body: BeaconBlockBody;
+}
+
+export interface SignedBeaconBlock extends phase0.SignedBeaconBlock {
+  message: BeaconBlock;
+}
+
+export interface BeaconState
+  extends Omit<phase0.BeaconState, "previousEpochAttestations" | "currentEpochAttestations"> {
+  // Participation
+  previousEpochParticipation: List<ParticipationFlags>;
+  currentEpochParticipation: List<ParticipationFlags>;
+  // Inactivity
+  inactivityScores: List<Number64>;
+  // Sync
+  currentSyncCommittee: SyncCommittee;
+  nextSyncCommittee: SyncCommittee;
+}
+
 /**
  * Spec v1.0.1
  */
@@ -115,12 +123,4 @@ export interface LightClientUpdate {
 export interface LightClientStore {
   snapshot: LightClientSnapshot;
   validUpdates: List<LightClientUpdate>;
-}
-
-export type SyncSubnets = BitVector;
-
-export interface Metadata {
-  seqNumber: Uint64;
-  attnets: phase0.AttestationSubnets;
-  syncnets: SyncSubnets;
 }

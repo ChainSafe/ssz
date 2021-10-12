@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import {describeDirectorySpecTest, InputType, safeType} from "@chainsafe/lodestar-spec-test-util";
-import {Bytes32, ssz} from "@chainsafe/lodestar-types";
+import {Bytes32, ssz} from "../lodestarTypes";
 import {expect} from "chai";
-import {CompositeType, ContainerType, Type} from "../../src";
+import {CompositeType, ContainerType, Type} from "@chainsafe/ssz";
 import {SPEC_TEST_LOCATION} from "../specTestVersioning";
 import {ACTIVE_PRESET, ForkName, PresetName} from "@chainsafe/lodestar-params";
 
@@ -11,14 +11,6 @@ import {ACTIVE_PRESET, ForkName, PresetName} from "@chainsafe/lodestar-params";
 
 // eslint-disable-next-line
 type Types = Record<string, Type<any>>;
-
-interface IBaseSSZStaticTestCase<T> {
-  meta?: {blsSetting?: BigInt};
-  roots: {root: string};
-  serialized: T;
-  serialized_raw: Uint8Array;
-  value: T;
-}
 
 const extraTypes = {
   Eth1Block: new ContainerType({
@@ -29,6 +21,14 @@ const extraTypes = {
     },
   }),
 };
+
+interface IBaseSSZStaticTestCase<T> {
+  meta?: {blsSetting?: BigInt};
+  roots: {root: string};
+  serialized: T;
+  serialized_raw: Uint8Array;
+  value: T;
+}
 
 export function sszStatic(fork: ForkName): void {
   const rootDir = path.join(SPEC_TEST_LOCATION, `tests/${ACTIVE_PRESET}/${fork}/ssz_static`);
