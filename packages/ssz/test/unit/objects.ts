@@ -97,6 +97,14 @@ export const NoTransformFieldObject = new ContainerType({
   },
 });
 
+export const NoTransformFieldObjectWithDeclaredExpectedCase = new ContainerType({
+  fields: {
+    someValue_RandOM: new NumberUintType({byteLength: 4}),
+    someOtherValue_1Random2: new BooleanType(),
+  },
+  expectedCase: "notransform",
+});
+
 export const RandomTransformFieldObject = new ContainerType({
   fields: {
     someValueRandOM: new NumberUintType({byteLength: 4}),

@@ -6,10 +6,9 @@ export function toExpectedCase(
   expectedCase: IJsonOptions["case"] = "camel",
   customCasingMap?: Record<string, string>
 ): string {
+  if (expectedCase === "notransform") return value;
   if (customCasingMap && customCasingMap[value]) return customCasingMap[value];
   switch (expectedCase) {
-    case "notransform":
-      return value;
     case "param":
       return Case.kebab(value);
     case "dot":

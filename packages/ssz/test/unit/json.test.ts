@@ -3,6 +3,7 @@ import {
   ComplexCamelCaseFieldObject,
   RandomTransformFieldObject,
   NoTransformFieldObject,
+  NoTransformFieldObjectWithDeclaredExpectedCase,
   SlashingTransformFieldObject,
   WithCasingDeclarationFieldObject,
 } from "./objects";
@@ -22,6 +23,17 @@ describe("json serialization", function () {
     const json = {someValue_RandOM: 4, someOtherValue_1Random2: true};
     const result = NoTransformFieldObject.fromJson(json, {case: "notransform"});
     expect(NoTransformFieldObject.equals(test, result)).to.be.true;
+  });
+
+  it("should deserialize/deserialize without case transformation with notransform declared expectedCase", function () {
+    const test = {someValue_RandOM: 4, someOtherValue_1Random2: true};
+    const json = {someValue_RandOM: 4, someOtherValue_1Random2: true};
+
+    const result = NoTransformFieldObjectWithDeclaredExpectedCase.fromJson(json);
+    expect(NoTransformFieldObjectWithDeclaredExpectedCase.equals(test, result)).to.be.true;
+
+    const back = NoTransformFieldObjectWithDeclaredExpectedCase.toJson(result);
+    expect(back).to.be.deep.equal(json);
   });
 
   it("should deserialize from snake case with numbers", function () {
