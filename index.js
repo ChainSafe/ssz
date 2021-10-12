@@ -32131,11 +32131,11 @@ class CompositeType extends type_1.Type {
         const output = new Uint8Array(this.tree_getSerializedLength(tree));
         return this.tree_serializeToBytes(tree, output, 0);
     }
-    bytes_validate(data, start, end) {
+    bytes_validate(data, start, end, emptyOk) {
         if (!data) {
             throw new Error("Data is null or undefined");
         }
-        if (data.length === 0) {
+        if (data.length === 0 && !emptyOk) {
             throw new Error("Data is empty");
         }
         if (start < 0) {
@@ -32458,8 +32458,8 @@ class BasicArrayType extends abstract_1.CompositeType {
         }
         return newValue;
     }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
+    struct_deserializeFromBytes(data, start, end, emptyOk) {
+        this.bytes_validate(data, start, end, emptyOk);
         const elementSize = this.elementType.struct_getSerializedLength();
         return Array.from({ length: (end - start) / elementSize }, (_, i) => this.elementType.struct_deserializeFromBytes(data, start + i * elementSize));
     }
@@ -32724,8 +32724,8 @@ class CompositeArrayType extends abstract_1.CompositeType {
         }
         return newValue;
     }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
+    struct_deserializeFromBytes(data, start, end, emptyOk) {
+        this.bytes_validate(data, start, end, emptyOk);
         if (start === end) {
             return [];
         }
@@ -33508,6 +33508,7 @@ class ContainerType extends abstract_1.CompositeType {
         super();
         this.fields = { ...options.fields };
         this.casingMap = options.casingMap;
+        this.expectedCase = options.expectedCase;
         this._typeSymbols.add(exports.CONTAINER_TYPE);
         this.fieldInfos = new Map();
         let chunkIndex = 0;
@@ -33694,7 +33695,7 @@ class ContainerType extends abstract_1.CompositeType {
             throw new Error("Invalid JSON container: expected Object");
         }
         const value = {};
-        const expectedCase = options && options.case;
+        const expectedCase = this.expectedCase || (options && options.case);
         const customCasingMap = this.casingMap || (options && options.casingMap);
         for (const [fieldName, fieldType] of Object.entries(this.fields)) {
             const expectedFieldName = json_1.toExpectedCase(fieldName, expectedCase, customCasingMap);
@@ -33708,7 +33709,7 @@ class ContainerType extends abstract_1.CompositeType {
     }
     struct_convertToJson(value, options) {
         const data = {};
-        const expectedCase = options && options.case;
+        const expectedCase = this.expectedCase || (options && options.case);
         const customCasingMap = this.casingMap || (options && options.casingMap);
         for (const [fieldName, fieldType] of Object.entries(this.fields)) {
             data[json_1.toExpectedCase(fieldName, expectedCase, customCasingMap)] = fieldType.toJson(value[fieldName], options);
@@ -34328,14 +34329,14 @@ class BasicListType extends array_1.BasicArrayType {
         return 0;
     }
     bytes_validate(data, start, end) {
-        super.bytes_validate(data, start, end);
+        super.bytes_validate(data, start, end, true);
         if (end - start > this.getMaxSerializedLength()) {
             throw new Error("Deserialized list length greater than limit");
         }
     }
     struct_deserializeFromBytes(data, start, end) {
         this.bytes_validate(data, start, end);
-        return super.struct_deserializeFromBytes(data, start, end);
+        return super.struct_deserializeFromBytes(data, start, end, true);
     }
     struct_getChunkCount(value) {
         return Math.ceil((value.length * this.elementType.struct_getSerializedLength()) / 32);
@@ -34591,8 +34592,8 @@ class CompositeListType extends array_1.CompositeArrayType {
         return 0;
     }
     struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        const value = super.struct_deserializeFromBytes(data, start, end);
+        this.bytes_validate(data, start, end, true);
+        const value = super.struct_deserializeFromBytes(data, start, end, true);
         if (value.length > this.limit) {
             throw new Error(`Deserialized list length greater than limit: ${value.length} ${this.limit}`);
         }
@@ -35807,11 +35808,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.toExpectedCase = void 0;
 const case_1 = __importDefault(__webpack_require__(8823));
 function toExpectedCase(value, expectedCase = "camel", customCasingMap) {
+    if (expectedCase === "notransform")
+        return value;
     if (customCasingMap && customCasingMap[value])
         return customCasingMap[value];
     switch (expectedCase) {
-        case "notransform":
-            return value;
         case "param":
             return case_1.default.kebab(value);
         case "dot":
