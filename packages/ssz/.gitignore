@@ -7,4 +7,4 @@ node_modules/
 .vscode
 yarn-error.log
 
-test/spec-tests-data
+spec-tests

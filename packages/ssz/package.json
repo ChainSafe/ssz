@@ -28,6 +28,7 @@
     "test:perf": "mocha  \"test/perf/**/*.test.ts\"",
     "test:unit": "nyc -e .ts mocha  \"test/unit/**/*.test.ts\"",
     "test:spec": "mocha  \"test/spec/**/*.test.ts\"",
+    "test:spec-static": "mocha test/spec/ssz_static.test.ts",
     "download-spec-tests": "node -r ts-node/register test/spec/downloadTests.ts"
   },
   "types": "lib/index.d.ts",
@@ -37,8 +38,8 @@
     "case": "^1.6.3"
   },
   "devDependencies": {
-    "@chainsafe/lodestar-params": "^0.28.1",
-    "@chainsafe/lodestar-spec-test-util": "^0.28.1"
+    "@chainsafe/lodestar-params": "^0.31.0",
+    "@chainsafe/lodestar-spec-test-util": "^0.31.0"
   },
   "keywords": [
     "ethereum",
