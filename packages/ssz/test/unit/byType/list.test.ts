@@ -34,6 +34,12 @@ runTypeTest({
   defaultValue: [],
   values: [
     {
+      id: "empty",
+      serialized: "0x",
+      json: [],
+      root: "0x52e2647abc3d0c9d3be0387f3f0d925422c7a4e98cf4489066f0f43281a899f3",
+    },
+    {
       id: "2 roots",
       serialized:
         "0xddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
