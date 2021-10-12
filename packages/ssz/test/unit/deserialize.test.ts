@@ -22,7 +22,6 @@ describe("deserialize", () => {
     {value: "", type: number16List100Type, expectedError: "Data is empty"},
     {value: "", type: SimpleObject, expectedError: "Data is empty"},
     {value: "00", type: SimpleObject, expectedError: "Incorrect data length 1, expect 3"},
-    {value: "", type: VariableSizeSimpleObject, expectedError: "Data is empty"},
     {value: "00", type: VariableSizeSimpleObject, expectedError: "Data length 1 is too small, expect at least 7"},
   ];
   for (const {type, value, expectedError} of invalidDataTestCases) {
