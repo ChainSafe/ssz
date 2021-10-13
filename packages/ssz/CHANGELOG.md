@@ -1,3 +1,16 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [0.8.19](https://github.com/chainsafe/ssz/compare/@chainsafe/ssz@0.8.18...@chainsafe/ssz@0.8.19) (2021-10-12)
+
+**Note:** Version bump only for package @chainsafe/ssz
+
+
+
+
+
 ## 0.8.18 (2021-09-25)
 
 ## Features
