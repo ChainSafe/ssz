@@ -2,6 +2,7 @@ export * from "./abstract";
 export * from "./array";
 export * from "./bitList";
 export * from "./bitVector";
+export * from "./byteList";
 export * from "./byteVector";
 export * from "./container";
 export * from "./containerLeafNodeStruct";
