@@ -6,7 +6,6 @@ import {BasicType} from "./abstract";
 export class BooleanType extends BasicType<boolean> {
   // Immutable characteristics
   readonly byteLength = 1;
-  readonly itemsPerChunk = 32;
   readonly fixedLen = 1;
   readonly minLen = 1;
   readonly maxLen = 1;

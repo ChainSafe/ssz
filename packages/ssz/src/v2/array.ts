@@ -11,6 +11,13 @@ import {
 import {ValueOf} from "../backings";
 import {BasicType, CompositeType} from "./abstract";
 
+// There's a matrix of Array-ish types that require a combination of this functions.
+// Regular class extends syntax doesn't work because it can only extend a single class.
+//
+// Type of array: List, Vector. Changes length property
+// Type of element: Basic, Composite. Changes merkelization if packing or not.
+// If Composite: Fixed len, Variable len. Changes the serialization requiring offsets.
+
 /**
  * SSZ Lists (variable-length arrays) include the length of the list in the tree
  * This length is always in the same index in the tree
@@ -20,10 +27,19 @@ import {BasicType, CompositeType} from "./abstract";
  * 2   3 // <-here
  * ```
  */
-export const LENGTH_GINDEX = BigInt(3);
-
+export function getLengthAndChunkNodeFromRootNode(node: Node): [Node, number] {
+  return [node.left, (node.right as LeafNode).getUint(4, 0)];
+}
 export function getLengthFromRootNode(node: Node): number {
   return (node.right as LeafNode).getUint(4, 0);
+}
+
+export function addLengthNode(chunksNode: Node, length: number): Node {
+  // TODO: Add LeafNode.fromUint()
+  const lengthNode = new LeafNode(zeroNode(0));
+  lengthNode.setUint(4, 0, length);
+
+  return new BranchNode(chunksNode, lengthNode);
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -34,13 +50,6 @@ export type ArrayProps = {
   /** List limit */
   limit?: number;
 };
-
-// There's a matrix of Array-ish types that require a combination of this functions.
-// Regular class extends syntax doesn't work because it can only extend a single class.
-//
-// Type of array: List, Vector. Changes length property
-// Type of element: Basic, Composite. Changes merkelization if packing or not.
-// If Composite: Fixed len, Variable len. Changes the serialization requiring offsets.
 
 // Basic
 ////////
@@ -88,7 +97,7 @@ export function struct_serializeToBytesArrayBasic<ElementType extends BasicType<
 // List of basic elements will pack them in merkelized form
 export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
   elementType: ElementType,
-  depth: number,
+  chunkDepth: number,
   data: Uint8Array,
   start: number,
   end: number,
@@ -101,7 +110,6 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   assertValidArrayLength(length, arrayProps);
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const chunkDepth = arrayProps.limit ? depth - 1 : depth;
   const chunksNode = packedRootsBytesToNode(chunkDepth, data, start, end);
 
   if (arrayProps.limit) {
@@ -109,14 +117,6 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   } else {
     return chunksNode;
   }
-}
-
-export function addLengthNode(chunksNode: Node, length: number): Node {
-  // TODO: Add LeafNode.fromUint()
-  const lengthNode = new LeafNode(zeroNode(0));
-  lengthNode.setUint(4, 0, length);
-
-  return new BranchNode(chunksNode, lengthNode);
 }
 
 /**
@@ -206,6 +206,32 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
       elementType.struct_serializeToBytes(output, offset + i * elementType.fixedLen, value[i]);
     }
     return offset + length * elementType.fixedLen;
+  }
+}
+
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+export function tree_serializedSizeArrayComposite<ElementType extends CompositeType<any>>(
+  elementType: ElementType,
+  length: number,
+  depth: number,
+  node: Node
+): number {
+  const nodes = getNodesAtDepth(node, depth, 0, length);
+
+  // Variable Length
+  if (elementType.fixedLen === null) {
+    let size = 0;
+    for (let i = 0; i < nodes.length; i++) {
+      size += 4 + elementType.tree_serializedSize(nodes[i]);
+    }
+    return size;
+  }
+
+  // Fixed length
+  else {
+    return length * elementType.fixedLen;
   }
 }
 

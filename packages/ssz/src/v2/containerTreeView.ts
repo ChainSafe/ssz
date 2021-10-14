@@ -19,12 +19,14 @@ type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> 
   new (type: ContainerTypeGeneric<Fields>, tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields>;
 };
 
-class ContainerTreeView<Fields extends Record<string, Type<any>>> implements TreeView {
+class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView {
   protected readonly views: TreeView[] = [];
   protected readonly leafNodes: LeafNode[] = [];
   protected readonly dirtyNodes = new Set<number>();
 
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree, protected inMutableMode = false) {}
+  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree, protected inMutableMode = false) {
+    super();
+  }
 
   get node(): Node {
     return this.tree.rootNode;

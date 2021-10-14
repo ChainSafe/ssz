@@ -2,9 +2,11 @@ import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {CompositeType, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
+  getLengthAndChunkNodeFromRootNode,
   struct_deserializeFromBytesArrayComposite,
   struct_serializedSizeArrayComposite,
   struct_serializeToBytesArrayComposite,
+  tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
 } from "./array";
@@ -24,6 +26,7 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
   readonly itemsPerChunk = 1;
   readonly isBasic = false;
   readonly depth: number;
+  readonly chunkDepth: number;
   readonly maxChunkCount: number;
   readonly fixedLen = null;
   readonly minLen = 0;
@@ -39,7 +42,8 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((this.limit * 1) / 32);
     // Depth includes the extra level for the length node
-    this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.depth = this.chunkDepth + 1;
     this.maxLen = this.limit * elementType.maxLen;
   }
 
@@ -65,13 +69,18 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
     return struct_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
+  tree_serializedSize(node: Node): number {
+    const length = getLengthFromRootNode(node);
+    return tree_serializedSizeArrayComposite(this.elementType, length, this.chunkDepth, node);
+  }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
     return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const length = getLengthFromRootNode(node);
-    return tree_serializeToBytesArrayComposite(this.elementType, length, this.depth, node, output, offset);
+    const [chunksNode, length] = getLengthAndChunkNodeFromRootNode(node);
+    return tree_serializeToBytesArrayComposite(this.elementType, length, this.chunkDepth, chunksNode, output, offset);
   }
 
   tree_getLength(node: Node): number {

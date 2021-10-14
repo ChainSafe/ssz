@@ -14,12 +14,14 @@ export type ArrayCompositeType<ElementType extends CompositeType<any>> = Composi
   tree_getLength(node: Node): number;
 };
 
-export class ArrayBasicTreeView<ElementType extends BasicType<any>> implements TreeView {
+export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends TreeView {
   private readonly leafNodes: LeafNode[] = [];
   private readonly dirtyNodes = new Set<number>();
   private allLeafNodesPopulated = false;
 
-  constructor(protected type: ArrayBasicType<ElementType>, protected tree: Tree, protected inMutableMode = false) {}
+  constructor(readonly type: ArrayBasicType<ElementType>, protected tree: Tree, protected inMutableMode = false) {
+    super();
+  }
 
   get length(): number {
     return this.type.tree_getLength(this.tree.rootNode);
@@ -50,7 +52,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> implements T
   }
 
   set(index: number, value: ValueOf<ElementType>): void {
-    const itemsPerChunk = this.type.elementType.itemsPerChunk;
+    const itemsPerChunk = this.type.itemsPerChunk;
 
     const chunkIndex = Math.floor(index / itemsPerChunk);
 
@@ -111,12 +113,14 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> implements T
   // }
 }
 
-export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> implements TreeView {
+export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> extends TreeView {
   private readonly views: TreeView[] = [];
   private readonly dirtyNodes = new Set<number>();
   private allLeafNodesPopulated = false;
 
-  constructor(protected type: ArrayCompositeType<ElementType>, protected tree: Tree, protected inMutableMode = false) {}
+  constructor(readonly type: ArrayCompositeType<ElementType>, protected tree: Tree, protected inMutableMode = false) {
+    super();
+  }
 
   get length(): number {
     return this.type.tree_getLength(this.tree.rootNode);

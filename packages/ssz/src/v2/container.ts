@@ -8,7 +8,11 @@ import {getContainerTreeViewClass} from "./containerTreeView";
 type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 type ViewOfFields<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K]["isBasic"] extends true ? Fields[K]["defaultValue"] : ReturnType<Fields[K]["getView"]>;
+  [K in keyof Fields]: Fields[K]["isBasic"] extends true
+    ? // If basic, return struct value. Will NOT propagate changes upwards
+      Fields[K]["defaultValue"]
+    : // If composite, return view. MAY propagate changes updwards
+      ReturnType<Fields[K]["getView"]>;
 };
 
 type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeView;
@@ -18,8 +22,6 @@ type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> 
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<ValueOfFields<Fields>> {
   // Immutable characteristics
-  readonly itemsPerChunk = 1;
-  readonly isBasic = false;
   readonly depth: number;
   readonly maxChunkCount: number;
   readonly fixedLen: number | null;
@@ -44,8 +46,6 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   constructor(readonly fields: Fields) {
     super();
 
-    // TODO Check that itemsPerChunk is an integer
-    this.itemsPerChunk = 1;
     this.maxChunkCount = Object.keys(fields).length;
     // TODO: Review math
     this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
@@ -98,11 +98,9 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     let totalSize = 0;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const [fieldName, fieldType] = this.fieldsEntries[i];
+      // Offset (4 bytes) + size
       totalSize +=
-        fieldType.fixedLen === null
-          ? // Offset + size
-            4 + fieldType.struct_serializedSize(value[fieldName])
-          : fieldType.fixedLen;
+        fieldType.fixedLen === null ? 4 + fieldType.struct_serializedSize(value[fieldName]) : fieldType.fixedLen;
     }
     return totalSize;
   }
@@ -142,6 +140,18 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
       }
     }
     return variableIndex;
+  }
+
+  tree_serializedSize(node: Node): number {
+    let totalSize = 0;
+    const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const [, fieldType] = this.fieldsEntries[i];
+      const node = nodes[i];
+      // Offset (4 bytes) + size
+      totalSize += fieldType.fixedLen === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedLen;
+    }
+    return totalSize;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {

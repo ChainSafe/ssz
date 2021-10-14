@@ -3,6 +3,7 @@ import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
 import {
   getLengthFromRootNode,
+  getLengthAndChunkNodeFromRootNode,
   struct_deserializeFromBytesArrayBasic,
   struct_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
@@ -23,6 +24,7 @@ export class ListBasicType<ElementType extends BasicType<any>>
   readonly itemsPerChunk: number;
   readonly isBasic = false;
   readonly depth: number;
+  readonly chunkDepth: number;
   readonly maxChunkCount: number;
   readonly fixedLen = null;
   readonly minLen = 0;
@@ -39,7 +41,8 @@ export class ListBasicType<ElementType extends BasicType<any>>
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
     // Depth includes the extra level for the length node
-    this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.depth = this.chunkDepth + 1;
     this.maxLen = this.limit * elementType.maxLen;
   }
 
@@ -66,12 +69,16 @@ export class ListBasicType<ElementType extends BasicType<any>>
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
+    return tree_deserializeFromBytesArrayBasic(this.elementType, this.chunkDepth, data, start, end, this);
+  }
+
+  tree_serializedSize(node: Node): number {
+    return getLengthFromRootNode(node) * this.elementType.byteLength;
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const length = getLengthFromRootNode(node);
-    return tree_serializeToBytesArrayBasic(this.elementType, this.depth, length, output, offset, node);
+    const [chunksNode, length] = getLengthAndChunkNodeFromRootNode(node);
+    return tree_serializeToBytesArrayBasic(this.elementType, length, this.chunkDepth, output, offset, chunksNode);
   }
 
   tree_getLength(node: Node): number {

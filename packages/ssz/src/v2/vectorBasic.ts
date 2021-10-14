@@ -65,6 +65,10 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     return struct_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
+  tree_serializedSize(): number {
+    return this.fixedLen;
+  }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
     return tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
   }

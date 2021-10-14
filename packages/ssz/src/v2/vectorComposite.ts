@@ -1,10 +1,10 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {CompositeType, ValueOf} from "./abstract";
 import {
-  getLengthFromRootNode,
   struct_deserializeFromBytesArrayComposite,
   struct_serializedSizeArrayComposite,
   struct_serializeToBytesArrayComposite,
+  tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
 } from "./array";
@@ -66,13 +66,16 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
     return struct_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
+  tree_serializedSize(node: Node): number {
+    return tree_serializedSizeArrayComposite(this.elementType, this.length, this.depth, node);
+  }
+
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
     return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const length = getLengthFromRootNode(node);
-    return tree_serializeToBytesArrayComposite(this.elementType, length, this.depth, node, output, offset);
+    return tree_serializeToBytesArrayComposite(this.elementType, this.length, this.depth, node, output, offset);
   }
 
   tree_getLength(): number {
