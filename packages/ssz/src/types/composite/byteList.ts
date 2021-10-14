@@ -25,14 +25,17 @@ export class ByteListType extends BasicListType<ByteList> {
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteList {
     this.bytes_validate(data, start, end);
-    return Array.from({length: end - start}, (_, i) => data[start + i]) as unknown as ByteList;
+    const length = end - start;
+    const value = new Array(end - start);
+    for (let i = 0; i < length; i++) {
+      value[i] = data[start + i];
+    }
+    return value as unknown as ByteList;
   }
 
   struct_serializeToBytes(value: ByteList, output: Uint8Array, offset: number): number {
     const length = value.length;
-    for (let i = 0; i < length; i++) {
-      output[offset + i] = value[i];
-    }
+    output.set(value, offset);
     return offset + length;
   }
 
@@ -47,7 +50,7 @@ export class ByteListType extends BasicListType<ByteList> {
 
   tree_convertToStruct(target: Tree): ByteList {
     const length = this.tree_getLength(target);
-    const value = [];
+    const value = new Array(length);
     const chunks = target.getNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
     let chunkIx = 0;
     let i;

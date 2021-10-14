@@ -106,13 +106,13 @@ describe("tree simple list/vector", () => {
     }
   });
 
-  it("ByteList  vs BasicList<byte>", () => {
+  it("ByteListType  vs BasicListType<byte>", () => {
     const limit = 2 + Math.floor(Math.random() * 1000);
     const byteLs = new ByteListType({limit});
     const basicLs = new BasicListType({elementType: byteType, limit});
 
     const length = Math.min(1 + Math.floor(Math.random() * limit), limit - 1);
-    const struct = Object.keys(Array.from({length})).map(() => Math.floor(Math.random() * 256));
+    const struct = Object.keys(Array.from({length})).map(() => Math.floor(Math.random() * 255));
 
     const tbByteLs = byteLs.createTreeBackedFromStruct(struct);
     const tbBasicLs = basicLs.createTreeBackedFromStruct(struct);
@@ -124,7 +124,7 @@ describe("tree simple list/vector", () => {
     expect(tbBasicLsSerialized).to.be.deep.equal(tbByteLsSerialized);
     expect(struct.toString()).to.be.deep.equal(tbByteLsSerialized.toString());
 
-    const elem = Math.floor(Math.random() * 256);
+    const elem = Math.floor(Math.random() * 255);
     tbByteLs.push(elem);
     tbBasicLs.push(elem);
     expect(tbBasicLs.tree.root).to.be.deep.equal(tbByteLs.tree.root);
@@ -137,6 +137,14 @@ describe("tree simple list/vector", () => {
     const elem2 = tbBasicLs.pop();
     expect(elem1).to.be.equal(elem2);
     expect(elem1).to.be.equal(elem);
+
+    const t1 = byteLs.tree_deserialize(tbByteLsSerialized);
+    const t2 = byteLs.tree_deserialize(tbBasicLsSerialized);
+    expect(t1.root).to.be.deep.equal(t2.root);
+
+    const b1 = byteLs.deserialize(tbByteLsSerialized);
+    const b2 = basicLs.deserialize(tbBasicLsSerialized);
+    expect(b1).to.be.deep.equal(b2);
   });
 
   it("tree_applyDeltaInBatch", () => {
