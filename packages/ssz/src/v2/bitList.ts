@@ -7,7 +7,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {CompositeType} from "./abstract";
-import {addLengthNode, getLengthFromRootNode, getLengthAndChunkNodeFromRootNode} from "./array";
+import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./array";
 import {BitArray} from "./bitArrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
@@ -51,7 +51,8 @@ export class BitListType extends CompositeType<BitArray> {
 
   getView(tree: Tree): BitArray {
     // TODO: Develop BitListTreeView
-    const [chunksNode, bitLen] = getLengthAndChunkNodeFromRootNode(tree.rootNode);
+    const chunksNode = getChunksNodeFromRootNode(tree.rootNode);
+    const bitLen = getLengthFromRootNode(tree.rootNode);
 
     const byteLen = Math.ceil(bitLen / 8);
     const chunkCount = Math.ceil(byteLen / 32);
@@ -89,7 +90,8 @@ export class BitListType extends CompositeType<BitArray> {
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const [chunksNode, bitLen] = getLengthAndChunkNodeFromRootNode(node);
+    const chunksNode = getChunksNodeFromRootNode(node);
+    const bitLen = getLengthFromRootNode(node);
 
     const byteLen = Math.ceil(bitLen / 8);
     const chunkCount = Math.ceil(byteLen / 32);

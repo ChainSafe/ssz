@@ -1,6 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {
+  defaultValueVector,
   struct_deserializeFromBytesArrayBasic,
   struct_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
@@ -22,6 +23,7 @@ export class VectorBasicType<ElementType extends BasicType<any>>
   readonly itemsPerChunk: number;
   readonly isBasic = false;
   readonly depth: number;
+  readonly chunkDepth: number;
   readonly maxChunkCount: number;
   readonly fixedLen: number;
   readonly minLen: number;
@@ -37,14 +39,15 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.length * elementType.byteLength) / 32);
-    this.depth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.depth = this.chunkDepth;
     this.fixedLen = this.length * elementType.byteLength;
     this.minLen = this.fixedLen;
     this.maxLen = this.fixedLen;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
-    return [];
+    return defaultValueVector(this.elementType, this.length);
   }
 
   getView(tree: Tree, inMutableMode?: boolean): ArrayBasicTreeView<ElementType> {
@@ -77,7 +80,17 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     return tree_serializeToBytesArrayBasic(this.elementType, this.length, this.depth, output, offset, node);
   }
 
+  // Helpers for TreeView
+
   tree_getLength(): number {
     return this.length;
+  }
+
+  tree_setLength(): void {
+    //
+  }
+
+  tree_getChunksNode(node: Node): Node {
+    return node;
   }
 }

@@ -1,14 +1,14 @@
-import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
-import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
+import {ListBasicTreeView, ArrayBasicType} from "./arrayTreeView";
 import {
   getLengthFromRootNode,
-  getLengthAndChunkNodeFromRootNode,
   struct_deserializeFromBytesArrayBasic,
   struct_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./array";
+import {LENGTH_GINDEX} from "../types/composite/list";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -50,8 +50,8 @@ export class ListBasicType<ElementType extends BasicType<any>>
     return [];
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ArrayBasicTreeView<ElementType> {
-    return new ArrayBasicTreeView(this, tree, inMutableMode);
+  getView(tree: Tree, inMutableMode?: boolean): ListBasicTreeView<ElementType> {
+    return new ListBasicTreeView(this, tree, inMutableMode);
   }
 
   // Serialization + deserialization
@@ -77,11 +77,25 @@ export class ListBasicType<ElementType extends BasicType<any>>
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const [chunksNode, length] = getLengthAndChunkNodeFromRootNode(node);
+    const chunksNode = this.tree_getChunksNode(node);
+    const length = this.tree_getLength(node);
     return tree_serializeToBytesArrayBasic(this.elementType, length, this.chunkDepth, output, offset, chunksNode);
   }
 
+  // Helpers for TreeView
+
   tree_getLength(node: Node): number {
     return (node.right as LeafNode).getUint(4, 0);
+  }
+
+  tree_setLength(tree: Tree, length: number): void {
+    // TODO: Add LeafNode.fromUint()
+    const lengthNode = new LeafNode(zeroNode(0));
+    lengthNode.setUint(4, 0, length);
+    tree.setNode(LENGTH_GINDEX, lengthNode);
+  }
+
+  tree_getChunksNode(node: Node): Node {
+    return node.left;
   }
 }

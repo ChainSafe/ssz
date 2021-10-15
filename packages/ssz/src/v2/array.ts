@@ -9,7 +9,7 @@ import {
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../backings";
-import {BasicType, CompositeType} from "./abstract";
+import {Type, BasicType, CompositeType} from "./abstract";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -27,11 +27,11 @@ import {BasicType, CompositeType} from "./abstract";
  * 2   3 // <-here
  * ```
  */
-export function getLengthAndChunkNodeFromRootNode(node: Node): [Node, number] {
-  return [node.left, (node.right as LeafNode).getUint(4, 0)];
-}
 export function getLengthFromRootNode(node: Node): number {
   return (node.right as LeafNode).getUint(4, 0);
+}
+export function getChunksNodeFromRootNode(node: Node): Node {
+  return node.left;
 }
 
 export function addLengthNode(chunksNode: Node, length: number): Node {
@@ -43,6 +43,17 @@ export function addLengthNode(chunksNode: Node, length: number): Node {
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+export function defaultValueVector<ElementType extends Type<any>>(
+  elementType: ElementType,
+  length: number
+): ValueOf<ElementType>[] {
+  const values: ValueOf<ElementType>[] = [];
+  for (let i = 0; i < length; i++) {
+    values.push(elementType.defaultValue);
+  }
+  return values;
+}
 
 export type ArrayProps = {
   /** Vector length */
@@ -63,11 +74,10 @@ export function struct_deserializeFromBytesArrayBasic<ElementType extends BasicT
 ): ValueOf<ElementType>[] {
   const values: ValueOf<ElementType>[] = [];
   const elSize = elementType.byteLength;
-  // TODO: Check length is non-decimal
-  const length = (end - start) / elSize;
 
   // Vector + List length validation
-  assertValidArrayLength(length, arrayProps);
+  const length = (end - start) / elSize;
+  assertValidArrayLength(length, arrayProps, true);
 
   for (let i = 0; i < length; i++) {
     // Last arguemnt is 0 because basic types don't need and `end` param
@@ -103,11 +113,9 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   end: number,
   arrayProps: ArrayProps
 ): Node {
-  // TODO: Check length is non-decimal
-  const length = (end - start) / elementType.byteLength;
-
   // Vector + List length validation
-  assertValidArrayLength(length, arrayProps);
+  const length = (end - start) / elementType.byteLength;
+  assertValidArrayLength(length, arrayProps, true);
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
   const chunksNode = packedRootsBytesToNode(chunkDepth, data, start, end);
@@ -373,7 +381,15 @@ function getVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: n
   return offsets;
 }
 
-function assertValidArrayLength(length: number, arrayProps: ArrayProps): void {
+/**
+ * @param checkNonDecimalLength Check that length is a multiple of element size.
+ * Optional since it's not necessary in getOffsetsArrayComposite() fn.
+ */
+function assertValidArrayLength(length: number, arrayProps: ArrayProps, checkNonDecimalLength?: boolean): void {
+  if (checkNonDecimalLength && length % 1 !== 0) {
+    throw Error("size not multiple of element fixedLen");
+  }
+
   // Vector + List length validation
   if (arrayProps.length !== undefined) {
     if (length !== arrayProps.length) {

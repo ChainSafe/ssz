@@ -1,4 +1,4 @@
-import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -6,25 +6,32 @@ import {BasicType, CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} fr
 export type ArrayBasicType<ElementType extends BasicType<any>> = CompositeType<ValueOf<ElementType>[]> & {
   readonly elementType: ElementType;
   readonly itemsPerChunk: number;
+  readonly chunkDepth: number;
   tree_getLength(node: Node): number;
+  tree_setLength(tree: Tree, length: number): void;
+  tree_getChunksNode(node: Node): Node;
 };
 
 export type ArrayCompositeType<ElementType extends CompositeType<any>> = CompositeType<ValueOf<ElementType>[]> & {
   readonly elementType: ElementType;
   tree_getLength(node: Node): number;
+  tree_setLength(tree: Tree, length: number): void;
 };
 
 export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends TreeView {
-  private readonly leafNodes: LeafNode[] = [];
-  private readonly dirtyNodes = new Set<number>();
+  protected leafNodes: LeafNode[] = [];
+  protected readonly dirtyNodes = new Set<number>();
+  protected _length: number;
+  protected dirtyLength = false;
   private allLeafNodesPopulated = false;
 
   constructor(readonly type: ArrayBasicType<ElementType>, protected tree: Tree, protected inMutableMode = false) {
     super();
+    this._length = this.type.tree_getLength(tree.rootNode);
   }
 
   get length(): number {
-    return this.type.tree_getLength(this.tree.rootNode);
+    return this._length;
   }
 
   get node(): Node {
@@ -35,11 +42,8 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
    * Get element at index `i`. Returns the primitive element directly
    */
   get(index: number): ValueOf<ElementType> {
-    // TODO
-    const itemsPerChunk = this.type.itemsPerChunk;
-
     // First walk through the tree to get the root node for that index
-    const chunkIndex = Math.floor(index / itemsPerChunk);
+    const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     let leafNode = this.leafNodes[chunkIndex];
     if (leafNode === undefined) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
@@ -52,11 +56,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
   }
 
   set(index: number, value: ValueOf<ElementType>): void {
-    const itemsPerChunk = this.type.itemsPerChunk;
-
-    const chunkIndex = Math.floor(index / itemsPerChunk);
-
-    // TODO, deduplicate with above
+    const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     let leafNode = this.leafNodes[chunkIndex];
     if (this.leafNodes[chunkIndex] === undefined) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
@@ -73,12 +73,47 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
     this.type.elementType.setValueToPackedNode(leafNode, index, value);
 
     if (this.inMutableMode) {
-      // Do not commit to the tree, but update the node in leafNodes
+      // Mark to commit to tree later
       this.dirtyNodes.add(chunkIndex);
     } else {
+      // Commit immediately
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
       this.tree.setNode(gindex, leafNode);
     }
+  }
+
+  getAll(): ValueOf<ElementType>[] {
+    if (!this.allLeafNodesPopulated) {
+      const chunksNode = this.type.tree_getChunksNode(this.node);
+      this.leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, this.length) as LeafNode[];
+      this.allLeafNodesPopulated = true;
+    }
+
+    const values: ValueOf<ElementType>[] = [];
+    const lenFullNodes = Math.floor(this.length);
+    const remainder = this.length % lenFullNodes;
+    const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
+
+    for (let n = 0; n < lenFullNodes; n++) {
+      const leafNode = this.leafNodes[n];
+      // TODO: Implement add a fast bulk packed element reader in the elementType
+      // ```
+      // abstract getValuesFromPackedNode(leafNode: LeafNode, output: V[], indexOffset: number): void;
+      // ```
+      // if performance here is a problem
+      for (let i = 0; i < itemsPerChunk; i++) {
+        values.push(this.type.elementType.getValueFromPackedNode(leafNode, n * itemsPerChunk + i));
+      }
+    }
+
+    if (remainder > 0) {
+      const leafNode = this.leafNodes[lenFullNodes];
+      for (let i = 0; i < remainder; i++) {
+        values.push(this.type.elementType.getValueFromPackedNode(leafNode, lenFullNodes * itemsPerChunk + i));
+      }
+    }
+
+    return values;
   }
 
   toMutable(): void {
@@ -96,34 +131,66 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
       this.tree.setNode(gindex, this.leafNodes[index]);
     }
 
+    // Update length if changed
+    if (this.dirtyLength) {
+      this.type.tree_setLength(this.tree, this._length);
+    }
+
     this.dirtyNodes.clear();
+    this.dirtyLength = false;
     this.inMutableMode = false;
   }
+}
 
-  // push(value: T): void {
-  //   this.type.tree_push(this.tree, value);
-  // }
+export class ListBasicTreeView<ElementType extends BasicType<any>> extends ArrayBasicTreeView<ElementType> {
+  push(value: ValueOf<ElementType>): void {
+    const length = this.length;
 
-  // getAll(): T[] {
-  //   if (this.allElementViewsPopulated) {
-  //     return this.elementViews;
-  //   } else {
-  //     const values = this.type.tree_getValues(this.tree);
-  //   }
-  // }
+    const prevChunkIndex = Math.floor((length - 1) / this.type.itemsPerChunk);
+    const chunkIndex = Math.floor(length / this.type.itemsPerChunk);
+    const inNewNode = prevChunkIndex !== chunkIndex;
+
+    if (inNewNode) {
+      // TODO: Optimize, prevent double initialization
+      const leafNode = new LeafNode(zeroNode(0));
+      this.type.elementType.setValueToPackedNode(leafNode, length, value);
+
+      this.leafNodes[chunkIndex] = leafNode;
+      if (this.inMutableMode) {
+        // Mark to commit to tree later
+        this.dirtyNodes.add(chunkIndex);
+      } else {
+        // Commit immediately
+        const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
+        this.tree.setNode(gindex, leafNode);
+      }
+    } else {
+      // Re-use .set() since no new node is added
+      this.set(length, value);
+    }
+
+    this._length = length + 1;
+    if (this.inMutableMode) {
+      this.dirtyLength = true;
+    } else {
+      this.type.tree_setLength(this.tree, this._length);
+    }
+  }
 }
 
 export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> extends TreeView {
-  private readonly views: TreeView[] = [];
-  private readonly dirtyNodes = new Set<number>();
-  private allLeafNodesPopulated = false;
+  protected readonly views: TreeView[] = [];
+  protected readonly dirtyNodes = new Set<number>();
+  protected _length: number;
+  protected dirtyLength = false;
 
   constructor(readonly type: ArrayCompositeType<ElementType>, protected tree: Tree, protected inMutableMode = false) {
     super();
+    this._length = this.type.tree_getLength(tree.rootNode);
   }
 
   get length(): number {
-    return this.type.tree_getLength(this.tree.rootNode);
+    return this._length;
   }
 
   get node(): Node {
@@ -146,8 +213,8 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
     return view as ViewOfComposite<ElementType>;
   }
 
-  set(index: number, value: ViewOf<ElementType>): void {
-    this.views[index] = value as TreeView;
+  set(index: number, view: ViewOf<ElementType>): void {
+    this.views[index] = view as TreeView;
 
     // Commit immediately
     if (this.inMutableMode) {
@@ -155,9 +222,11 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
       this.dirtyNodes.add(index);
     } else {
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, value.node);
+      this.tree.setNode(gindex, view.node);
     }
   }
+
+  // TODO: Implement getAll if it's really necessary
 
   toMutable(): void {
     this.inMutableMode = true;
@@ -174,19 +243,37 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
       this.tree.setNode(gindex, this.views[index].node);
     }
 
+    // Update length if changed
+    if (this.dirtyLength) {
+      this.type.tree_setLength(this.tree, this._length);
+    }
+
     this.dirtyNodes.clear();
+    this.dirtyLength = false;
     this.inMutableMode = false;
   }
+}
 
-  // push(value: T): void {
-  //   this.type.tree_push(this.tree, value);
-  // }
+export class ListCompositeTreeView<ElementType extends CompositeType<any>> extends ArrayCompositeTreeView<ElementType> {
+  push(view: ViewOf<ElementType>): void {
+    this.views[this.length] = view as TreeView;
 
-  // getAll(): T[] {
-  //   if (this.allElementViewsPopulated) {
-  //     return this.elementViews;
-  //   } else {
-  //     const values = this.type.tree_getValues(this.tree);
-  //   }
-  // }
+    const length = this.length;
+
+    if (this.inMutableMode) {
+      // Mark to commit to tree later
+      this.dirtyNodes.add(length);
+    } else {
+      // Commit immediately
+      const gindex = this.type.getGindexBitStringAtChunkIndex(length);
+      this.tree.setNode(gindex, view.node, true);
+    }
+
+    this._length = length + 1;
+    if (this.inMutableMode) {
+      this.dirtyLength = true;
+    } else {
+      this.type.tree_setLength(this.tree, this._length);
+    }
+  }
 }

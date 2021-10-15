@@ -1,8 +1,8 @@
-import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {LENGTH_GINDEX} from "..";
 import {CompositeType, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
-  getLengthAndChunkNodeFromRootNode,
   struct_deserializeFromBytesArrayComposite,
   struct_serializedSizeArrayComposite,
   struct_serializeToBytesArrayComposite,
@@ -10,7 +10,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
 } from "./array";
-import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
+import {ListCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -51,8 +51,8 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
     return [];
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ArrayCompositeTreeView<ElementType> {
-    return new ArrayCompositeTreeView(this, tree, inMutableMode);
+  getView(tree: Tree, inMutableMode?: boolean): ListCompositeTreeView<ElementType> {
+    return new ListCompositeTreeView(this, tree, inMutableMode);
   }
 
   // Serialization + deserialization
@@ -79,11 +79,25 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const [chunksNode, length] = getLengthAndChunkNodeFromRootNode(node);
+    const chunksNode = this.tree_getChunksNode(node);
+    const length = this.tree_getLength(node);
     return tree_serializeToBytesArrayComposite(this.elementType, length, this.chunkDepth, chunksNode, output, offset);
   }
 
+  // Helpers for TreeView
+
   tree_getLength(node: Node): number {
     return (node.right as LeafNode).getUint(4, 0);
+  }
+
+  tree_setLength(tree: Tree, length: number): void {
+    // TODO: Add LeafNode.fromUint()
+    const lengthNode = new LeafNode(zeroNode(0));
+    lengthNode.setUint(4, 0, length);
+    tree.setNode(LENGTH_GINDEX, lengthNode);
+  }
+
+  tree_getChunksNode(node: Node): Node {
+    return node.left;
   }
 }

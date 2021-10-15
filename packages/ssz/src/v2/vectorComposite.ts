@@ -7,6 +7,7 @@ import {
   tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
+  defaultValueVector,
 } from "./array";
 import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
 
@@ -45,7 +46,7 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
-    return [];
+    return defaultValueVector(this.elementType, this.length);
   }
 
   getView(tree: Tree, inMutableMode?: boolean): ArrayCompositeTreeView<ElementType> {
@@ -78,7 +79,17 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
     return tree_serializeToBytesArrayComposite(this.elementType, this.length, this.depth, node, output, offset);
   }
 
+  // Helpers for TreeView
+
   tree_getLength(): number {
     return this.length;
+  }
+
+  tree_setLength(): void {
+    //
+  }
+
+  tree_getChunksNode(node: Node): Node {
+    return node;
   }
 }
