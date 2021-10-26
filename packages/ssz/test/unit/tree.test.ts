@@ -9,6 +9,7 @@ import {
   Number64UintType,
   NumberUintType,
   toHexString,
+  ByteListType,
 } from "../../src";
 
 import {number16List100Type, VariableSizeSimpleObject, number16Type} from "./objects";
@@ -103,6 +104,47 @@ describe("tree simple list/vector", () => {
       expect(newBalance).to.be.equal(31217089836 + delta);
       expect(tbBalancesList64[100]).to.be.equal(31217089836 + delta);
     }
+  });
+
+  it("ByteListType  vs BasicListType<byte>", () => {
+    const limit = 2 + Math.floor(Math.random() * 1000);
+    const byteLs = new ByteListType({limit});
+    const basicLs = new BasicListType({elementType: byteType, limit});
+
+    const length = Math.min(1 + Math.floor(Math.random() * limit), limit - 1);
+    const struct = Object.keys(Array.from({length})).map(() => Math.floor(Math.random() * 255));
+
+    const tbByteLs = byteLs.createTreeBackedFromStruct(struct);
+    const tbBasicLs = basicLs.createTreeBackedFromStruct(struct);
+
+    expect(tbBasicLs.tree.root).to.be.deep.equal(tbByteLs.tree.root);
+    let tbByteLsSerialized = byteLs.serialize(tbByteLs);
+    let tbBasicLsSerialized = basicLs.serialize(tbBasicLs);
+
+    expect(tbBasicLsSerialized).to.be.deep.equal(tbByteLsSerialized);
+    expect(struct.toString()).to.be.deep.equal(tbByteLsSerialized.toString());
+
+    const elem = Math.floor(Math.random() * 255);
+    tbByteLs.push(elem);
+    tbBasicLs.push(elem);
+    expect(tbBasicLs.tree.root).to.be.deep.equal(tbByteLs.tree.root);
+
+    tbByteLsSerialized = byteLs.serialize(tbByteLs);
+    tbBasicLsSerialized = basicLs.serialize(tbBasicLs);
+    expect(tbBasicLsSerialized).to.be.deep.equal(tbByteLsSerialized);
+    expect(tbByteLsSerialized[length]).to.be.equal(elem);
+    const elem1 = tbByteLs.pop();
+    const elem2 = tbBasicLs.pop();
+    expect(elem1).to.be.equal(elem2);
+    expect(elem1).to.be.equal(elem);
+
+    const t1 = byteLs.tree_deserialize(tbByteLsSerialized);
+    const t2 = byteLs.tree_deserialize(tbBasicLsSerialized);
+    expect(t1.root).to.be.deep.equal(t2.root);
+
+    const b1 = byteLs.deserialize(tbByteLsSerialized);
+    const b2 = basicLs.deserialize(tbBasicLsSerialized);
+    expect(b1).to.be.deep.equal(b2);
   });
 
   it("tree_applyDeltaInBatch", () => {
