@@ -1,6 +1,7 @@
 import {assert, expect} from "chai";
 import {describe, it} from "mocha";
-import {booleanType, byteType, ContainerType, Type} from "../../src";
+import {booleanType, byteType, ContainerType, Type, UnionType} from "../../src";
+import {NoneType} from "../../src/types/basic/none";
 import {number16Type, number16Vector6Type, SimpleObject, VariableSizeSimpleObject} from "./objects";
 
 describe("deserialize", () => {
@@ -34,15 +35,25 @@ interface ITestType {
   bar: boolean;
 }
 
-describe("type inference", () => {
-  it("should detect the return type", () => {
-    const testType = new ContainerType<ITestType>({
-      fields: {
-        foo: byteType,
-        bar: booleanType,
-      },
-    });
+type UnionObject =
+  | {
+      selector: 0;
+      value: undefined;
+    }
+  | {
+      selector: 1;
+      value: ITestType;
+    };
 
+const testType = new ContainerType<ITestType>({
+  fields: {
+    foo: byteType,
+    bar: booleanType,
+  },
+});
+
+describe("type inference", () => {
+  it("should detect the return type of ContainerType", () => {
     const input: ITestType = {
       foo: 1,
       bar: true,
@@ -50,5 +61,23 @@ describe("type inference", () => {
     const bytes = testType.serialize(input);
     const output = testType.deserialize(bytes);
     assert(output.bar == true);
+  });
+
+  it("should detect the return type of UnionType", () => {
+    const unionType = new UnionType<UnionObject>({types: [new NoneType(), testType]});
+    const input: UnionObject = {
+      selector: 1,
+      value: {
+        foo: 1,
+        bar: true,
+      },
+    };
+    const bytes = unionType.serialize(input);
+    const output = unionType.deserialize(bytes);
+    if (output.selector === 0) {
+      throw Error("expect selector 1");
+    }
+    assert(output.value.bar === true);
+    assert(output.value.foo === 1);
   });
 });
