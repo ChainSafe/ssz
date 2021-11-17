@@ -38,7 +38,7 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         // should simply not be decoded without raising an error.
         // Note that for some type declarations in the invalid suite, the type itself may technically be invalid.
         // This is a valid way of detecting invalid data too. E.g. a 0-length basic vector.
-        expect(() => type.deserialize(testData.serialized), "Must throw on deserialize").to.throw;
+        expect(() => type.deserialize(testData.serialized), "Must throw on deserialize").to.throw();
       });
     }
   });

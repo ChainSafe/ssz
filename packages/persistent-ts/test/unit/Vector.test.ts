@@ -133,7 +133,7 @@ it("PersistentVector.pop works with many elements", () => {
 });
 
 it("PersistentVector returns undefined beyond its bounds", () => {
-  let vector = PersistentVector.from(Array.from({length: 1025}, (_, i) => i)); 
+  let vector = PersistentVector.from(Array.from({length: 1025}, (_, i) => i));
 
   expect(vector.get(-1)).to.be.undefined;
   expect(vector.get(1025)).to.be.undefined;
@@ -206,9 +206,9 @@ describe("PersistentVector<->TransientVector", () => {
     expect([...pv]).to.deep.equal(arr);
 
     tv.persistent();
-    expect(() => tv.set(0, 0)).to.throw;
-    expect(() => tv.persistent()).to.throw;
-    expect(() => tv.push(0)).to.throw;
-    expect(() => tv.pop()).to.throw;
+    expect(() => tv.set(0, 0)).to.throw();
+    expect(() => tv.persistent()).to.throw();
+    expect(() => tv.push(0)).to.throw();
+    expect(() => tv.pop()).to.throw();
   });
 });
