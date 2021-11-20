@@ -92,6 +92,13 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
         `Deserialized list length of ${end - start} is greater than limit ${this.getMaxSerializedLength()}`
       );
     }
+
+    // make sure we can consume all of the data, or the generic spec test ComplexTestStruct_offset_7_plus_one failed
+    if ((end - start) % this.elementType.getFixedSerializedLength() !== 0) {
+      throw new Error(
+        `Cannot consume ${end - start} bytes, element length ${this.elementType.getFixedSerializedLength()}`
+      );
+    }
   }
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): T {
