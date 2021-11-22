@@ -31783,6 +31783,18 @@ class UintType extends abstract_1.BasicType {
     struct_getSerializedLength() {
         return this.byteLength;
     }
+    /**
+     * Validate the exact byte length
+     */
+    bytes_validate_length(data, start, end) {
+        this.bytes_validate(data, start);
+        if (end !== undefined) {
+            const length = end - start;
+            if (length > this.struct_getSerializedLength()) {
+                throw new Error(`Data length of ${length} is too big, expect ${this.struct_getSerializedLength()}`);
+            }
+        }
+    }
 }
 exports.UintType = UintType;
 exports.NUMBER_UINT_TYPE = Symbol.for("ssz/NumberUintType");
@@ -31836,13 +31848,19 @@ class NumberUintType extends UintType {
         }
         return offset + this.byteLength;
     }
-    struct_deserializeFromBytes(data, offset) {
-        this.bytes_validate(data, offset);
+    struct_deserializeFromBytes(data, start, end) {
+        // if this is a standalone deserialization, we want to validate more strictly
+        if (end !== undefined) {
+            this.bytes_validate_length(data, start, end);
+        }
+        else {
+            this.bytes_validate(data, start);
+        }
         let isInfinity = true;
         let output = 0;
         for (let i = 0; i < this.byteLength; i++) {
-            output += data[offset + i] * 2 ** (8 * i);
-            if (data[offset + i] !== 0xff) {
+            output += data[start + i] * 2 ** (8 * i);
+            if (data[start + i] !== 0xff) {
                 isInfinity = false;
             }
         }
@@ -32008,8 +32026,13 @@ class BigIntUintType extends UintType {
         }
         return offset + this.byteLength;
     }
-    struct_deserializeFromBytes(data, offset) {
-        this.bytes_validate(data, offset);
+    struct_deserializeFromBytes(data, start, end) {
+        if (end !== undefined) {
+            this.bytes_validate_length(data, start, end);
+        }
+        else {
+            this.bytes_validate(data, start);
+        }
         // Motivation:
         //   Creating BigInts and bitshifting is more expensive than
         // number bitshifting.
@@ -32021,7 +32044,7 @@ class BigIntUintType extends UintType {
         let output = BigInt(0);
         let groupIndex = 0, groupOutput = 0;
         for (let i = 0; i < this.byteLength; i++) {
-            groupOutput += data[offset + i] << (8 * (i % 4));
+            groupOutput += data[start + i] << (8 * (i % 4));
             if ((i + 1) % 4 === 0) {
                 // Left shift returns a signed integer and the output may have become negative
                 // In that case, the output needs to be converted to unsigned integer
@@ -33025,7 +33048,7 @@ class BitListType extends list_1.BasicListType {
         }
     }
     getMaxSerializedLength() {
-        return Math.ceil(this.limit / 8) + 1;
+        return Math.ceil((this.limit + 1) / 8);
     }
     getMinSerializedLength() {
         return 1;
@@ -34398,8 +34421,13 @@ class BasicListType extends array_1.BasicArrayType {
     }
     bytes_validate(data, start, end) {
         super.bytes_validate(data, start, end, true);
-        if (end - start > this.getMaxSerializedLength()) {
-            throw new Error("Deserialized list length greater than limit");
+        const length = end - start;
+        if (length > this.getMaxSerializedLength()) {
+            throw new Error(`Deserialized list length of ${length} is greater than limit ${this.getMaxSerializedLength()}`);
+        }
+        // make sure we can consume all of the data, or the generic spec test ComplexTestStruct_offset_7_plus_one failed
+        if (length % this.elementType.getFixedSerializedLength() !== 0) {
+            throw new Error(`Cannot consume ${length} bytes, element length ${this.elementType.getFixedSerializedLength()}`);
         }
     }
     struct_deserializeFromBytes(data, start, end) {
