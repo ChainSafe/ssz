@@ -50,7 +50,7 @@ export class BitListType extends BasicListType<BitList> {
   }
 
   getMaxSerializedLength(): number {
-    return Math.ceil(this.limit / 8) + 1;
+    return Math.ceil((this.limit + 1) / 8);
   }
 
   getMinSerializedLength(): number {

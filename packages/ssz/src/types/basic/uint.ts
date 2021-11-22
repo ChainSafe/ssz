@@ -1,8 +1,8 @@
+import {HashObject} from "@chainsafe/as-sha256";
 import {Json} from "../../interface";
 import {bigIntPow} from "../../util/bigInt";
 import {isTypeOf, Type} from "../type";
 import {BasicType} from "./abstract";
-import {HashObject} from "@chainsafe/as-sha256";
 
 export interface IUintOptions {
   byteLength: number;
@@ -27,8 +27,22 @@ export abstract class UintType<T> extends BasicType<T> {
 
     this._typeSymbols.add(UINT_TYPE);
   }
+
   struct_getSerializedLength(): number {
     return this.byteLength;
+  }
+
+  /**
+   * Validate the exact byte length
+   */
+  bytes_validate_length(data: Uint8Array, start: number, end: number): void {
+    this.bytes_validate(data, start);
+    if (end !== undefined) {
+      const length = end - start;
+      if (length > this.struct_getSerializedLength()) {
+        throw new Error(`Data length of ${length} is too big, expect ${this.struct_getSerializedLength()}`);
+      }
+    }
   }
 }
 
@@ -93,13 +107,19 @@ export class NumberUintType extends UintType<number> {
     return offset + this.byteLength;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, offset: number): number {
-    this.bytes_validate(data, offset);
+  struct_deserializeFromBytes(data: Uint8Array, start: number, end?: number): number {
+    // if this is a standalone deserialization, we want to validate more strictly
+    if (end !== undefined) {
+      this.bytes_validate_length(data, start, end);
+    } else {
+      this.bytes_validate(data, start);
+    }
+
     let isInfinity = true;
     let output = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      output += data[offset + i] * 2 ** (8 * i);
-      if (data[offset + i] !== 0xff) {
+      output += data[start + i] * 2 ** (8 * i);
+      if (data[start + i] !== 0xff) {
         isInfinity = false;
       }
     }
@@ -270,8 +290,13 @@ export class BigIntUintType extends UintType<bigint> {
     return offset + this.byteLength;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, offset: number): bigint {
-    this.bytes_validate(data, offset);
+  struct_deserializeFromBytes(data: Uint8Array, start: number, end?: number): bigint {
+    if (end !== undefined) {
+      this.bytes_validate_length(data, start, end);
+    } else {
+      this.bytes_validate(data, start);
+    }
+
     // Motivation:
     //   Creating BigInts and bitshifting is more expensive than
     // number bitshifting.
@@ -284,7 +309,7 @@ export class BigIntUintType extends UintType<bigint> {
     let groupIndex = 0,
       groupOutput = 0;
     for (let i = 0; i < this.byteLength; i++) {
-      groupOutput += data[offset + i] << (8 * (i % 4));
+      groupOutput += data[start + i] << (8 * (i % 4));
       if ((i + 1) % 4 === 0) {
         // Left shift returns a signed integer and the output may have become negative
         // In that case, the output needs to be converted to unsigned integer

@@ -87,8 +87,14 @@ export class BasicListType<T extends List<unknown> = List<unknown>> extends Basi
 
   bytes_validate(data: Uint8Array, start: number, end: number): void {
     super.bytes_validate(data, start, end, true);
-    if (end - start > this.getMaxSerializedLength()) {
-      throw new Error("Deserialized list length greater than limit");
+    const length = end - start;
+    if (length > this.getMaxSerializedLength()) {
+      throw new Error(`Deserialized list length of ${length} is greater than limit ${this.getMaxSerializedLength()}`);
+    }
+
+    // make sure we can consume all of the data, or the generic spec test ComplexTestStruct_offset_7_plus_one failed
+    if (length % this.elementType.getFixedSerializedLength() !== 0) {
+      throw new Error(`Cannot consume ${length} bytes, element length ${this.elementType.getFixedSerializedLength()}`);
     }
   }
 

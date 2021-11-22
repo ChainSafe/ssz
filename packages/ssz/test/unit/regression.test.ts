@@ -45,7 +45,7 @@ describe("known issues", () => {
 
   it("too large number from json", function () {
     const Number = new NumberUintType({byteLength: 4});
-    expect(() => Number.fromJson("18446744073709551616")).to.throw;
+    expect(() => Number.fromJson("18446744073709551616")).to.throw();
   });
 
   it("converts bit arrays to tree", function () {
