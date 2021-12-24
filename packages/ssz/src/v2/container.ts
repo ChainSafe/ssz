@@ -1,4 +1,5 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
+import {IJsonOptions} from "../types";
 import {SszErrorPath} from "../util/errorPath";
 import {CompositeType, TreeView, Type, ValueOf} from "./abstract";
 import {getContainerTreeViewClass} from "./containerTreeView";
@@ -19,6 +20,12 @@ type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFie
 type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
   new (type: ContainerType<Fields>, tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields>;
 };
+
+export interface IContainerOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  casingMap?: Record<string, string>;
+  expectedCase?: IJsonOptions["case"];
+}
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<ValueOfFields<Fields>> {
   // Immutable characteristics
@@ -43,7 +50,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields) {
+  constructor(readonly fields: Fields, opts?: IContainerOptions) {
     super();
 
     this.maxChunkCount = Object.keys(fields).length;

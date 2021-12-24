@@ -10,10 +10,6 @@ export class BooleanType extends BasicType<boolean> {
   readonly minLen = 1;
   readonly maxLen = 1;
 
-  constructor() {
-    super();
-  }
-
   get defaultValue(): boolean {
     return false;
   }

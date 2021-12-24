@@ -3,7 +3,7 @@ import {BasicType} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
-export class UintType extends BasicType<number> {
+export class NumberUintType extends BasicType<number> {
   // Immutable characteristics
   readonly byteLength: number;
   readonly itemsPerChunk: number;
