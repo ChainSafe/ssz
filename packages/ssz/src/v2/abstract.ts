@@ -1,4 +1,5 @@
 import {GindexBitstring, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {merkleizeSingleBuff} from "../util/merkleize";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -58,6 +59,15 @@ export abstract class Type<V> {
     // Un-performant path but useful for testing and prototyping
     return this.deserialize((view as TreeView).serialize());
   }
+
+  // Merkleization
+
+  abstract hashTreeRoot(value: V): Uint8Array;
+
+  equals(_value1: V, _value2: V): boolean {
+    // TODO
+    return true;
+  }
 }
 
 export abstract class BasicType<V> extends Type<V> {
@@ -79,6 +89,12 @@ export abstract class BasicType<V> extends Type<V> {
     return this.byteLength;
   }
 
+  hashTreeRoot(value: V): Uint8Array {
+    const output = new Uint8Array(32);
+    this.struct_serializeToBytes(output, 0, value);
+    return output;
+  }
+
   abstract getValueFromNode(leafNode: LeafNode): V;
   abstract setValueToNode(leafNode: LeafNode, value: V): void;
   abstract getValueFromPackedNode(leafNode: LeafNode, index: number): V;
@@ -87,6 +103,14 @@ export abstract class BasicType<V> extends Type<V> {
 
 export abstract class CompositeType<V> extends Type<V> {
   readonly isBasic = false;
+
+  hashTreeRoot(value: V): Uint8Array {
+    const roots = this.getRoots(value);
+    return merkleizeSingleBuff(roots, this.maxChunkCount);
+  }
+
+  protected abstract readonly maxChunkCount: number;
+  protected abstract getRoots(value: V): Uint8Array;
 }
 
 export abstract class TreeView {

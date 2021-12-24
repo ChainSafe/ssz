@@ -7,9 +7,23 @@ import {CompositeType, isCompositeType, toHexString, Type} from "../../../src";
 import {SPEC_TEST_LOCATION} from "../../specTestVersioning";
 
 // Test types defined here
-import {getTestType} from "./types";
+import {getTestType as getTestTypeV1} from "./types";
+import {getTestType as getTestTypeV2} from "./typesV2";
 
 const rootGenericSszPath = path.join(SPEC_TEST_LOCATION, "tests", "general", "phase0", "ssz_generic");
+
+type TypeVN = {
+  deserialize(data: Uint8Array): unknown;
+  serialize(value: unknown): Uint8Array;
+  hashTreeRoot(value: unknown): Uint8Array;
+  equals(value1: unknown, value2: unknown): boolean;
+};
+type GetTestType = (testType: string, testCase: string) => TypeVN;
+
+const byTypeVersion: [GetTestType, string][] = [
+  [getTestTypeV1, "v1"],
+  [getTestTypeV2, "v2"],
+];
 
 // ssz_generic
 // | basic_vector
@@ -30,16 +44,18 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
   describe(`${testType} invalid`, () => {
     const invalidCasesPath = path.join(testTypePath, "invalid");
     for (const invalidCase of fs.readdirSync(invalidCasesPath)) {
-      it(invalidCase, () => {
-        const type = getTestType(testType, invalidCase);
-        const testData = parseInvalidTestcase(path.join(invalidCasesPath, invalidCase));
+      for (const [getTestType, typeV] of byTypeVersion) {
+        it(`${invalidCase} - ${typeV}`, () => {
+          const type = getTestType(testType, invalidCase);
+          const testData = parseInvalidTestcase(path.join(invalidCasesPath, invalidCase));
 
-        // Unlike the valid suite, invalid encodings do not have any value or hash tree root. The serialized data
-        // should simply not be decoded without raising an error.
-        // Note that for some type declarations in the invalid suite, the type itself may technically be invalid.
-        // This is a valid way of detecting invalid data too. E.g. a 0-length basic vector.
-        expect(() => type.deserialize(testData.serialized), "Must throw on deserialize").to.throw();
-      });
+          // Unlike the valid suite, invalid encodings do not have any value or hash tree root. The serialized data
+          // should simply not be decoded without raising an error.
+          // Note that for some type declarations in the invalid suite, the type itself may technically be invalid.
+          // This is a valid way of detecting invalid data too. E.g. a 0-length basic vector.
+          expect(() => type.deserialize(testData.serialized), "Must throw on deserialize").to.throw();
+        });
+      }
     }
   });
 
@@ -53,41 +69,43 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         continue;
       }
 
-      it(validCase, () => {
-        const type = getTestType(testType, validCase);
+      for (const [getTestType, typeV] of byTypeVersion) {
+        it(`${validCase} - ${typeV}`, () => {
+          const type = getTestType(testType, validCase);
 
-        const testData = parseValidTestcase(path.join(validCasesPath, validCase), type);
-        const testDataSerialized = toHexString(testData.serialized);
-        const testDataRoot = toHexString(testData.root);
+          const testData = parseValidTestcase(path.join(validCasesPath, validCase), type as Type<any>);
+          const testDataSerialized = toHexString(testData.serialized);
+          const testDataRoot = toHexString(testData.root);
 
-        const serialized = wrapErr(() => type.serialize(testData.value), "type.serialize()");
-        const value = wrapErr(() => type.deserialize(testData.serialized), "type.deserialize()");
-        const root = wrapErr(() => type.hashTreeRoot(testData.value), "type.hashTreeRoot()");
-        const valueSerdes = wrapErr(() => type.deserialize(serialized), "type.deserialize(serialized)");
+          const serialized = wrapErr(() => type.serialize(testData.value), "type.serialize()");
+          const value = wrapErr(() => type.deserialize(testData.serialized), "type.deserialize()");
+          const root = wrapErr(() => type.hashTreeRoot(testData.value), "type.hashTreeRoot()");
+          const valueSerdes = wrapErr(() => type.deserialize(serialized), "type.deserialize(serialized)");
 
-        expect(valueSerdes).to.deep.equal(testData.value, "round trip serdes");
-        expect(toHexString(serialized)).to.equal(testDataSerialized, "struct serialize");
-        expect(value).to.deep.equal(testData.value, "struct deserialize");
-        expect(toHexString(root)).to.equal(testDataRoot, "struct hashTreeRoot");
+          expect(valueSerdes).to.deep.equal(testData.value, "round trip serdes");
+          expect(toHexString(serialized)).to.equal(testDataSerialized, "struct serialize");
+          expect(value).to.deep.equal(testData.value, "struct deserialize");
+          expect(toHexString(root)).to.equal(testDataRoot, "struct hashTreeRoot");
 
-        // If the type is composite, test tree-backed ops
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!isCompositeType(type as Type<any>)) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const compositeType = type as CompositeType<any>;
+          // If the type is composite, test tree-backed ops
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if (!isCompositeType(type as Type<any>)) return;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const compositeType = type as CompositeType<any>;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const treebackedValue = compositeType.createTreeBackedFromStruct(testData.value);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        const treeToStruct = compositeType.tree_convertToStruct(treebackedValue.tree);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const treebackedValue = compositeType.createTreeBackedFromStruct(testData.value);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          const treeToStruct = compositeType.tree_convertToStruct(treebackedValue.tree);
 
-        expect(treeToStruct).to.deep.equal(testData.value, "tree-backed to struct");
-        expect(type.equals(testData.value, treebackedValue), "struct - tree-backed type.equals()").to.be.true;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        expect(toHexString(treebackedValue.serialize())).to.equal(testDataSerialized, "tree-backed serialize");
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        expect(toHexString(treebackedValue.hashTreeRoot())).to.equal(testDataRoot, "tree-backed hashTreeRoot");
-      });
+          expect(treeToStruct).to.deep.equal(testData.value, "tree-backed to struct");
+          expect(type.equals(testData.value, treebackedValue), "struct - tree-backed type.equals()").to.be.true;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+          expect(toHexString(treebackedValue.serialize())).to.equal(testDataSerialized, "tree-backed serialize");
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+          expect(toHexString(treebackedValue.hashTreeRoot())).to.equal(testDataRoot, "tree-backed hashTreeRoot");
+        });
+      }
     }
   });
 }

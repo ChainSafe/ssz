@@ -28,6 +28,7 @@ import {BitArray} from "./bitArrayTreeView";
  */
 export class BitVectorType extends CompositeType<BitArray> {
   // Immutable characteristics
+  protected readonly maxChunkCount: number;
   readonly chunkCount: number;
   readonly depth: number;
   readonly fixedLen: number;
@@ -38,6 +39,7 @@ export class BitVectorType extends CompositeType<BitArray> {
     super();
 
     this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
+    this.maxChunkCount = this.chunkCount;
     this.depth = Math.ceil(Math.log2(this.chunkCount));
     this.fixedLen = Math.ceil(this.lengthBits / 8);
     this.minLen = this.fixedLen;
@@ -90,5 +92,11 @@ export class BitVectorType extends CompositeType<BitArray> {
 
   tree_getLength(node: Node): number {
     return (node.right as LeafNode).getUint(4, 0);
+  }
+
+  // Merkleization
+
+  protected getRoots(value: BitArray): Uint8Array {
+    return value.uint8Array;
   }
 }

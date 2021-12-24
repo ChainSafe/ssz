@@ -312,6 +312,24 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   }
 }
 
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+export function struct_getRootsArrayComposite<ElementType extends CompositeType<any>>(
+  elementType: ElementType,
+  length: number,
+  value: ValueOf<ElementType>[]
+): Uint8Array {
+  const roots = new Uint8Array(32 * length);
+
+  for (let i = 0; i < length; i++) {
+    const root = elementType.hashTreeRoot(value[i]);
+    roots.set(root, 32 * i);
+  }
+
+  return roots;
+}
+
 function getOffsetsArrayComposite(
   fixedLen: null | number,
   data: Uint8Array,

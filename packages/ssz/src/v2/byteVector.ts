@@ -90,4 +90,8 @@ export class ByteVectorType extends CompositeType<ByteVector> {
   tree_getLength(node: Node): number {
     return (node.right as LeafNode).getUint(4, 0);
   }
+
+  protected getRoots(value: ByteVector): Uint8Array {
+    return value;
+  }
 }

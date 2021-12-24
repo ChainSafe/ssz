@@ -8,6 +8,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
   defaultValueVector,
+  struct_getRootsArrayComposite,
 } from "./array";
 import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
 
@@ -33,8 +34,8 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
   constructor(readonly elementType: ElementType, readonly length: number) {
     super();
 
-    if (!elementType.isBasic) {
-      throw Error("VectorCompositeType can only have a basic type as elementType");
+    if (elementType.isBasic) {
+      throw Error("elementType must not be basic");
     }
 
     // TODO Check that itemsPerChunk is an integer
@@ -91,5 +92,11 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
 
   tree_getChunksNode(node: Node): Node {
     return node;
+  }
+
+  // Merkleization
+
+  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
+    return struct_getRootsArrayComposite(this.elementType, this.length, value);
   }
 }

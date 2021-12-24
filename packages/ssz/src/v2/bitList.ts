@@ -28,6 +28,7 @@ import {BitArray} from "./bitArrayTreeView";
  */
 export class BitListType extends CompositeType<BitArray> {
   // Immutable characteristics
+  protected readonly maxChunkCount: number;
   readonly depth: number;
   readonly chunkDepth: number;
   readonly fixedLen = null;
@@ -38,9 +39,9 @@ export class BitListType extends CompositeType<BitArray> {
     super();
 
     // TODO Check that itemsPerChunk is an integer
-    const maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
+    this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
     // Depth includes the extra level for the length node
-    this.chunkDepth = Math.ceil(Math.log2(maxChunkCount));
+    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
     this.depth = 1 + this.chunkDepth;
     this.maxLen = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
   }
@@ -103,6 +104,10 @@ export class BitListType extends CompositeType<BitArray> {
 
   tree_getLength(node: Node): number {
     return (node.right as LeafNode).getUint(4, 0);
+  }
+
+  protected getRoots(value: BitArray): Uint8Array {
+    return value.uint8Array;
   }
 }
 

@@ -200,6 +200,21 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return variableIndex;
   }
 
+  // Merkleization
+
+  protected getRoots(struct: ValueOfFields<Fields>): Uint8Array {
+    const roots = new Uint8Array(32 * this.fieldsEntries.length);
+
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const fieldName = this.fieldsEntries[i][0];
+      const fieldType = this.fieldsEntries[i][1];
+      const root = fieldType.hashTreeRoot(struct[fieldName]);
+      roots.set(root, 32 * i);
+    }
+
+    return roots;
+  }
+
   /** Deserializer helper */
   private getFieldRanges(data: Uint8Array, start: number, end: number): [number, number][] {
     if (this.variableOffsetsPosition.length === 0) {

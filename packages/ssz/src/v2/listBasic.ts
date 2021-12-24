@@ -34,7 +34,7 @@ export class ListBasicType<ElementType extends BasicType<any>>
     super();
 
     if (!elementType.isBasic) {
-      throw Error("ListBasicType can only have a basic type as elementType");
+      throw Error("elementType must be basic");
     }
 
     // TODO Check that itemsPerChunk is an integer
@@ -97,5 +97,13 @@ export class ListBasicType<ElementType extends BasicType<any>>
 
   tree_getChunksNode(node: Node): Node {
     return node.left;
+  }
+
+  // Merkleization
+
+  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
+    const roots = new Uint8Array(this.struct_serializedSize(value));
+    struct_serializeToBytesArrayBasic(this.elementType, value.length, roots, 0, value);
+    return roots;
   }
 }
