@@ -324,8 +324,8 @@ function getFieldRangesVarLen(
   for (let i = 0; i < variableOffsetsPosition.length; i++) {
     const offset = fixedSection.getUint32(variableOffsetsPosition[i], true);
 
-    // Validate offsets
-    if (offset >= size) {
+    // Validate offsets. If the list is empty the offset points to the end of the buffer, offset == size
+    if (offset > size) {
       throw new Error("Offset out of bounds");
     }
     if (i === 0) {
