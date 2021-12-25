@@ -2,6 +2,7 @@ import {HashObject} from "@chainsafe/as-sha256";
 import {hashObjectToUint8Array, hashTwoObjects, isHashObject, uint8ArrayToHashObject} from "./hash";
 
 const ERR_INVALID_TREE = "Invalid tree";
+const TWO_POWER_32 = 2 ** 32;
 
 export abstract class Node implements HashObject {
   // this is to save an extra variable to check if a node has a root or not
@@ -118,30 +119,46 @@ export class LeafNode extends Node {
   }
 
   getUint(uintBytes: number, offsetBytes: number): number {
+    const hIndex = Math.floor(offsetBytes / 4);
+
+    // number has to be masked from an h value
     if (uintBytes < 4) {
-      // number has to be masked from an h value
-      const hIndex = Math.floor(offsetBytes / 4);
+      const bIndex = 4 - uintBytes - (offsetBytes % 4);
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        const bIndex = 3 - (offsetBytes % 4);
         return 0xff & (h >> (bIndex * 8));
       } else {
-        const bIndex = 2 - (offsetBytes % 4);
         return 0xffff & (h >> (bIndex * 8));
       }
-    } else if (uintBytes === 4) {
-      // number equals the h value
-      const hIndex = Math.floor(offsetBytes / 4);
-      return getNodeH(this, hIndex);
-    } else {
-      throw Error("getUint does not support uintBytes > 4");
+    }
+
+    // number equals the h value
+    else if (uintBytes === 4) {
+      return getNodeH(this, hIndex) >>> 0;
+    }
+
+    // number spans 2 h values
+    else if (uintBytes === 8) {
+      const low = getNodeH(this, hIndex) >>> 0;
+      const high = getNodeH(this, hIndex + 1);
+      if (high === 0) {
+        return low;
+      } else {
+        return low + high * TWO_POWER_32;
+      }
+    }
+
+    // Bigger uint can't be represented
+    else {
+      throw Error("uintBytes > 8");
     }
   }
 
   getUintBigint(uintBytes: number, offsetBytes: number): bigint {
+    const hIndex = Math.floor(offsetBytes / 4);
+
+    // number has to be masked from an h value
     if (uintBytes < 4) {
-      // number has to be masked from an h value
-      const hIndex = Math.floor(offsetBytes / 4);
       const bIndex = 4 - uintBytes - (offsetBytes % 4);
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
@@ -149,44 +166,112 @@ export class LeafNode extends Node {
       } else {
         return BigInt(0xffff & (h >> (bIndex * 8)));
       }
-    } else if (uintBytes === 4) {
-      // number equals the h value
-      const hIndex = Math.floor(offsetBytes / 4);
+    }
+
+    // number equals the h value
+    else if (uintBytes === 4) {
       return BigInt(getNodeH(this, hIndex));
-    } else if (uintBytes === 8) {
-      const hIndex1 = Math.floor(offsetBytes / 4);
-      const hIndex2 = hIndex1 + 1;
-      const h1 = BigInt(getNodeH(this, hIndex1));
-      const h2 = BigInt(getNodeH(this, hIndex2));
-      return (h1 << BigInt(32)) + h2;
-    } else {
-      throw Error("getUint does not support uintBytes > 8");
+    }
+
+    // number spans multiple h values
+    else {
+      const hRange = Math.ceil(uintBytes / 4);
+      let v = BigInt(0);
+      for (let i = 0; i < hRange; i++) {
+        v += BigInt(getNodeH(this, hIndex + i)) << BigInt(32 * i);
+      }
+      return v;
     }
   }
 
   setUint(uintBytes: number, offsetBytes: number, value: number): void {
-    if (uintBytes === 4) {
-      // number equals the h value
-      const hIndex = Math.floor(offsetBytes / 4);
+    const hIndex = Math.floor(offsetBytes / 4);
+
+    // number has to be masked from an h value
+    if (uintBytes < 4) {
+      const bIndex = 4 - uintBytes - (offsetBytes % 4);
+      let h = getNodeH(this, hIndex);
+      if (uintBytes === 1) {
+        h &= ~(0xff << (bIndex * 8));
+        h |= (0xff && value) << (bIndex * 8);
+      } else {
+        h &= ~(0xffff << (bIndex * 8));
+        h |= (0xffff && value) << (bIndex * 8);
+      }
+      setNodeH(this, hIndex, h);
+    }
+
+    // number equals the h value
+    else if (uintBytes === 4) {
       setNodeH(this, hIndex, value);
-    } else {
-      throw Error("Does not support uintBytes !== 4");
+    }
+
+    // number spans 2 h values
+    else if (uintBytes === 8) {
+      setNodeH(this, hIndex, value & 0xffffffff);
+      setNodeH(this, hIndex + 1, (value / TWO_POWER_32) & 0xffffffff);
+    }
+
+    // Bigger uint can't be represented
+    else {
+      throw Error("uintBytes > 8");
+    }
+  }
+
+  setUintBigint(uintBytes: number, offsetBytes: number, valueBN: bigint): void {
+    const hIndex = Math.floor(offsetBytes / 4);
+
+    // number has to be masked from an h value
+    if (uintBytes < 4) {
+      const value = Number(valueBN);
+      const bIndex = 4 - uintBytes - (offsetBytes % 4);
+      let h = getNodeH(this, hIndex);
+      if (uintBytes === 1) {
+        h &= ~(0xff << (bIndex * 8));
+        h |= (0xff && value) << (bIndex * 8);
+      } else {
+        h &= ~(0xffff << (bIndex * 8));
+        h |= (0xffff && value) << (bIndex * 8);
+      }
+      setNodeH(this, hIndex, h);
+    }
+
+    // number equals the h value
+    else if (uintBytes === 4) {
+      setNodeH(this, hIndex, Number(valueBN));
+    }
+
+    // number spans multiple h values
+    else {
+      const hEnd = hIndex + Math.ceil(uintBytes / 4);
+      for (let i = hIndex; i < hEnd; i++) {
+        setNodeH(this, i, Number(valueBN & BigInt(0xffffffff)));
+        valueBN = valueBN >> BigInt(32);
+      }
     }
   }
 
   bitwiseOrUint(uintBytes: number, offsetBytes: number, value: number): void {
+    const hIndex = Math.floor(offsetBytes / 4);
+
+    // number has to be masked from an h value
     if (uintBytes < 4) {
-      // number has to be masked from an h value
-      const hIndex = Math.floor(offsetBytes / 4);
       const bIndex = 4 - uintBytes - (offsetBytes % 4);
       bitwiseOrNodeH(this, hIndex, value << bIndex);
-    } else if (uintBytes === 4) {
-      // number equals the h value
-      const hIndex = Math.floor(offsetBytes / 4);
-      setNodeH(this, hIndex, value);
-    } else {
-      // TODO
-      throw Error("Not supports byteLength > 4");
+    }
+
+    // number equals the h value
+    else if (uintBytes === 4) {
+      bitwiseOrNodeH(this, hIndex, value);
+    }
+
+    // number spans multiple h values
+    else {
+      const hEnd = hIndex + Math.ceil(uintBytes / 4);
+      for (let i = hIndex; i < hEnd; i++) {
+        bitwiseOrNodeH(this, i, value & 0xffffffff);
+        value >>= 32;
+      }
     }
   }
 }
