@@ -1,15 +1,13 @@
-import {ByteVector} from "../../../src";
-
 // Each type exported here contains both a compile-time type
 // (a typescript interface) and a run-time ssz type (a javascript variable)
 // For more information, see ./index.ts
 
-export type Bytes4 = ByteVector;
-export type Bytes8 = ByteVector;
-export type Bytes20 = ByteVector;
-export type Bytes32 = ByteVector;
-export type Bytes48 = ByteVector;
-export type Bytes96 = ByteVector;
+export type Bytes4 = Uint8Array;
+export type Bytes8 = Uint8Array;
+export type Bytes20 = Uint8Array;
+export type Bytes32 = Uint8Array;
+export type Bytes48 = Uint8Array;
+export type Bytes96 = Uint8Array;
 export type Uint8 = number;
 export type Uint16 = number;
 export type Uint32 = number;

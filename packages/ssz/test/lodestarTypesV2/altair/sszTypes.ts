@@ -14,9 +14,8 @@ import {
   VALIDATOR_REGISTRY_LIMIT,
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
 } from "@chainsafe/lodestar-params";
-import {Root} from "../primitive/types";
-import {ssz as phase0Ssz} from "../phase0";
-import {ssz as primitiveSsz} from "../primitive";
+import * as phase0Ssz from "../phase0/sszTypes";
+import * as primitiveSsz from "../primitive/sszTypes";
 import {LazyVariable} from "../utils/lazyVar";
 
 const {

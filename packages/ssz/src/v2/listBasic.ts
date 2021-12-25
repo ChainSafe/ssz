@@ -1,7 +1,7 @@
 import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {ListBasicTreeView, ArrayBasicType} from "./arrayTreeView";
-import {maxChunksToDepth} from "../util/tree";
+import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayBasic,
@@ -10,7 +10,6 @@ import {
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./array";
-import {LENGTH_GINDEX} from "../types/composite/list";
 import {mixInLength} from "../util/merkleize";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */

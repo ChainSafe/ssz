@@ -1,4 +1,3 @@
-import {BigIntUintType, RootType, Number64UintType} from "../../../src";
 import {ByteVectorType} from "../../../src/v2/byteVector";
 import {UintNumberType} from "../../../src/v2/uint";
 import {BooleanType} from "../../../src/v2/boolean";
