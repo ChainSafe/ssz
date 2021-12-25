@@ -1,6 +1,7 @@
 import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {ListBasicTreeView, ArrayBasicType} from "./arrayTreeView";
+import {maxChunksToDepth} from "../util/tree";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayBasic,
@@ -43,7 +44,7 @@ export class ListBasicType<ElementType extends BasicType<any>>
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
     // Depth includes the extra level for the length node
-    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth + 1;
     this.maxLen = this.limit * elementType.maxLen;
   }

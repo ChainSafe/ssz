@@ -1,4 +1,5 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/tree";
 import {IJsonOptions} from "../types";
 import {SszErrorPath} from "../util/errorPath";
 import {toExpectedCase} from "../util/json";
@@ -55,8 +56,11 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     super();
 
     this.maxChunkCount = Object.keys(fields).length;
-    // TODO: Review math
-    this.depth = 1 + Math.ceil(Math.log2(this.maxChunkCount));
+    if (this.maxChunkCount === 0) {
+      throw Error("fields must not be empty");
+    }
+
+    this.depth = maxChunksToDepth(this.maxChunkCount);
 
     // TODO: Consider de-duplicating all the field iterations in this loops. It's only run once, may not be worth it.
     this.fixedLen = getContainerFixedLen(fields);

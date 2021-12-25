@@ -1,4 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/tree";
 import {CompositeType, ValueOf} from "./abstract";
 import {
   struct_deserializeFromBytesArrayComposite,
@@ -38,10 +39,13 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
     if (elementType.isBasic) {
       throw Error("elementType must not be basic");
     }
+    if (length === 0) {
+      throw Error("Vector types must not be empty");
+    }
 
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((length * 1) / 32);
-    this.depth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.depth = maxChunksToDepth(this.maxChunkCount);
     this.fixedLen = elementType.fixedLen === null ? null : length * elementType.fixedLen;
     this.minLen = length * elementType.minLen;
     this.maxLen = length * elementType.maxLen;

@@ -1,4 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {
   defaultValueVector,
@@ -36,11 +37,14 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     if (!elementType.isBasic) {
       throw Error("elementType must be basic");
     }
+    if (length === 0) {
+      throw Error("Vector types must not be empty");
+    }
 
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.length * elementType.byteLength) / 32);
-    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;
     this.fixedLen = this.length * elementType.byteLength;
     this.minLen = this.fixedLen;

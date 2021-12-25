@@ -6,6 +6,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/tree";
 import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
 import {BitArray} from "./bitArrayTreeView";
@@ -38,9 +39,13 @@ export class BitVectorType extends CompositeType<BitArray> {
   constructor(readonly lengthBits: number) {
     super();
 
+    if (lengthBits === 0) {
+      throw Error("Vector types must not be empty");
+    }
+
     this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
     this.maxChunkCount = this.chunkCount;
-    this.depth = Math.ceil(Math.log2(this.chunkCount));
+    this.depth = maxChunksToDepth(this.chunkCount);
     this.fixedLen = Math.ceil(this.lengthBits / 8);
     this.minLen = this.fixedLen;
     this.maxLen = this.fixedLen;

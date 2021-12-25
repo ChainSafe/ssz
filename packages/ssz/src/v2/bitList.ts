@@ -6,6 +6,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/tree";
 import {fromHexString} from "../util/byteArray";
 import {mixInLength} from "../util/merkleize";
 import {CompositeType} from "./abstract";
@@ -43,7 +44,7 @@ export class BitListType extends CompositeType<BitArray> {
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
     // Depth includes the extra level for the length node
-    this.chunkDepth = Math.ceil(Math.log2(this.maxChunkCount));
+    this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = 1 + this.chunkDepth;
     this.maxLen = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
   }
