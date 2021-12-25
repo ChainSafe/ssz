@@ -10,6 +10,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
   struct_getRootsArrayComposite,
+  struct_fromJsonArray,
 } from "./array";
 import {ListCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
 
@@ -106,5 +107,11 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
     return struct_getRootsArrayComposite(this.elementType, value.length, value);
+  }
+
+  // JSON
+
+  fromJson(data: unknown): ValueOf<ElementType>[] {
+    return struct_fromJsonArray(this.elementType, data);
   }
 }

@@ -6,6 +6,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
+import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
 import {addLengthNode} from "./array";
 import {BitArray} from "./bitArrayTreeView";
@@ -98,5 +99,13 @@ export class BitVectorType extends CompositeType<BitArray> {
 
   protected getRoots(value: BitArray): Uint8Array {
     return value.uint8Array;
+  }
+
+  // JSON
+
+  fromJson(data: unknown): BitArray {
+    // TODO: Validate
+    const bytes = fromHexString(data as string);
+    return this.struct_deserializeFromBytes(bytes, 0, this.fixedLen);
   }
 }

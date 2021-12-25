@@ -3,6 +3,7 @@ import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {
   defaultValueVector,
   struct_deserializeFromBytesArrayBasic,
+  struct_fromJsonArray,
   struct_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
@@ -96,11 +97,15 @@ export class VectorBasicType<ElementType extends BasicType<any>>
 
   // Merkleization
 
-  // Merkleization
-
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
     const roots = new Uint8Array(this.fixedLen);
     struct_serializeToBytesArrayBasic(this.elementType, this.length, roots, 0, value);
     return roots;
+  }
+
+  // JSON
+
+  fromJson(data: unknown): ValueOf<ElementType>[] {
+    return struct_fromJsonArray(this.elementType, data, this.length);
   }
 }

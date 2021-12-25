@@ -10,9 +10,7 @@ export class BooleanType extends BasicType<boolean> {
   readonly minLen = 1;
   readonly maxLen = 1;
 
-  get defaultValue(): boolean {
-    return false;
-  }
+  readonly defaultValue = false;
 
   // bytes serdes
 
@@ -65,5 +63,14 @@ export class BooleanType extends BasicType<boolean> {
 
   setValueToPackedNode(): never {
     throw Error("Not implemented");
+  }
+
+  // JSON
+
+  fromJson(data: unknown): boolean {
+    if (typeof data !== "boolean") {
+      throw Error(`JSON invalid type ${typeof data} expected boolean`);
+    }
+    return data;
   }
 }

@@ -6,6 +6,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
+import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
 
 export type ByteVector = Uint8Array;
@@ -28,6 +29,7 @@ export type ByteVector = Uint8Array;
  */
 export class ByteVectorType extends CompositeType<ByteVector> {
   // Immutable characteristics
+  protected readonly maxChunkCount: number;
   readonly chunkCount: number;
   readonly depth: number;
   readonly fixedLen: number;
@@ -38,6 +40,7 @@ export class ByteVectorType extends CompositeType<ByteVector> {
     super();
 
     this.chunkCount = Math.ceil(this.lengthBytes / 32);
+    this.maxChunkCount = this.chunkCount;
     this.depth = Math.ceil(Math.log2(this.chunkCount));
     this.fixedLen = this.lengthBytes;
     this.minLen = this.fixedLen;
@@ -91,7 +94,19 @@ export class ByteVectorType extends CompositeType<ByteVector> {
     return (node.right as LeafNode).getUint(4, 0);
   }
 
+  // Merkleization
+
   protected getRoots(value: ByteVector): Uint8Array {
+    return value;
+  }
+
+  // JSON
+
+  fromJson(data: unknown): ByteVector {
+    const value = fromHexString(data as string);
+    if (value.length !== this.lengthBytes) {
+      throw new Error(`JSON invalid ByteVector length ${value.length} expected ${this.lengthBytes}`);
+    }
     return value;
   }
 }

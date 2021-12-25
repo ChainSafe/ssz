@@ -1,6 +1,7 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 import {IJsonOptions} from "../types";
 import {SszErrorPath} from "../util/errorPath";
+import {toExpectedCase} from "../util/json";
 import {CompositeType, TreeView, Type, ValueOf} from "./abstract";
 import {getContainerTreeViewClass} from "./containerTreeView";
 
@@ -50,7 +51,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, opts?: IContainerOptions) {
+  constructor(readonly fields: Fields, private readonly opts?: IContainerOptions) {
     super();
 
     this.maxChunkCount = Object.keys(fields).length;
@@ -213,6 +214,31 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     }
 
     return roots;
+  }
+
+  // JSON
+
+  fromJson(data: unknown): ValueOfFields<Fields> {
+    if (typeof data !== "object") {
+      throw new Error("JSON must be of type object");
+    }
+
+    const value = {} as ValueOfFields<Fields>;
+
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const fieldName = this.fieldsEntries[i][0];
+      const fieldType = this.fieldsEntries[i][1];
+
+      const jsonKey = toExpectedCase(fieldName as string, this.opts?.expectedCase, this.opts?.casingMap);
+      const jsonValue = (data as Record<string, unknown>)[jsonKey];
+      if (jsonValue === undefined) {
+        throw Error(`JSON expected field ${jsonKey} is undefined`);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      value[fieldName] = fieldType.fromJson(jsonValue);
+    }
+
+    return value;
   }
 
   /** Deserializer helper */

@@ -4,6 +4,7 @@ import {ListBasicTreeView, ArrayBasicType} from "./arrayTreeView";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayBasic,
+  struct_fromJsonArray,
   struct_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
@@ -105,5 +106,11 @@ export class ListBasicType<ElementType extends BasicType<any>>
     const roots = new Uint8Array(this.struct_serializedSize(value));
     struct_serializeToBytesArrayBasic(this.elementType, value.length, roots, 0, value);
     return roots;
+  }
+
+  // JSON
+
+  fromJson(data: unknown): ValueOf<ElementType>[] {
+    return struct_fromJsonArray(this.elementType, data);
   }
 }

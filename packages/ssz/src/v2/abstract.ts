@@ -68,6 +68,10 @@ export abstract class Type<V> {
     // TODO
     return true;
   }
+
+  // JSON support
+
+  abstract fromJson(data: unknown): V;
 }
 
 export abstract class BasicType<V> extends Type<V> {

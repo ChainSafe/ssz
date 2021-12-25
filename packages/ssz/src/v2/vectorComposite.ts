@@ -9,6 +9,7 @@ import {
   tree_serializeToBytesArrayComposite,
   defaultValueVector,
   struct_getRootsArrayComposite,
+  struct_fromJsonArray,
 } from "./array";
 import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
 
@@ -98,5 +99,11 @@ export class VectorCompositeType<ElementType extends CompositeType<any>>
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
     return struct_getRootsArrayComposite(this.elementType, this.length, value);
+  }
+
+  // JSON
+
+  fromJson(data: unknown): ValueOf<ElementType>[] {
+    return struct_fromJsonArray(this.elementType, data, this.length);
   }
 }

@@ -6,6 +6,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
+import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./array";
 import {BitArray} from "./bitArrayTreeView";
@@ -106,8 +107,18 @@ export class BitListType extends CompositeType<BitArray> {
     return (node.right as LeafNode).getUint(4, 0);
   }
 
+  // Merkleization
+
   protected getRoots(value: BitArray): Uint8Array {
     return value.uint8Array;
+  }
+
+  // JSON
+
+  fromJson(data: unknown): BitArray {
+    // TODO: Validate
+    const bytes = fromHexString(data as string);
+    return this.struct_deserializeFromBytes(bytes, 0, bytes.length);
   }
 }
 

@@ -330,6 +330,29 @@ export function struct_getRootsArrayComposite<ElementType extends CompositeType<
   return roots;
 }
 
+/**
+ * @param length In List length = undefined, Vector length = fixed value
+ */
+export function struct_fromJsonArray<ElementType extends Type<any>>(
+  elementType: ElementType,
+  json: unknown,
+  length?: number
+): ValueOf<ElementType>[] {
+  if (!Array.isArray(json)) {
+    throw Error("JSON must be an array");
+  }
+
+  if (length === undefined) {
+    length = json.length;
+  }
+
+  const value: ValueOf<ElementType>[] = [];
+  for (let i = 0; i < length; i++) {
+    value.push(elementType.fromJson(json[i]));
+  }
+  return value;
+}
+
 function getOffsetsArrayComposite(
   fixedLen: null | number,
   data: Uint8Array,
