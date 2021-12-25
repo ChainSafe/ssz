@@ -5,17 +5,17 @@ import {ContainerType} from "../../../src/v2/container";
 import {ListBasicType} from "../../../src/v2/listBasic";
 import {VectorBasicType} from "../../../src/v2/vectorBasic";
 import {BooleanType} from "../../../src/v2/boolean";
-import {UintNumberType} from "../../../src/v2/uint";
+import {UintBigintType} from "../../../src/v2/uint";
 import {VectorCompositeType} from "../../../src/v2/vectorComposite";
 
 const bool = new BooleanType();
-const byte = new UintNumberType(1);
-const uint8 = new UintNumberType(1);
-const uint16 = new UintNumberType(2);
-const uint32 = new UintNumberType(4);
-const uint64 = new UintNumberType(8);
-const uint128 = new UintNumberType(16);
-const uint256 = new UintNumberType(32);
+const byte = new UintBigintType(1);
+const uint8 = new UintBigintType(1);
+const uint16 = new UintBigintType(2);
+const uint32 = new UintBigintType(4);
+const uint64 = new UintBigintType(8);
+const uint128 = new UintBigintType(16);
+const uint256 = new UintBigintType(32);
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -153,7 +153,7 @@ export function getTestType(testType: string, testCase: string): Type<unknown> {
     // {size}: the uint size: 8, 16, 32, 64, 128 or 256.
     case "uints": {
       // TODO: memoize
-      return new UintNumberType(parseSecondNum(testCase, "size") / 8);
+      return new UintBigintType(parseSecondNum(testCase, "size") / 8);
     }
 
     default:

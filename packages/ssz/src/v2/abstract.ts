@@ -109,8 +109,7 @@ export abstract class CompositeType<V> extends Type<V> {
   readonly isBasic = false;
 
   hashTreeRoot(value: V): Uint8Array {
-    const roots = this.getRoots(value);
-    return merkleizeSingleBuff(roots, this.maxChunkCount);
+    return merkleizeSingleBuff(this.getRoots(value), this.maxChunkCount);
   }
 
   protected abstract readonly maxChunkCount: number;

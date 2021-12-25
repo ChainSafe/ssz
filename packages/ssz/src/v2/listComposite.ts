@@ -1,5 +1,6 @@
 import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX} from "..";
+import {mixInLength} from "../util/merkleize";
 import {CompositeType, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
@@ -104,6 +105,10 @@ export class ListCompositeType<ElementType extends CompositeType<any>>
   }
 
   // Merkleization
+
+  hashTreeRoot(value: ValueOf<ElementType>[]): Uint8Array {
+    return mixInLength(super.hashTreeRoot(value), value.length);
+  }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
     return struct_getRootsArrayComposite(this.elementType, value.length, value);

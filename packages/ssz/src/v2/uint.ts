@@ -207,9 +207,12 @@ export class UintBigintType extends BasicType<bigint> {
   // JSON
 
   fromJson(data: unknown): bigint {
-    if (typeof data !== "bigint") {
+    if (typeof data === "bigint") {
+      return data;
+    } else if (typeof data === "string" || typeof data === "number") {
+      return BigInt(data);
+    } else {
       throw Error(`JSON invalid type ${typeof data} expected bigint`);
     }
-    return data;
   }
 }

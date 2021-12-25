@@ -30,7 +30,15 @@ export function merkleizeSingleBuff(chunksBuff: Uint8Array, padFor?: number): Ui
     chunkCount = paddedChunkCount / 2;
   }
 
-  return chunksBuff.slice(0, 32);
+  // If output is too small, pad to 32. hash .concat() assumes all inputs are exactly 32 bytes
+  // TODO: Make hash() accept output of <= 32 and autopad on copy.
+  if (chunksBuff.length < 32) {
+    const out = new Uint8Array(32);
+    out.set(chunksBuff);
+    return out;
+  } else {
+    return chunksBuff.slice(0, 32);
+  }
 }
 
 export function merkleize(chunks: Uint8Array[], padFor?: number): Uint8Array {
@@ -64,11 +72,10 @@ export function merkleize(chunks: Uint8Array[], padFor?: number): Uint8Array {
 }
 
 /** @ignore */
-export function mixInLength(root: Buffer, length: number): Buffer {
+export function mixInLength(root: Uint8Array, length: number): Uint8Array {
   const lengthBuf = Buffer.alloc(32);
   lengthBuf.writeUIntLE(length, 0, 6);
-  const h = hash(root, lengthBuf);
-  return Buffer.from(h.buffer, h.byteOffset, h.byteLength);
+  return hash(root, lengthBuf);
 }
 
 // x2 faster than bitLengthStr()

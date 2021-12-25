@@ -10,6 +10,7 @@ import {
   tree_serializeToBytesArrayBasic,
 } from "./array";
 import {LENGTH_GINDEX} from "../types/composite/list";
+import {mixInLength} from "../util/merkleize";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -101,6 +102,10 @@ export class ListBasicType<ElementType extends BasicType<any>>
   }
 
   // Merkleization
+
+  hashTreeRoot(value: ValueOf<ElementType>[]): Uint8Array {
+    return mixInLength(super.hashTreeRoot(value), value.length);
+  }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
     const roots = new Uint8Array(this.struct_serializedSize(value));

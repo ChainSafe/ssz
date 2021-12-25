@@ -2,7 +2,6 @@ import {Json, List} from "../../interface";
 import {IArrayOptions, BasicArrayType, CompositeArrayType} from "./array";
 import {isBasicType, isNumber64UintType, number32Type} from "../basic";
 import {IJsonOptions, isTypeOf, Type} from "../type";
-import {mixInLength} from "../../util/compat";
 import {cloneHashObject} from "../../util/hash";
 import {
   BranchNode,
@@ -17,6 +16,7 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {isTreeBacked} from "../../backings/tree/treeValue";
 import {HashObject} from "@chainsafe/as-sha256";
+import {mixInLength} from "../../util/merkleize";
 
 /**
  * SSZ Lists (variable-length arrays) include the length of the list in the tree
