@@ -20,7 +20,7 @@ export class UintNumberType extends BasicType<number> {
     this.maxLen = byteLength;
   }
 
-  readonly defaultValue = 0;
+  readonly defaultValue: number = 0;
 
   // Serialization + deserialization
 
