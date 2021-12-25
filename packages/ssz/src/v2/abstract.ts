@@ -9,6 +9,12 @@ export type ValueOf<T extends Type<any>> = T["defaultValue"];
 export type ViewOf<T extends Type<any>> = T["isBasic"] extends true ? T["defaultValue"] : ReturnType<T["getView"]>;
 export type ViewOfComposite<T extends CompositeType<any>> = ReturnType<T["getView"]>;
 
+const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
+
+type ValueWithCachedPermanentRoot = {
+  [symbolCachedPermanentRoot]?: Uint8Array;
+};
+
 export abstract class Type<V> {
   abstract readonly defaultValue: V;
   abstract readonly isBasic: boolean;
@@ -108,8 +114,32 @@ export abstract class BasicType<V> extends Type<V> {
 export abstract class CompositeType<V> extends Type<V> {
   readonly isBasic = false;
 
+  constructor(
+    /**
+     * Caches hashTreeRoot() result for struct values.
+     * WARNING: Must only be used with value that never mutate. The cached root is never discarded
+     */
+    private readonly cachePermanentRootStruct?: boolean
+  ) {
+    super();
+  }
+
   hashTreeRoot(value: V): Uint8Array {
-    return merkleizeSingleBuff(this.getRoots(value), this.maxChunkCount);
+    // Return cached mutable root if any
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        return cachedRoot;
+      }
+    }
+
+    const root = merkleizeSingleBuff(this.getRoots(value), this.maxChunkCount);
+
+    if (this.cachePermanentRootStruct) {
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+    }
+
+    return root;
   }
 
   protected abstract readonly maxChunkCount: number;

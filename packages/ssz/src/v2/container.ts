@@ -27,6 +27,7 @@ export interface IContainerOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   casingMap?: Record<string, string>;
   expectedCase?: IJsonOptions["case"];
+  cachePermanentRootStruct?: boolean;
 }
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<ValueOfFields<Fields>> {
@@ -53,7 +54,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
 
   constructor(readonly fields: Fields, private readonly opts?: IContainerOptions) {
-    super();
+    super(opts?.cachePermanentRootStruct);
 
     this.maxChunkCount = Object.keys(fields).length;
     if (this.maxChunkCount === 0) {
