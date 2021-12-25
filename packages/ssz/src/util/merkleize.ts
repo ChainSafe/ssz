@@ -3,42 +3,56 @@ import {hash} from "./hash";
 import {zeroNode} from "./zeros";
 
 export function merkleizeSingleBuff(chunksBuff: Uint8Array, padFor?: number): Uint8Array {
-  let chunkCount = Math.ceil(chunksBuff.length / 32);
-
-  const layerCount = bitLength(nextPowerOf2(padFor ?? chunkCount) - 1);
-  if (chunkCount == 0) {
-    return zeroNode(layerCount);
+  // TODO: Optimize
+  const chunkCount = Math.ceil(chunksBuff.length / 32);
+  const chunks: Uint8Array[] = [];
+  for (let i = 0; i < chunkCount; i++) {
+    const chunk = new Uint8Array(32);
+    chunk.set(chunksBuff.slice(i * 32, (i + 1) * 32));
+    chunks.push(chunk);
   }
 
-  // Instead of pushing on all padding zero chunks at the leaf level
-  // we push on zero hash chunks at the highest possible level to avoid over-hashing
-  for (let l = 0; l < layerCount; l++) {
-    const padCount = chunkCount % 2;
-    const paddedChunkCount = chunkCount + padCount;
+  return merkleize(chunks, padFor);
 
-    // if the chunks.length is odd
-    // we need to push on the zero-hash of that level to merkleize that level
-    for (let i = 0; i < padCount; i++) {
-      chunksBuff.set(zeroNode(l), 32 * (chunkCount + i));
-    }
+  // TODO:
+  // let chunkCount = Math.ceil(chunksBuff.length / 32);
+  // console.log({chunkCount, padFor, len: chunksBuff.length});
 
-    for (let i = 0; i < paddedChunkCount; i += 2) {
-      const root = SHA256.digest64(chunksBuff.slice(32 * i, 32 * (i + 2)));
-      chunksBuff.set(root, (32 * i) / 2);
-    }
+  // const layerCount = bitLength(nextPowerOf2(padFor ?? chunkCount) - 1);
+  // if (chunkCount == 0) {
+  //   return zeroNode(layerCount);
+  // }
 
-    chunkCount = paddedChunkCount / 2;
-  }
+  // const roots: Uint8Array[] = [];
 
-  // If output is too small, pad to 32. hash .concat() assumes all inputs are exactly 32 bytes
-  // TODO: Make hash() accept output of <= 32 and autopad on copy.
-  if (chunksBuff.length < 32) {
-    const out = new Uint8Array(32);
-    out.set(chunksBuff);
-    return out;
-  } else {
-    return chunksBuff.slice(0, 32);
-  }
+  // // Instead of pushing on all padding zero chunks at the leaf level
+  // // we push on zero hash chunks at the highest possible level to avoid over-hashing
+  // for (let l = 0; l < layerCount; l++) {
+  //   const padCount = chunkCount % 2;
+
+  //   for (let i = 0; i < chunkCount; i += 2) {
+  //     roots.push(SHA256.digest(chunksBuff.slice(32 * i, 32 * (i + 2))));
+  //   }
+
+  //   // if the chunks.length is odd
+  //   // we need to push on the zero-hash of that level to merkleize that level
+  //   if (padCount > 0) {
+  //     roots.push(SHA256.digest(Buffer.concat([chunksBuff.slice(32 * chunkCount, 32 * (chunkCount + 1)), zeroNode(l)])));
+  //   }
+  //   console.log({l, padCount, chunkCount}, roots);
+
+  //   chunkCount = (chunkCount + padCount) / 2;
+  // }
+
+  // // If output is too small, pad to 32. hash .concat() assumes all inputs are exactly 32 bytes
+  // // TODO: Make hash() accept output of <= 32 and autopad on copy.
+  // if (chunksBuff.length < 32) {
+  //   const out = new Uint8Array(32);
+  //   out.set(chunksBuff);
+  //   return out;
+  // } else {
+  //   return chunksBuff.slice(0, 32);
+  // }
 }
 
 export function merkleize(chunks: Uint8Array[], padFor?: number): Uint8Array {

@@ -80,8 +80,8 @@ export function struct_deserializeFromBytesArrayBasic<ElementType extends BasicT
   assertValidArrayLength(length, arrayProps, true);
 
   for (let i = 0; i < length; i++) {
-    // Last arguemnt is 0 because basic types don't need and `end` param
-    values.push(elementType.struct_deserializeFromBytes(data, start + i * elSize, 0));
+    // TODO: If faster, consider skipping size check for uint types
+    values.push(elementType.struct_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize));
   }
 
   return values;

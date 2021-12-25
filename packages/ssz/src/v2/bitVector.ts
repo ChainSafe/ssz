@@ -8,7 +8,6 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
-import {addLengthNode} from "./array";
 import {BitArray} from "./bitArrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
@@ -81,8 +80,7 @@ export class BitVectorType extends CompositeType<BitArray> {
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const chunksNode = packedRootsBytesToNode(this.depth, data, start, end);
-    return addLengthNode(chunksNode, this.lengthBits);
+    return packedRootsBytesToNode(this.depth, data, start, end);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
