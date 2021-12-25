@@ -74,7 +74,7 @@ export class BitListType extends CompositeType<BitArray> {
   }
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
-    const [uint8Array, bitLen] = deserializeUint8ArrayBitListFromBytes(data, start, end);
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
     return new BitArray(uint8Array, bitLen);
   }
 
@@ -88,7 +88,7 @@ export class BitListType extends CompositeType<BitArray> {
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const [uint8Array, bitLen] = deserializeUint8ArrayBitListFromBytes(data, start, end);
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
     const chunksNode = packedRootsBytesToNode(this.chunkDepth, uint8Array, 0, uint8Array.length);
     return addLengthNode(chunksNode, bitLen);
   }
@@ -126,9 +126,21 @@ export class BitListType extends CompositeType<BitArray> {
     const bytes = fromHexString(data as string);
     return this.struct_deserializeFromBytes(bytes, 0, bytes.length);
   }
+
+  // Deserializer helpers
+
+  private deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number): BitArrayDeserialized {
+    const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data, start, end);
+    if (bitLen > this.limitBits) {
+      throw Error(`bitLen ${bitLen} over limit ${this.limitBits}`);
+    }
+    return {uint8Array, bitLen};
+  }
 }
 
-function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number): [Uint8Array, number] {
+type BitArrayDeserialized = {uint8Array: Uint8Array; bitLen: number};
+
+function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number): BitArrayDeserialized {
   const lastByte = data[end - 1];
 
   if (lastByte === 0) {
@@ -138,19 +150,17 @@ function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, 
   if (lastByte === 1) {
     const uint8Array = data.slice(start, end - 1);
     const bitLen = (end - start - 1) * 8;
-    return [uint8Array, bitLen];
+    return {uint8Array, bitLen};
   }
 
   // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
   const uint8Array = data.slice(start, end);
-  // copy chunk into new memory
-  const lastChunkByte = end - start - 1;
   // mask lastChunkByte
   const lastByteBitLength = lastByte.toString(2).length - 1;
   const bitLen = (end - start - 1) * 8 + lastByteBitLength;
   const mask = 0xff >> (8 - lastByteBitLength);
-  uint8Array[lastChunkByte] &= mask;
-  return [uint8Array, bitLen];
+  uint8Array[end - start - 1] &= mask;
+  return {uint8Array, bitLen};
 }
 
 function bitLenToSerializedLength(bitLen: number): number {

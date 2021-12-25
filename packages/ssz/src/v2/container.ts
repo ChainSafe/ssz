@@ -248,6 +248,11 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   /** Deserializer helper */
   private getFieldRanges(data: Uint8Array, start: number, end: number): [number, number][] {
     if (this.variableOffsetsPosition.length === 0) {
+      // Validate fixed length container
+      if (end - start !== this.fixedEnd) {
+        throw Error("Container size not equal fixed size");
+      }
+
       return this.fieldRangesFixedLen;
     }
 

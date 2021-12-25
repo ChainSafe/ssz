@@ -35,6 +35,17 @@ export class BitVectorType extends CompositeType<BitArray> {
   readonly fixedLen: number;
   readonly minLen: number;
   readonly maxLen: number;
+  /**
+   * Mask to check if trailing bits are zero'ed. Mask returns bits that must be zero'ed
+   * ```
+   * lengthBits % 8 | zeroBitsMask
+   * 0              | 0
+   * 1              | 11111110
+   * 2              | 11111100
+   * 7              | 10000000
+   * ```
+   */
+  private readonly zeroBitsMask: number;
 
   constructor(readonly lengthBits: number) {
     super();
@@ -49,6 +60,8 @@ export class BitVectorType extends CompositeType<BitArray> {
     this.fixedLen = Math.ceil(this.lengthBits / 8);
     this.minLen = this.fixedLen;
     this.maxLen = this.fixedLen;
+    // To cache mask for trailing zero bits validation
+    this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
   }
 
   get defaultValue(): BitArray {
@@ -72,6 +85,7 @@ export class BitVectorType extends CompositeType<BitArray> {
   }
 
   struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
+    this.assertValidLength(data, start, end);
     return new BitArray(data.slice(start, end), this.lengthBits);
   }
 
@@ -85,6 +99,7 @@ export class BitVectorType extends CompositeType<BitArray> {
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    this.assertValidLength(data, start, end);
     return packedRootsBytesToNode(this.depth, data, start, end);
   }
 
@@ -110,5 +125,24 @@ export class BitVectorType extends CompositeType<BitArray> {
     // TODO: Validate
     const bytes = fromHexString(data as string);
     return this.struct_deserializeFromBytes(bytes, 0, this.fixedLen);
+  }
+
+  // Deserializer helpers
+
+  private assertValidLength(data: Uint8Array, start: number, end: number): void {
+    const size = end - start;
+    if (end - start !== this.fixedLen) {
+      throw Error(`BitVector size ${size} must be exactly ${this.fixedLen}`);
+    }
+
+    // If lengthBits is not aligned to bytes, ensure trailing bits are zeroed
+    if (
+      // If zeroBitsMask == 0, then the BitVector uses full bytes only
+      this.zeroBitsMask > 0 &&
+      // if the last byte is partial, retrieve it and use the cached mask to check if trailing bits are zeroed
+      (data[end - 1] & this.zeroBitsMask) > 0
+    ) {
+      throw Error("BitVector: nonzero bits past length");
+    }
   }
 }
