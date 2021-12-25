@@ -1,6 +1,7 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
-import {LeafNode, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "../../src";
+import {LeafNode, Node} from "../../src";
+import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes} from "../../src/packedNode";
 
 describe("subtree / packedNode single node", () => {
   const testCases: {
@@ -46,16 +47,33 @@ describe("subtree / packedNode single node", () => {
       outStr: "0x0a09080704030201",
     },
     {
-      id: "Empty 32 bytes",
+      id: "32 bytes zero",
       size: 32,
       nodes: [new LeafNode({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x0000000000000000000000000000000000000000000000000000000000000000",
     },
     {
-      id: "Full 32 bytes",
+      id: "32 bytes same",
       size: 32,
       nodes: [new LeafNode(Buffer.alloc(32, 0xdd))],
       outStr: "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    },
+    {
+      id: "32 bytes random",
+      size: 32,
+      nodes: [
+        new LeafNode({
+          h0: 928805656,
+          h1: 695963229,
+          h2: 4049923874,
+          h3: 2584465765,
+          h4: 842993870,
+          h5: 2733647718,
+          h6: 2699562781,
+          h7: 1073247141,
+        }),
+      ],
+      outStr: "0x18735c375d8e7b2922ef64f165d10b9ace103f326627f0a21d0fe8a0a573f83f",
     },
   ];
 
@@ -66,10 +84,10 @@ describe("subtree / packedNode single node", () => {
       expect("0x" + Buffer.from(out).toString("hex")).to.equal(outStr);
     });
 
-    it(`${id} - packedRootsBytesToNode`, () => {
+    it(`${id} - packedRootsBytesToLeafNodes`, () => {
       const data = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));
-      const node = packedRootsBytesToNode(0, data, 0, size);
-      expect(onlyHashObject(node.rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
+      const nodesRes = packedRootsBytesToLeafNodes(data, 0, size);
+      expect(onlyHashObject(nodesRes[0].rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
     });
   }
 });
