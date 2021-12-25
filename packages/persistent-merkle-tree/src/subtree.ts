@@ -1,11 +1,9 @@
+import {setNodeH} from ".";
 import {BranchNode, Node, LeafNode, getNodeH} from "./node";
 import {zeroNode} from "./zeroNode";
 
 const ERR_NAVIGATION = "Navigation error";
 const ERR_TOO_MANY_NODES = "Too many nodes";
-
-/** Cached values to mask an h value */
-const uint32Masks = [0x00000000, 0xff000000, 0xffff0000, 0xffffff00];
 
 // subtree filling
 
@@ -73,15 +71,18 @@ export function subtreeFillToContents(nodes: Node[], depth: number): Node {
  */
 export function packedRootsBytesToNode(depth: number, data: Uint8Array, start: number, end: number): Node {
   const size = end - start;
-  const size32 = Math.ceil(size / 4);
-  const nodeCount = Math.ceil(size / 32);
+
+  // Uint32Array can only be mapped over full bytes, thus use floor above intead of ceil
+  const size32 = Math.floor(size / 4);
+  const uint32Arr = new Uint32Array(data.buffer, start, size32);
+
+  const fullNodeCount = Math.floor(size / 32);
   const leafNodes: LeafNode[] = [];
 
   // Efficiently construct the tree writing to hashObjects directly
-  const uint32Arr = new Uint32Array(data.buffer, start, size32);
 
   // TODO: Optimize, with this approach each h property is written twice
-  for (let i = 0; i < nodeCount; i++) {
+  for (let i = 0; i < fullNodeCount; i++) {
     leafNodes.push(
       new LeafNode({
         h0: uint32Arr[i * 8 + 0],
@@ -96,6 +97,39 @@ export function packedRootsBytesToNode(depth: number, data: Uint8Array, start: n
     );
   }
 
+  // Consider that the last node may only include partial data
+  const remainderBytes = size % 32;
+
+  // Last node
+  if (remainderBytes > 0) {
+    const remainderUint32 = size % 4;
+    const node = new LeafNode({
+      h0: 0,
+      h1: 0,
+      h2: 0,
+      h3: 0,
+      h4: 0,
+      h5: 0,
+      h6: 0,
+      h7: 0,
+    });
+    leafNodes.push(node);
+
+    // Loop to dynamically copy the full h values
+    const fullHCount = Math.floor(remainderBytes / 4);
+    for (let h = 0; h < fullHCount; h++) {
+      setNodeH(node, h, uint32Arr[fullNodeCount * 8 + h]);
+    }
+
+    if (remainderUint32 > 0) {
+      let h = 0;
+      for (let i = 0; i < remainderUint32; i++) {
+        h |= data[start + size - remainderUint32 + i] << (i * 8);
+      }
+      setNodeH(node, fullHCount, h);
+    }
+  }
+
   return subtreeFillToContents(leafNodes, depth);
 }
 
@@ -103,7 +137,10 @@ export function packedRootsBytesToNode(depth: number, data: Uint8Array, start: n
  * Optimized serialization of consecutive leave nodes to linear bytes
  */
 export function packedNodeRootsToBytes(data: Uint8Array, start: number, size: number, nodes: Node[]): void {
-  const sizeUint32 = Math.ceil(size / 4);
+  // TODO: Do >>> 2 to divide by 4 and floor in one op
+  const sizeUint32 = Math.floor(size / 4);
+
+  // Uint32Array can only be mapped over full bytes, thus use floor above intead of ceil
   const uint32Arr = new Uint32Array(data.buffer, start, sizeUint32);
   // Efficiently get hashObjects data into data
 
@@ -136,8 +173,10 @@ export function packedNodeRootsToBytes(data: Uint8Array, start: number, size: nu
     }
 
     if (remainderUint32 > 0) {
-      const mask = uint32Masks[remainderUint32];
-      uint32Arr[fullNodeCount * 8 + fullHCount] = getNodeH(node, fullHCount) & mask;
+      const h = getNodeH(node, fullHCount);
+      for (let i = 0; i < remainderUint32; i++) {
+        data[start + size - remainderUint32 + i] = (h >> (i * 8)) & 0xff;
+      }
     }
   }
 }
