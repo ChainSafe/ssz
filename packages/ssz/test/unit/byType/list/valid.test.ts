@@ -1,9 +1,11 @@
-import {CompositeType, ContainerType, ListType, Number64UintType, RootType} from "../../../src";
-import {runTypeTest} from "./runTypeTest";
+import {CompositeType, ContainerType, ListType, Number64UintType, RootType} from "../../../../src";
+import {runTypeTestValid} from "../testRunners";
 
-runTypeTest({
+const uint64Type = new Number64UintType();
+
+runTypeTestValid({
   typeName: "List(Number64UintType)",
-  type: new ListType({elementType: new Number64UintType(), limit: 2 ** 7}),
+  type: new ListType({elementType: uint64Type, limit: 2 ** 7}),
   defaultValue: [],
   values: [
     {
@@ -28,7 +30,7 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "List(Root)",
   type: new ListType({elementType: new RootType({expandedType: {} as CompositeType<any>}), limit: 2 ** 7}),
   defaultValue: [],
@@ -52,10 +54,10 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "List(ContainerType)",
   type: new ListType({
-    elementType: new ContainerType({fields: {a: new Number64UintType(), b: new Number64UintType()}}),
+    elementType: new ContainerType({fields: {a: uint64Type, b: uint64Type}}),
     limit: 2 ** 7,
   }),
   defaultValue: [],

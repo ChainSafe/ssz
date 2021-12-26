@@ -1,27 +1,7 @@
-import {BigIntUintType, booleanType, Number64UintType, NumberUintType} from "../../../src";
-import {runTypeTest, runTypeValueTest} from "./runTypeTest";
+import {BigIntUintType, Number64UintType, NumberUintType} from "../../../../src";
+import {runTypeTestValid} from "../testRunners";
 
-runTypeTest({
-  typeName: "boolean",
-  type: booleanType,
-  defaultValue: false,
-  values: [
-    {
-      id: "false",
-      serialized: "0x00",
-      json: false,
-      root: "0x0000000000000000000000000000000000000000000000000000000000000000",
-    },
-    {
-      id: "true",
-      serialized: "0x01",
-      json: true,
-      root: "0x0100000000000000000000000000000000000000000000000000000000000000",
-    },
-  ],
-});
-
-runTypeTest({
+runTypeTestValid({
   typeName: "NumberUint8",
   type: new NumberUintType({byteLength: 1}),
   defaultValue: 0,
@@ -41,7 +21,7 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "NumberUint32",
   type: new NumberUintType({byteLength: 4}),
   defaultValue: 0,
@@ -61,7 +41,7 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "NumberUint64",
   type: new NumberUintType({byteLength: 8}),
   defaultValue: 0,
@@ -82,7 +62,7 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "Number64UintType",
   type: new Number64UintType(),
   defaultValue: 0,
@@ -105,7 +85,7 @@ runTypeTest({
 
 // Extra serialize only tests
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "NumberUintType(2)",
   type: new NumberUintType({byteLength: 2}),
   values: [
@@ -116,7 +96,7 @@ runTypeValueTest({
   ],
 });
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "NumberUintType(4)",
   type: new NumberUintType({byteLength: 4}),
   values: [
@@ -127,7 +107,7 @@ runTypeValueTest({
   ],
 });
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "NumberUintType(8)",
   type: new NumberUintType({byteLength: 8}),
   values: [
@@ -139,7 +119,7 @@ runTypeValueTest({
   ],
 });
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "Number64UintType",
   type: new Number64UintType(),
   values: [
@@ -151,7 +131,7 @@ runTypeValueTest({
   ],
 });
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "BigIntUint(8)",
   type: new BigIntUintType({byteLength: 8}),
   values: [
@@ -162,7 +142,7 @@ runTypeValueTest({
   ],
 });
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "BigIntUint(16)",
   type: new BigIntUintType({byteLength: 16}),
   values: [
@@ -173,7 +153,7 @@ runTypeValueTest({
   ],
 });
 
-runTypeValueTest({
+runTypeTestValid({
   typeName: "BigIntUint(32)",
   type: new BigIntUintType({byteLength: 32}),
   values: [

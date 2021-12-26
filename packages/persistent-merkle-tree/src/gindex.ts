@@ -8,7 +8,7 @@ export function bitIndexBigInt(v: bigint): number {
 export function toGindex(depth: number, index: bigint): Gindex {
   const anchor = BigInt(1) << BigInt(depth);
   if (index >= anchor) {
-    throw new Error("index too large for depth");
+    throw new Error(`index ${index} too large for depth ${depth}`);
   }
   return anchor | index;
 }

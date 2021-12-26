@@ -6,7 +6,7 @@ import {
   NoTransformFieldObjectWithDeclaredExpectedCase,
   SlashingTransformFieldObject,
   WithCasingDeclarationFieldObject,
-} from "./objects";
+} from "./testTypes";
 import {expect} from "chai";
 import {CompositeListType} from "../../src/types/composite";
 

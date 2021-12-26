@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 
 import {booleanType, byteType, Type} from "../../src";
-import {ArrayObject, bigint16Type, bytes2Type, number16List100Type, UnionObject} from "./objects";
+import {ArrayObject, bigint16Type, bytes2Type, number16List100Type, UnionObject} from "./testTypes";
 
 describe("equals", () => {
   const testCases: {
