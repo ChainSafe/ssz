@@ -269,7 +269,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 
   // TODO: Add LeafNode.fromUint()
   if (arrayProps.limit) {
-    return addLengthNode(chunksNode, length);
+    return addLengthNode(chunksNode, offsets.length);
   } else {
     return chunksNode;
   }
