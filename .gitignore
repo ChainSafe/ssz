@@ -5,3 +5,5 @@ yarn-error.log
 .vscode
 
 packages/ssz/spec-tests
+
+benchmark_data/

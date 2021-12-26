@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import * as src from "../../src";
+import * as src from "../../../src";
 
 describe("isFooType", () => {
   const cases: {

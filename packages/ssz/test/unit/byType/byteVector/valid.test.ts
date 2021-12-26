@@ -1,7 +1,7 @@
-import {ByteVectorType} from "../../../src";
-import {runTypeTest} from "./runTypeTest";
+import {ByteVectorType} from "../../../../src";
+import {runTypeTestValid} from "../testRunners";
 
-runTypeTest({
+runTypeTestValid({
   typeName: "ByteVectorType(4)",
   type: new ByteVectorType({length: 4}),
   defaultValue: Buffer.alloc(4, 0),
@@ -21,7 +21,7 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "ByteVectorType(32)",
   type: new ByteVectorType({length: 32}),
   defaultValue: Buffer.alloc(32, 0),
@@ -41,7 +41,7 @@ runTypeTest({
   ],
 });
 
-runTypeTest({
+runTypeTestValid({
   typeName: "ByteVectorType(96)",
   type: new ByteVectorType({length: 96}),
   defaultValue: Buffer.alloc(96, 0),

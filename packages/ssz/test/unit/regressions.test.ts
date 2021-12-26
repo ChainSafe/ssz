@@ -1,5 +1,6 @@
 import {expect} from "chai";
-
+import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
+import {number64Type} from "./testTypes";
 import {
   VectorType,
   ByteVectorType,
@@ -12,9 +13,11 @@ import {
   BitList,
 } from "../../src";
 
+// Compilation of various issues from SSZ and Lodestar libs
+
 /* eslint-disable max-len */
 
-describe("known issues", () => {
+describe("Regressions / known issues", () => {
   it("SyncCommitteeBits hashTreeRoot consistency", function () {
     const SyncCommitteeBits = new BitVectorType({
       length: 512,
@@ -87,5 +90,16 @@ describe("known issues", () => {
 
     expect(Vec.fromJson(json)).to.deep.equal(arr);
     expect(Lis.fromJson(json)).to.deep.equal(arr);
+  });
+
+  it("should hash active validation indexes correctly as in final_updates_minimal.yaml", () => {
+    const validatorIndexes = [];
+    for (let i = 0; i < 64; i++) {
+      validatorIndexes.push(i);
+    }
+    const type = new ListType({elementType: number64Type, limit: VALIDATOR_REGISTRY_LIMIT});
+    // This is the logic to calculate activeIndexRoots in processFinalUpdates
+    const hash = Buffer.from(type.hashTreeRoot(validatorIndexes)).toString("hex");
+    expect(hash).to.equal("ba1031ba1a5daab0d49597cfa8664ce2b4c9b4db6ca69fbef51e0a9a325a3b63");
   });
 });

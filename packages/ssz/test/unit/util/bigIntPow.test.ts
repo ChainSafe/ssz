@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {bigIntPow} from "../../src/util/bigInt";
+import {bigIntPow} from "../../../src/util/bigInt";
 
 describe("util / bigIntPow", () => {
   it("should throw error on negative exponent", () => {
