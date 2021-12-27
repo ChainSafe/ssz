@@ -12,18 +12,6 @@ export async function testRunnerMemoryGc<T>(opts: TestRunnerMemoryOpts<T>): Prom
   const {
     getInstance,
     /**
-     * Sample memory usage every `sampleEvery` instances
-     */
-    sampleEvery = 1000,
-    /**
-     * Stop when `process.memoryUsage().rss > maxRssBytes`.
-     */
-    maxRssBytes = 2e9,
-    /**
-     * Stop after creating `maxInstances` instances.
-     */
-    maxInstances = Infinity,
-    /**
      * How to compute the total memory usage.
      * Defaults to `heapUsed + external`.
      * https://nodejs.org/api/process.html#processmemoryusage
@@ -65,6 +53,7 @@ export async function testRunnerMemoryGc<T>(opts: TestRunnerMemoryOpts<T>): Prom
     usedMemoryArr.push(totalUsedMemoryDiff);
 
     const usedMemoryReg = linearRegression(xs, usedMemoryArr);
+    // eslint-disable-next-line no-console
     console.log("totalUsedMemoryDiff", totalUsedMemoryDiff, usedMemoryReg);
   }
 }
@@ -144,6 +133,7 @@ export function testRunnerMemory<T>(opts: TestRunnerMemoryOpts<T>): number {
         }
 
         if (logEachSample) {
+          // eslint-disable-next-line no-console
           console.log(i, memoryUsage.rss / maxRssBytes, {m});
         }
 
