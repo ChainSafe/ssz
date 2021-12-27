@@ -85,14 +85,15 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
   getAll(): ValueOf<ElementType>[] {
     if (!this.allLeafNodesPopulated) {
       const chunksNode = this.type.tree_getChunksNode(this.node);
-      this.leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, this.length) as LeafNode[];
+      const chunkCount = Math.ceil(this.length / this.type.itemsPerChunk);
+      this.leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
       this.allLeafNodesPopulated = true;
     }
 
     const values: ValueOf<ElementType>[] = [];
-    const lenFullNodes = Math.floor(this.length);
-    const remainder = this.length % lenFullNodes;
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
+    const lenFullNodes = Math.floor(this.length / itemsPerChunk);
+    const remainder = this.length % itemsPerChunk;
 
     for (let n = 0; n < lenFullNodes; n++) {
       const leafNode = this.leafNodes[n];
