@@ -19,15 +19,28 @@ export type ArrayCompositeType<ElementType extends CompositeType<any>> = Composi
 };
 
 export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends TreeView {
-  protected leafNodes: LeafNode[] = [];
+  protected leafNodes: LeafNode[];
   protected readonly dirtyNodes = new Set<number>();
   protected _length: number;
   protected dirtyLength = false;
-  private allLeafNodesPopulated = false;
+  private allLeafNodesPopulated: boolean;
 
-  constructor(readonly type: ArrayBasicType<ElementType>, protected tree: Tree, protected inMutableMode = false) {
+  constructor(
+    readonly type: ArrayBasicType<ElementType>,
+    protected tree: Tree,
+    protected inMutableMode = false,
+    clonedFrom?: ArrayBasicTreeView<ElementType>
+  ) {
     super();
     this._length = this.type.tree_getLength(tree.rootNode);
+
+    if (clonedFrom) {
+      this.leafNodes = clonedFrom.leafNodes;
+      this.allLeafNodesPopulated = clonedFrom.allLeafNodesPopulated;
+    } else {
+      this.leafNodes = [];
+      this.allLeafNodesPopulated = false;
+    }
   }
 
   get length(): number {
@@ -140,6 +153,17 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
     this.dirtyNodes.clear();
     this.dirtyLength = false;
     this.inMutableMode = false;
+  }
+
+  clone(dontTransferCache?: boolean): ArrayBasicTreeView<ElementType> {
+    if (dontTransferCache) {
+      return new ArrayBasicTreeView(this.type, this.tree.clone(), false);
+    } else {
+      const cloned = new ArrayBasicTreeView(this.type, this.tree.clone(), false, dontTransferCache ? undefined : this);
+      this.leafNodes = [];
+      this.allLeafNodesPopulated = false;
+      return cloned;
+    }
   }
 }
 
