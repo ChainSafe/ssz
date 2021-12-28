@@ -1,4 +1,3 @@
-import SHA256 from "@chainsafe/as-sha256";
 import {hash} from "./hash";
 import {zeroNode} from "./zeros";
 

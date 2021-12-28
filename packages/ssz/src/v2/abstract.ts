@@ -70,9 +70,10 @@ export abstract class Type<V> {
 
   abstract hashTreeRoot(value: V): Uint8Array;
 
-  equals(_value1: V, _value2: V): boolean {
-    // TODO
-    return true;
+  equals(value1: V, value2: V): boolean {
+    value1;
+    value2;
+    throw Error("Not implemented");
   }
 
   // JSON support

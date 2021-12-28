@@ -122,7 +122,7 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
   });
 });
 
-describe.only("Tree batch setNodes", () => {
+describe("Tree batch setNodes", () => {
   const testCases: {depth: number; gindexes: number[]}[] = [
     {depth: 1, gindexes: [2]},
     {depth: 1, gindexes: [2, 3]},
@@ -211,40 +211,6 @@ describe.only("Tree batch setNodes", () => {
       }
     });
   }
-
-  it("Should set multiple nodes correctly", () => {
-    const depth = 5;
-    const tree = new Tree(zeroNode(depth));
-    tree.setNodes(
-      [BigInt(18), BigInt(46), BigInt(60)],
-      [new LeafNode(Buffer.alloc(32, 2)), new LeafNode(Buffer.alloc(32, 2)), new LeafNode(Buffer.alloc(32, 2))]
-    );
-    expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
-  });
-
-  it("Should set multiple nodes", () => {
-    const depth = 3;
-    const tree = new Tree(subtreeFillToDepth(new LeafNode(Buffer.alloc(32, 0)), depth));
-
-    for (let i = 8; i < 16; i++) {
-      tree.setNode(BigInt(i), new LeafNode(Buffer.alloc(32, 0)));
-    }
-    for (let i = 1; i < 16; i++) {
-      const node = tree.getNode(BigInt(i));
-      // @ts-ignore
-      node.gindex = i;
-    }
-
-    tree.setNodes(
-      [BigInt(9), BigInt(10), BigInt(11), BigInt(15)],
-      [
-        new LeafNode(Buffer.alloc(32, 109)),
-        new LeafNode(Buffer.alloc(32, 110)),
-        new LeafNode(Buffer.alloc(32, 111)),
-        new LeafNode(Buffer.alloc(32, 115)),
-      ]
-    );
-  });
 });
 
 function getTreeRoots(tree: Tree, maxGindex: number): string[] {

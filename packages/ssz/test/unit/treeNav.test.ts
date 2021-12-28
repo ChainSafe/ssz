@@ -29,24 +29,3 @@ describe("commonDepth", () => {
     return Math.ceil(Math.log2(-~(from ^ to)));
   }
 });
-
-describe("left right bitwise", () => {
-  const n = 250;
-  const d = 8;
-  const bools = [];
-
-  it("with bitstring", () => {
-    n.toString(2);
-    expect;
-    boolNavBitstring(n, d);
-  });
-});
-
-function boolNavBitstring(n: number, d: number): boolean[] {
-  const s = n.toString(2);
-  const bools: boolean[] = [];
-  for (let i = 0; i < d; i++) {
-    bools[i] = s[i] === "1";
-  }
-  return bools;
-}

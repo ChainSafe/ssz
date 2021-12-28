@@ -1,8 +1,8 @@
 import {CompositeType, ContainerType, VectorType, Number64UintType, RootType} from "../../../../src";
-import {zeroHashes} from "../../../../src/util/zeros";
 import {runTypeTestValid} from "../testRunners";
 
 const uint64Type = new Number64UintType();
+const zeroHash = Buffer.alloc(32, 0);
 
 runTypeTestValid({
   typeName: "Vector(Number64UintType)",
@@ -21,7 +21,7 @@ runTypeTestValid({
 runTypeTestValid({
   typeName: "Vector(Root)",
   type: new VectorType({elementType: new RootType({expandedType: {} as CompositeType<any>}), length: 4}),
-  defaultValue: [zeroHashes[0], zeroHashes[0], zeroHashes[0], zeroHashes[0]],
+  defaultValue: [zeroHash, zeroHash, zeroHash, zeroHash],
   values: [
     {
       id: "4 roots",

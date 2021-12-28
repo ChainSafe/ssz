@@ -5,7 +5,7 @@ import {ContainerType} from "../../src/v2/container";
 import {ListBasicType} from "../../src/v2/listBasic";
 import {UintNumberType as UintTypeV2} from "../../src/v2/uint";
 
-describe.only("BasicList", () => {
+describe("BasicList", () => {
   it("edit mutate and transfer", () => {
     const uintBytes = 1;
     const limit = 64;
@@ -61,7 +61,6 @@ describe.only("BasicList", () => {
 describe("Array length", () => {
   const uintBytes = 1;
   const limit = 2 ** 7;
-  const renderUpToGindex = 13;
 
   let serialized: Uint8Array;
   let serializedHex: string; // "0x010203";
@@ -80,6 +79,7 @@ describe("Array length", () => {
     serialized = uint8List.serialize();
     serializedHex = toHexString(serialized);
     rootHex = toHexString(uint8List.hashTreeRoot());
+    serializedHex;
 
     // for (let i = 1; i < renderUpToGindex; i++) {
     //   try {

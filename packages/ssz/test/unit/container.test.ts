@@ -1,7 +1,7 @@
 import {NumberUintType} from "../../src/types/basic/uint";
 import {ContainerType} from "../../src/types/composite/container";
 
-describe.only("Container generator", () => {
+describe("Container generator", () => {
   it("Use define properties", () => {
     const uint32Type = new NumberUintType({byteLength: 4});
     const uint64Type = new NumberUintType({byteLength: 8});
@@ -35,5 +35,8 @@ describe.only("Container generator", () => {
     }
 
     const obj = Object.create(Object.prototype, propertyDescriptors) as ContainerValue;
+
+    containerType;
+    obj;
   });
 });
