@@ -1,4 +1,4 @@
-import {getNodesAtDepth, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, LeafNode, Node, setNodesAtDepth, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -139,11 +139,17 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
       return;
     }
 
-    // TODO: Use fast setNodes() method
+    // TODO: Ensure fast setNodes() method is correct
+    const indexes: number[] = [];
+    const nodes: LeafNode[] = [];
     for (const index of this.dirtyNodes) {
-      const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, this.leafNodes[index]);
+      indexes.push(index);
+      nodes.push(this.leafNodes[index]);
     }
+
+    const chunksNode = this.tree.getNode(BigInt(2));
+    const newChunksNode = setNodesAtDepth(this.type.chunkDepth, chunksNode, indexes, nodes);
+    this.tree.setNode(BigInt(2), newChunksNode);
 
     // Update length if changed
     if (this.dirtyLength) {

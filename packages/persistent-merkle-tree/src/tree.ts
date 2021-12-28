@@ -1,5 +1,5 @@
 import {Gindex, Bit, toGindexBitstring, GindexBitstring, convertGindexToBitstring} from "./gindex";
-import {Node, LeafNode} from "./node";
+import {Node, LeafNode, BranchNode} from "./node";
 import {HashObject} from "@chainsafe/as-sha256";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
@@ -87,6 +87,141 @@ export class Tree {
     }
     const parentNodes = this.getParentNodes(bitstring, expand);
     this.rebindNodeToRoot(bitstring, parentNodes, n);
+  }
+
+  /**
+   * Set multiple nodes in batch, editing and traversing nodes strictly once.
+   * gindexes MUST be sorted in ascending order beforehand. All gindexes must be
+   * at the exact same depth.
+   *
+   * Strategy: for each gindex in `gindexes` navigate to the depth of its parent,
+   * and create a new parent. Then calculate the closest common depth with the next
+   * gindex and navigate upwards creating or caching nodes as necessary. Loop and repeat.
+   */
+  setNodes(gindexes: Gindex[], nodes: Node[]): void {
+    const bitstrings: string[] = [];
+    for (let i = 0; i < gindexes.length; i++) {
+      const gindex = gindexes[i];
+      if (gindex < 1) {
+        throw new Error("Invalid gindex < 1");
+      }
+      bitstrings.push(gindex.toString(2));
+    }
+
+    const oneBigint = BigInt(1);
+    const leftParentNodeStack: (Node | null)[] = [];
+    const parentNodeStack: Node[] = [this.rootNode];
+
+    // depth   gindexes
+    // 0          1
+    // 1        2   3
+    // 2       4 5 6 7
+    // '10' means, at depth 1, node is at the left
+
+    // Ignore first bit "1", then substract 1 to get to the parent
+    const parentDepth = bitstrings[0].length - 2;
+    let depth = 1;
+    let node = this.rootNode;
+
+    for (let i = 0; i < bitstrings.length; i++) {
+      const bitstring = bitstrings[i];
+
+      // Navigate down until parent depth, and store the chain of nodes
+      for (let d = depth; d <= parentDepth; d++) {
+        node = bitstring[d] === "0" ? node.left : node.right;
+        parentNodeStack[d] = node;
+      }
+
+      depth = parentDepth;
+
+      // If this is the left node, check first it the next node is on the right
+      //
+      //   -    If both nodes exist, create new
+      //  / \
+      // x   x
+      //
+      //   -    If only the left node exists, rebindLeft
+      //  / \
+      // x   -
+      //
+      //   -    If this is the right node, only the right node exists, rebindRight
+      //  / \
+      // -   x
+
+      const lastBit = bitstring[parentDepth + 1];
+      if (lastBit === "0") {
+        // Next node is the very next to the right of current node
+        if (gindexes[i] + oneBigint === gindexes[i + 1]) {
+          node = new BranchNode(nodes[i], nodes[i + 1]);
+          // Move pointer one extra forward since node has consumed two nodes
+          i++;
+        } else {
+          node = new BranchNode(nodes[i], node.right);
+        }
+      } else {
+        node = new BranchNode(node.left, nodes[i]);
+      }
+
+      // Here `node` is the new BranchNode at depth `parentDepth`
+
+      // Now climb upwards until finding the common node with the next index
+      // For the last iteration, diffDepth will be 1
+      const diffDepth = findDiffDepth(bitstring, bitstrings[i + 1] || "1");
+      const isLastBitstring = i >= bitstrings.length - 1;
+
+      // When climbing up from a left node there are two possible paths
+      // 1. Go to the right of the parent: Store left node to rebind latter
+      // 2. Go another level up: Will never visit the left node again, so must rebind now
+
+      // 🡼 \     Rebind left only, will never visit this node again
+      // 🡽 /\
+      //
+      //    / 🡽  Rebind left only (same as above)
+      // 🡽 /\
+      //
+      // 🡽 /\ 🡾  Store left node to rebind the entire node when returning
+      //
+      // 🡼 \     Rebind right with left if exists, will never visit this node again
+      //   /\ 🡼
+      //
+      //    / 🡽  Rebind right with left if exists (same as above)
+      //   /\ 🡼
+
+      for (let d = parentDepth; d >= diffDepth; d--) {
+        // If node is on the left, store for latter
+        // If node is on the right merge with stored left node
+        if (bitstring[d] === "0") {
+          if (isLastBitstring || d !== diffDepth) {
+            // If it's last bitstring, bind with parent since it won't navigate to the right anymore
+            // Also, if still has to move upwards, rebind since the node won't be visited anymore
+            node = new BranchNode(node, parentNodeStack[d - 1].right);
+          } else {
+            // Only store the left node if it's at d = diffDepth
+            leftParentNodeStack[d] = node;
+            node = parentNodeStack[d - 1];
+          }
+        } else {
+          const leftNode = leftParentNodeStack[d];
+
+          if (leftNode) {
+            node = new BranchNode(leftNode, node);
+            leftParentNodeStack[d] = null;
+          } else {
+            node = new BranchNode(parentNodeStack[d - 1].left, node);
+          }
+        }
+      }
+
+      if (isLastBitstring) {
+        // Done, set root node
+        this.rootNode = node;
+      } else {
+        // Prepare next loop
+        // Go to the parent of the depth with diff, to switch branches to the right
+        depth = diffDepth;
+        node = parentNodeStack[depth - 1];
+      }
+    }
   }
 
   getRoot(index: Gindex | GindexBitstring): Uint8Array {
@@ -297,6 +432,163 @@ export class Tree {
 }
 
 /**
+ * Set multiple nodes in batch, editing and traversing nodes strictly once.
+ *
+ * - gindexes MUST be sorted in ascending order beforehand.
+ * - All gindexes must be at the exact same depth.
+ * - Depth must be > 0, if 0 just replace the root node.
+ *
+ * Strategy: for each gindex in `gindexes` navigate to the depth of its parent,
+ * and create a new parent. Then calculate the closest common depth with the next
+ * gindex and navigate upwards creating or caching nodes as necessary. Loop and repeat.
+ */
+export function setNodesAtDepth(nodesDepth: number, rootNode: Node, indexes: number[], nodes: Node[]): Node {
+  // depth depthi   gindexes   indexes
+  // 0     1           1          0
+  // 1     0         2   3      0   1
+  // 2     -        4 5 6 7    0 1 2 3
+  // '10' means, at depth 1, node is at the left
+  //
+  // For index N check if the bit at position depthi is set to navigate right at depthi
+  // ```
+  // mask = 1 << depthi
+  // goRight = (N & mask) == mask
+  // ```
+
+  /**
+   * Contiguous filled stack of parent nodes. It get filled in the first descent
+   * Indexed by depthi
+   */
+  const parentNodeStack: Node[] = [];
+
+  /**
+   * Temp stack of left parent nodes, index by depthi.
+   * Node leftParentNodeStack[depthi] is a node at d = depthi - 1, such that:
+   * ```
+   * parentNodeStack[depthi].left = leftParentNodeStack[depthi]
+   * ```
+   */
+  const leftParentNodeStack: (Node | undefined)[] = [];
+
+  // Ignore first bit "1", then substract 1 to get to the parent
+  const depthiRoot = nodesDepth - 1;
+  const depthiParent = 0;
+  let depthi = depthiRoot;
+  let node = rootNode;
+
+  // Insert root node to make the loop below general
+  parentNodeStack[depthiRoot] = rootNode;
+
+  // TODO: Iterate to depth 32 to allow using bit ops
+  // for (; depthi >= 32; depthi--) {
+  //   node = node.left;
+  // }
+
+  for (let i = 0; i < indexes.length; i++) {
+    const index = indexes[i];
+
+    // Navigate down until parent depth, and store the chain of nodes
+    //
+    // Starts from latest common depth, so node is the parent node at `depthi`
+    // When persisting the next node, store at the `d - 1` since its the child of node at `depthi`
+    //
+    // Stops at the level above depthiParent. For the re-binding routing below node must be at depthiParent
+    for (let d = depthi; d > depthiParent; d--) {
+      node = isLeftNode(d, index) ? node.left : node.right;
+      parentNodeStack[d - 1] = node;
+    }
+
+    depthi = depthiParent;
+
+    // If this is the left node, check first it the next node is on the right
+    //
+    //   -    If both nodes exist, create new
+    //  / \
+    // x   x
+    //
+    //   -    If only the left node exists, rebindLeft
+    //  / \
+    // x   -
+    //
+    //   -    If this is the right node, only the right node exists, rebindRight
+    //  / \
+    // -   x
+
+    // d = 0, mask = 1 << d = 1
+    const isLeftLeafNode = (index & 1) !== 1;
+    if (isLeftLeafNode) {
+      // Next node is the very next to the right of current node
+      if (index + 1 === indexes[i + 1]) {
+        node = new BranchNode(nodes[i], nodes[i + 1]);
+        // Move pointer one extra forward since node has consumed two nodes
+        i++;
+      } else {
+        node = new BranchNode(nodes[i], node.right);
+      }
+    } else {
+      node = new BranchNode(node.left, nodes[i]);
+    }
+
+    // Here `node` is the new BranchNode at depthi `depthiParent`
+
+    // Now climb upwards until finding the common node with the next index
+    // For the last iteration, climb to the root at `depthiRoot`
+    const isLastIndex = i >= indexes.length - 1;
+    const diffDepthi = isLastIndex ? depthiRoot : findDiffDepthi(index, indexes[i + 1]);
+
+    // When climbing up from a left node there are two possible paths
+    // 1. Go to the right of the parent: Store left node to rebind latter
+    // 2. Go another level up: Will never visit the left node again, so must rebind now
+
+    // 🡼 \     Rebind left only, will never visit this node again
+    // 🡽 /\
+    //
+    //    / 🡽  Rebind left only (same as above)
+    // 🡽 /\
+    //
+    // 🡽 /\ 🡾  Store left node to rebind the entire node when returning
+    //
+    // 🡼 \     Rebind right with left if exists, will never visit this node again
+    //   /\ 🡼
+    //
+    //    / 🡽  Rebind right with left if exists (same as above)
+    //   /\ 🡼
+
+    for (let d = depthiParent + 1; d <= diffDepthi; d++) {
+      // If node is on the left, store for latter
+      // If node is on the right merge with stored left node
+      if (isLeftNode(d, index)) {
+        if (isLastIndex || d !== diffDepthi) {
+          // If it's last index, bind with parent since it won't navigate to the right anymore
+          // Also, if still has to move upwards, rebind since the node won't be visited anymore
+          node = new BranchNode(node, parentNodeStack[d].right);
+        } else {
+          // Only store the left node if it's at d = diffDepth
+          leftParentNodeStack[d] = node;
+          node = parentNodeStack[d];
+        }
+      } else {
+        const leftNode = leftParentNodeStack[d];
+
+        if (leftNode !== undefined) {
+          node = new BranchNode(leftNode, node);
+          leftParentNodeStack[d] = undefined;
+        } else {
+          node = new BranchNode(parentNodeStack[d].left, node);
+        }
+      }
+    }
+
+    // Prepare next loop
+    // Go to the parent of the depth with diff, to switch branches to the right
+    depthi = diffDepthi;
+  }
+
+  // Done, return new root node
+  return node;
+}
+
+/**
  * Fast read-only iteration
  * In-order traversal of nodes at `depth`
  * starting from the `startIndex`-indexed node
@@ -378,4 +670,50 @@ export function getNodesAtDepth(rootNode: Node, depth: number, startIndex: numbe
   }
 
   return nodes;
+}
+
+function findDiffDepth(bitstringA: GindexBitstring, bitstringB: GindexBitstring): number {
+  for (let i = 1; i < bitstringA.length; i++) {
+    if (bitstringA[i] !== bitstringB[i]) {
+      return i;
+    }
+  }
+  return bitstringA.length;
+}
+
+/**
+ * Supports index up to Number.MAX_SAFE_INTEGER.
+ * In Eth2 case the biggest tree's index is 2**40 (VALIDATOR_REGISTRY_LIMIT)
+ */
+function isLeftNode(depthi: number, index: number): boolean {
+  if (depthi > 31) {
+    // Javascript can only do bitwise ops with 32 bit numbers.
+    // Shifting left 1 by 32 wraps around and becomes 1.
+    // Get the high part of `index` and adjust depthi
+    const indexHi = (index / 2 ** 32) >>> 0;
+    const mask = 1 << (depthi - 32);
+    return (indexHi & mask) !== mask;
+  }
+
+  const mask = 1 << depthi;
+  return (index & mask) !== mask;
+}
+
+/**
+ * depth depthi   gindexes   indexes
+ * 0     1           1          0
+ * 1     0         2   3      0   1
+ * 2     -        4 5 6 7    0 1 2 3
+ *
+ * **Conditions**:
+ * - `from` and `to` must not be equal
+ *
+ * @param from Index
+ * @param to Index
+ */
+function findDiffDepthi(from: number, to: number): number {
+  // (0,0) -> 0 | (0,1) -> 1 | (0,2) -> 2
+  const heighFromLeafs = Math.ceil(Math.log2(-~(from ^ to)));
+  // Must offset by one to match the depthi scale
+  return heighFromLeafs - 1;
 }

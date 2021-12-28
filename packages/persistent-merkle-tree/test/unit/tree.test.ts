@@ -1,7 +1,15 @@
 import {byteArrayToHashObject, HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
 
-import {Tree, zeroNode, LeafNode, subtreeFillToContents, uint8ArrayToHashObject} from "../../src";
+import {
+  Tree,
+  zeroNode,
+  LeafNode,
+  subtreeFillToContents,
+  uint8ArrayToHashObject,
+  subtreeFillToDepth,
+  setNodesAtDepth,
+} from "../../src";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
@@ -113,6 +121,139 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
     expect(tree.getRoot(BigInt(14))).to.deep.equal(zeroNode(0));
   });
 });
+
+describe.only("Tree batch setNodes", () => {
+  const testCases: {depth: number; gindexes: number[]}[] = [
+    {depth: 1, gindexes: [2]},
+    {depth: 1, gindexes: [2, 3]},
+    {depth: 2, gindexes: [4]},
+    {depth: 2, gindexes: [6]},
+    {depth: 2, gindexes: [4, 6]},
+    {depth: 3, gindexes: [9]},
+    {depth: 3, gindexes: [12]},
+    {depth: 3, gindexes: [9, 10]},
+    {depth: 3, gindexes: [13, 14]},
+    {depth: 3, gindexes: [9, 10, 13, 14]},
+    {depth: 3, gindexes: [8, 9, 10, 11, 12, 13, 14, 15]},
+    {depth: 4, gindexes: [16]},
+    {depth: 4, gindexes: [16, 17]},
+    {depth: 4, gindexes: [16, 20]},
+    {depth: 4, gindexes: [16, 20, 30]},
+    {depth: 4, gindexes: [16, 20, 30, 31]},
+    {depth: 5, gindexes: [33]},
+    {depth: 5, gindexes: [33, 34]},
+    {depth: 10, gindexes: [1024, 1061, 1098, 1135, 1172, 1209, 1246, 1283]},
+    {depth: 40, gindexes: [1157505940782, 1349082402477, 1759777921993]},
+  ];
+
+  for (const {depth, gindexes} of testCases) {
+    const id = `depth ${depth} ${JSON.stringify(gindexes)}`;
+    // Prepare tree
+    const treeOk = new Tree(zeroNode(depth));
+    const tree = new Tree(zeroNode(depth));
+    const tree2 = new Tree(zeroNode(depth));
+    const gindexesBigint = gindexes.map((gindex) => BigInt(gindex));
+    const index0 = 2 ** depth;
+    const indexes = gindexes.map((gindex) => gindex - index0);
+
+    // Run correct setNode() method for each and grab all tree roots
+    for (let i = 0; i < gindexesBigint.length; i++) {
+      treeOk.setNode(gindexesBigint[i], new LeafNode(Buffer.alloc(32, gindexes[i])));
+    }
+
+    // For the large test cases, only compare the rootNode root (gindex 1)
+    const maxGindex = depth > 6 ? 1 : 2 ** (depth + 1);
+    const rootsOk = getTreeRoots(treeOk, maxGindex);
+
+    it(`${id} - setNodes()`, () => {
+      tree.setNodes(
+        gindexesBigint,
+        gindexes.map((nodeValue) => new LeafNode(Buffer.alloc(32, nodeValue)))
+      );
+      const roots = getTreeRoots(tree, maxGindex);
+
+      try {
+        expect(roots).to.deep.equal(rootsOk);
+      } catch (e) {
+        if (process.env.DEBUG) {
+          // On error print all roots for easier debugging
+          console.log(" ", " ", "rootsOk".padEnd(64), "roots");
+          for (let i = 1; i < rootsOk.length; i++) {
+            console.log(i, rootsOk[i] !== roots[i] ? "x" : " ", rootsOk[i], roots[i]);
+          }
+        }
+        throw e;
+      }
+    });
+
+    it(`${id} - setNodesAtDepth()`, () => {
+      const chunksNode = tree.rootNode;
+      const newChunksNode = setNodesAtDepth(
+        depth,
+        chunksNode,
+        indexes,
+        gindexes.map((nodeValue) => new LeafNode(Buffer.alloc(32, nodeValue)))
+      );
+      tree.rootNode = newChunksNode;
+      const roots = getTreeRoots(tree, maxGindex);
+
+      try {
+        expect(roots).to.deep.equal(rootsOk);
+      } catch (e) {
+        if (process.env.DEBUG) {
+          // On error print all roots for easier debugging
+          console.log(" ", " ", "rootsOk".padEnd(64), "roots");
+          for (let i = 1; i < rootsOk.length; i++) {
+            console.log(i, rootsOk[i] !== roots[i] ? "x" : " ", rootsOk[i], roots[i]);
+          }
+        }
+        throw e;
+      }
+    });
+  }
+
+  it("Should set multiple nodes correctly", () => {
+    const depth = 5;
+    const tree = new Tree(zeroNode(depth));
+    tree.setNodes(
+      [BigInt(18), BigInt(46), BigInt(60)],
+      [new LeafNode(Buffer.alloc(32, 2)), new LeafNode(Buffer.alloc(32, 2)), new LeafNode(Buffer.alloc(32, 2))]
+    );
+    expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
+  });
+
+  it("Should set multiple nodes", () => {
+    const depth = 3;
+    const tree = new Tree(subtreeFillToDepth(new LeafNode(Buffer.alloc(32, 0)), depth));
+
+    for (let i = 8; i < 16; i++) {
+      tree.setNode(BigInt(i), new LeafNode(Buffer.alloc(32, 0)));
+    }
+    for (let i = 1; i < 16; i++) {
+      const node = tree.getNode(BigInt(i));
+      // @ts-ignore
+      node.gindex = i;
+    }
+
+    tree.setNodes(
+      [BigInt(9), BigInt(10), BigInt(11), BigInt(15)],
+      [
+        new LeafNode(Buffer.alloc(32, 109)),
+        new LeafNode(Buffer.alloc(32, 110)),
+        new LeafNode(Buffer.alloc(32, 111)),
+        new LeafNode(Buffer.alloc(32, 115)),
+      ]
+    );
+  });
+});
+
+function getTreeRoots(tree: Tree, maxGindex: number): string[] {
+  const roots: string[] = [];
+  for (let i = 1; i < maxGindex; i++) {
+    roots[i] = toHex(tree.getNode(BigInt(i)).root);
+  }
+  return roots;
+}
 
 function toHex(bytes: Buffer | Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
