@@ -1,8 +1,7 @@
-import {HashObject} from "@chainsafe/as-sha256";
 import {itBench} from "@dapplion/benchmark";
 import {getNodeH, LeafNode} from "../../src/node";
 
-describe("packedRootsBytesToLeafNodes", () => {
+describe("HashObject LeafNode", () => {
   // Number of new nodes created in processAttestations() on average
   const nodesPerSlot = 250_000 / 32;
 
@@ -35,9 +34,9 @@ describe("packedRootsBytesToLeafNodes", () => {
     }
   });
 
-  // itBench(`new LeafNode() x${nodesPerSlot}`, () => {
-  //   for (let i = 0; i < nodesPerSlot; i++) {
-  //     new LeafNode(zeroLeafNode);
-  //   }
-  // });
+  itBench(`new LeafNode() x${nodesPerSlot}`, () => {
+    for (let i = 0; i < nodesPerSlot; i++) {
+      new LeafNode(zeroLeafNode);
+    }
+  });
 });

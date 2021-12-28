@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {packedRootsBytesToLeafNodes, packedRootsBytesToLeafNodesDV} from "../../src/packedNode";
+import {packedRootsBytesToLeafNodes} from "../../src/packedNode";
 
 describe("packedRootsBytesToLeafNodes", () => {
   const bytes = 4 * 1000;
@@ -11,12 +11,8 @@ describe("packedRootsBytesToLeafNodes", () => {
     const data = new Uint8Array(bytes + offset);
     data.set(Buffer.alloc(bytes, 0xdd));
 
-    // itBench("packedRootsBytesToLeafNodes offset 2 len 128", () => {
-    //   packedRootsBytesToLeafNodes(data, start, end);
-    // });
-
-    itBench(`packedRootsBytesToLeafNodesDV bytes ${bytes} offset ${offset} `, () => {
-      packedRootsBytesToLeafNodesDV(data, start, end);
+    itBench(`packedRootsBytesToLeafNodes bytes ${bytes} offset ${offset} `, () => {
+      packedRootsBytesToLeafNodes(data, start, end);
     });
   }
 });
