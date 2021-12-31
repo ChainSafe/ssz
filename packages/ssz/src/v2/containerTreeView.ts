@@ -5,7 +5,7 @@ import {BasicType, CompositeType, TreeView, Type, ValueOf} from "./abstract";
 
 export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = CompositeType<ValueOfFields<Fields>> & {
   readonly fields: Fields;
-  readonly fieldsEntries: [keyof Fields, Fields[keyof Fields]][];
+  readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
 };
 
 type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
@@ -44,7 +44,7 @@ class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeVi
     // TODO: Use fast setNodes() method
     for (const i of this.dirtyNodes) {
       const gindex = this.type.getGindexBitStringAtChunkIndex(i);
-      if (this.type.fieldsEntries[i][1].isBasic) {
+      if (this.type.fieldsEntries[i].fieldType.isBasic) {
         this.tree.setNode(gindex, this.leafNodes[i]);
       } else {
         this.views[i].commit();
@@ -55,6 +55,24 @@ class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeVi
     this.dirtyNodes.clear();
     this.inMutableMode = false;
   }
+
+  protected serializedSize(): number {
+    let totalSize = 0;
+
+    for (let i = 0; i < this.type.fieldsEntries.length; i++) {
+      const {fieldName, fieldType} = this.type.fieldsEntries[i];
+      if (fieldType.fixedLen === null) {
+        // Offset (4 bytes) + size
+        // Re-use the getter logic defined `Object.defineProperty()` below.
+        // Will get the cached view if any otherwise create a new view.
+        totalSize += 4 + (this as unknown as Record<keyof Fields, TreeView>)[fieldName]["serializedSize"]();
+      } else {
+        totalSize += fieldType.fixedLen;
+      }
+    }
+
+    return totalSize;
+  }
 }
 
 export function getContainerTreeViewClass<Fields extends Record<string, Type<any>>>(
@@ -64,7 +82,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
 
   // Dynamically define prototype methods
   for (let i = 0; i < type.fieldsEntries.length; i++) {
-    const [fieldName, fieldType] = type.fieldsEntries[i];
+    const {fieldName, fieldType} = type.fieldsEntries[i];
     const gindex = type.getGindexBitStringAtChunkIndex(i);
 
     // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).

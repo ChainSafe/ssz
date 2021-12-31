@@ -8,7 +8,7 @@ import {getContainerTreeViewClass} from "./containerTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
-type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
+export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 type ViewOfFields<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K]["isBasic"] extends true
@@ -44,7 +44,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   readonly fieldIndex: Record<keyof Fields, number>;
 
   // Precalculated data for faster serdes
-  readonly fieldsEntries: [keyof Fields, Fields[keyof Fields]][];
+  readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
   readonly isFixedLen: boolean[];
   readonly fieldRangesFixedLen: BytesRange[];
   /** Offsets position relative to start of serialized Container. Length may not equal field count. */
@@ -72,7 +72,11 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     this.maxLen = maxLen;
 
     // Precalculated data for faster serdes
-    this.fieldsEntries = Array.from(Object.entries(fields)) as [keyof Fields, Fields[keyof Fields]][];
+    this.fieldsEntries = [];
+    for (const fieldName of Object.keys(fields) as (keyof Fields)[]) {
+      this.fieldsEntries.push({fieldName, fieldType: this.fields[fieldName]});
+    }
+
     const {isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd, fixedLen} = precomputeSerdesData(fields);
     this.isFixedLen = isFixedLen;
     this.fieldRangesFixedLen = fieldRangesFixedLen;
@@ -83,7 +87,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     // Reverse indexing: fieldName -> index in fields
     this.fieldIndex = {} as Record<keyof Fields, number>;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      this.fieldIndex[this.fieldsEntries[i][0]] = i;
+      this.fieldIndex[this.fieldsEntries[i].fieldName] = i;
     }
 
     this.TreeView = getContainerTreeViewClass(this);
@@ -112,7 +116,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   struct_serializedSize(value: ValueOfFields<Fields>): number {
     let totalSize = 0;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const [fieldName, fieldType] = this.fieldsEntries[i];
+      const {fieldName, fieldType} = this.fieldsEntries[i];
       // Offset (4 bytes) + size
       totalSize +=
         fieldType.fixedLen === null ? 4 + fieldType.struct_serializedSize(value[fieldName]) : fieldType.fixedLen;
@@ -125,7 +129,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     const value = {} as ValueOfFields<Fields>;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const [fieldName, fieldType] = this.fieldsEntries[i];
+      const {fieldName, fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
       try {
         value[fieldName] = fieldType.struct_deserializeFromBytes(
@@ -146,8 +150,9 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     let variableIndex = this.fixedEnd;
 
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
+
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const [fieldName, fieldType] = this.fieldsEntries[i];
+      const {fieldName, fieldType} = this.fieldsEntries[i];
       if (fieldType.fixedLen === null) {
         // write offset
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
@@ -165,7 +170,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     let totalSize = 0;
     const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const fieldType = this.fieldsEntries[i][1];
+      const {fieldType} = this.fieldsEntries[i];
       const node = nodes[i];
       // Offset (4 bytes) + size
       totalSize += fieldType.fixedLen === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedLen;
@@ -178,7 +183,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     const nodes: Node[] = [];
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const fieldType = this.fieldsEntries[i][1];
+      const {fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
       nodes.push(fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end));
     }
@@ -191,10 +196,10 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     let variableIndex = this.fixedEnd;
 
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
-    const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
+    const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length);
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const fieldType = this.fieldsEntries[i][1];
+      const {fieldType} = this.fieldsEntries[i];
       const node = nodes[i];
       if (fieldType.fixedLen === null) {
         // write offset
@@ -218,8 +223,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     const roots = new Uint8Array(32 * this.fieldsEntries.length);
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const fieldName = this.fieldsEntries[i][0];
-      const fieldType = this.fieldsEntries[i][1];
+      const {fieldName, fieldType} = this.fieldsEntries[i];
       const root = fieldType.hashTreeRoot(struct[fieldName]);
       roots.set(root, 32 * i);
     }
@@ -237,8 +241,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     const value = {} as ValueOfFields<Fields>;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const fieldName = this.fieldsEntries[i][0];
-      const fieldType = this.fieldsEntries[i][1];
+      const {fieldName, fieldType} = this.fieldsEntries[i];
 
       const jsonKey = toExpectedCase(fieldName as string, this.opts?.expectedCase, this.opts?.casingMap);
       const jsonValue = (data as Record<string, unknown>)[jsonKey];
