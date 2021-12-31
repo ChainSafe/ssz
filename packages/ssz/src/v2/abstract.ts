@@ -6,7 +6,6 @@ import {merkleizeSingleBuff} from "../util/merkleize";
 export type ValueOf<T extends Type<any>> = T["defaultValue"];
 // type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
 
-export type ViewOf<T extends Type<any>> = T["isBasic"] extends true ? T["defaultValue"] : ReturnType<T["getView"]>;
 export type ViewOfComposite<T extends CompositeType<any>> = ReturnType<T["getView"]>;
 
 const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
@@ -23,8 +22,6 @@ export abstract class Type<V> {
   abstract readonly fixedLen: number | null;
   abstract readonly minLen: number;
   abstract readonly maxLen: number;
-
-  abstract getView(tree: Tree, inMutableMode?: boolean): unknown;
 
   getGindexBitStringAtChunkIndex(index: number): GindexBitstring {
     return toGindexBitstring(this.depth, index);
@@ -49,21 +46,6 @@ export abstract class Type<V> {
 
   deserialize(data: Uint8Array): V {
     return this.struct_deserializeFromBytes(data, 0, data.length);
-  }
-
-  deserializeToTreeView(data: Uint8Array): ReturnType<this["getView"]> {
-    const node = this.tree_deserializeFromBytes(data, 0, data.length);
-    return this.getView(new Tree(node)) as ReturnType<this["getView"]>;
-  }
-
-  toTreeViewFromStruct(value: V): ReturnType<this["getView"]> {
-    // Un-performant path but useful for testing and prototyping
-    return this.deserializeToTreeView(this.serialize(value));
-  }
-
-  toStructFromTreeView(view: ReturnType<this["getView"]>): V {
-    // Un-performant path but useful for testing and prototyping
-    return this.deserialize((view as TreeView).serialize());
   }
 
   // Merkleization
@@ -123,6 +105,23 @@ export abstract class CompositeType<V> extends Type<V> {
     private readonly cachePermanentRootStruct?: boolean
   ) {
     super();
+  }
+
+  abstract getView(tree: Tree, inMutableMode?: boolean): unknown;
+
+  deserializeToTreeView(data: Uint8Array): ReturnType<this["getView"]> {
+    const node = this.tree_deserializeFromBytes(data, 0, data.length);
+    return this.getView(new Tree(node)) as ReturnType<this["getView"]>;
+  }
+
+  toTreeViewFromStruct(value: V): ReturnType<this["getView"]> {
+    // Un-performant path but useful for testing and prototyping
+    return this.deserializeToTreeView(this.serialize(value));
+  }
+
+  toStructFromTreeView(view: ReturnType<this["getView"]>): V {
+    // Un-performant path but useful for testing and prototyping
+    return this.deserialize((view as TreeView).serialize());
   }
 
   hashTreeRoot(value: V): Uint8Array {

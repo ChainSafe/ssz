@@ -11,7 +11,11 @@ export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = Com
 type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 type ViewOfFields<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K]["isBasic"] extends true ? Fields[K]["defaultValue"] : ReturnType<Fields[K]["getView"]>;
+  [K in keyof Fields]: Fields[K] extends CompositeType<any>
+    ? // If composite, return view. MAY propagate changes updwards
+      ReturnType<Fields[K]["getView"]>
+    : // If basic, return struct value. Will NOT propagate changes upwards
+      Fields[K]["defaultValue"];
 };
 
 type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeView;

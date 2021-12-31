@@ -1,5 +1,5 @@
 import {getNodesAtDepth, LeafNode, Node, setNodesAtDepth, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {BasicType, CompositeType, TreeView, ValueOf, ViewOf, ViewOfComposite} from "./abstract";
+import {BasicType, CompositeType, TreeView, ValueOf, ViewOfComposite} from "./abstract";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -265,7 +265,7 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
     return view as ViewOfComposite<ElementType>;
   }
 
-  set(index: number, view: ViewOf<ElementType>): void {
+  set(index: number, view: ViewOfComposite<ElementType>): void {
     this.views[index] = view as TreeView;
 
     // Commit immediately
@@ -274,7 +274,7 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
       this.dirtyNodes.add(index);
     } else {
       const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-      this.tree.setNode(gindex, view.node);
+      this.tree.setNode(gindex, (view as TreeView).node);
     }
   }
 
@@ -355,7 +355,7 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
 }
 
 export class ListCompositeTreeView<ElementType extends CompositeType<any>> extends ArrayCompositeTreeView<ElementType> {
-  push(view: ViewOf<ElementType>): void {
+  push(view: ViewOfComposite<ElementType>): void {
     this.views[this.length] = view as TreeView;
 
     const length = this.length;
@@ -366,7 +366,7 @@ export class ListCompositeTreeView<ElementType extends CompositeType<any>> exten
     } else {
       // Commit immediately
       const gindex = this.type.getGindexBitStringAtChunkIndex(length);
-      this.tree.setNode(gindex, view.node, true);
+      this.tree.setNode(gindex, (view as TreeView).node, true);
     }
 
     this._length = length + 1;
