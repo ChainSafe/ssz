@@ -153,9 +153,18 @@ export abstract class TreeView {
   abstract readonly node: Node;
   abstract readonly type: Type<any>;
 
+  protected abstract serializedSize(): number;
+
   serialize(): Uint8Array {
-    const output = new Uint8Array(this.type.tree_serializedSize(this.node));
+    // Ensure all transient changes are commited to the root node
+    this.commit();
+
+    const output = new Uint8Array(this.serializedSize());
     this.type.tree_serializeToBytes(output, 0, this.node);
     return output;
+  }
+
+  hashTreeRoot(): Uint8Array {
+    return this.node.root;
   }
 }
