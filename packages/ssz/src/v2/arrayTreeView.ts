@@ -147,6 +147,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
       nodes.push(this.leafNodes[index]);
     }
 
+    // TODO: Generalize for Vectors
     const chunksNode = this.tree.getNode(BigInt(2));
     const newChunksNode = setNodesAtDepth(this.type.chunkDepth, chunksNode, indexes, nodes);
     this.tree.setNode(BigInt(2), newChunksNode);
@@ -170,6 +171,12 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
       this.allLeafNodesPopulated = false;
       return cloned;
     }
+  }
+
+  // Helpers for TreeView
+
+  protected serializedSize(): number {
+    return this.length * this.type.elementType.byteLength;
   }
 }
 
@@ -210,14 +217,28 @@ export class ListBasicTreeView<ElementType extends BasicType<any>> extends Array
 }
 
 export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> extends TreeView {
-  protected readonly views: TreeView[] = [];
+  protected views: TreeView[];
   protected readonly dirtyNodes = new Set<number>();
   protected _length: number;
   protected dirtyLength = false;
+  private allViewsPopulated: boolean;
 
-  constructor(readonly type: ArrayCompositeType<ElementType>, protected tree: Tree, protected inMutableMode = false) {
+  constructor(
+    readonly type: ArrayCompositeType<ElementType>,
+    protected tree: Tree,
+    protected inMutableMode = false,
+    clonedFrom?: ArrayCompositeTreeView<ElementType>
+  ) {
     super();
     this._length = this.type.tree_getLength(tree.rootNode);
+
+    if (clonedFrom) {
+      this.views = clonedFrom.views;
+      this.allViewsPopulated = clonedFrom.allViewsPopulated;
+    } else {
+      this.views = [];
+      this.allViewsPopulated = false;
+    }
   }
 
   get length(): number {
@@ -257,7 +278,20 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
     }
   }
 
-  // TODO: Implement getAll if it's really necessary
+  getAll(): ViewOfComposite<ElementType>[] {
+    if (!this.allViewsPopulated) {
+      for (let i = 0; i < this.length; i++) {
+        if (this.views[i] === undefined) {
+          const gindex = this.type.getGindexBitStringAtChunkIndex(i);
+          const subtree = this.tree.getSubtree(gindex);
+          this.views[i] = this.type.elementType.getView(subtree, this.inMutableMode) as TreeView;
+        }
+      }
+      this.allViewsPopulated = true;
+    }
+
+    return this.views as ViewOfComposite<ElementType>[];
+  }
 
   toMutable(): void {
     this.inMutableMode = true;
@@ -282,6 +316,41 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
     this.dirtyNodes.clear();
     this.dirtyLength = false;
     this.inMutableMode = false;
+  }
+
+  clone(dontTransferCache?: boolean): ArrayCompositeTreeView<ElementType> {
+    if (dontTransferCache) {
+      return new ArrayCompositeTreeView(this.type, this.tree.clone(), false);
+    } else {
+      const cloned = new ArrayCompositeTreeView(
+        this.type,
+        this.tree.clone(),
+        false,
+        dontTransferCache ? undefined : this
+      );
+      this.views = [];
+      this.allViewsPopulated = false;
+      return cloned;
+    }
+  }
+
+  // Helpers for TreeView
+
+  protected serializedSize(): number {
+    // Variable Length
+    if (this.type.elementType.fixedLen === null) {
+      let size = 0;
+      const views = this.getAll();
+      for (let i = 0; i < views.length; i++) {
+        size += 4 + (views[i] as TreeView)["serializedSize"]();
+      }
+      return size;
+    }
+
+    // Fixed length
+    else {
+      return length * this.type.elementType.fixedLen;
+    }
   }
 }
 
