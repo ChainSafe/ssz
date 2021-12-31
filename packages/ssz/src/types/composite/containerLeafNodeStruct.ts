@@ -58,7 +58,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
   // struct_convertToJson
 
   struct_convertToTree(value: T): Tree {
-    const node = new BranchNodeStruct(this, value);
+    const node = new BranchNodeStruct(super.struct_convertToTree.bind(this), value);
     return new Tree(node);
   }
 
@@ -67,7 +67,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
   // bytes_getVariableOffsets
 
   tree_defaultNode(): Node {
-    return new BranchNodeStruct(this, this.struct_defaultValue());
+    return new BranchNodeStruct(super.struct_convertToTree.bind(this), this.struct_defaultValue());
   }
 
   tree_convertToStruct(target: Tree): T {
@@ -78,7 +78,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Tree {
     const value = this.struct_deserializeFromBytes(data, start, end);
-    const node = new BranchNodeStruct(this, value);
+    const node = new BranchNodeStruct(super.struct_convertToTree.bind(this), value);
     return new Tree(node);
   }
 
@@ -100,7 +100,7 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
 
     // TODO: Should this check for valid field name? Benchmark the cost
     const newNodeValue = {...prevNodeValue, [property]: value} as T;
-    target.rootNode = new BranchNodeStruct(this, newNodeValue);
+    target.rootNode = new BranchNodeStruct(super.struct_convertToTree.bind(this), newNodeValue);
 
     return true;
   }
@@ -144,13 +144,13 @@ export class ContainerLeafNodeStructType<T extends ObjectLike = ObjectLike> exte
  * expensive because the tree has to be recreated every time.
  */
 export class BranchNodeStruct<T> extends Node {
-  constructor(readonly type: ContainerLeafNodeStructType<T>, readonly value: T) {
+  constructor(private readonly valueToTree: (value: T) => Tree, readonly value: T) {
     super();
   }
 
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
-      const tree = this.type.toFullTree(this.value);
+      const tree = this.valueToTree(this.value);
       super.applyHash(tree.rootNode.rootHashObject);
     }
     return this;
@@ -165,12 +165,12 @@ export class BranchNodeStruct<T> extends Node {
   }
 
   get left(): Node {
-    const tree = this.type.toFullTree(this.value);
+    const tree = this.valueToTree(this.value);
     return tree.rootNode.left;
   }
 
   get right(): Node {
-    const tree = this.type.toFullTree(this.value);
+    const tree = this.valueToTree(this.value);
     return tree.rootNode.right;
   }
 
