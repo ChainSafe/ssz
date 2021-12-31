@@ -21,8 +21,8 @@ import {ListCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class ListCompositeType<ElementType extends CompositeType<any>>
-  extends CompositeType<ValueOf<ElementType>[]>
+export class ListCompositeType<ElementType extends CompositeType<any, any>>
+  extends CompositeType<ValueOf<ElementType>[], ListCompositeTreeView<ElementType>>
   implements ArrayCompositeType<ElementType>
 {
   // Immutable characteristics

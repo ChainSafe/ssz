@@ -7,9 +7,26 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString} from "../util/byteArray";
-import {CompositeType} from "./abstract";
+import {CompositeType, TreeView} from "./abstract";
 
 export type ByteVector = Uint8Array;
+
+/**
+ * TODO
+ */
+export class ByteVectorTreeView extends TreeView {
+  // eslint-disable-next-line
+  node = null as any;
+  // eslint-disable-next-line
+  type = null as any;
+  // eslint-disable-next-line
+  commit(): void {}
+  // eslint-disable-next-line
+  toMutable(): void {}
+  protected serializedSize(): number {
+    return 0;
+  }
+}
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -27,7 +44,7 @@ export type ByteVector = Uint8Array;
  * This BitList implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
-export class ByteVectorType extends CompositeType<ByteVector> {
+export class ByteVectorType extends CompositeType<ByteVector, ByteVectorTreeView> {
   // Immutable characteristics
   protected readonly maxChunkCount: number;
   readonly chunkCount: number;
@@ -51,14 +68,16 @@ export class ByteVectorType extends CompositeType<ByteVector> {
     return new Uint8Array(this.fixedLen);
   }
 
-  getView(tree: Tree): ByteVector {
+  getView(tree: Tree): ByteVectorTreeView {
     // TODO: Develop BitListTreeView
     const byteLen = this.fixedLen;
     const nodes = getNodesAtDepth(tree.rootNode, this.depth, 0, this.chunkCount);
     const uint8Array = new Uint8Array(byteLen);
     packedNodeRootsToBytes(uint8Array, 0, byteLen, nodes);
 
-    return uint8Array;
+    // TODO
+    // return uint8Array;
+    return new ByteVectorTreeView();
   }
 
   // Serialization + deserialization

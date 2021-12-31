@@ -6,7 +6,7 @@ import {merkleizeSingleBuff} from "../util/merkleize";
 export type ValueOf<T extends Type<any>> = T["defaultValue"];
 // type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
 
-export type ViewOfComposite<T extends CompositeType<any>> = ReturnType<T["getView"]>;
+export type ViewOfComposite<T extends CompositeType<any, TreeView>> = ReturnType<T["getView"]>;
 
 const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
 
@@ -94,7 +94,7 @@ export abstract class BasicType<V> extends Type<V> {
   abstract setValueToPackedNode(leafNode: LeafNode, index: number, value: V): void;
 }
 
-export abstract class CompositeType<V> extends Type<V> {
+export abstract class CompositeType<V, TV extends TreeView> extends Type<V> {
   readonly isBasic = false;
 
   constructor(
@@ -107,21 +107,21 @@ export abstract class CompositeType<V> extends Type<V> {
     super();
   }
 
-  abstract getView(tree: Tree, inMutableMode?: boolean): unknown;
+  abstract getView(tree: Tree, inMutableMode?: boolean): TV;
 
-  deserializeToTreeView(data: Uint8Array): ReturnType<this["getView"]> {
+  deserializeToTreeView(data: Uint8Array): TV {
     const node = this.tree_deserializeFromBytes(data, 0, data.length);
-    return this.getView(new Tree(node)) as ReturnType<this["getView"]>;
+    return this.getView(new Tree(node));
   }
 
-  toTreeViewFromStruct(value: V): ReturnType<this["getView"]> {
+  toTreeViewFromStruct(value: V): TV {
     // Un-performant path but useful for testing and prototyping
     return this.deserializeToTreeView(this.serialize(value));
   }
 
-  toStructFromTreeView(view: ReturnType<this["getView"]>): V {
+  toStructFromTreeView(view: TV): V {
     // Un-performant path but useful for testing and prototyping
-    return this.deserialize((view as TreeView).serialize());
+    return this.deserialize(view.serialize());
   }
 
   hashTreeRoot(value: V): Uint8Array {

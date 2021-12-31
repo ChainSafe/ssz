@@ -3,7 +3,10 @@ import {BasicType, CompositeType, TreeView, ValueOf, ViewOfComposite} from "./ab
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export type ArrayBasicType<ElementType extends BasicType<any>> = CompositeType<ValueOf<ElementType>[]> & {
+export type ArrayBasicType<ElementType extends BasicType<any>> = CompositeType<
+  ValueOf<ElementType>[],
+  ArrayBasicTreeView<ElementType>
+> & {
   readonly elementType: ElementType;
   readonly itemsPerChunk: number;
   readonly chunkDepth: number;
@@ -12,7 +15,10 @@ export type ArrayBasicType<ElementType extends BasicType<any>> = CompositeType<V
   tree_getChunksNode(node: Node): Node;
 };
 
-export type ArrayCompositeType<ElementType extends CompositeType<any>> = CompositeType<ValueOf<ElementType>[]> & {
+export type ArrayCompositeType<ElementType extends CompositeType<any, any>> = CompositeType<
+  ValueOf<ElementType>[],
+  ArrayCompositeTreeView<ElementType>
+> & {
   readonly elementType: ElementType;
   tree_getLength(node: Node): number;
   tree_setLength(tree: Tree, length: number): void;
@@ -216,7 +222,7 @@ export class ListBasicTreeView<ElementType extends BasicType<any>> extends Array
   }
 }
 
-export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> extends TreeView {
+export class ArrayCompositeTreeView<ElementType extends CompositeType<any, any>> extends TreeView {
   protected views: TreeView[];
   protected readonly dirtyNodes = new Set<number>();
   protected _length: number;
@@ -354,7 +360,9 @@ export class ArrayCompositeTreeView<ElementType extends CompositeType<any>> exte
   }
 }
 
-export class ListCompositeTreeView<ElementType extends CompositeType<any>> extends ArrayCompositeTreeView<ElementType> {
+export class ListCompositeTreeView<
+  ElementType extends CompositeType<any, any>
+> extends ArrayCompositeTreeView<ElementType> {
   push(view: ViewOfComposite<ElementType>): void {
     this.views[this.length] = view as TreeView;
 

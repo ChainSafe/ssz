@@ -9,7 +9,7 @@ import {
 import {maxChunksToDepth} from "../util/tree";
 import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
-import {BitArray} from "./bitArrayTreeView";
+import {BitArray, BitArrayTreeView} from "./bitArrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -27,7 +27,7 @@ import {BitArray} from "./bitArrayTreeView";
  * This BitList implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
-export class BitVectorType extends CompositeType<BitArray> {
+export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView> {
   // Immutable characteristics
   protected readonly maxChunkCount: number;
   readonly chunkCount: number;
@@ -68,14 +68,16 @@ export class BitVectorType extends CompositeType<BitArray> {
     return new BitArray(new Uint8Array(this.fixedLen), this.lengthBits);
   }
 
-  getView(tree: Tree): BitArray {
+  getView(tree: Tree): BitArrayTreeView {
     // TODO: Develop BitListTreeView
     const byteLen = this.fixedLen;
     const nodes = getNodesAtDepth(tree.rootNode, this.depth, 0, this.chunkCount);
     const uint8Array = new Uint8Array(byteLen);
     packedNodeRootsToBytes(uint8Array, 0, byteLen, nodes);
 
-    return new BitArray(uint8Array, this.lengthBits);
+    // TODO
+    // return new BitArray(uint8Array, this.lengthBits);
+    return new BitArrayTreeView();
   }
 
   // Serialization + deserialization

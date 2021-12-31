@@ -150,7 +150,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
 // Composite
 ////////////
 
-export function struct_serializedSizeArrayComposite<ElementType extends CompositeType<any>>(
+export function struct_serializedSizeArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   value: ValueOf<ElementType>[],
   arrayProps: ArrayProps
@@ -163,7 +163,7 @@ export function struct_serializedSizeArrayComposite<ElementType extends Composit
   return totalSize;
 }
 
-export function struct_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any>>(
+export function struct_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   data: Uint8Array,
   start: number,
@@ -188,7 +188,7 @@ export function struct_deserializeFromBytesArrayComposite<ElementType extends Co
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function struct_serializeToBytesArrayComposite<ElementType extends CompositeType<any>>(
+export function struct_serializeToBytesArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   length: number,
   output: Uint8Array,
@@ -220,7 +220,7 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function tree_serializedSizeArrayComposite<ElementType extends CompositeType<any>>(
+export function tree_serializedSizeArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   length: number,
   depth: number,
@@ -243,7 +243,7 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
   }
 }
 
-export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any>>(
+export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   depth: number,
   data: Uint8Array,
@@ -278,7 +278,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function tree_serializeToBytesArrayComposite<ElementType extends CompositeType<any>>(
+export function tree_serializeToBytesArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   length: number,
   depth: number,
@@ -315,7 +315,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function struct_getRootsArrayComposite<ElementType extends CompositeType<any>>(
+export function struct_getRootsArrayComposite<ElementType extends CompositeType<any, any>>(
   elementType: ElementType,
   length: number,
   value: ValueOf<ElementType>[]

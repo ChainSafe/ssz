@@ -3,7 +3,10 @@ import {BasicType, CompositeType, TreeView, Type, ValueOf} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
-export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = CompositeType<ValueOfFields<Fields>> & {
+export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = CompositeType<
+  ValueOfFields<Fields>,
+  ContainerTreeViewType<Fields>
+> & {
   readonly fields: Fields;
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
 };
@@ -11,7 +14,7 @@ export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = Com
 type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 type ViewOfFields<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any>
+  [K in keyof Fields]: Fields[K] extends CompositeType<any, any>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getView"]>
     : // If basic, return struct value. Will NOT propagate changes upwards
@@ -141,7 +144,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else {
-      const fieldTypeComposite = fieldType as unknown as CompositeType<any>;
+      const fieldTypeComposite = fieldType as unknown as CompositeType<any, TreeView>;
       Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
@@ -150,7 +153,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
           let view = this.views[i];
           if (view === undefined) {
             const subtree = this.tree.getSubtree(gindex);
-            view = fieldTypeComposite.getView(subtree, this.inMutableMode) as TreeView;
+            view = fieldTypeComposite.getView(subtree, this.inMutableMode);
             this.views[i] = view;
           }
 

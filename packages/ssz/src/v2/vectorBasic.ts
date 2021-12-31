@@ -18,7 +18,7 @@ import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class VectorBasicType<ElementType extends BasicType<any>>
-  extends CompositeType<ValueOf<ElementType>[]>
+  extends CompositeType<ValueOf<ElementType>[], ArrayBasicTreeView<ElementType>>
   implements ArrayBasicType<ElementType>
 {
   // Immutable characteristics

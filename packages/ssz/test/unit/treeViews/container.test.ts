@@ -39,22 +39,22 @@ describe("Container TreeView", () => {
   runTreeViewTest({
     typeName: "containerBytesType",
     type: containerBytesType,
-    treeViewToStruct: (tv) => ({a: tv.a, b: tv.b}),
+    treeViewToStruct: (tv) => containerBytesType.toStructFromTreeView(tv),
     mutations: [
       {
         id: "set all properties",
         valueBefore: {a: Buffer.alloc(32, 1), b: Buffer.alloc(96, 2)},
         valueAfter: {a: Buffer.alloc(32, 10), b: Buffer.alloc(96, 20)},
         fn: (tv) => {
-          tv.a = Buffer.alloc(32, 10);
-          tv.b = Buffer.alloc(96, 20);
+          tv.a = byte32.toTreeViewFromStruct(Buffer.alloc(32, 10));
+          tv.b = byte96.toTreeViewFromStruct(Buffer.alloc(96, 20));
         },
       },
     ],
   });
 });
 
-export type TreeMutation<CT extends CompositeType<any>> = {
+export type TreeMutation<CT extends CompositeType<any, TreeView>> = {
   id: string;
   valueBefore: ValueOf<CT>;
   valueAfter: ValueOf<CT>;
@@ -64,7 +64,7 @@ export type TreeMutation<CT extends CompositeType<any>> = {
   fn: (treeView: ViewOfComposite<CT>) => ViewOfComposite<CT> | void;
 };
 
-function runTreeViewTest<CT extends CompositeType<any>>({
+function runTreeViewTest<CT extends CompositeType<any, any>>({
   typeName,
   type,
   treeViewToStruct,
@@ -92,7 +92,7 @@ function runTreeViewTest<CT extends CompositeType<any>>({
       const {id, valueBefore, valueAfter, fn} = testCase;
 
       it(`${id} mutable = false`, () => {
-        const tvBefore = type.toTreeViewFromStruct(valueBefore);
+        const tvBefore = type.toTreeViewFromStruct(valueBefore) as ReturnType<CT["getView"]>;
 
         const tvAfter = (fn(tvBefore) ?? tvBefore) as TreeView;
 

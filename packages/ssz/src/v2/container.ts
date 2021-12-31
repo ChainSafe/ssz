@@ -11,7 +11,7 @@ import {getContainerTreeViewClass} from "./containerTreeView";
 export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 type ViewOfFields<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any>
+  [K in keyof Fields]: Fields[K] extends CompositeType<any, any>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getView"]>
     : // If basic, return struct value. Will NOT propagate changes upwards
@@ -32,7 +32,10 @@ export interface IContainerOptions {
   cachePermanentRootStruct?: boolean;
 }
 
-export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<ValueOfFields<Fields>> {
+export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<
+  ValueOfFields<Fields>,
+  ContainerTreeViewType<Fields>
+> {
   // Immutable characteristics
   readonly depth: number;
   readonly maxChunkCount: number;

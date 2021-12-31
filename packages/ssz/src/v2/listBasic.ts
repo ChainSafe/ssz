@@ -19,7 +19,7 @@ import {mixInLength} from "../util/merkleize";
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class ListBasicType<ElementType extends BasicType<any>>
-  extends CompositeType<ValueOf<ElementType>[]>
+  extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>>
   implements ArrayBasicType<ElementType>
 {
   // Immutable characteristics

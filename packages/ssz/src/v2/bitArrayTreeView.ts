@@ -1,3 +1,5 @@
+import {TreeView} from "./abstract";
+
 /** Globally cache this information. @see getUint8ByteToBitBooleanArray */
 const uint8ByteToBitBooleanArrays: boolean[][] = [];
 
@@ -157,3 +159,20 @@ export class BitArray {
 
 export class BitArrayErrorMoreThanOneBitSet extends Error {}
 export class BitArrayErrorNoBitSet extends Error {}
+
+/**
+ * TODO
+ */
+export class BitArrayTreeView extends TreeView {
+  // eslint-disable-next-line
+  node = null as any;
+  // eslint-disable-next-line
+  type = null as any;
+  // eslint-disable-next-line
+  commit(): void {}
+  // eslint-disable-next-line
+  toMutable(): void {}
+  protected serializedSize(): number {
+    return 0;
+  }
+}
