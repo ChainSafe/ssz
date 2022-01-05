@@ -14,7 +14,7 @@ export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = Com
 
 type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
-type ViewOfFields<Fields extends Record<string, Type<any>>> = {
+type FieldsView<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<any, any, any>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getView"]>
@@ -22,12 +22,21 @@ type ViewOfFields<Fields extends Record<string, Type<any>>> = {
       Fields[K]["defaultValue"];
 };
 
-type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeView;
+type FieldsViewMutable<Fields extends Record<string, Type<any>>> = {
+  [K in keyof Fields]: Fields[K] extends CompositeType<any, any, any>
+    ? // If composite, return view. MAY propagate changes updwards
+      ReturnType<Fields[K]["getViewMutable"]>
+    : // If basic, return struct value. Will NOT propagate changes upwards
+      Fields[K]["defaultValue"];
+};
+
+type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> & TreeView;
 type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
   new (type: ContainerTypeGeneric<Fields>, tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields>;
 };
 
-type ContainerTreeViewMutableType<Fields extends Record<string, Type<any>>> = ViewOfFields<Fields> & TreeViewMutable;
+type ContainerTreeViewMutableType<Fields extends Record<string, Type<any>>> = FieldsViewMutable<Fields> &
+  TreeViewMutable;
 type ContainerTreeViewMutableTypeConstructor<Fields extends Record<string, Type<any>>> = {
   new (type: ContainerTypeGeneric<Fields>, node: Node, cache: unknown): ContainerTreeViewMutableType<Fields>;
 };
