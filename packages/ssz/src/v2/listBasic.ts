@@ -1,6 +1,6 @@
-import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
-import {ListBasicTreeView, ArrayBasicType} from "./arrayTreeView";
+import {ListBasicTreeView, ListBasicTreeViewMutable, ArrayBasicType} from "./arrayTreeView";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {
   getLengthFromRootNode,
@@ -19,7 +19,7 @@ import {mixInLength} from "../util/merkleize";
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class ListBasicType<ElementType extends BasicType<any>>
-  extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>>
+  extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>, ListBasicTreeViewMutable<ElementType>>
   implements ArrayBasicType<ElementType>
 {
   // Immutable characteristics
@@ -52,8 +52,12 @@ export class ListBasicType<ElementType extends BasicType<any>>
     return [];
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ListBasicTreeView<ElementType> {
-    return new ListBasicTreeView(this, tree, inMutableMode);
+  getView(tree: Tree): ListBasicTreeView<ElementType> {
+    return new ListBasicTreeView(this, tree);
+  }
+
+  getViewMutable(node: Node, cache: unknown): ListBasicTreeViewMutable<ElementType> {
+    return new ListBasicTreeViewMutable(this, node, cache as any);
   }
 
   // Serialization + deserialization
@@ -99,6 +103,17 @@ export class ListBasicType<ElementType extends BasicType<any>>
 
   tree_getChunksNode(node: Node): Node {
     return node.left;
+  }
+
+  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
+    let lengthNode: LeafNode;
+    if (newLength !== undefined) {
+      lengthNode = new LeafNode(zeroNode(0));
+      lengthNode.setUint(4, 0, length);
+    } else {
+      lengthNode = rootNode.right as LeafNode;
+    }
+    return new BranchNode(chunksNode, lengthNode);
   }
 
   // Merkleization

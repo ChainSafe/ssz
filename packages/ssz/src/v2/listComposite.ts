@@ -1,4 +1,4 @@
-import {LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {mixInLength} from "../util/merkleize";
 import {CompositeType, ValueOf} from "./abstract";
@@ -13,7 +13,7 @@ import {
   struct_getRootsArrayComposite,
   struct_fromJsonArray,
 } from "./array";
-import {ListCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
+import {ListCompositeTreeView, ListCompositeTreeViewMutable, ArrayCompositeType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -21,8 +21,12 @@ import {ListCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class ListCompositeType<ElementType extends CompositeType<any, any>>
-  extends CompositeType<ValueOf<ElementType>[], ListCompositeTreeView<ElementType>>
+export class ListCompositeType<ElementType extends CompositeType<any, any, any>>
+  extends CompositeType<
+    ValueOf<ElementType>[],
+    ListCompositeTreeView<ElementType>,
+    ListCompositeTreeViewMutable<ElementType>
+  >
   implements ArrayCompositeType<ElementType>
 {
   // Immutable characteristics
@@ -54,8 +58,12 @@ export class ListCompositeType<ElementType extends CompositeType<any, any>>
     return [];
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ListCompositeTreeView<ElementType> {
-    return new ListCompositeTreeView(this, tree, inMutableMode);
+  getView(tree: Tree): ListCompositeTreeView<ElementType> {
+    return new ListCompositeTreeView(this, tree);
+  }
+
+  getViewMutable(node: Node, cache: unknown): ListCompositeTreeViewMutable<ElementType> {
+    return new ListCompositeTreeViewMutable(this, node, cache as any);
   }
 
   // Serialization + deserialization
@@ -102,6 +110,17 @@ export class ListCompositeType<ElementType extends CompositeType<any, any>>
 
   tree_getChunksNode(node: Node): Node {
     return node.left;
+  }
+
+  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
+    let lengthNode: LeafNode;
+    if (newLength !== undefined) {
+      lengthNode = new LeafNode(zeroNode(0));
+      lengthNode.setUint(4, 0, length);
+    } else {
+      lengthNode = rootNode.right as LeafNode;
+    }
+    return new BranchNode(chunksNode, lengthNode);
   }
 
   // Merkleization

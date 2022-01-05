@@ -12,7 +12,7 @@ import {
   struct_getRootsArrayComposite,
   struct_fromJsonArray,
 } from "./array";
-import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
+import {ArrayCompositeTreeView, ArrayCompositeTreeViewMutable, ArrayCompositeType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -20,14 +20,19 @@ import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayTreeView";
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class VectorCompositeType<ElementType extends CompositeType<any, any>>
-  extends CompositeType<ValueOf<ElementType>[], ArrayCompositeTreeView<ElementType>>
+export class VectorCompositeType<ElementType extends CompositeType<any, any, any>>
+  extends CompositeType<
+    ValueOf<ElementType>[],
+    ArrayCompositeTreeView<ElementType>,
+    ArrayCompositeTreeViewMutable<ElementType>
+  >
   implements ArrayCompositeType<ElementType>
 {
   // Immutable characteristics
   readonly itemsPerChunk = 1;
   readonly isBasic = false;
   readonly depth: number;
+  readonly chunkDepth: number;
   readonly maxChunkCount: number;
   readonly fixedLen: number | null;
   readonly minLen: number;
@@ -45,7 +50,8 @@ export class VectorCompositeType<ElementType extends CompositeType<any, any>>
 
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((length * 1) / 32);
-    this.depth = maxChunksToDepth(this.maxChunkCount);
+    this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
+    this.depth = this.chunkDepth;
     this.fixedLen = elementType.fixedLen === null ? null : length * elementType.fixedLen;
     this.minLen = length * elementType.minLen;
     this.maxLen = length * elementType.maxLen;
@@ -55,8 +61,12 @@ export class VectorCompositeType<ElementType extends CompositeType<any, any>>
     return defaultValueVector(this.elementType, this.length);
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ArrayCompositeTreeView<ElementType> {
-    return new ArrayCompositeTreeView(this, tree, inMutableMode);
+  getView(tree: Tree): ArrayCompositeTreeView<ElementType> {
+    return new ArrayCompositeTreeView(this, tree);
+  }
+
+  getViewMutable(node: Node, cache: unknown): ArrayCompositeTreeViewMutable<ElementType> {
+    return new ArrayCompositeTreeViewMutable(this, node, cache as any);
   }
 
   // Serialization + deserialization
@@ -97,6 +107,10 @@ export class VectorCompositeType<ElementType extends CompositeType<any, any>>
 
   tree_getChunksNode(node: Node): Node {
     return node;
+  }
+
+  tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
+    return chunksNode;
   }
 
   // Merkleization

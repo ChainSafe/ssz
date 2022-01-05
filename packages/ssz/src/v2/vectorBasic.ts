@@ -9,7 +9,7 @@ import {
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./array";
-import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
+import {ArrayBasicTreeView, ArrayBasicTreeViewMutable, ArrayBasicType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -18,7 +18,7 @@ import {ArrayBasicTreeView, ArrayBasicType} from "./arrayTreeView";
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class VectorBasicType<ElementType extends BasicType<any>>
-  extends CompositeType<ValueOf<ElementType>[], ArrayBasicTreeView<ElementType>>
+  extends CompositeType<ValueOf<ElementType>[], ArrayBasicTreeView<ElementType>, ArrayBasicTreeViewMutable<ElementType>>
   implements ArrayBasicType<ElementType>
 {
   // Immutable characteristics
@@ -55,8 +55,12 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     return defaultValueVector(this.elementType, this.length);
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ArrayBasicTreeView<ElementType> {
-    return new ArrayBasicTreeView(this, tree, inMutableMode);
+  getView(tree: Tree): ArrayBasicTreeView<ElementType> {
+    return new ArrayBasicTreeView(this, tree);
+  }
+
+  getViewMutable(node: Node, cache: unknown): ArrayBasicTreeViewMutable<ElementType> {
+    return new ArrayBasicTreeViewMutable(this, node, cache as any);
   }
 
   // Serialization + deserialization
@@ -97,6 +101,10 @@ export class VectorBasicType<ElementType extends BasicType<any>>
 
   tree_getChunksNode(node: Node): Node {
     return node;
+  }
+
+  tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
+    return chunksNode;
   }
 
   // Merkleization

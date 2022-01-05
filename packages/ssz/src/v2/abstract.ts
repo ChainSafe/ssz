@@ -6,7 +6,7 @@ import {merkleizeSingleBuff} from "../util/merkleize";
 export type ValueOf<T extends Type<any>> = T["defaultValue"];
 // type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
 
-export type ViewOfComposite<T extends CompositeType<any, TreeView>> = ReturnType<T["getView"]>;
+export type ViewOfComposite<T extends CompositeType<any, TreeView, TreeViewMutable>> = ReturnType<T["getView"]>;
 
 const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
 
@@ -94,7 +94,7 @@ export abstract class BasicType<V> extends Type<V> {
   abstract setValueToPackedNode(leafNode: LeafNode, index: number, value: V): void;
 }
 
-export abstract class CompositeType<V, TV extends TreeView> extends Type<V> {
+export abstract class CompositeType<V, TV extends TreeView, TVM extends TreeViewMutable> extends Type<V> {
   readonly isBasic = false;
 
   constructor(
@@ -107,7 +107,13 @@ export abstract class CompositeType<V, TV extends TreeView> extends Type<V> {
     super();
   }
 
-  abstract getView(tree: Tree, inMutableMode?: boolean): TV;
+  abstract getView(tree: Tree): TV;
+  abstract getViewMutable(node: Node, cache: unknown, invalidateParent?: () => void): TVM;
+  commitView(view: TVM): Node {
+    // Commit must drop the invalidateParent() reference
+    view.commit();
+    return view.node;
+  }
 
   deserializeToTreeView(data: Uint8Array): TV {
     const node = this.tree_deserializeFromBytes(data, 0, data.length);
@@ -147,18 +153,31 @@ export abstract class CompositeType<V, TV extends TreeView> extends Type<V> {
 }
 
 export abstract class TreeView {
-  abstract toMutable(): void;
-  abstract commit(): void;
   abstract readonly node: Node;
   abstract readonly type: Type<any>;
 
-  protected abstract serializedSize(): number;
+  serialize(): Uint8Array {
+    const output = new Uint8Array(this.type.tree_serializedSize(this.node));
+    this.type.tree_serializeToBytes(output, 0, this.node);
+    return output;
+  }
+
+  hashTreeRoot(): Uint8Array {
+    return this.node.root;
+  }
+}
+
+export abstract class TreeViewMutable {
+  abstract commit(): void;
+  abstract readonly node: Node;
+  abstract readonly cache: unknown;
+  abstract readonly type: Type<any>;
 
   serialize(): Uint8Array {
     // Ensure all transient changes are commited to the root node
     this.commit();
 
-    const output = new Uint8Array(this.serializedSize());
+    const output = new Uint8Array(this.type.tree_serializedSize(this.node));
     this.type.tree_serializeToBytes(output, 0, this.node);
     return output;
   }

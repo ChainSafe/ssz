@@ -93,7 +93,7 @@ export class BitArray {
    * Split array of values between participants and no participants
    * @returns [yes, no]
    */
-  intersectValues<T>(values: T[]): [T[], T[]] {
+  intersectValues<T>(values: T[]): {yes: T[]; no: T[]} {
     const yes = [];
     const no = [];
 
@@ -119,7 +119,7 @@ export class BitArray {
       }
     }
 
-    return [yes, no];
+    return {yes, no};
   }
 
   /**

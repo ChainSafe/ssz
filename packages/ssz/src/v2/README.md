@@ -53,3 +53,33 @@ Specialized types
 - Good abstractions:
   - Don't leak internal details (hash objects) to consumers
 - Type safety
+
+# Tree view behaviour
+
+```ts
+const container1 = toTreeView({a: [0, 0]});
+const container2 = toTreeView({a: [1, 1]});
+
+container1.a = container2.a;
+
+// Should this statement mutate container2 data?
+container1.a[0] = 2;
+// Should this statement mutate container1 data?
+container2.a[0] = 2;
+```
+
+**Case 2**
+
+```ts
+const container1 = toTreeView({a: [0, 0]});
+const container2 = toTreeView({a: [1, 1]});
+
+const a = container2.a;
+container1.a = a;
+
+// Should this statement mutate container1, container2 or none?
+a[0] = 2;
+```
+
+- mutate container2 only
+- f one want to modify container1: `container1.a[0] = 2`

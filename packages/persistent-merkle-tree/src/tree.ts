@@ -431,6 +431,11 @@ export class Tree {
   }
 }
 
+export function getNodeAtDepth(rootNode: Node, depth: number, index: number): Node {
+  // TODO
+  throw Error("TODO");
+}
+
 /**
  * Set multiple nodes in batch, editing and traversing nodes strictly once.
  *
