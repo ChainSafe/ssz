@@ -126,7 +126,7 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
           else if (typeV === "v2") {
             if ((type as TypeV2<unknown>).isBasic) return;
 
-            const compositeType = type as CompositeTypeV2<any, any>;
+            const compositeType = type as CompositeTypeV2<any, any, any>;
 
             const node = compositeType.tree_deserializeFromBytes(testData.serialized, 0, testData.serialized.length);
             expect(toHexString(node.root)).to.equal(testDataRoot, "tree-backed hashTreeRoot");

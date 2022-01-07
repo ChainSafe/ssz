@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {toHexString} from "../../../src/util/byteArray";
-import {CompositeType, CompositeView, ValueOf, TreeView} from "../../../src/v2/abstract";
+import {CompositeType, ValueOf, TreeView, TreeViewMutable, CompositeViewMutable} from "../../../src/v2/abstract";
 import {ContainerType} from "../../../src/v2/container";
 import {UintNumberType} from "../../../src/v2/uint";
 import {ByteVectorType} from "../../../src/v2/byteVector";
@@ -54,17 +54,17 @@ describe("Container TreeView", () => {
   });
 });
 
-export type TreeMutation<CT extends CompositeType<any, TreeView>> = {
+export type TreeMutation<CT extends CompositeType<any, TreeView, TreeViewMutable>> = {
   id: string;
   valueBefore: ValueOf<CT>;
   valueAfter: ValueOf<CT>;
   /**
    * Allow fn() to return void, and expect tvBefore to be mutated
    */
-  fn: (treeView: CompositeView<CT>) => CompositeView<CT> | void;
+  fn: (treeView: CompositeViewMutable<CT>) => CompositeViewMutable<CT> | void;
 };
 
-function runTreeViewTest<CT extends CompositeType<any, any>>({
+function runTreeViewTest<CT extends CompositeType<any, TreeView, TreeViewMutable>>({
   typeName,
   type,
   treeViewToStruct,
@@ -72,10 +72,10 @@ function runTreeViewTest<CT extends CompositeType<any, any>>({
 }: {
   typeName: string;
   type: CT;
-  treeViewToStruct?: (tv: CompositeView<CT>) => ValueOf<CT>;
+  treeViewToStruct?: (tv: CompositeViewMutable<CT>) => ValueOf<CT>;
   mutations: TreeMutation<CT>[];
 }): void {
-  function assertValidTvAfter(tvAfter: TreeView, valueAfter: ValueOf<CT>, message: string): void {
+  function assertValidTvAfter(tvAfter: TreeViewMutable, valueAfter: ValueOf<CT>, message: string): void {
     expect(toHexString(tvAfter.serialize())).to.deep.equal(
       toHexString(type.serialize(valueAfter)),
       `TreeView !== valueAfter serialized - ${message}`
@@ -92,22 +92,21 @@ function runTreeViewTest<CT extends CompositeType<any, any>>({
       const {id, valueBefore, valueAfter, fn} = testCase;
 
       it(`${id} mutable = false`, () => {
-        const tvBefore = type.toTreeViewFromStruct(valueBefore) as ReturnType<CT["getView"]>;
+        const tvBefore = type.toTreeViewMutableFromStruct(valueBefore);
 
-        const tvAfter = (fn(tvBefore) ?? tvBefore) as TreeView;
+        const tvAfter = fn(tvBefore as CompositeViewMutable<CT>) ?? tvBefore;
 
-        assertValidTvAfter(tvAfter, valueAfter, "After mutation");
+        assertValidTvAfter(tvAfter as TreeViewMutable, valueAfter, "After mutation");
       });
 
       it(`${id} mutable = true`, () => {
-        const tvBefore = type.toTreeViewFromStruct(valueBefore) as TreeView;
+        const tvBefore = type.toTreeViewMutableFromStruct(valueBefore);
 
         // Set to mutable, and edit
-        tvBefore.toMutable();
-        const tvAfter = (fn(tvBefore as CompositeView<CT>) ?? tvBefore) as TreeView;
+        const tvAfter = fn(tvBefore as CompositeViewMutable<CT>) ?? tvBefore;
 
         if (treeViewToStruct) {
-          const tvAfterStruct = treeViewToStruct(tvAfter as CompositeView<CT>);
+          const tvAfterStruct = treeViewToStruct(tvAfter as CompositeViewMutable<CT>);
           expect(tvAfterStruct).to.deep.equal(
             valueAfter,
             "TreeView !== valueAfter struct - after mutation before commit"
@@ -115,7 +114,7 @@ function runTreeViewTest<CT extends CompositeType<any, any>>({
         }
 
         tvBefore.commit();
-        assertValidTvAfter(tvAfter, valueAfter, "After mutation");
+        assertValidTvAfter(tvAfter as TreeViewMutable, valueAfter, "After mutation");
       });
     }
   });

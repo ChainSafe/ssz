@@ -139,6 +139,11 @@ export abstract class CompositeType<V, TV, TVM> extends Type<V> {
     return this.deserializeToTreeView(this.serialize(value));
   }
 
+  toTreeViewMutableFromStruct(value: V): TVM {
+    // Un-performant path but useful for testing and prototyping
+    return this.deserializeToTreeViewMutable(this.serialize(value));
+  }
+
   toStructFromTreeView(view: TV): V {
     // Un-performant path but useful for testing and prototyping
     const node = this.commitView(view);
