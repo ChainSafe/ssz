@@ -11,7 +11,7 @@ import {fromHexString} from "../util/byteArray";
 import {mixInLength} from "../util/merkleize";
 import {CompositeType} from "./abstract";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./array";
-import {BitArray, BitArrayTreeView} from "./bitArrayTreeView";
+import {BitArray} from "./bitArrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -29,7 +29,7 @@ import {BitArray, BitArrayTreeView} from "./bitArrayTreeView";
  * This BitList implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
-export class BitListType extends CompositeType<BitArray, BitArrayTreeView> {
+export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
   // Immutable characteristics
   protected readonly maxChunkCount: number;
   readonly depth: number;
@@ -53,10 +53,14 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView> {
     return new BitArray(new Uint8Array(0), 0);
   }
 
-  getView(tree: Tree): BitArrayTreeView {
+  getView(tree: Tree): BitArray {
+    return this.getViewMutable(tree.rootNode);
+  }
+
+  getViewMutable(node: Node): BitArray {
     // TODO: Develop BitListTreeView
-    const chunksNode = getChunksNodeFromRootNode(tree.rootNode);
-    const bitLen = getLengthFromRootNode(tree.rootNode);
+    const chunksNode = getChunksNodeFromRootNode(node);
+    const bitLen = getLengthFromRootNode(node);
 
     const byteLen = Math.ceil(bitLen / 8);
     const chunkCount = Math.ceil(byteLen / 32);
@@ -64,9 +68,20 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView> {
     const uint8Array = new Uint8Array(byteLen);
     packedNodeRootsToBytes(uint8Array, 0, byteLen, nodes);
 
-    // TODO
-    // new BitArray(uint8Array, bitLen);
-    return new BitArrayTreeView();
+    return new BitArray(uint8Array, bitLen);
+  }
+
+  commitView(view: BitArray): Node {
+    return this.commitViewMutable(view);
+  }
+
+  commitViewMutable(view: BitArray): Node {
+    const bytes = this.serialize(view);
+    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+  }
+
+  getViewMutableCache(): unknown {
+    return;
   }
 
   // Serialization + deserialization

@@ -74,6 +74,10 @@ export class Tree {
     return node;
   }
 
+  getNodeAtDepth(depth: number, index: number): Node {
+    throw Error("TODO: Not implemented");
+  }
+
   setNode(gindex: Gindex | GindexBitstring, n: Node, expand = false): void {
     // Pre-compute entire bitstring instead of using an iterator (25% faster)
     let bitstring;
@@ -87,6 +91,10 @@ export class Tree {
     }
     const parentNodes = this.getParentNodes(bitstring, expand);
     this.rebindNodeToRoot(bitstring, parentNodes, n);
+  }
+
+  setNodeAtDepth(depth: number, index: number, node: Node, expand?: boolean): void {
+    throw Error("TODO: Not implemented");
   }
 
   /**
@@ -432,8 +440,16 @@ export class Tree {
 }
 
 export function getNodeAtDepth(rootNode: Node, depth: number, index: number): Node {
-  // TODO
-  throw Error("TODO");
+  // Ignore first bit "1", then substract 1 to get to the parent
+  const depthiRoot = depth - 1;
+  const depthiParent = 0;
+  let node = rootNode;
+
+  for (let d = depthiRoot; d >= depthiParent; d--) {
+    node = isLeftNode(d, index) ? node.left : node.right;
+  }
+
+  return node;
 }
 
 /**
@@ -591,6 +607,54 @@ export function setNodesAtDepth(nodesDepth: number, rootNode: Node, indexes: num
 
   // Done, return new root node
   return node;
+}
+
+export function getNodesAtDepthIndexes(rootNode: Node, depth: number, startIndex: number, count: number): Node[] {
+  const nodes: Node[] = [];
+  const endIndex = startIndex + count;
+
+  // Ignore first bit "1", then substract 1 to get to the parent
+  const depthiRoot = depth - 1;
+  const depthiParent = 0;
+  let depthi = depthiRoot;
+  let node = rootNode;
+
+  /**
+   * Contiguous filled stack of parent nodes. It get filled in the first descent
+   * Indexed by depthi
+   */
+  const parentNodeStack: Node[] = [];
+  const isLeftStack: boolean[] = [];
+
+  // Insert root node to make the loop below general
+  parentNodeStack[depthiRoot] = rootNode;
+
+  for (let index = startIndex; index < endIndex; index++) {
+    for (let d = depthi; d >= depthiParent; d--) {
+      if (d !== depthi) {
+        parentNodeStack[d] = node;
+      }
+
+      const isLeft = isLeftNode(d, index);
+      isLeftStack[d] = isLeft;
+      node = isLeft ? node.left : node.right;
+    }
+
+    nodes.push(node);
+
+    // Find the first depth where navigation when left.
+    // Store that heigh and go right from there
+    for (let d = depthiParent; d <= depthiRoot; d++) {
+      if (isLeftStack[d] === true) {
+        depthi = d;
+        break;
+      }
+    }
+
+    node = parentNodeStack[depthi];
+  }
+
+  return nodes;
 }
 
 /**

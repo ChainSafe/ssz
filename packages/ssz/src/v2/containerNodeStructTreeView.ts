@@ -1,5 +1,6 @@
-import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth, Tree} from "@chainsafe/persistent-merkle-tree";
-import {BasicType, CompositeType, TreeView, TreeViewMutable, Type, ValueOf} from "./abstract";
+import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {CompositeType, TreeView, TreeViewMutable, Type, ValueOf} from "./abstract";
+import {BranchNodeStruct} from "./branchNodeStruct";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -57,10 +58,6 @@ type ContainerTreeViewMutableTypeConstructor<Fields extends Record<string, Type<
  *
  */
 class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView {
-  protected readonly views: TreeView[] = [];
-  protected readonly leafNodes: LeafNode[] = [];
-  protected readonly dirtyNodes = new Set<number>();
-
   constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
     super();
   }
@@ -83,22 +80,22 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
-      const fieldTypeBasic = fieldType as unknown as BasicType<any>;
       Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeView) {
-          const leafNode = getNodeAtDepth(this.node, this.type.depth, index) as LeafNode;
-          return fieldTypeBasic.getValueFromNode(leafNode) as unknown;
+          return (this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>).value;
         },
 
-        set: function (this: CustomContainerTreeView, value) {
-          const leafNodePrev = getNodeAtDepth(this.node, this.type.depth, index) as LeafNode;
-          const leafNode = new LeafNode(leafNodePrev);
-          fieldTypeBasic.setValueToNode(leafNode, value);
-          this.tree.setNodeAtDepth(this.type.depth, index, leafNode);
+        set: function (this: CustomContainerTreeView, value: unknown) {
+          const node = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
+          const {value: prevNodeValue} = node;
+
+          // TODO: Should this check for valid field name? Benchmark the cost
+          const newNodeValue = {...prevNodeValue, [fieldName]: value} as ValueOfFields<Fields>;
+          this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
         },
       });
     }
@@ -113,13 +110,18 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
         enumerable: true,
 
         get: function (this: CustomContainerTreeView) {
-          const gindex = this.type.getGindexBitStringAtChunkIndex(index);
-          return fieldTypeComposite.getView(this.tree.getSubtree(gindex));
+          const {value} = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
+          return fieldTypeComposite.toTreeViewFromStruct(value[fieldName]);
         },
 
-        set: function (this: CustomContainerTreeView, value: TreeView) {
-          const node = fieldTypeComposite.commitView(value);
-          this.tree.setNodeAtDepth(this.type.depth, index, node);
+        set: function (this: CustomContainerTreeView, view: TreeView) {
+          const node = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
+          const {value: prevNodeValue} = node;
+
+          // TODO: Should this check for valid field name? Benchmark the cost
+          const value = fieldTypeComposite.toStructFromTreeView(view) as unknown;
+          const newNodeValue = {...prevNodeValue, [fieldName]: value} as ValueOfFields<Fields>;
+          this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
         },
       });
     }
@@ -132,79 +134,33 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
   return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
 }
 
-type ContainerTreeViewMutableCache = {
-  nodes: Node[];
-  caches: unknown[];
-  nodesPopulated: boolean;
-};
-
 class ContainerTreeViewMutable<Fields extends Record<string, Type<any>>> extends TreeViewMutable {
-  protected nodes: Node[] = [];
-  protected caches: unknown[];
-  protected views: TreeView[] = [];
-  protected readonly nodesChanged = new Map<number, Node>();
-  protected readonly viewsChanged = new Map<number, unknown>();
-  private nodesPopulated: boolean;
+  protected valueChanged: ValueOfFields<Fields> | null = null;
+  protected _rootNode: BranchNodeStruct<ValueOfFields<Fields>>;
 
-  constructor(
-    readonly type: ContainerTypeGeneric<Fields>,
-    protected _rootNode: Node,
-    cache?: ContainerTreeViewMutableCache
-  ) {
+  constructor(readonly type: ContainerTypeGeneric<Fields>, node: Node) {
     super();
-
-    if (cache) {
-      this.nodes = cache.nodes;
-      this.caches = cache.caches;
-      this.nodesPopulated = cache.nodesPopulated;
-    } else {
-      this.nodes = [];
-      this.caches = [];
-      this.nodesPopulated = false;
-    }
+    this._rootNode = node as BranchNodeStruct<ValueOfFields<Fields>>;
   }
 
   get node(): Node {
     return this._rootNode;
   }
 
-  get cache(): ContainerTreeViewMutableCache {
-    return {
-      nodes: this.nodes,
-      caches: this.caches,
-      nodesPopulated: this.nodesPopulated,
-    };
+  get cache(): void {
+    return;
   }
 
   commit(): Node {
-    if (this.nodesChanged.size === 0) {
+    if (this.valueChanged === null) {
       return this._rootNode;
     }
 
-    const nodesChanged: {index: number; node: Node}[] = [];
+    // TODO: No need to go though a view, just to struct -> node
+    const view = this.type.toTreeViewFromStruct(this.valueChanged);
 
-    for (const [index, view] of this.viewsChanged) {
-      nodesChanged.push({
-        index,
-        node: (
-          this.type.fieldsEntries[index].fieldType as unknown as CompositeType<any, unknown, unknown>
-        ).commitViewMutable(view),
-      });
-    }
-
-    for (const [index, node] of this.nodesChanged) {
-      nodesChanged.push({index, node});
-    }
-
-    // TODO: Optimize to loop only once
-    const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
-    const indexes = nodesChangedSorted.map((entry) => entry.index);
-    const nodes = nodesChangedSorted.map((entry) => entry.node);
-
-    this._rootNode = setNodesAtDepth(this.type.depth, this._rootNode, indexes, nodes);
-
-    this.nodesChanged.clear();
-    this.viewsChanged.clear();
+    this.valueChanged = null;
+    this._rootNode = view.node as BranchNodeStruct<ValueOfFields<Fields>>;
 
     return this._rootNode;
   }
@@ -223,39 +179,22 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
     // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
-      const fieldTypeBasic = fieldType as unknown as BasicType<any>;
       Object.defineProperty(CustomContainerTreeViewMutable.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeViewMutable) {
-          // First walk through the tree to get the root node for that index
-          let node = this.nodes[index];
-          if (node === undefined) {
-            node = getNodeAtDepth(this._rootNode, this.type.depth, index);
-            this.nodes[index] = node;
-          }
-
-          return fieldTypeBasic.getValueFromNode(node as LeafNode) as unknown;
+          const value = this.valueChanged || this._rootNode.value;
+          return value[fieldName] as unknown;
         },
 
-        set: function (this: CustomContainerTreeViewMutable, value) {
-          // Create new node if current leafNode is not dirty
-          let nodeChanged = this.nodesChanged.get(index);
-          if (!nodeChanged) {
-            // TODO, deduplicate with above
-            let nodePrev = this.nodes[index];
-            if (this.nodes[index] === undefined) {
-              nodePrev = getNodeAtDepth(this._rootNode, this.type.depth, index);
-              this.nodes[index] = nodePrev;
-            }
-
-            nodeChanged = new LeafNode(nodePrev);
-            this.nodesChanged.set(index, nodeChanged);
+        set: function (this: CustomContainerTreeViewMutable, value: unknown) {
+          if (this.valueChanged === null) {
+            this.valueChanged = {...this._rootNode.value};
           }
 
-          fieldTypeBasic.setValueToNode(nodeChanged as LeafNode, value);
+          this.valueChanged[fieldName] = value;
         },
       });
     }
@@ -270,42 +209,18 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
         enumerable: true,
 
         get: function (this: CustomContainerTreeViewMutable) {
-          const viewChanged = this.viewsChanged.get(index);
-          if (viewChanged) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return viewChanged;
-          }
-
-          let node = this.nodes[index];
-          if (node === undefined) {
-            node = getNodeAtDepth(this._rootNode, this.type.depth, index);
-            this.nodes[index] = node;
-          }
-
-          // TODO: To only run .commit() in the child views that actually change, use again
-          // the invalidateParent() hook and add indexes to a `this.dirtyChildViews.add(index)`
-          const view = fieldTypeComposite.getViewMutable(node, this.caches[index]);
-          this.viewsChanged.set(index, view);
-
-          const cache = fieldTypeComposite.getViewMutableCache(view);
-          if (cache) {
-            this.caches[index] = cache;
-          }
-
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-          return view;
+          const value = this.valueChanged || this._rootNode.value;
+          return fieldTypeComposite.toTreeViewFromStruct(value[fieldName]);
         },
 
         set: function (this: CustomContainerTreeViewMutable, view: TreeViewMutable) {
-          // Commit any temp data and transfer cache
-          const node = fieldTypeComposite.commitViewMutable(view);
+          if (this.valueChanged === null) {
+            this.valueChanged = {...this._rootNode.value};
+          }
 
-          // Should transfer cache?
-          this.caches[index] = fieldTypeComposite.getViewMutableCache(view);
-
-          // Do not commit to the tree, but update the node in leafNodes
-          this.nodes[index] = node;
-          this.viewsChanged.set(index, view);
+          // TODO: Optimize
+          const value = fieldTypeComposite.toStructFromTreeView(view) as unknown;
+          this.valueChanged[fieldName] = value;
         },
       });
     }

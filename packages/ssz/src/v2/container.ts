@@ -11,7 +11,7 @@ import {getContainerTreeViewClass, getContainerTreeViewMutableClass} from "./con
 export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 type FieldsView<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, any, any>
+  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getView"]>
     : // If basic, return struct value. Will NOT propagate changes upwards
@@ -19,7 +19,7 @@ type FieldsView<Fields extends Record<string, Type<any>>> = {
 };
 
 type FieldsViewMutable<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, any, any>
+  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getViewMutable"]>
     : // If basic, return struct value. Will NOT propagate changes upwards
@@ -28,13 +28,13 @@ type FieldsViewMutable<Fields extends Record<string, Type<any>>> = {
 
 type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> & TreeView;
 type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields>;
+  new (type: ContainerType<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };
 
 type ContainerTreeViewMutableType<Fields extends Record<string, Type<any>>> = FieldsViewMutable<Fields> &
   TreeViewMutable;
 type ContainerTreeViewMutableTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, node: Node, cache: unknown): ContainerTreeViewMutableType<Fields>;
+  new (type: ContainerType<Fields>, node: Node, cache?: unknown): ContainerTreeViewMutableType<Fields>;
 };
 
 type BytesRange = {start: number; end: number};
@@ -44,6 +44,8 @@ export interface IContainerOptions {
   casingMap?: Record<string, string>;
   expectedCase?: IJsonOptions["case"];
   cachePermanentRootStruct?: boolean;
+  getContainerTreeViewClass?: typeof getContainerTreeViewClass;
+  getContainerTreeViewMutableClass?: typeof getContainerTreeViewMutableClass;
 }
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<
@@ -57,9 +59,6 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   readonly fixedLen: number | null;
   readonly minLen: number;
   readonly maxLen: number;
-
-  /** Reverse indexing: fieldName -> index in fields */
-  readonly fieldIndex: Record<keyof Fields, number>;
 
   // Precalculated data for faster serdes
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
@@ -103,14 +102,10 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     this.fixedEnd = fixedEnd;
     this.fixedLen = fixedLen;
 
-    // Reverse indexing: fieldName -> index in fields
-    this.fieldIndex = {} as Record<keyof Fields, number>;
-    for (let i = 0; i < this.fieldsEntries.length; i++) {
-      this.fieldIndex[this.fieldsEntries[i].fieldName] = i;
-    }
-
-    this.TreeView = getContainerTreeViewClass(this);
-    this.TreeViewMutable = getContainerTreeViewMutableClass(this);
+    // TODO: This options are necessary for ContainerNodeStruct to override this.
+    // Refactor this constructor to allow customization without pollutin the options
+    this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
+    this.TreeViewMutable = opts?.getContainerTreeViewMutableClass?.(this) ?? getContainerTreeViewMutableClass(this);
   }
 
   get defaultValue(): ValueOfFields<Fields> {
@@ -121,12 +116,25 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return obj;
   }
 
-  getView(tree: Tree, inMutableMode?: boolean): ContainerTreeViewType<Fields> {
-    return new this.TreeView(this, tree, inMutableMode);
+  getView(tree: Tree): ContainerTreeViewType<Fields> {
+    return new this.TreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache: unknown): ContainerTreeViewMutableType<Fields> {
+  getViewMutable(node: Node, cache?: unknown): ContainerTreeViewMutableType<Fields> {
     return new this.TreeViewMutable(this, node, cache);
+  }
+
+  getViewMutableCache(view: ContainerTreeViewMutableType<Fields>): unknown {
+    return view.cache;
+  }
+
+  commitView(view: ContainerTreeViewType<Fields>): Node {
+    return view.node;
+  }
+
+  commitViewMutable(view: ContainerTreeViewMutableType<Fields>): Node {
+    view.commit();
+    return view.node;
   }
 
   // Serialization + deserialization

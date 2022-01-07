@@ -59,8 +59,20 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     return new ArrayBasicTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache: unknown): ArrayBasicTreeViewMutable<ElementType> {
+  getViewMutable(node: Node, cache?: unknown): ArrayBasicTreeViewMutable<ElementType> {
     return new ArrayBasicTreeViewMutable(this, node, cache as any);
+  }
+
+  commitView(view: ArrayBasicTreeView<ElementType>): Node {
+    return view.node;
+  }
+
+  commitViewMutable(view: ArrayBasicTreeViewMutable<ElementType>): Node {
+    return view.commit();
+  }
+
+  getViewMutableCache(view: ArrayBasicTreeViewMutable<ElementType>): unknown {
+    return view.cache;
   }
 
   // Serialization + deserialization

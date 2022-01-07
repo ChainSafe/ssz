@@ -9,7 +9,7 @@ import {
 import {maxChunksToDepth} from "../util/tree";
 import {fromHexString} from "../util/byteArray";
 import {CompositeType} from "./abstract";
-import {BitArray, BitArrayTreeView} from "./bitArrayTreeView";
+import {BitArray} from "./bitArrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -27,7 +27,7 @@ import {BitArray, BitArrayTreeView} from "./bitArrayTreeView";
  * This BitList implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
-export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView> {
+export class BitVectorType extends CompositeType<BitArray, BitArray, BitArray> {
   // Immutable characteristics
   protected readonly maxChunkCount: number;
   readonly chunkCount: number;
@@ -68,16 +68,31 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView> {
     return new BitArray(new Uint8Array(this.fixedLen), this.lengthBits);
   }
 
-  getView(tree: Tree): BitArrayTreeView {
+  getView(tree: Tree): BitArray {
+    return this.getViewMutable(tree.rootNode);
+  }
+
+  getViewMutable(node: Node): BitArray {
     // TODO: Develop BitListTreeView
     const byteLen = this.fixedLen;
-    const nodes = getNodesAtDepth(tree.rootNode, this.depth, 0, this.chunkCount);
+    const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
     const uint8Array = new Uint8Array(byteLen);
     packedNodeRootsToBytes(uint8Array, 0, byteLen, nodes);
 
-    // TODO
-    // return new BitArray(uint8Array, this.lengthBits);
-    return new BitArrayTreeView();
+    return new BitArray(uint8Array, this.lengthBits);
+  }
+
+  commitView(view: BitArray): Node {
+    return this.commitViewMutable(view);
+  }
+
+  commitViewMutable(view: BitArray): Node {
+    const bytes = this.serialize(view);
+    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+  }
+
+  getViewMutableCache(): unknown {
+    return;
   }
 
   // Serialization + deserialization

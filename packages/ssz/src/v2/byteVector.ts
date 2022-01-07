@@ -1,32 +1,14 @@
 import {
   getNodesAtDepth,
-  LeafNode,
   Node,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString} from "../util/byteArray";
-import {CompositeType, TreeView} from "./abstract";
+import {CompositeType} from "./abstract";
 
 export type ByteVector = Uint8Array;
-
-/**
- * TODO
- */
-export class ByteVectorTreeView extends TreeView {
-  // eslint-disable-next-line
-  node = null as any;
-  // eslint-disable-next-line
-  type = null as any;
-  // eslint-disable-next-line
-  commit(): void {}
-  // eslint-disable-next-line
-  toMutable(): void {}
-  protected serializedSize(): number {
-    return 0;
-  }
-}
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -44,7 +26,7 @@ export class ByteVectorTreeView extends TreeView {
  * This BitList implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
-export class ByteVectorType extends CompositeType<ByteVector, ByteVectorTreeView> {
+export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVector> {
   // Immutable characteristics
   protected readonly maxChunkCount: number;
   readonly chunkCount: number;
@@ -68,16 +50,31 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVectorTreeView
     return new Uint8Array(this.fixedLen);
   }
 
-  getView(tree: Tree): ByteVectorTreeView {
+  getView(tree: Tree): ByteVector {
+    return this.getViewMutable(tree.rootNode);
+  }
+
+  getViewMutable(node: Node): ByteVector {
     // TODO: Develop BitListTreeView
     const byteLen = this.fixedLen;
-    const nodes = getNodesAtDepth(tree.rootNode, this.depth, 0, this.chunkCount);
+    const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
     const uint8Array = new Uint8Array(byteLen);
     packedNodeRootsToBytes(uint8Array, 0, byteLen, nodes);
 
-    // TODO
-    // return uint8Array;
-    return new ByteVectorTreeView();
+    return uint8Array;
+  }
+
+  commitView(view: Uint8Array): Node {
+    return this.commitViewMutable(view);
+  }
+
+  commitViewMutable(view: Uint8Array): Node {
+    const bytes = this.serialize(view);
+    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+  }
+
+  getViewMutableCache(): unknown {
+    return;
   }
 
   // Serialization + deserialization
@@ -109,8 +106,8 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVectorTreeView
     return offset + this.fixedLen;
   }
 
-  tree_getLength(node: Node): number {
-    return (node.right as LeafNode).getUint(4, 0);
+  tree_getLength(): number {
+    return this.fixedLen;
   }
 
   // Merkleization

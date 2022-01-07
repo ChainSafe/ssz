@@ -56,8 +56,20 @@ export class ListBasicType<ElementType extends BasicType<any>>
     return new ListBasicTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache: unknown): ListBasicTreeViewMutable<ElementType> {
+  getViewMutable(node: Node, cache?: unknown): ListBasicTreeViewMutable<ElementType> {
     return new ListBasicTreeViewMutable(this, node, cache as any);
+  }
+
+  commitView(view: ListBasicTreeView<ElementType>): Node {
+    return view.node;
+  }
+
+  commitViewMutable(view: ListBasicTreeViewMutable<ElementType>): Node {
+    return view.commit();
+  }
+
+  getViewMutableCache(view: ListBasicTreeViewMutable<ElementType>): unknown {
+    return view.cache;
   }
 
   // Serialization + deserialization
@@ -109,7 +121,7 @@ export class ListBasicType<ElementType extends BasicType<any>>
     let lengthNode: LeafNode;
     if (newLength !== undefined) {
       lengthNode = new LeafNode(zeroNode(0));
-      lengthNode.setUint(4, 0, length);
+      lengthNode.setUint(4, 0, newLength);
     } else {
       lengthNode = rootNode.right as LeafNode;
     }

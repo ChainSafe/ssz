@@ -14,7 +14,7 @@ function exampleTreeView(): void {
   });
 
   const epochPartipationView = epochPartipationType.getView(tree);
-  const containerView = containerType.getView(tree, false);
+  const containerView = containerType.getView(tree);
 
   containerView.epochPartipation; // Typed as 'ListBasicTreeView<UintType>'
   containerView.slot; // Typed as 'number'

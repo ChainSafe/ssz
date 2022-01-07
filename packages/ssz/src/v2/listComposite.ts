@@ -1,7 +1,7 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {mixInLength} from "../util/merkleize";
-import {CompositeType, ValueOf} from "./abstract";
+import {CompositeType, CompositeView, CompositeViewMutable, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
   struct_deserializeFromBytesArrayComposite,
@@ -21,7 +21,9 @@ import {ListCompositeTreeView, ListCompositeTreeViewMutable, ArrayCompositeType}
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class ListCompositeType<ElementType extends CompositeType<any, any, any>>
+export class ListCompositeType<
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewMutable<ElementType>>
+  >
   extends CompositeType<
     ValueOf<ElementType>[],
     ListCompositeTreeView<ElementType>,
@@ -62,8 +64,20 @@ export class ListCompositeType<ElementType extends CompositeType<any, any, any>>
     return new ListCompositeTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache: unknown): ListCompositeTreeViewMutable<ElementType> {
+  getViewMutable(node: Node, cache?: unknown): ListCompositeTreeViewMutable<ElementType> {
     return new ListCompositeTreeViewMutable(this, node, cache as any);
+  }
+
+  commitView(view: ListCompositeTreeView<ElementType>): Node {
+    return view.node;
+  }
+
+  commitViewMutable(view: ListCompositeTreeViewMutable<ElementType>): Node {
+    return view.commit();
+  }
+
+  getViewMutableCache(view: ListCompositeTreeViewMutable<ElementType>): unknown {
+    return view.cache;
   }
 
   // Serialization + deserialization
@@ -116,7 +130,7 @@ export class ListCompositeType<ElementType extends CompositeType<any, any, any>>
     let lengthNode: LeafNode;
     if (newLength !== undefined) {
       lengthNode = new LeafNode(zeroNode(0));
-      lengthNode.setUint(4, 0, length);
+      lengthNode.setUint(4, 0, newLength);
     } else {
       lengthNode = rootNode.right as LeafNode;
     }

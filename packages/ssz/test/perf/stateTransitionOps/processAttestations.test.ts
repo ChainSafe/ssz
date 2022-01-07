@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
 import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
-import {ArrayBasicTreeView} from "../../../src/v2/arrayTreeView";
+import {ArrayBasicTreeView, ListBasicTreeViewMutable} from "../../../src/v2/arrayTreeView";
 import {ListBasicType} from "../../../src/v2/listBasic";
 import {UintNumberType} from "../../../src/v2/uint";
 import {NumberUintType, ListType, TreeBacked, List} from "../../../src";
@@ -74,19 +74,54 @@ describe("processAttestations", () => {
   //   maybe the instantiation of so many BranchNode classes? Initializing all the h values to 0?
   //   consider not setting them at constructor time and doing it latter. Does it increase performance? Memory?
   //   - Creating 250_000 / 32 `new LeafNode(leafNode)` takes 0.175 ms, so no.
-  itBench({
+  itBench<ListBasicTreeViewMutable<UintNumberType>, ListBasicTreeViewMutable<UintNumberType>>({
     id: "set epochStatuses - ListTreeView",
-    beforeEach: () => {
-      const epochStatuses = epochStatusesTypeV2.toTreeViewFromStruct(statusArr);
+    before: () => {
+      const epochStatuses = epochStatusesTypeV2.deserializeToTreeViewMutable(epochStatusesTypeV2.serialize(statusArr));
       // Populate read cache
       epochStatuses.getAll();
       return epochStatuses;
     },
+    beforeEach: (epochStatuses) => epochStatuses,
     fn: (epochStatuses) => {
-      epochStatuses.toMutable();
       for (let i = 0; i < attesterIndices.length; i++) {
         epochStatuses.set(attesterIndices[i], 0x07);
       }
+      epochStatuses.commit();
+    },
+  });
+
+  itBench<ListBasicTreeViewMutable<UintNumberType>, ListBasicTreeViewMutable<UintNumberType>>({
+    id: "set epochStatuses - ListTreeView - set()",
+    before: () => {
+      const epochStatuses = epochStatusesTypeV2.deserializeToTreeViewMutable(epochStatusesTypeV2.serialize(statusArr));
+      // Populate read cache
+      epochStatuses.getAll();
+      return epochStatuses;
+    },
+    beforeEach: (epochStatuses) => epochStatuses,
+    fn: (epochStatuses) => {
+      for (let i = 0; i < attesterIndices.length; i++) {
+        epochStatuses.set(attesterIndices[i], 0x07);
+      }
+    },
+  });
+
+  itBench<ListBasicTreeViewMutable<UintNumberType>, ListBasicTreeViewMutable<UintNumberType>>({
+    id: "set epochStatuses - ListTreeView - commit()",
+    before: () => {
+      const epochStatuses = epochStatusesTypeV2.deserializeToTreeViewMutable(epochStatusesTypeV2.serialize(statusArr));
+      // Populate read cache
+      epochStatuses.getAll();
+      return epochStatuses;
+    },
+    beforeEach: (epochStatuses) => {
+      for (let i = 0; i < attesterIndices.length; i++) {
+        epochStatuses.set(attesterIndices[i], 0x07);
+      }
+      return epochStatuses;
+    },
+    fn: (epochStatuses) => {
       epochStatuses.commit();
     },
   });
@@ -103,6 +138,11 @@ describe("processAttestations", () => {
       }
     },
   });
+
+  // after(async function () {
+  //   this.timeout(3000_000);
+  //   await new Promise((r) => setTimeout(r, 3000_000));
+  // });
 });
 
 // function processAttestations() {

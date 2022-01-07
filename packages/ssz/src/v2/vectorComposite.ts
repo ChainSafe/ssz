@@ -1,6 +1,6 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/tree";
-import {CompositeType, ValueOf} from "./abstract";
+import {CompositeType, CompositeView, CompositeViewMutable, ValueOf} from "./abstract";
 import {
   struct_deserializeFromBytesArrayComposite,
   struct_serializedSizeArrayComposite,
@@ -20,7 +20,9 @@ import {ArrayCompositeTreeView, ArrayCompositeTreeViewMutable, ArrayCompositeTyp
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class VectorCompositeType<ElementType extends CompositeType<any, any, any>>
+export class VectorCompositeType<
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewMutable<ElementType>>
+  >
   extends CompositeType<
     ValueOf<ElementType>[],
     ArrayCompositeTreeView<ElementType>,
@@ -65,8 +67,20 @@ export class VectorCompositeType<ElementType extends CompositeType<any, any, any
     return new ArrayCompositeTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache: unknown): ArrayCompositeTreeViewMutable<ElementType> {
+  getViewMutable(node: Node, cache?: unknown): ArrayCompositeTreeViewMutable<ElementType> {
     return new ArrayCompositeTreeViewMutable(this, node, cache as any);
+  }
+
+  commitView(view: ArrayCompositeTreeView<ElementType>): Node {
+    return view.node;
+  }
+
+  commitViewMutable(view: ArrayCompositeTreeViewMutable<ElementType>): Node {
+    return view.commit();
+  }
+
+  getViewMutableCache(view: ArrayCompositeTreeViewMutable<ElementType>): unknown {
+    return view.cache;
   }
 
   // Serialization + deserialization
