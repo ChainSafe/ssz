@@ -1,5 +1,14 @@
-import {GindexBitstring, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {GindexBitstring, LeafNode, Node, Proof, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {byteArrayEquals} from "../util/byteArray";
 import {merkleizeSingleBuff} from "../util/merkleize";
+
+/**
+ * Proof path
+ * ```
+ * ["validators", 1234, "slashed"]
+ * ```
+ */
+export type Path = (string | number)[];
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -220,11 +229,23 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   }
 
   toValueFromView(view: TV): V {
-    return this.tree_toValue(this.commitView(view));
+    const node = this.commitView(view);
+    return this.tree_toValue(node);
   }
 
   toValueFromViewDU(view: TVDU): V {
-    return this.tree_toValue(this.commitViewDU(view));
+    const node = this.commitViewDU(view);
+    return this.tree_toValue(node);
+  }
+
+  toViewFromViewDU(view: TVDU): TV {
+    const node = this.commitViewDU(view);
+    return this.getView(new Tree(node));
+  }
+
+  toViewDUFromView(view: TV): TVDU {
+    const node = this.commitView(view);
+    return this.getViewDU(node);
   }
 
   toStructFromView(view: TV): V {
@@ -252,13 +273,32 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     return root;
   }
 
+  // Proofs API
+
+  createFromProof(proof: Proof, root: Uint8Array): TV {
+    const tree = Tree.createFromProof(proof);
+    if (!byteArrayEquals(tree.root, root)) {
+      throw new Error("Proof does not match trusted root");
+    }
+    return this.getView(tree);
+  }
+
+  createFromProofUnsafe(proof: Proof): TV {
+    return this.getView(Tree.createFromProof(proof));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tree_createProof(node: Node, paths: Path[]): Proof {
+    throw Error("TODO");
+  }
+
   protected abstract readonly maxChunkCount: number;
   protected abstract getRoots(value: V): Uint8Array;
 }
 
 export abstract class TreeView {
   abstract readonly node: Node;
-  abstract readonly type: Type<any>;
+  abstract readonly type: CompositeType<any, unknown, unknown>;
 
   serialize(): Uint8Array {
     const output = new Uint8Array(this.type.tree_serializedSize(this.node));
@@ -269,24 +309,13 @@ export abstract class TreeView {
   hashTreeRoot(): Uint8Array {
     return this.node.root;
   }
+
+  createProof(paths: Path[]): Proof {
+    return this.type.tree_createProof(this.node, paths);
+  }
 }
 
-export abstract class TreeViewDU {
+export abstract class TreeViewDU extends TreeView {
   abstract commit(): Node;
-  abstract readonly node: Node;
   abstract readonly cache: unknown;
-  abstract readonly type: Type<any>;
-
-  serialize(): Uint8Array {
-    // Ensure all transient changes are commited to the root node
-    const node = this.commit();
-
-    const output = new Uint8Array(this.type.tree_serializedSize(node));
-    this.type.tree_serializeToBytes(output, 0, node);
-    return output;
-  }
-
-  hashTreeRoot(): Uint8Array {
-    return this.node.root;
-  }
 }
