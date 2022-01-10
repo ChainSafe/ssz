@@ -40,16 +40,16 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
 
   // Precalculated data for faster serdes
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
-  readonly isFixedLen: boolean[];
-  readonly fieldRangesFixedLen: BytesRange[];
+  protected readonly isFixedLen: boolean[];
+  protected readonly fieldRangesFixedLen: BytesRange[];
   /** Offsets position relative to start of serialized Container. Length may not equal field count. */
-  readonly variableOffsetsPosition: number[];
+  protected readonly variableOffsetsPosition: number[];
   /** End of fixed section of serialized Container */
-  readonly fixedEnd: number;
+  protected readonly fixedEnd: number;
 
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
-  readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
-  readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
+  protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
+  protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
   constructor(readonly fields: Fields, private readonly opts?: IContainerOptions) {
     super(opts?.cachePermanentRootStruct);
