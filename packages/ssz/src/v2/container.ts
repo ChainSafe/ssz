@@ -3,8 +3,8 @@ import {maxChunksToDepth} from "../util/tree";
 import {IJsonOptions} from "../types";
 import {SszErrorPath} from "../util/errorPath";
 import {toExpectedCase} from "../util/json";
-import {CompositeType, TreeView, TreeViewMutable, Type, ValueOf} from "./abstract";
-import {getContainerTreeViewClass, getContainerTreeViewMutableClass} from "./containerTreeView";
+import {CompositeType, TreeView, TreeViewDU, Type, ValueOf} from "./abstract";
+import {getContainerTreeViewClass, getContainerTreeViewDUClass} from "./containerTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -18,10 +18,10 @@ type FieldsView<Fields extends Record<string, Type<any>>> = {
       Fields[K]["defaultValue"];
 };
 
-type FieldsViewMutable<Fields extends Record<string, Type<any>>> = {
+type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
     ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getViewMutable"]>
+      ReturnType<Fields[K]["getViewDU"]>
     : // If basic, return struct value. Will NOT propagate changes upwards
       Fields[K]["defaultValue"];
 };
@@ -31,10 +31,9 @@ type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> 
   new (type: ContainerType<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };
 
-type ContainerTreeViewMutableType<Fields extends Record<string, Type<any>>> = FieldsViewMutable<Fields> &
-  TreeViewMutable;
-type ContainerTreeViewMutableTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, node: Node, cache?: unknown): ContainerTreeViewMutableType<Fields>;
+type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> & TreeViewDU;
+type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
+  new (type: ContainerType<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
 };
 
 type BytesRange = {start: number; end: number};
@@ -45,13 +44,13 @@ export interface IContainerOptions {
   expectedCase?: IJsonOptions["case"];
   cachePermanentRootStruct?: boolean;
   getContainerTreeViewClass?: typeof getContainerTreeViewClass;
-  getContainerTreeViewMutableClass?: typeof getContainerTreeViewMutableClass;
+  getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
 }
 
 export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
-  ContainerTreeViewMutableType<Fields>
+  ContainerTreeViewDUType<Fields>
 > {
   // Immutable characteristics
   readonly depth: number;
@@ -71,7 +70,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
 
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
-  readonly TreeViewMutable: ContainerTreeViewMutableTypeConstructor<Fields>;
+  readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
   constructor(readonly fields: Fields, private readonly opts?: IContainerOptions) {
     super(opts?.cachePermanentRootStruct);
@@ -105,7 +104,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     // TODO: This options are necessary for ContainerNodeStruct to override this.
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
-    this.TreeViewMutable = opts?.getContainerTreeViewMutableClass?.(this) ?? getContainerTreeViewMutableClass(this);
+    this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
   }
 
   get defaultValue(): ValueOfFields<Fields> {
@@ -120,11 +119,11 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return new this.TreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache?: unknown): ContainerTreeViewMutableType<Fields> {
-    return new this.TreeViewMutable(this, node, cache);
+  getViewDU(node: Node, cache?: unknown): ContainerTreeViewDUType<Fields> {
+    return new this.TreeViewDU(this, node, cache);
   }
 
-  getViewMutableCache(view: ContainerTreeViewMutableType<Fields>): unknown {
+  getViewDUCache(view: ContainerTreeViewDUType<Fields>): unknown {
     return view.cache;
   }
 
@@ -132,7 +131,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return view.node;
   }
 
-  commitViewMutable(view: ContainerTreeViewMutableType<Fields>): Node {
+  commitViewDU(view: ContainerTreeViewDUType<Fields>): Node {
     view.commit();
     return view.node;
   }
@@ -145,18 +144,18 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   // [field1 offset][field2 data       ][field1 data               ]
   // [0x000000c]    [0xaabbaabbaabbaabb][0xffffffffffffffffffffffff]
 
-  struct_serializedSize(value: ValueOfFields<Fields>): number {
+  value_serializedSize(value: ValueOfFields<Fields>): number {
     let totalSize = 0;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       // Offset (4 bytes) + size
       totalSize +=
-        fieldType.fixedLen === null ? 4 + fieldType.struct_serializedSize(value[fieldName]) : fieldType.fixedLen;
+        fieldType.fixedLen === null ? 4 + fieldType.value_serializedSize(value[fieldName]) : fieldType.fixedLen;
     }
     return totalSize;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
     const fieldRanges = this.getFieldRanges(data, start, end);
     const value = {} as ValueOfFields<Fields>;
 
@@ -164,7 +163,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
       const {fieldName, fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
       try {
-        value[fieldName] = fieldType.struct_deserializeFromBytes(
+        value[fieldName] = fieldType.value_deserializeFromBytes(
           data,
           start + fieldRange.start,
           start + fieldRange.end
@@ -177,7 +176,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return value;
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfFields<Fields>): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfFields<Fields>): number {
     let fixedIndex = offset;
     let variableIndex = this.fixedEnd;
 
@@ -190,9 +189,9 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
-        variableIndex = fieldType.struct_serializeToBytes(output, variableIndex, value[fieldName]);
+        variableIndex = fieldType.value_serializeToBytes(output, variableIndex, value[fieldName]);
       } else {
-        fixedIndex = fieldType.struct_serializeToBytes(output, fixedIndex, value[fieldName]);
+        fixedIndex = fieldType.value_serializeToBytes(output, fixedIndex, value[fieldName]);
       }
     }
     return variableIndex;

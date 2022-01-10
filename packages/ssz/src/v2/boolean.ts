@@ -14,7 +14,7 @@ export class BooleanType extends BasicType<boolean> {
 
   // bytes serdes
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number): boolean {
+  value_deserializeFromBytes(data: Uint8Array, start: number): boolean {
     switch (data[start]) {
       case 1:
         return true;
@@ -25,7 +25,7 @@ export class BooleanType extends BasicType<boolean> {
     }
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: boolean): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: boolean): number {
     output[offset] = value ? 1 : 0;
     return offset + 1;
   }

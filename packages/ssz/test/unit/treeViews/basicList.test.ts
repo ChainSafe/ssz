@@ -13,7 +13,7 @@ describe("BasicList", () => {
     const uint8Type = new UintTypeV2(uintBytes);
     const uint8ListType = new ListBasicType(uint8Type, limit);
 
-    const uint8ListTree = uint8ListType.toTreeViewFromStruct(uint8ListType.defaultValue);
+    const uint8ListTree = uint8ListType.toView(uint8ListType.defaultValue);
     const uint8ListStruct: number[] = [];
 
     // Populate tree
@@ -52,7 +52,7 @@ describe("BasicList", () => {
     expect(uint8ListTree2.getAll()).to.deep.equal(uint8ListStruct2, "Wrong cloned value after set in source");
   });
 
-  it("TreeViewMutable edit mutate and transfer", () => {
+  it("TreeViewDU edit mutate and transfer", () => {
     const uintBytes = 1;
     const limit = 64;
     const len = 4;
@@ -60,7 +60,7 @@ describe("BasicList", () => {
     const uint8Type = new UintTypeV2(uintBytes);
     const uint8ListType = new ListBasicType(uint8Type, limit);
 
-    const uint8ListTree = uint8ListType.toTreeViewMutableFromStruct(uint8ListType.defaultValue);
+    const uint8ListTree = uint8ListType.toViewDU(uint8ListType.defaultValue);
     const uint8ListStruct: number[] = [];
 
     // Populate tree

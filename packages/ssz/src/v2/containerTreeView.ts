@@ -1,12 +1,12 @@
 import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth, Tree} from "@chainsafe/persistent-merkle-tree";
-import {BasicType, CompositeType, TreeView, TreeViewMutable, Type, ValueOf} from "./abstract";
+import {BasicType, CompositeType, TreeView, TreeViewDU, Type, ValueOf} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
 export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
-  ContainerTreeViewMutableType<Fields>
+  ContainerTreeViewDUType<Fields>
 > & {
   readonly fields: Fields;
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
@@ -22,10 +22,10 @@ type FieldsView<Fields extends Record<string, Type<any>>> = {
       Fields[K]["defaultValue"];
 };
 
-type FieldsViewMutable<Fields extends Record<string, Type<any>>> = {
+type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
     ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getViewMutable"]>
+      ReturnType<Fields[K]["getViewDU"]>
     : // If basic, return struct value. Will NOT propagate changes upwards
       Fields[K]["defaultValue"];
 };
@@ -35,10 +35,9 @@ type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> 
   new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };
 
-type ContainerTreeViewMutableType<Fields extends Record<string, Type<any>>> = FieldsViewMutable<Fields> &
-  TreeViewMutable;
-type ContainerTreeViewMutableTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewMutableType<Fields>;
+type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> & TreeViewDU;
+type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
+  new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
 };
 
 /**
@@ -132,13 +131,13 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
   return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
 }
 
-type ContainerTreeViewMutableCache = {
+type ContainerTreeViewDUCache = {
   nodes: Node[];
   caches: unknown[];
   nodesPopulated: boolean;
 };
 
-class ContainerTreeViewMutable<Fields extends Record<string, Type<any>>> extends TreeViewMutable {
+class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU {
   protected nodes: Node[] = [];
   protected caches: unknown[];
   protected views: TreeView[] = [];
@@ -149,7 +148,7 @@ class ContainerTreeViewMutable<Fields extends Record<string, Type<any>>> extends
   constructor(
     readonly type: ContainerTypeGeneric<Fields>,
     protected _rootNode: Node,
-    cache?: ContainerTreeViewMutableCache
+    cache?: ContainerTreeViewDUCache
   ) {
     super();
 
@@ -168,7 +167,7 @@ class ContainerTreeViewMutable<Fields extends Record<string, Type<any>>> extends
     return this._rootNode;
   }
 
-  get cache(): ContainerTreeViewMutableCache {
+  get cache(): ContainerTreeViewDUCache {
     return {
       nodes: this.nodes,
       caches: this.caches,
@@ -188,7 +187,7 @@ class ContainerTreeViewMutable<Fields extends Record<string, Type<any>>> extends
         index,
         node: (
           this.type.fieldsEntries[index].fieldType as unknown as CompositeType<any, unknown, unknown>
-        ).commitViewMutable(view),
+        ).commitViewDU(view),
       });
     }
 
@@ -210,10 +209,10 @@ class ContainerTreeViewMutable<Fields extends Record<string, Type<any>>> extends
   }
 }
 
-export function getContainerTreeViewMutableClass<Fields extends Record<string, Type<any>>>(
+export function getContainerTreeViewDUClass<Fields extends Record<string, Type<any>>>(
   type: ContainerTypeGeneric<Fields>
-): ContainerTreeViewMutableTypeConstructor<Fields> {
-  class CustomContainerTreeViewMutable extends ContainerTreeViewMutable<Fields> {}
+): ContainerTreeViewDUTypeConstructor<Fields> {
+  class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -224,12 +223,12 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
       const fieldTypeBasic = fieldType as unknown as BasicType<any>;
-      Object.defineProperty(CustomContainerTreeViewMutable.prototype, fieldName, {
+      Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // TODO: Review the memory cost of this closures
-        get: function (this: CustomContainerTreeViewMutable) {
+        get: function (this: CustomContainerTreeViewDU) {
           // First walk through the tree to get the root node for that index
           let node = this.nodes[index];
           if (node === undefined) {
@@ -240,7 +239,7 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
           return fieldTypeBasic.getValueFromNode(node as LeafNode) as unknown;
         },
 
-        set: function (this: CustomContainerTreeViewMutable, value) {
+        set: function (this: CustomContainerTreeViewDU, value) {
           // Create new node if current leafNode is not dirty
           let nodeChanged = this.nodesChanged.get(index);
           if (!nodeChanged) {
@@ -265,11 +264,11 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
     // set it to the parent tree in the field gindex.
     else {
       const fieldTypeComposite = fieldType as unknown as CompositeType<any, unknown, unknown>;
-      Object.defineProperty(CustomContainerTreeViewMutable.prototype, fieldName, {
+      Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
-        get: function (this: CustomContainerTreeViewMutable) {
+        get: function (this: CustomContainerTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -284,10 +283,10 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
 
           // TODO: To only run .commit() in the child views that actually change, use again
           // the invalidateParent() hook and add indexes to a `this.dirtyChildViews.add(index)`
-          const view = fieldTypeComposite.getViewMutable(node, this.caches[index]);
+          const view = fieldTypeComposite.getViewDU(node, this.caches[index]);
           this.viewsChanged.set(index, view);
 
-          const cache = fieldTypeComposite.getViewMutableCache(view);
+          const cache = fieldTypeComposite.getViewDUCache(view);
           if (cache) {
             this.caches[index] = cache;
           }
@@ -296,12 +295,12 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
           return view;
         },
 
-        set: function (this: CustomContainerTreeViewMutable, view: TreeViewMutable) {
+        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU) {
           // Commit any temp data and transfer cache
-          const node = fieldTypeComposite.commitViewMutable(view);
+          const node = fieldTypeComposite.commitViewDU(view);
 
           // Should transfer cache?
-          this.caches[index] = fieldTypeComposite.getViewMutableCache(view);
+          this.caches[index] = fieldTypeComposite.getViewDUCache(view);
 
           // Do not commit to the tree, but update the node in leafNodes
           this.nodes[index] = node;
@@ -315,5 +314,5 @@ export function getContainerTreeViewMutableClass<Fields extends Record<string, T
   // Change class name
   // Object.defineProperty(CustomContainerTreeView, "name", {value: typeName, writable: false});
 
-  return CustomContainerTreeViewMutable as unknown as ContainerTreeViewMutableTypeConstructor<Fields>;
+  return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields>;
 }

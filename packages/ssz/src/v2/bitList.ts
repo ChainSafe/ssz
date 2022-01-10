@@ -54,10 +54,10 @@ export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
   }
 
   getView(tree: Tree): BitArray {
-    return this.getViewMutable(tree.rootNode);
+    return this.getViewDU(tree.rootNode);
   }
 
-  getViewMutable(node: Node): BitArray {
+  getViewDU(node: Node): BitArray {
     // TODO: Develop BitListTreeView
     const chunksNode = getChunksNodeFromRootNode(node);
     const bitLen = getLengthFromRootNode(node);
@@ -72,30 +72,30 @@ export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
   }
 
   commitView(view: BitArray): Node {
-    return this.commitViewMutable(view);
+    return this.commitViewDU(view);
   }
 
-  commitViewMutable(view: BitArray): Node {
+  commitViewDU(view: BitArray): Node {
     const bytes = this.serialize(view);
     return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
   }
 
-  getViewMutableCache(): unknown {
+  getViewDUCache(): unknown {
     return;
   }
 
   // Serialization + deserialization
 
-  struct_serializedSize(value: BitArray): number {
+  value_serializedSize(value: BitArray): number {
     return bitLenToSerializedLength(value.bitLen);
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
     const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
     return new BitArray(uint8Array, bitLen);
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
     output.set(value.uint8Array, offset);
     return applyPaddingBit(output, offset, value.bitLen);
   }
@@ -141,7 +141,7 @@ export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
   fromJson(data: unknown): BitArray {
     // TODO: Validate
     const bytes = fromHexString(data as string);
-    return this.struct_deserializeFromBytes(bytes, 0, bytes.length);
+    return this.value_deserializeFromBytes(bytes, 0, bytes.length);
   }
 
   // Deserializer helpers

@@ -1,12 +1,12 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
-import {ListBasicTreeView, ListBasicTreeViewMutable, ArrayBasicType} from "./arrayTreeView";
+import {ListBasicTreeView, ListBasicTreeViewDU, ArrayBasicType} from "./arrayTreeView";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {
   getLengthFromRootNode,
-  struct_deserializeFromBytesArrayBasic,
-  struct_fromJsonArray,
-  struct_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_fromJsonArray,
+  value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./array";
@@ -19,7 +19,7 @@ import {mixInLength} from "../util/merkleize";
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class ListBasicType<ElementType extends BasicType<any>>
-  extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>, ListBasicTreeViewMutable<ElementType>>
+  extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>, ListBasicTreeViewDU<ElementType>>
   implements ArrayBasicType<ElementType>
 {
   // Immutable characteristics
@@ -56,34 +56,34 @@ export class ListBasicType<ElementType extends BasicType<any>>
     return new ListBasicTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache?: unknown): ListBasicTreeViewMutable<ElementType> {
-    return new ListBasicTreeViewMutable(this, node, cache as any);
+  getViewDU(node: Node, cache?: unknown): ListBasicTreeViewDU<ElementType> {
+    return new ListBasicTreeViewDU(this, node, cache as any);
   }
 
   commitView(view: ListBasicTreeView<ElementType>): Node {
     return view.node;
   }
 
-  commitViewMutable(view: ListBasicTreeViewMutable<ElementType>): Node {
+  commitViewDU(view: ListBasicTreeViewDU<ElementType>): Node {
     return view.commit();
   }
 
-  getViewMutableCache(view: ListBasicTreeViewMutable<ElementType>): unknown {
+  getViewDUCache(view: ListBasicTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 
   // Serialization + deserialization
 
-  struct_serializedSize(value: ValueOf<ElementType>[]): number {
+  value_serializedSize(value: ValueOf<ElementType>[]): number {
     return value.length * this.elementType.byteLength;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return struct_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
-    return struct_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
+  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+    return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
@@ -135,14 +135,14 @@ export class ListBasicType<ElementType extends BasicType<any>>
   }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
-    const roots = new Uint8Array(this.struct_serializedSize(value));
-    struct_serializeToBytesArrayBasic(this.elementType, value.length, roots, 0, value);
+    const roots = new Uint8Array(this.value_serializedSize(value));
+    value_serializeToBytesArrayBasic(this.elementType, value.length, roots, 0, value);
     return roots;
   }
 
   // JSON
 
   fromJson(data: unknown): ValueOf<ElementType>[] {
-    return struct_fromJsonArray(this.elementType, data);
+    return value_fromJsonArray(this.elementType, data);
   }
 }

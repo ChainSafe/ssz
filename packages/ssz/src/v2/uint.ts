@@ -24,7 +24,7 @@ export class UintNumberType extends BasicType<number> {
 
   // Serialization + deserialization
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): number {
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): number {
     const size = end - start;
     if (size !== this.byteLength) {
       throw Error(`Invalid size ${size} expected ${this.byteLength}`);
@@ -44,7 +44,7 @@ export class UintNumberType extends BasicType<number> {
     return output;
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: number): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: number): number {
     if (this.byteLength > 6 && value === Infinity) {
       for (let i = offset; i < offset + this.byteLength; i++) {
         output[i] = 0xff;
@@ -137,7 +137,7 @@ export class UintBigintType extends BasicType<bigint> {
 
   // Serialization + deserialization
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): bigint {
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): bigint {
     const size = end - start;
     if (size !== this.byteLength) {
       throw Error(`Invalid size ${size} expected ${this.byteLength}`);
@@ -151,7 +151,7 @@ export class UintBigintType extends BasicType<bigint> {
     return output;
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: bigint): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: bigint): number {
     let v = value;
     // TODO: Not-optimized, copy pasted from UintNumberType
     const MAX_BYTE = BigInt(0xff);

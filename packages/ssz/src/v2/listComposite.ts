@@ -1,19 +1,19 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {mixInLength} from "../util/merkleize";
-import {CompositeType, CompositeView, CompositeViewMutable, ValueOf} from "./abstract";
+import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "./abstract";
 import {
   getLengthFromRootNode,
-  struct_deserializeFromBytesArrayComposite,
-  struct_serializedSizeArrayComposite,
-  struct_serializeToBytesArrayComposite,
+  value_deserializeFromBytesArrayComposite,
+  value_serializedSizeArrayComposite,
+  value_serializeToBytesArrayComposite,
   tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
-  struct_getRootsArrayComposite,
-  struct_fromJsonArray,
+  value_getRootsArrayComposite,
+  value_fromJsonArray,
 } from "./array";
-import {ListCompositeTreeView, ListCompositeTreeViewMutable, ArrayCompositeType} from "./arrayTreeView";
+import {ListCompositeTreeView, ListCompositeTreeViewDU, ArrayCompositeType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -22,12 +22,12 @@ import {ListCompositeTreeView, ListCompositeTreeViewMutable, ArrayCompositeType}
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class ListCompositeType<
-    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewMutable<ElementType>>
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
   >
   extends CompositeType<
     ValueOf<ElementType>[],
     ListCompositeTreeView<ElementType>,
-    ListCompositeTreeViewMutable<ElementType>
+    ListCompositeTreeViewDU<ElementType>
   >
   implements ArrayCompositeType<ElementType>
 {
@@ -64,34 +64,34 @@ export class ListCompositeType<
     return new ListCompositeTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache?: unknown): ListCompositeTreeViewMutable<ElementType> {
-    return new ListCompositeTreeViewMutable(this, node, cache as any);
+  getViewDU(node: Node, cache?: unknown): ListCompositeTreeViewDU<ElementType> {
+    return new ListCompositeTreeViewDU(this, node, cache as any);
   }
 
   commitView(view: ListCompositeTreeView<ElementType>): Node {
     return view.node;
   }
 
-  commitViewMutable(view: ListCompositeTreeViewMutable<ElementType>): Node {
+  commitViewDU(view: ListCompositeTreeViewDU<ElementType>): Node {
     return view.commit();
   }
 
-  getViewMutableCache(view: ListCompositeTreeViewMutable<ElementType>): unknown {
+  getViewDUCache(view: ListCompositeTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 
   // Serialization + deserialization
 
-  struct_serializedSize(value: ValueOf<ElementType>[]): number {
-    return struct_serializedSizeArrayComposite(this.elementType, value, this);
+  value_serializedSize(value: ValueOf<ElementType>[]): number {
+    return value_serializedSizeArrayComposite(this.elementType, value, this);
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return struct_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
-    return struct_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
+  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+    return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
   tree_serializedSize(node: Node): number {
@@ -144,12 +144,12 @@ export class ListCompositeType<
   }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
-    return struct_getRootsArrayComposite(this.elementType, value.length, value);
+    return value_getRootsArrayComposite(this.elementType, value.length, value);
   }
 
   // JSON
 
   fromJson(data: unknown): ValueOf<ElementType>[] {
-    return struct_fromJsonArray(this.elementType, data);
+    return value_fromJsonArray(this.elementType, data);
   }
 }

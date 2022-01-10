@@ -51,10 +51,10 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   }
 
   getView(tree: Tree): ByteVector {
-    return this.getViewMutable(tree.rootNode);
+    return this.getViewDU(tree.rootNode);
   }
 
-  getViewMutable(node: Node): ByteVector {
+  getViewDU(node: Node): ByteVector {
     // TODO: Develop BitListTreeView
     const byteLen = this.fixedLen;
     const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
@@ -65,29 +65,30 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   }
 
   commitView(view: Uint8Array): Node {
-    return this.commitViewMutable(view);
+    return this.commitViewDU(view);
   }
 
-  commitViewMutable(view: Uint8Array): Node {
+  commitViewDU(view: Uint8Array): Node {
     const bytes = this.serialize(view);
     return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
   }
 
-  getViewMutableCache(): unknown {
+  getViewDUCache(): unknown {
     return;
   }
 
   // Serialization + deserialization
 
-  struct_serializedSize(): number {
+  value_serializedSize(): number {
     return this.fixedLen;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
+    // TODO: Validate length
     return data.slice(start, end);
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: ByteVector): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: ByteVector): number {
     output.set(value, offset);
     return offset + this.fixedLen;
   }

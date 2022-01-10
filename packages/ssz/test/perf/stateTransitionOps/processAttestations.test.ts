@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
 import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
-import {ArrayBasicTreeView, ListBasicTreeViewMutable} from "../../../src/v2/arrayTreeView";
+import {ArrayBasicTreeView, ListBasicTreeViewDU} from "../../../src/v2/arrayTreeView";
 import {ListBasicType} from "../../../src/v2/listBasic";
 import {UintNumberType} from "../../../src/v2/uint";
 import {NumberUintType, ListType, TreeBacked, List} from "../../../src";
@@ -41,7 +41,7 @@ describe("processAttestations", () => {
   itBench<ArrayBasicTreeView<UintNumberType>, ArrayBasicTreeView<UintNumberType>>({
     id: "get epochStatuses - ListTreeView",
     before: () => {
-      const epochStatuses = epochStatusesTypeV2.toTreeViewFromStruct(statusArr);
+      const epochStatuses = epochStatusesTypeV2.toView(statusArr);
       // Populate read cache
       epochStatuses.getAll();
       return epochStatuses;
@@ -74,10 +74,10 @@ describe("processAttestations", () => {
   //   maybe the instantiation of so many BranchNode classes? Initializing all the h values to 0?
   //   consider not setting them at constructor time and doing it latter. Does it increase performance? Memory?
   //   - Creating 250_000 / 32 `new LeafNode(leafNode)` takes 0.175 ms, so no.
-  itBench<ListBasicTreeViewMutable<UintNumberType>, ListBasicTreeViewMutable<UintNumberType>>({
+  itBench<ListBasicTreeViewDU<UintNumberType>, ListBasicTreeViewDU<UintNumberType>>({
     id: "set epochStatuses - ListTreeView",
     before: () => {
-      const epochStatuses = epochStatusesTypeV2.deserializeToTreeViewMutable(epochStatusesTypeV2.serialize(statusArr));
+      const epochStatuses = epochStatusesTypeV2.deserializeToViewDU(epochStatusesTypeV2.serialize(statusArr));
       // Populate read cache
       epochStatuses.getAll();
       return epochStatuses;
@@ -91,10 +91,10 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<ListBasicTreeViewMutable<UintNumberType>, ListBasicTreeViewMutable<UintNumberType>>({
+  itBench<ListBasicTreeViewDU<UintNumberType>, ListBasicTreeViewDU<UintNumberType>>({
     id: "set epochStatuses - ListTreeView - set()",
     before: () => {
-      const epochStatuses = epochStatusesTypeV2.deserializeToTreeViewMutable(epochStatusesTypeV2.serialize(statusArr));
+      const epochStatuses = epochStatusesTypeV2.deserializeToViewDU(epochStatusesTypeV2.serialize(statusArr));
       // Populate read cache
       epochStatuses.getAll();
       return epochStatuses;
@@ -107,10 +107,10 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<ListBasicTreeViewMutable<UintNumberType>, ListBasicTreeViewMutable<UintNumberType>>({
+  itBench<ListBasicTreeViewDU<UintNumberType>, ListBasicTreeViewDU<UintNumberType>>({
     id: "set epochStatuses - ListTreeView - commit()",
     before: () => {
-      const epochStatuses = epochStatusesTypeV2.deserializeToTreeViewMutable(epochStatusesTypeV2.serialize(statusArr));
+      const epochStatuses = epochStatusesTypeV2.deserializeToViewDU(epochStatusesTypeV2.serialize(statusArr));
       // Populate read cache
       epochStatuses.getAll();
       return epochStatuses;

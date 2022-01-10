@@ -69,10 +69,10 @@ export class BitVectorType extends CompositeType<BitArray, BitArray, BitArray> {
   }
 
   getView(tree: Tree): BitArray {
-    return this.getViewMutable(tree.rootNode);
+    return this.getViewDU(tree.rootNode);
   }
 
-  getViewMutable(node: Node): BitArray {
+  getViewDU(node: Node): BitArray {
     // TODO: Develop BitListTreeView
     const byteLen = this.fixedLen;
     const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
@@ -83,30 +83,30 @@ export class BitVectorType extends CompositeType<BitArray, BitArray, BitArray> {
   }
 
   commitView(view: BitArray): Node {
-    return this.commitViewMutable(view);
+    return this.commitViewDU(view);
   }
 
-  commitViewMutable(view: BitArray): Node {
+  commitViewDU(view: BitArray): Node {
     const bytes = this.serialize(view);
     return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
   }
 
-  getViewMutableCache(): unknown {
+  getViewDUCache(): unknown {
     return;
   }
 
   // Serialization + deserialization
 
-  struct_serializedSize(): number {
+  value_serializedSize(): number {
     return this.fixedLen;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
     this.assertValidLength(data, start, end);
     return new BitArray(data.slice(start, end), this.lengthBits);
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
+  value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
     output.set(value.uint8Array, offset);
     return offset + this.fixedLen;
   }
@@ -141,7 +141,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArray, BitArray> {
   fromJson(data: unknown): BitArray {
     // TODO: Validate
     const bytes = fromHexString(data as string);
-    return this.struct_deserializeFromBytes(bytes, 0, this.fixedLen);
+    return this.value_deserializeFromBytes(bytes, 0, this.fixedLen);
   }
 
   // Deserializer helpers

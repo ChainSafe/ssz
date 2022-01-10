@@ -7,7 +7,7 @@ export type ValueOf<T extends Type<any>> = T["defaultValue"];
 // type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
 
 export type CompositeView<T extends CompositeType<any, unknown, unknown>> = ReturnType<T["getView"]>;
-export type CompositeViewMutable<T extends CompositeType<any, unknown, unknown>> = ReturnType<T["getViewMutable"]>;
+export type CompositeViewDU<T extends CompositeType<any, unknown, unknown>> = ReturnType<T["getViewDU"]>;
 
 const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
 
@@ -15,6 +15,59 @@ type ValueWithCachedPermanentRoot = {
   [symbolCachedPermanentRoot]?: Uint8Array;
 };
 
+/**
+ * # Serialization
+ * - serialize
+ * - deserialize
+ * - deserializeToView
+ * - deserializeToViewDU
+ * Internal
+ * - value_serializedSize
+ * - value_deserializeFromBytes
+ * - value_serializeToBytes
+ * - tree_serializedSize
+ * - tree_serializeToBytes
+ * - tree_deserializeFromBytes
+ * Internal - Basic types
+ * - getValueFromNode
+ * - setValueToNode
+ * - getValueFromPackedNode
+ * - setValueToPackedNode
+ *
+ * # Merkelization
+ * - hashTreeRoot
+ * Internal
+ * - getRoots
+ * - maxChunkCount
+ *
+ * # Views
+ * - getView
+ * - getViewDU
+ * - toValueFromView
+ * - toValueFromViewDU
+ * - toViewFromValue
+ * - toViewDUFromValue
+ * Internal
+ * - commitView
+ * - commitViewDU
+ * - getViewDUCache
+ *
+ * # Tree helpers
+ * Internal - Arrays
+ * - tree_getLength
+ * - tree_setLength
+ * - tree_getChunksNode
+ * - tree_setChunksNode
+ *
+ * # Proofs
+ * - tree_createFromProof
+ * - tree_createProof
+ * - getPathInfo
+ * - tree_getLeafGindices
+ * - getPropertyGindex
+ * - getPropertyType
+ *
+ */
 export abstract class Type<V> {
   abstract readonly defaultValue: V;
   abstract readonly isBasic: boolean;
@@ -30,23 +83,42 @@ export abstract class Type<V> {
 
   // Serialization + deserialization
 
-  abstract struct_serializedSize(struct: V): number;
-  abstract struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): V;
-  abstract struct_serializeToBytes(output: Uint8Array, offset: number, struct: V): number;
+  // TODO: From Cayman's chat
+  // - Rename struct to value
+  // - Type TreeView's Type and at methods to `toValue()` and things like this
+  // - Add proofs
+  // - Move to schema?
+  abstract value_serializedSize(value: V): number;
+  abstract value_serializeToBytes(output: Uint8Array, offset: number, value: V): number;
+  abstract value_deserializeFromBytes(data: Uint8Array, start: number, end: number): V;
   abstract tree_serializedSize(node: Node): number;
-  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node;
   abstract tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number;
+  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node;
+
+  // Un-performant path but useful for testing and prototyping
+  value_toTree(value: V): Node {
+    const bytes = new Uint8Array(this.value_serializedSize(value));
+    this.value_serializeToBytes(bytes, 0, value);
+    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+  }
+
+  // Un-performant path but useful for testing and prototyping
+  tree_toValue(node: Node): V {
+    const bytes = new Uint8Array(this.tree_serializedSize(node));
+    this.tree_serializeToBytes(bytes, 0, node);
+    return this.value_deserializeFromBytes(bytes, 0, bytes.length);
+  }
 
   // User-friendly API
 
   serialize(value: V): Uint8Array {
-    const output = new Uint8Array(this.struct_serializedSize(value));
-    this.struct_serializeToBytes(output, 0, value);
+    const output = new Uint8Array(this.value_serializedSize(value));
+    this.value_serializeToBytes(output, 0, value);
     return output;
   }
 
   deserialize(data: Uint8Array): V {
-    return this.struct_deserializeFromBytes(data, 0, data.length);
+    return this.value_deserializeFromBytes(data, 0, data.length);
   }
 
   // Merkleization
@@ -75,7 +147,7 @@ export abstract class BasicType<V> extends Type<V> {
     throw Error("Basic types do not return views");
   }
 
-  struct_serializedSize(): number {
+  value_serializedSize(): number {
     return this.byteLength;
   }
 
@@ -85,7 +157,7 @@ export abstract class BasicType<V> extends Type<V> {
 
   hashTreeRoot(value: V): Uint8Array {
     const output = new Uint8Array(32);
-    this.struct_serializeToBytes(output, 0, value);
+    this.value_serializeToBytes(output, 0, value);
     return output;
   }
 
@@ -95,7 +167,7 @@ export abstract class BasicType<V> extends Type<V> {
   abstract setValueToPackedNode(leafNode: LeafNode, index: number, value: V): void;
 }
 
-export abstract class CompositeType<V, TV, TVM> extends Type<V> {
+export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   readonly isBasic = false;
 
   constructor(
@@ -109,7 +181,10 @@ export abstract class CompositeType<V, TV, TVM> extends Type<V> {
   }
 
   abstract getView(tree: Tree): TV;
-  abstract getViewMutable(node: Node, cache?: unknown): TVM;
+  /**
+   * ViewDU = View Deferred Update
+   */
+  abstract getViewDU(node: Node, cache?: unknown): TVDU;
   /**
    * Sample implementation
    * ```ts
@@ -121,30 +196,38 @@ export abstract class CompositeType<V, TV, TVM> extends Type<V> {
    * @returns
    */
   abstract commitView(view: TV): Node;
-  abstract commitViewMutable(view: TVM): Node;
-  abstract getViewMutableCache(view: TVM): unknown;
+  abstract commitViewDU(view: TVDU): Node;
+  abstract getViewDUCache(view: TVDU): unknown;
 
-  deserializeToTreeView(data: Uint8Array): TV {
+  deserializeToView(data: Uint8Array): TV {
     const node = this.tree_deserializeFromBytes(data, 0, data.length);
     return this.getView(new Tree(node));
   }
 
-  deserializeToTreeViewMutable(data: Uint8Array): TVM {
+  deserializeToViewDU(data: Uint8Array): TVDU {
     const node = this.tree_deserializeFromBytes(data, 0, data.length);
-    return this.getViewMutable(node);
+    return this.getViewDU(node);
   }
 
-  toTreeViewFromStruct(value: V): TV {
-    // Un-performant path but useful for testing and prototyping
-    return this.deserializeToTreeView(this.serialize(value));
+  toView(value: V): TV {
+    const node = this.value_toTree(value);
+    return this.getView(new Tree(node));
   }
 
-  toTreeViewMutableFromStruct(value: V): TVM {
-    // Un-performant path but useful for testing and prototyping
-    return this.deserializeToTreeViewMutable(this.serialize(value));
+  toViewDU(value: V): TVDU {
+    const node = this.value_toTree(value);
+    return this.getViewDU(node);
   }
 
-  toStructFromTreeView(view: TV): V {
+  toValueFromView(view: TV): V {
+    return this.tree_toValue(this.commitView(view));
+  }
+
+  toValueFromViewDU(view: TVDU): V {
+    return this.tree_toValue(this.commitViewDU(view));
+  }
+
+  toStructFromView(view: TV): V {
     // Un-performant path but useful for testing and prototyping
     const node = this.commitView(view);
     const output = new Uint8Array(this.tree_serializedSize(node));
@@ -188,7 +271,7 @@ export abstract class TreeView {
   }
 }
 
-export abstract class TreeViewMutable {
+export abstract class TreeViewDU {
   abstract commit(): Node;
   abstract readonly node: Node;
   abstract readonly cache: unknown;

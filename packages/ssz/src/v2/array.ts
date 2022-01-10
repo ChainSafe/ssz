@@ -65,7 +65,7 @@ export type ArrayProps = {
 // Basic
 ////////
 
-export function struct_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
+export function value_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
   elementType: ElementType,
   data: Uint8Array,
   start: number,
@@ -81,7 +81,7 @@ export function struct_deserializeFromBytesArrayBasic<ElementType extends BasicT
 
   for (let i = 0; i < length; i++) {
     // TODO: If faster, consider skipping size check for uint types
-    values.push(elementType.struct_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize));
+    values.push(elementType.value_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize));
   }
 
   return values;
@@ -90,7 +90,7 @@ export function struct_deserializeFromBytesArrayBasic<ElementType extends BasicT
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function struct_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
+export function value_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
   elementType: ElementType,
   length: number,
   output: Uint8Array,
@@ -99,7 +99,7 @@ export function struct_serializeToBytesArrayBasic<ElementType extends BasicType<
 ): number {
   const elSize = elementType.byteLength;
   for (let i = 0; i < length; i++) {
-    elementType.struct_serializeToBytes(output, offset + i * elSize, value[i]);
+    elementType.value_serializeToBytes(output, offset + i * elSize, value[i]);
   }
   return offset + length * elSize;
 }
@@ -150,7 +150,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
 // Composite
 ////////////
 
-export function struct_serializedSizeArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_serializedSizeArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
   elementType: ElementType,
   value: ValueOf<ElementType>[],
   arrayProps: ArrayProps
@@ -158,12 +158,12 @@ export function struct_serializedSizeArrayComposite<ElementType extends Composit
   const length = arrayProps.length ? arrayProps.length : value.length;
   let totalSize = 0;
   for (let i = 0; i < length; i++) {
-    totalSize += elementType.struct_serializedSize(value[i]);
+    totalSize += elementType.value_serializedSize(value[i]);
   }
   return totalSize;
 }
 
-export function struct_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
   elementType: ElementType,
   data: Uint8Array,
   start: number,
@@ -179,7 +179,7 @@ export function struct_deserializeFromBytesArrayComposite<ElementType extends Co
   for (let i = 0; i < offsets.length - 1; i++) {
     const startEl = offsets[i];
     const endEl = offsets[i + 1];
-    values.push(elementType.struct_deserializeFromBytes(data, startEl, endEl));
+    values.push(elementType.value_deserializeFromBytes(data, startEl, endEl));
   }
 
   return values;
@@ -188,7 +188,7 @@ export function struct_deserializeFromBytesArrayComposite<ElementType extends Co
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function struct_serializeToBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_serializeToBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   output: Uint8Array,
@@ -203,7 +203,7 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
       // write offset
       fixedSection.setUint32(i * 4, variableIndex - offset, true);
       // write serialized element to variable section
-      variableIndex = elementType.struct_serializeToBytes(output, variableIndex, value[i]);
+      variableIndex = elementType.value_serializeToBytes(output, variableIndex, value[i]);
     }
     return variableIndex;
   }
@@ -211,7 +211,7 @@ export function struct_serializeToBytesArrayComposite<ElementType extends Compos
   // Fixed length
   else {
     for (let i = 0; i < length; i++) {
-      elementType.struct_serializeToBytes(output, offset + i * elementType.fixedLen, value[i]);
+      elementType.value_serializeToBytes(output, offset + i * elementType.fixedLen, value[i]);
     }
     return offset + length * elementType.fixedLen;
   }
@@ -315,7 +315,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function struct_getRootsArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_getRootsArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   value: ValueOf<ElementType>[]
@@ -333,7 +333,7 @@ export function struct_getRootsArrayComposite<ElementType extends CompositeType<
 /**
  * @param length In List length = undefined, Vector length = fixed value
  */
-export function struct_fromJsonArray<ElementType extends Type<any>>(
+export function value_fromJsonArray<ElementType extends Type<any>>(
   elementType: ElementType,
   json: unknown,
   length?: number

@@ -3,13 +3,13 @@ import {maxChunksToDepth} from "../util/tree";
 import {BasicType, CompositeType, ValueOf} from "./abstract";
 import {
   defaultValueVector,
-  struct_deserializeFromBytesArrayBasic,
-  struct_fromJsonArray,
-  struct_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_fromJsonArray,
+  value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./array";
-import {ArrayBasicTreeView, ArrayBasicTreeViewMutable, ArrayBasicType} from "./arrayTreeView";
+import {ArrayBasicTreeView, ArrayBasicTreeViewDU, ArrayBasicType} from "./arrayTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
@@ -18,7 +18,7 @@ import {ArrayBasicTreeView, ArrayBasicTreeViewMutable, ArrayBasicType} from "./a
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class VectorBasicType<ElementType extends BasicType<any>>
-  extends CompositeType<ValueOf<ElementType>[], ArrayBasicTreeView<ElementType>, ArrayBasicTreeViewMutable<ElementType>>
+  extends CompositeType<ValueOf<ElementType>[], ArrayBasicTreeView<ElementType>, ArrayBasicTreeViewDU<ElementType>>
   implements ArrayBasicType<ElementType>
 {
   // Immutable characteristics
@@ -59,34 +59,34 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     return new ArrayBasicTreeView(this, tree);
   }
 
-  getViewMutable(node: Node, cache?: unknown): ArrayBasicTreeViewMutable<ElementType> {
-    return new ArrayBasicTreeViewMutable(this, node, cache as any);
+  getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
+    return new ArrayBasicTreeViewDU(this, node, cache as any);
   }
 
   commitView(view: ArrayBasicTreeView<ElementType>): Node {
     return view.node;
   }
 
-  commitViewMutable(view: ArrayBasicTreeViewMutable<ElementType>): Node {
+  commitViewDU(view: ArrayBasicTreeViewDU<ElementType>): Node {
     return view.commit();
   }
 
-  getViewMutableCache(view: ArrayBasicTreeViewMutable<ElementType>): unknown {
+  getViewDUCache(view: ArrayBasicTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 
   // Serialization + deserialization
 
-  struct_serializedSize(): number {
+  value_serializedSize(): number {
     return this.fixedLen;
   }
 
-  struct_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return struct_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
-  struct_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
-    return struct_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
+  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+    return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
   tree_serializedSize(): number {
@@ -123,13 +123,13 @@ export class VectorBasicType<ElementType extends BasicType<any>>
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
     const roots = new Uint8Array(this.fixedLen);
-    struct_serializeToBytesArrayBasic(this.elementType, this.length, roots, 0, value);
+    value_serializeToBytesArrayBasic(this.elementType, this.length, roots, 0, value);
     return roots;
   }
 
   // JSON
 
   fromJson(data: unknown): ValueOf<ElementType>[] {
-    return struct_fromJsonArray(this.elementType, data, this.length);
+    return value_fromJsonArray(this.elementType, data, this.length);
   }
 }

@@ -19,6 +19,8 @@ function exampleTreeView(): void {
   containerView.epochPartipation; // Typed as 'ListBasicTreeView<UintType>'
   containerView.slot; // Typed as 'number'
 
+  containerView.epochPartipation = epochPartipationType.toView([1, 2]);
+
   // Simulate attestation processing
   for (let i = 0, max = 250_000 / 32; i < max; i++) {
     let flags = epochPartipationView.get(i);
@@ -28,7 +30,7 @@ function exampleTreeView(): void {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function exampleTreeViewMutable(): void {
+function exampleTreeViewDU(): void {
   const tree = new Tree(zeroNode(0));
   const uintType = new UintNumberType(1);
   const epochPartipationType = new ListBasicType(uintType, 1e8);
@@ -37,11 +39,13 @@ function exampleTreeViewMutable(): void {
     slot: uintType,
   });
 
-  const containerView = containerType.getViewMutable(tree.rootNode, undefined);
+  const containerView = containerType.getViewDU(tree.rootNode, undefined);
   const epochPartipationView = containerView.epochPartipation;
 
-  containerView.epochPartipation; // Typed as 'ListBasicTreeViewMutable<UintType>'
+  containerView.epochPartipation; // Typed as 'ListBasicTreeViewDU<UintType>'
   containerView.slot; // Typed as 'number'
+
+  containerView.epochPartipation = epochPartipationType.toViewDU([1, 2]);
 
   // Warm-up the cache
   epochPartipationView.getAll();
