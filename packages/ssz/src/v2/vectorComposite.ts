@@ -79,7 +79,7 @@ export class VectorCompositeType<
     return view.commit();
   }
 
-  getViewDUCache(view: ArrayCompositeTreeViewDU<ElementType>): unknown {
+  cacheOfViewDU(view: ArrayCompositeTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 

@@ -38,10 +38,10 @@ type ValueWithCachedPermanentRoot = {
  * - tree_serializeToBytes
  * - tree_deserializeFromBytes
  * Internal - Basic types
- * - getValueFromNode
- * - setValueToNode
- * - getValueFromPackedNode
- * - setValueToPackedNode
+ * - tree_getFromNode
+ * - tree_setToNode
+ * - tree_getFromPackedNode
+ * - tree_setToPackedNode
  *
  * # Merkelization
  * - hashTreeRoot
@@ -59,7 +59,7 @@ type ValueWithCachedPermanentRoot = {
  * Internal
  * - commitView
  * - commitViewDU
- * - getViewDUCache
+ * - cacheOfViewDU
  *
  * # Tree helpers
  * Internal - Arrays
@@ -170,10 +170,10 @@ export abstract class BasicType<V> extends Type<V> {
     return output;
   }
 
-  abstract getValueFromNode(leafNode: LeafNode): V;
-  abstract setValueToNode(leafNode: LeafNode, value: V): void;
-  abstract getValueFromPackedNode(leafNode: LeafNode, index: number): V;
-  abstract setValueToPackedNode(leafNode: LeafNode, index: number, value: V): void;
+  abstract tree_getFromNode(leafNode: LeafNode): V;
+  abstract tree_setToNode(leafNode: LeafNode, value: V): void;
+  abstract tree_getFromPackedNode(leafNode: LeafNode, index: number): V;
+  abstract tree_setToPackedNode(leafNode: LeafNode, index: number, value: V): void;
 }
 
 export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
@@ -206,7 +206,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    */
   abstract commitView(view: TV): Node;
   abstract commitViewDU(view: TVDU): Node;
-  abstract getViewDUCache(view: TVDU): unknown;
+  abstract cacheOfViewDU(view: TVDU): unknown;
 
   deserializeToView(data: Uint8Array): TV {
     const node = this.tree_deserializeFromBytes(data, 0, data.length);

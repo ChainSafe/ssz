@@ -73,7 +73,7 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
     return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
   }
 
-  getViewDUCache(): unknown {
+  cacheOfViewDU(): unknown {
     return;
   }
 

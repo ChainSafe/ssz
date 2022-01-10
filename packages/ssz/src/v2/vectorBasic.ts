@@ -71,7 +71,7 @@ export class VectorBasicType<ElementType extends BasicType<any>>
     return view.commit();
   }
 
-  getViewDUCache(view: ArrayBasicTreeViewDU<ElementType>): unknown {
+  cacheOfViewDU(view: ArrayBasicTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 

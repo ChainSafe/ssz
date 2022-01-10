@@ -81,7 +81,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     const {fieldName, fieldType} = type.fieldsEntries[index];
 
     // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
-    // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
+    // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
       const fieldTypeBasic = fieldType as unknown as BasicType<any>;
@@ -92,13 +92,13 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeView) {
           const leafNode = getNodeAtDepth(this.node, this.type.depth, index) as LeafNode;
-          return fieldTypeBasic.getValueFromNode(leafNode) as unknown;
+          return fieldTypeBasic.tree_getFromNode(leafNode) as unknown;
         },
 
         set: function (this: CustomContainerTreeView, value) {
           const leafNodePrev = getNodeAtDepth(this.node, this.type.depth, index) as LeafNode;
           const leafNode = new LeafNode(leafNodePrev);
-          fieldTypeBasic.setValueToNode(leafNode, value);
+          fieldTypeBasic.tree_setToNode(leafNode, value);
           this.tree.setNodeAtDepth(this.type.depth, index, leafNode);
         },
       });
@@ -221,7 +221,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
     const {fieldName, fieldType} = type.fieldsEntries[index];
 
     // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
-    // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
+    // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
       const fieldTypeBasic = fieldType as unknown as BasicType<any>;
@@ -238,7 +238,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
             this.nodes[index] = node;
           }
 
-          return fieldTypeBasic.getValueFromNode(node as LeafNode) as unknown;
+          return fieldTypeBasic.tree_getFromNode(node as LeafNode) as unknown;
         },
 
         set: function (this: CustomContainerTreeViewDU, value) {
@@ -256,7 +256,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
             this.nodesChanged.set(index, nodeChanged);
           }
 
-          fieldTypeBasic.setValueToNode(nodeChanged as LeafNode, value);
+          fieldTypeBasic.tree_setToNode(nodeChanged as LeafNode, value);
         },
       });
     }
@@ -288,7 +288,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
           const view = fieldTypeComposite.getViewDU(node, this.caches[index]);
           this.viewsChanged.set(index, view);
 
-          const cache = fieldTypeComposite.getViewDUCache(view);
+          const cache = fieldTypeComposite.cacheOfViewDU(view);
           if (cache) {
             this.caches[index] = cache;
           }
@@ -302,7 +302,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
           const node = fieldTypeComposite.commitViewDU(view);
 
           // Should transfer cache?
-          this.caches[index] = fieldTypeComposite.getViewDUCache(view);
+          this.caches[index] = fieldTypeComposite.cacheOfViewDU(view);
 
           // Do not commit to the tree, but update the node in leafNodes
           this.nodes[index] = node;

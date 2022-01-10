@@ -66,7 +66,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
     const leafNode = this.tree.getNodeAtDepth(this.type.depth, chunkIndex) as LeafNode;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.type.elementType.getValueFromPackedNode(leafNode, index) as ValueOf<ElementType>;
+    return this.type.elementType.tree_getFromPackedNode(leafNode, index) as ValueOf<ElementType>;
   }
 
   set(index: number, value: ValueOf<ElementType>): void {
@@ -75,7 +75,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
 
     // Create a new node to preserve immutability
     const leafNode = new LeafNode(leafNodePrev);
-    this.type.elementType.setValueToPackedNode(leafNodePrev, index, value);
+    this.type.elementType.tree_setToPackedNode(leafNodePrev, index, value);
 
     // Commit immediately
     const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
@@ -100,14 +100,14 @@ export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends Tree
       // ```
       // if performance here is a problem
       for (let i = 0; i < itemsPerChunk; i++) {
-        values.push(this.type.elementType.getValueFromPackedNode(leafNode, n * itemsPerChunk + i));
+        values.push(this.type.elementType.tree_getFromPackedNode(leafNode, n * itemsPerChunk + i));
       }
     }
 
     if (remainder > 0) {
       const leafNode = leafNodes[lenFullNodes];
       for (let i = 0; i < remainder; i++) {
-        values.push(this.type.elementType.getValueFromPackedNode(leafNode, lenFullNodes * itemsPerChunk + i));
+        values.push(this.type.elementType.tree_getFromPackedNode(leafNode, lenFullNodes * itemsPerChunk + i));
       }
     }
 
@@ -130,7 +130,7 @@ export class ListBasicTreeView<ElementType extends BasicType<any>> extends Array
     if (inNewNode) {
       // TODO: Optimize, prevent double initialization
       const leafNode = new LeafNode(zeroNode(0));
-      this.type.elementType.setValueToPackedNode(leafNode, length, value);
+      this.type.elementType.tree_setToPackedNode(leafNode, length, value);
 
       // Commit immediately
       this.tree.setNodeAtDepth(this.type.depth, chunkIndex, leafNode);
@@ -203,7 +203,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<any>> extends Tr
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.type.elementType.getValueFromPackedNode(node, index) as ValueOf<ElementType>;
+    return this.type.elementType.tree_getFromPackedNode(node, index) as ValueOf<ElementType>;
   }
 
   set(index: number, value: ValueOf<ElementType>): void {
@@ -223,7 +223,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<any>> extends Tr
       this.nodesChanged.add(chunkIndex);
     }
 
-    this.type.elementType.setValueToPackedNode(nodeChanged, index, value);
+    this.type.elementType.tree_setToPackedNode(nodeChanged, index, value);
   }
 
   getAll(): ValueOf<ElementType>[] {
@@ -254,14 +254,14 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<any>> extends Tr
       // ```
       // if performance here is a problem
       for (let i = 0; i < itemsPerChunk; i++) {
-        values.push(this.type.elementType.getValueFromPackedNode(leafNode, n * itemsPerChunk + i));
+        values.push(this.type.elementType.tree_getFromPackedNode(leafNode, n * itemsPerChunk + i));
       }
     }
 
     if (remainder > 0) {
       const leafNode = this.nodes[lenFullNodes];
       for (let i = 0; i < remainder; i++) {
-        values.push(this.type.elementType.getValueFromPackedNode(leafNode, lenFullNodes * itemsPerChunk + i));
+        values.push(this.type.elementType.tree_getFromPackedNode(leafNode, lenFullNodes * itemsPerChunk + i));
       }
     }
 
@@ -459,7 +459,7 @@ export class ArrayCompositeTreeViewDU<
     const view = this.type.elementType.getViewDU(node, this.caches[index]);
 
     this.viewsChanged.set(index, view);
-    const viewCache = this.type.elementType.getViewDUCache(view);
+    const viewCache = this.type.elementType.cacheOfViewDU(view);
     if (viewCache) {
       this.caches[index] = viewCache;
     }
@@ -472,7 +472,7 @@ export class ArrayCompositeTreeViewDU<
     const node = this.type.elementType.commitViewDU(view);
 
     // Should transfer cache?
-    this.caches[index] = this.type.elementType.getViewDUCache(view);
+    this.caches[index] = this.type.elementType.cacheOfViewDU(view);
 
     // Do not commit to the tree, but update the node in leafNodes
     this.nodes[index] = node;

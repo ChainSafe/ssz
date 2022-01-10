@@ -80,7 +80,7 @@ export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
     return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
   }
 
-  getViewDUCache(): unknown {
+  cacheOfViewDU(): unknown {
     return;
   }
 

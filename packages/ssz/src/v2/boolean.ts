@@ -49,19 +49,19 @@ export class BooleanType extends BasicType<boolean> {
 
   // Fast tree opts
 
-  getValueFromNode(leafNode: LeafNode): boolean {
+  tree_getFromNode(leafNode: LeafNode): boolean {
     return leafNode.getUint(4, 0) === 1;
   }
 
-  setValueToNode(leafNode: LeafNode, value: boolean): void {
+  tree_setToNode(leafNode: LeafNode, value: boolean): void {
     leafNode.setUint(4, 0, value ? 1 : 0);
   }
 
-  getValueFromPackedNode(): never {
+  tree_getFromPackedNode(): never {
     throw Error("Not implemented");
   }
 
-  setValueToPackedNode(): never {
+  tree_setToPackedNode(): never {
     throw Error("Not implemented");
   }
 

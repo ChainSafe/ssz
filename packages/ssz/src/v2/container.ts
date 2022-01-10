@@ -102,7 +102,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
     return new this.TreeViewDU(this, node, cache);
   }
 
-  getViewDUCache(view: ContainerTreeViewDUType<Fields>): unknown {
+  cacheOfViewDU(view: ContainerTreeViewDUType<Fields>): unknown {
     return view.cache;
   }
 

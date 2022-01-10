@@ -68,7 +68,7 @@ export class ListBasicType<ElementType extends BasicType<any>>
     return view.commit();
   }
 
-  getViewDUCache(view: ListBasicTreeViewDU<ElementType>): unknown {
+  cacheOfViewDU(view: ListBasicTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 

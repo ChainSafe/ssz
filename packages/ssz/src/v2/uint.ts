@@ -79,23 +79,23 @@ export class UintNumberType extends BasicType<number> {
 
   // Fast Tree access
 
-  getValueFromNode(leafNode: LeafNode): number {
+  tree_getFromNode(leafNode: LeafNode): number {
     return leafNode.getUint(this.byteLength, 0);
   }
 
   /** Mutates node to set value */
-  setValueToNode(leafNode: LeafNode, value: number): void {
-    this.setValueToPackedNode(leafNode, 0, value);
+  tree_setToNode(leafNode: LeafNode, value: number): void {
+    this.tree_setToPackedNode(leafNode, 0, value);
   }
 
-  /** EXAMPLE of `getValueFromNode` */
-  getValueFromPackedNode(leafNode: LeafNode, index: number): number {
+  /** EXAMPLE of `tree_getFromNode` */
+  tree_getFromPackedNode(leafNode: LeafNode, index: number): number {
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
     return leafNode.getUint(this.byteLength, offsetBytes);
   }
 
   /** Mutates node to set value */
-  setValueToPackedNode(leafNode: LeafNode, index: number, value: number): void {
+  tree_setToPackedNode(leafNode: LeafNode, index: number, value: number): void {
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
 
     // TODO: Benchmark the cost of this if, and consider using a different class
@@ -182,23 +182,23 @@ export class UintBigintType extends BasicType<bigint> {
 
   // Fast Tree access
 
-  getValueFromNode(leafNode: LeafNode): bigint {
+  tree_getFromNode(leafNode: LeafNode): bigint {
     return leafNode.getUintBigint(this.byteLength, 0);
   }
 
   /** Mutates node to set value */
-  setValueToNode(leafNode: LeafNode, value: bigint): void {
-    this.setValueToPackedNode(leafNode, 0, value);
+  tree_setToNode(leafNode: LeafNode, value: bigint): void {
+    this.tree_setToPackedNode(leafNode, 0, value);
   }
 
-  /** EXAMPLE of `getValueFromNode` */
-  getValueFromPackedNode(leafNode: LeafNode, index: number): bigint {
+  /** EXAMPLE of `tree_getFromNode` */
+  tree_getFromPackedNode(leafNode: LeafNode, index: number): bigint {
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
     return leafNode.getUintBigint(this.byteLength, offsetBytes);
   }
 
   /** Mutates node to set value */
-  setValueToPackedNode(leafNode: LeafNode, index: number, value: bigint): void {
+  tree_setToPackedNode(leafNode: LeafNode, index: number, value: bigint): void {
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
     // TODO: Not-optimized, copy pasted from UintNumberType
     leafNode.setUintBigint(this.byteLength, offsetBytes, value);

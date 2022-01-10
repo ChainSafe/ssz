@@ -76,7 +76,7 @@ export class ListCompositeType<
     return view.commit();
   }
 
-  getViewDUCache(view: ListCompositeTreeViewDU<ElementType>): unknown {
+  cacheOfViewDU(view: ListCompositeTreeViewDU<ElementType>): unknown {
     return view.cache;
   }
 

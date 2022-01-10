@@ -45,7 +45,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     const {fieldName, fieldType} = type.fieldsEntries[index];
 
     // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
-    // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
+    // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
       Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
@@ -143,7 +143,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
     const {fieldName, fieldType} = type.fieldsEntries[index];
 
     // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
-    // The view must use the getValueFromNode() and setValueToNode() methods to persist the struct data to the node,
+    // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
       Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
