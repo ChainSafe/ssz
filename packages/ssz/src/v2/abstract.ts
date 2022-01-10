@@ -296,9 +296,9 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   protected abstract getRoots(value: V): Uint8Array;
 }
 
-export abstract class TreeView {
+export abstract class TreeView<T extends CompositeType<any, unknown, unknown>> {
   abstract readonly node: Node;
-  abstract readonly type: CompositeType<any, unknown, unknown>;
+  abstract readonly type: T;
 
   serialize(): Uint8Array {
     const output = new Uint8Array(this.type.tree_serializedSize(this.node));
@@ -313,9 +313,13 @@ export abstract class TreeView {
   createProof(paths: Path[]): Proof {
     return this.type.tree_createProof(this.node, paths);
   }
+
+  toValue(): ValueOf<T> {
+    return this.type.tree_toValue(this.node) as unknown;
+  }
 }
 
-export abstract class TreeViewDU extends TreeView {
+export abstract class TreeViewDU<T extends CompositeType<any, unknown, unknown>> extends TreeView<T> {
   abstract commit(): Node;
   abstract readonly cache: unknown;
 }

@@ -3,38 +3,17 @@ import {maxChunksToDepth} from "../util/tree";
 import {IJsonOptions} from "../types";
 import {SszErrorPath} from "../util/errorPath";
 import {toExpectedCase} from "../util/json";
-import {CompositeType, TreeView, TreeViewDU, Type, ValueOf} from "./abstract";
+import {CompositeType, Type} from "./abstract";
 import {getContainerTreeViewClass, getContainerTreeViewDUClass} from "./containerTreeView";
+import {
+  ValueOfFields,
+  ContainerTreeViewType,
+  ContainerTreeViewTypeConstructor,
+  ContainerTreeViewDUType,
+  ContainerTreeViewDUTypeConstructor,
+} from "./containerTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
-
-export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
-
-type FieldsView<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
-    ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getView"]>
-    : // If basic, return struct value. Will NOT propagate changes upwards
-      Fields[K]["defaultValue"];
-};
-
-type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
-    ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getViewDU"]>
-    : // If basic, return struct value. Will NOT propagate changes upwards
-      Fields[K]["defaultValue"];
-};
-
-type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> & TreeView;
-type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
-};
-
-type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> & TreeViewDU;
-type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerType<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
-};
 
 type BytesRange = {start: number; end: number};
 

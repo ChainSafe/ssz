@@ -1,45 +1,14 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, TreeView, TreeViewDU, Type, ValueOf} from "./abstract";
+import {CompositeType, TreeView, TreeViewDU, Type} from "./abstract";
 import {BranchNodeStruct} from "./branchNodeStruct";
+import {
+  ContainerTreeViewDUTypeConstructor,
+  ContainerTreeViewTypeConstructor,
+  ContainerTypeGeneric,
+  ValueOfFields,
+} from "./containerTreeView";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
-
-export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = CompositeType<
-  ValueOfFields<Fields>,
-  ContainerTreeViewType<Fields>,
-  ContainerTreeViewDUType<Fields>
-> & {
-  readonly fields: Fields;
-  readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
-};
-
-type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
-
-type FieldsView<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
-    ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getView"]>
-    : // If basic, return struct value. Will NOT propagate changes upwards
-      Fields[K]["defaultValue"];
-};
-
-type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
-    ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getViewDU"]>
-    : // If basic, return struct value. Will NOT propagate changes upwards
-      Fields[K]["defaultValue"];
-};
-
-type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> & TreeView;
-type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
-};
-
-type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> & TreeViewDU;
-type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
-  new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
-};
 
 /**
  * Intented usage:
@@ -56,7 +25,7 @@ type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView {
+class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView<ContainerTypeGeneric<Fields>> {
   constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
     super();
   }
@@ -113,7 +82,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
           return fieldTypeComposite.toView(value[fieldName]);
         },
 
-        set: function (this: CustomContainerTreeView, view: TreeView) {
+        set: function (this: CustomContainerTreeView, view: TreeView<any>) {
           const node = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
           const {value: prevNodeValue} = node;
 
@@ -133,7 +102,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
   return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
 }
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU {
+class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU<ContainerTypeGeneric<Fields>> {
   protected valueChanged: ValueOfFields<Fields> | null = null;
   protected _rootNode: BranchNodeStruct<ValueOfFields<Fields>>;
 
@@ -210,7 +179,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
           return fieldTypeComposite.toViewDU(value[fieldName]);
         },
 
-        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU) {
+        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU<any>) {
           if (this.valueChanged === null) {
             this.valueChanged = {...this._rootNode.value};
           }

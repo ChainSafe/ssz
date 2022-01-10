@@ -12,9 +12,9 @@ export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = Com
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
 };
 
-type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
+export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
-type FieldsView<Fields extends Record<string, Type<any>>> = {
+export type FieldsView<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getView"]>
@@ -22,7 +22,7 @@ type FieldsView<Fields extends Record<string, Type<any>>> = {
       Fields[K]["defaultValue"];
 };
 
-type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
+export type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
     ? // If composite, return view. MAY propagate changes updwards
       ReturnType<Fields[K]["getViewDU"]>
@@ -30,13 +30,15 @@ type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
       Fields[K]["defaultValue"];
 };
 
-type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> & TreeView;
-type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
+export type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> &
+  TreeView<ContainerTypeGeneric<Fields>>;
+export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
   new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };
 
-type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> & TreeViewDU;
-type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
+export type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> &
+  TreeViewDU<ContainerTypeGeneric<Fields>>;
+export type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
   new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
 };
 
@@ -55,8 +57,8 @@ type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView {
-  protected readonly views: TreeView[] = [];
+class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView<ContainerTypeGeneric<Fields>> {
+  protected readonly views: TreeView<any>[] = [];
   protected readonly leafNodes: LeafNode[] = [];
   protected readonly dirtyNodes = new Set<number>();
 
@@ -116,7 +118,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
           return fieldTypeComposite.getView(this.tree.getSubtree(gindex));
         },
 
-        set: function (this: CustomContainerTreeView, value: TreeView) {
+        set: function (this: CustomContainerTreeView, value: TreeView<any>) {
           const node = fieldTypeComposite.commitView(value);
           this.tree.setNodeAtDepth(this.type.depth, index, node);
         },
@@ -137,10 +139,10 @@ type ContainerTreeViewDUCache = {
   nodesPopulated: boolean;
 };
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU {
+class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU<ContainerTypeGeneric<Fields>> {
   protected nodes: Node[] = [];
   protected caches: unknown[];
-  protected views: TreeView[] = [];
+  protected views: TreeView<any>[] = [];
   protected readonly nodesChanged = new Map<number, Node>();
   protected readonly viewsChanged = new Map<number, unknown>();
   private nodesPopulated: boolean;
@@ -295,7 +297,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
           return view;
         },
 
-        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU) {
+        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU<any>) {
           // Commit any temp data and transfer cache
           const node = fieldTypeComposite.commitViewDU(view);
 

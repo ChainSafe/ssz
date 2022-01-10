@@ -44,7 +44,7 @@ export type ArrayCompositeType<
   tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node;
 };
 
-export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends TreeView {
+export class ArrayBasicTreeView<ElementType extends BasicType<any>> extends TreeView<ArrayBasicType<ElementType>> {
   constructor(readonly type: ArrayBasicType<ElementType>, protected tree: Tree) {
     super();
   }
@@ -149,7 +149,7 @@ type ArrayBasicTreeViewDUCache = {
   nodesPopulated: boolean;
 };
 
-export class ArrayBasicTreeViewDU<ElementType extends BasicType<any>> extends TreeViewDU {
+export class ArrayBasicTreeViewDU<ElementType extends BasicType<any>> extends TreeViewDU<ArrayBasicType<ElementType>> {
   protected nodes: LeafNode[];
   protected readonly nodesChanged = new Set<number>();
   protected _length: number;
@@ -329,7 +329,7 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<any>> extends Arr
 
 export class ArrayCompositeTreeView<
   ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
-> extends TreeView {
+> extends TreeView<ArrayCompositeType<ElementType>> {
   constructor(readonly type: ArrayCompositeType<ElementType>, protected tree: Tree) {
     super();
   }
@@ -390,7 +390,7 @@ type ArrayCompositeTreeViewDUCache = {
 
 export class ArrayCompositeTreeViewDU<
   ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
-> extends TreeViewDU {
+> extends TreeViewDU<ArrayCompositeType<ElementType>> {
   protected nodes: Node[];
   protected caches: unknown[];
   protected readonly viewsChanged = new Map<number, CompositeViewDU<ElementType>>();

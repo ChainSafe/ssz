@@ -1,6 +1,7 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 import {Type} from "./abstract";
-import {ContainerType, IContainerOptions, ValueOfFields} from "./container";
+import {ContainerType, IContainerOptions} from "./container";
+import {ValueOfFields} from "./containerTreeView";
 import {getContainerTreeViewClass, getContainerTreeViewDUClass} from "./containerNodeStructTreeView";
 import {BranchNodeStruct} from "./branchNodeStruct";
 
