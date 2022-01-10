@@ -44,6 +44,11 @@ function computeUint8ByteToBitBooleanArray(byte: number): boolean[] {
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
 export class BitArray {
+  /** Error message for getSingleTrueBit() */
+  static ERROR_MORE_THAN_ONE_BIT_SET = "BIT_ARRAY_ERROR_MORE_THAN_ONE_BIT_SET";
+  /** Error message for getSingleTrueBit() */
+  static ERROR_NO_BIT_SET = "BIT_ARRAY_ERROR_NO_BIT_SET";
+
   constructor(readonly uint8Array: Uint8Array, readonly bitLen: number) {
     if (uint8Array.length !== Math.ceil(bitLen / 8)) {
       throw Error("BitArray uint8Array length does not match bitLen");
@@ -123,6 +128,9 @@ export class BitArray {
   /**
    * Return the position of a single bit set. If no bit set or more than 1 bit set, throws.
    * @returns Single bit set position
+   * @throws
+   *  - ERROR_MORE_THAN_ONE_BIT_SET
+   *  - ERROR_NO_BIT_SET
    */
   getSingleTrueBit(): number {
     let index: number | null = null;
@@ -141,19 +149,16 @@ export class BitArray {
       // For each bit in the byte check participation and add to indexesSelected array
       for (let iBit = 0; iBit < 8; iBit++) {
         if (booleansInByte[iBit] === true) {
-          if (index !== null) throw new BitArrayErrorMoreThanOneBitSet();
+          if (index !== null) throw Error(BitArray.ERROR_MORE_THAN_ONE_BIT_SET);
           index = iByte * 8 + iBit;
         }
       }
     }
 
     if (index === null) {
-      throw new BitArrayErrorNoBitSet();
+      throw Error(BitArray.ERROR_NO_BIT_SET);
     } else {
       return index;
     }
   }
 }
-
-export class BitArrayErrorMoreThanOneBitSet extends Error {}
-export class BitArrayErrorNoBitSet extends Error {}

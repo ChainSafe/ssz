@@ -13,5 +13,8 @@ export {VectorCompositeType} from "./type/vectorComposite";
 // Base type clases
 export {Type, BasicType, CompositeType, TreeView, TreeViewDU} from "./abstract";
 
+// Values
+export {BitArray} from "./value/bitArray";
+
 // Helper types
 export {ValueOf, CompositeView, CompositeViewDU} from "./abstract";
