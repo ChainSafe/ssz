@@ -12,6 +12,8 @@ import {mixInLength} from "../../util/merkleize";
 import {CompositeType} from "../abstract";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
+import {BitArrayTreeView} from "../view/bitArray";
+import {BitArrayTreeViewDU} from "../viewDU/bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -29,7 +31,7 @@ import {BitArray} from "../value/bitArray";
  * This BitList implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
-export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
+export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitArrayTreeViewDU> {
   // Immutable characteristics
   readonly depth: number;
   readonly chunkDepth: number;
@@ -53,22 +55,12 @@ export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
     return new BitArray(new Uint8Array(0), 0);
   }
 
-  getView(tree: Tree): BitArray {
-    return this.getViewDU(tree.rootNode);
+  getView(tree: Tree): BitArrayTreeView {
+    return new BitArrayTreeView(this, tree);
   }
 
-  getViewDU(node: Node): BitArray {
-    // TODO: Develop BitListTreeView
-    const chunksNode = getChunksNodeFromRootNode(node);
-    const bitLen = getLengthFromRootNode(node);
-
-    const byteLen = Math.ceil(bitLen / 8);
-    const chunkCount = Math.ceil(byteLen / 32);
-    const nodes = getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkCount);
-    const uint8Array = new Uint8Array(byteLen);
-    packedNodeRootsToBytes(uint8Array, 0, byteLen, nodes);
-
-    return new BitArray(uint8Array, bitLen);
+  getViewDU(node: Node): BitArrayTreeViewDU {
+    return new BitArrayTreeViewDU(this, node);
   }
 
   commitView(view: BitArray): Node {
