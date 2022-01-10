@@ -1,5 +1,5 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {BasicType} from "./abstract";
+import {BasicType} from "../abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

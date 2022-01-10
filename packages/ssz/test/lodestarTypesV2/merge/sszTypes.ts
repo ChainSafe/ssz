@@ -1,8 +1,4 @@
-import {ByteVectorType} from "../../../src/v2/byteVector";
-import {ContainerType} from "../../../src/v2/container";
-import {ListBasicType} from "../../../src/v2/listBasic";
-import {ListCompositeType} from "../../../src/v2/listComposite";
-import {VectorCompositeType} from "../../../src/v2/vectorComposite";
+import {ByteVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src/v2";
 import {
   BYTES_PER_LOGS_BLOOM,
   HISTORICAL_ROOTS_LIMIT,

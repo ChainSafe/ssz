@@ -6,12 +6,12 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
-import {fromHexString} from "../util/byteArray";
-import {mixInLength} from "../util/merkleize";
-import {CompositeType} from "./abstract";
-import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./array";
-import {BitArray} from "./bitArrayTreeView";
+import {maxChunksToDepth} from "../../util/tree";
+import {fromHexString} from "../../util/byteArray";
+import {mixInLength} from "../../util/merkleize";
+import {CompositeType} from "../abstract";
+import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
+import {BitArray} from "../value/bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 

@@ -1,6 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
-import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "./abstract";
+import {maxChunksToDepth} from "../../util/tree";
+import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "../abstract";
+import {defaultValueVector, value_fromJsonArray} from "./arrayBasic";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -8,11 +9,10 @@ import {
   tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
-  defaultValueVector,
   value_getRootsArrayComposite,
-  value_fromJsonArray,
-} from "./array";
-import {ArrayCompositeTreeView, ArrayCompositeTreeViewDU, ArrayCompositeType} from "./arrayTreeView";
+} from "./arrayComposite";
+import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite";
+import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 

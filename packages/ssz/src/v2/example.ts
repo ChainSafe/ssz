@@ -1,7 +1,7 @@
 import {Tree, zeroNode} from "@chainsafe/persistent-merkle-tree/lib";
-import {ContainerType} from "./container";
-import {ListBasicType} from "./listBasic";
-import {UintNumberType} from "./uint";
+import {ContainerType} from "./type/container";
+import {ListBasicType} from "./type/listBasic";
+import {UintNumberType} from "./type/uint";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function exampleTreeView(): void {

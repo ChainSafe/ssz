@@ -5,8 +5,8 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
-import {fromHexString} from "../util/byteArray";
-import {CompositeType} from "./abstract";
+import {fromHexString} from "../../util/byteArray";
+import {CompositeType} from "../abstract";
 
 export type ByteVector = Uint8Array;
 

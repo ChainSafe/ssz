@@ -1,10 +1,12 @@
-import {BitVectorType} from "../../../src/v2/bitVector";
-import {BitListType} from "../../../src/v2/bitList";
-import {ContainerType} from "../../../src/v2/container";
-import {ListBasicType} from "../../../src/v2/listBasic";
-import {ListCompositeType} from "../../../src/v2/listComposite";
-import {VectorBasicType} from "../../../src/v2/vectorBasic";
-import {VectorCompositeType} from "../../../src/v2/vectorComposite";
+import {
+  BitListType,
+  BitVectorType,
+  ContainerType,
+  ListBasicType,
+  ListCompositeType,
+  VectorBasicType,
+  VectorCompositeType,
+} from "../../../src/v2";
 import {
   ATTESTATION_SUBNET_COUNT,
   DEPOSIT_CONTRACT_TREE_DEPTH,

@@ -1,12 +1,14 @@
 import {Type} from "../../../src/v2/abstract";
-import {BitVectorType} from "../../../src/v2/bitVector";
-import {BitListType} from "../../../src/v2/bitList";
-import {ContainerType} from "../../../src/v2/container";
-import {ListBasicType} from "../../../src/v2/listBasic";
-import {VectorBasicType} from "../../../src/v2/vectorBasic";
-import {BooleanType} from "../../../src/v2/boolean";
-import {UintBigintType} from "../../../src/v2/uint";
-import {VectorCompositeType} from "../../../src/v2/vectorComposite";
+import {
+  BooleanType,
+  UintBigintType,
+  BitVectorType,
+  BitListType,
+  ContainerType,
+  ListBasicType,
+  VectorBasicType,
+  VectorCompositeType,
+} from "../../../src/v2";
 
 const bool = new BooleanType();
 const byte = new UintBigintType(1);

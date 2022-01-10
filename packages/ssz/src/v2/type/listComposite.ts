@@ -1,9 +1,9 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
-import {mixInLength} from "../util/merkleize";
-import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "./abstract";
+import {LENGTH_GINDEX, maxChunksToDepth} from "../../util/tree";
+import {mixInLength} from "../../util/merkleize";
+import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "../abstract";
+import {getLengthFromRootNode, value_fromJsonArray} from "./arrayBasic";
 import {
-  getLengthFromRootNode,
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
   value_serializeToBytesArrayComposite,
@@ -11,9 +11,10 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
   value_getRootsArrayComposite,
-  value_fromJsonArray,
-} from "./array";
-import {ListCompositeTreeView, ListCompositeTreeViewDU, ArrayCompositeType} from "./arrayTreeView";
+} from "./arrayComposite";
+import {ArrayCompositeType} from "../view/arrayComposite";
+import {ListCompositeTreeView} from "../view/listComposite";
+import {ListCompositeTreeViewDU} from "../viewDU/listComposite";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 

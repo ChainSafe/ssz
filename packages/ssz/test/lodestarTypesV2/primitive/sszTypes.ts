@@ -1,6 +1,6 @@
-import {ByteVectorType} from "../../../src/v2/byteVector";
-import {UintNumberType} from "../../../src/v2/uint";
-import {BooleanType} from "../../../src/v2/boolean";
+import {ByteVectorType} from "../../../src/v2/type/byteVector";
+import {UintNumberType} from "../../../src/v2/type/uint";
+import {BooleanType} from "../../../src/v2/type/boolean";
 
 export const Boolean = new BooleanType();
 export const Byte = new UintNumberType(1);

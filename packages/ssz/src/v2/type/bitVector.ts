@@ -6,10 +6,10 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
-import {fromHexString} from "../util/byteArray";
-import {CompositeType} from "./abstract";
-import {BitArray} from "./bitArrayTreeView";
+import {maxChunksToDepth} from "../../util/tree";
+import {fromHexString} from "../../util/byteArray";
+import {CompositeType} from "../abstract";
+import {BitArray} from "../value/bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 

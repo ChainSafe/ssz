@@ -1,8 +1,7 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
 import {ListType, NumberUintType, toHexString} from "../../../src";
-import {ListBasicType} from "../../../src/v2/listBasic";
-import {UintNumberType as UintTypeV2} from "../../../src/v2/uint";
+import {ListBasicType, UintNumberType as UintTypeV2} from "../../../src/v2";
 
 describe("BasicList", () => {
   it("TreeView edit mutate and transfer", () => {

@@ -1,8 +1,4 @@
-import {BitVectorType} from "../../../src/v2/bitVector";
-import {ContainerType} from "../../../src/v2/container";
-import {ListBasicType} from "../../../src/v2/listBasic";
-import {ListCompositeType} from "../../../src/v2/listComposite";
-import {VectorCompositeType} from "../../../src/v2/vectorComposite";
+import {BitVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src/v2";
 import {
   FINALIZED_ROOT_INDEX_FLOORLOG2,
   NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2,

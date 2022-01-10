@@ -1,9 +1,10 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "./abstract";
+import {Type} from "../abstract";
 import {ContainerType, IContainerOptions} from "./container";
-import {ValueOfFields} from "./containerTreeView";
-import {getContainerTreeViewClass, getContainerTreeViewDUClass} from "./containerNodeStructTreeView";
-import {BranchNodeStruct} from "./branchNodeStruct";
+import {getContainerTreeViewClass} from "../view/containerNodeStruct";
+import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
+import {BranchNodeStruct} from "../branchNodeStruct";
+import {ValueOfFields} from "../view/container";
 
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
   constructor(readonly fields: Fields, opts?: IContainerOptions) {

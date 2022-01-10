@@ -1,17 +1,16 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
-import {IJsonOptions} from "../types";
-import {SszErrorPath} from "../util/errorPath";
-import {toExpectedCase} from "../util/json";
-import {CompositeType, Type, ValueOf} from "./abstract";
-import {getContainerTreeViewClass, getContainerTreeViewDUClass} from "./containerTreeView";
+import {maxChunksToDepth} from "../../util/tree";
+import {IJsonOptions} from "../../types";
+import {SszErrorPath} from "../../util/errorPath";
+import {toExpectedCase} from "../../util/json";
+import {CompositeType, Type, ValueOf} from "../abstract";
+import {getContainerTreeViewClass} from "../view/container";
+import {ValueOfFields, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
 import {
-  ValueOfFields,
-  ContainerTreeViewType,
-  ContainerTreeViewTypeConstructor,
+  getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "./containerTreeView";
+} from "../viewDU/container";
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 

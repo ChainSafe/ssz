@@ -1,9 +1,7 @@
 import {expect} from "chai";
 import {toHexString} from "../../../src/util/byteArray";
 import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src/v2/abstract";
-import {ContainerType} from "../../../src/v2/container";
-import {UintNumberType} from "../../../src/v2/uint";
-import {ByteVectorType} from "../../../src/v2/byteVector";
+import {ContainerType, UintNumberType, ByteVectorType} from "../../../src/v2";
 
 describe("Container TreeView", () => {
   const uint64Type = new UintNumberType(8);

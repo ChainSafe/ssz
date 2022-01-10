@@ -5,10 +5,9 @@ import {
   zeroNode,
   getNodesAtDepth,
   subtreeFillToContents,
-  packedNodeRootsToBytes,
-  packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, BasicType, CompositeType, ValueOf} from "./abstract";
+import {Type, CompositeType, ValueOf} from "../abstract";
+import {assertValidArrayLength} from "./arrayBasic";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -60,94 +59,6 @@ export type ArrayProps = {
   /** List limit */
   limit?: number;
 };
-
-// Basic
-////////
-
-export function value_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
-  elementType: ElementType,
-  data: Uint8Array,
-  start: number,
-  end: number,
-  arrayProps: ArrayProps
-): ValueOf<ElementType>[] {
-  const values: ValueOf<ElementType>[] = [];
-  const elSize = elementType.byteLength;
-
-  // Vector + List length validation
-  const length = (end - start) / elSize;
-  assertValidArrayLength(length, arrayProps, true);
-
-  for (let i = 0; i < length; i++) {
-    // TODO: If faster, consider skipping size check for uint types
-    values.push(elementType.value_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize));
-  }
-
-  return values;
-}
-
-/**
- * @param length In List length = value.length, Vector length = fixed value
- */
-export function value_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
-  elementType: ElementType,
-  length: number,
-  output: Uint8Array,
-  offset: number,
-  value: ValueOf<ElementType>[]
-): number {
-  const elSize = elementType.byteLength;
-  for (let i = 0; i < length; i++) {
-    elementType.value_serializeToBytes(output, offset + i * elSize, value[i]);
-  }
-  return offset + length * elSize;
-}
-
-// List of basic elements will pack them in merkelized form
-export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
-  elementType: ElementType,
-  chunkDepth: number,
-  data: Uint8Array,
-  start: number,
-  end: number,
-  arrayProps: ArrayProps
-): Node {
-  // Vector + List length validation
-  const length = (end - start) / elementType.byteLength;
-  assertValidArrayLength(length, arrayProps, true);
-
-  // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const chunksNode = packedRootsBytesToNode(chunkDepth, data, start, end);
-
-  if (arrayProps.limit) {
-    return addLengthNode(chunksNode, length);
-  } else {
-    return chunksNode;
-  }
-}
-
-/**
- * @param length In List length = value.length, Vector length = fixed value
- */
-export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
-  elementType: ElementType,
-  length: number,
-  depth: number,
-  output: Uint8Array,
-  offset: number,
-  node: Node
-): number {
-  const size = elementType.byteLength * length;
-  const chunkCount = Math.ceil(size / 32);
-
-  const nodes = getNodesAtDepth(node, depth, 0, chunkCount);
-  packedNodeRootsToBytes(output, offset, size, nodes);
-
-  return offset + size;
-}
-
-// Composite
-////////////
 
 export function value_serializedSizeArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
@@ -331,29 +242,6 @@ export function value_getRootsArrayComposite<ElementType extends CompositeType<u
   return roots;
 }
 
-/**
- * @param length In List length = undefined, Vector length = fixed value
- */
-export function value_fromJsonArray<ElementType extends Type<any>>(
-  elementType: ElementType,
-  json: unknown,
-  length?: number
-): ValueOf<ElementType>[] {
-  if (!Array.isArray(json)) {
-    throw Error("JSON must be an array");
-  }
-
-  if (length === undefined) {
-    length = json.length;
-  }
-
-  const value: ValueOf<ElementType>[] = [];
-  for (let i = 0; i < length; i++) {
-    value.push(elementType.fromJson(json[i]));
-  }
-  return value;
-}
-
 function getOffsetsArrayComposite(
   fixedLen: null | number,
   data: Uint8Array,
@@ -421,27 +309,4 @@ function getVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: n
     throw new Error("First offset skips variable data");
   }
   return offsets;
-}
-
-/**
- * @param checkNonDecimalLength Check that length is a multiple of element size.
- * Optional since it's not necessary in getOffsetsArrayComposite() fn.
- */
-function assertValidArrayLength(length: number, arrayProps: ArrayProps, checkNonDecimalLength?: boolean): void {
-  if (checkNonDecimalLength && length % 1 !== 0) {
-    throw Error("size not multiple of element fixedLen");
-  }
-
-  // Vector + List length validation
-  if (arrayProps.length !== undefined) {
-    if (length !== arrayProps.length) {
-      throw new Error(`Incorrect vector length ${length} expected ${arrayProps.length}`);
-    }
-  } else if (arrayProps.limit !== undefined) {
-    if (length > arrayProps.limit) {
-      throw new Error(`List length too big ${length} limit ${arrayProps.limit}`);
-    }
-  } else {
-    throw Error("Must set either length or limit");
-  }
 }

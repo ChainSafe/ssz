@@ -1,10 +1,8 @@
 import {itBench} from "@dapplion/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
 import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
-import {ArrayBasicTreeView, ListBasicTreeViewDU} from "../../../src/v2/arrayTreeView";
-import {ListBasicType} from "../../../src/v2/listBasic";
-import {UintNumberType} from "../../../src/v2/uint";
 import {NumberUintType, ListType, TreeBacked, List} from "../../../src";
+import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src/v2";
 
 describe("processAttestations", () => {
   const vc = 250_000;
@@ -17,6 +15,10 @@ describe("processAttestations", () => {
 
   const uint8TypeV2 = new UintNumberType(1);
   const epochStatusesTypeV2 = new ListBasicType(uint8TypeV2, VALIDATOR_REGISTRY_LIMIT);
+
+  // Helper types
+  type Statuses = typeof epochStatusesTypeV2;
+  type StatusesViewDU = CompositeViewDU<Statuses>;
 
   before("Compute attesterIndices", () => {
     for (let i = 0; i < vc; i += Math.floor(2 * attesterShare * Math.random())) {
@@ -38,10 +40,10 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<ArrayBasicTreeView<UintNumberType>, ArrayBasicTreeView<UintNumberType>>({
-    id: "get epochStatuses - ListTreeView",
+  itBench<StatusesViewDU, StatusesViewDU>({
+    id: "get epochStatuses - ViewDU",
     before: () => {
-      const epochStatuses = epochStatusesTypeV2.toView(statusArr);
+      const epochStatuses = epochStatusesTypeV2.toViewDU(statusArr);
       // Populate read cache
       epochStatuses.getAll();
       return epochStatuses;
@@ -74,7 +76,7 @@ describe("processAttestations", () => {
   //   maybe the instantiation of so many BranchNode classes? Initializing all the h values to 0?
   //   consider not setting them at constructor time and doing it latter. Does it increase performance? Memory?
   //   - Creating 250_000 / 32 `new LeafNode(leafNode)` takes 0.175 ms, so no.
-  itBench<ListBasicTreeViewDU<UintNumberType>, ListBasicTreeViewDU<UintNumberType>>({
+  itBench<StatusesViewDU, StatusesViewDU>({
     id: "set epochStatuses - ListTreeView",
     before: () => {
       const epochStatuses = epochStatusesTypeV2.deserializeToViewDU(epochStatusesTypeV2.serialize(statusArr));
@@ -91,7 +93,7 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<ListBasicTreeViewDU<UintNumberType>, ListBasicTreeViewDU<UintNumberType>>({
+  itBench<StatusesViewDU, StatusesViewDU>({
     id: "set epochStatuses - ListTreeView - set()",
     before: () => {
       const epochStatuses = epochStatusesTypeV2.deserializeToViewDU(epochStatusesTypeV2.serialize(statusArr));
@@ -107,7 +109,7 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<ListBasicTreeViewDU<UintNumberType>, ListBasicTreeViewDU<UintNumberType>>({
+  itBench<StatusesViewDU, StatusesViewDU>({
     id: "set epochStatuses - ListTreeView - commit()",
     before: () => {
       const epochStatuses = epochStatusesTypeV2.deserializeToViewDU(epochStatusesTypeV2.serialize(statusArr));
