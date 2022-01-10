@@ -3,7 +3,7 @@ import {CompositeType, TreeView, Type} from "../abstract";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * Intented usage:
@@ -20,7 +20,7 @@ import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} f
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView<ContainerTypeGeneric<Fields>> {
+class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
   constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
     super();
   }
@@ -30,7 +30,7 @@ class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeVi
   }
 }
 
-export function getContainerTreeViewClass<Fields extends Record<string, Type<any>>>(
+export function getContainerTreeViewClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewTypeConstructor<Fields> {
   class CustomContainerTreeView extends ContainerTreeView<Fields> {}

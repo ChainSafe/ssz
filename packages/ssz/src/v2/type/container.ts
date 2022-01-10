@@ -12,7 +12,7 @@ import {
   ContainerTreeViewDUTypeConstructor,
 } from "../viewDU/container";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
 
@@ -25,7 +25,7 @@ export interface IContainerOptions {
   getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
 }
 
-export class ContainerType<Fields extends Record<string, Type<any>>> extends CompositeType<
+export class ContainerType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
   ContainerTreeViewDUType<Fields>
@@ -257,8 +257,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
       if (jsonValue === undefined) {
         throw Error(`JSON expected field ${jsonKey} is undefined`);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      value[fieldName] = fieldType.fromJson(jsonValue);
+      value[fieldName] = fieldType.fromJson(jsonValue) as ValueOf<Fields[keyof Fields]>;
     }
 
     return value;
@@ -296,7 +295,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   }
 }
 
-function getContainerFixedLen(fields: Record<string, Type<any>>): null | number {
+function getContainerFixedLen(fields: Record<string, Type<unknown>>): null | number {
   let fixedLen = 0;
   for (const fieldType of Object.values(fields)) {
     if (fieldType.fixedLen === null) {
@@ -308,7 +307,7 @@ function getContainerFixedLen(fields: Record<string, Type<any>>): null | number 
   return fixedLen;
 }
 
-function getMinMaxLengths(fields: Record<string, Type<any>>): [number, number] {
+function getMinMaxLengths(fields: Record<string, Type<unknown>>): [number, number] {
   let minLen = 0;
   let maxLen = 0;
 
@@ -374,7 +373,7 @@ function getFieldRangesVarLen(
   return fieldRangesVarLen;
 }
 
-function precomputeSerdesData(fields: Record<string, Type<any>>): {
+function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
   isFixedLen: boolean[];
   fieldRangesFixedLen: BytesRange[];
   variableOffsetsPosition: number[];

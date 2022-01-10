@@ -1,20 +1,18 @@
 import {getNodeAtDepth, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {BasicType, CompositeType, TreeView, TreeViewDU, Type, ValueOf} from "../abstract";
+import {BasicType, CompositeType, TreeView, Type, ValueOf} from "../abstract";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
-
-export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = CompositeType<
+export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
-  TreeViewDU<any>
+  unknown
 > & {
   readonly fields: Fields;
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
 };
 
-export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
+export type ValueOfFields<Fields extends Record<string, Type<unknown>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
-export type FieldsView<Fields extends Record<string, Type<any>>> = {
+export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<unknown, infer TV, unknown>
     ? // If composite, return view. MAY propagate changes updwards
       TV
@@ -24,9 +22,9 @@ export type FieldsView<Fields extends Record<string, Type<any>>> = {
     : never;
 };
 
-export type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> &
+export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
   TreeView<ContainerTypeGeneric<Fields>>;
-export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<any>>> = {
+export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<unknown>>> = {
   new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };
 
@@ -45,8 +43,8 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  protected readonly views: TreeView<any>[] = [];
+class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
+  protected readonly views: unknown[] = [];
   protected readonly leafNodes: LeafNode[] = [];
   protected readonly dirtyNodes = new Set<number>();
 
@@ -59,7 +57,7 @@ class ContainerTreeView<Fields extends Record<string, Type<any>>> extends TreeVi
   }
 }
 
-export function getContainerTreeViewClass<Fields extends Record<string, Type<any>>>(
+export function getContainerTreeViewClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewTypeConstructor<Fields> {
   class CustomContainerTreeView extends ContainerTreeView<Fields> {}
@@ -72,7 +70,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
-      const fieldTypeBasic = fieldType as unknown as BasicType<any>;
+      const fieldTypeBasic = fieldType as unknown as BasicType<unknown>;
       Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
@@ -80,7 +78,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeView) {
           const leafNode = getNodeAtDepth(this.node, this.type.depth, index) as LeafNode;
-          return fieldTypeBasic.tree_getFromNode(leafNode) as unknown;
+          return fieldTypeBasic.tree_getFromNode(leafNode);
         },
 
         set: function (this: CustomContainerTreeView, value) {
@@ -101,12 +99,14 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
         configurable: false,
         enumerable: true,
 
+        // Returns TreeView of fieldName
         get: function (this: CustomContainerTreeView) {
           const gindex = this.type.getGindexBitStringAtChunkIndex(index);
           return fieldTypeComposite.getView(this.tree.getSubtree(gindex));
         },
 
-        set: function (this: CustomContainerTreeView, value: TreeView<any>) {
+        // Expects TreeView of fieldName
+        set: function (this: CustomContainerTreeView, value: unknown) {
           const node = fieldTypeComposite.commitView(value);
           this.tree.setNodeAtDepth(this.type.depth, index, node);
         },

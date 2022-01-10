@@ -1,10 +1,10 @@
 import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
-import {BasicType, CompositeType, TreeView, TreeViewDU, Type} from "../abstract";
+import {BasicType, CompositeType, TreeViewDU, Type} from "../abstract";
 import {ContainerTypeGeneric} from "../view/container";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
-export type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
+export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<unknown, unknown, infer TVDU>
     ? // If composite, return view. MAY propagate changes updwards
       TVDU
@@ -14,9 +14,9 @@ export type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
     : never;
 };
 
-export type ContainerTreeViewDUType<Fields extends Record<string, Type<any>>> = FieldsViewDU<Fields> &
+export type ContainerTreeViewDUType<Fields extends Record<string, Type<unknown>>> = FieldsViewDU<Fields> &
   TreeViewDU<ContainerTypeGeneric<Fields>>;
-export type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<any>>> = {
+export type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<unknown>>> = {
   new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
 };
 
@@ -26,10 +26,12 @@ type ContainerTreeViewDUCache = {
   nodesPopulated: boolean;
 };
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU<ContainerTypeGeneric<Fields>> {
+class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
+  ContainerTypeGeneric<Fields>
+> {
   protected nodes: Node[] = [];
   protected caches: unknown[];
-  protected views: TreeView<any>[] = [];
+  protected views: unknown[] = [];
   protected readonly nodesChanged = new Map<number, Node>();
   protected readonly viewsChanged = new Map<number, unknown>();
   private nodesPopulated: boolean;
@@ -98,7 +100,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends Tree
   }
 }
 
-export function getContainerTreeViewDUClass<Fields extends Record<string, Type<any>>>(
+export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewDUTypeConstructor<Fields> {
   class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}
@@ -111,7 +113,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
     // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (fieldType.isBasic) {
-      const fieldTypeBasic = fieldType as unknown as BasicType<any>;
+      const fieldTypeBasic = fieldType as unknown as BasicType<unknown>;
       Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,
@@ -157,6 +159,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
         configurable: false,
         enumerable: true,
 
+        // Returns TreeViewDU of fieldName
         get: function (this: CustomContainerTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
@@ -184,7 +187,8 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
           return view;
         },
 
-        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU<any>) {
+        // Expects TreeViewDU of fieldName
+        set: function (this: CustomContainerTreeViewDU, view: unknown) {
           // Commit any temp data and transfer cache
           const node = fieldTypeComposite.commitViewDU(view);
 

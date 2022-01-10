@@ -6,7 +6,7 @@ import {
   getNodesAtDepth,
   subtreeFillToContents,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, CompositeType, ValueOf} from "../abstract";
+import {CompositeType, ValueOf} from "../abstract";
 import {assertValidArrayLength} from "./arrayBasic";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
@@ -38,19 +38,6 @@ export function addLengthNode(chunksNode: Node, length: number): Node {
   lengthNode.setUint(4, 0, length);
 
   return new BranchNode(chunksNode, lengthNode);
-}
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export function defaultValueVector<ElementType extends Type<any>>(
-  elementType: ElementType,
-  length: number
-): ValueOf<ElementType>[] {
-  const values: ValueOf<ElementType>[] = [];
-  for (let i = 0; i < length; i++) {
-    values.push(elementType.defaultValue);
-  }
-  return values;
 }
 
 export type ArrayProps = {

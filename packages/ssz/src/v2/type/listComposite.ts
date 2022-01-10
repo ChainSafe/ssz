@@ -16,13 +16,14 @@ import {ArrayCompositeType} from "../view/arrayComposite";
 import {ListCompositeTreeView} from "../view/listComposite";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
 export class ListCompositeType<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
   >
   extends CompositeType<
@@ -66,6 +67,8 @@ export class ListCompositeType<
   }
 
   getViewDU(node: Node, cache?: unknown): ListCompositeTreeViewDU<ElementType> {
+    // cache type should be validated (if applicate) in the view
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new ListCompositeTreeViewDU(this, node, cache as any);
   }
 

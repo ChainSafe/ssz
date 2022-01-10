@@ -13,7 +13,7 @@ import {CompositeType} from "../abstract";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * BitList may be represented as an array of bits or compressed into an array of bytes.
@@ -31,12 +31,12 @@ import {BitArray} from "../value/bitArray";
  */
 export class BitListType extends CompositeType<BitArray, BitArray, BitArray> {
   // Immutable characteristics
-  protected readonly maxChunkCount: number;
   readonly depth: number;
   readonly chunkDepth: number;
   readonly fixedLen = null;
   readonly minLen = 1; // +1 for the extra padding bit
   readonly maxLen: number;
+  protected readonly maxChunkCount: number;
 
   constructor(readonly limitBits: number) {
     super();

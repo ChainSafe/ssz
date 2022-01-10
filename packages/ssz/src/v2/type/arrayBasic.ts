@@ -40,15 +40,13 @@ export function addLengthNode(chunksNode: Node, length: number): Node {
   return new BranchNode(chunksNode, lengthNode);
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export function defaultValueVector<ElementType extends Type<any>>(
+export function defaultValueVector<ElementType extends Type<unknown>>(
   elementType: ElementType,
   length: number
 ): ValueOf<ElementType>[] {
   const values: ValueOf<ElementType>[] = [];
   for (let i = 0; i < length; i++) {
-    values.push(elementType.defaultValue);
+    values.push(elementType.defaultValue as ValueOf<ElementType>);
   }
   return values;
 }
@@ -60,7 +58,7 @@ export type ArrayProps = {
   limit?: number;
 };
 
-export function value_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
+export function value_deserializeFromBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   data: Uint8Array,
   start: number,
@@ -76,7 +74,9 @@ export function value_deserializeFromBytesArrayBasic<ElementType extends BasicTy
 
   for (let i = 0; i < length; i++) {
     // TODO: If faster, consider skipping size check for uint types
-    values.push(elementType.value_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize));
+    values.push(
+      elementType.value_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize) as ValueOf<ElementType>
+    );
   }
 
   return values;
@@ -85,7 +85,7 @@ export function value_deserializeFromBytesArrayBasic<ElementType extends BasicTy
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function value_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
+export function value_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   length: number,
   output: Uint8Array,
@@ -100,7 +100,7 @@ export function value_serializeToBytesArrayBasic<ElementType extends BasicType<a
 }
 
 // List of basic elements will pack them in merkelized form
-export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<any>>(
+export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   chunkDepth: number,
   data: Uint8Array,
@@ -125,7 +125,7 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<any>>(
+export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   length: number,
   depth: number,
@@ -145,7 +145,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
 /**
  * @param length In List length = undefined, Vector length = fixed value
  */
-export function value_fromJsonArray<ElementType extends Type<any>>(
+export function value_fromJsonArray<ElementType extends Type<unknown>>(
   elementType: ElementType,
   json: unknown,
   length?: number
@@ -160,7 +160,7 @@ export function value_fromJsonArray<ElementType extends Type<any>>(
 
   const value: ValueOf<ElementType>[] = [];
   for (let i = 0; i < length; i++) {
-    value.push(elementType.fromJson(json[i]));
+    value.push(elementType.fromJson(json[i]) as ValueOf<ElementType>);
   }
   return value;
 }

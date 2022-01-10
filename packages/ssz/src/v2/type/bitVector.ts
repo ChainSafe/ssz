@@ -11,7 +11,7 @@ import {fromHexString} from "../../util/byteArray";
 import {CompositeType} from "../abstract";
 import {BitArray} from "../value/bitArray";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * BitList may be represented as an array of bits or compressed into an array of bytes.
@@ -29,12 +29,12 @@ import {BitArray} from "../value/bitArray";
  */
 export class BitVectorType extends CompositeType<BitArray, BitArray, BitArray> {
   // Immutable characteristics
-  protected readonly maxChunkCount: number;
   readonly chunkCount: number;
   readonly depth: number;
   readonly fixedLen: number;
   readonly minLen: number;
   readonly maxLen: number;
+  protected readonly maxChunkCount: number;
   /**
    * Mask to check if trailing bits are zero'ed. Mask returns bits that must be zero'ed
    * ```

@@ -4,9 +4,11 @@ import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTypeGeneric, ValueOfFields} from "../view/container";
 import {ContainerTreeViewDUTypeConstructor} from "./container";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends TreeViewDU<ContainerTypeGeneric<Fields>> {
+class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
+  ContainerTypeGeneric<Fields>
+> {
   protected valueChanged: ValueOfFields<Fields> | null = null;
   protected _rootNode: BranchNodeStruct<ValueOfFields<Fields>>;
 
@@ -37,7 +39,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends Tree
   }
 }
 
-export function getContainerTreeViewDUClass<Fields extends Record<string, Type<any>>>(
+export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewDUTypeConstructor<Fields> {
   class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}

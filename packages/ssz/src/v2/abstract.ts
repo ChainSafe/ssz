@@ -10,20 +10,19 @@ import {merkleizeSingleBuff} from "../util/merkleize";
  */
 export type Path = (string | number)[];
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering  */
 
-export type ValueOf<T extends Type<any>> = T extends Type<infer V> ? V : never;
-// type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
+export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
 
 export type CompositeView<T extends CompositeType<unknown, unknown, unknown>> = T extends CompositeType<
-  any,
+  unknown,
   infer TV,
   unknown
 >
   ? TV
   : never;
 export type CompositeViewDU<T extends CompositeType<unknown, unknown, unknown>> = T extends CompositeType<
-  any,
+  unknown,
   unknown,
   infer TVDU
 >

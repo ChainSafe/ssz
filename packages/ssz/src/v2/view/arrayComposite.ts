@@ -1,10 +1,9 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, TreeView, TreeViewDU, ValueOf, CompositeView, CompositeViewDU} from "../abstract";
+import {CompositeType, TreeView, ValueOf, CompositeView, CompositeViewDU} from "../abstract";
 
 export type ArrayCompositeType<
   ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-> = CompositeType<ValueOf<ElementType>[], TreeView<any>, TreeViewDU<any>> & {
+> = CompositeType<ValueOf<ElementType>[], unknown, unknown> & {
   readonly elementType: ElementType;
   readonly chunkDepth: number;
   tree_getLength(node: Node): number;

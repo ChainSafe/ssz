@@ -10,7 +10,7 @@ import {CompositeType} from "../abstract";
 
 export type ByteVector = Uint8Array;
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * BitList may be represented as an array of bits or compressed into an array of bytes.
@@ -28,12 +28,12 @@ export type ByteVector = Uint8Array;
  */
 export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVector> {
   // Immutable characteristics
-  protected readonly maxChunkCount: number;
   readonly chunkCount: number;
   readonly depth: number;
   readonly fixedLen: number;
   readonly minLen: number;
   readonly maxLen: number;
+  protected readonly maxChunkCount: number;
 
   constructor(readonly lengthBytes: number) {
     super();

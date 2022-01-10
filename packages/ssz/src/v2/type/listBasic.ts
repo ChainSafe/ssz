@@ -14,13 +14,13 @@ import {ArrayBasicType} from "../view/arrayBasic";
 import {ListBasicTreeView} from "../view/listBasic";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic";
 
-/* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * Basic types are max 32 bytes long so always fit in a single tree node.
  * Basic types are never returned in a wrapper, but their native representation
  */
-export class ListBasicType<ElementType extends BasicType<any>>
+export class ListBasicType<ElementType extends BasicType<unknown>>
   extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>, ListBasicTreeViewDU<ElementType>>
   implements ArrayBasicType<ElementType>
 {
@@ -59,6 +59,8 @@ export class ListBasicType<ElementType extends BasicType<any>>
   }
 
   getViewDU(node: Node, cache?: unknown): ListBasicTreeViewDU<ElementType> {
+    // cache type should be validated (if applicate) in the view
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new ListBasicTreeViewDU(this, node, cache as any);
   }
 
