@@ -54,7 +54,7 @@ describe("Container TreeView", () => {
   });
 });
 
-export type TreeMutation<CT extends CompositeType<any, unknown, unknown>> = {
+export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = {
   id: string;
   valueBefore: ValueOf<CT>;
   valueAfter: ValueOf<CT>;
@@ -64,7 +64,7 @@ export type TreeMutation<CT extends CompositeType<any, unknown, unknown>> = {
   fn: (treeView: CompositeViewDU<CT>) => CompositeViewDU<CT> | void;
 };
 
-function runTreeViewTest<CT extends CompositeType<any, unknown, unknown>>({
+function runTreeViewTest<CT extends CompositeType<unknown, unknown, unknown>>({
   typeName,
   type,
   treeViewToStruct,

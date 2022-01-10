@@ -1,5 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, TreeView, TreeViewDU, Type} from "./abstract";
+import {CompositeType, TreeView, TreeViewDU, Type, ValueOf} from "./abstract";
 import {BranchNodeStruct} from "./branchNodeStruct";
 import {
   ContainerTreeViewDUTypeConstructor,
@@ -72,17 +72,19 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else {
-      const fieldTypeComposite = fieldType as unknown as CompositeType<any, unknown, unknown>;
+      const fieldTypeComposite = fieldType as unknown as CompositeType<unknown, unknown, unknown>;
       Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
-        get: function (this: CustomContainerTreeView) {
+        // Returns TreeView of fieldName
+        get: function (this: CustomContainerTreeView): unknown {
           const {value} = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
           return fieldTypeComposite.toView(value[fieldName]);
         },
 
-        set: function (this: CustomContainerTreeView, view: TreeView<any>) {
+        // Expects TreeView of fieldName
+        set: function (this: CustomContainerTreeView, view: unknown) {
           const node = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
           const {value: prevNodeValue} = node;
 
@@ -151,11 +153,12 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
         enumerable: true,
 
         // TODO: Review the memory cost of this closures
-        get: function (this: CustomContainerTreeViewDU) {
-          return (this.valueChanged || this._rootNode.value)[fieldName] as unknown;
+        get: function (this: CustomContainerTreeViewDU): ValueOf<Fields[keyof Fields]> {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return (this.valueChanged || this._rootNode.value)[fieldName];
         },
 
-        set: function (this: CustomContainerTreeViewDU, value: unknown) {
+        set: function (this: CustomContainerTreeViewDU, value: ValueOf<Fields[keyof Fields]>) {
           if (this.valueChanged === null) {
             this.valueChanged = {...this._rootNode.value};
           }
@@ -169,23 +172,25 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else {
-      const fieldTypeComposite = fieldType as unknown as CompositeType<any, unknown, unknown>;
+      const fieldTypeComposite = fieldType as unknown as CompositeType<unknown, unknown, unknown>;
       Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
-        get: function (this: CustomContainerTreeViewDU) {
+        // Returns TreeViewDU of fieldName
+        get: function (this: CustomContainerTreeViewDU): unknown {
           const value = this.valueChanged || this._rootNode.value;
           return fieldTypeComposite.toViewDU(value[fieldName]);
         },
 
-        set: function (this: CustomContainerTreeViewDU, view: TreeViewDU<any>) {
+        // Expects TreeViewDU of fieldName
+        set: function (this: CustomContainerTreeViewDU, view: unknown) {
           if (this.valueChanged === null) {
             this.valueChanged = {...this._rootNode.value};
           }
 
-          const value = fieldTypeComposite.toValueFromViewDU(view) as unknown;
-          this.valueChanged[fieldName] = value;
+          const value = fieldTypeComposite.toValueFromViewDU(view);
+          this.valueChanged[fieldName] = value as ValueOf<Fields[keyof Fields]>;
         },
       });
     }

@@ -8,8 +8,7 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../backings";
-import {Type, BasicType, CompositeType} from "./abstract";
+import {Type, BasicType, CompositeType, ValueOf} from "./abstract";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -150,7 +149,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<an
 // Composite
 ////////////
 
-export function value_serializedSizeArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_serializedSizeArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   value: ValueOf<ElementType>[],
   arrayProps: ArrayProps
@@ -163,7 +162,9 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
   return totalSize;
 }
 
-export function value_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_deserializeFromBytesArrayComposite<
+  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>
+>(
   elementType: ElementType,
   data: Uint8Array,
   start: number,
@@ -188,7 +189,7 @@ export function value_deserializeFromBytesArrayComposite<ElementType extends Com
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function value_serializeToBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_serializeToBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   output: Uint8Array,
@@ -220,7 +221,7 @@ export function value_serializeToBytesArrayComposite<ElementType extends Composi
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function tree_serializedSizeArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function tree_serializedSizeArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   depth: number,
@@ -243,7 +244,7 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
   }
 }
 
-export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   depth: number,
   data: Uint8Array,
@@ -278,7 +279,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function tree_serializeToBytesArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function tree_serializeToBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   depth: number,
@@ -315,7 +316,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function value_getRootsArrayComposite<ElementType extends CompositeType<any, unknown, unknown>>(
+export function value_getRootsArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   value: ValueOf<ElementType>[]

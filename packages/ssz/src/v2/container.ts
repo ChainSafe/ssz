@@ -3,7 +3,7 @@ import {maxChunksToDepth} from "../util/tree";
 import {IJsonOptions} from "../types";
 import {SszErrorPath} from "../util/errorPath";
 import {toExpectedCase} from "../util/json";
-import {CompositeType, Type} from "./abstract";
+import {CompositeType, Type, ValueOf} from "./abstract";
 import {getContainerTreeViewClass, getContainerTreeViewDUClass} from "./containerTreeView";
 import {
   ValueOfFields,
@@ -89,7 +89,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
   get defaultValue(): ValueOfFields<Fields> {
     const obj = {} as ValueOfFields<Fields>;
     for (const [key, type] of Object.entries(this.fields)) {
-      obj[key as keyof ValueOfFields<Fields>] = type.defaultValue as unknown;
+      obj[key as keyof ValueOfFields<Fields>] = type.defaultValue as ValueOf<Fields[keyof Fields]>;
     }
     return obj;
   }
@@ -146,7 +146,7 @@ export class ContainerType<Fields extends Record<string, Type<any>>> extends Com
           data,
           start + fieldRange.start,
           start + fieldRange.end
-        ) as unknown;
+        ) as ValueOf<Fields[keyof Fields]>;
       } catch (e) {
         throw new SszErrorPath(e as Error, fieldName as string);
       }

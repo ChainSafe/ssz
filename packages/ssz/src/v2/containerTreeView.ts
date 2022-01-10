@@ -15,19 +15,23 @@ export type ContainerTypeGeneric<Fields extends Record<string, Type<any>>> = Com
 export type ValueOfFields<Fields extends Record<string, Type<any>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
 
 export type FieldsView<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
+  [K in keyof Fields]: Fields[K] extends CompositeType<unknown, infer TV, unknown>
     ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getView"]>
+      TV
     : // If basic, return struct value. Will NOT propagate changes upwards
-      Fields[K]["defaultValue"];
+    Fields[K] extends BasicType<infer V>
+    ? V
+    : never;
 };
 
 export type FieldsViewDU<Fields extends Record<string, Type<any>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<any, unknown, unknown>
+  [K in keyof Fields]: Fields[K] extends CompositeType<unknown, unknown, infer TVDU>
     ? // If composite, return view. MAY propagate changes updwards
-      ReturnType<Fields[K]["getViewDU"]>
+      TVDU
     : // If basic, return struct value. Will NOT propagate changes upwards
-      Fields[K]["defaultValue"];
+    Fields[K] extends BasicType<infer V>
+    ? V
+    : never;
 };
 
 export type ContainerTreeViewType<Fields extends Record<string, Type<any>>> = FieldsView<Fields> &
@@ -108,7 +112,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<any
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else {
-      const fieldTypeComposite = fieldType as unknown as CompositeType<any, unknown, unknown>;
+      const fieldTypeComposite = fieldType as unknown as CompositeType<unknown, unknown, unknown>;
       Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
@@ -188,7 +192,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<any>>> extends Tree
       nodesChanged.push({
         index,
         node: (
-          this.type.fieldsEntries[index].fieldType as unknown as CompositeType<any, unknown, unknown>
+          this.type.fieldsEntries[index].fieldType as unknown as CompositeType<unknown, unknown, unknown>
         ).commitViewDU(view),
       });
     }
@@ -265,7 +269,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<a
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else {
-      const fieldTypeComposite = fieldType as unknown as CompositeType<any, unknown, unknown>;
+      const fieldTypeComposite = fieldType as unknown as CompositeType<unknown, unknown, unknown>;
       Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,

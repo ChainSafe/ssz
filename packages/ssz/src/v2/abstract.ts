@@ -12,11 +12,23 @@ export type Path = (string | number)[];
 
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/no-explicit-any */
 
-export type ValueOf<T extends Type<any>> = T["defaultValue"];
+export type ValueOf<T extends Type<any>> = T extends Type<infer V> ? V : never;
 // type ElV<Type extends ListBasicType<any>> = Type extends ListBasicType<infer ElType> ? V<ElType> :never
 
-export type CompositeView<T extends CompositeType<any, unknown, unknown>> = ReturnType<T["getView"]>;
-export type CompositeViewDU<T extends CompositeType<any, unknown, unknown>> = ReturnType<T["getViewDU"]>;
+export type CompositeView<T extends CompositeType<unknown, unknown, unknown>> = T extends CompositeType<
+  any,
+  infer TV,
+  unknown
+>
+  ? TV
+  : never;
+export type CompositeViewDU<T extends CompositeType<unknown, unknown, unknown>> = T extends CompositeType<
+  any,
+  unknown,
+  infer TVDU
+>
+  ? TVDU
+  : never;
 
 const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
 
@@ -296,7 +308,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   protected abstract getRoots(value: V): Uint8Array;
 }
 
-export abstract class TreeView<T extends CompositeType<any, unknown, unknown>> {
+export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown>> {
   abstract readonly node: Node;
   abstract readonly type: T;
 
@@ -315,11 +327,11 @@ export abstract class TreeView<T extends CompositeType<any, unknown, unknown>> {
   }
 
   toValue(): ValueOf<T> {
-    return this.type.tree_toValue(this.node) as unknown;
+    return this.type.tree_toValue(this.node) as ValueOf<T>;
   }
 }
 
-export abstract class TreeViewDU<T extends CompositeType<any, unknown, unknown>> extends TreeView<T> {
+export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unknown>> extends TreeView<T> {
   abstract commit(): Node;
   abstract readonly cache: unknown;
 }
