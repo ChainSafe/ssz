@@ -32,7 +32,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
   protected nodes: Node[] = [];
   protected caches: unknown[];
   protected views: unknown[] = [];
-  protected readonly nodesChanged = new Map<number, Node>();
+  protected readonly nodesChanged = new Set<number>();
   protected readonly viewsChanged = new Map<number, unknown>();
   private nodesPopulated: boolean;
 
@@ -82,8 +82,8 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       });
     }
 
-    for (const [index, node] of this.nodesChanged) {
-      nodesChanged.push({index, node});
+    for (const index of this.nodesChanged) {
+      nodesChanged.push({index, node: this.nodes[index]});
     }
 
     // TODO: Optimize to loop only once
@@ -132,17 +132,17 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         set: function (this: CustomContainerTreeViewDU, value) {
           // Create new node if current leafNode is not dirty
-          let nodeChanged = this.nodesChanged.get(index);
-          if (!nodeChanged) {
-            // TODO, deduplicate with above
-            let nodePrev = this.nodes[index];
-            if (this.nodes[index] === undefined) {
-              nodePrev = getNodeAtDepth(this._rootNode, this.type.depth, index);
-              this.nodes[index] = nodePrev;
-            }
+          let nodeChanged: LeafNode;
+          if (this.nodesChanged.has(index)) {
+            // TODO: This assumes that node has already been populated
+            nodeChanged = this.nodes[index] as LeafNode;
+          } else {
+            const nodePrev = this.nodes[index] ?? (getNodeAtDepth(this._rootNode, this.type.depth, index) as LeafNode);
 
             nodeChanged = new LeafNode(nodePrev);
-            this.nodesChanged.set(index, nodeChanged);
+            // Store the changed node in the nodes cache
+            this.nodes[index] = nodeChanged;
+            this.nodesChanged.add(index);
           }
 
           fieldTypeBasic.tree_setToNode(nodeChanged as LeafNode, value);
