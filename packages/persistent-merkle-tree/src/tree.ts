@@ -75,7 +75,7 @@ export class Tree {
   }
 
   getNodeAtDepth(depth: number, index: number): Node {
-    throw Error("TODO: Not implemented");
+    return getNodeAtDepth(this.rootNode, depth, index);
   }
 
   setNode(gindex: Gindex | GindexBitstring, n: Node, expand = false): void {
@@ -93,8 +93,8 @@ export class Tree {
     this.rebindNodeToRoot(bitstring, parentNodes, n);
   }
 
-  setNodeAtDepth(depth: number, index: number, node: Node, expand?: boolean): void {
-    throw Error("TODO: Not implemented");
+  setNodeAtDepth(depth: number, index: number, node: Node): void {
+    this.rootNode = setNodeAtDepth(depth, this.rootNode, index, node);
   }
 
   /**
@@ -450,6 +450,13 @@ export function getNodeAtDepth(rootNode: Node, depth: number, index: number): No
   }
 
   return node;
+}
+
+/**
+ * TODO: OPTIMIZE (if necessary)
+ */
+export function setNodeAtDepth(nodesDepth: number, rootNode: Node, index: number, nodeChanged: Node): Node {
+  return setNodesAtDepth(nodesDepth, rootNode, [index], [nodeChanged]);
 }
 
 /**
