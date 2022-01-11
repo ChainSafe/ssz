@@ -30,6 +30,7 @@ import {BitArrayTreeViewDU} from "../viewDU/bitArray";
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
 export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, BitArrayTreeViewDU> {
+  readonly typeName: string;
   // Immutable characteristics
   readonly chunkCount: number;
   readonly depth: number;
@@ -56,6 +57,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
       throw Error("Vector types must not be empty");
     }
 
+    this.typeName = `BitVector[${lengthBits}]`;
     this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
     this.maxChunkCount = this.chunkCount;
     this.depth = maxChunksToDepth(this.chunkCount);

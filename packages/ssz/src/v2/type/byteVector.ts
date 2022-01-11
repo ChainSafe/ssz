@@ -27,6 +27,7 @@ export type ByteVector = Uint8Array;
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
 export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVector> {
+  readonly typeName: string;
   // Immutable characteristics
   readonly chunkCount: number;
   readonly depth: number;
@@ -38,6 +39,7 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   constructor(readonly lengthBytes: number) {
     super();
 
+    this.typeName = `ByteVector[${lengthBytes}]`;
     this.chunkCount = Math.ceil(this.lengthBytes / 32);
     this.maxChunkCount = this.chunkCount;
     this.depth = Math.ceil(Math.log2(this.chunkCount));

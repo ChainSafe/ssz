@@ -32,6 +32,7 @@ import {BitArrayTreeViewDU} from "../viewDU/bitArray";
  * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
  */
 export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitArrayTreeViewDU> {
+  readonly typeName: string;
   // Immutable characteristics
   readonly depth: number;
   readonly chunkDepth: number;
@@ -43,6 +44,7 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
   constructor(readonly limitBits: number) {
     super();
 
+    this.typeName = `BitList[${limitBits}]`;
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
     // Depth includes the extra level for the length node

@@ -96,6 +96,8 @@ export abstract class Type<V> {
   abstract readonly fixedLen: number | null;
   abstract readonly minLen: number;
   abstract readonly maxLen: number;
+  /** Human readable name: "List(Uint,4)", "BeaconState" */
+  abstract readonly typeName: string;
 
   getGindexBitStringAtChunkIndex(index: number): GindexBitstring {
     return toGindexBitstring(this.depth, index);

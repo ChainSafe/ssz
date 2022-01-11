@@ -25,6 +25,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   extends CompositeType<ValueOf<ElementType>[], ListBasicTreeView<ElementType>, ListBasicTreeViewDU<ElementType>>
   implements ArrayBasicType<ElementType>
 {
+  readonly typeName: string;
   // Immutable characteristics
   readonly itemsPerChunk: number;
   readonly isBasic = false;
@@ -42,6 +43,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
       throw Error("elementType must be basic");
     }
 
+    this.typeName = `List[${elementType.typeName}, ${limit}]`;
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);

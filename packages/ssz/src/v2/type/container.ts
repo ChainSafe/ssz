@@ -17,6 +17,7 @@ import {
 type BytesRange = {start: number; end: number};
 
 export interface IContainerOptions {
+  typeName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   casingMap?: Record<string, string>;
   expectedCase?: IJsonOptions["case"];
@@ -30,6 +31,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   ContainerTreeViewType<Fields>,
   ContainerTreeViewDUType<Fields>
 > {
+  readonly typeName: string;
   // Immutable characteristics
   readonly depth: number;
   readonly maxChunkCount: number;
@@ -52,6 +54,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   constructor(readonly fields: Fields, private readonly opts?: IContainerOptions) {
     super(opts?.cachePermanentRootStruct);
+
+    this.typeName = opts?.typeName ?? "Container";
 
     this.maxChunkCount = Object.keys(fields).length;
     if (this.maxChunkCount === 0) {

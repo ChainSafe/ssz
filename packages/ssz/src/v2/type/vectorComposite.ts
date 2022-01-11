@@ -31,6 +31,7 @@ export class VectorCompositeType<
   >
   implements ArrayCompositeType<ElementType>
 {
+  readonly typeName: string;
   // Immutable characteristics
   readonly itemsPerChunk = 1;
   readonly isBasic = false;
@@ -51,6 +52,7 @@ export class VectorCompositeType<
       throw Error("Vector types must not be empty");
     }
 
+    this.typeName = `Vector[${elementType.typeName}, ${length}]`;
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((length * 1) / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);

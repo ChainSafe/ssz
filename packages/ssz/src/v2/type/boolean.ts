@@ -4,6 +4,7 @@ import {BasicType} from "../abstract";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export class BooleanType extends BasicType<boolean> {
+  readonly typeName = "boolean";
   // Immutable characteristics
   readonly byteLength = 1;
   readonly fixedLen = 1;

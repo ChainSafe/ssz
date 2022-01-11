@@ -33,6 +33,7 @@ export class ListCompositeType<
   >
   implements ArrayCompositeType<ElementType>
 {
+  readonly typeName: string;
   // Immutable characteristics
   readonly itemsPerChunk = 1;
   readonly isBasic = false;
@@ -50,6 +51,7 @@ export class ListCompositeType<
       throw Error("elementType must not be basic");
     }
 
+    this.typeName = `List[${elementType.typeName}, ${limit}]`;
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil((this.limit * 1) / 32);
     // Depth includes the extra level for the length node

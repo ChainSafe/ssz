@@ -4,6 +4,7 @@ import {BasicType} from "../abstract";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export class UintNumberType extends BasicType<number> {
+  readonly typeName: string;
   // Immutable characteristics
   readonly byteLength: number;
   readonly itemsPerChunk: number;
@@ -14,6 +15,7 @@ export class UintNumberType extends BasicType<number> {
 
   constructor(byteLength: number, private readonly clipInfinity?: boolean, private readonly setBitwise?: boolean) {
     super();
+    this.typeName = `uint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
     this.fixedLen = byteLength;
@@ -129,6 +131,7 @@ export class UintNumberType extends BasicType<number> {
 }
 
 export class UintBigintType extends BasicType<bigint> {
+  readonly typeName: string;
   // Immutable characteristics
   readonly byteLength: number;
   readonly itemsPerChunk: number;
@@ -138,6 +141,7 @@ export class UintBigintType extends BasicType<bigint> {
 
   constructor(byteLength: number, readonly setBitwise?: boolean) {
     super();
+    this.typeName = `uintBigint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
     this.fixedLen = byteLength;

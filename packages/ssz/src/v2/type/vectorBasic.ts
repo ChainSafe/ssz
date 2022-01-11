@@ -23,6 +23,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   extends CompositeType<ValueOf<ElementType>[], ArrayBasicTreeView<ElementType>, ArrayBasicTreeViewDU<ElementType>>
   implements ArrayBasicType<ElementType>
 {
+  readonly typeName: string;
   // Immutable characteristics
   readonly itemsPerChunk: number;
   readonly isBasic = false;
@@ -43,6 +44,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
       throw Error("Vector types must not be empty");
     }
 
+    this.typeName = `Vector[${elementType.typeName}, ${length}]`;
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.length * elementType.byteLength) / 32);
