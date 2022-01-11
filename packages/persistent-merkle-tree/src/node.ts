@@ -3,6 +3,7 @@ import {hashObjectToUint8Array, hashTwoObjects, isHashObject, uint8ArrayToHashOb
 
 const ERR_INVALID_TREE = "Invalid tree";
 const TWO_POWER_32 = 2 ** 32;
+const MAX_SAFE_INTEGER_HI = Math.floor(Number.MAX_SAFE_INTEGER / TWO_POWER_32);
 
 export abstract class Node implements HashObject {
   // this is to save an extra variable to check if a node has a root or not
@@ -119,7 +120,7 @@ export class LeafNode extends Node {
     data.set(this.root.slice(0, size), start);
   }
 
-  getUint(uintBytes: number, offsetBytes: number): number {
+  getUint(uintBytes: number, offsetBytes: number, clipInfinity?: boolean): number {
     const hIndex = Math.floor(offsetBytes / 4);
 
     // number has to be masked from an h value
@@ -141,9 +142,12 @@ export class LeafNode extends Node {
     // number spans 2 h values
     else if (uintBytes === 8) {
       const low = getNodeH(this, hIndex) >>> 0;
-      const high = getNodeH(this, hIndex + 1);
+      const high = getNodeH(this, hIndex + 1) >>> 0;
       if (high === 0) {
         return low;
+      } else if (high >= MAX_SAFE_INTEGER_HI && clipInfinity) {
+        // Limit uint returns
+        return Infinity;
       } else {
         return low + high * TWO_POWER_32;
       }

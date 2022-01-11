@@ -82,7 +82,7 @@ export class UintNumberType extends BasicType<number> {
   // Fast Tree access
 
   tree_getFromNode(leafNode: LeafNode): number {
-    return leafNode.getUint(this.byteLength, 0);
+    return leafNode.getUint(this.byteLength, 0, true);
   }
 
   /** Mutates node to set value */
@@ -93,7 +93,7 @@ export class UintNumberType extends BasicType<number> {
   /** EXAMPLE of `tree_getFromNode` */
   tree_getFromPackedNode(leafNode: LeafNode, index: number): number {
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
-    return leafNode.getUint(this.byteLength, offsetBytes);
+    return leafNode.getUint(this.byteLength, offsetBytes, true);
   }
 
   /** Mutates node to set value */
