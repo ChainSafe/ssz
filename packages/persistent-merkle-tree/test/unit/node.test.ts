@@ -12,32 +12,34 @@ describe("LeafNode uint", () => {
       nodeValue: {h0: 4},
       testCases: [
         {bytes: 4, offset: 0, value: 4},
-        {bytes: 2, offset: 2, value: 4},
-        {bytes: 1, offset: 3, value: 4},
-        {bytes: 2, offset: 0, value: 0},
-        {bytes: 1, offset: 0, value: 0},
+        {bytes: 2, offset: 2, value: 0},
+        {bytes: 1, offset: 3, value: 0},
+        {bytes: 2, offset: 0, value: 4},
+        {bytes: 1, offset: 0, value: 4},
       ],
     },
     {
+      // This number is represented here as big endian.
+      // eth2 uses little endian, so the number is chopped as bytes [dd, cc, bb, aa]
       nodeValue: {h0: 0xaabbccdd},
       asHex: true,
       testCases: [
         {bytes: 8, offset: 0, value: 0xaabbccdd},
         {bytes: 4, offset: 0, value: 0xaabbccdd},
-        {bytes: 2, offset: 2, value: 0xccdd},
-        {bytes: 2, offset: 0, value: 0xaabb},
-        {bytes: 1, offset: 0, value: 0xaa},
-        {bytes: 1, offset: 1, value: 0xbb},
-        {bytes: 1, offset: 2, value: 0xcc},
-        {bytes: 1, offset: 3, value: 0xdd},
+        {bytes: 2, offset: 2, value: 0xaabb},
+        {bytes: 2, offset: 0, value: 0xccdd},
+        {bytes: 1, offset: 0, value: 0xdd},
+        {bytes: 1, offset: 1, value: 0xcc},
+        {bytes: 1, offset: 2, value: 0xbb},
+        {bytes: 1, offset: 3, value: 0xaa},
       ],
     },
   ];
 
   for (const {nodeValue, testCases, asHex} of testCasesNode) {
-    it(`getUint, ${JSON.stringify(nodeValue)}`, () => {
-      const leafNode = new LeafNode({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0, ...nodeValue});
-      for (const {bytes, offset, value} of testCases) {
+    const leafNode = new LeafNode({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0, ...nodeValue});
+    for (const {bytes, offset, value} of testCases) {
+      it(`getUint, ${JSON.stringify(nodeValue)} bytes: ${bytes} offset: ${offset}`, () => {
         // Use the unsigned right shift operator. By default bitwise ops convert to signed 32 bit numbers.
         // Signed 32 bit numbers conver funky to hex.
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unsigned_right_shift
@@ -47,9 +49,51 @@ describe("LeafNode uint", () => {
         } else {
           expect(res).to.equal(value, `Wrong getUint(${bytes}, ${offset})`);
         }
-      }
-    });
+      });
+    }
   }
+});
+
+// Ensure that bitshifting logic to manipulate single bytes is correct
+describe("LeafNode single bytes", () => {
+  const buf = Buffer.alloc(32, 0);
+  for (let i = 0; i < 32; i++) {
+    buf[i] = i + 1;
+  }
+
+  it("Write full root with setUint", () => {
+    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    for (let i = 0; i < 32; i++) {
+      leafNode.setUint(1, i, i + 1);
+    }
+    expect(Buffer.from(leafNode.root).toString("hex")).to.equal(buf.toString("hex"), "Wrong leafNode.root value");
+  });
+
+  it("Write full root with setUintBigint", () => {
+    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    for (let i = 0; i < 32; i++) {
+      leafNode.setUintBigint(1, i, BigInt(i + 1));
+    }
+    expect(Buffer.from(leafNode.root).toString("hex")).to.equal(buf.toString("hex"), "Wrong leafNode.root value");
+  });
+
+  it("Get full root with getUint", () => {
+    const out = Buffer.alloc(32, 0);
+    const leafNode = new LeafNode(buf);
+    for (let i = 0; i < 32; i++) {
+      out[i] = leafNode.getUint(1, i);
+    }
+    expect(out.toString("hex")).to.equal(buf.toString("hex"), "Wrong out value");
+  });
+
+  it("Get full root with getUintBigint", () => {
+    const out = Buffer.alloc(32, 0);
+    const leafNode = new LeafNode(buf);
+    for (let i = 0; i < 32; i++) {
+      out[i] = Number(leafNode.getUintBigint(1, i));
+    }
+    expect(out.toString("hex")).to.equal(buf.toString("hex"), "Wrong out value");
+  });
 });
 
 describe("setUint getUint - all small values", () => {

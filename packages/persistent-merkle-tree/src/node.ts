@@ -123,12 +123,12 @@ export class LeafNode extends Node {
 
     // number has to be masked from an h value
     if (uintBytes < 4) {
-      const bIndex = 4 - uintBytes - (offsetBytes % 4);
+      const bitIndex = (offsetBytes % 4) * 8;
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        return 0xff & (h >> (bIndex * 8));
+        return 0xff & (h >> bitIndex);
       } else {
-        return 0xffff & (h >> (bIndex * 8));
+        return 0xffff & (h >> bitIndex);
       }
     }
 
@@ -162,12 +162,12 @@ export class LeafNode extends Node {
 
     // number has to be masked from an h value
     if (uintBytes < 4) {
-      const bIndex = 4 - uintBytes - (offsetBytes % 4);
+      const bitIndex = (offsetBytes % 4) * 8;
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        return BigInt(0xff & (h >> (bIndex * 8)));
+        return BigInt(0xff & (h >> bitIndex));
       } else {
-        return BigInt(0xffff & (h >> (bIndex * 8)));
+        return BigInt(0xffff & (h >> bitIndex));
       }
     }
 
@@ -192,14 +192,14 @@ export class LeafNode extends Node {
 
     // number has to be masked from an h value
     if (uintBytes < 4) {
-      const bIndex = 4 - uintBytes - (offsetBytes % 4);
+      const bitIndex = (offsetBytes % 4) * 8;
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        h &= ~(0xff << (bIndex * 8));
-        h |= (0xff && value) << (bIndex * 8);
+        h &= ~(0xff << bitIndex);
+        h |= (0xff && value) << bitIndex;
       } else {
-        h &= ~(0xffff << (bIndex * 8));
-        h |= (0xffff && value) << (bIndex * 8);
+        h &= ~(0xffff << bitIndex);
+        h |= (0xffff && value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
     }
@@ -232,14 +232,14 @@ export class LeafNode extends Node {
     // number has to be masked from an h value
     if (uintBytes < 4) {
       const value = Number(valueBN);
-      const bIndex = 4 - uintBytes - (offsetBytes % 4);
+      const bitIndex = (offsetBytes % 4) * 8;
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
-        h &= ~(0xff << (bIndex * 8));
-        h |= (0xff && value) << (bIndex * 8);
+        h &= ~(0xff << bitIndex);
+        h |= (0xff && value) << bitIndex;
       } else {
-        h &= ~(0xffff << (bIndex * 8));
-        h |= (0xffff && value) << (bIndex * 8);
+        h &= ~(0xffff << bitIndex);
+        h |= (0xffff && value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
     }
@@ -264,8 +264,8 @@ export class LeafNode extends Node {
 
     // number has to be masked from an h value
     if (uintBytes < 4) {
-      const bIndex = 4 - uintBytes - (offsetBytes % 4);
-      bitwiseOrNodeH(this, hIndex, value << bIndex);
+      const bitIndex = (offsetBytes % 4) * 8;
+      bitwiseOrNodeH(this, hIndex, value << bitIndex);
     }
 
     // number equals the h value

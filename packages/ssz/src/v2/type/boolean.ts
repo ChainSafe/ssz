@@ -7,6 +7,7 @@ export class BooleanType extends BasicType<boolean> {
   readonly typeName = "boolean";
   // Immutable characteristics
   readonly byteLength = 1;
+  readonly itemsPerChunk = 32;
   readonly fixedLen = 1;
   readonly minLen = 1;
   readonly maxLen = 1;
@@ -58,12 +59,14 @@ export class BooleanType extends BasicType<boolean> {
     leafNode.setUint(4, 0, value ? 1 : 0);
   }
 
-  tree_getFromPackedNode(): never {
-    throw Error("Not implemented");
+  tree_getFromPackedNode(leafNode: LeafNode, index: number): boolean {
+    const offsetBytes = index % this.itemsPerChunk;
+    return leafNode.getUint(1, offsetBytes) !== 0;
   }
 
-  tree_setToPackedNode(): never {
-    throw Error("Not implemented");
+  tree_setToPackedNode(leafNode: LeafNode, index: number, value: boolean): void {
+    const offsetBytes = index % this.itemsPerChunk;
+    leafNode.setUint(1, offsetBytes, value ? 1 : 0);
   }
 
   // JSON
