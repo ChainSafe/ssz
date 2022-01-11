@@ -483,6 +483,16 @@ export function setNodesAtDepth(nodesDepth: number, rootNode: Node, indexes: num
   // goRight = (N & mask) == mask
   // ```
 
+  // If depth is 0 there's only one node max and the optimization below will cause a navigation error.
+  // For this case, check if there's a new root node and return it, otherwise the current rootNode.
+  if (nodesDepth === 0) {
+    if (indexes.length > 0 && indexes[0] === 0) {
+      return nodes[0];
+    } else {
+      return rootNode;
+    }
+  }
+
   /**
    * Contiguous filled stack of parent nodes. It get filled in the first descent
    * Indexed by depthi
