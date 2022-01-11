@@ -1,10 +1,16 @@
-import {expect} from "chai";
-import {toHexString} from "../../../src/util/byteArray";
-import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src/v2/abstract";
-import {ContainerType, UintNumberType, ByteVectorType} from "../../../src/v2";
+import {
+  BooleanType,
+  ContainerType,
+  UintNumberType,
+  UintBigintType,
+  ListBasicType,
+  ByteVectorType,
+} from "../../../src/v2";
+import {runTreeViewTest} from "./runTreeViewTest";
+import {runTreeViewContainerSwapTest} from "./runContainerSwapTest";
 
 describe("Container TreeView", () => {
-  const uint64Type = new UintNumberType(8);
+  const uint64Type = new UintNumberType(8, true);
   const containerUintsType = new ContainerType({
     a: uint64Type,
     b: uint64Type,
@@ -28,92 +34,45 @@ describe("Container TreeView", () => {
   });
 
   const byte32 = new ByteVectorType(32);
-  const byte96 = new ByteVectorType(96);
   const containerBytesType = new ContainerType({
     a: byte32,
-    b: byte96,
+    b: byte32,
   });
+
+  const byte32_value1 = Buffer.alloc(32, 1);
+  const byte32_value2 = Buffer.alloc(32, 2);
+  const byte32_value5 = Buffer.alloc(32, 5);
+  const byte32_value6 = Buffer.alloc(32, 6);
 
   runTreeViewTest({
     typeName: "containerBytesType",
     type: containerBytesType,
-    treeViewToStruct: (tv) => containerBytesType.toView(tv),
+    treeViewToStruct: (tv) => ({a: tv.a, b: tv.b}),
     mutations: [
       {
         id: "set all properties",
-        valueBefore: {a: Buffer.alloc(32, 1), b: Buffer.alloc(96, 2)},
-        valueAfter: {a: Buffer.alloc(32, 10), b: Buffer.alloc(96, 20)},
+        valueBefore: {a: byte32_value1, b: byte32_value2},
+        valueAfter: {a: byte32_value5, b: byte32_value6},
         fn: (tv) => {
-          tv.a = byte32.toView(Buffer.alloc(32, 10));
-          tv.b = byte96.toView(Buffer.alloc(96, 20));
+          tv.a = byte32_value5;
+          tv.b = byte32_value6;
         },
       },
     ],
   });
-});
 
-export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = {
-  id: string;
-  valueBefore: ValueOf<CT>;
-  valueAfter: ValueOf<CT>;
-  /**
-   * Allow fn() to return void, and expect tvBefore to be mutated
-   */
-  fn: (treeView: CompositeViewDU<CT>) => CompositeViewDU<CT> | void;
-};
+  // Swap properties tests. Because swaping uses the same property names you can write many more tests
+  // just by declaring the property type and two values:
 
-function runTreeViewTest<CT extends CompositeType<unknown, unknown, unknown>>({
-  typeName,
-  type,
-  treeViewToStruct,
-  mutations: ops,
-}: {
-  typeName: string;
-  type: CT;
-  treeViewToStruct?: (tv: CompositeViewDU<CT>) => ValueOf<CT>;
-  mutations: TreeMutation<CT>[];
-}): void {
-  function assertValidTvAfter(tvAfter: TreeViewDU<CT>, valueAfter: ValueOf<CT>, message: string): void {
-    expect(toHexString(tvAfter.serialize())).to.deep.equal(
-      toHexString(type.serialize(valueAfter)),
-      `TreeView !== valueAfter serialized - ${message}`
-    );
-
-    expect(toHexString(tvAfter.hashTreeRoot())).to.deep.equal(
-      toHexString(type.hashTreeRoot(valueAfter)),
-      `TreeView !== valueAfter hashTreeRoot - ${message}`
-    );
+  runTreeViewContainerSwapTest(new BooleanType(), true, false);
+  runTreeViewContainerSwapTest(uint64Type, 1, 2);
+  runTreeViewContainerSwapTest(uint64Type, 1, Infinity);
+  runTreeViewContainerSwapTest(new UintBigintType(8), BigInt(1), BigInt(2));
+  for (const bytes of [32, 48, 96]) {
+    runTreeViewContainerSwapTest(new ByteVectorType(bytes), Buffer.alloc(bytes, 1), Buffer.alloc(bytes, 2));
   }
 
-  describe(`${typeName} TreeView mutations`, () => {
-    for (const testCase of ops) {
-      const {id, valueBefore, valueAfter, fn} = testCase;
-
-      it(`${id} mutable = false`, () => {
-        const tvBefore = type.toViewDU(valueBefore);
-
-        const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
-
-        assertValidTvAfter(tvAfter as TreeViewDU<CT>, valueAfter, "After mutation");
-      });
-
-      it(`${id} mutable = true`, () => {
-        const tvBefore = type.toViewDU(valueBefore) as TreeViewDU<CT>;
-
-        // Set to mutable, and edit
-        const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
-
-        if (treeViewToStruct) {
-          const tvAfterStruct = treeViewToStruct(tvAfter as CompositeViewDU<CT>);
-          expect(tvAfterStruct).to.deep.equal(
-            valueAfter,
-            "TreeView !== valueAfter struct - after mutation before commit"
-          );
-        }
-
-        tvBefore.commit();
-        assertValidTvAfter(tvAfter as TreeViewDU<CT>, valueAfter, "After mutation");
-      });
-    }
-  });
-}
+  // Composite childs
+  runTreeViewContainerSwapTest(containerUintsType, {a: 1, b: 2}, {a: 5, b: 6});
+  runTreeViewContainerSwapTest(new ListBasicType(uint64Type, 8), [1, 2], [5, 6]);
+});
