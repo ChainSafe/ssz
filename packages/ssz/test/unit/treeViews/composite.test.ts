@@ -18,7 +18,7 @@ describe("TreeView swap properties", () => {
   // Swap properties tests. Because swaping uses the same property names you can write many more tests
   // just by declaring the property type and two values:
 
-  runTreeViewSwapTest.only(new BooleanType(), true, false);
+  runTreeViewSwapTest(new BooleanType(), true, false);
   runTreeViewSwapTest(uint64Type, 1, 2);
   runTreeViewSwapTest(uint64Type, 1, Infinity);
   runTreeViewSwapTest(new UintBigintType(8), BigInt(1), BigInt(2));
