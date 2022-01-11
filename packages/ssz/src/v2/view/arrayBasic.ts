@@ -48,7 +48,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
 
     // Create a new node to preserve immutability
     const leafNode = new LeafNode(leafNodePrev);
-    this.type.elementType.tree_setToPackedNode(leafNodePrev, index, value);
+    this.type.elementType.tree_setToPackedNode(leafNode, index, value);
 
     // Commit immediately
     const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
