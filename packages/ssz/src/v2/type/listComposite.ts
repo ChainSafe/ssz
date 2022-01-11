@@ -2,7 +2,7 @@ import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-
 import {LENGTH_GINDEX, maxChunksToDepth} from "../../util/tree";
 import {mixInLength} from "../../util/merkleize";
 import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "../abstract";
-import {getLengthFromRootNode, value_fromJsonArray} from "./arrayBasic";
+import {getLengthFromRootNode, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -153,7 +153,11 @@ export class ListCompositeType<
 
   // JSON
 
-  fromJson(data: unknown): ValueOf<ElementType>[] {
-    return value_fromJsonArray(this.elementType, data);
+  fromJson(json: unknown): ValueOf<ElementType>[] {
+    return value_fromJsonArray(this.elementType, json);
+  }
+
+  toJson(value: ValueOf<ElementType>[]): unknown {
+    return value_toJsonArray(this.elementType, value);
   }
 }

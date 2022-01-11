@@ -153,7 +153,8 @@ export abstract class Type<V> {
 
   // JSON support
 
-  abstract fromJson(data: unknown): V;
+  abstract fromJson(json: unknown): V;
+  abstract toJson(value: V): unknown;
 }
 
 export abstract class BasicType<V> extends Type<V> {

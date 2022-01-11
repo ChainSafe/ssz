@@ -5,7 +5,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
-import {fromHexString} from "../../util/byteArray";
+import {fromHexString, toHexString} from "../../util/byteArray";
 import {CompositeType} from "../abstract";
 
 export type ByteVector = Uint8Array;
@@ -119,11 +119,15 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
 
   // JSON
 
-  fromJson(data: unknown): ByteVector {
-    const value = fromHexString(data as string);
+  fromJson(json: unknown): ByteVector {
+    const value = fromHexString(json as string);
     if (value.length !== this.lengthBytes) {
       throw new Error(`JSON invalid ByteVector length ${value.length} expected ${this.lengthBytes}`);
     }
     return value;
+  }
+
+  toJson(value: ByteVector): unknown {
+    return toHexString(value);
   }
 }

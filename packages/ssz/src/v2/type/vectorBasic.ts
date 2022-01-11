@@ -5,6 +5,7 @@ import {
   defaultValueVector,
   value_deserializeFromBytesArrayBasic,
   value_fromJsonArray,
+  value_toJsonArray,
   value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
@@ -132,7 +133,11 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   // JSON
 
-  fromJson(data: unknown): ValueOf<ElementType>[] {
-    return value_fromJsonArray(this.elementType, data, this.length);
+  fromJson(json: unknown): ValueOf<ElementType>[] {
+    return value_fromJsonArray(this.elementType, json, this.length);
+  }
+
+  toJson(value: ValueOf<ElementType>[]): unknown {
+    return value_toJsonArray(this.elementType, value, this.length);
   }
 }

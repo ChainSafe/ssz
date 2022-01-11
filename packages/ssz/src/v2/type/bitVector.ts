@@ -7,7 +7,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../../util/tree";
-import {fromHexString} from "../../util/byteArray";
+import {fromHexString, toHexString} from "../../util/byteArray";
 import {CompositeType} from "../abstract";
 import {BitArray} from "../value/bitArray";
 import {BitArrayTreeView} from "../view/bitArray";
@@ -134,10 +134,14 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
 
   // JSON
 
-  fromJson(data: unknown): BitArray {
+  fromJson(json: unknown): BitArray {
     // TODO: Validate
-    const bytes = fromHexString(data as string);
+    const bytes = fromHexString(json as string);
     return this.value_deserializeFromBytes(bytes, 0, this.fixedLen);
+  }
+
+  toJson(value: BitArray): unknown {
+    return toHexString(this.serialize(value));
   }
 
   // Deserializer helpers

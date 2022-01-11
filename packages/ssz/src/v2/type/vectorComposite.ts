@@ -1,7 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../../util/tree";
 import {CompositeType, CompositeView, CompositeViewDU, ValueOf} from "../abstract";
-import {defaultValueVector, value_fromJsonArray} from "./arrayBasic";
+import {defaultValueVector, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -138,7 +138,11 @@ export class VectorCompositeType<
 
   // JSON
 
-  fromJson(data: unknown): ValueOf<ElementType>[] {
-    return value_fromJsonArray(this.elementType, data, this.length);
+  fromJson(json: unknown): ValueOf<ElementType>[] {
+    return value_fromJsonArray(this.elementType, json, this.length);
+  }
+
+  toJson(value: ValueOf<ElementType>[]): unknown {
+    return value_toJsonArray(this.elementType, value, this.length);
   }
 }

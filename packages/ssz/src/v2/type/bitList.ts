@@ -7,7 +7,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../../util/tree";
-import {fromHexString} from "../../util/byteArray";
+import {fromHexString, toHexString} from "../../util/byteArray";
 import {mixInLength} from "../../util/merkleize";
 import {CompositeType} from "../abstract";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
@@ -130,10 +130,14 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
 
   // JSON
 
-  fromJson(data: unknown): BitArray {
+  fromJson(json: unknown): BitArray {
     // TODO: Validate
-    const bytes = fromHexString(data as string);
+    const bytes = fromHexString(json as string);
     return this.value_deserializeFromBytes(bytes, 0, bytes.length);
+  }
+
+  toJson(value: BitArray): unknown {
+    return toHexString(this.serialize(value));
   }
 
   // Deserializer helpers

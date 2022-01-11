@@ -10,6 +10,7 @@ export class UintNumberType extends BasicType<number> {
   readonly fixedLen: number;
   readonly minLen: number;
   readonly maxLen: number;
+  private readonly maxDecimalStr: string;
 
   constructor(byteLength: number, readonly infinityWhenBig?: boolean, readonly setBitwise?: boolean) {
     super();
@@ -18,6 +19,7 @@ export class UintNumberType extends BasicType<number> {
     this.fixedLen = byteLength;
     this.minLen = byteLength;
     this.maxLen = byteLength;
+    this.maxDecimalStr = (BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1)).toString(10);
   }
 
   readonly defaultValue: number = 0;
@@ -108,11 +110,21 @@ export class UintNumberType extends BasicType<number> {
 
   // JSON
 
-  fromJson(data: unknown): number {
-    if (typeof data !== "number") {
-      throw Error(`JSON invalid type ${typeof data} expected number`);
+  fromJson(json: unknown): number {
+    if (typeof json !== "number") {
+      throw Error(`JSON invalid type ${typeof json} expected number`);
     }
-    return data;
+    return json;
+  }
+
+  toJson(value: number): unknown {
+    if (this.byteLength > 4) {
+      if (value === Infinity) {
+        return this.maxDecimalStr;
+      }
+      return value.toString(10);
+    }
+    return value;
   }
 }
 
@@ -206,13 +218,21 @@ export class UintBigintType extends BasicType<bigint> {
 
   // JSON
 
-  fromJson(data: unknown): bigint {
-    if (typeof data === "bigint") {
-      return data;
-    } else if (typeof data === "string" || typeof data === "number") {
-      return BigInt(data);
+  fromJson(json: unknown): bigint {
+    if (typeof json === "bigint") {
+      return json;
+    } else if (typeof json === "string" || typeof json === "number") {
+      return BigInt(json);
     } else {
-      throw Error(`JSON invalid type ${typeof data} expected bigint`);
+      throw Error(`JSON invalid type ${typeof json} expected bigint`);
+    }
+  }
+
+  toJson(value: bigint): unknown {
+    if (this.byteLength > 4) {
+      return value.toString(10);
+    } else {
+      return Number(value);
     }
   }
 }

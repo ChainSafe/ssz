@@ -67,10 +67,14 @@ export class BooleanType extends BasicType<boolean> {
 
   // JSON
 
-  fromJson(data: unknown): boolean {
-    if (typeof data !== "boolean") {
-      throw Error(`JSON invalid type ${typeof data} expected boolean`);
+  fromJson(json: unknown): boolean {
+    if (typeof json !== "boolean") {
+      throw Error(`JSON invalid type ${typeof json} expected boolean`);
     }
-    return data;
+    return json;
+  }
+
+  toJson(value: boolean): unknown {
+    return value;
   }
 }

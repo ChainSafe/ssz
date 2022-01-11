@@ -242,8 +242,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // JSON
 
-  fromJson(data: unknown): ValueOfFields<Fields> {
-    if (typeof data !== "object") {
+  fromJson(json: unknown): ValueOfFields<Fields> {
+    if (typeof json !== "object") {
       throw new Error("JSON must be of type object");
     }
 
@@ -253,7 +253,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       const {fieldName, fieldType} = this.fieldsEntries[i];
 
       const jsonKey = toExpectedCase(fieldName as string, this.opts?.expectedCase, this.opts?.casingMap);
-      const jsonValue = (data as Record<string, unknown>)[jsonKey];
+      const jsonValue = (json as Record<string, unknown>)[jsonKey];
       if (jsonValue === undefined) {
         throw Error(`JSON expected field ${jsonKey} is undefined`);
       }
@@ -261,6 +261,18 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     }
 
     return value;
+  }
+
+  toJson(value: ValueOfFields<Fields>): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
+
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const {fieldName, fieldType} = this.fieldsEntries[i];
+      const jsonKey = toExpectedCase(fieldName as string, this.opts?.expectedCase, this.opts?.casingMap);
+      json[jsonKey] = fieldType.toJson(value[fieldName]);
+    }
+
+    return json;
   }
 
   /** Deserializer helper */

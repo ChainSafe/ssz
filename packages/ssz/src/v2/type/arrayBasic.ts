@@ -166,6 +166,25 @@ export function value_fromJsonArray<ElementType extends Type<unknown>>(
 }
 
 /**
+ * @param length In List length = undefined, Vector length = fixed value
+ */
+export function value_toJsonArray<ElementType extends Type<unknown>>(
+  elementType: ElementType,
+  value: ValueOf<ElementType>[],
+  length?: number
+): unknown[] {
+  if (length === undefined) {
+    length = value.length;
+  }
+
+  const json: unknown[] = [];
+  for (let i = 0; i < length; i++) {
+    json.push(elementType.toJson(value[i]) as ValueOf<ElementType>);
+  }
+  return json;
+}
+
+/**
  * @param checkNonDecimalLength Check that length is a multiple of element size.
  * Optional since it's not necessary in getOffsetsArrayComposite() fn.
  */
