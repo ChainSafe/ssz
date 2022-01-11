@@ -14,12 +14,10 @@ export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = 
 
 const runTreeViewTestFn = function runTreeViewTest<CT extends CompositeType<unknown, unknown, unknown>>(
   {
-    typeName,
     type,
     treeViewToStruct,
     mutations: ops,
   }: {
-    typeName: string;
     type: CT;
     treeViewToStruct?: (tv: CompositeViewDU<CT>) => ValueOf<CT>;
     mutations: TreeMutation<CT>[];
@@ -43,7 +41,7 @@ const runTreeViewTestFn = function runTreeViewTest<CT extends CompositeType<unkn
   // eslint-disable-next-line no-only-tests/no-only-tests
   const describeFn = (opts?.only ? describe.only : opts?.skip ? describe.skip : describe) as Mocha.SuiteFunction;
 
-  describeFn(`${typeName} TreeView mutations`, () => {
+  describeFn(`${type.typeName} TreeView mutations`, () => {
     for (const testCase of ops) {
       const {id, valueBefore, valueAfter, fn} = testCase;
 
