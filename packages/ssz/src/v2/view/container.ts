@@ -44,10 +44,6 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *
  */
 class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  protected readonly views: unknown[] = [];
-  protected readonly leafNodes: LeafNode[] = [];
-  protected readonly dirtyNodes = new Set<number>();
-
   constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
     super();
   }
