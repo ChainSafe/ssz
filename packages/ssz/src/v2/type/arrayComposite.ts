@@ -70,10 +70,10 @@ export function value_deserializeFromBytesArrayComposite<
   arrayProps: ArrayProps
 ): ValueOf<ElementType>[] {
   const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
+  offsets.push(end);
 
   const values: ValueOf<ElementType>[] = [];
 
-  offsets.push(end);
   // offests include the last element end
   for (let i = 0; i < offsets.length - 1; i++) {
     const startEl = offsets[i];
@@ -151,10 +151,11 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   arrayProps: ArrayProps
 ): Node {
   const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
+  const length = offsets.length;
+  offsets.push(end);
 
   const nodes: Node[] = [];
 
-  offsets.push(end);
   // offests include the last element end
   for (let i = 0; i < offsets.length - 1; i++) {
     const startEl = offsets[i];
@@ -167,7 +168,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 
   // TODO: Add LeafNode.fromUint()
   if (arrayProps.limit) {
-    return addLengthNode(chunksNode, offsets.length);
+    return addLengthNode(chunksNode, length);
   } else {
     return chunksNode;
   }
