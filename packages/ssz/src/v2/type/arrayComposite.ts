@@ -144,7 +144,7 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
 
 export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
-  depth: number,
+  chunkDepth: number,
   data: Uint8Array,
   start: number,
   end: number,
@@ -163,7 +163,6 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   }
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const chunkDepth = arrayProps.limit ? depth - 1 : depth;
   const chunksNode = subtreeFillToContents(nodes, chunkDepth);
 
   // TODO: Add LeafNode.fromUint()

@@ -47,8 +47,8 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
-    // Depth includes the extra level for the length node
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
+    // Depth includes the extra level for the length node
     this.depth = this.chunkDepth + 1;
     this.maxLen = this.limit * elementType.maxLen;
   }

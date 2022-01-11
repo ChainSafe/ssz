@@ -53,8 +53,7 @@ export class VectorCompositeType<
     }
 
     this.typeName = `Vector[${elementType.typeName}, ${length}]`;
-    // TODO Check that itemsPerChunk is an integer
-    this.maxChunkCount = Math.ceil((length * 1) / 32);
+    this.maxChunkCount = length;
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;
     this.fixedLen = elementType.fixedLen === null ? null : length * elementType.fixedLen;
@@ -107,7 +106,7 @@ export class VectorCompositeType<
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
+    return tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {

@@ -52,10 +52,9 @@ export class ListCompositeType<
     }
 
     this.typeName = `List[${elementType.typeName}, ${limit}]`;
-    // TODO Check that itemsPerChunk is an integer
-    this.maxChunkCount = Math.ceil((this.limit * 1) / 32);
-    // Depth includes the extra level for the length node
+    this.maxChunkCount = this.limit;
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
+    // Depth includes the extra level for the length node
     this.depth = this.chunkDepth + 1;
     this.maxLen = this.limit * elementType.maxLen;
   }
@@ -106,7 +105,7 @@ export class ListCompositeType<
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
+    return tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
