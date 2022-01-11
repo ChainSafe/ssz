@@ -100,8 +100,9 @@ export class ListCompositeType<
   }
 
   tree_serializedSize(node: Node): number {
-    const length = getLengthFromRootNode(node);
-    return tree_serializedSizeArrayComposite(this.elementType, length, this.chunkDepth, node);
+    const chunksNode = this.tree_getChunksNode(node);
+    const length = this.tree_getLength(node);
+    return tree_serializedSizeArrayComposite(this.elementType, length, this.chunkDepth, chunksNode);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
@@ -117,7 +118,7 @@ export class ListCompositeType<
   // Helpers for TreeView
 
   tree_getLength(node: Node): number {
-    return (node.right as LeafNode).getUint(4, 0);
+    return getLengthFromRootNode(node);
   }
 
   tree_setLength(tree: Tree, length: number): void {
