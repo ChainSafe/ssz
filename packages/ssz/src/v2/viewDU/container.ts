@@ -67,7 +67,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
   }
 
   commit(): Node {
-    if (this.nodesChanged.size === 0) {
+    if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
       return this._rootNode;
     }
 
