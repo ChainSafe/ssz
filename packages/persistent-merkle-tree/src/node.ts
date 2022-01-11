@@ -1,9 +1,7 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {hashObjectToUint8Array, hashTwoObjects, isHashObject, uint8ArrayToHashObject} from "./hash";
 
-const ERR_INVALID_TREE = "Invalid tree";
 const TWO_POWER_32 = 2 ** 32;
-const MAX_SAFE_INTEGER_HI = Math.floor(Number.MAX_SAFE_INTEGER / TWO_POWER_32);
 
 export abstract class Node implements HashObject {
   // this is to save an extra variable to check if a node has a root or not
@@ -82,7 +80,7 @@ export class LeafNode extends Node {
     if (isHashObject(_root)) {
       this.applyHash(_root);
     } else {
-      if (_root.length !== 32) throw new Error(ERR_INVALID_TREE);
+      if (_root.length !== 32) throw new Error(`Root length ${_root.length} must be 32`);
       this.applyHash(uint8ArrayToHashObject(_root));
     }
   }
@@ -141,15 +139,15 @@ export class LeafNode extends Node {
 
     // number spans 2 h values
     else if (uintBytes === 8) {
-      const low = getNodeH(this, hIndex) >>> 0;
-      const high = getNodeH(this, hIndex + 1) >>> 0;
+      const low = getNodeH(this, hIndex);
+      const high = getNodeH(this, hIndex + 1);
       if (high === 0) {
-        return low;
-      } else if (high >= MAX_SAFE_INTEGER_HI && clipInfinity) {
+        return low >>> 0;
+      } else if (high === -1 && low === -1 && clipInfinity) {
         // Limit uint returns
         return Infinity;
       } else {
-        return low + high * TWO_POWER_32;
+        return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
       }
     }
 
@@ -189,7 +187,7 @@ export class LeafNode extends Node {
     }
   }
 
-  setUint(uintBytes: number, offsetBytes: number, value: number): void {
+  setUint(uintBytes: number, offsetBytes: number, value: number, clipInfinity?: boolean): void {
     const hIndex = Math.floor(offsetBytes / 4);
 
     // number has to be masked from an h value
@@ -213,8 +211,13 @@ export class LeafNode extends Node {
 
     // number spans 2 h values
     else if (uintBytes === 8) {
-      setNodeH(this, hIndex, value & 0xffffffff);
-      setNodeH(this, hIndex + 1, (value / TWO_POWER_32) & 0xffffffff);
+      if (value === Infinity && clipInfinity) {
+        setNodeH(this, hIndex, -1);
+        setNodeH(this, hIndex + 1, -1);
+      } else {
+        setNodeH(this, hIndex, value & 0xffffffff);
+        setNodeH(this, hIndex + 1, (value / TWO_POWER_32) & 0xffffffff);
+      }
     }
 
     // Bigger uint can't be represented

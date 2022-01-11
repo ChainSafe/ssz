@@ -12,7 +12,7 @@ export class UintNumberType extends BasicType<number> {
   readonly maxLen: number;
   private readonly maxDecimalStr: string;
 
-  constructor(byteLength: number, readonly infinityWhenBig?: boolean, readonly setBitwise?: boolean) {
+  constructor(byteLength: number, private readonly clipInfinity?: boolean, private readonly setBitwise?: boolean) {
     super();
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
@@ -40,7 +40,7 @@ export class UintNumberType extends BasicType<number> {
         isInfinity = false;
       }
     }
-    if (this.infinityWhenBig && isInfinity) {
+    if (this.clipInfinity && isInfinity) {
       return Infinity;
     }
     return output;
@@ -82,7 +82,7 @@ export class UintNumberType extends BasicType<number> {
   // Fast Tree access
 
   tree_getFromNode(leafNode: LeafNode): number {
-    return leafNode.getUint(this.byteLength, 0, true);
+    return leafNode.getUint(this.byteLength, 0, this.clipInfinity);
   }
 
   /** Mutates node to set value */
@@ -93,7 +93,7 @@ export class UintNumberType extends BasicType<number> {
   /** EXAMPLE of `tree_getFromNode` */
   tree_getFromPackedNode(leafNode: LeafNode, index: number): number {
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
-    return leafNode.getUint(this.byteLength, offsetBytes, true);
+    return leafNode.getUint(this.byteLength, offsetBytes, this.clipInfinity);
   }
 
   /** Mutates node to set value */
@@ -104,7 +104,7 @@ export class UintNumberType extends BasicType<number> {
     if (this.setBitwise) {
       leafNode.bitwiseOrUint(this.byteLength, offsetBytes, value);
     } else {
-      leafNode.setUint(this.byteLength, offsetBytes, value);
+      leafNode.setUint(this.byteLength, offsetBytes, value, this.clipInfinity);
     }
   }
 
