@@ -113,10 +113,18 @@ export class UintNumberType extends BasicType<number> {
   // JSON
 
   fromJson(json: unknown): number {
-    if (typeof json !== "number") {
+    if (typeof json === "number") {
+      return json;
+    } else if (typeof json === "string") {
+      const num = parseInt(json, 10);
+      if (isNaN(num)) {
+        throw Error("JSON invalid number isNaN");
+      } else {
+        return num;
+      }
+    } else {
       throw Error(`JSON invalid type ${typeof json} expected number`);
     }
-    return json;
   }
 
   toJson(value: number): unknown {

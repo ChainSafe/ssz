@@ -1,5 +1,6 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, TreeView, Type} from "../abstract";
+import {Type} from "../type/abstract";
+import {CompositeType, TreeView} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container";
 

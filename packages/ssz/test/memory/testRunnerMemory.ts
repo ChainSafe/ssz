@@ -24,6 +24,10 @@ export async function testRunnerMemoryGc<T>(opts: TestRunnerMemoryOpts<T>): Prom
   const xs: number[] = [];
   const usedMemoryArr: number[] = [];
 
+  if (!global.gc) {
+    throw Error("Must enable global.gc with $ node --expose-gc");
+  }
+
   for (let n = 0; n < rounds; n++) {
     global.gc();
     global.gc();
@@ -82,6 +86,10 @@ export function testRunnerMemory<T>(opts: TestRunnerMemoryOpts<T>): number {
     logEachSample,
     convergeFactor = 0.2 / 100, // 0.2%
   } = opts;
+
+  if (!global.gc) {
+    throw Error("Must enable global.gc with $ node --expose-gc");
+  }
 
   const refs: T[] = [];
   const xs: number[] = [];

@@ -111,8 +111,20 @@ export class ArrayCompositeTreeViewDU<
     for (let i = 0; i < this.length; i++) {
       views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
     }
-
     return views;
+  }
+
+  getAllReadonlyValues(): ValueOf<ElementType>[] {
+    if (!this.nodesPopulated) {
+      this.nodes = getNodesAtDepth(this._rootNode, this.type.depth, 0, this.length);
+      this.nodesPopulated = true;
+    }
+
+    const values: ValueOf<ElementType>[] = [];
+    for (let i = 0; i < this.length; i++) {
+      values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
+    }
+    return values;
   }
 
   commit(): Node {
