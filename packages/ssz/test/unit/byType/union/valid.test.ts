@@ -1,18 +1,14 @@
-import {ContainerType, NumberUintType, UnionType} from "../../../../src";
-import {NoneType} from "../../../../src/types_old/basic/none";
-import {runTypeTestValid} from "../testRunners";
+import {ContainerType, UintNumberType, UnionType, NoneType} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
-const number16Type = new NumberUintType({byteLength: 2});
+const number16Type = new UintNumberType(2);
 const SimpleObject = new ContainerType({
-  fields: {
-    b: number16Type,
-    a: number16Type,
-  },
+  b: number16Type,
+  a: number16Type,
 });
 
 runTypeTestValid({
-  typeName: "Union(Node, Container, Uint16)",
-  type: new UnionType({types: [new NoneType(), SimpleObject, number16Type]}),
+  type: new UnionType([new NoneType(), SimpleObject, number16Type]),
   defaultValue: {selector: 0, value: null},
   values: [
     {

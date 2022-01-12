@@ -8,7 +8,9 @@ export {ContainerType} from "./type/container";
 export {ContainerNodeStructType} from "./type/containerNodeStruct";
 export {ListBasicType} from "./type/listBasic";
 export {ListCompositeType} from "./type/listComposite";
+export {NoneType} from "./type/none";
 export {UintBigintType, UintNumberType} from "./type/uint";
+export {UnionType} from "./type/union";
 export {VectorBasicType} from "./type/vectorBasic";
 export {VectorCompositeType} from "./type/vectorComposite";
 
