@@ -335,20 +335,6 @@
     "@chainsafe/ssz" "^0.8.13"
     js-yaml "^3.13.1"
 
-"@chainsafe/lodestar-spec-test-util@^0.28.1":
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-spec-test-util/-/lodestar-spec-test-util-0.28.1.tgz#6879a940a88d5429392393f1ec767c5dc0c0b4c2"
-  integrity sha512-glcUT5VzF60pLSf73X5CtH9wpoxHNDbCTgFeoknV8dBtFNe3xfRPbDk9/LbZZWUYy4tgVWLgJ38/ZJkGcyrv8w==
-  dependencies:
-    "@chainsafe/lodestar-utils" "^0.28.1"
-    "@chainsafe/ssz" "^0.8.13"
-    axios "^0.21.0"
-    chai "^4.2.0"
-    mocha "^8.1.1"
-    rimraf "^3.0.2"
-    snappyjs "^0.6.0"
-    tar "^6.0.5"
-
 "@chainsafe/lodestar-utils@^0.28.1":
   version "0.28.1"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-utils/-/lodestar-utils-0.28.1.tgz#30285855bd18cc88f16accbe0390b9c0c34c8638"

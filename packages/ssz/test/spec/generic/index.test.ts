@@ -1,28 +1,15 @@
 import {expect} from "chai";
 import path from "path";
 import fs from "fs";
-// eslint-disable-next-line no-restricted-imports
-import {parseInvalidTestcase, parseValidTestcase} from "@chainsafe/lodestar-spec-test-util/lib/sszGeneric";
 import {CompositeType, toHexString, Type} from "../../../src";
 import {SPEC_TEST_LOCATION} from "../../specTestVersioning";
+import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase, ValidTestCaseData} from "../testRunner";
 
 // Test types defined here
 import {getTestType} from "./types";
+import {Node} from "@chainsafe/persistent-merkle-tree";
 
 const rootGenericSszPath = path.join(SPEC_TEST_LOCATION, "tests", "general", "phase0", "ssz_generic");
-
-// ssz_generic
-// | basic_vector
-//   | invalid
-//     | vec_bool_0
-//       | serialized.ssz_snappy
-//   | valid
-//     | vec_bool_1_max
-//       | meta.yaml
-//       | serialized.ssz_snappy
-//       | value.yaml
-//
-// Docs: https://github.com/ethereum/eth2.0-specs/blob/master/tests/formats/ssz_generic/README.md
 
 for (const testType of fs.readdirSync(rootGenericSszPath)) {
   const testTypePath = path.join(rootGenericSszPath, testType);
@@ -38,7 +25,7 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         }
 
         const type = getTestType(testType, invalidCase);
-        const testData = parseInvalidTestcase(path.join(invalidCasesPath, invalidCase));
+        const testData = parseSszGenericInvalidTestcase(path.join(invalidCasesPath, invalidCase));
 
         /* eslint-disable no-console */
         if (process.env.DEBUG) {
@@ -66,60 +53,88 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
 
       it(validCase, () => {
         const type = getTestType(testType, validCase);
-
-        const testData = parseValidTestcase(path.join(validCasesPath, validCase), type as Type<unknown>);
-        const testDataSerialized = toHexString(testData.serialized);
-        const testDataRoot = toHexString(testData.root);
-
-        if (process.env.DEBUG) {
-          console.log("serialized", Buffer.from(testData.serialized).toString("hex"));
-        }
-
-        const serialized = wrapErr(() => type.serialize(testData.value), "type.serialize()");
-        const value = wrapErr(() => type.deserialize(copy(testData.serialized)), "type.deserialize()");
-        const root = wrapErr(() => type.hashTreeRoot(testData.value), "type.hashTreeRoot()");
-        const valueSerdes = wrapErr(() => type.deserialize(serialized), "type.deserialize(serialized)");
-
-        expect(valueSerdes).to.deep.equal(testData.value, "round trip serdes");
-        expect(toHexString(serialized)).to.equal(testDataSerialized, "struct serialize");
-        expect(value).to.deep.equal(testData.value, "struct deserialize");
-        expect(toHexString(root)).to.equal(testDataRoot, "struct hashTreeRoot");
-
-        // If the type is composite, test tree-backed ops
-        if (typeV === "v1") {
-          if (!isCompositeType(type as Type<unknown>)) return;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const compositeType = type as CompositeType<any>;
-
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const treebackedValue = compositeType.createTreeBackedFromStruct(testData.value);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          const treeToStruct = compositeType.tree_convertToStruct(treebackedValue.tree);
-
-          expect(treeToStruct).to.deep.equal(testData.value, "tree-backed to struct");
-          expect(type.equals(testData.value, treebackedValue), "struct - tree-backed type.equals()").to.be.true;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-          expect(toHexString(treebackedValue.serialize())).to.equal(testDataSerialized, "tree-backed serialize");
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-          expect(toHexString(treebackedValue.hashTreeRoot())).to.equal(testDataRoot, "tree-backed hashTreeRoot");
-        }
-
-        // v2
-        else if (typeV === "v2") {
-          if ((type as TypeV2<unknown>).isBasic) return;
-
-          const compositeType = type as CompositeTypeV2<any, any, any>;
-
-          const node = compositeType.tree_deserializeFromBytes(testData.serialized, 0, testData.serialized.length);
-          expect(toHexString(node.root)).to.equal(testDataRoot, "tree-backed hashTreeRoot");
-
-          const treeBytes = new Uint8Array(compositeType.tree_serializedSize(node));
-          compositeType.tree_serializeToBytes(treeBytes, 0, node);
-          expect(toHexString(treeBytes)).to.equal(testDataSerialized, "tree-backed serialize");
-        }
+        const testData = parseSszGenericValidTestcase(path.join(validCasesPath, validCase));
+        runValidTest(type, testData);
       });
     }
   });
+}
+
+export function runValidTest(type: Type<unknown>, testData: ValidTestCaseData): void {
+  const testDataSerialized = toHexString(testData.serialized);
+  const testDataRoot = toHexString(testData.root);
+
+  if (process.env.DEBUG) {
+    console.log("serialized", Buffer.from(testData.serialized).toString("hex"));
+  }
+
+  function assertBytes(bytes: Uint8Array, msg: string): void {
+    expect(toHexString(bytes)).to.equal(testDataSerialized, `Wrong serialized - ${msg}`);
+  }
+
+  function assertValue(value: unknown, msg: string): void {
+    expect(type.toJson(value)).to.deep.equal(testData.jsonValue, `Wrong value - ${msg}`);
+  }
+
+  function assertRoot(root: Uint8Array, msg: string): void {
+    expect(toHexString(root)).to.equal(testDataRoot, `Wrong root - ${msg}`);
+  }
+
+  function assertNode(node: Node, msg: string): void {
+    expect(toHexString(node.root)).to.equal(testDataRoot, `Wrong node - ${msg}`);
+  }
+
+  // JSON -> value - fromJson()
+  const testDataValue = wrapErr(() => type.fromJson(testData.jsonValue), "type.fromJson()");
+
+  // value -> bytes - serialize()
+  const serialized = wrapErr(() => type.serialize(testDataValue), "type.serialize()");
+  assertBytes(serialized, "type.serialize()");
+
+  {
+    // bytes -> value - deserialize()
+    const value = wrapErr(() => type.deserialize(copy(testData.serialized)), "type.deserialize()");
+    assertValue(value, "type.deserialize()");
+  }
+
+  {
+    // hashTreeRoot()
+    const root = wrapErr(() => type.hashTreeRoot(testDataValue), "type.hashTreeRoot()");
+    assertRoot(root, "type.hashTreeRoot()");
+  }
+
+  // value -> tree - value_toTree()
+  const node = wrapErr(() => type.value_toTree(testDataValue), "type.value_toTree()");
+  assertNode(node, "type.value_toTree()");
+
+  {
+    // tree -> value -
+    const value = wrapErr(() => type.tree_toValue(node), "type.tree_toValue()");
+    assertValue(value, "type.tree_toValue()");
+  }
+
+  {
+    // tree -> bytes
+    const output = new Uint8Array(type.tree_serializedSize(node));
+    type.tree_serializeToBytes(output, 0, node);
+    assertBytes(output, "type.tree_serializeToBytes");
+  }
+
+  {
+    // bytes -> tree
+    const node = type.tree_deserializeFromBytes(copy(testData.serialized), 0, testData.serialized.length);
+    assertNode(node, "type.tree_deserializeFromBytes()");
+  }
+
+  if (!type.isBasic) {
+    const compositeType = type as CompositeType<unknown, unknown, unknown>;
+
+    const view = compositeType.deserializeToView(copy(testData.serialized));
+    assertNode(compositeType.commitView(view), "deserializeToView");
+
+    const viewDU = compositeType.deserializeToViewDU(copy(testData.serialized));
+    assertNode(compositeType.commitViewDU(viewDU), "deserializeToViewDU");
+  }
 }
 
 function copy(buf: Uint8Array): Uint8Array {

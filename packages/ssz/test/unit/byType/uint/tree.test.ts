@@ -30,7 +30,7 @@ describe("UintNumberType / tree", () => {
 });
 
 // Ensure UintNumberType can deal with Infinity value
-describe("UintType - Infinity", () => {
+describe("UintType - Infinity with clipInfinity", () => {
   const hexOffset0 = "0xffffffffffffffff000000000000000000000000000000000000000000000000";
   const hexOffset2 = "0x00000000000000000000000000000000ffffffffffffffff0000000000000000";
 

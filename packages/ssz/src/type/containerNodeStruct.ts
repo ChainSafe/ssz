@@ -29,6 +29,16 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return this.value_serializeToBytes(output, offset, value);
   }
 
+  // Overwrites for fast conversion node <-> value
+
+  tree_toValue(node: Node): ValueOfFields<Fields> {
+    return (node as BranchNodeStruct<ValueOfFields<Fields>>).value;
+  }
+
+  value_toTree(value: ValueOfFields<Fields>): Node {
+    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+  }
+
   private valueToTree(value: ValueOfFields<Fields>): Node {
     // TODO: Optimize conversion
     const bytes = this.serialize(value);

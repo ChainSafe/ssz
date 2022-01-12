@@ -1,6 +1,8 @@
 {
   "include": ["src"],
   "compilerOptions": {
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
+
     "outDir": "lib",
     "target": "esnext",
     "module": "commonjs",

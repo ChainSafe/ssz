@@ -10,9 +10,9 @@ import {
   VectorBasicType,
   BooleanType,
   ListCompositeType,
+  NoneType,
+  UnionType,
 } from "../../src";
-import {NoneType} from "../../src/types_old/basic/none";
-import {UnionType} from "../../src/types_old/composite/union";
 
 export const booleanType = new BooleanType();
 export const byteType = new UintNumberType(1);
@@ -130,5 +130,5 @@ export const ArrayObject = new ContainerType({v: new ListCompositeType(SimpleObj
 
 export const ArrayObject2 = new ListCompositeType(OuterObject, 100);
 
-export const UnionObject = new UnionType({types: [new NoneType(), SimpleObject, number16Type]});
+export const UnionObject = new UnionType([new NoneType(), SimpleObject, number16Type]);
 export const balancesType = new ListBasicType(number64Type, 100);

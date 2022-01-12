@@ -6,7 +6,6 @@ import {
   ContainerNodeStructType,
   toHexString,
   ListCompositeType,
-  readonlyValuesListOfLeafNodeStruct,
   ValueOf,
   CompositeViewDU,
 } from "../../src";
@@ -89,7 +88,7 @@ describe("Container with BranchNodeStruct", function () {
         validatorListTB.push(ValidatorNodeStructTypeType.toViewDU(validator_));
       }
 
-      expect(readonlyValuesListOfLeafNodeStruct(validatorListTB)).to.deep.equal(validatorsFlat);
+      expect(validatorListTB.getAllReadonlyValues()).to.deep.equal(validatorsFlat);
     });
 
     it("return each property as struct backed", () => {

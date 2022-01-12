@@ -2,6 +2,7 @@ import {
   Type,
   BooleanType,
   UintBigintType,
+  UintNumberType,
   BitVectorType,
   BitListType,
   ContainerType,
@@ -11,10 +12,10 @@ import {
 } from "../../../src";
 
 const bool = new BooleanType();
-const byte = new UintBigintType(1);
-const uint8 = new UintBigintType(1);
-const uint16 = new UintBigintType(2);
-const uint32 = new UintBigintType(4);
+const byte = new UintNumberType(1);
+const uint8 = new UintNumberType(1);
+const uint16 = new UintNumberType(2);
+const uint32 = new UintNumberType(4);
 const uint64 = new UintBigintType(8);
 const uint128 = new UintBigintType(16);
 const uint256 = new UintBigintType(32);
