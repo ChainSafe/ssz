@@ -56,14 +56,14 @@ runViewTestMutation({
   ],
 });
 
-const deltas = [1_000_000_000_000, 999, 0, -1_000_000];
+const deltaValues = [1_000_000_000_000, 999, 0, -1_000_000];
 const initBalance = 31217089836; // Must be greater than the negative delta
 
 runViewTestMutation({
   type: ListN64Uint64NumberType,
   mutations: [
     // For each delta test mutating a single item of a List
-    ...deltas.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
+    ...deltaValues.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
       const valueBefore = Array.from({length: limit}, () => initBalance);
       const valueAfter = [...valueBefore];
       const i = Math.floor(limit / 2); // Mutate the middle value
@@ -74,13 +74,13 @@ runViewTestMutation({
         valueBefore,
         valueAfter,
         fn: (tv) => {
-          ListN64Uint64NumberType.tree_applyDeltaAtIndex(tv.tree, i, delta);
+          tv.set(i, tv.get(i) + delta);
         },
       };
     }),
 
     // For each delta test mutating half of the List items in batch
-    ...deltas.map((delta): TreeMutation<List<number>> => {
+    ...deltaValues.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
       const valueBefore = Array.from({length: limit}, () => initBalance);
       const valueAfter = [...valueBefore];
 
@@ -97,23 +97,25 @@ runViewTestMutation({
         valueBefore,
         valueAfter,
         fn: (tv) => {
-          ListN64Uint64NumberType.tree_applyDeltaInBatch(tv.tree, deltaByIndex);
+          for (const [i, _delta] of deltaByIndex) {
+            tv.set(i, tv.get(i) + _delta);
+          }
         },
       };
     }),
 
     // For each delta create a new tree applying half of the List items in batch
     // Since the tree is re-created `fn()` returns a new tree that is used to compare `valueAfter`
-    ...deltas.map((delta): TreeMutation<List<number>> => {
+    ...deltaValues.map((delta): TreeMutation<typeof ListN64Uint64NumberType> => {
       const valueBefore = Array.from({length: limit}, () => initBalance);
       const valueAfter: number[] = [];
-      const deltas: number[] = [];
+      const deltasByIdx: number[] = [];
 
       for (let i = 0; i < limit; i++) {
         // `i % 2 === 0` to only apply the delta to half the values
         const d = i % 2 === 0 ? delta : 0;
         valueAfter[i] = valueBefore[i] + d;
-        deltas[i] = d;
+        deltasByIdx[i] = d;
       }
 
       return {
@@ -121,12 +123,11 @@ runViewTestMutation({
         valueBefore,
         valueAfter,
         fn: (tv) => {
-          const [newTree] = ListN64Uint64NumberType.tree_newTreeFromDeltas(tv.tree, deltas);
-
-          // TODO: Consider setting length in `tree_newTreeFromDeltas()`
-          ListN64Uint64NumberType.tree_setLength(newTree, ListN64Uint64NumberType.tree_getLength(tv.tree));
-
-          return ListN64Uint64NumberType.createTreeBacked(newTree);
+          const values = tv.getAll();
+          for (let i = 0; i < values.length; i++) {
+            values[i] += deltasByIdx[i];
+          }
+          return ListN64Uint64NumberType.toViewDU(values);
         },
       };
     }),

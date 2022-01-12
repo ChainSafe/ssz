@@ -31,10 +31,8 @@ describe("list", () => {
   // using applyDelta gives 4x improvement to get and set
   // 2.7x improvement compared to set only
   itBench("Number64UintType - increase 10 using applyDelta", () => {
-    const basicArrayType = tbBalances.type;
-    const tree = tbBalances.node;
     for (let i = 0; i < numBalances; i++) {
-      basicArrayType.tree_applyDeltaAtIndex(tree, i, 10);
+      tbBalances.set(i, 10 + tbBalances.get(i));
     }
   });
 
@@ -46,9 +44,9 @@ describe("list", () => {
   // same performance to tree_applyUint64Delta, should be a little faster
   // if it operates on a subtree with hook
   itBench("Number64UintType - increase 10 using applyDeltaInBatch", () => {
-    const basicArrayType = tbBalances.type;
-    const tree = tbBalances.node;
-    basicArrayType.tree_applyDeltaInBatch(tree, deltaByIndex);
+    for (let i = 0; i < numBalances; i++) {
+      tbBalances.set(i, 10 + tbBalances.get(i));
+    }
   });
 });
 
@@ -58,20 +56,20 @@ describe("subtreeFillToContents", function () {
   const tbBalances64 = createBalanceList(numBalances);
   const delta = 100;
   const deltas = Array.from({length: numBalances}, () => delta);
-  const tree = tbBalances64.tree;
-  const type = tbBalances64.type as Number64ListType;
 
   /** tree_newTreeFromUint64Deltas is 17% faster than unsafeUint8ArrayToTree */
   /** ✓ tree_newTreeFromUint64Deltas    28.72705 ops/s    34.81040 ms/op        -       1149 runs   40.0 s */
   itBench("tree_newTreeFromUint64Deltas", () => {
-    type.tree_newTreeFromDeltas(tree, deltas);
+    const balances = tbBalances64.getAll();
+    for (let i = 0, len = deltas.length; i < len; i++) {
+      balances[i] += deltas[i];
+    }
+    tbBalances64.type.toViewDU(balances);
   });
 
   const newBalances = new BigUint64Array(numBalances);
-  const cachedBalances64: number[] = [];
-  for (let i = 0; i < tbBalances64.length; i++) {
-    cachedBalances64.push(tbBalances64[i]);
-  }
+  const cachedBalances64 = tbBalances64.getAll();
+
   /** ✓ unsafeUint8ArrayToTree    24.51560 ops/s    40.79035 ms/op        -        981 runs   40.0 s */
   itBench("unsafeUint8ArrayToTree", () => {
     for (let i = 0; i < numBalances; i++) {
@@ -79,7 +77,7 @@ describe("subtreeFillToContents", function () {
     }
     unsafeUint8ArrayToTree(
       new Uint8Array(newBalances.buffer, newBalances.byteOffset, newBalances.byteLength),
-      type.getChunkDepth()
+      tbBalances64.type["chunkDepth"]
     );
   });
 });
@@ -90,7 +88,10 @@ function createBalanceList(count: number) {
 
   const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
-  return balancesList.toViewDU(balancesStruct);
+  const viewDU = balancesList.toViewDU(balancesStruct);
+  // Prime cache
+  viewDU.getAll();
+  return viewDU;
 }
 
 function unsafeUint8ArrayToTree(data: Uint8Array, depth: number): Node {
