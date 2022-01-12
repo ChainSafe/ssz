@@ -1,8 +1,9 @@
-import {ContainerType} from "../../../src";
-
 import {ts as phase0} from "../phase0";
 import {ts as altair} from "../altair";
 import {ts as merge} from "../merge";
+import {ssz as phase0Ssz} from "../phase0";
+import {ssz as altairSsz} from "../altair";
+import {ssz as mergeSsz} from "../merge";
 
 // Re-export union types for types that are _known_ to differ
 
@@ -27,9 +28,15 @@ export type AllForksTypes = {
  * SSZ Types known to change between forks
  */
 export type AllForksSSZTypes = {
-  BeaconBlockBody: ContainerType<BeaconBlockBody>;
-  BeaconBlock: ContainerType<BeaconBlock>;
-  SignedBeaconBlock: ContainerType<SignedBeaconBlock>;
-  BeaconState: ContainerType<BeaconState>;
-  Metadata: ContainerType<Metadata>;
+  BeaconBlockBody:
+    | typeof phase0Ssz.BeaconBlockBody
+    | typeof altairSsz.BeaconBlockBody
+    | typeof mergeSsz.BeaconBlockBody;
+  BeaconBlock: typeof phase0Ssz.BeaconBlock | typeof altairSsz.BeaconBlock | typeof mergeSsz.BeaconBlock;
+  SignedBeaconBlock:
+    | typeof phase0Ssz.SignedBeaconBlock
+    | typeof altairSsz.SignedBeaconBlock
+    | typeof mergeSsz.SignedBeaconBlock;
+  BeaconState: typeof phase0Ssz.BeaconState | typeof altairSsz.BeaconState | typeof mergeSsz.BeaconState;
+  Metadata: typeof phase0Ssz.Metadata | typeof altairSsz.Metadata;
 };
