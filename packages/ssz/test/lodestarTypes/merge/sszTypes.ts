@@ -1,25 +1,27 @@
 import {ByteVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src";
-import {
-  BYTES_PER_LOGS_BLOOM,
-  HISTORICAL_ROOTS_LIMIT,
-  MAX_TRANSACTIONS_PER_PAYLOAD,
-  MAX_BYTES_PER_OPAQUE_TRANSACTION,
-  MAX_EXTRA_DATA_BYTES,
-  SLOTS_PER_HISTORICAL_ROOT,
-} from "@chainsafe/lodestar-params";
 import {ssz as primitiveSsz} from "../primitive";
 import {ssz as phase0Ssz} from "../phase0";
 import {ssz as altairSsz} from "../altair";
 import {Uint256} from "../primitive/sszTypes";
+import {preset} from "../params";
+
+const {
+  BYTES_PER_LOGS_BLOOM,
+  HISTORICAL_ROOTS_LIMIT,
+  MAX_TRANSACTIONS_PER_PAYLOAD,
+  MAX_BYTES_PER_TRANSACTION,
+  MAX_EXTRA_DATA_BYTES,
+  SLOTS_PER_HISTORICAL_ROOT,
+} = preset;
 
 const {Bytes20, Bytes32, Number64, Slot, ValidatorIndex, Root, BLSSignature, Uint8} = primitiveSsz;
 
 /**
- * ByteList[MAX_BYTES_PER_OPAQUE_TRANSACTION]
+ * ByteList[MAX_BYTES_PER_TRANSACTION]
  *
  * Spec v1.0.1
  */
-export const Transaction = new ListBasicType(primitiveSsz.Byte, MAX_BYTES_PER_OPAQUE_TRANSACTION);
+export const Transaction = new ListBasicType(primitiveSsz.Byte, MAX_BYTES_PER_TRANSACTION);
 
 /**
  * Union[OpaqueTransaction]

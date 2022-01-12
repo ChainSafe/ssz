@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
 import {number64Type} from "./testTypes";
 import {
   VectorBasicType,
@@ -74,6 +73,8 @@ describe("Regressions / known issues", () => {
     for (let i = 0; i < 64; i++) {
       validatorIndexes.push(i);
     }
+
+    const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
     const type = new ListBasicType(number64Type, VALIDATOR_REGISTRY_LIMIT);
     // This is the logic to calculate activeIndexRoots in processFinalUpdates
     const hash = Buffer.from(type.hashTreeRoot(validatorIndexes)).toString("hex");

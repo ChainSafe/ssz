@@ -1,6 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
-import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
 import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src";
 
 describe("processAttestations", () => {
@@ -9,6 +8,7 @@ describe("processAttestations", () => {
   const attesterIndices: number[] = [];
   const statusArr: number[] = [];
 
+  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
   const uint8Type = new UintNumberType(1);
   const epochStatusesType = new ListBasicType(uint8Type, VALIDATOR_REGISTRY_LIMIT);
 

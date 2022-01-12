@@ -7,26 +7,30 @@ import {
   VectorBasicType,
   VectorCompositeType,
 } from "../../../src";
+import * as primitiveSsz from "../primitive/sszTypes";
 import {
-  ATTESTATION_SUBNET_COUNT,
+  preset,
+  MAX_REQUEST_BLOCKS,
   DEPOSIT_CONTRACT_TREE_DEPTH,
+  JUSTIFICATION_BITS_LENGTH,
+  ATTESTATION_SUBNET_COUNT,
+} from "../params";
+
+const {
   EPOCHS_PER_ETH1_VOTING_PERIOD,
   EPOCHS_PER_HISTORICAL_VECTOR,
   EPOCHS_PER_SLASHINGS_VECTOR,
   HISTORICAL_ROOTS_LIMIT,
-  JUSTIFICATION_BITS_LENGTH,
   MAX_ATTESTATIONS,
   MAX_ATTESTER_SLASHINGS,
   MAX_DEPOSITS,
   MAX_PROPOSER_SLASHINGS,
-  MAX_REQUEST_BLOCKS,
   MAX_VALIDATORS_PER_COMMITTEE,
   MAX_VOLUNTARY_EXITS,
   SLOTS_PER_EPOCH,
   SLOTS_PER_HISTORICAL_ROOT,
   VALIDATOR_REGISTRY_LIMIT,
-} from "@chainsafe/lodestar-params";
-import * as primitiveSsz from "../primitive/sszTypes";
+} = preset;
 
 const {
   Boolean,

@@ -40,7 +40,6 @@
     "case": "^1.6.3"
   },
   "devDependencies": {
-    "@chainsafe/lodestar-params": "^0.31.0",
     "@chainsafe/lodestar-spec-test-util": "^0.31.0",
     "@types/js-yaml": "^4.0.5",
     "js-yaml": "^4.1.0",
