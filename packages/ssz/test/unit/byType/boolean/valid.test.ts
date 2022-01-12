@@ -1,9 +1,8 @@
-import {booleanType} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {BooleanType} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({
-  typeName: "boolean",
-  type: booleanType,
+  type: new BooleanType(),
   defaultValue: false,
   values: [
     {

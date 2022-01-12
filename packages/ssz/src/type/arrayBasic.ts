@@ -7,7 +7,7 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, BasicType, ValueOf} from "./abstract";
+import {Type, BasicType, ValueOf, JsonOptions} from "./abstract";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -148,7 +148,8 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<un
 export function value_fromJsonArray<ElementType extends Type<unknown>>(
   elementType: ElementType,
   json: unknown,
-  length?: number
+  length?: number,
+  opts?: JsonOptions
 ): ValueOf<ElementType>[] {
   if (!Array.isArray(json)) {
     throw Error("JSON must be an array");
@@ -160,7 +161,7 @@ export function value_fromJsonArray<ElementType extends Type<unknown>>(
 
   const value: ValueOf<ElementType>[] = [];
   for (let i = 0; i < length; i++) {
-    value.push(elementType.fromJson(json[i]) as ValueOf<ElementType>);
+    value.push(elementType.fromJson(json[i], opts) as ValueOf<ElementType>);
   }
   return value;
 }
@@ -171,7 +172,8 @@ export function value_fromJsonArray<ElementType extends Type<unknown>>(
 export function value_toJsonArray<ElementType extends Type<unknown>>(
   elementType: ElementType,
   value: ValueOf<ElementType>[],
-  length?: number
+  length?: number,
+  opts?: JsonOptions
 ): unknown[] {
   if (length === undefined) {
     length = value.length;
@@ -179,7 +181,7 @@ export function value_toJsonArray<ElementType extends Type<unknown>>(
 
   const json: unknown[] = [];
   for (let i = 0; i < length; i++) {
-    json.push(elementType.toJson(value[i]) as ValueOf<ElementType>);
+    json.push(elementType.toJson(value[i], opts) as ValueOf<ElementType>);
   }
   return json;
 }

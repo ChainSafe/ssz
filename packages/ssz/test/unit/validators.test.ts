@@ -2,56 +2,29 @@ import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
 import {expect} from "chai";
 import {describe, it} from "mocha";
 import {
-  BigIntUintType,
-  booleanType,
-  ByteVectorType,
   ContainerType,
-  ContainerLeafNodeStructType,
-  NumberUintType,
+  ContainerNodeStructType,
   toHexString,
-  TreeBacked,
-  ListType,
+  ListCompositeType,
   readonlyValuesListOfLeafNodeStruct,
-  List,
+  ValueOf,
+  CompositeViewDU,
 } from "../../src";
+import {Validator as ValidatorDef} from "../lodestarTypes/phase0/sszTypes";
 
 describe("Container with BranchNodeStruct", function () {
   this.timeout(0);
 
-  const Bytes48 = new ByteVectorType({length: 48});
-  const Bytes32 = new ByteVectorType({length: 32});
-  const Uint64 = new BigIntUintType({byteLength: 8});
-  const Number64 = new NumberUintType({byteLength: 8});
+  type Validator = ValueOf<typeof ValidatorDef>;
 
-  interface Validator {
-    pubkey: Uint8Array;
-    withdrawalCredentials: Uint8Array;
-    effectiveBalance: bigint;
-    slashed: boolean;
-    activationEligibilityEpoch: number;
-    activationEpoch: number;
-    exitEpoch: number;
-    withdrawableEpoch: number;
-  }
-
-  const fields = {
-    pubkey: Bytes48,
-    withdrawalCredentials: Bytes32,
-    effectiveBalance: Uint64,
-    slashed: booleanType,
-    activationEligibilityEpoch: Number64,
-    activationEpoch: Number64,
-    exitEpoch: Number64,
-    withdrawableEpoch: Number64,
-  };
-
-  const ValidatorType = new ContainerType<Validator>({fields});
-  const ValidatorLeafNodeStructType = new ContainerLeafNodeStructType<Validator>({fields});
+  const fields = ValidatorDef.fields;
+  const ValidatorType = new ContainerType(fields);
+  const ValidatorNodeStructTypeType = new ContainerNodeStructType(fields);
 
   const validator: Validator = {
     pubkey: Buffer.alloc(48, 0xaa),
     withdrawalCredentials: Buffer.alloc(32, 0xbb),
-    effectiveBalance: BigInt(32e9),
+    effectiveBalance: 32e9,
     slashed: false,
     activationEligibilityEpoch: 1_000_000,
     activationEpoch: 2_000_000,
@@ -59,27 +32,28 @@ describe("Container with BranchNodeStruct", function () {
     withdrawableEpoch: 4_000_000,
   };
 
-  const validatorTb = ValidatorType.createTreeBackedFromStruct(validator);
-  const validatorTbLeafNodeStruct = ValidatorLeafNodeStructType.createTreeBackedFromStruct(validator);
+  const validatorViewDU = ValidatorType.toViewDU(validator);
+  const validatorNodeStructViewDU = ValidatorNodeStructTypeType.toViewDU(validator);
 
-  const ops: Record<string, (treeBacked: TreeBacked<Validator>, type: ContainerType<Validator>) => unknown> = {
-    getExitEpoch: (treeBacked) => treeBacked.exitEpoch,
-    getPubkey: (treeBacked) => toHexString(treeBacked.pubkey),
-    hashTreeRoot: (treeBacked) => treeBacked.hashTreeRoot(),
-    getProof: (treeBacked) => treeBacked.createProof([["exitEpoch"]]),
-    serialize: (treeBacked) => treeBacked.serialize(),
-  };
+  const ops: Record<string, (treeBacked: CompositeViewDU<typeof ValidatorDef>, type: typeof ValidatorDef) => unknown> =
+    {
+      getExitEpoch: (treeBacked) => treeBacked.exitEpoch,
+      getPubkey: (treeBacked) => toHexString(treeBacked.pubkey),
+      hashTreeRoot: (treeBacked) => treeBacked.hashTreeRoot(),
+      getProof: (treeBacked) => treeBacked.createProof([["exitEpoch"]]),
+      serialize: (treeBacked) => treeBacked.serialize(),
+    };
 
   for (const [id, op] of Object.entries(ops)) {
     let res: unknown;
     let resLeafNodeStruct: unknown;
 
     it(`${id} TreeBacked`, () => {
-      res = op(validatorTb, ValidatorType);
+      res = op(validatorViewDU, ValidatorType);
     });
 
     it(`${id} ContainerLeafNodeStructType`, () => {
-      resLeafNodeStruct = op(validatorTbLeafNodeStruct, ValidatorLeafNodeStructType);
+      resLeafNodeStruct = op(validatorNodeStructViewDU, ValidatorNodeStructTypeType);
     });
 
     it(`${id} must equal`, function () {
@@ -88,51 +62,48 @@ describe("Container with BranchNodeStruct", function () {
     });
   }
 
-  describe("ValidatorLeafNodeStructType in List", () => {
-    const ValidtorsListType = new ListType<List<Validator>>({
-      elementType: ValidatorLeafNodeStructType,
-      limit: VALIDATOR_REGISTRY_LIMIT,
-    });
+  describe("ValidatorNodeStructTypeType in List", () => {
+    const ValidtorsListType = new ListCompositeType(ValidatorNodeStructTypeType, VALIDATOR_REGISTRY_LIMIT);
 
     it("edit then read", () => {
-      const validatorListTB = ValidtorsListType.defaultTreeBacked();
+      const validatorListTB = ValidtorsListType.toViewDU(ValidtorsListType.defaultValue);
       for (let i = 0; i < 10; i++) {
         const validator_ = {...validator, withdrawableEpoch: i};
-        validatorListTB.push(validator_);
+        validatorListTB.push(ValidatorNodeStructTypeType.toViewDU(validator_));
       }
 
-      expect(validatorListTB[3].withdrawableEpoch).to.equal(3, "Wrong [3] value before mutating");
-      expect(validatorListTB[4].withdrawableEpoch).to.equal(4, "Wrong [3] value before mutating");
-      validatorListTB[3].withdrawableEpoch = 33;
-      validatorListTB[4].withdrawableEpoch = 44;
-      expect(validatorListTB[3].withdrawableEpoch).to.equal(33, "Wrong [3] value after mutating");
-      expect(validatorListTB[4].withdrawableEpoch).to.equal(44, "Wrong [4] value after mutating");
+      expect(validatorListTB.get(3).withdrawableEpoch).to.equal(3, "Wrong [3] value before mutating");
+      expect(validatorListTB.get(4).withdrawableEpoch).to.equal(4, "Wrong [3] value before mutating");
+      validatorListTB.get(3).withdrawableEpoch = 33;
+      validatorListTB.get(4).withdrawableEpoch = 44;
+      expect(validatorListTB.get(3).withdrawableEpoch).to.equal(33, "Wrong [3] value after mutating");
+      expect(validatorListTB.get(4).withdrawableEpoch).to.equal(44, "Wrong [4] value after mutating");
     });
 
     it("readonlyValuesListOfLeafNodeStruct", () => {
-      const validatorListTB = ValidtorsListType.defaultTreeBacked();
+      const validatorListTB = ValidtorsListType.toViewDU(ValidtorsListType.defaultValue);
       const validatorsFlat: Validator[] = [];
       for (let i = 0; i < 10; i++) {
         const validator_ = {...validator, withdrawableEpoch: i};
         validatorsFlat.push(validator_);
-        validatorListTB.push(validator_);
+        validatorListTB.push(ValidatorNodeStructTypeType.toViewDU(validator_));
       }
 
       expect(readonlyValuesListOfLeafNodeStruct(validatorListTB)).to.deep.equal(validatorsFlat);
     });
 
     it("return each property as struct backed", () => {
-      const validatorListTB = ValidtorsListType.defaultTreeBacked();
-      validatorListTB.push(validator);
+      const validatorListTB = ValidtorsListType.toViewDU(ValidtorsListType.defaultValue);
+      validatorListTB.push(ValidatorNodeStructTypeType.toViewDU(validator));
       for (const key of Object.keys(validator) as (keyof typeof validator)[]) {
-        expect(validatorListTB[0][key].valueOf()).to.deep.equal(validator[key], `wrong ${key} value`);
+        expect(validatorListTB.get(0)[key].valueOf()).to.deep.equal(validator[key], `wrong ${key} value`);
       }
     });
 
-    it("validator.valueOf()", () => {
-      const validatorListTB = ValidtorsListType.defaultTreeBacked();
-      validatorListTB.push(validator);
-      expect(validatorListTB[0].valueOf()).to.deep.equal(validator);
+    it("validator.toValue()", () => {
+      const validatorListTB = ValidtorsListType.toViewDU(ValidtorsListType.defaultValue);
+      validatorListTB.push(ValidatorNodeStructTypeType.toViewDU(validator));
+      expect(validatorListTB.get(0).toValue()).to.deep.equal(validator);
     });
   });
 });

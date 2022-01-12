@@ -99,6 +99,12 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 
     return this._rootNode;
   }
+
+  protected clearCache(): void {
+    this.nodes = [];
+    this.caches = [];
+    this.nodesPopulated = false;
+  }
 }
 
 export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(

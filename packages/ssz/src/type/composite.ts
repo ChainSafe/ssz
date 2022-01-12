@@ -175,9 +175,25 @@ export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown
   toValue(): ValueOf<T> {
     return this.type.tree_toValue(this.node) as ValueOf<T>;
   }
+
+  clone(): this {
+    return this.type.getView(new Tree(this.node)) as this;
+  }
 }
 
 export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unknown>> extends TreeView<T> {
   abstract commit(): Node;
   abstract readonly cache: unknown;
+
+  protected abstract clearCache(): void;
+
+  clone(dontTransferCache?: boolean): this {
+    if (dontTransferCache) {
+      return this.type.getViewDU(this.node) as this;
+    } else {
+      const cache = this.cache;
+      this.clearCache();
+      return this.type.getViewDU(this.node, cache) as this;
+    }
+  }
 }

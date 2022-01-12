@@ -52,4 +52,8 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   getSingleTrueBit(): number {
     return this.getSingleTrueBit();
   }
+
+  protected clearCache(): void {
+    return;
+  }
 }

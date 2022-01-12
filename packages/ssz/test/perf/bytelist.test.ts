@@ -1,18 +1,20 @@
 import {itBench} from "@dapplion/benchmark";
-import {ByteListType, BasicListType, byteType} from "../../src";
+import {ByteListType, ListBasicType, UintNumberType} from "../../src";
 
 describe("ByteListType vs BasicListType<byte>", () => {
-  const limit = 2 + 100 + Math.floor(Math.random() * 1000);
-  const byteLs = new ByteListType({limit});
-  const basicLs = new BasicListType({elementType: byteType, limit});
+  const limit = 256 * 2;
+  const byteLs = new ByteListType(limit);
+  const byteType = new UintNumberType(1);
+  const basicLs = new ListBasicType(byteType, limit);
 
-  const length = Math.min(1 + Math.floor(Math.random() * limit), limit - 1 - 100);
-  const struct = Object.keys(Array.from({length})).map(() => Math.floor(Math.random() * 255));
+  const length = 256;
+  const arr = Object.keys(Array.from({length})).map(() => 0xaa);
+  const buf = Buffer.alloc(length, 0xaa);
 
-  const tbByteLs = byteLs.createTreeBackedFromStruct(struct);
-  const tbBasicLs = basicLs.createTreeBackedFromStruct(struct);
+  const tbByteLs = byteLs.toView(buf);
+  const tbBasicLs = basicLs.toView(arr);
   const tbByteLsSerialized = byteLs.serialize(tbByteLs);
-  const tbBasicLsSerialized = basicLs.serialize(tbBasicLs);
+  const tbBasicLsSerialized = tbBasicLs.serialize();
 
   const ROUNDS = 10000;
 
@@ -34,18 +36,13 @@ describe("ByteListType vs BasicListType<byte>", () => {
   });
   itBench("BasicListType<byte> - serialize", () => {
     for (let i = 0; i < ROUNDS; i++) {
-      basicLs.serialize(tbBasicLs);
+      tbBasicLs.serialize();
     }
   });
 
-  itBench("ByteListType - tree_convertToStruct", () => {
-    for (let i = 0; i < ROUNDS; i++) {
-      byteLs.tree_convertToStruct(tbByteLs.tree);
-    }
-  });
   itBench("BasicListType<byte> - tree_convertToStruct", () => {
     for (let i = 0; i < ROUNDS; i++) {
-      basicLs.tree_convertToStruct(tbBasicLs.tree);
+      tbBasicLs.toValue();
     }
   });
 });

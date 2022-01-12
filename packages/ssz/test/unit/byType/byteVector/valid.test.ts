@@ -1,9 +1,8 @@
 import {ByteVectorType} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({
-  typeName: "ByteVectorType(4)",
-  type: new ByteVectorType({length: 4}),
+  type: new ByteVectorType(4),
   defaultValue: Buffer.alloc(4, 0),
   values: [
     {
@@ -22,8 +21,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "ByteVectorType(32)",
-  type: new ByteVectorType({length: 32}),
+  type: new ByteVectorType(32),
   defaultValue: Buffer.alloc(32, 0),
   values: [
     {
@@ -42,8 +40,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "ByteVectorType(96)",
-  type: new ByteVectorType({length: 96}),
+  type: new ByteVectorType(96),
   defaultValue: Buffer.alloc(96, 0),
   values: [
     {

@@ -8,7 +8,7 @@ import {
   WithCasingDeclarationFieldObject,
 } from "./testTypes";
 import {expect} from "chai";
-import {CompositeListType} from "../../src/types_old/composite";
+import {ListCompositeType} from "../../src";
 
 describe("json serialization", function () {
   it("should do round trip - container", function () {
@@ -114,10 +114,7 @@ describe("json serialization", function () {
   });
 
   it("should deserialize array of containers from snake case", function () {
-    const CamelCaseObjectArray = new CompositeListType({
-      elementType: CamelCaseFieldObject,
-      limit: 2,
-    });
+    const CamelCaseObjectArray = new ListCompositeType(CamelCaseFieldObject, 2);
     const test = {someValue: 4, someOtherValue: true};
     const json = {some_value: 4, some_other_value: true};
     const result = CamelCaseObjectArray.fromJson([json, json], {case: "snake"});
@@ -141,10 +138,7 @@ describe("json serialization", function () {
   });
 
   it("should serialize array of containers to snake case", function () {
-    const CamelCaseObjectArray = new CompositeListType({
-      elementType: CamelCaseFieldObject,
-      limit: 2,
-    });
+    const CamelCaseObjectArray = new ListCompositeType(CamelCaseFieldObject, 2);
     const test = {someValue: 4, someOtherValue: true};
     const json = {some_value: 4, some_other_value: true};
     const result = CamelCaseObjectArray.toJson([test, test], {case: "snake"});

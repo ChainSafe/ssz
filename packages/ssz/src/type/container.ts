@@ -2,7 +2,7 @@ import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/per
 import {maxChunksToDepth} from "../util/tree";
 import {SszErrorPath} from "../util/errorPath";
 import {toExpectedCase} from "../util/json";
-import {Type, ValueOf} from "./abstract";
+import {JsonOptions, Type, ValueOf} from "./abstract";
 import {CompositeType} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
 import {ValueOfFields, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
@@ -16,28 +16,13 @@ import {
 
 type BytesRange = {start: number; end: number};
 
-export interface IJsonOptions {
-  case:
-    | "snake"
-    | "constant"
-    | "camel"
-    | "param"
-    | "header"
-    | "pascal" //Same as squish
-    | "dot"
-    | "notransform";
-  casingMap?: Record<string, string>;
-}
-
-export interface IContainerOptions {
+export type ContainerOptions = JsonOptions & {
   typeName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  casingMap?: IJsonOptions["casingMap"];
-  expectedCase?: IJsonOptions["case"];
   cachePermanentRootStruct?: boolean;
   getContainerTreeViewClass?: typeof getContainerTreeViewClass;
   getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
-}
+};
 
 export class ContainerType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
   ValueOfFields<Fields>,
@@ -65,7 +50,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, private readonly opts?: IContainerOptions) {
+  constructor(readonly fields: Fields, private readonly opts?: ContainerOptions) {
     super(opts?.cachePermanentRootStruct);
 
     this.typeName = opts?.typeName ?? "Container";
@@ -259,17 +244,19 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // JSON
 
-  fromJson(json: unknown): ValueOfFields<Fields> {
+  fromJson(json: unknown, opts?: JsonOptions): ValueOfFields<Fields> {
     if (typeof json !== "object") {
       throw new Error("JSON must be of type object");
     }
 
+    const keyCase = this.opts?.case ?? opts?.case;
+    const casingMap = this.opts?.casingMap ?? opts?.casingMap;
     const value = {} as ValueOfFields<Fields>;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
 
-      const jsonKey = toExpectedCase(fieldName as string, this.opts?.expectedCase, this.opts?.casingMap);
+      const jsonKey = toExpectedCase(fieldName as string, keyCase, casingMap);
       const jsonValue = (json as Record<string, unknown>)[jsonKey];
       if (jsonValue === undefined) {
         throw Error(`JSON expected field ${jsonKey} is undefined`);
@@ -280,12 +267,14 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return value;
   }
 
-  toJson(value: ValueOfFields<Fields>): Record<string, unknown> {
+  toJson(value: ValueOfFields<Fields>, opts?: JsonOptions): Record<string, unknown> {
+    const keyCase = this.opts?.case ?? opts?.case;
+    const casingMap = this.opts?.casingMap ?? opts?.casingMap;
     const json: Record<string, unknown> = {};
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
-      const jsonKey = toExpectedCase(fieldName as string, this.opts?.expectedCase, this.opts?.casingMap);
+      const jsonKey = toExpectedCase(fieldName as string, keyCase, casingMap);
       json[jsonKey] = fieldType.toJson(value[fieldName]);
     }
 

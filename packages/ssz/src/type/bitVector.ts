@@ -69,7 +69,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
   }
 
   get defaultValue(): BitArray {
-    return new BitArray(new Uint8Array(this.fixedLen), this.lengthBits);
+    return BitArray.fromBitLen(this.lengthBits);
   }
 
   getView(tree: Tree): BitArrayTreeView {

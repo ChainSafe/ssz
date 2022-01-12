@@ -55,6 +55,10 @@ export class BitArray {
     }
   }
 
+  static fromBitLen(bitLen: number): BitArray {
+    return new BitArray(new Uint8Array(Math.ceil(bitLen / 8)), bitLen);
+  }
+
   get(bitIndex: number): boolean {
     const byteIdx = Math.floor(bitIndex / 8);
     const bitInBit = bitIndex % 8;

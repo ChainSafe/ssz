@@ -1,15 +1,11 @@
-import {CompositeType, ContainerType, Number64UintType, NumberUintType} from "../../../../src";
-import {VariableSizeSimpleObject} from "../../testTypes";
-import {runTypeTestTreeViewMutations} from "../testRunners";
+import {ByteVectorType, ContainerType, ListBasicType, UintNumberType} from "../../../../src";
+import {runViewTestMutation} from "../runViewTestMutation";
 
-const number64UintType = new Number64UintType();
-const uint64Type = new NumberUintType({byteLength: 8});
-type ContainerAB = {a: number; b: number};
+const uint64Type = new UintNumberType(8, true);
 
-runTypeTestTreeViewMutations<ContainerAB>({
-  typeName: "Container({a: Uint64, b: Uint64})",
+runViewTestMutation({
   // Use Number64UintType and NumberUintType to test they work the same
-  type: new ContainerType({fields: {a: uint64Type, b: number64UintType}}),
+  type: new ContainerType({a: uint64Type, b: uint64Type}, {typeName: "Container({a: Uint64, b: Uint64})"}),
   mutations: [
     {
       id: "set basic",
@@ -44,18 +40,20 @@ runTypeTestTreeViewMutations<ContainerAB>({
   ],
 });
 
-type VarSizeSimpleObject = {a: number; b: number; list: number[]};
+const uint64ListType = new ListBasicType(uint64Type, 8);
 
-runTypeTestTreeViewMutations<VarSizeSimpleObject>({
-  typeName: "VariableSizeSimpleObject",
-  type: VariableSizeSimpleObject as unknown as CompositeType<VarSizeSimpleObject>,
+runViewTestMutation({
+  type: new ContainerType(
+    {a: uint64Type, b: uint64Type, list: uint64ListType},
+    {typeName: "Container({a: Uint64, b: Uint64, list: List(Uint64)})"}
+  ),
   mutations: [
     {
       id: "set composite entire list",
       valueBefore: {a: 1, b: 2, list: []},
       valueAfter: {a: 1, b: 2, list: [10, 20]},
       fn: (tv) => {
-        tv.list = [10, 20];
+        tv.list = uint64ListType.toViewDU([10, 20]);
       },
     },
     {
@@ -79,4 +77,49 @@ runTypeTestTreeViewMutations<VarSizeSimpleObject>({
       },
     },
   ],
+});
+
+describe("Container TreeView", () => {
+  const uint64Type = new UintNumberType(8, true);
+  const containerUintsType = new ContainerType({a: uint64Type, b: uint64Type}, {typeName: "Container(uint64)"});
+
+  runViewTestMutation({
+    type: containerUintsType,
+    treeViewToStruct: (tv) => ({a: tv.a, b: tv.b}),
+    mutations: [
+      {
+        id: "set all properties",
+        valueBefore: {a: 1, b: 2},
+        valueAfter: {a: 10, b: 20},
+        fn: (tv) => {
+          tv.a = 10;
+          tv.b = 20;
+        },
+      },
+    ],
+  });
+
+  const byte32 = new ByteVectorType(32);
+  const containerBytesType = new ContainerType({a: byte32, b: byte32}, {typeName: "Container(bytes32)"});
+
+  const byte32_value1 = Buffer.alloc(32, 1);
+  const byte32_value2 = Buffer.alloc(32, 2);
+  const byte32_value5 = Buffer.alloc(32, 5);
+  const byte32_value6 = Buffer.alloc(32, 6);
+
+  runViewTestMutation({
+    type: containerBytesType,
+    treeViewToStruct: (tv) => ({a: tv.a, b: tv.b}),
+    mutations: [
+      {
+        id: "set all properties",
+        valueBefore: {a: byte32_value1, b: byte32_value2},
+        valueAfter: {a: byte32_value5, b: byte32_value6},
+        fn: (tv) => {
+          tv.a = byte32_value5;
+          tv.b = byte32_value6;
+        },
+      },
+    ],
+  });
 });

@@ -25,24 +25,24 @@ testRunnerMemoryBpi([
   //
   // sum: 2279, all: 2251
   {id: "Attestation struct", getInstance: getAttestation},
-  {id: "Attestation tree", getInstance: (i) => ssz.Attestation.createTreeBackedFromStruct(getAttestation(i))},
+  {id: "Attestation tree", getInstance: (i) => ssz.Attestation.toView(getAttestation(i))},
 
   {id: "SignedAggregateAndProof struct", getInstance: getSignedAggregateAndProof},
   {
     id: "SignedAggregateAndProof tree",
-    getInstance: (i) => ssz.SignedAggregateAndProof.createTreeBackedFromStruct(getSignedAggregateAndProof(i)),
+    getInstance: (i) => ssz.SignedAggregateAndProof.toView(getSignedAggregateAndProof(i)),
   },
 
   {id: "AggregationBits struct", getInstance: (i) => getBitsSingle(120, i % 120)},
   {
     id: "AggregationBits tree",
-    getInstance: (i) => ssz.CommitteeBits.createTreeBackedFromStruct(getBitsSingle(120, i % 120)),
+    getInstance: (i) => ssz.CommitteeBits.toView(getBitsSingle(120, i % 120)),
   },
 
   {id: "SignedBeaconBlockPhase0 struct", getInstance: getSignedBeaconBlockPhase0},
   {
     id: "SignedBeaconBlockPhase0 tree",
-    getInstance: (i) => ssz.SignedBeaconBlock.createTreeBackedFromStruct(getSignedBeaconBlockPhase0(i)),
+    getInstance: (i) => ssz.SignedBeaconBlock.toView(getSignedBeaconBlockPhase0(i)),
   },
 ]);
 

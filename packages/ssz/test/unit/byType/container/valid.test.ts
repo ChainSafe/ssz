@@ -1,11 +1,10 @@
-import {ContainerType, ListType, Number64UintType} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {ContainerType, ListBasicType, UintNumberType} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
-const uint64Type = new Number64UintType();
+const uint64Type = new UintNumberType(8, true);
 
 runTypeTestValid({
-  typeName: "Container({a: Uint64, b: Uint64})",
-  type: new ContainerType({fields: {a: uint64Type, b: uint64Type}}),
+  type: new ContainerType({a: uint64Type, b: uint64Type}, {typeName: "Container({a: Uint64, b: Uint64})"}),
   defaultValue: {a: 0, b: 0},
   values: [
     {
@@ -24,8 +23,10 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Container({a: List(Uint64), b: Uint64})",
-  type: new ContainerType({fields: {a: new ListType({elementType: uint64Type, limit: 2 ** 7}), b: uint64Type}}),
+  type: new ContainerType(
+    {a: new ListBasicType(uint64Type, 2 ** 7), b: uint64Type},
+    {typeName: "Container({a: List(Uint64), b: Uint64})"}
+  ),
   defaultValue: {a: [], b: 0},
   values: [
     {

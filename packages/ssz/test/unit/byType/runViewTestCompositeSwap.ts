@@ -1,8 +1,8 @@
-import {Type, ValueOf, TreeView, BasicType} from "../../../src/v2/abstract";
-import {ContainerType, ListBasicType, ListCompositeType, VectorBasicType, VectorCompositeType} from "../../../src/v2";
-import {runTreeViewTest} from "./runTreeViewTest";
+import {Type, ValueOf, TreeView, BasicType} from "../../../src";
+import {ContainerType, ListBasicType, ListCompositeType, VectorBasicType, VectorCompositeType} from "../../../src";
+import {runViewTestMutation} from "./runViewTestMutation";
 
-const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknown>>(
+const runViewTestCompositeSwapFn = function runViewTestCompositeSwap<T extends Type<unknown>>(
   propertyType: T,
   value1: ValueOf<T>,
   value2: ValueOf<T>,
@@ -13,7 +13,7 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
     {typeName: `Container(a: ${propertyType.typeName}, b: ${propertyType.typeName})`}
   );
 
-  runTreeViewTest(
+  runViewTestMutation(
     {
       type: containerUintsType,
       treeViewToStruct: (tv) => {
@@ -48,7 +48,7 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
       ]
     : [
         // Comment next lines to solo List or Vector
-        // ListCompositeType,
+        ListCompositeType,
         VectorCompositeType,
       ];
 
@@ -58,7 +58,7 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
       2
     );
 
-    runTreeViewTest(
+    runViewTestMutation(
       {
         type: arrayType,
         treeViewToStruct: (tv) => {
@@ -87,19 +87,17 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
   }
 };
 
-type RunTreeViewSwapTest = typeof runTreeViewSwapTestFn & {
-  only: typeof runTreeViewSwapTestFn;
-  skip: typeof runTreeViewSwapTestFn;
+export const runViewTestCompositeSwap = runViewTestCompositeSwapFn as typeof runViewTestCompositeSwapFn & {
+  only: typeof runViewTestCompositeSwapFn;
+  skip: typeof runViewTestCompositeSwapFn;
 };
 
-export const runTreeViewSwapTest = runTreeViewSwapTestFn as RunTreeViewSwapTest;
-
-runTreeViewSwapTest.only = function runTreeViewTest(arg1, arg2, arg3, opts = {}): void {
+runViewTestCompositeSwap.only = function runViewTestMutation(arg1, arg2, arg3, opts = {}): void {
   opts.only = true;
-  runTreeViewSwapTestFn(arg1, arg2, arg3, opts);
-} as typeof runTreeViewSwapTestFn;
+  runViewTestCompositeSwapFn(arg1, arg2, arg3, opts);
+} as typeof runViewTestCompositeSwapFn;
 
-runTreeViewSwapTest.skip = function runTreeViewTest(arg1, arg2, arg3, opts = {}): void {
+runViewTestCompositeSwap.skip = function runViewTestMutation(arg1, arg2, arg3, opts = {}): void {
   opts.skip = true;
-  runTreeViewSwapTestFn(arg1, arg2, arg3, opts);
-} as typeof runTreeViewSwapTestFn;
+  runViewTestCompositeSwapFn(arg1, arg2, arg3, opts);
+} as typeof runViewTestCompositeSwapFn;

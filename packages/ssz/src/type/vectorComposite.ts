@@ -1,6 +1,6 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/tree";
-import {ValueOf} from "./abstract";
+import {JsonOptions, ValueOf} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {defaultValueVector, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
@@ -35,7 +35,6 @@ export class VectorCompositeType<
   readonly typeName: string;
   // Immutable characteristics
   readonly itemsPerChunk = 1;
-  readonly isBasic = false;
   readonly depth: number;
   readonly chunkDepth: number;
   readonly maxChunkCount: number;
@@ -140,11 +139,11 @@ export class VectorCompositeType<
 
   // JSON
 
-  fromJson(json: unknown): ValueOf<ElementType>[] {
-    return value_fromJsonArray(this.elementType, json, this.length);
+  fromJson(json: unknown, opts?: JsonOptions): ValueOf<ElementType>[] {
+    return value_fromJsonArray(this.elementType, json, this.length, opts);
   }
 
-  toJson(value: ValueOf<ElementType>[]): unknown {
-    return value_toJsonArray(this.elementType, value, this.length);
+  toJson(value: ValueOf<ElementType>[], opts?: JsonOptions): unknown {
+    return value_toJsonArray(this.elementType, value, this.length, opts);
   }
 }

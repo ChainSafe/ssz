@@ -1,8 +1,7 @@
 import {SimpleObject, VariableSizeSimpleObject} from "../../testTypes";
-import {runTypeTestInvalid} from "../testRunners";
+import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
 runTypeTestInvalid({
-  typeName: "SimpleObject",
   type: SimpleObject,
   values: [
     // error is empty because struct and tree throw different errors
@@ -12,7 +11,6 @@ runTypeTestInvalid({
 });
 
 runTypeTestInvalid({
-  typeName: "VariableSizeSimpleObject",
   type: VariableSizeSimpleObject,
   values: [
     // error is empty because struct and tree throw different errors

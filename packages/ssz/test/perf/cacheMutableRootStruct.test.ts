@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {BitVectorType, ContainerType, UintBigintType} from "../../src/v2";
+import {BitVectorType, ContainerType, UintBigintType} from "../../src";
 
 describe("cachePermanentRootStruct", () => {
   const uint64 = new UintBigintType(8);

@@ -1,39 +1,34 @@
-import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
 import {itBench} from "@dapplion/benchmark";
-import {byteType, List, ListType, TreeBacked} from "../../src";
+import {CompositeViewDU} from "../../src";
+import {EpochParticipation} from "../lodestarTypes/altair/sszTypes";
 
 describe("processAttestations() epochStatuses", () => {
-  const epochParticipationType = new ListType<List<number>>({
-    elementType: byteType,
-    limit: VALIDATOR_REGISTRY_LIMIT,
-  });
-
   const len = 250_000;
   const readWrites = Math.round(len / 32);
   const indexes = shuffle(linspace(len));
 
-  itBench<TreeBacked<List<number>>, TreeBacked<List<number>>>({
+  itBench<CompositeViewDU<typeof EpochParticipation>, CompositeViewDU<typeof EpochParticipation>>({
     id: `epochParticipation len ${len} rws ${readWrites}`,
     before: () => {
       const epochParticipation = getEpochParticipation(len, 3);
-      return epochParticipationType.createTreeBackedFromStruct(epochParticipation);
+      return EpochParticipation.toViewDU(epochParticipation);
     },
     beforeEach: (epochParticipation) => epochParticipation.clone(),
     fn: (epochParticipation) => {
       for (let i = 0; i < readWrites; i++) {
         const idx = indexes[i];
-        epochParticipation[idx] = 8;
+        epochParticipation.set(idx, 8);
       }
     },
   });
 });
 
-function getEpochParticipation(len: number, value: number): List<number> {
+function getEpochParticipation(len: number, value: number): number[] {
   const arr: number[] = [];
   for (let i = 0; i < len; i++) {
     arr.push(value);
   }
-  return arr as List<number>;
+  return arr;
 }
 
 function linspace(len: number): number[] {

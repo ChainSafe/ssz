@@ -1,26 +1,17 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
 
-import {byteType, ContainerType, ListType, Type} from "../../../src";
+import {ContainerType, ListBasicType, ListCompositeType, Type} from "../../../src";
+import {byteType} from "../testTypes";
 
 const SimpleObject = new ContainerType({
-  fields: {
-    b: byteType,
-    a: byteType,
-    c: new ListType({
-      elementType: byteType,
-      limit: 100,
-    }),
-  },
+  b: byteType,
+  a: byteType,
+  c: new ListBasicType(byteType, 100),
 });
 
 const ArrayObject = new ContainerType({
-  fields: {
-    v: new ListType({
-      elementType: SimpleObject,
-      limit: 100,
-    }),
-  },
+  v: new ListCompositeType(SimpleObject, 100),
 });
 
 describe("error path", () => {

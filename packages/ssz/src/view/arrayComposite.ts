@@ -53,8 +53,4 @@ export class ArrayCompositeTreeView<
     }
     return views;
   }
-
-  clone(): ArrayCompositeTreeView<ElementType> {
-    return new ArrayCompositeTreeView(this.type, this.tree.clone());
-  }
 }
