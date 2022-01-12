@@ -15,11 +15,9 @@ type Types = Record<string, Type<any>>;
 
 const extraTypes = {
   Eth1Block: new ContainerType({
-    fields: {
-      timestamp: ssz.Number64,
-      depositRoot: ssz.Root,
-      depositCount: ssz.Number64,
-    },
+    timestamp: ssz.Number64,
+    depositRoot: ssz.Root,
+    depositCount: ssz.Number64,
   }),
 };
 

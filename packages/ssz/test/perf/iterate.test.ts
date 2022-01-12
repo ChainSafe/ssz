@@ -1,14 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
-import {
-  booleanType,
-  ByteVectorType,
-  ContainerType,
-  List,
-  ListType,
-  NumberUintType,
-  ObjectLike,
-  TreeBacked,
-} from "../../src";
+import {ListBasicType, UintNumberType} from "../../src";
+import {Validators} from "../lodestarTypes/phase0/sszTypes";
 
 describe("iterate", () => {
   const N = 5000;
@@ -36,20 +28,12 @@ describe("readonly values - iterator vs array", () => {
   const length = 250_000;
   const balances = createBalanceList(length);
 
-  itBench("basicListValue.readonlyValues()", () => {
-    Array.from(balances.readonlyValues());
-  });
   itBench("basicListValue.readonlyValuesArray()", () => {
-    balances.readonlyValuesArray();
+    balances.getAll();
   });
 
-  itBench("basicListValue.readonlyValues() + iterate all", () => {
-    for (const balance of balances.readonlyValues()) {
-      balance + 1;
-    }
-  });
   itBench("basicListValue.readonlyValuesArray() + loop all", () => {
-    const balancesArray = balances.readonlyValuesArray();
+    const balancesArray = balances.getAll();
     for (let i = 0; i < balancesArray.length; i++) {
       balancesArray[i] + 1;
     }
@@ -57,54 +41,29 @@ describe("readonly values - iterator vs array", () => {
 
   const validators = createValidatorList(length);
 
-  itBench("compositeListValue.readonlyValues()", () => {
-    Array.from(validators.readonlyValues());
-  });
   itBench("compositeListValue.readonlyValuesArray()", () => {
-    validators.readonlyValuesArray();
+    validators.getAllReadonly();
   });
-  itBench("compositeListValue.readonlyValues() + iterate all", () => {
-    for (const v of validators.readonlyValues()) {
-      v;
-    }
-  });
+
   itBench("compositeListValue.readonlyValuesArray() + loop all", () => {
-    const validatorsArray = validators.readonlyValuesArray();
+    const validatorsArray = validators.getAllReadonly();
     for (let i = 0; i < validatorsArray.length; i++) {
       validatorsArray[i];
     }
   });
 });
 
-function createBalanceList(count: number): TreeBacked<List<number>> {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createBalanceList(count: number) {
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
-  const balancesList = new ListType({
-    elementType: new NumberUintType({byteLength: 8}),
-    limit: VALIDATOR_REGISTRY_LIMIT,
-  });
+  const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
-  return balancesList.createTreeBackedFromStruct(balancesStruct);
+  return balancesList.toViewDU(balancesStruct);
 }
-function createValidatorList(count: number): TreeBacked<List<ObjectLike>> {
-  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
-  const Validator = new ContainerType({
-    fields: {
-      pubkey: new ByteVectorType({length: 48}),
-      withdrawalCredentials: new ByteVectorType({length: 32}),
-      effectiveBalance: new NumberUintType({byteLength: 8}),
-      slashed: booleanType,
-      activationEligibilityEpoch: new NumberUintType({byteLength: 8}),
-      activationEpoch: new NumberUintType({byteLength: 8}),
-      exitEpoch: new NumberUintType({byteLength: 8}),
-      withdrawableEpoch: new NumberUintType({byteLength: 8}),
-    },
-  });
-  const validatorList = new ListType({
-    elementType: Validator,
-    limit: VALIDATOR_REGISTRY_LIMIT,
-  });
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createValidatorList(count: number) {
   const validatorsStruct = Array.from({length: count}, () => ({
     pubkey: new Uint8Array(48),
     withdrawalCredentials: new Uint8Array(32),
@@ -115,5 +74,5 @@ function createValidatorList(count: number): TreeBacked<List<ObjectLike>> {
     exitEpoch: 31217089836,
     withdrawableEpoch: 31217089836,
   }));
-  return validatorList.createTreeBackedFromStruct(validatorsStruct);
+  return Validators.toViewDU(validatorsStruct);
 }

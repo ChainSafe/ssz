@@ -1,12 +1,12 @@
-import {CompositeType, ContainerType, VectorType, Number64UintType, RootType} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {ContainerType, VectorBasicType, VectorCompositeType, UintNumberType, ByteVectorType} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
-const uint64Type = new Number64UintType();
+const rootType = new ByteVectorType(32);
+const uint64Type = new UintNumberType(8);
 const zeroHash = Buffer.alloc(32, 0);
 
 runTypeTestValid({
-  typeName: "Vector(Number64UintType)",
-  type: new VectorType({elementType: uint64Type, length: 4}),
+  type: new VectorBasicType(uint64Type, 4),
   defaultValue: [0, 0, 0, 0],
   values: [
     {
@@ -19,8 +19,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Vector(Root)",
-  type: new VectorType({elementType: new RootType({expandedType: {} as CompositeType<any>}), length: 4}),
+  type: new VectorCompositeType(rootType, 4),
   defaultValue: [zeroHash, zeroHash, zeroHash, zeroHash],
   values: [
     {
@@ -39,11 +38,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Vector(ContainerType)",
-  type: new VectorType({
-    elementType: new ContainerType({fields: {a: uint64Type, b: uint64Type}}),
-    length: 4,
-  }),
+  type: new VectorCompositeType(new ContainerType({a: uint64Type, b: uint64Type}), 4),
   defaultValue: [
     {a: 0, b: 0},
     {a: 0, b: 0},

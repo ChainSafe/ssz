@@ -1,9 +1,8 @@
-import {BigIntUintType, Number64UintType, NumberUintType} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {UintBigintType, UintNumberType} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({
-  typeName: "NumberUint8",
-  type: new NumberUintType({byteLength: 1}),
+  type: new UintNumberType(1),
   defaultValue: 0,
   values: [
     {
@@ -22,8 +21,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "NumberUint32",
-  type: new NumberUintType({byteLength: 4}),
+  type: new UintNumberType(4),
   defaultValue: 0,
   values: [
     {
@@ -42,8 +40,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "NumberUint64",
-  type: new NumberUintType({byteLength: 8}),
+  type: new UintNumberType(8),
   defaultValue: 0,
   values: [
     {
@@ -63,8 +60,8 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Number64UintType",
-  type: new Number64UintType(),
+  type: new UintNumberType(8, true),
+  typeName: "uint64 (clipInfinity)",
   defaultValue: 0,
   values: [
     {
@@ -86,8 +83,7 @@ runTypeTestValid({
 // Extra serialize only tests
 
 runTypeTestValid({
-  typeName: "NumberUintType(2)",
-  type: new NumberUintType({byteLength: 2}),
+  type: new UintNumberType(2),
   values: [
     {value: 2 ** 8, serialized: "0x0001"},
     {value: 2 ** 12 - 1, serialized: "0xff0f"},
@@ -97,8 +93,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "NumberUintType(4)",
-  type: new NumberUintType({byteLength: 4}),
+  type: new UintNumberType(4),
   values: [
     {value: 2 ** 16, serialized: "0x00000100"},
     {value: 2 ** 28 - 1, serialized: "0xffffff0f"},
@@ -108,8 +103,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "NumberUintType(8)",
-  type: new NumberUintType({byteLength: 8}),
+  type: new UintNumberType(8),
   values: [
     {value: 2 ** 32, serialized: "0x0000000001000000"},
     {value: 2 ** 52 - 1, serialized: "0xffffffffffff0f00"},
@@ -120,8 +114,8 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "Number64UintType",
-  type: new Number64UintType(),
+  type: new UintNumberType(8, true),
+  typeName: "uint64 (clipInfinity)",
   values: [
     {value: 2 ** 32, serialized: "0x0000000001000000"},
     {value: 2 ** 52 - 1, serialized: "0xffffffffffff0f00"},
@@ -132,8 +126,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "BigIntUint(8)",
-  type: new BigIntUintType({byteLength: 8}),
+  type: new UintBigintType(8),
   values: [
     {value: 0x01n, serialized: "0x0100000000000000"},
     {value: 0xaabbn, serialized: "0xbbaa000000000000"},
@@ -143,8 +136,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "BigIntUint(16)",
-  type: new BigIntUintType({byteLength: 16}),
+  type: new UintBigintType(16),
   values: [
     {value: 0x01n, serialized: "0x01000000000000000000000000000000"},
     {value: 0xaabbn, serialized: "0xbbaa0000000000000000000000000000"},
@@ -154,8 +146,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "BigIntUint(32)",
-  type: new BigIntUintType({byteLength: 32}),
+  type: new UintBigintType(32),
   values: [
     {
       value: 0xaabbn,

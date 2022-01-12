@@ -94,8 +94,4 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
 
     return values;
   }
-
-  clone(): ArrayBasicTreeView<ElementType> {
-    return new ArrayBasicTreeView(this.type, this.tree.clone());
-  }
 }

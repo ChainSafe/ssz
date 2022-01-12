@@ -29,7 +29,6 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   readonly typeName: string;
   // Immutable characteristics
   readonly itemsPerChunk: number;
-  readonly isBasic = false;
   readonly depth: number;
   readonly chunkDepth: number;
   readonly maxChunkCount: number;

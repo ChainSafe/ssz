@@ -1,6 +1,6 @@
 import {Attestation, SignedAggregateAndProof, SignedBeaconBlock} from "../lodestarTypes/phase0/types";
 import {SignedContributionAndProof} from "../lodestarTypes/altair/types";
-import {BitList} from "../../src";
+import {BitArray} from "../../src";
 
 // Typical mainnet numbers
 const BITS_PER_ATTESTATION = 90;
@@ -83,20 +83,18 @@ export function getSignedBeaconBlockPhase0(i: number): SignedBeaconBlock {
   };
 }
 
-export function getBitsSingle(len: number, bitSet: number): BitList {
-  const bits: boolean[] = [];
-  for (let i = 0; i < len; i++) {
-    bits.push(i === bitSet);
-  }
-  return bits as BitList;
+export function getBitsSingle(len: number, bitSet: number): BitArray {
+  const bits = BitArray.fromBitLen(len);
+  bits.set(bitSet, true);
+  return bits;
 }
 
-function getBitsMany(len: number, bitsSet: number): BitList {
-  const bits: boolean[] = [];
-  for (let i = 0; i < len; i++) {
-    bits.push(i <= bitsSet);
+function getBitsMany(len: number, bitsSet: number): BitArray {
+  const bits = BitArray.fromBitLen(len);
+  for (let i = 0; i <= bitsSet; i++) {
+    bits.set(i, true);
   }
-  return bits as BitList;
+  return bits;
 }
 
 function randomBytes(bytes: number): Uint8Array {

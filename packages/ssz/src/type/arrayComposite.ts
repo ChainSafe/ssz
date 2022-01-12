@@ -1,14 +1,7 @@
-import {
-  BranchNode,
-  LeafNode,
-  Node,
-  zeroNode,
-  getNodesAtDepth,
-  subtreeFillToContents,
-} from "@chainsafe/persistent-merkle-tree";
+import {Node, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "./abstract";
 import {CompositeType} from "./composite";
-import {assertValidArrayLength} from "./arrayBasic";
+import {addLengthNode, assertValidArrayLength} from "./arrayBasic";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -16,30 +9,6 @@ import {assertValidArrayLength} from "./arrayBasic";
 // Type of array: List, Vector. Changes length property
 // Type of element: Basic, Composite. Changes merkelization if packing or not.
 // If Composite: Fixed len, Variable len. Changes the serialization requiring offsets.
-
-/**
- * SSZ Lists (variable-length arrays) include the length of the list in the tree
- * This length is always in the same index in the tree
- * ```
- *   1
- *  / \
- * 2   3 // <-here
- * ```
- */
-export function getLengthFromRootNode(node: Node): number {
-  return (node.right as LeafNode).getUint(4, 0);
-}
-export function getChunksNodeFromRootNode(node: Node): Node {
-  return node.left;
-}
-
-export function addLengthNode(chunksNode: Node, length: number): Node {
-  // TODO: Add LeafNode.fromUint()
-  const lengthNode = new LeafNode(zeroNode(0));
-  lengthNode.setUint(4, 0, length);
-
-  return new BranchNode(chunksNode, lengthNode);
-}
 
 export type ArrayProps = {
   /** Vector length */

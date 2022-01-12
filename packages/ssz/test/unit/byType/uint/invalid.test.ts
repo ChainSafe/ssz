@@ -1,9 +1,8 @@
-import {NumberUintType} from "../../../../src";
-import {runTypeTestInvalid} from "../testRunners";
+import {UintNumberType} from "../../../../src";
+import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
 runTypeTestInvalid({
-  typeName: "NumberUintType(8)",
-  type: new NumberUintType({byteLength: 8}),
+  type: new UintNumberType(8),
   values: [
     // error is empty because struct and tree throw different errors
     {serialized: "", error: ""},

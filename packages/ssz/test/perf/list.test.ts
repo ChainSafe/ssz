@@ -1,51 +1,38 @@
 import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
 import {itBench} from "@dapplion/benchmark";
-import {List, ListType, Number64ListType, Number64UintType, NumberUintType, TreeBacked, Type} from "../../src";
+import {UintNumberType, ListBasicType} from "../../src";
 
 describe("list", () => {
   const numBalances = 250_000;
 
-  const tbBalances = createBalanceList(numBalances, new NumberUintType({byteLength: 8}));
-  const tbBalances64 = createBalanceList(numBalances, new Number64UintType());
-  // access balances list   1.296884 ops/s    771.0793 ms/op        -         38 runs   30.1 s
-  itBench("NumberUintType - get balances list", () => {
-    for (let i = 0; i < numBalances; i++) {
-      tbBalances[i];
-    }
-  });
+  const tbBalances = createBalanceList(numBalances);
 
   // using Number64UintType gives 20% improvement
   itBench("Number64UintType - get balances list", () => {
     for (let i = 0; i < numBalances; i++) {
-      tbBalances64[i];
-    }
-  });
-
-  itBench("NumberUintType - set balances list", () => {
-    for (let i = 0; i < numBalances; i++) {
-      tbBalances[i] = 31217089836;
+      tbBalances.get(i);
     }
   });
 
   // using Number64UintType gives 2% - 10% improvement
   itBench("Number64UintType - set balances list", () => {
     for (let i = 0; i < numBalances; i++) {
-      tbBalances64[i] = 31217089836;
+      tbBalances.set(i, 31217089836);
     }
   });
 
   itBench("Number64UintType - get and increase 10 then set", () => {
-    const tbBalance = tbBalances64.clone();
+    const tbBalance = tbBalances.clone();
     for (let i = 0; i < numBalances; i++) {
-      tbBalance[i] += 10;
+      tbBalance.set(i, 10 + tbBalances.get(i));
     }
   });
 
   // using applyDelta gives 4x improvement to get and set
   // 2.7x improvement compared to set only
   itBench("Number64UintType - increase 10 using applyDelta", () => {
-    const basicArrayType = tbBalances64.type as Number64ListType;
-    const tree = tbBalances64.tree.clone();
+    const basicArrayType = tbBalances.type;
+    const tree = tbBalances.node;
     for (let i = 0; i < numBalances; i++) {
       basicArrayType.tree_applyDeltaAtIndex(tree, i, 10);
     }
@@ -55,11 +42,12 @@ describe("list", () => {
   for (let i = 0; i < numBalances; i++) {
     deltaByIndex.set(i, 10);
   }
+
   // same performance to tree_applyUint64Delta, should be a little faster
   // if it operates on a subtree with hook
   itBench("Number64UintType - increase 10 using applyDeltaInBatch", () => {
-    const basicArrayType = tbBalances64.type as Number64ListType;
-    const tree = tbBalances64.tree.clone();
+    const basicArrayType = tbBalances.type;
+    const tree = tbBalances.node;
     basicArrayType.tree_applyDeltaInBatch(tree, deltaByIndex);
   });
 });
@@ -67,7 +55,7 @@ describe("list", () => {
 describe("subtreeFillToContents", function () {
   const numBalances = 250_000;
 
-  const tbBalances64 = createBalanceList(numBalances, new Number64UintType());
+  const tbBalances64 = createBalanceList(numBalances);
   const delta = 100;
   const deltas = Array.from({length: numBalances}, () => delta);
   const tree = tbBalances64.tree;
@@ -96,15 +84,13 @@ describe("subtreeFillToContents", function () {
   });
 });
 
-function createBalanceList(count: number, elementType: Type<number>): TreeBacked<List<number>> {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createBalanceList(count: number) {
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
-  const balancesList = new ListType({
-    elementType,
-    limit: VALIDATOR_REGISTRY_LIMIT,
-  });
+  const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
-  return balancesList.createTreeBackedFromStruct(balancesStruct);
+  return balancesList.toViewDU(balancesStruct);
 }
 
 function unsafeUint8ArrayToTree(data: Uint8Array, depth: number): Node {

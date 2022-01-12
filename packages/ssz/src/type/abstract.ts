@@ -8,6 +8,19 @@ import {GindexBitstring, LeafNode, Node, toGindexBitstring} from "@chainsafe/per
  */
 export type Path = (string | number)[];
 
+export type JsonOptions = {
+  case?:
+    | "snake"
+    | "constant"
+    | "camel"
+    | "param"
+    | "header"
+    | "pascal" //Same as squish
+    | "dot"
+    | "notransform";
+  casingMap?: Record<string, string>;
+};
+
 /* eslint-disable @typescript-eslint/member-ordering  */
 
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
@@ -132,8 +145,8 @@ export abstract class Type<V> {
 
   // JSON support
 
-  abstract fromJson(json: unknown): V;
-  abstract toJson(value: V): unknown;
+  abstract fromJson(json: unknown, opts?: JsonOptions): V;
+  abstract toJson(value: V, opts?: JsonOptions): unknown;
 }
 
 export abstract class BasicType<V> extends Type<V> {

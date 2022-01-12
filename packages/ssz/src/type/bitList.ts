@@ -47,14 +47,14 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     this.typeName = `BitList[${limitBits}]`;
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
-    // Depth includes the extra level for the length node
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
+    // Depth includes the extra level for the length node
     this.depth = 1 + this.chunkDepth;
     this.maxLen = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
   }
 
   get defaultValue(): BitArray {
-    return new BitArray(new Uint8Array(0), 0);
+    return BitArray.fromBitLen(0);
   }
 
   getView(tree: Tree): BitArrayTreeView {
@@ -65,17 +65,16 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     return new BitArrayTreeViewDU(this, node);
   }
 
-  commitView(view: BitArray): Node {
-    return this.commitViewDU(view);
+  commitView(view: BitArrayTreeView): Node {
+    return view.node;
   }
 
-  commitViewDU(view: BitArray): Node {
-    const bytes = this.serialize(view);
-    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+  commitViewDU(view: BitArrayTreeViewDU): Node {
+    return view.commit();
   }
 
-  cacheOfViewDU(): unknown {
-    return;
+  cacheOfViewDU(view: BitArrayTreeViewDU): unknown {
+    return view.cache;
   }
 
   // Serialization + deserialization
@@ -109,8 +108,8 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     const bitLen = getLengthFromRootNode(node);
 
     const byteLen = Math.ceil(bitLen / 8);
-    const chunkCount = Math.ceil(byteLen / 32);
-    const nodes = getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkCount);
+    const chunkLen = Math.ceil(byteLen / 32);
+    const nodes = getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkLen);
     packedNodeRootsToBytes(output, offset, byteLen, nodes);
 
     return applyPaddingBit(output, offset, bitLen);

@@ -165,14 +165,8 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     return this._rootNode;
   }
 
-  clone(dontTransferCache?: boolean): ArrayBasicTreeViewDU<ElementType> {
-    if (dontTransferCache) {
-      return new ArrayBasicTreeViewDU(this.type, this._rootNode);
-    } else {
-      const cache = this.cache;
-      this.nodes = [];
-      this.nodesPopulated = false;
-      return new ArrayBasicTreeViewDU(this.type, this._rootNode, cache);
-    }
+  protected clearCache(): void {
+    this.nodes = [];
+    this.nodesPopulated = false;
   }
 }

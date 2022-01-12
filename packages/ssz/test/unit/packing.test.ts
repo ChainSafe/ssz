@@ -1,13 +1,13 @@
 import {expect} from "chai";
-import {BigIntUintType, toHexString, VectorType} from "../../src";
+import {UintBigintType, toHexString, VectorBasicType} from "../../src";
 
 describe("uint packing", () => {
-  const uint8 = new BigIntUintType({byteLength: 1});
-  const uint16 = new BigIntUintType({byteLength: 2});
-  const uint32 = new BigIntUintType({byteLength: 4});
-  const uint64 = new BigIntUintType({byteLength: 8});
-  const uint128 = new BigIntUintType({byteLength: 16});
-  const uint256 = new BigIntUintType({byteLength: 32});
+  const uint8 = new UintBigintType(1);
+  const uint16 = new UintBigintType(2);
+  const uint32 = new UintBigintType(4);
+  const uint64 = new UintBigintType(8);
+  const uint128 = new UintBigintType(16);
+  const uint256 = new UintBigintType(32);
 
   const uints = {
     uint8,
@@ -48,8 +48,8 @@ describe("uint packing", () => {
       const uint = uints[key];
       const length = Math.ceil(32 / uint.byteLength);
 
-      const vectorType = new VectorType({elementType: uint, length});
-      const arr: BigInt[] = [];
+      const vectorType = new VectorBasicType(uint, length);
+      const arr: bigint[] = [];
       for (let i = 0; i < length; i++) {
         arr[i] = BigInt(0xf);
       }

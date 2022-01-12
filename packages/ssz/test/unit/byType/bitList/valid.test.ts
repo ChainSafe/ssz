@@ -1,10 +1,9 @@
-import {BitListType, BitList} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {BitListType, BitArray} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({
-  typeName: "BitList(2048)",
-  type: new BitListType({limit: 2048}),
-  defaultValue: [] as boolean[] as BitList,
+  type: new BitListType(2048),
+  defaultValue: BitArray.fromBitLen(0),
   values: [
     {
       id: "empty",

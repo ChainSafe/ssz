@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {toHexString} from "../../../src/util/byteArray";
-import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src/v2/abstract";
+import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src";
 
 export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = {
   id: string;
@@ -12,7 +12,7 @@ export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = 
   fn: (treeView: CompositeViewDU<CT>) => CompositeViewDU<CT> | void;
 };
 
-const runTreeViewTestFn = function runTreeViewTest<CT extends CompositeType<unknown, unknown, unknown>>(
+const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeType<unknown, unknown, unknown>>(
   {
     type,
     treeViewToStruct,
@@ -45,7 +45,7 @@ const runTreeViewTestFn = function runTreeViewTest<CT extends CompositeType<unkn
     for (const testCase of ops) {
       const {id, valueBefore, valueAfter, fn} = testCase;
 
-      it.skip(`${id} TreeView`, () => {
+      it(`${id} TreeView`, () => {
         const tvBefore = type.toView(valueBefore);
 
         const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
@@ -74,19 +74,17 @@ const runTreeViewTestFn = function runTreeViewTest<CT extends CompositeType<unkn
   });
 };
 
-type RunTreeViewTest = typeof runTreeViewTestFn & {
-  only: typeof runTreeViewTestFn;
-  skip: typeof runTreeViewTestFn;
+export const runViewTestMutation = runViewTestMutationFn as typeof runViewTestMutationFn & {
+  only: typeof runViewTestMutationFn;
+  skip: typeof runViewTestMutationFn;
 };
 
-export const runTreeViewTest = runTreeViewTestFn as RunTreeViewTest;
-
-runTreeViewTest.only = function runTreeViewTest(args, opts = {}): void {
+runViewTestMutation.only = function runViewTestMutation(args, opts = {}): void {
   opts.only = true;
-  runTreeViewTestFn(args, opts);
-} as typeof runTreeViewTestFn;
+  runViewTestMutationFn(args, opts);
+} as typeof runViewTestMutationFn;
 
-runTreeViewTest.skip = function runTreeViewTest(args, opts = {}): void {
+runViewTestMutation.skip = function runViewTestMutation(args, opts = {}): void {
   opts.skip = true;
-  runTreeViewTestFn(args, opts);
-} as typeof runTreeViewTestFn;
+  runViewTestMutationFn(args, opts);
+} as typeof runViewTestMutationFn;

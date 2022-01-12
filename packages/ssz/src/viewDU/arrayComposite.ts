@@ -146,15 +146,9 @@ export class ArrayCompositeTreeViewDU<
     return this._rootNode;
   }
 
-  clone(dontTransferCache?: boolean): ArrayCompositeTreeViewDU<ElementType> {
-    if (dontTransferCache) {
-      return new ArrayCompositeTreeViewDU(this.type, this.node);
-    } else {
-      const cache = this.cache;
-      this.nodes = [];
-      this.caches = [];
-      this.nodesPopulated = false;
-      return new ArrayCompositeTreeViewDU(this.type, this.node, cache);
-    }
+  protected clearCache(): void {
+    this.nodes = [];
+    this.caches = [];
+    this.nodesPopulated = false;
   }
 }

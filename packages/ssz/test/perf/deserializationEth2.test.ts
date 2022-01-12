@@ -18,7 +18,7 @@ describe("Deserialization of frequent eth2 objects", () => {
     before: () => sszPhase0.Attestation.serialize(getAttestation(0)),
     beforeEach: (bytes) => bytes,
     fn: (bytes) => {
-      sszPhase0.Attestation.createTreeBackedFromBytes(bytes);
+      sszPhase0.Attestation.deserializeToView(bytes);
     },
   });
 
@@ -36,7 +36,7 @@ describe("Deserialization of frequent eth2 objects", () => {
     before: () => sszPhase0.SignedAggregateAndProof.serialize(getSignedAggregateAndProof(0)),
     beforeEach: (bytes) => bytes,
     fn: (bytes) => {
-      sszPhase0.SignedAggregateAndProof.createTreeBackedFromBytes(bytes);
+      sszPhase0.SignedAggregateAndProof.deserializeToView(bytes);
     },
   });
 

@@ -2,8 +2,10 @@
 export {BitListType} from "./type/bitList";
 export {BitVectorType} from "./type/bitVector";
 export {BooleanType} from "./type/boolean";
+export {ByteListType} from "./type/byteList";
 export {ByteVectorType} from "./type/byteVector";
 export {ContainerType} from "./type/container";
+export {ContainerNodeStructType} from "./type/containerNodeStruct";
 export {ListBasicType} from "./type/listBasic";
 export {ListCompositeType} from "./type/listComposite";
 export {UintBigintType, UintNumberType} from "./type/uint";
@@ -16,3 +18,6 @@ export {CompositeType, TreeView, TreeViewDU, CompositeView, CompositeViewDU} fro
 
 // Values
 export {BitArray} from "./value/bitArray";
+
+// Utils
+export {fromHexString, toHexString} from "./util/byteArray";

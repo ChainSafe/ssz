@@ -1,34 +1,42 @@
 import {itBench} from "@dapplion/benchmark";
-import {BigIntUintType, BitListType, CompositeType, CompositeValue, ContainerType, ListType} from "../../src";
+import {
+  UintBigintType,
+  BitListType,
+  CompositeType,
+  ContainerType,
+  ListBasicType,
+  ValueOf,
+  TreeView,
+  TreeViewDU,
+} from "../../src";
 
 describe("SSZ (de)serialize", () => {
-  const Gwei = new BigIntUintType({byteLength: 8});
+  const Gwei = new UintBigintType(8);
 
-  type TestCase<T extends CompositeValue> = {
+  type TestCase<T extends CompositeType<unknown, unknown, unknown>> = {
     id: string;
-    type: CompositeType<T>;
-    getValue?: () => T;
+    type: T;
+    getValue?: () => ValueOf<T>;
   };
 
-  function getBigListTestCase(arrLen: number): TestCase<bigint[]> {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  function getBigListTestCase(arrLen: number) {
     return {
       id: `List(BigInt) ${arrLen}`,
-      type: new ListType({elementType: Gwei, limit: arrLen}),
+      type: new ListBasicType(Gwei, arrLen),
       getValue: () => Array.from({length: arrLen}, () => BigInt(31217089836)),
     };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const testCases: TestCase<any>[] = [
+  const testCases: TestCase<CompositeType<unknown, TreeView<any>, TreeViewDU<any>>>[] = [
     {
       id: "Simple object",
-      type: new ContainerType({
-        fields: {a: Gwei, b: Gwei, c: Gwei},
-      }),
+      type: new ContainerType({a: Gwei, b: Gwei, c: Gwei}),
     },
     {
       id: "aggregationBits",
-      type: new BitListType({limit: 2048}),
+      type: new BitListType(2048),
       getValue: () => Array.from({length: 128}, () => true),
     },
 
@@ -39,26 +47,25 @@ describe("SSZ (de)serialize", () => {
 
   for (const {id, type, getValue} of testCases) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const struct = getValue ? getValue() : type.defaultValue();
-    const binary = type.serialize(struct);
+    const struct = getValue ? getValue() : type.defaultValue;
+    const bytes = type.serialize(struct);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const treeBacked = type.createTreeBackedFromStruct(struct);
+    const view = type.toView(struct);
 
     itBench(`${id} binary -> struct`, () => {
-      type.struct_deserialize(binary);
+      type.deserialize(bytes);
     });
 
     itBench(`${id} binary -> tree_backed`, () => {
-      type.tree_deserialize(binary);
+      type.deserializeToView(bytes);
     });
 
     itBench(`${id} struct -> tree_backed`, () => {
-      type.struct_convertToTree(struct);
+      type.toView(struct);
     });
 
     itBench(`${id} tree_backed -> struct`, () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      type.tree_convertToStruct(treeBacked.tree);
+      view.toValue();
     });
 
     itBench(`${id} struct -> binary`, () => {
@@ -66,7 +73,7 @@ describe("SSZ (de)serialize", () => {
     });
 
     itBench(`${id} tree_backed -> binary`, () => {
-      type.serialize(treeBacked);
+      view.serialize();
     });
   }
 });

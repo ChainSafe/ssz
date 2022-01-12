@@ -1,5 +1,6 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, TreeViewDU, Type, ValueOf} from "../abstract";
+import {Type, ValueOf} from "../type/abstract";
+import {CompositeType, TreeViewDU} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTypeGeneric, ValueOfFields} from "../view/container";
 import {ContainerTreeViewDUTypeConstructor} from "./container";
@@ -36,6 +37,10 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
 
     return this._rootNode;
+  }
+
+  protected clearCache(): void {
+    return;
   }
 }
 

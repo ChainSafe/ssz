@@ -1,10 +1,9 @@
-import {BitVectorType} from "../../../../src";
-import {runTypeTestValid} from "../testRunners";
+import {BitVectorType, BitArray} from "../../../../src";
+import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({
-  typeName: "BitVector(128)",
-  type: new BitVectorType({length: 128}),
-  defaultValue: Array.from({length: 128}, () => false),
+  type: new BitVectorType(128),
+  defaultValue: BitArray.fromBitLen(128),
   values: [
     {
       id: "empty",
@@ -22,9 +21,8 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  typeName: "BitVector(512)",
-  type: new BitVectorType({length: 512}),
-  defaultValue: Array.from({length: 512}, () => false),
+  type: new BitVectorType(512),
+  defaultValue: BitArray.fromBitLen(512),
   values: [
     {
       id: "empty",
