@@ -1,5 +1,5 @@
-import {NumberUintType} from "../../src/types/basic/uint";
-import {ContainerType} from "../../src/types/composite/container";
+import {NumberUintType} from "../../src/types_old/basic/uint";
+import {ContainerType} from "../../src/types_old/composite/container";
 
 describe("Container generator", () => {
   it("Use define properties", () => {

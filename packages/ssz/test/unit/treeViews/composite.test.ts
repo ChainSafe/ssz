@@ -28,5 +28,5 @@ describe("TreeView swap properties", () => {
 
   // Composite childs
   runTreeViewSwapTest(containerUintsType, {a: 1, b: 2}, {a: 5, b: 6});
-  runTreeViewSwapTest(new ListBasicType(uint64Type, 8), [1, 2], [5, 6]);
+  runTreeViewSwapTest.only(new ListBasicType(uint64Type, 8), [1, 2], [5, 6]);
 });

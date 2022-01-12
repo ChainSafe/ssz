@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {NumberUintType} from "../../src/types/basic/uint";
-import {ContainerType} from "../../src/types/composite/container";
+import {NumberUintType} from "../../src/types_old/basic/uint";
+import {ContainerType} from "../../src/types_old/composite/container";
 
 describe("uint type", () => {
   it("Fast get uint from hashObject", () => {

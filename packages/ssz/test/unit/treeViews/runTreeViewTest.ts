@@ -45,7 +45,7 @@ const runTreeViewTestFn = function runTreeViewTest<CT extends CompositeType<unkn
     for (const testCase of ops) {
       const {id, valueBefore, valueAfter, fn} = testCase;
 
-      it(`${id} TreeView`, () => {
+      it.skip(`${id} TreeView`, () => {
         const tvBefore = type.toView(valueBefore);
 
         const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;

@@ -1,5 +1,5 @@
 import {ContainerType, NumberUintType, UnionType} from "../../../../src";
-import {NoneType} from "../../../../src/types/basic/none";
+import {NoneType} from "../../../../src/types_old/basic/none";
 import {runTypeTestValid} from "../testRunners";
 
 const number16Type = new NumberUintType({byteLength: 2});

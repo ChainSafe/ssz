@@ -48,7 +48,7 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
       ]
     : [
         // Comment next lines to solo List or Vector
-        ListCompositeType,
+        // ListCompositeType,
         VectorCompositeType,
       ];
 
@@ -62,11 +62,11 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
       {
         type: arrayType,
         treeViewToStruct: (tv) => {
-          const a = tv.get(0);
-          const b = tv.get(1);
+          const i0 = tv.get(0);
+          const i1 = tv.get(1);
           return [
-            (a instanceof TreeView ? a.toValue() : a) as ValueOf<T>,
-            (b instanceof TreeView ? b.toValue() : b) as ValueOf<T>,
+            (i0 instanceof TreeView ? i0.toValue() : i0) as ValueOf<T>,
+            (i1 instanceof TreeView ? i1.toValue() : i1) as ValueOf<T>,
           ];
         },
         mutations: [
@@ -75,9 +75,9 @@ const runTreeViewSwapTestFn = function runTreeViewSwapTest<T extends Type<unknow
             valueBefore: [value1, value2],
             valueAfter: [value2, value1],
             fn: (tv) => {
-              const a = tv.get(0);
+              const i0 = tv.get(0);
               tv.set(0, tv.get(1));
-              tv.set(1, a);
+              tv.set(1, i0);
             },
           },
         ],

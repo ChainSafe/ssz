@@ -12,8 +12,8 @@ import {
   BooleanType,
   Number64UintType,
 } from "../../src";
-import {NoneType} from "../../src/types/basic/none";
-import {UnionType} from "../../src/types/composite/union";
+import {NoneType} from "../../src/types_old/basic/none";
+import {UnionType} from "../../src/types_old/composite/union";
 
 export const bytes2Type = new ByteVectorType({length: 2});
 export const bytes4Type = new ByteVectorType({length: 4});
