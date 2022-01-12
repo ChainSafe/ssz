@@ -1,22 +1,23 @@
-import {ByteVector} from "../../../src";
+import {ValueOf} from "../../../src";
+import * as ssz from "./sszTypes";
 
 // Each type exported here contains both a compile-time type
 // (a typescript interface) and a run-time ssz type (a javascript variable)
 // For more information, see ./index.ts
 
-export type Bytes4 = ByteVector;
-export type Bytes8 = ByteVector;
-export type Bytes20 = ByteVector;
-export type Bytes32 = ByteVector;
-export type Bytes48 = ByteVector;
-export type Bytes96 = ByteVector;
-export type Uint8 = number;
-export type Uint16 = number;
-export type Uint32 = number;
-export type Number64 = number;
-export type Uint64 = bigint;
-export type Uint128 = bigint;
-export type Uint256 = bigint;
+export type Bytes4 = ValueOf<typeof ssz.Bytes4>;
+export type Bytes8 = ValueOf<typeof ssz.Bytes8>;
+export type Bytes20 = ValueOf<typeof ssz.Bytes20>;
+export type Bytes32 = ValueOf<typeof ssz.Bytes32>;
+export type Bytes48 = ValueOf<typeof ssz.Bytes48>;
+export type Bytes96 = ValueOf<typeof ssz.Bytes96>;
+export type Uint8 = ValueOf<typeof ssz.Uint8>;
+export type Uint16 = ValueOf<typeof ssz.Uint16>;
+export type Uint32 = ValueOf<typeof ssz.Uint32>;
+export type Number64 = ValueOf<typeof ssz.Number64>;
+export type Uint64 = ValueOf<typeof ssz.Uint64>;
+export type Uint128 = ValueOf<typeof ssz.Uint128>;
+export type Uint256 = ValueOf<typeof ssz.Uint256>;
 
 // Custom types, defined for type hinting and readability
 

@@ -1,15 +1,4 @@
-import {
-  byteType,
-  ByteVectorType,
-  ContainerType,
-  List,
-  ListType,
-  RootType,
-  Union,
-  UnionType,
-  Vector,
-  VectorType,
-} from "../../../src";
+import {ByteVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src";
 import {
   BYTES_PER_LOGS_BLOOM,
   HISTORICAL_ROOTS_LIMIT,
@@ -18,52 +7,40 @@ import {
   MAX_EXTRA_DATA_BYTES,
   SLOTS_PER_HISTORICAL_ROOT,
 } from "@chainsafe/lodestar-params";
-import {ssz as primitiveSsz, ts as primitive} from "../primitive";
-import {ssz as phase0Ssz, ts as phase0} from "../phase0";
+import {ssz as primitiveSsz} from "../primitive";
+import {ssz as phase0Ssz} from "../phase0";
 import {ssz as altairSsz} from "../altair";
-import * as merge from "./types";
-import {LazyVariable} from "../utils/lazyVar";
 import {Uint256} from "../primitive/sszTypes";
 
 const {Bytes20, Bytes32, Number64, Slot, ValidatorIndex, Root, BLSSignature, Uint8} = primitiveSsz;
-
-// So the expandedRoots can be referenced, and break the circular dependency
-const typesRef = new LazyVariable<{
-  BeaconBlock: ContainerType<merge.BeaconBlock>;
-  BeaconState: ContainerType<merge.BeaconState>;
-}>();
 
 /**
  * ByteList[MAX_BYTES_PER_OPAQUE_TRANSACTION]
  *
  * Spec v1.0.1
  */
-export const OpaqueTransaction = new ListType({elementType: byteType, limit: MAX_BYTES_PER_OPAQUE_TRANSACTION});
+export const Transaction = new ListBasicType(primitiveSsz.Byte, MAX_BYTES_PER_OPAQUE_TRANSACTION);
 
 /**
  * Union[OpaqueTransaction]
  *
  * Spec v1.0.1
  */
-export const Transaction = new UnionType<Union<merge.Transaction>>({types: [OpaqueTransaction]});
-export const Transactions = new ListType<List<merge.Transaction>>({
-  elementType: Transaction,
-  limit: MAX_TRANSACTIONS_PER_PAYLOAD,
-});
+export const Transactions = new ListCompositeType(Transaction, MAX_TRANSACTIONS_PER_PAYLOAD);
 
 const executionPayloadFields = {
   parentHash: Root,
   coinbase: Bytes20,
   stateRoot: Bytes32,
   receiptRoot: Bytes32,
-  logsBloom: new ByteVectorType({length: BYTES_PER_LOGS_BLOOM}),
+  logsBloom: new ByteVectorType(BYTES_PER_LOGS_BLOOM),
   random: Bytes32,
   blockNumber: Number64,
   gasLimit: Number64,
   gasUsed: Number64,
   timestamp: Number64,
   // TODO: if there is perf issue, consider making ByteListType
-  extraData: new ListType({limit: MAX_EXTRA_DATA_BYTES, elementType: Uint8}),
+  extraData: new ListBasicType(Uint8, MAX_EXTRA_DATA_BYTES),
   baseFeePerGas: Bytes32,
   // Extra payload fields
   blockHash: Root,
@@ -92,11 +69,9 @@ const executionPayloadFields = {
  *
  * Spec v1.0.1
  */
-export const ExecutionPayload = new ContainerType<merge.ExecutionPayload>({
-  fields: {
-    ...executionPayloadFields,
-    transactions: Transactions,
-  },
+export const ExecutionPayload = new ContainerType({
+  ...executionPayloadFields,
+  transactions: Transactions,
 });
 
 /**
@@ -108,108 +83,81 @@ export const ExecutionPayload = new ContainerType<merge.ExecutionPayload>({
  *
  * Spec v1.0.1
  */
-export const ExecutionPayloadHeader = new ContainerType<merge.ExecutionPayloadHeader>({
-  fields: {
-    ...executionPayloadFields,
-    transactionsRoot: Root,
-  },
+export const ExecutionPayloadHeader = new ContainerType({
+  ...executionPayloadFields,
+  transactionsRoot: Root,
 });
 
-export const BeaconBlockBody = new ContainerType<merge.BeaconBlockBody>({
-  fields: {
-    ...altairSsz.BeaconBlockBody.fields,
-    executionPayload: ExecutionPayload,
-  },
+export const BeaconBlockBody = new ContainerType({
+  ...altairSsz.BeaconBlockBody.fields,
+  executionPayload: ExecutionPayload,
 });
 
-export const BeaconBlock = new ContainerType<merge.BeaconBlock>({
-  fields: {
-    slot: Slot,
-    proposerIndex: ValidatorIndex,
-    // Reclare expandedType() with altair block and altair state
-    parentRoot: new RootType({expandedType: () => typesRef.get().BeaconBlock}),
-    stateRoot: new RootType({expandedType: () => typesRef.get().BeaconState}),
-    body: BeaconBlockBody,
-  },
+export const BeaconBlock = new ContainerType({
+  slot: Slot,
+  proposerIndex: ValidatorIndex,
+  // Reclare expandedType() with altair block and altair state
+  parentRoot: Root,
+  stateRoot: Root,
+  body: BeaconBlockBody,
 });
 
-export const SignedBeaconBlock = new ContainerType<merge.SignedBeaconBlock>({
-  fields: {
-    message: BeaconBlock,
-    signature: BLSSignature,
-  },
+export const SignedBeaconBlock = new ContainerType({
+  message: BeaconBlock,
+  signature: BLSSignature,
 });
 
-export const PowBlock = new ContainerType<merge.BeaconState>({
-  fields: {
-    blockHash: Root,
-    parentHash: Root,
-    totalDifficulty: Uint256,
-    difficulty: Uint256,
-  },
+export const PowBlock = new ContainerType({
+  blockHash: Root,
+  parentHash: Root,
+  totalDifficulty: Uint256,
+  difficulty: Uint256,
 });
 
 // Re-declare with the new expanded type
-export const HistoricalBlockRoots = new VectorType<Vector<primitive.Root>>({
-  elementType: new RootType({expandedType: () => typesRef.get().BeaconBlock}),
-  length: SLOTS_PER_HISTORICAL_ROOT,
-});
+export const HistoricalBlockRoots = new VectorCompositeType(Root, SLOTS_PER_HISTORICAL_ROOT);
+export const HistoricalStateRoots = new VectorCompositeType(Root, SLOTS_PER_HISTORICAL_ROOT);
 
-export const HistoricalStateRoots = new VectorType<Vector<primitive.Root>>({
-  elementType: new RootType({expandedType: () => typesRef.get().BeaconState}),
-  length: SLOTS_PER_HISTORICAL_ROOT,
-});
-
-export const HistoricalBatch = new ContainerType<phase0.HistoricalBatch>({
-  fields: {
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots,
-  },
+export const HistoricalBatch = new ContainerType({
+  blockRoots: Root,
+  stateRoots: Root,
 });
 
 // we don't reuse phase0.BeaconState fields since we need to replace some keys
 // and we cannot keep order doing that
-export const BeaconState = new ContainerType<merge.BeaconState>({
-  fields: {
-    genesisTime: Number64,
-    genesisValidatorsRoot: Root,
-    slot: primitiveSsz.Slot,
-    fork: phase0Ssz.Fork,
-    // History
-    latestBlockHeader: phase0Ssz.BeaconBlockHeader,
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots,
-    historicalRoots: new ListType({
-      elementType: new RootType({expandedType: HistoricalBatch}),
-      limit: HISTORICAL_ROOTS_LIMIT,
-    }),
-    // Eth1
-    eth1Data: phase0Ssz.Eth1Data,
-    eth1DataVotes: phase0Ssz.Eth1DataVotes,
-    eth1DepositIndex: Number64,
-    // Registry
-    validators: phase0Ssz.Validators,
-    balances: phase0Ssz.Balances,
-    randaoMixes: phase0Ssz.RandaoMixes,
-    // Slashings
-    slashings: phase0Ssz.Slashings,
-    // Participation
-    previousEpochParticipation: altairSsz.EpochParticipation,
-    currentEpochParticipation: altairSsz.EpochParticipation,
-    // Finality
-    justificationBits: phase0Ssz.JustificationBits,
-    previousJustifiedCheckpoint: phase0Ssz.Checkpoint,
-    currentJustifiedCheckpoint: phase0Ssz.Checkpoint,
-    finalizedCheckpoint: phase0Ssz.Checkpoint,
-    // Inactivity
-    inactivityScores: altairSsz.InactivityScores,
-    // Sync
-    currentSyncCommittee: altairSsz.SyncCommittee,
-    nextSyncCommittee: altairSsz.SyncCommittee,
-    // Execution
-    latestExecutionPayloadHeader: ExecutionPayloadHeader, // [New in Merge]
-  },
+export const BeaconState = new ContainerType({
+  genesisTime: Number64,
+  genesisValidatorsRoot: Root,
+  slot: primitiveSsz.Slot,
+  fork: phase0Ssz.Fork,
+  // History
+  latestBlockHeader: phase0Ssz.BeaconBlockHeader,
+  blockRoots: HistoricalBlockRoots,
+  stateRoots: HistoricalStateRoots,
+  historicalRoots: new ListCompositeType(Root, HISTORICAL_ROOTS_LIMIT),
+  // Eth1
+  eth1Data: phase0Ssz.Eth1Data,
+  eth1DataVotes: phase0Ssz.Eth1DataVotes,
+  eth1DepositIndex: Number64,
+  // Registry
+  validators: phase0Ssz.Validators,
+  balances: phase0Ssz.Balances,
+  randaoMixes: phase0Ssz.RandaoMixes,
+  // Slashings
+  slashings: phase0Ssz.Slashings,
+  // Participation
+  previousEpochParticipation: altairSsz.EpochParticipation,
+  currentEpochParticipation: altairSsz.EpochParticipation,
+  // Finality
+  justificationBits: phase0Ssz.JustificationBits,
+  previousJustifiedCheckpoint: phase0Ssz.Checkpoint,
+  currentJustifiedCheckpoint: phase0Ssz.Checkpoint,
+  finalizedCheckpoint: phase0Ssz.Checkpoint,
+  // Inactivity
+  inactivityScores: altairSsz.InactivityScores,
+  // Sync
+  currentSyncCommittee: altairSsz.SyncCommittee,
+  nextSyncCommittee: altairSsz.SyncCommittee,
+  // Execution
+  latestExecutionPayloadHeader: ExecutionPayloadHeader, // [New in Merge]
 });
-
-// MUST set typesRef here, otherwise expandedType() calls will throw
-typesRef.set({BeaconBlock, BeaconState});
