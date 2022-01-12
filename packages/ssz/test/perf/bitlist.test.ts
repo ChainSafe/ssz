@@ -1,4 +1,3 @@
-import {MAX_VALIDATORS_PER_COMMITTEE} from "@chainsafe/lodestar-params";
 import {itBench} from "@dapplion/benchmark";
 import {BitArray, BitListType} from "../../src";
 
@@ -7,6 +6,7 @@ import {BitArray, BitListType} from "../../src";
 // so it's far more efficient to keep bitlists as Uint8Arrays and also save memory.
 
 describe("BitListType types", () => {
+  const MAX_VALIDATORS_PER_COMMITTEE = 2048;
   const CommitteeBits = new BitListType(MAX_VALIDATORS_PER_COMMITTEE);
 
   const testCases: {bitLen: number; bitsSet: number}[] = [

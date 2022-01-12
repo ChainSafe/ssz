@@ -327,14 +327,6 @@
     "@assemblyscript/loader" "^0.9.2"
     buffer "^5.4.3"
 
-"@chainsafe/lodestar-params@^0.28.1":
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.28.1.tgz#9ae6469746b2fe61420fe5e78f86c4b6961af076"
-  integrity sha512-g5+Nu69Eik1kq3OfUwIte9p/SN+Kkv+6r05VymfM1tCVb5yaoGVvO3rl0EL+e1zNA4A1tQBNTI4/CKLqVZEOgA==
-  dependencies:
-    "@chainsafe/ssz" "^0.8.13"
-    js-yaml "^3.13.1"
-
 "@chainsafe/lodestar-utils@^0.28.1":
   version "0.28.1"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-utils/-/lodestar-utils-0.28.1.tgz#30285855bd18cc88f16accbe0390b9c0c34c8638"

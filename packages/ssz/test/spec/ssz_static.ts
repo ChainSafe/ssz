@@ -1,12 +1,13 @@
 import fs from "fs";
 import path from "path";
-import {ACTIVE_PRESET, ForkName, PresetName} from "@chainsafe/lodestar-params";
 import {ContainerType, Type} from "../../src";
 import {ssz} from "../lodestarTypes";
 import {SPEC_TEST_LOCATION} from "../specTestVersioning";
 import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType";
 import {parseSszStaticTestcase} from "./testRunner";
-import {runValidTest} from "./generic/index.test";
+import {runValidSszTest} from "./runValidTest";
+import {ForkName} from "./fork";
+import {ACTIVE_PRESET} from "../lodestarTypes/params";
 
 // ssz_static
 // | Attestation
@@ -52,14 +53,14 @@ export function sszStatic(fork: ForkName): void {
   }
 }
 
-function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName, preset: PresetName): void {
+function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName, preset: string): void {
   const typeDir = path.join(SPEC_TEST_LOCATION, `tests/${preset}/${forkName}/ssz_static/${typeName}`);
 
   for (const caseName of fs.readdirSync(typeDir)) {
     describe(`${preset}/${forkName}/ssz_static/${typeName}/${caseName}`, () => {
       const sszTypeNoUint = replaceUintTypeWithUintBigintType(sszType);
       const testData = parseSszStaticTestcase(path.join(typeDir, caseName));
-      runValidTest(sszTypeNoUint, testData);
+      runValidSszTest(sszTypeNoUint, testData);
     });
   }
 }

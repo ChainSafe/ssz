@@ -1,9 +1,18 @@
-import {IJsonOptions} from "../types_old";
 import Case from "case";
+
+type KeyCase =
+  | "snake"
+  | "constant"
+  | "camel"
+  | "param"
+  | "header"
+  | "pascal" //Same as squish
+  | "dot"
+  | "notransform";
 
 export function toExpectedCase(
   value: string,
-  expectedCase: IJsonOptions["case"] = "camel",
+  expectedCase: KeyCase = "camel",
   customCasingMap?: Record<string, string>
 ): string {
   if (expectedCase === "notransform") return value;

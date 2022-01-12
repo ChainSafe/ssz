@@ -1,4 +1,4 @@
-import {ForkName} from "@chainsafe/lodestar-params";
+import {ForkName} from "./fork";
 import {sszStatic} from "./ssz_static";
 
 if (process.env.LODESTAR_FORK) {

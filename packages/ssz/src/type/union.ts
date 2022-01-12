@@ -46,7 +46,7 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     }
 
     for (let i = 1; i < types.length; i++) {
-      if (types[0] instanceof NoneType) {
+      if (types[i] instanceof NoneType) {
         throw Error("None may only be the first option");
       }
     }

@@ -1,4 +1,3 @@
-import {VALIDATOR_REGISTRY_LIMIT} from "@chainsafe/lodestar-params";
 import {expect} from "chai";
 import {describe, it} from "mocha";
 import {
@@ -62,6 +61,7 @@ describe("Container with BranchNodeStruct", function () {
   }
 
   describe("ValidatorNodeStructTypeType in List", () => {
+    const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
     const ValidtorsListType = new ListCompositeType(ValidatorNodeStructTypeType, VALIDATOR_REGISTRY_LIMIT);
 
     it("edit then read", () => {

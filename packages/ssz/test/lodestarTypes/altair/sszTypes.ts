@@ -1,17 +1,16 @@
 import {BitVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src";
-import {
-  FINALIZED_ROOT_INDEX_FLOORLOG2,
-  NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2,
-  SYNC_COMMITTEE_SUBNET_COUNT,
+import * as phase0Ssz from "../phase0/sszTypes";
+import * as primitiveSsz from "../primitive/sszTypes";
+import {preset, FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT} from "../params";
+
+const {
   SYNC_COMMITTEE_SIZE,
   SLOTS_PER_HISTORICAL_ROOT,
   HISTORICAL_ROOTS_LIMIT,
   SLOTS_PER_EPOCH,
   VALIDATOR_REGISTRY_LIMIT,
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
-} from "@chainsafe/lodestar-params";
-import * as phase0Ssz from "../phase0/sszTypes";
-import * as primitiveSsz from "../primitive/sszTypes";
+} = preset;
 
 const {
   Bytes32,
@@ -153,9 +152,9 @@ export const LightClientSnapshot = new ContainerType({
 export const LightClientUpdate = new ContainerType({
   header: phase0Ssz.BeaconBlockHeader,
   nextSyncCommittee: SyncCommittee,
-  nextSyncCommitteeBranch: new VectorCompositeType(Bytes32, NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2),
+  nextSyncCommitteeBranch: new VectorCompositeType(Bytes32, NEXT_SYNC_COMMITTEE_DEPTH),
   finalityHeader: phase0Ssz.BeaconBlockHeader,
-  finalityBranch: new VectorCompositeType(Bytes32, FINALIZED_ROOT_INDEX_FLOORLOG2),
+  finalityBranch: new VectorCompositeType(Bytes32, FINALIZED_ROOT_DEPTH),
   syncCommitteeBits: new BitVectorType(SYNC_COMMITTEE_SIZE),
   syncCommitteeSignature: BLSSignature,
   forkVersion: Version,

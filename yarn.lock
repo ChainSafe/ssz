@@ -1193,14 +1193,6 @@
     "@chainsafe/ssz" "^0.8.11"
     js-yaml "^3.13.1"
 
-"@chainsafe/lodestar-params@^0.31.0":
-  version "0.31.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.31.0.tgz#fbce7d33ac6c448796208c8f4da1f3073680af99"
-  integrity sha512-fZOYLj2W6YERWIAWwlV9q/7xGjms4P5G40ASnsxdRgePaa/7n60QG6EgUioHb29syL16zJ1Gh4/djYVJUyEI9Q==
-  dependencies:
-    "@chainsafe/ssz" "^0.8.17"
-    js-yaml "^4.1.0"
-
 "@chainsafe/lodestar-spec-test-util@^0.31.0":
   version "0.31.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-spec-test-util/-/lodestar-spec-test-util-0.31.0.tgz#0bc30cd70cca4a1b1f1b24ad60e3dfb58f5b46fb"

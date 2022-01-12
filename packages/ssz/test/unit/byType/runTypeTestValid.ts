@@ -103,10 +103,6 @@ export function runTypeTestValid<T>({
           });
         }
 
-        it("struct equals", () => {
-          expect(type.equals(value, value));
-        });
-
         const typeComposite = type as CompositeType<unknown, unknown, unknown>;
         if (!typeComposite.isBasic) {
           it("tree deserialize to view", () => {
