@@ -39,7 +39,7 @@ export function getSignedContributionAndProof(i: number): SignedContributionAndP
       contribution: {
         slot: 1234567 + i,
         beaconBlockRoot: randomBytes(32),
-        subCommitteeIndex: i % 16,
+        subcommitteeIndex: i % 16,
         aggregationBits: getBitsMany(120, BITS_PER_ATTESTATION),
         signature: randomBytes(96),
       },

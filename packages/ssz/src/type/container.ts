@@ -16,7 +16,9 @@ import {
 
 type BytesRange = {start: number; end: number};
 
-export type ContainerOptions = JsonOptions & {
+export type ContainerOptions<Fields extends Record<string, unknown>> = JsonOptions<
+  keyof Fields extends string ? keyof Fields : string
+> & {
   typeName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cachePermanentRootStruct?: boolean;
@@ -50,7 +52,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, private readonly opts?: ContainerOptions) {
+  constructor(readonly fields: Fields, readonly opts?: ContainerOptions<Fields>) {
     super(opts?.cachePermanentRootStruct);
 
     this.typeName = opts?.typeName ?? "Container";
@@ -259,7 +261,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       const jsonKey = toExpectedCase(fieldName as string, keyCase, casingMap);
       const jsonValue = (json as Record<string, unknown>)[jsonKey];
       if (jsonValue === undefined) {
-        throw Error(`JSON expected field ${jsonKey} is undefined`);
+        throw Error(`JSON expected key ${jsonKey} is undefined`);
       }
       value[fieldName] = fieldType.fromJson(jsonValue) as ValueOf<Fields[keyof Fields]>;
     }

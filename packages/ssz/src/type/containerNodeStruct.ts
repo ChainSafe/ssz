@@ -7,7 +7,7 @@ import {BranchNodeStruct} from "../branchNodeStruct";
 import {ValueOfFields} from "../view/container";
 
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
-  constructor(readonly fields: Fields, opts?: ContainerOptions) {
+  constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
     super(fields, {
       ...opts,
       getContainerTreeViewClass,

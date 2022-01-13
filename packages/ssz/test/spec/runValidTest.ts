@@ -18,7 +18,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   }
 
   function assertValue(value: unknown, msg: string): void {
-    expect(type.toJson(value)).to.deep.equal(testData.jsonValue, `Wrong value - ${msg}`);
+    expect(toJsonOrString(type.toJson(value))).to.deep.equal(toJsonOrString(testData.jsonValue), `Wrong json - ${msg}`);
   }
 
   function assertRoot(root: Uint8Array, msg: string): void {
@@ -94,5 +94,13 @@ function wrapErr<T>(fn: () => T, prefix: string): T {
   } catch (e) {
     (e as Error).message = `${prefix}: ${(e as Error).message}`;
     throw e;
+  }
+}
+
+function toJsonOrString(value: unknown): unknown {
+  if (typeof value === "number" || typeof value === "bigint") {
+    return value.toString(10);
+  } else {
+    return value;
   }
 }

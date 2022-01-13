@@ -8,7 +8,7 @@ import {GindexBitstring, LeafNode, Node, toGindexBitstring} from "@chainsafe/per
  */
 export type Path = (string | number)[];
 
-export type JsonOptions = {
+export type JsonOptions<CaseKey extends string = string> = {
   case?:
     | "snake"
     | "constant"
@@ -18,7 +18,7 @@ export type JsonOptions = {
     | "pascal" //Same as squish
     | "dot"
     | "notransform";
-  casingMap?: Record<string, string>;
+  casingMap?: Partial<Record<CaseKey, string>>;
 };
 
 /* eslint-disable @typescript-eslint/member-ordering  */

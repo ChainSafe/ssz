@@ -22,7 +22,7 @@ export function replaceUintTypeWithUintBigintType<T extends Type<any>>(type: T):
     for (const key of Object.keys(fields) as (keyof typeof fields)[]) {
       fields[key] = replaceUintTypeWithUintBigintType(fields[key]);
     }
-    return new ContainerType(fields) as unknown as T;
+    return new ContainerType(fields, type.opts) as unknown as T;
   }
 
   // For List or vectors replace the subType

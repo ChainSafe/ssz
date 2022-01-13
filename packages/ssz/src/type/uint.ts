@@ -3,6 +3,8 @@ import {BasicType} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
+const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
+
 export class UintNumberType extends BasicType<number> {
   readonly typeName: string;
   // Immutable characteristics
@@ -122,19 +124,23 @@ export class UintNumberType extends BasicType<number> {
       } else {
         return num;
       }
+    } else if (typeof json === "bigint") {
+      if (json > MAX_SAFE_INTEGER_BN) {
+        throw Error("JSON > MAX_SAFE_INTEGER_BN");
+      } else {
+        return Number(json);
+      }
     } else {
       throw Error(`JSON invalid type ${typeof json} expected number`);
     }
   }
 
   toJson(value: number): unknown {
-    if (this.byteLength > 4) {
-      if (value === Infinity) {
-        return this.maxDecimalStr;
-      }
+    if (value === Infinity) {
+      return this.maxDecimalStr;
+    } else {
       return value.toString(10);
     }
-    return value;
   }
 }
 
@@ -241,10 +247,6 @@ export class UintBigintType extends BasicType<bigint> {
   }
 
   toJson(value: bigint): unknown {
-    if (this.byteLength > 4) {
-      return value.toString(10);
-    } else {
-      return Number(value);
-    }
+    return value.toString(10);
   }
 }
