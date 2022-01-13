@@ -206,7 +206,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     let fixedIndex = offset;
-    let variableIndex = this.fixedEnd;
+    let variableIndex = offset + this.fixedEnd;
 
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length);

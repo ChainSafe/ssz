@@ -45,31 +45,40 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
     for (const testCase of ops) {
       const {id, valueBefore, valueAfter, fn} = testCase;
 
-      it(`${id} TreeView`, () => {
-        const tvBefore = type.toView(valueBefore);
+      // Skip tests if ONLY_ID is set
+      const onlyId = process.env.ONLY_ID;
 
-        const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
+      const treeViewId = `${id} - TreeView`;
+      if (!onlyId || treeViewId.includes(onlyId)) {
+        it(treeViewId, () => {
+          const tvBefore = type.toView(valueBefore);
 
-        assertValidTvAfter(tvAfter as TreeViewDU<CT>, valueAfter, "After mutation");
-      });
+          const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
 
-      it(`${id} TreeViewDU`, () => {
-        const tvBefore = type.toViewDU(valueBefore) as TreeViewDU<CT>;
+          assertValidTvAfter(tvAfter as TreeViewDU<CT>, valueAfter, "After mutation");
+        });
+      }
 
-        // Set to mutable, and edit
-        const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
+      const treeViewDUId = `${id} - TreeViewDU`;
+      if (!onlyId || treeViewDUId.includes(onlyId)) {
+        it(treeViewDUId, () => {
+          const tvBefore = type.toViewDU(valueBefore) as TreeViewDU<CT>;
 
-        if (treeViewToStruct) {
-          const tvAfterStruct = treeViewToStruct(tvAfter as CompositeViewDU<CT>);
-          expect(type.toJson(tvAfterStruct)).to.deep.equal(
-            type.toJson(valueAfter),
-            "Wrong value after mutation before commit"
-          );
-        }
+          // Set to mutable, and edit
+          const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
 
-        type.commitViewDU(tvAfter);
-        assertValidTvAfter(tvAfter as TreeViewDU<CT>, valueAfter, "After mutation");
-      });
+          if (treeViewToStruct) {
+            const tvAfterStruct = treeViewToStruct(tvAfter as CompositeViewDU<CT>);
+            expect(type.toJson(tvAfterStruct)).to.deep.equal(
+              type.toJson(valueAfter),
+              "Wrong value after mutation before commit"
+            );
+          }
+
+          type.commitViewDU(tvAfter);
+          assertValidTvAfter(tvAfter as TreeViewDU<CT>, valueAfter, "After mutation");
+        });
+      }
     }
   });
 };

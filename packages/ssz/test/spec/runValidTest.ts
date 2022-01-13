@@ -50,12 +50,17 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     assertValue(value, "type.deserialize()");
   }
 
+  // To print the chunk roots of a type value
+  //
+  // $ RENDER_ROOTS=true ONLY_ID="4 arrays" ../../node_modules/.bin/mocha test/unit/byType/vector/valid.test.ts
+  //
+  // 0x0000000000000000000000000000000000000000000000000000000000000000
   if (process.env.RENDER_ROOTS) {
     if (type.isBasic) {
-      console.log("ROOTS Basic", type.serialize(testDataValue));
+      console.log("ROOTS Basic", toHexString(type.serialize(testDataValue)));
     } else {
       const roots = (type as CompositeType<unknown, unknown, unknown>)["getRoots"](testDataValue);
-      console.log("ROOTS Composite", roots);
+      console.log("ROOTS Composite", toHexString(roots));
     }
   }
 
@@ -142,7 +147,7 @@ function renderTree(node: Node): void {
   console.log(gatherLeafNodes(node));
 }
 
-function gatherLeafNodes(node: Node, nodes = new Map<string, string>(), gindex = "1"): Map<string, string> {
+export function gatherLeafNodes(node: Node, nodes = new Map<string, string>(), gindex = "1"): Map<string, string> {
   if (node.isLeaf()) {
     nodes.set(gindex, toHexString(node.root));
   } else {

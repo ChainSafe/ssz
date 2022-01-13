@@ -20,13 +20,13 @@ runTypeTestValid({
     {
       id: "Container",
       serialized: "0x010e000d00", // 1st byte = 1 => SimpleObject type
-      json: {selector: 1, value: {a: 0xd, b: 0xe}},
+      json: {selector: 1, value: {a: "13", b: "14"}},
       root: "0x877853415ee3688a63df0cbdbbd436d397f9008b49431b24b39fb3698bd6f034",
     },
     {
       id: "Uint16",
       serialized: "0x020d00", // 1st byte = 2 => number16 type
-      json: {selector: 2, value: 0xd},
+      json: {selector: 2, value: "13"},
       root: "0x487e42872db8f54736409836c93d9a3aaf3d6fc86b2ce8a4120d061ce7d4e284",
     },
   ],

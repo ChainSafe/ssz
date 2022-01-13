@@ -65,7 +65,7 @@ export function runTypeTestValid<T>({
     // Skip tests if ONLY_ID is set
     const onlyId = process.env.ONLY_ID;
 
-    if (defaultValue !== undefined && (onlyId === undefined || onlyId === "defaultValue")) {
+    if (defaultValue !== undefined && (!onlyId || "defaultValue".includes(onlyId))) {
       it("defaultValue", () => {
         expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(toJsonOrString(type.toJson(defaultValue)));
       });
@@ -76,7 +76,7 @@ export function runTypeTestValid<T>({
       const testId = testCase.id ?? testCase.serialized;
 
       // Skip tests if ONLY_ID is set
-      if (onlyId !== undefined && onlyId !== testId) {
+      if (onlyId && !testId.includes(onlyId)) {
         continue;
       }
 

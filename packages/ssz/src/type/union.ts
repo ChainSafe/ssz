@@ -135,7 +135,7 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     const valueNode = node.left;
 
     output[offset] = selector;
-    return this.types[selector].value_serializeToBytes(output, offset + 1, valueNode);
+    return this.types[selector].tree_serializeToBytes(output, offset + 1, valueNode);
   }
 
   // Merkleization

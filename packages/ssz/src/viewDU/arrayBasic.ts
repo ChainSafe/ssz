@@ -60,7 +60,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     let node = this.nodes[chunkIndex];
     if (node === undefined) {
-      node = getNodeAtDepth(this._rootNode, this.type.depth, index) as LeafNode;
+      node = getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex) as LeafNode;
       this.nodes[chunkIndex] = node;
     }
 
@@ -77,8 +77,8 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       // TODO: This assumes that node has already been populated
       nodeChanged = this.nodes[chunkIndex];
     } else {
-      const nodePrev = this.nodes[chunkIndex] ?? (getNodeAtDepth(this._rootNode, this.type.depth, index) as LeafNode);
-
+      const nodePrev =
+        this.nodes[chunkIndex] ?? (getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex) as LeafNode);
       nodeChanged = new LeafNode(nodePrev);
       // Store the changed node in the nodes cache
       this.nodes[chunkIndex] = nodeChanged;
