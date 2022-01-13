@@ -1,4 +1,11 @@
-import {ContainerType, VectorBasicType, VectorCompositeType, UintNumberType, ByteVectorType} from "../../../../src";
+import {
+  ContainerType,
+  VectorBasicType,
+  VectorCompositeType,
+  UintNumberType,
+  ByteVectorType,
+  ListBasicType,
+} from "../../../../src";
 import {runTypeTestValid} from "../runTypeTestValid";
 
 const rootType = new ByteVectorType(32);
@@ -57,6 +64,22 @@ runTypeTestValid({
         {a: "345678", b: "876543"},
       ],
       root: "0xb1a797eb50654748ba239010edccea7b46b55bf740730b700684f48b0c478372",
+    },
+  ],
+});
+
+runTypeTestValid({
+  type: new VectorCompositeType(new ListBasicType(uint64Type, 8), 2),
+  defaultValue: [[], []],
+  values: [
+    {
+      id: "[1,2],[5,6]",
+      serialized: "0x08000000180000000100000000000000020000000000000005000000000000000600000000000000",
+      json: [
+        ["1", "2"],
+        ["5", "6"],
+      ],
+      root: "0x0014c485ce39c8071f69631566b1d1ad51e2b0b5abc3c7a299a6fac1abce9e49",
     },
   ],
 });

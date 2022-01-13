@@ -23,11 +23,20 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
   arrayProps: ArrayProps
 ): number {
   const length = arrayProps.length ? arrayProps.length : value.length;
-  let totalSize = 0;
-  for (let i = 0; i < length; i++) {
-    totalSize += elementType.value_serializedSize(value[i]);
+
+  // Variable Length
+  if (elementType.fixedLen === null) {
+    let size = 0;
+    for (let i = 0; i < length; i++) {
+      size += 4 + elementType.value_serializedSize(value[i]);
+    }
+    return size;
   }
-  return totalSize;
+
+  // Fixed length
+  else {
+    return length * elementType.fixedLen;
+  }
 }
 
 export function value_deserializeFromBytesArrayComposite<
@@ -95,10 +104,10 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
   depth: number,
   node: Node
 ): number {
-  const nodes = getNodesAtDepth(node, depth, 0, length);
-
   // Variable Length
   if (elementType.fixedLen === null) {
+    const nodes = getNodesAtDepth(node, depth, 0, length);
+
     let size = 0;
     for (let i = 0; i < nodes.length; i++) {
       size += 4 + elementType.tree_serializedSize(nodes[i]);

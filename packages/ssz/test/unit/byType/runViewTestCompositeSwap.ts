@@ -8,14 +8,14 @@ const runViewTestCompositeSwapFn = function runViewTestCompositeSwap<T extends T
   value2: ValueOf<T>,
   opts?: {only?: boolean; skip?: boolean}
 ): void {
-  const containerUintsType = new ContainerType(
+  const containerType = new ContainerType(
     {a: propertyType, b: propertyType},
     {typeName: `Container(a: ${propertyType.typeName}, b: ${propertyType.typeName})`}
   );
 
   runViewTestMutation(
     {
-      type: containerUintsType,
+      type: containerType,
       treeViewToStruct: (tv) => {
         const a = tv.a;
         const b = tv.b;
@@ -26,7 +26,7 @@ const runViewTestCompositeSwapFn = function runViewTestCompositeSwap<T extends T
       },
       mutations: [
         {
-          id: "Swap properties",
+          id: `${containerType.typeName} Swap properties`,
           valueBefore: {a: value1, b: value2},
           valueAfter: {a: value2, b: value1},
           fn: (tv) => {
@@ -71,7 +71,7 @@ const runViewTestCompositeSwapFn = function runViewTestCompositeSwap<T extends T
         },
         mutations: [
           {
-            id: "Swap properties",
+            id: `${arrayType.typeName} Swap properties`,
             valueBefore: [value1, value2],
             valueAfter: [value2, value1],
             fn: (tv) => {

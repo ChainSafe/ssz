@@ -73,14 +73,14 @@ export function runTypeTestValid<T>({
 
     for (let i = 0; i < values.length; i++) {
       const testCase = values[i];
-      const testId = testCase.id ?? testCase.serialized;
 
+      const testId = `${typeName ?? type.typeName} value ${i} - ${testCase.id ?? testCase.serialized}`;
       // Skip tests if ONLY_ID is set
       if (onlyId && !testId.includes(onlyId)) {
         continue;
       }
 
-      it(`${typeName ?? type.typeName} value ${i} - ${testId}`, () => {
+      it(testId, () => {
         let root: string;
         if (typeof testCase.root === "string") {
           root = testCase.root;
