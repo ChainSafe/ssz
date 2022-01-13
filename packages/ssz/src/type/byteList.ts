@@ -6,6 +6,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString} from "../util/byteArray";
+import {mixInLength} from "../util/merkleize";
 import {maxChunksToDepth} from "../util/tree";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
 import {CompositeType} from "./composite";
@@ -95,6 +96,10 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
   }
 
   // Merkleization
+
+  hashTreeRoot(value: ByteList): Uint8Array {
+    return mixInLength(super.hashTreeRoot(value), value.length);
+  }
 
   protected getRoots(value: ByteList): Uint8Array {
     return value;

@@ -106,7 +106,7 @@ export class VectorCompositeType<
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
+    return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
