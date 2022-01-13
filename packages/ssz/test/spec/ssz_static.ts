@@ -59,8 +59,13 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
   for (const caseName of fs.readdirSync(typeDir)) {
     describe(`${preset}/${forkName}/ssz_static/${typeName}/${caseName}`, () => {
       const sszTypeNoUint = replaceUintTypeWithUintBigintType(sszType);
-      const testData = parseSszStaticTestcase(path.join(typeDir, caseName));
-      runValidSszTest(sszTypeNoUint, testData);
+      const caseDir = path.join(typeDir, caseName);
+      for (const subcaseName of fs.readdirSync(caseDir)) {
+        it(subcaseName, () => {
+          const testData = parseSszStaticTestcase(path.join(caseDir, subcaseName));
+          runValidSszTest(sszTypeNoUint, testData);
+        });
+      }
     });
   }
 }

@@ -3,6 +3,7 @@ import fs from "fs";
 import {fromHexString} from "@chainsafe/ssz";
 import {uncompress} from "snappyjs";
 import jsyaml from "js-yaml";
+import {schema} from "@chainsafe/lodestar-utils/lib/yaml/schema";
 
 /* eslint-disable
   @typescript-eslint/explicit-module-boundary-types,
@@ -26,28 +27,7 @@ export type ValidTestCaseData = {
  * Docs: https://github.com/ethereum/consensus-specs/blob/master/tests/formats/ssz_static/core.md
  */
 export function parseSszStaticTestcase(dirpath: string): ValidTestCaseData {
-  // The root is stored in meta.yml as:
-  //   root: 0xDEADBEEF
-  const meta = jsyaml.load(path.join(dirpath, "roots.yaml")) as {root: string};
-  if (typeof meta.root !== "string") {
-    throw Error("meta.root not a string");
-  }
-
-  // The serialized value is stored in serialized.ssz_snappy
-  const serialized = uncompress<Uint8Array>(fs.readFileSync(path.join(dirpath, "serialized.ssz_snappy")));
-
-  // The value is stored in value.yml
-  const yamlPath = path.join(dirpath, "value.yaml");
-  const yamlStrNumbersAsNumbers = fs.readFileSync(yamlPath, "utf8");
-  const jsonValue = readYamlNumbersAsStrings(yamlStrNumbersAsNumbers);
-
-  // type.fromJson(loadYamlFile(path.join(dirpath, "value.yaml")) as Json) as T;
-
-  return {
-    root: fromHexString(meta.root),
-    serialized,
-    jsonValue,
-  };
+  return parseSszValidTestcase(dirpath, "roots.yaml");
 }
 
 /**
@@ -62,11 +42,16 @@ export function parseSszStaticTestcase(dirpath: string): ValidTestCaseData {
  * Docs: https://github.com/ethereum/eth2.0-specs/blob/master/tests/formats/ssz_generic/README.md
  */
 export function parseSszGenericValidTestcase(dirpath: string): ValidTestCaseData {
+  return parseSszValidTestcase(dirpath, "meta.yaml");
+}
+
+export function parseSszValidTestcase(dirpath: string, metaFilename: string): ValidTestCaseData {
   // The root is stored in meta.yml as:
   //   root: 0xDEADBEEF
-  const meta = jsyaml.load(path.join(dirpath, "meta.yaml")) as {root: string};
+  const metaStr = fs.readFileSync(path.join(dirpath, metaFilename), "utf8");
+  const meta = jsyaml.load(metaStr) as {root: string};
   if (typeof meta.root !== "string") {
-    throw Error("meta.root not a string");
+    throw Error(`meta.root not a string: ${meta.root}\n${fs}`);
   }
 
   // The serialized value is stored in serialized.ssz_snappy
@@ -105,7 +90,5 @@ export function parseSszGenericInvalidTestcase(dirpath: string) {
 }
 
 export function readYamlNumbersAsStrings(yamlStr: string): unknown {
-  // eslint-disable-next-line quotes, no-useless-escape
-  const yamlStrNumbersAsStrings = yamlStr.replace(/([\[:]\s?)?(\d+)([^0-9]{1})/g, '$1"$2"$3');
-  return jsyaml.load(yamlStrNumbersAsStrings);
+  return jsyaml.load(yamlStr, {schema});
 }

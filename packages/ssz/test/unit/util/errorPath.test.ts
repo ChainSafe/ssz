@@ -35,7 +35,7 @@ describe("error path", () => {
   for (const {type, value} of testCases) {
     it(`should print the error path deserializing ${type.constructor.name}`, () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v[1]: Not all variable bytes consumed");
+      assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v: Offset out of bounds");
     });
   }
 });
