@@ -263,7 +263,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       if (jsonValue === undefined) {
         throw Error(`JSON expected key ${jsonKey} is undefined`);
       }
-      value[fieldName] = fieldType.fromJson(jsonValue) as ValueOf<Fields[keyof Fields]>;
+      value[fieldName] = fieldType.fromJson(jsonValue, opts) as ValueOf<Fields[keyof Fields]>;
     }
 
     return value;
@@ -277,7 +277,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       const jsonKey = toExpectedCase(fieldName as string, keyCase, casingMap);
-      json[jsonKey] = fieldType.toJson(value[fieldName]);
+      json[jsonKey] = fieldType.toJson(value[fieldName], opts);
     }
 
     return json;
