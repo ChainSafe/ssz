@@ -57,12 +57,23 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
   const typeDir = path.join(SPEC_TEST_LOCATION, `tests/${preset}/${forkName}/ssz_static/${typeName}`);
 
   for (const caseName of fs.readdirSync(typeDir)) {
+    const caseId = `${preset}/${forkName}/ssz_static/${typeName}/${caseName}`;
+    const onlyCase = process.env.ONLY_CASE;
+    if (onlyCase && !caseId.includes(onlyCase)) {
+      continue;
+    }
+
     describe(`${preset}/${forkName}/ssz_static/${typeName}/${caseName}`, () => {
       const sszTypeNoUint = replaceUintTypeWithUintBigintType(sszType);
       const caseDir = path.join(typeDir, caseName);
-      for (const subcaseName of fs.readdirSync(caseDir)) {
-        it(subcaseName, () => {
-          const testData = parseSszStaticTestcase(path.join(caseDir, subcaseName));
+      for (const testId of fs.readdirSync(caseDir)) {
+        const onlyId = process.env.ONLY_ID;
+        if (onlyId && !testId.includes(onlyId)) {
+          continue;
+        }
+
+        it(testId, () => {
+          const testData = parseSszStaticTestcase(path.join(caseDir, testId));
           runValidSszTest(sszTypeNoUint, testData);
         });
       }
