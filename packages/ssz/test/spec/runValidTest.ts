@@ -17,8 +17,12 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   const testDataSerializedStr =
     typeof testData.serialized === "string" ? testData.serialized : toHexString(testData.serialized);
 
+  if (process.env.RENDER_JSON) {
+    console.log(testData.jsonValue);
+  }
+
   if (process.env.RENDER_SERIALIZED) {
-    console.log("serialized", Buffer.from(testData.serialized).toString("hex"));
+    console.log("serialized", testDataSerializedStr);
   }
 
   // JSON -> value - fromJson()

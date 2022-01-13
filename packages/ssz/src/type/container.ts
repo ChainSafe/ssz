@@ -160,7 +160,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfFields<Fields>): number {
     let fixedIndex = offset;
-    let variableIndex = this.fixedEnd;
+    let variableIndex = offset + this.fixedEnd;
 
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
 

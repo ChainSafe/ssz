@@ -111,7 +111,7 @@ export const SignedContributionAndProof = new ContainerType(
     message: ContributionAndProof,
     signature: BLSSignature,
   },
-  {case: "notransform"}
+  {case: "notransform", typeName: "SignedContributionAndProof"}
 );
 
 export const SyncAggregatorSelectionData = new ContainerType(
