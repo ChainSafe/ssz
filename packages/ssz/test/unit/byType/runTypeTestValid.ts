@@ -62,7 +62,10 @@ export function runTypeTestValid<T>({
   values: TypeTestValid[];
 }): void {
   describe(`${typeName ?? type.typeName} valid`, () => {
-    if (defaultValue !== undefined) {
+    // Skip tests if ONLY_ID is set
+    const onlyId = process.env.ONLY_ID;
+
+    if (defaultValue !== undefined && (onlyId === undefined || onlyId === "defaultValue")) {
       it("defaultValue", () => {
         expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(toJsonOrString(type.toJson(defaultValue)));
       });
@@ -70,7 +73,14 @@ export function runTypeTestValid<T>({
 
     for (let i = 0; i < values.length; i++) {
       const testCase = values[i];
-      it(`${typeName ?? type.typeName} value ${i} - ${testCase.id ?? testCase.serialized}`, () => {
+      const testId = testCase.id ?? testCase.serialized;
+
+      // Skip tests if ONLY_ID is set
+      if (onlyId !== undefined && onlyId !== testId) {
+        continue;
+      }
+
+      it(`${typeName ?? type.typeName} value ${i} - ${testId}`, () => {
         let root: string;
         if (typeof testCase.root === "string") {
           root = testCase.root;

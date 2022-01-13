@@ -60,10 +60,20 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   const node = wrapErr(() => type.value_toTree(testDataValue), "type.value_toTree()");
   assertNode(node, "type.value_toTree()");
 
-  {
-    // tree -> value -
-    const value = wrapErr(() => type.tree_toValue(node), "type.tree_toValue()");
-    assertValue(value, "type.tree_toValue()");
+  // To print a tree a single test you are debugging do
+  //
+  // $ RENDER_TREE=true ONLY_ID="4 arrays" ../../node_modules/.bin/mocha test/unit/byType/vector/valid.test.ts
+  //
+  // '1000' => '0x0000000000000000000000000000000000000000000000000000000000000000',
+  // '1001' => '0x0000000000000000000000000000000000000000000000000000000000000000',
+  // '1010' => '0x40e2010000000000000000000000000000000000000000000000000000000000',
+  // '1011' => '0xf1fb090000000000000000000000000000000000000000000000000000000000',
+  // '1100' => '0x4794030000000000000000000000000000000000000000000000000000000000',
+  // '1101' => '0xf8ad0b0000000000000000000000000000000000000000000000000000000000',
+  // '1110' => '0x4e46050000000000000000000000000000000000000000000000000000000000',
+  // '1111' => '0xff5f0d0000000000000000000000000000000000000000000000000000000000'
+  if (process.env.RENDER_TREE) {
+    renderTree(node);
   }
 
   {
@@ -71,6 +81,12 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     const output = new Uint8Array(type.tree_serializedSize(node));
     type.tree_serializeToBytes(output, 0, node);
     assertBytes(output, "type.tree_serializeToBytes");
+  }
+
+  {
+    // tree -> value -
+    const value = wrapErr(() => type.tree_toValue(node), "type.tree_toValue()");
+    assertValue(value, "type.tree_toValue()");
   }
 
   {
@@ -111,4 +127,18 @@ export function toJsonOrString(value: unknown): unknown {
   } else {
     return value;
   }
+}
+
+function renderTree(node: Node): void {
+  console.log(gatherLeafNodes(node));
+}
+
+function gatherLeafNodes(node: Node, nodes = new Map<string, string>(), gindex = "1"): Map<string, string> {
+  if (node.isLeaf()) {
+    nodes.set(gindex, toHexString(node.root));
+  } else {
+    gatherLeafNodes(node.left, nodes, gindex + "0");
+    gatherLeafNodes(node.right, nodes, gindex + "1");
+  }
+  return nodes;
 }
