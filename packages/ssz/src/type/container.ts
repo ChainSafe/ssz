@@ -248,7 +248,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   fromJson(json: unknown, opts?: JsonOptions): ValueOfFields<Fields> {
     if (typeof json !== "object") {
-      throw new Error("JSON must be of type object");
+      throw Error("JSON must be of type object");
+    }
+    if (json === null) {
+      throw Error("JSON must not be null");
     }
 
     const keyCase = this.opts?.case ?? opts?.case;

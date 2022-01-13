@@ -25,15 +25,15 @@ const uint256 = new UintBigintType(32);
 // class SingleFieldTestStruct(Container):
 //     A: byte
 const SingleFieldTestStruct = new ContainerType({
-  a: byte,
+  A: byte,
 });
 
 // class SmallTestStruct(Container):
 //     A: uint16
 //     B: uint16
 const SmallTestStruct = new ContainerType({
-  a: uint16,
-  b: uint16,
+  A: uint16,
+  B: uint16,
 });
 
 // class FixedTestStruct(Container):
@@ -41,9 +41,9 @@ const SmallTestStruct = new ContainerType({
 //     B: uint64
 //     C: uint32
 const FixedTestStruct = new ContainerType({
-  a: uint8,
-  b: uint64,
-  c: uint32,
+  A: uint8,
+  B: uint64,
+  C: uint32,
 });
 
 // class VarTestStruct(Container):
@@ -51,9 +51,9 @@ const FixedTestStruct = new ContainerType({
 //     B: List[uint16, 1024]
 //     C: uint8
 const VarTestStruct = new ContainerType({
-  a: uint16,
-  b: new ListBasicType(uint16, 1024),
-  c: uint8,
+  A: uint16,
+  B: new ListBasicType(uint16, 1024),
+  C: uint8,
 });
 
 // class ComplexTestStruct(Container):
@@ -65,13 +65,13 @@ const VarTestStruct = new ContainerType({
 //     F: Vector[FixedTestStruct, 4]
 //     G: Vector[VarTestStruct, 2]
 const ComplexTestStruct = new ContainerType({
-  a: uint16,
-  b: new ListBasicType(uint16, 128),
-  c: uint8,
-  d: new BitListType(256),
-  e: VarTestStruct,
-  f: new VectorCompositeType(FixedTestStruct, 4),
-  g: new VectorCompositeType(VarTestStruct, 2),
+  A: uint16,
+  B: new ListBasicType(uint16, 128),
+  C: uint8,
+  D: new BitListType(256),
+  E: VarTestStruct,
+  F: new VectorCompositeType(FixedTestStruct, 4),
+  G: new VectorCompositeType(VarTestStruct, 2),
 });
 
 // class BitsStruct(Container):
@@ -81,11 +81,11 @@ const ComplexTestStruct = new ContainerType({
 //     D: Bitlist[6]
 //     E: Bitvector[8]
 const BitsStruct = new ContainerType({
-  a: new BitListType(5),
-  b: new BitVectorType(2),
-  c: new BitVectorType(1),
-  d: new BitListType(6),
-  e: new BitVectorType(8),
+  A: new BitListType(5),
+  B: new BitVectorType(2),
+  C: new BitVectorType(1),
+  D: new BitListType(6),
+  E: new BitVectorType(8),
 });
 
 const containerTypes = {

@@ -12,18 +12,20 @@ type KeyCase =
 
 export function toExpectedCase(
   value: string,
-  expectedCase: KeyCase = "camel",
+  expectedCase?: KeyCase,
   customCasingMap?: Partial<Record<string, string>>
 ): string {
-  if (expectedCase === "notransform") {
-    return value;
-  }
   if (customCasingMap) {
     const customCase = customCasingMap[value];
     if (customCase !== undefined) {
       return customCase;
     }
   }
+
+  if (!expectedCase || expectedCase === "notransform") {
+    return value;
+  }
+
   switch (expectedCase) {
     case "param":
       return Case.kebab(value);

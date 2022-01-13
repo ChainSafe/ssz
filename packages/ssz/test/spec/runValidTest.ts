@@ -17,16 +17,21 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   const testDataSerializedStr =
     typeof testData.serialized === "string" ? testData.serialized : toHexString(testData.serialized);
 
-  if (process.env.DEBUG) {
+  if (process.env.RENDER_SERIALIZED) {
     console.log("serialized", Buffer.from(testData.serialized).toString("hex"));
   }
+
+  // JSON -> value - fromJson()
+  const testDataValue = wrapErr(() => type.fromJson(testData.jsonValue), "type.fromJson()");
+  // Use our re-transformed to JSON to ensure the type is the safe
+  const testDataJson = wrapErr(() => type.toJson(testDataValue), "type.toJson()");
 
   function assertBytes(bytes: Uint8Array, msg: string): void {
     expect(toHexString(bytes)).to.equal(testDataSerializedStr, `Wrong serialized - ${msg}`);
   }
 
   function assertValue(value: unknown, msg: string): void {
-    expect(toJsonOrString(type.toJson(value))).to.deep.equal(toJsonOrString(testData.jsonValue), `Wrong json - ${msg}`);
+    expect(type.toJson(value)).to.deep.equal(testDataJson, `Wrong json - ${msg}`);
   }
 
   function assertRoot(root: Uint8Array, msg: string): void {
@@ -36,9 +41,6 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   function assertNode(node: Node, msg: string): void {
     expect(toHexString(node.root)).to.equal(testDataRootHex, `Wrong node - ${msg}`);
   }
-
-  // JSON -> value - fromJson()
-  const testDataValue = wrapErr(() => type.fromJson(testData.jsonValue), "type.fromJson()");
 
   // value -> bytes - serialize()
   const serialized = wrapErr(() => type.serialize(testDataValue), "type.serialize()");
