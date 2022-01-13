@@ -1,20 +1,28 @@
 import {expect} from "chai";
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, toHexString, Type} from "../../src";
-import {ValidTestCaseData} from "./testRunner";
+import {CompositeType, fromHexString, toHexString, Type} from "../../src";
+
+type ValidTestCaseData = {
+  root: string;
+  serialized: string | Uint8Array;
+  jsonValue: unknown;
+};
 
 /* eslint-disable no-console */
 
 export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData): void {
-  const testDataSerialized = toHexString(testData.serialized);
-  const testDataRoot = toHexString(testData.root);
+  const testDataRootHex = testData.root;
+  const testDataSerialized =
+    typeof testData.serialized === "string" ? fromHexString(testData.serialized) : testData.serialized;
+  const testDataSerializedStr =
+    typeof testData.serialized === "string" ? testData.serialized : toHexString(testData.serialized);
 
   if (process.env.DEBUG) {
     console.log("serialized", Buffer.from(testData.serialized).toString("hex"));
   }
 
   function assertBytes(bytes: Uint8Array, msg: string): void {
-    expect(toHexString(bytes)).to.equal(testDataSerialized, `Wrong serialized - ${msg}`);
+    expect(toHexString(bytes)).to.equal(testDataSerializedStr, `Wrong serialized - ${msg}`);
   }
 
   function assertValue(value: unknown, msg: string): void {
@@ -22,11 +30,11 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   }
 
   function assertRoot(root: Uint8Array, msg: string): void {
-    expect(toHexString(root)).to.equal(testDataRoot, `Wrong root - ${msg}`);
+    expect(toHexString(root)).to.equal(testDataRootHex, `Wrong root - ${msg}`);
   }
 
   function assertNode(node: Node, msg: string): void {
-    expect(toHexString(node.root)).to.equal(testDataRoot, `Wrong node - ${msg}`);
+    expect(toHexString(node.root)).to.equal(testDataRootHex, `Wrong node - ${msg}`);
   }
 
   // JSON -> value - fromJson()
@@ -38,7 +46,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
 
   {
     // bytes -> value - deserialize()
-    const value = wrapErr(() => type.deserialize(copy(testData.serialized)), "type.deserialize()");
+    const value = wrapErr(() => type.deserialize(copy(testDataSerialized)), "type.deserialize()");
     assertValue(value, "type.deserialize()");
   }
 
@@ -67,17 +75,17 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
 
   {
     // bytes -> tree
-    const node = type.tree_deserializeFromBytes(copy(testData.serialized), 0, testData.serialized.length);
+    const node = type.tree_deserializeFromBytes(copy(testDataSerialized), 0, testDataSerialized.length);
     assertNode(node, "type.tree_deserializeFromBytes()");
   }
 
   if (!type.isBasic) {
     const compositeType = type as CompositeType<unknown, unknown, unknown>;
 
-    const view = compositeType.deserializeToView(copy(testData.serialized));
+    const view = compositeType.deserializeToView(copy(testDataSerialized));
     assertNode(compositeType.commitView(view), "deserializeToView");
 
-    const viewDU = compositeType.deserializeToViewDU(copy(testData.serialized));
+    const viewDU = compositeType.deserializeToViewDU(copy(testDataSerialized));
     assertNode(compositeType.commitViewDU(viewDU), "deserializeToViewDU");
   }
 }
@@ -97,7 +105,7 @@ function wrapErr<T>(fn: () => T, prefix: string): T {
   }
 }
 
-function toJsonOrString(value: unknown): unknown {
+export function toJsonOrString(value: unknown): unknown {
   if (typeof value === "number" || typeof value === "bigint") {
     return value.toString(10);
   } else {

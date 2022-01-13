@@ -17,7 +17,7 @@ runTypeTestValid({
   values: getValues((hex: string): number[] => [...fromHexString(hex)]),
 });
 
-function getValues(hexToJson: (hex: string) => unknown): TypeTestValid<any>[] {
+function getValues(hexToJson: (hex: string) => unknown): TypeTestValid[] {
   return [
     {
       id: "4 bytes zero",

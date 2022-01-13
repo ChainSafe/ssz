@@ -118,15 +118,24 @@ export class UintNumberType extends BasicType<number> {
     if (typeof json === "number") {
       return json;
     } else if (typeof json === "string") {
-      const num = parseInt(json, 10);
-      if (isNaN(num)) {
-        throw Error("JSON invalid number isNaN");
+      if (this.clipInfinity && json === this.maxDecimalStr) {
+        // Allow to handle max possible number
+        return Infinity;
       } else {
-        return num;
+        const num = parseInt(json, 10);
+        if (isNaN(num)) {
+          throw Error("JSON invalid number isNaN");
+        } else if (num > Number.MAX_SAFE_INTEGER) {
+          // Throw to prevent decimal precision errors downstream
+          throw Error("JSON invalid number > MAX_SAFE_INTEGER");
+        } else {
+          return num;
+        }
       }
     } else if (typeof json === "bigint") {
       if (json > MAX_SAFE_INTEGER_BN) {
-        throw Error("JSON > MAX_SAFE_INTEGER_BN");
+        // Throw to prevent decimal precision errors downstream
+        throw Error("JSON invalid number > MAX_SAFE_INTEGER_BN");
       } else {
         return Number(json);
       }

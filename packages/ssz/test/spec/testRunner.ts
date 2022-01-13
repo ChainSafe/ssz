@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs";
-import {fromHexString} from "@chainsafe/ssz";
 import {uncompress} from "snappyjs";
 import jsyaml from "js-yaml";
 import {schema} from "@chainsafe/lodestar-utils/lib/yaml/schema";
@@ -11,7 +10,7 @@ import {schema} from "@chainsafe/lodestar-utils/lib/yaml/schema";
 */
 
 export type ValidTestCaseData = {
-  root: Uint8Array;
+  root: string;
   serialized: Uint8Array;
   jsonValue: unknown;
 };
@@ -65,7 +64,7 @@ export function parseSszValidTestcase(dirpath: string, metaFilename: string): Va
   // type.fromJson(loadYamlFile(path.join(dirpath, "value.yaml")) as Json) as T;
 
   return {
-    root: fromHexString(meta.root),
+    root: meta.root,
     serialized,
     jsonValue,
   };

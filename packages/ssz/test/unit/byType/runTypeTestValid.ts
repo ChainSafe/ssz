@@ -1,15 +1,14 @@
 import {expect} from "chai";
-import {CompositeType, fromHexString, toHexString, Type} from "../../../src";
+import {Type} from "../../../src";
+import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest";
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-export type TypeTestValid<T> = {
+export type TypeTestValid = {
   id?: string;
   serialized: string;
-  json?: any;
-  value?: T;
-  root?: string;
-  skipToJsonTest?: boolean;
+  json: unknown;
+  root: string | null;
 };
 
 /**
@@ -60,63 +59,34 @@ export function runTypeTestValid<T>({
   type: Type<T>;
   typeName?: string;
   defaultValue?: T;
-  values: TypeTestValid<T>[];
+  values: TypeTestValid[];
 }): void {
   describe(`${typeName ?? type.typeName} valid`, () => {
     if (defaultValue !== undefined) {
       it("defaultValue", () => {
-        const actual = type.defaultValue;
-        expect(type.equals(actual, defaultValue));
+        expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(toJsonOrString(type.toJson(defaultValue)));
       });
     }
 
-    for (const testCase of values) {
-      const {id, serialized, json, root, skipToJsonTest, value: _value} = testCase;
-      let value: any;
-
-      describe(id ?? serialized, () => {
-        before("Parse value", () => {
-          value = json !== undefined ? type.fromJson(json) : _value;
-        });
-
-        if (!skipToJsonTest && json !== undefined) {
-          it("struct toJson", () => {
-            expect(type.toJson(value)).to.deep.equal(json);
-          });
-        }
-
-        it("struct deserialize", () => {
-          if (skipToJsonTest || json === undefined) {
-            expect(type.deserialize(fromHexString(serialized))).to.deep.equal(value);
+    for (let i = 0; i < values.length; i++) {
+      const testCase = values[i];
+      it(`${typeName ?? type.typeName} value ${i} - ${testCase.id ?? testCase.serialized}`, () => {
+        let root: string;
+        if (typeof testCase.root === "string") {
+          root = testCase.root;
+        } else {
+          if (type.isBasic) {
+            root = testCase.serialized.padEnd(32 * 2 + 2, "0");
           } else {
-            expect(type.toJson(type.deserialize(fromHexString(serialized)))).to.deep.equal(json);
+            throw Error("Must set root");
           }
-        });
-
-        it("struct serialize", () => {
-          expect(toHexString(type.serialize(value))).to.equal(serialized);
-        });
-
-        if (root !== undefined) {
-          it("struct hashTreeRoot", () => {
-            expect(toHexString(type.hashTreeRoot(value))).to.equal(root);
-          });
         }
 
-        const typeComposite = type as CompositeType<unknown, unknown, unknown>;
-        if (!typeComposite.isBasic) {
-          it("tree deserialize to view", () => {
-            const view = typeComposite.deserializeToView(fromHexString(serialized));
-            const node = typeComposite.commitView(view);
-            expect(toHexString(node.root)).to.equal(root);
-          });
-
-          it("tree deserialize to viewDU", () => {
-            const viewDU = typeComposite.deserializeToViewDU(fromHexString(serialized));
-            const node = typeComposite.commitViewDU(viewDU);
-            expect(toHexString(node.root)).to.equal(root);
-          });
-        }
+        runValidSszTest(type, {
+          root,
+          serialized: testCase.serialized,
+          jsonValue: testCase.json,
+        });
       });
     }
   });

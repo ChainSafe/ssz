@@ -51,7 +51,11 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
       it(validCase, () => {
         const type = getTestType(testType, validCase);
         const testData = parseSszGenericValidTestcase(path.join(validCasesPath, validCase));
-        runValidSszTest(type, testData);
+        runValidSszTest(type, {
+          root: testData.root,
+          serialized: testData.serialized,
+          jsonValue: testData.jsonValue,
+        });
       });
     }
   });
