@@ -142,7 +142,8 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       return this._rootNode;
     }
 
-    const indexes = Array.from(this.nodesChanged.keys()).sort();
+    // Numerical sort ascending
+    const indexes = Array.from(this.nodesChanged.keys()).sort((a, b) => a - b);
     const nodesChangedSorted: LeafNode[] = [];
     for (const index of indexes) {
       nodesChangedSorted.push(this.nodes[index]);

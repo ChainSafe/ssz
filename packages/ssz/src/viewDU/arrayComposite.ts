@@ -138,7 +138,8 @@ export class ArrayCompositeTreeViewDU<
       return this._rootNode;
     }
 
-    const indexes = Array.from(this.viewsChanged.keys()).sort();
+    // Numerical sort ascending
+    const indexes = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
     const nodesChangedSorted: Node[] = [];
     for (const index of indexes) {
       const view = this.viewsChanged.get(index);
