@@ -13,8 +13,14 @@ const byteType = new UintNumberType(1);
 runTypeTestValid({
   type: new ListBasicType(byteType, 256),
   defaultValue: [],
-  // BasicListType(byte,256) wants an array of numbers
-  values: getValues((hex: string): number[] => [...fromHexString(hex)]),
+  // BasicListType(byte,256) wants an array of numbers (for JSON as strings)
+  values: getValues((hex: string): string[] => {
+    const bytesStr: string[] = [];
+    for (const byte of fromHexString(hex)) {
+      bytesStr.push(byte.toString(10));
+    }
+    return bytesStr;
+  }),
 });
 
 function getValues(hexToJson: (hex: string) => unknown): TypeTestValid[] {

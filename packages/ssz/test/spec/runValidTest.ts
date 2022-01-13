@@ -50,6 +50,15 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     assertValue(value, "type.deserialize()");
   }
 
+  if (process.env.RENDER_ROOTS) {
+    if (type.isBasic) {
+      console.log("ROOTS Basic", type.serialize(testDataValue));
+    } else {
+      const roots = (type as CompositeType<unknown, unknown, unknown>)["getRoots"](testDataValue);
+      console.log("ROOTS Composite", roots);
+    }
+  }
+
   {
     // hashTreeRoot()
     const root = wrapErr(() => type.hashTreeRoot(testDataValue), "type.hashTreeRoot()");
