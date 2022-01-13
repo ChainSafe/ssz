@@ -101,6 +101,9 @@ export class ArrayCompositeTreeViewDU<
     this.viewsChanged.set(index, view);
   }
 
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   */
   getAllReadonly(): CompositeViewDU<ElementType>[] {
     if (!this.nodesPopulated) {
       this.nodes = getNodesAtDepth(this._rootNode, this.type.depth, 0, this.length);
@@ -114,6 +117,9 @@ export class ArrayCompositeTreeViewDU<
     return views;
   }
 
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   */
   getAllReadonlyValues(): ValueOf<ElementType>[] {
     if (!this.nodesPopulated) {
       this.nodes = getNodesAtDepth(this._rootNode, this.type.depth, 0, this.length);

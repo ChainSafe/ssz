@@ -88,6 +88,9 @@ describe("Container with BranchNodeStruct", function () {
         validatorListTB.push(ValidatorNodeStructTypeType.toViewDU(validator_));
       }
 
+      // MUST commit to persist the view to nodes before doing a getAllReadonlyValues()
+      validatorListTB.commit();
+
       expect(validatorListTB.getAllReadonlyValues()).to.deep.equal(validatorsFlat);
     });
 
