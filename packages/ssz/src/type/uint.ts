@@ -30,6 +30,22 @@ export class UintNumberType extends BasicType<number> {
 
   // Serialization + deserialization
 
+  value_serializeToBytes(output: Uint8Array, offset: number, value: number): number {
+    if (this.byteLength > 6 && value === Infinity) {
+      for (let i = offset; i < offset + this.byteLength; i++) {
+        output[i] = 0xff;
+      }
+    } else {
+      let v = value;
+      const MAX_BYTE = 0xff;
+      for (let i = 0; i < this.byteLength; i++) {
+        output[offset + i] = v & MAX_BYTE;
+        v = Math.floor(v / 256);
+      }
+    }
+    return offset + this.byteLength;
+  }
+
   value_deserializeFromBytes(data: Uint8Array, start: number, end: number): number {
     const size = end - start;
     if (size !== this.byteLength) {
@@ -50,19 +66,8 @@ export class UintNumberType extends BasicType<number> {
     return output;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: number): number {
-    if (this.byteLength > 6 && value === Infinity) {
-      for (let i = offset; i < offset + this.byteLength; i++) {
-        output[i] = 0xff;
-      }
-    } else {
-      let v = value;
-      const MAX_BYTE = 0xff;
-      for (let i = 0; i < this.byteLength; i++) {
-        output[offset + i] = v & MAX_BYTE;
-        v = Math.floor(v / 256);
-      }
-    }
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+    (node as LeafNode).writeToBytes(output, offset, this.byteLength);
     return offset + this.byteLength;
   }
 
@@ -76,11 +81,6 @@ export class UintNumberType extends BasicType<number> {
     const chunk = new Uint8Array(32);
     chunk.set(data.slice(start, end));
     return new LeafNode(chunk);
-  }
-
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    (node as LeafNode).writeToBytes(output, offset, this.byteLength);
-    return offset + this.byteLength;
   }
 
   // Fast Tree access

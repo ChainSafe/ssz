@@ -7,6 +7,8 @@ const uint64Type = new UintNumberType(8, true);
 
 runTypeTestValid({
   type: new ContainerType({a: uint64Type, b: uint64Type}, {typeName: "Container({a: Uint64, b: Uint64})"}),
+  minSize: 16,
+  maxSize: 16,
   defaultValue: {a: 0, b: 0},
   values: [
     {
@@ -26,9 +28,11 @@ runTypeTestValid({
 
 runTypeTestValid({
   type: new ContainerType(
-    {a: new ListBasicType(uint64Type, 2 ** 7), b: uint64Type},
+    {a: new ListBasicType(uint64Type, 128), b: uint64Type},
     {typeName: "Container({a: List(Uint64), b: Uint64})"}
   ),
+  minSize: 12,
+  maxSize: 1036,
   defaultValue: {a: [], b: 0},
   values: [
     {
@@ -49,6 +53,8 @@ runTypeTestValid({
 
 runTypeTestValid({
   type: replaceUintTypeWithUintBigintType(SignedContributionAndProof),
+  minSize: 345,
+  maxSize: 345,
   values: [
     {
       id: "SignedContributionAndProof ssz_random_chaos case_8",

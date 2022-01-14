@@ -97,6 +97,11 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     return 1 + this.types[value.selector].value_serializedSize(value.value);
   }
 
+  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfTypes<Types>): number {
+    output[offset] = value.selector;
+    return this.types[value.selector].value_serializeToBytes(output, offset + 1, value.value);
+  }
+
   value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfTypes<Types> {
     const selector = data[start];
     if (selector > this.maxSelector) {
@@ -109,15 +114,18 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     } as ValueOfTypes<Types>;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfTypes<Types>): number {
-    output[offset] = value.selector;
-    return this.types[value.selector].value_serializeToBytes(output, offset + 1, value.value);
-  }
-
   tree_serializedSize(node: Node): number {
     const selector = getLengthFromRootNode(node);
     const valueNode = node.left;
     return 1 + this.types[selector].value_serializedSize(valueNode);
+  }
+
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+    const selector = getLengthFromRootNode(node);
+    const valueNode = node.left;
+
+    output[offset] = selector;
+    return this.types[selector].tree_serializeToBytes(output, offset + 1, valueNode);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
@@ -128,14 +136,6 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
 
     const valueNode = this.types[selector].tree_deserializeFromBytes(data, start + 1, end);
     return addLengthNode(valueNode, selector);
-  }
-
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    const selector = getLengthFromRootNode(node);
-    const valueNode = node.left;
-
-    output[offset] = selector;
-    return this.types[selector].tree_serializeToBytes(output, offset + 1, valueNode);
   }
 
   // Merkleization

@@ -54,21 +54,41 @@ export function runTypeTestValid<T>({
   type,
   typeName,
   defaultValue,
+  minSize,
+  maxSize,
   values,
 }: {
   type: Type<T>;
   typeName?: string;
   defaultValue?: T;
+  minSize?: number;
+  maxSize?: number;
   values: TypeTestValid[];
 }): void {
   describe(`${typeName ?? type.typeName} valid`, () => {
     // Skip tests if ONLY_ID is set
     const onlyId = process.env.ONLY_ID;
 
-    if (defaultValue !== undefined && (!onlyId || "defaultValue".includes(onlyId))) {
-      it("defaultValue", () => {
-        expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(toJsonOrString(type.toJson(defaultValue)));
-      });
+    if (!onlyId) {
+      if (defaultValue !== undefined) {
+        it("defaultValue", () => {
+          expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(
+            toJsonOrString(type.toJson(defaultValue))
+          );
+        });
+      }
+
+      if (minSize !== undefined) {
+        it("minSize", () => {
+          expect(type.minSize).to.equal(minSize);
+        });
+      }
+
+      if (maxSize !== undefined) {
+        it("maxSize", () => {
+          expect(type.maxSize).to.equal(maxSize);
+        });
+      }
     }
 
     for (let i = 0; i < values.length; i++) {

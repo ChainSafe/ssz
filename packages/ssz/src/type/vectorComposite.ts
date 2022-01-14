@@ -93,24 +93,24 @@ export class VectorCompositeType<
     return value_serializedSizeArrayComposite(this.elementType, value, this);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
+  }
+
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
   }
 
   tree_serializedSize(node: Node): number {
     return tree_serializedSizeArrayComposite(this.elementType, this.length, this.depth, node);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
-  }
-
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     return tree_serializeToBytesArrayComposite(this.elementType, this.length, this.depth, node, output, offset);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
   }
 
   // Helpers for TreeView

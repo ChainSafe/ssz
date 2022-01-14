@@ -91,12 +91,12 @@ export class ListCompositeType<
     return value_serializedSizeArrayComposite(this.elementType, value, this);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
+  }
+
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
   }
 
   tree_serializedSize(node: Node): number {
@@ -105,14 +105,14 @@ export class ListCompositeType<
     return tree_serializedSizeArrayComposite(this.elementType, length, this.chunkDepth, chunksNode);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
-  }
-
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const chunksNode = this.tree_getChunksNode(node);
     const length = this.tree_getLength(node);
     return tree_serializeToBytesArrayComposite(this.elementType, length, this.chunkDepth, chunksNode, output, offset);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
   }
 
   // Helpers for TreeView

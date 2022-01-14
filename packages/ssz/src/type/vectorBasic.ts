@@ -87,24 +87,24 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
+  }
+
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
   tree_serializedSize(): number {
     return this.fixedSize;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
-  }
-
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     return tree_serializeToBytesArrayBasic(this.elementType, this.length, this.depth, output, offset, node);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
   }
 
   // Helpers for TreeView

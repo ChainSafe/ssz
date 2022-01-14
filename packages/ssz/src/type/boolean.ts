@@ -16,6 +16,11 @@ export class BooleanType extends BasicType<boolean> {
 
   // bytes serdes
 
+  value_serializeToBytes(output: Uint8Array, offset: number, value: boolean): number {
+    output[offset] = value ? 1 : 0;
+    return offset + 1;
+  }
+
   value_deserializeFromBytes(data: Uint8Array, start: number): boolean {
     switch (data[start]) {
       case 1:
@@ -27,8 +32,8 @@ export class BooleanType extends BasicType<boolean> {
     }
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: boolean): number {
-    output[offset] = value ? 1 : 0;
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+    (node as LeafNode).writeToBytes(output, offset, 1);
     return offset + 1;
   }
 
@@ -42,11 +47,6 @@ export class BooleanType extends BasicType<boolean> {
     const leafNode = new LeafNode(zeroNode(0));
     leafNode.setUint(4, 0, data[start]);
     return leafNode;
-  }
-
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    (node as LeafNode).writeToBytes(output, offset, 1);
-    return offset + 1;
   }
 
   // Fast tree opts

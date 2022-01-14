@@ -83,24 +83,18 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     return bitLenToSerializedLength(value.bitLen);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
-    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
-    return new BitArray(uint8Array, bitLen);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
     output.set(value.uint8Array, offset);
     return applyPaddingBit(output, offset, value.bitLen);
   }
 
-  tree_serializedSize(node: Node): number {
-    return bitLenToSerializedLength(getLengthFromRootNode(node));
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
+    return new BitArray(uint8Array, bitLen);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
-    const chunksNode = packedRootsBytesToNode(this.chunkDepth, uint8Array, 0, uint8Array.length);
-    return addLengthNode(chunksNode, bitLen);
+  tree_serializedSize(node: Node): number {
+    return bitLenToSerializedLength(getLengthFromRootNode(node));
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
@@ -113,6 +107,12 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     packedNodeRootsToBytes(output, offset, byteLen, nodes);
 
     return applyPaddingBit(output, offset, bitLen);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
+    const chunksNode = packedRootsBytesToNode(this.chunkDepth, uint8Array, 0, uint8Array.length);
+    return addLengthNode(chunksNode, bitLen);
   }
 
   tree_getLength(node: Node): number {

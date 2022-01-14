@@ -66,28 +66,28 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
     return this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
-    // TODO: Validate length
-    return data.slice(start, end);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ByteVector): number {
     output.set(value, offset);
     return offset + this.fixedSize;
+  }
+
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
+    // TODO: Validate length
+    return data.slice(start, end);
   }
 
   tree_serializedSize(): number {
     return this.fixedSize;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return packedRootsBytesToNode(this.chunkDepth, data, start, end);
-  }
-
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const nodes = getNodesAtDepth(node, this.chunkDepth, 0, this.maxChunkCount);
     packedNodeRootsToBytes(output, offset, this.fixedSize, nodes);
     return offset + this.fixedSize;
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return packedRootsBytesToNode(this.chunkDepth, data, start, end);
   }
 
   // Merkleization

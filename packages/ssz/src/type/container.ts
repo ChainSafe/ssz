@@ -64,25 +64,22 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
     this.depth = maxChunksToDepth(this.maxChunkCount);
 
-    // TODO: Consider de-duplicating all the field iterations in this loops. It's only run once, may not be worth it.
-    this.fixedSize = getContainerFixedLen(fields);
-    const [minLen, maxLen] = getMinMaxLengths(fields);
-    this.minSize = minLen;
-    this.maxSize = maxLen;
-
     // Precalculated data for faster serdes
     this.fieldsEntries = [];
     for (const fieldName of Object.keys(fields) as (keyof Fields)[]) {
       this.fieldsEntries.push({fieldName, fieldType: this.fields[fieldName]});
     }
 
-    const {isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd, fixedSize} =
-      precomputeSerdesData(fields);
+    const {minLen, maxLen, fixedSize} = precomputeSizes(fields);
+    this.minSize = minLen;
+    this.maxSize = maxLen;
+    this.fixedSize = fixedSize;
+
+    const {isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd} = precomputeSerdesData(fields);
     this.isFixedLen = isFixedLen;
     this.fieldRangesFixedLen = fieldRangesFixedLen;
     this.variableOffsetsPosition = variableOffsetsPosition;
     this.fixedEnd = fixedEnd;
-    this.fixedSize = fixedSize;
 
     // TODO: This options are necessary for ContainerNodeStruct to override this.
     // Refactor this constructor to allow customization without pollutin the options
@@ -138,27 +135,6 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return totalSize;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
-    const fieldRanges = this.getFieldRanges(data, start, end);
-    const value = {} as ValueOfFields<Fields>;
-
-    for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
-      const fieldRange = fieldRanges[i];
-      try {
-        value[fieldName] = fieldType.value_deserializeFromBytes(
-          data,
-          start + fieldRange.start,
-          start + fieldRange.end
-        ) as ValueOf<Fields[keyof Fields]>;
-      } catch (e) {
-        throw new SszErrorPath(e as Error, fieldName as string);
-      }
-    }
-
-    return value;
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfFields<Fields>): number {
     let fixedIndex = offset;
     let variableIndex = offset + this.fixedEnd;
@@ -180,6 +156,27 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return variableIndex;
   }
 
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
+    const fieldRanges = this.getFieldRanges(data, start, end);
+    const value = {} as ValueOfFields<Fields>;
+
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const {fieldName, fieldType} = this.fieldsEntries[i];
+      const fieldRange = fieldRanges[i];
+      try {
+        value[fieldName] = fieldType.value_deserializeFromBytes(
+          data,
+          start + fieldRange.start,
+          start + fieldRange.end
+        ) as ValueOf<Fields[keyof Fields]>;
+      } catch (e) {
+        throw new SszErrorPath(e as Error, fieldName as string);
+      }
+    }
+
+    return value;
+  }
+
   tree_serializedSize(node: Node): number {
     let totalSize = 0;
     const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
@@ -190,19 +187,6 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       totalSize += fieldType.fixedSize === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedSize;
     }
     return totalSize;
-  }
-
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const fieldRanges = this.getFieldRanges(data, start, end);
-    const nodes: Node[] = [];
-
-    for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldType} = this.fieldsEntries[i];
-      const fieldRange = fieldRanges[i];
-      nodes.push(fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end));
-    }
-
-    return subtreeFillToContents(nodes, this.depth);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
@@ -222,13 +206,23 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
         // write serialized element to variable section
         variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
       } else {
-        // TODO: Previous implementation had an optimization to directly grab the node's root for basic types.
-        // I've omitted this optimization since it makes un-performant assumptions about how the root is represented.
-        // Consider optimizing tree_serializeToBytes() directly of types that are shorter than 32 bytes.
         fixedIndex = fieldType.tree_serializeToBytes(output, fixedIndex, node);
       }
     }
     return variableIndex;
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    const fieldRanges = this.getFieldRanges(data, start, end);
+    const nodes: Node[] = [];
+
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const {fieldType} = this.fieldsEntries[i];
+      const fieldRange = fieldRanges[i];
+      nodes.push(fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end));
+    }
+
+    return subtreeFillToContents(nodes, this.depth);
   }
 
   // Merkleization
@@ -287,7 +281,11 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return json;
   }
 
-  /** Deserializer helper */
+  /**
+   * Deserializer helper: Returns the bytes ranges of all fields, both variable and fixed size.
+   * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
+   * - For variable size fields does a first pass over the fixed section to read offsets
+   */
   private getFieldRanges(data: Uint8Array, start: number, end: number): BytesRange[] {
     if (this.variableOffsetsPosition.length === 0) {
       // Validate fixed length container
@@ -300,7 +298,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     }
 
     // Read offsets in one pass
-    const fieldRangesVarLen = getFieldRangesVarLen(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
+    const variableOffsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
 
     // Merge fieldRangesFixedLen + fieldRangesVarLen in one array
     let variableIndex = 0;
@@ -308,54 +306,29 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     const fieldRanges: BytesRange[] = [];
 
     for (let i = 0; i < this.isFixedLen.length; i++) {
-      fieldRanges.push(
-        this.isFixedLen[i]
-          ? // push from fixLen ranges ++
-            this.fieldRangesFixedLen[fixedIndex++]
-          : // push from varLen ranges ++
-            fieldRangesVarLen[variableIndex++]
-      );
+      if (this.isFixedLen[i]) {
+        // push from fixLen ranges ++
+        fieldRanges.push(this.fieldRangesFixedLen[fixedIndex++]);
+      } else {
+        // push from varLen ranges ++
+        fieldRanges.push({start: variableOffsets[variableIndex], end: variableOffsets[variableIndex + 1]});
+        variableIndex++;
+      }
     }
     return fieldRanges;
   }
 }
 
-function getContainerFixedLen(fields: Record<string, Type<unknown>>): null | number {
-  let fixedSize = 0;
-  for (const fieldType of Object.values(fields)) {
-    if (fieldType.fixedSize === null) {
-      return null;
-    } else {
-      fixedSize += fieldType.fixedSize;
-    }
-  }
-  return fixedSize;
-}
-
-function getMinMaxLengths(fields: Record<string, Type<unknown>>): [number, number] {
-  let minLen = 0;
-  let maxLen = 0;
-
-  for (const fieldType of Object.values(fields)) {
-    minLen += fieldType.minSize;
-    maxLen += fieldType.maxSize;
-
-    if (fieldType.fixedSize === null) {
-      // +4 for the offset
-      minLen += 4;
-      maxLen += 4;
-    }
-  }
-  return [minLen, maxLen];
-}
-
-function getFieldRangesVarLen(
+/**
+ * Returns the byte ranges of all variable size fields.
+ */
+function readVariableOffsets(
   data: Uint8Array,
   start: number,
   end: number,
   fixedEnd: number,
   variableOffsetsPosition: number[]
-): BytesRange[] {
+): number[] {
   if (variableOffsetsPosition.length === 0) {
     return [];
   }
@@ -390,29 +363,30 @@ function getFieldRangesVarLen(
   }
   offsets.push(end);
 
-  const fieldRangesVarLen: BytesRange[] = [];
-  for (let i = 0; i < offsets.length; i++) {
-    fieldRangesVarLen.push({start: offsets[i], end: offsets[i + 1]});
-  }
-
-  return fieldRangesVarLen;
+  return offsets;
 }
 
+/**
+ * Precompute fixed and variable offsets position for faster deserialization.
+ * @returns Does a single pass over all fields and returns:
+ * - isFixedLen: If field index [i] is fixed length
+ * - fieldRangesFixedLen: For fields with fixed length, their range of bytes
+ * - variableOffsetsPosition: Position of the 4 bytes offset for variable size fields
+ * - fixedEnd: End of the fixed size range
+ * -
+ */
 function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
   isFixedLen: boolean[];
   fieldRangesFixedLen: BytesRange[];
   variableOffsetsPosition: number[];
   fixedEnd: number;
-  fixedSize: number | null;
 } {
   const isFixedLen: boolean[] = [];
   const fieldRangesFixedLen: BytesRange[] = [];
   const variableOffsetsPosition: number[] = [];
   let pointerFixed = 0;
 
-  const fieldsEntries = Array.from(Object.entries(fields));
-  for (let i = 0; i < fieldsEntries.length; i++) {
-    const [, fieldType] = fieldsEntries[i];
+  for (const fieldType of Object.values(fields)) {
     isFixedLen.push(fieldType.fixedSize !== null);
     if (fieldType.fixedSize === null) {
       // Variable length
@@ -429,6 +403,33 @@ function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
     fieldRangesFixedLen,
     variableOffsetsPosition,
     fixedEnd: pointerFixed,
-    fixedSize: variableOffsetsPosition.length === 0 ? pointerFixed : null,
   };
+}
+
+/**
+ * Precompute sizes of the Container doing one pass over fields
+ */
+function precomputeSizes(fields: Record<string, Type<unknown>>): {
+  minLen: number;
+  maxLen: number;
+  fixedSize: number | null;
+} {
+  let minLen = 0;
+  let maxLen = 0;
+  let fixedSize: number | null = 0;
+
+  for (const fieldType of Object.values(fields)) {
+    minLen += fieldType.minSize;
+    maxLen += fieldType.maxSize;
+
+    if (fieldType.fixedSize === null) {
+      // +4 for the offset
+      minLen += 4;
+      maxLen += 4;
+      fixedSize = null;
+    } else if (fixedSize !== null) {
+      fixedSize += fieldType.fixedSize;
+    }
+  }
+  return {minLen, maxLen, fixedSize};
 }

@@ -19,14 +19,14 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return this.value_serializedSize((node as BranchNodeStruct<ValueOfFields<Fields>>).value);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const value = this.value_deserializeFromBytes(data, start, end);
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
-  }
-
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const {value} = node as BranchNodeStruct<ValueOfFields<Fields>>;
     return this.value_serializeToBytes(output, offset, value);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    const value = this.value_deserializeFromBytes(data, start, end);
+    return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
   // Overwrites for fast conversion node <-> value

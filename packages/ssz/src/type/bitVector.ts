@@ -99,29 +99,29 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
     return this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
-    this.assertValidLength(data, start, end);
-    return new BitArray(data.slice(start, end), this.lengthBits);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
     output.set(value.uint8Array, offset);
     return offset + this.fixedSize;
+  }
+
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
+    this.assertValidLength(data, start, end);
+    return new BitArray(data.slice(start, end), this.lengthBits);
   }
 
   tree_serializedSize(): number {
     return this.fixedSize;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    this.assertValidLength(data, start, end);
-    return packedRootsBytesToNode(this.depth, data, start, end);
-  }
-
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
     packedNodeRootsToBytes(output, offset, this.fixedSize, nodes);
     return offset + this.fixedSize;
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    this.assertValidLength(data, start, end);
+    return packedRootsBytesToNode(this.depth, data, start, end);
   }
 
   tree_getLength(node: Node): number {

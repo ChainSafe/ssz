@@ -39,30 +39,6 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
   }
 }
 
-export function value_deserializeFromBytesArrayComposite<
-  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>
->(
-  elementType: ElementType,
-  data: Uint8Array,
-  start: number,
-  end: number,
-  arrayProps: ArrayProps
-): ValueOf<ElementType>[] {
-  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
-  offsets.push(end);
-
-  const values: ValueOf<ElementType>[] = [];
-
-  // offests include the last element end
-  for (let i = 0; i < offsets.length - 1; i++) {
-    const startEl = offsets[i];
-    const endEl = offsets[i + 1];
-    values.push(elementType.value_deserializeFromBytes(data, startEl, endEl));
-  }
-
-  return values;
-}
-
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
@@ -95,6 +71,30 @@ export function value_serializeToBytesArrayComposite<ElementType extends Composi
   }
 }
 
+export function value_deserializeFromBytesArrayComposite<
+  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>
+>(
+  elementType: ElementType,
+  data: Uint8Array,
+  start: number,
+  end: number,
+  arrayProps: ArrayProps
+): ValueOf<ElementType>[] {
+  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  offsets.push(end);
+
+  const values: ValueOf<ElementType>[] = [];
+
+  // offests include the last element end
+  for (let i = 0; i < offsets.length - 1; i++) {
+    const startEl = offsets[i];
+    const endEl = offsets[i + 1];
+    values.push(elementType.value_deserializeFromBytes(data, startEl, endEl));
+  }
+
+  return values;
+}
+
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
@@ -118,38 +118,6 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
   // Fixed length
   else {
     return length * elementType.fixedSize;
-  }
-}
-
-export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
-  elementType: ElementType,
-  chunkDepth: number,
-  data: Uint8Array,
-  start: number,
-  end: number,
-  arrayProps: ArrayProps
-): Node {
-  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
-  const length = offsets.length;
-  offsets.push(end);
-
-  const nodes: Node[] = [];
-
-  // offests include the last element end
-  for (let i = 0; i < offsets.length - 1; i++) {
-    const startEl = offsets[i];
-    const endEl = offsets[i + 1];
-    nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl));
-  }
-
-  // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const chunksNode = subtreeFillToContents(nodes, chunkDepth);
-
-  // TODO: Add LeafNode.fromUint()
-  if (arrayProps.limit) {
-    return addLengthNode(chunksNode, length);
-  } else {
-    return chunksNode;
   }
 }
 
@@ -187,6 +155,38 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
       index = elementType.tree_serializeToBytes(output, index, nodes[i]);
     }
     return index;
+  }
+}
+
+export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
+  elementType: ElementType,
+  chunkDepth: number,
+  data: Uint8Array,
+  start: number,
+  end: number,
+  arrayProps: ArrayProps
+): Node {
+  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  const length = offsets.length;
+  offsets.push(end);
+
+  const nodes: Node[] = [];
+
+  // offests include the last element end
+  for (let i = 0; i < offsets.length - 1; i++) {
+    const startEl = offsets[i];
+    const endEl = offsets[i + 1];
+    nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl));
+  }
+
+  // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
+  const chunksNode = subtreeFillToContents(nodes, chunkDepth);
+
+  // TODO: Add LeafNode.fromUint()
+  if (arrayProps.limit) {
+    return addLengthNode(chunksNode, length);
+  } else {
+    return chunksNode;
   }
 }
 

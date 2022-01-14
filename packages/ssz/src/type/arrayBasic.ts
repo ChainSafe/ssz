@@ -58,6 +58,23 @@ export type ArrayProps = {
   limit?: number;
 };
 
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+export function value_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
+  elementType: ElementType,
+  length: number,
+  output: Uint8Array,
+  offset: number,
+  value: ValueOf<ElementType>[]
+): number {
+  const elSize = elementType.byteLength;
+  for (let i = 0; i < length; i++) {
+    elementType.value_serializeToBytes(output, offset + i * elSize, value[i]);
+  }
+  return offset + length * elSize;
+}
+
 export function value_deserializeFromBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   data: Uint8Array,
@@ -85,18 +102,21 @@ export function value_deserializeFromBytesArrayBasic<ElementType extends BasicTy
 /**
  * @param length In List length = value.length, Vector length = fixed value
  */
-export function value_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
+export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   length: number,
+  depth: number,
   output: Uint8Array,
   offset: number,
-  value: ValueOf<ElementType>[]
+  node: Node
 ): number {
-  const elSize = elementType.byteLength;
-  for (let i = 0; i < length; i++) {
-    elementType.value_serializeToBytes(output, offset + i * elSize, value[i]);
-  }
-  return offset + length * elSize;
+  const size = elementType.byteLength * length;
+  const chunkCount = Math.ceil(size / 32);
+
+  const nodes = getNodesAtDepth(node, depth, 0, chunkCount);
+  packedNodeRootsToBytes(output, offset, size, nodes);
+
+  return offset + size;
 }
 
 // List of basic elements will pack them in merkelized form
@@ -120,26 +140,6 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   } else {
     return chunksNode;
   }
-}
-
-/**
- * @param length In List length = value.length, Vector length = fixed value
- */
-export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
-  elementType: ElementType,
-  length: number,
-  depth: number,
-  output: Uint8Array,
-  offset: number,
-  node: Node
-): number {
-  const size = elementType.byteLength * length;
-  const chunkCount = Math.ceil(size / 32);
-
-  const nodes = getNodesAtDepth(node, depth, 0, chunkCount);
-  packedNodeRootsToBytes(output, offset, size, nodes);
-
-  return offset + size;
 }
 
 /**

@@ -85,16 +85,12 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     return value.length * this.elementType.byteLength;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
-    return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return tree_deserializeFromBytesArrayBasic(this.elementType, this.chunkDepth, data, start, end, this);
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
   tree_serializedSize(node: Node): number {
@@ -105,6 +101,10 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     const chunksNode = this.tree_getChunksNode(node);
     const length = this.tree_getLength(node);
     return tree_serializeToBytesArrayBasic(this.elementType, length, this.chunkDepth, output, offset, chunksNode);
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    return tree_deserializeFromBytesArrayBasic(this.elementType, this.chunkDepth, data, start, end, this);
   }
 
   // Helpers for TreeView

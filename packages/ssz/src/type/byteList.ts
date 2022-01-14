@@ -67,23 +67,18 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
     return value.length;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteList {
-    // TODO: Validate length
-    return data.slice(start, end);
-  }
-
   value_serializeToBytes(output: Uint8Array, offset: number, value: ByteList): number {
     output.set(value, offset);
     return offset + value.length;
   }
 
-  tree_serializedSize(node: Node): number {
-    return getLengthFromRootNode(node);
+  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteList {
+    // TODO: Validate length
+    return data.slice(start, end);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const chunksNode = packedRootsBytesToNode(this.chunkDepth, data, start, end);
-    return addLengthNode(chunksNode, end - start);
+  tree_serializedSize(node: Node): number {
+    return getLengthFromRootNode(node);
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
@@ -93,6 +88,11 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
     const nodes = getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkLen);
     packedNodeRootsToBytes(output, offset, byteLen, nodes);
     return offset + byteLen;
+  }
+
+  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+    const chunksNode = packedRootsBytesToNode(this.chunkDepth, data, start, end);
+    return addLengthNode(chunksNode, end - start);
   }
 
   // Merkleization

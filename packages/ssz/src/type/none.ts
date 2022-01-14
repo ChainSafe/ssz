@@ -17,20 +17,20 @@ export class NoneType extends BasicType<null> {
 
   // bytes serdes
 
+  value_serializeToBytes(output: Uint8Array, offset: number, value: null): number {
+    return offset;
+  }
+
   value_deserializeFromBytes(data: Uint8Array, start: number): null {
     return null;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: null): number {
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     return offset;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
     return zeroNode(0);
-  }
-
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    return offset;
   }
 
   // Fast tree opts
