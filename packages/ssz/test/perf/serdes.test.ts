@@ -9,10 +9,12 @@ import {
   TreeView,
   TreeViewDU,
   BitArray,
+  UintNumberType,
 } from "../../src";
 
 describe("SSZ (de)serialize", () => {
   const Gwei = new UintBigintType(8);
+  const uint64 = new UintNumberType(8);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   runTestCase("Simple object", new ContainerType({a: Gwei, b: Gwei, c: Gwei}));
@@ -25,6 +27,10 @@ describe("SSZ (de)serialize", () => {
   for (const arrLen of [1e3, 1e4, 1e5]) {
     runTestCase(`List(BigInt) ${arrLen}`, new ListBasicType(Gwei, arrLen), () =>
       Array.from({length: arrLen}, () => BigInt(31217089836))
+    );
+
+    runTestCase(`List(Number) ${arrLen}`, new ListBasicType(uint64, arrLen), () =>
+      Array.from({length: arrLen}, () => 31217089836)
     );
   }
 
