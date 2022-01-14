@@ -30,11 +30,14 @@ import {ACTIVE_PRESET} from "../lodestarTypes/params";
 type Types = Record<string, Type<any>>;
 
 const extraTypes = {
-  Eth1Block: new ContainerType({
-    timestamp: ssz.Number64,
-    depositRoot: ssz.Root,
-    depositCount: ssz.Number64,
-  }),
+  Eth1Block: new ContainerType(
+    {
+      timestamp: ssz.Number64,
+      depositRoot: ssz.Root,
+      depositCount: ssz.Number64,
+    },
+    {jsonCase: "snake"}
+  ),
 };
 
 export function sszStatic(fork: ForkName): void {
@@ -51,6 +54,23 @@ export function sszStatic(fork: ForkName): void {
 
     testStatic(typeName, type, fork, ACTIVE_PRESET);
   }
+}
+
+// RUN_ONLY_FAILED_TEST mode:
+// - Runs spec tests until 1 test fails. Then it persists its name
+// - On the next run of the command it will solo that test such that's easily debuggable
+// - Once that tests pass it will remove the flag file and allow to run all tests again in the next run
+const failedTestFilepath = "failedTest.txt";
+const failedTestExists = fs.existsSync(failedTestFilepath);
+const failedTestStr = failedTestExists ? fs.readFileSync(failedTestFilepath, "utf8") : "";
+if (failedTestExists) {
+  console.log("failedTestStr", failedTestStr);
+}
+
+const {RUN_ONLY_FAILED_TEST} = process.env;
+if (RUN_ONLY_FAILED_TEST) {
+  process.env.ONLY_CASE = failedTestStr.split(":")[0];
+  process.env.ONLY_ID = failedTestStr.split(":")[1] ?? "";
 }
 
 function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName, preset: string): void {
@@ -73,8 +93,20 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
         }
 
         it(testId, () => {
-          const testData = parseSszStaticTestcase(path.join(caseDir, testId));
-          runValidSszTest(sszTypeNoUint, testData);
+          try {
+            const testData = parseSszStaticTestcase(path.join(caseDir, testId));
+            runValidSszTest(sszTypeNoUint, testData);
+
+            if (RUN_ONLY_FAILED_TEST && failedTestExists) {
+              fs.unlinkSync(failedTestFilepath);
+            }
+          } catch (e) {
+            if (RUN_ONLY_FAILED_TEST && !failedTestExists) {
+              fs.writeFileSync(failedTestFilepath, `${caseId}:${testId}`);
+              process.exit(666);
+            }
+            throw e;
+          }
         });
       }
     });

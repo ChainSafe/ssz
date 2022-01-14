@@ -173,8 +173,8 @@ export const HistoricalStateRoots = new VectorCompositeType(Root, SLOTS_PER_HIST
 
 export const HistoricalBatch = new ContainerType(
   {
-    blockRoots: Root,
-    stateRoots: Root,
+    blockRoots: HistoricalBlockRoots,
+    stateRoots: HistoricalStateRoots,
   },
   {casingMap: phase0Ssz.HistoricalBatch.opts?.casingMap}
 );

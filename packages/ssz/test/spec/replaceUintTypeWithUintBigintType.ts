@@ -4,7 +4,16 @@
 // #######################################
 // # MUST NOT IMPORT FROM @chainsafe/ssz #
 // #######################################
-import {Type, UintNumberType, UintBigintType, ContainerType, ListBasicType, VectorBasicType} from "../../src";
+import {
+  Type,
+  UintNumberType,
+  UintBigintType,
+  ContainerType,
+  ListBasicType,
+  ListCompositeType,
+  VectorBasicType,
+  VectorCompositeType,
+} from "../../src";
 
 /**
  * Transform the type to something that is safe to deserialize
@@ -29,9 +38,14 @@ export function replaceUintTypeWithUintBigintType<T extends Type<any>>(type: T):
   if (type instanceof ListBasicType) {
     return new ListBasicType(replaceUintTypeWithUintBigintType(type.elementType), type.limit) as unknown as T;
   }
-
   if (type instanceof VectorBasicType) {
     return new VectorBasicType(replaceUintTypeWithUintBigintType(type.elementType), type.length) as unknown as T;
+  }
+  if (type instanceof ListCompositeType) {
+    return new ListCompositeType(replaceUintTypeWithUintBigintType(type.elementType), type.limit) as unknown as T;
+  }
+  if (type instanceof VectorCompositeType) {
+    return new VectorCompositeType(replaceUintTypeWithUintBigintType(type.elementType), type.length) as unknown as T;
   }
 
   return type;
