@@ -6,7 +6,7 @@ import {toHexString} from "../../src";
 
 /* eslint-disable quotes */
 
-describe("JSON loader", () => {
+describe("Spec test YAML loader", () => {
   it("Load YAML string number", () => {
     expect(jsyaml.load('num: "1234"')).to.deep.equal({num: "1234"});
   });
@@ -28,15 +28,13 @@ describe("JSON loader", () => {
 
   it("fromJson case", () => {
     const rootHex = toHexString(Buffer.alloc(32, 0xaa));
-    BeaconBlockHeader.fromJson(
-      {
-        slot: 1,
-        proposer_index: 1,
-        parent_root: rootHex,
-        state_root: rootHex,
-        body_root: rootHex,
-      },
-      {case: "snake"}
-    );
+    const value = BeaconBlockHeader.fromJson({
+      slot: 1,
+      proposer_index: 1,
+      parent_root: rootHex,
+      state_root: rootHex,
+      body_root: rootHex,
+    });
+    expect(Object.keys(value)).to.deep.equal(["slot", "proposerIndex", "parentRoot", "stateRoot", "bodyRoot"]);
   });
 });

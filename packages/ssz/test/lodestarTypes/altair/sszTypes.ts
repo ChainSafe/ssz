@@ -228,6 +228,8 @@ export const BeaconState = new ContainerType(
   {
     casingMap: {
       ...phase0Ssz.BeaconState.opts?.casingMap,
+      previousEpochParticipation: "previous_epoch_participation",
+      currentEpochParticipation: "current_epoch_participation",
       inactivityScores: "inactivity_scores",
       currentSyncCommittee: "current_sync_committee",
       nextSyncCommittee: "next_sync_committee",

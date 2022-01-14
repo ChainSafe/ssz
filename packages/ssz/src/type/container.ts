@@ -455,7 +455,7 @@ function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
     if (keyFromCaseMap === undefined) {
       throw Error(`casingMap[${fieldName}] not defined`);
     }
-    return keyFromCaseMap;
+    return keyFromCaseMap as string;
   } else if (jsonCase) {
     return Case[jsonCase](fieldName as string);
   } else {
