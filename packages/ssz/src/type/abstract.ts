@@ -124,12 +124,6 @@ export abstract class Type<V> {
 
   abstract hashTreeRoot(value: V): Uint8Array;
 
-  equals(value1: V, value2: V): boolean {
-    value1;
-    value2;
-    throw Error("Not implemented");
-  }
-
   // JSON support
 
   abstract fromJson(json: unknown): V;

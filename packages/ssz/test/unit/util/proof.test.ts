@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import {ArrayObject, SimpleObject} from "../testTypes";
 
-describe("create proof", () => {
+// TODO: @wemeetagain
+describe.skip("create proof", () => {
   it("should include all leaves of path to composite type", () => {
     const arrayObj = ArrayObject.toView(ArrayObject.defaultValue);
     const simpleObj = SimpleObject.toView(SimpleObject.defaultValue);

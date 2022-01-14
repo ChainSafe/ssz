@@ -14,7 +14,8 @@ const ArrayObject = new ContainerType({
   v: new ListCompositeType(SimpleObject, 100),
 });
 
-describe("error path", () => {
+// ErrorPath functionality is disabled
+describe.skip("error path", () => {
   const testCases: {
     value: string;
     type: Type<any>;

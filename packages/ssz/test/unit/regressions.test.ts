@@ -54,7 +54,7 @@ describe("Regressions / known issues", () => {
     const CommitteeBitsVector2 = new BitVectorType(33);
     // all bits after length should be 0 so this should throw error
     expect(() => CommitteeBitsVector2.deserializeToViewDU(invalidBytes)).to.throw(
-      "Invalid deserialized bitvector length"
+      "BitVector: nonzero bits past length"
     );
   });
 

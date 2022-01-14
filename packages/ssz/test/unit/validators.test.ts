@@ -38,7 +38,8 @@ describe("Container with BranchNodeStruct", function () {
       getExitEpoch: (treeBacked) => treeBacked.exitEpoch,
       getPubkey: (treeBacked) => toHexString(treeBacked.pubkey),
       hashTreeRoot: (treeBacked) => treeBacked.hashTreeRoot(),
-      getProof: (treeBacked) => treeBacked.createProof([["exitEpoch"]]),
+      // TODO: @wemeetagain
+      // getProof: (treeBacked) => treeBacked.createProof([["exitEpoch"]]),
       serialize: (treeBacked) => treeBacked.serialize(),
     };
 
