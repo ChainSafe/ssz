@@ -50,9 +50,9 @@ const executionPayloadFields = {
 
 const executionPayloadCasingMap = {
   parentHash: "parent_hash",
-  feeRecipient: "fee_recipient",
+  coinbase: "coinbase",
   stateRoot: "state_root",
-  receiptsRoot: "receipts_root",
+  receiptRoot: "receipt_root",
   logsBloom: "logs_bloom",
   random: "random",
   blockNumber: "block_number",

@@ -63,7 +63,7 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
       continue;
     }
 
-    describe(`${preset}/${forkName}/ssz_static/${typeName}/${caseName}`, () => {
+    describe(caseId, () => {
       const sszTypeNoUint = replaceUintTypeWithUintBigintType(sszType);
       const caseDir = path.join(typeDir, caseName);
       for (const testId of fs.readdirSync(caseDir)) {
