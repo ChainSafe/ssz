@@ -18,7 +18,13 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     typeof testData.serialized === "string" ? testData.serialized : toHexString(testData.serialized);
 
   if (process.env.RENDER_JSON_RAW) {
-    console.log(JSON.stringify(testData.jsonValue, null, 2));
+    console.log(
+      JSON.stringify(
+        testData.jsonValue,
+        (key, value: unknown) => (typeof value === "bigint" ? value.toString() : value),
+        2
+      )
+    );
   }
 
   if (process.env.RENDER_SERIALIZED) {

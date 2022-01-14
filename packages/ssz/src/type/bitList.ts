@@ -154,7 +154,12 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
 type BitArrayDeserialized = {uint8Array: Uint8Array; bitLen: number};
 
 function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number): BitArrayDeserialized {
+  if (end > data.length) {
+    throw Error(`BitList attempting to read byte ${end} of data length ${data.length}`);
+  }
+
   const lastByte = data[end - 1];
+  const size = end - start;
 
   if (lastByte === 0) {
     throw new Error("Invalid deserialized bitlist, padding bit required");
@@ -162,7 +167,7 @@ function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, 
 
   if (lastByte === 1) {
     const uint8Array = data.slice(start, end - 1);
-    const bitLen = (end - start - 1) * 8;
+    const bitLen = (size - 1) * 8;
     return {uint8Array, bitLen};
   }
 
@@ -170,9 +175,9 @@ function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, 
   const uint8Array = data.slice(start, end);
   // mask lastChunkByte
   const lastByteBitLength = lastByte.toString(2).length - 1;
-  const bitLen = (end - start - 1) * 8 + lastByteBitLength;
+  const bitLen = (size - 1) * 8 + lastByteBitLength;
   const mask = 0xff >> (8 - lastByteBitLength);
-  uint8Array[end - start - 1] &= mask;
+  uint8Array[size - 1] &= mask;
   return {uint8Array, bitLen};
 }
 

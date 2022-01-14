@@ -80,14 +80,14 @@ export function value_deserializeFromBytesArrayComposite<
 ): ValueOf<ElementType>[] {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
-  offsets.push(end);
+  offsets.push(end - start); // The offsets are relative to the start
 
   const values: ValueOf<ElementType>[] = [];
 
   // offests include the last element end
   for (let i = 0; i < length; i++) {
-    const startEl = offsets[i];
-    const endEl = offsets[i + 1];
+    const startEl = start + offsets[i];
+    const endEl = start + offsets[i + 1];
     values.push(elementType.value_deserializeFromBytes(data, startEl, endEl));
   }
 
@@ -166,14 +166,14 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 ): Node {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
-  offsets.push(end);
+  offsets.push(end - start); // The offsets are relative to the start
 
   const nodes: Node[] = [];
 
   // offests include the last element end
   for (let i = 0; i < length; i++) {
-    const startEl = offsets[i];
-    const endEl = offsets[i + 1];
+    const startEl = start + offsets[i];
+    const endEl = start + offsets[i + 1];
     nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl));
   }
 

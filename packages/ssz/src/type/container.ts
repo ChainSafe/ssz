@@ -1,7 +1,6 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
-import {SszErrorPath} from "../util/errorPath";
 import {Type, ValueOf} from "./abstract";
 import {CompositeType} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
@@ -171,23 +170,16 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
     const fieldRanges = this.getFieldRanges(data, start, end);
-    const value = {} as ValueOfFields<Fields>;
+    const value = {} as {[K in keyof Fields]: unknown};
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
-      try {
-        value[fieldName] = fieldType.value_deserializeFromBytes(
-          data,
-          start + fieldRange.start,
-          start + fieldRange.end
-        ) as ValueOf<Fields[keyof Fields]>;
-      } catch (e) {
-        throw new SszErrorPath(e as Error, fieldName as string);
-      }
+      // TODO: Consider adding SszErrorPath back but preserving the original stack-traces
+      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
     }
 
-    return value;
+    return value as ValueOfFields<Fields>;
   }
 
   tree_serializedSize(node: Node): number {
@@ -306,7 +298,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
     // Read offsets in one pass
     const offsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
-    offsets.push(end);
+    offsets.push(end - start); // The offsets are relative to the start
 
     // Merge fieldRangesFixedLen + offsets in one array
     let variableIdx = 0;
