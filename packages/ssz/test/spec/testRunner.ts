@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import {uncompress} from "snappyjs";
 import jsyaml from "js-yaml";
-import {schema} from "@chainsafe/lodestar-utils/lib/yaml/schema";
+import {schema} from "./sszYamlSchema";
 
 /* eslint-disable
   @typescript-eslint/explicit-module-boundary-types,
