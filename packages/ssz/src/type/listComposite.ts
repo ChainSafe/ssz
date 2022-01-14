@@ -1,7 +1,7 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {mixInLength} from "../util/merkleize";
-import {ValueOf, JsonOptions} from "./abstract";
+import {ValueOf} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {getLengthFromRootNode, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
@@ -155,11 +155,11 @@ export class ListCompositeType<
 
   // JSON
 
-  fromJson(json: unknown, opts?: JsonOptions): ValueOf<ElementType>[] {
-    return value_fromJsonArray(this.elementType, json, undefined, opts);
+  fromJson(json: unknown): ValueOf<ElementType>[] {
+    return value_fromJsonArray(this.elementType, json, undefined);
   }
 
-  toJson(value: ValueOf<ElementType>[], opts?: JsonOptions): unknown {
-    return value_toJsonArray(this.elementType, value, undefined, opts);
+  toJson(value: ValueOf<ElementType>[]): unknown {
+    return value_toJsonArray(this.elementType, value, undefined);
   }
 }

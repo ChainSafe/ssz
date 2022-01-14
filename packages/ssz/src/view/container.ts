@@ -2,13 +2,19 @@ import {getNodeAtDepth, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle
 import {BasicType, Type, ValueOf} from "../type/abstract";
 import {CompositeType, TreeView} from "../type/composite";
 
+export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
+  fieldName: keyof Fields;
+  fieldType: Fields[keyof Fields];
+  jsonKey: string;
+};
+
 export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
   unknown
 > & {
   readonly fields: Fields;
-  readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
+  readonly fieldsEntries: FieldEntry<Fields>[];
 };
 
 export type ValueOfFields<Fields extends Record<string, Type<unknown>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};

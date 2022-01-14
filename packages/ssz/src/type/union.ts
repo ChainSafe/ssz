@@ -1,5 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {JsonOptions, Type} from "./abstract";
+import {Type} from "./abstract";
 import {CompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 import {NoneType} from "./none";
@@ -152,7 +152,7 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
 
   // JSON
 
-  fromJson(json: unknown, opts?: JsonOptions): ValueOfTypes<Types> {
+  fromJson(json: unknown): ValueOfTypes<Types> {
     if (typeof json !== "object") {
       throw new Error("JSON must be of type object");
     }
@@ -169,14 +169,14 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
 
     return {
       selector: union.selector,
-      value: type.toJson(union.value, opts),
+      value: type.toJson(union.value),
     } as ValueOfTypes<Types>;
   }
 
-  toJson(value: ValueOfTypes<Types>, opts?: JsonOptions): Record<string, unknown> {
+  toJson(value: ValueOfTypes<Types>): Record<string, unknown> {
     return {
       selector: value.selector,
-      value: this.types[value.selector].toJson(value.value, opts),
+      value: this.types[value.selector].toJson(value.value),
     };
   }
 }

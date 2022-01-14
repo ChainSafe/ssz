@@ -1,11 +1,11 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
+import Case from "case";
 import {maxChunksToDepth} from "../util/tree";
 import {SszErrorPath} from "../util/errorPath";
-import {toExpectedCase} from "../util/json";
-import {JsonOptions, Type, ValueOf} from "./abstract";
+import {Type, ValueOf} from "./abstract";
 import {CompositeType} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
-import {ValueOfFields, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
+import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
 import {
   getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
@@ -16,15 +16,24 @@ import {
 
 type BytesRange = {start: number; end: number};
 
-export type ContainerOptions<Fields extends Record<string, unknown>> = JsonOptions<
-  keyof Fields extends string ? keyof Fields : string
-> & {
+export type ContainerOptions<Fields extends Record<string, unknown>> = {
   typeName?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsonCase?: KeyCase;
+  casingMap?: CasingMap<Fields>;
   cachePermanentRootStruct?: boolean;
   getContainerTreeViewClass?: typeof getContainerTreeViewClass;
   getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
 };
+
+type KeyCase =
+  | "snake"
+  | "constant"
+  | "camel"
+  | "header"
+  //Same as squish
+  | "pascal";
+
+type CasingMap<Fields extends Record<string, unknown>> = {[K in keyof Fields]: string};
 
 export class ContainerType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
   ValueOfFields<Fields>,
@@ -39,8 +48,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   readonly minSize: number;
   readonly maxSize: number;
 
-  // Precalculated data for faster serdes
-  readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
+  // Precomputed data for faster serdes
+  readonly fieldsEntries: FieldEntry<Fields>[];
   protected readonly isFixedLen: boolean[];
   protected readonly fieldRangesFixedLen: BytesRange[];
   /** Offsets position relative to start of serialized Container. Length may not equal field count. */
@@ -67,7 +76,11 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     // Precalculated data for faster serdes
     this.fieldsEntries = [];
     for (const fieldName of Object.keys(fields) as (keyof Fields)[]) {
-      this.fieldsEntries.push({fieldName, fieldType: this.fields[fieldName]});
+      this.fieldsEntries.push({
+        fieldName,
+        fieldType: this.fields[fieldName],
+        jsonKey: precomputeJsonKey(fieldName, opts?.casingMap, opts?.jsonCase),
+      });
     }
 
     const {minLen, maxLen, fixedSize} = precomputeSizes(fields);
@@ -241,7 +254,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // JSON
 
-  fromJson(json: unknown, opts?: JsonOptions): ValueOfFields<Fields> {
+  fromJson(json: unknown): ValueOfFields<Fields> {
     if (typeof json !== "object") {
       throw Error("JSON must be of type object");
     }
@@ -249,33 +262,26 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       throw Error("JSON must not be null");
     }
 
-    const keyCase = this.opts?.case ?? opts?.case;
-    const casingMap = this.opts?.casingMap ?? opts?.casingMap;
     const value = {} as ValueOfFields<Fields>;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
-
-      const jsonKey = toExpectedCase(fieldName as string, keyCase, casingMap);
+      const {fieldName, fieldType, jsonKey} = this.fieldsEntries[i];
       const jsonValue = (json as Record<string, unknown>)[jsonKey];
       if (jsonValue === undefined) {
         throw Error(`JSON expected key ${jsonKey} is undefined`);
       }
-      value[fieldName] = fieldType.fromJson(jsonValue, opts) as ValueOf<Fields[keyof Fields]>;
+      value[fieldName] = fieldType.fromJson(jsonValue) as ValueOf<Fields[keyof Fields]>;
     }
 
     return value;
   }
 
-  toJson(value: ValueOfFields<Fields>, opts?: JsonOptions): Record<string, unknown> {
-    const keyCase = this.opts?.case ?? opts?.case;
-    const casingMap = this.opts?.casingMap ?? opts?.casingMap;
+  toJson(value: ValueOfFields<Fields>): Record<string, unknown> {
     const json: Record<string, unknown> = {};
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
-      const jsonKey = toExpectedCase(fieldName as string, keyCase, casingMap);
-      json[jsonKey] = fieldType.toJson(value[fieldName], opts);
+      const {fieldName, fieldType, jsonKey} = this.fieldsEntries[i];
+      json[jsonKey] = fieldType.toJson(value[fieldName]);
     }
 
     return json;
@@ -433,4 +439,25 @@ function precomputeSizes(fields: Record<string, Type<unknown>>): {
     }
   }
   return {minLen, maxLen, fixedSize};
+}
+
+/**
+ * Compute the JSON key for each fieldName. There will exist a single JSON representation for each type.
+ * To transform JSON payloads to a casing that is different from the type's defined use external tooling.
+ */
+function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
+  fieldName: keyof Fields,
+  casingMap?: CasingMap<Fields>,
+  jsonCase?: KeyCase
+): string {
+  if (casingMap) {
+    if (!casingMap[fieldName]) {
+      throw Error(`casingMap[${fieldName}] not defined`);
+    }
+    return casingMap[fieldName];
+  } else if (jsonCase) {
+    return Case[jsonCase](fieldName as string);
+  } else {
+    return fieldName as string;
+  }
 }
