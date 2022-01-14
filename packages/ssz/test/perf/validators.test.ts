@@ -41,7 +41,7 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
       serialize: (tb) => tb.serialize(),
       set_exitEpoch_and_hashTreeRoot: (tb) => {
         tb.exitEpoch = 6435;
-        tb.createProof([["exitEpoch"]]);
+        tb.hashTreeRoot();
       },
     };
 
