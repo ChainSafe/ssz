@@ -18,9 +18,9 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   // Immutable characteristics
   readonly depth: number;
   readonly chunkDepth: number;
-  readonly fixedLen: number;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number;
+  readonly minSize: number;
+  readonly maxSize: number;
   protected readonly maxChunkCount: number;
 
   constructor(readonly lengthBytes: number) {
@@ -30,13 +30,13 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
     this.maxChunkCount = Math.ceil(this.lengthBytes / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;
-    this.fixedLen = this.lengthBytes;
-    this.minLen = this.fixedLen;
-    this.maxLen = this.fixedLen;
+    this.fixedSize = this.lengthBytes;
+    this.minSize = this.fixedSize;
+    this.maxSize = this.fixedSize;
   }
 
   get defaultValue(): ByteVector {
-    return new Uint8Array(this.fixedLen);
+    return new Uint8Array(this.fixedSize);
   }
 
   getView(tree: Tree): ByteVector {
@@ -63,7 +63,7 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   // Serialization + deserialization
 
   value_serializedSize(): number {
-    return this.fixedLen;
+    return this.fixedSize;
   }
 
   value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
@@ -73,11 +73,11 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
 
   value_serializeToBytes(output: Uint8Array, offset: number, value: ByteVector): number {
     output.set(value, offset);
-    return offset + this.fixedLen;
+    return offset + this.fixedSize;
   }
 
   tree_serializedSize(): number {
-    return this.fixedLen;
+    return this.fixedSize;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
@@ -86,8 +86,8 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const nodes = getNodesAtDepth(node, this.chunkDepth, 0, this.maxChunkCount);
-    packedNodeRootsToBytes(output, offset, this.fixedLen, nodes);
-    return offset + this.fixedLen;
+    packedNodeRootsToBytes(output, offset, this.fixedSize, nodes);
+    return offset + this.fixedSize;
   }
 
   // Merkleization

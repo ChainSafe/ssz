@@ -38,9 +38,9 @@ export class VectorCompositeType<
   readonly depth: number;
   readonly chunkDepth: number;
   readonly maxChunkCount: number;
-  readonly fixedLen: number | null;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number | null;
+  readonly minSize: number;
+  readonly maxSize: number;
 
   constructor(readonly elementType: ElementType, readonly length: number) {
     super();
@@ -56,9 +56,9 @@ export class VectorCompositeType<
     this.maxChunkCount = length;
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;
-    this.fixedLen = elementType.fixedLen === null ? null : length * elementType.fixedLen;
-    this.minLen = length * elementType.minLen;
-    this.maxLen = length * elementType.maxLen;
+    this.fixedSize = elementType.fixedSize === null ? null : length * elementType.fixedSize;
+    this.minSize = length * elementType.minSize;
+    this.maxSize = length * elementType.maxSize;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {

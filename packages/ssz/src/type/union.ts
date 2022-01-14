@@ -24,9 +24,9 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
   // Immutable characteristics
   readonly depth = 1;
   readonly maxChunkCount = 2;
-  readonly fixedLen = null;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize = null;
+  readonly minSize: number;
+  readonly maxSize: number;
 
   protected readonly maxSelector: number;
 
@@ -57,12 +57,12 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     const maxLens: number[] = [];
 
     for (const _type of types) {
-      minLens.push(_type.minLen);
-      maxLens.push(_type.maxLen);
+      minLens.push(_type.minSize);
+      maxLens.push(_type.maxSize);
     }
 
-    this.minLen = 1 + Math.min(...minLens);
-    this.maxLen = 1 + Math.min(...maxLens);
+    this.minSize = 1 + Math.min(...minLens);
+    this.maxSize = 1 + Math.min(...maxLens);
     this.maxSelector = this.types.length - 1;
   }
 

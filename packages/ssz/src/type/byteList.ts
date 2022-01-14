@@ -20,9 +20,9 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
   // Immutable characteristics
   readonly depth: number;
   readonly chunkDepth: number;
-  readonly fixedLen = null;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize = null;
+  readonly minSize: number;
+  readonly maxSize: number;
   protected readonly maxChunkCount: number;
 
   constructor(readonly limitBytes: number) {
@@ -32,8 +32,8 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
     this.maxChunkCount = Math.ceil(this.limitBytes / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = 1 + this.chunkDepth;
-    this.minLen = 0;
-    this.maxLen = this.limitBytes;
+    this.minSize = 0;
+    this.maxSize = this.limitBytes;
   }
 
   get defaultValue(): ByteList {

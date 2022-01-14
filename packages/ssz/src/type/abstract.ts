@@ -82,10 +82,10 @@ export abstract class Type<V> {
   abstract readonly defaultValue: V;
   abstract readonly isBasic: boolean;
   abstract readonly depth: number;
-  /** if fixedLen === null has variable length. Otherwise is fixed len of value `fixedLen` */
-  abstract readonly fixedLen: number | null;
-  abstract readonly minLen: number;
-  abstract readonly maxLen: number;
+  /** if fixedSize === null has variable length. Otherwise is fixed size of value `fixedSize` */
+  abstract readonly fixedSize: number | null;
+  abstract readonly minSize: number;
+  abstract readonly maxSize: number;
   /** Human readable name: "List(Uint,4)", "BeaconState" */
   abstract readonly typeName: string;
 

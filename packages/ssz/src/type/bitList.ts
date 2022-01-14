@@ -36,9 +36,9 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
   // Immutable characteristics
   readonly depth: number;
   readonly chunkDepth: number;
-  readonly fixedLen = null;
-  readonly minLen = 1; // +1 for the extra padding bit
-  readonly maxLen: number;
+  readonly fixedSize = null;
+  readonly minSize = 1; // +1 for the extra padding bit
+  readonly maxSize: number;
   protected readonly maxChunkCount: number;
 
   constructor(readonly limitBits: number) {
@@ -50,7 +50,7 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     // Depth includes the extra level for the length node
     this.depth = 1 + this.chunkDepth;
-    this.maxLen = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
+    this.maxSize = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
   }
 
   get defaultValue(): BitArray {

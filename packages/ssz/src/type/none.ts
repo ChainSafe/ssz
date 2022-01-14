@@ -9,9 +9,9 @@ export class NoneType extends BasicType<null> {
   // Immutable characteristics
   readonly byteLength = 0;
   readonly itemsPerChunk = 32;
-  readonly fixedLen = 0;
-  readonly minLen = 0;
-  readonly maxLen = 0;
+  readonly fixedSize = 0;
+  readonly minSize = 0;
+  readonly maxSize = 0;
 
   readonly defaultValue = null;
 

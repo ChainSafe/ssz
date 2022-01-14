@@ -30,9 +30,9 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   readonly depth: number;
   readonly chunkDepth: number;
   readonly maxChunkCount: number;
-  readonly fixedLen: number;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number;
+  readonly minSize: number;
+  readonly maxSize: number;
 
   constructor(readonly elementType: ElementType, readonly length: number) {
     super();
@@ -50,9 +50,9 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     this.maxChunkCount = Math.ceil((this.length * elementType.byteLength) / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;
-    this.fixedLen = this.length * elementType.byteLength;
-    this.minLen = this.fixedLen;
-    this.maxLen = this.fixedLen;
+    this.fixedSize = this.length * elementType.byteLength;
+    this.minSize = this.fixedSize;
+    this.maxSize = this.fixedSize;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {
@@ -84,7 +84,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   // Serialization + deserialization
 
   value_serializedSize(): number {
-    return this.fixedLen;
+    return this.fixedSize;
   }
 
   value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
@@ -96,7 +96,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   }
 
   tree_serializedSize(): number {
-    return this.fixedLen;
+    return this.fixedSize;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
@@ -128,7 +128,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   // Merkleization
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
-    const roots = new Uint8Array(this.fixedLen);
+    const roots = new Uint8Array(this.fixedSize);
     value_serializeToBytesArrayBasic(this.elementType, this.length, roots, 0, value);
     return roots;
   }

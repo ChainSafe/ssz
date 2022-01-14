@@ -35,9 +35,9 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   // Immutable characteristics
   readonly depth: number;
   readonly maxChunkCount: number;
-  readonly fixedLen: number | null;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number | null;
+  readonly minSize: number;
+  readonly maxSize: number;
 
   // Precalculated data for faster serdes
   readonly fieldsEntries: {fieldName: keyof Fields; fieldType: Fields[keyof Fields]}[];
@@ -65,10 +65,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     this.depth = maxChunksToDepth(this.maxChunkCount);
 
     // TODO: Consider de-duplicating all the field iterations in this loops. It's only run once, may not be worth it.
-    this.fixedLen = getContainerFixedLen(fields);
+    this.fixedSize = getContainerFixedLen(fields);
     const [minLen, maxLen] = getMinMaxLengths(fields);
-    this.minLen = minLen;
-    this.maxLen = maxLen;
+    this.minSize = minLen;
+    this.maxSize = maxLen;
 
     // Precalculated data for faster serdes
     this.fieldsEntries = [];
@@ -76,12 +76,13 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       this.fieldsEntries.push({fieldName, fieldType: this.fields[fieldName]});
     }
 
-    const {isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd, fixedLen} = precomputeSerdesData(fields);
+    const {isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd, fixedSize} =
+      precomputeSerdesData(fields);
     this.isFixedLen = isFixedLen;
     this.fieldRangesFixedLen = fieldRangesFixedLen;
     this.variableOffsetsPosition = variableOffsetsPosition;
     this.fixedEnd = fixedEnd;
-    this.fixedLen = fixedLen;
+    this.fixedSize = fixedSize;
 
     // TODO: This options are necessary for ContainerNodeStruct to override this.
     // Refactor this constructor to allow customization without pollutin the options
@@ -132,7 +133,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       const {fieldName, fieldType} = this.fieldsEntries[i];
       // Offset (4 bytes) + size
       totalSize +=
-        fieldType.fixedLen === null ? 4 + fieldType.value_serializedSize(value[fieldName]) : fieldType.fixedLen;
+        fieldType.fixedSize === null ? 4 + fieldType.value_serializedSize(value[fieldName]) : fieldType.fixedSize;
     }
     return totalSize;
   }
@@ -166,7 +167,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
-      if (fieldType.fixedLen === null) {
+      if (fieldType.fixedSize === null) {
         // write offset
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
@@ -186,7 +187,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       const {fieldType} = this.fieldsEntries[i];
       const node = nodes[i];
       // Offset (4 bytes) + size
-      totalSize += fieldType.fixedLen === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedLen;
+      totalSize += fieldType.fixedSize === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedSize;
     }
     return totalSize;
   }
@@ -214,7 +215,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldType} = this.fieldsEntries[i];
       const node = nodes[i];
-      if (fieldType.fixedLen === null) {
+      if (fieldType.fixedSize === null) {
         // write offset
         fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
         fixedIndex += 4;
@@ -290,8 +291,9 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   private getFieldRanges(data: Uint8Array, start: number, end: number): BytesRange[] {
     if (this.variableOffsetsPosition.length === 0) {
       // Validate fixed length container
-      if (end - start !== this.fixedEnd) {
-        throw Error("Container size not equal fixed size");
+      const size = end - start;
+      if (size !== this.fixedEnd) {
+        throw Error(`${this.typeName} size ${size} not equal fixed size ${this.fixedEnd}`);
       }
 
       return this.fieldRangesFixedLen;
@@ -301,17 +303,17 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     const fieldRangesVarLen = getFieldRangesVarLen(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
 
     // Merge fieldRangesFixedLen + fieldRangesVarLen in one array
-    let varLenIndex = 0;
-    let fixedLenIndex = 0;
+    let variableIndex = 0;
+    let fixedIndex = 0;
     const fieldRanges: BytesRange[] = [];
 
     for (let i = 0; i < this.isFixedLen.length; i++) {
       fieldRanges.push(
         this.isFixedLen[i]
           ? // push from fixLen ranges ++
-            this.fieldRangesFixedLen[fixedLenIndex++]
+            this.fieldRangesFixedLen[fixedIndex++]
           : // push from varLen ranges ++
-            fieldRangesVarLen[varLenIndex++]
+            fieldRangesVarLen[variableIndex++]
       );
     }
     return fieldRanges;
@@ -319,15 +321,15 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 }
 
 function getContainerFixedLen(fields: Record<string, Type<unknown>>): null | number {
-  let fixedLen = 0;
+  let fixedSize = 0;
   for (const fieldType of Object.values(fields)) {
-    if (fieldType.fixedLen === null) {
+    if (fieldType.fixedSize === null) {
       return null;
     } else {
-      fixedLen += fieldType.fixedLen;
+      fixedSize += fieldType.fixedSize;
     }
   }
-  return fixedLen;
+  return fixedSize;
 }
 
 function getMinMaxLengths(fields: Record<string, Type<unknown>>): [number, number] {
@@ -335,10 +337,10 @@ function getMinMaxLengths(fields: Record<string, Type<unknown>>): [number, numbe
   let maxLen = 0;
 
   for (const fieldType of Object.values(fields)) {
-    minLen += fieldType.minLen;
-    maxLen += fieldType.maxLen;
+    minLen += fieldType.minSize;
+    maxLen += fieldType.maxSize;
 
-    if (fieldType.fixedLen === null) {
+    if (fieldType.fixedSize === null) {
       // +4 for the offset
       minLen += 4;
       maxLen += 4;
@@ -401,7 +403,7 @@ function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
   fieldRangesFixedLen: BytesRange[];
   variableOffsetsPosition: number[];
   fixedEnd: number;
-  fixedLen: number | null;
+  fixedSize: number | null;
 } {
   const isFixedLen: boolean[] = [];
   const fieldRangesFixedLen: BytesRange[] = [];
@@ -411,14 +413,14 @@ function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
   const fieldsEntries = Array.from(Object.entries(fields));
   for (let i = 0; i < fieldsEntries.length; i++) {
     const [, fieldType] = fieldsEntries[i];
-    isFixedLen.push(fieldType.fixedLen !== null);
-    if (fieldType.fixedLen === null) {
+    isFixedLen.push(fieldType.fixedSize !== null);
+    if (fieldType.fixedSize === null) {
       // Variable length
       variableOffsetsPosition.push(pointerFixed);
       pointerFixed += 4;
     } else {
-      fieldRangesFixedLen.push({start: pointerFixed, end: pointerFixed + fieldType.fixedLen});
-      pointerFixed += fieldType.fixedLen;
+      fieldRangesFixedLen.push({start: pointerFixed, end: pointerFixed + fieldType.fixedSize});
+      pointerFixed += fieldType.fixedSize;
     }
   }
 
@@ -427,6 +429,6 @@ function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
     fieldRangesFixedLen,
     variableOffsetsPosition,
     fixedEnd: pointerFixed,
-    fixedLen: variableOffsetsPosition.length === 0 ? pointerFixed : null,
+    fixedSize: variableOffsetsPosition.length === 0 ? pointerFixed : null,
   };
 }

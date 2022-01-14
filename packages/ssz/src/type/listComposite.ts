@@ -40,9 +40,9 @@ export class ListCompositeType<
   readonly depth: number;
   readonly chunkDepth: number;
   readonly maxChunkCount: number;
-  readonly fixedLen = null;
-  readonly minLen = 0;
-  readonly maxLen: number;
+  readonly fixedSize = null;
+  readonly minSize = 0;
+  readonly maxSize: number;
 
   constructor(readonly elementType: ElementType, readonly limit: number) {
     super();
@@ -56,7 +56,7 @@ export class ListCompositeType<
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     // Depth includes the extra level for the length node
     this.depth = this.chunkDepth + 1;
-    this.maxLen = this.limit * elementType.maxLen;
+    this.maxSize = this.limit * elementType.maxSize;
   }
 
   get defaultValue(): ValueOf<ElementType>[] {

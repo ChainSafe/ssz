@@ -25,7 +25,7 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
   const length = arrayProps.length ? arrayProps.length : value.length;
 
   // Variable Length
-  if (elementType.fixedLen === null) {
+  if (elementType.fixedSize === null) {
     let size = 0;
     for (let i = 0; i < length; i++) {
       size += 4 + elementType.value_serializedSize(value[i]);
@@ -35,7 +35,7 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
 
   // Fixed length
   else {
-    return length * elementType.fixedLen;
+    return length * elementType.fixedSize;
   }
 }
 
@@ -48,7 +48,7 @@ export function value_deserializeFromBytesArrayComposite<
   end: number,
   arrayProps: ArrayProps
 ): ValueOf<ElementType>[] {
-  const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
+  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
   offsets.push(end);
 
   const values: ValueOf<ElementType>[] = [];
@@ -74,7 +74,7 @@ export function value_serializeToBytesArrayComposite<ElementType extends Composi
   value: ValueOf<ElementType>[]
 ): number {
   // Variable length
-  if (elementType.fixedLen === null) {
+  if (elementType.fixedSize === null) {
     let variableIndex = offset + length * 4;
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     for (let i = 0; i < length; i++) {
@@ -89,9 +89,9 @@ export function value_serializeToBytesArrayComposite<ElementType extends Composi
   // Fixed length
   else {
     for (let i = 0; i < length; i++) {
-      elementType.value_serializeToBytes(output, offset + i * elementType.fixedLen, value[i]);
+      elementType.value_serializeToBytes(output, offset + i * elementType.fixedSize, value[i]);
     }
-    return offset + length * elementType.fixedLen;
+    return offset + length * elementType.fixedSize;
   }
 }
 
@@ -105,7 +105,7 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
   node: Node
 ): number {
   // Variable Length
-  if (elementType.fixedLen === null) {
+  if (elementType.fixedSize === null) {
     const nodes = getNodesAtDepth(node, depth, 0, length);
 
     let size = 0;
@@ -117,7 +117,7 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
 
   // Fixed length
   else {
-    return length * elementType.fixedLen;
+    return length * elementType.fixedSize;
   }
 }
 
@@ -129,7 +129,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   end: number,
   arrayProps: ArrayProps
 ): Node {
-  const offsets = getOffsetsArrayComposite(elementType.fixedLen, data, start, end, arrayProps);
+  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
   const length = offsets.length;
   offsets.push(end);
 
@@ -168,7 +168,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
-  if (elementType.fixedLen === null) {
+  if (elementType.fixedSize === null) {
     let variableIndex = offset + length * 4;
     const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
     for (let i = 0; i < nodes.length; i++) {
@@ -209,7 +209,7 @@ export function value_getRootsArrayComposite<ElementType extends CompositeType<u
 }
 
 function getOffsetsArrayComposite(
-  fixedLen: null | number,
+  fixedSize: null | number,
   data: Uint8Array,
   start: number,
   end: number,
@@ -220,22 +220,22 @@ function getOffsetsArrayComposite(
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
-  if (fixedLen === null) {
+  if (fixedSize === null) {
     offsets = getVariableOffsetsArrayComposite(data.buffer, data.byteOffset + start, end - start);
   }
 
   // Fixed length
   else {
-    if (fixedLen === 0) {
+    if (fixedSize === 0) {
       throw Error("element fixed length is 0");
     }
-    if (size % fixedLen !== 0) {
-      throw Error(`size ${size} is not multiple of element fixedLen ${fixedLen}`);
+    if (size % fixedSize !== 0) {
+      throw Error(`size ${size} is not multiple of element fixedSize ${fixedSize}`);
     }
 
-    const length = size / fixedLen;
+    const length = size / fixedSize;
     for (let i = 0; i < length; i++) {
-      offsets.push(i * fixedLen);
+      offsets.push(i * fixedSize);
     }
   }
 

@@ -34,9 +34,9 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
   // Immutable characteristics
   readonly chunkCount: number;
   readonly depth: number;
-  readonly fixedLen: number;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number;
+  readonly minSize: number;
+  readonly maxSize: number;
   protected readonly maxChunkCount: number;
   /**
    * Mask to check if trailing bits are zero'ed. Mask returns bits that must be zero'ed
@@ -61,9 +61,9 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
     this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
     this.maxChunkCount = this.chunkCount;
     this.depth = maxChunksToDepth(this.chunkCount);
-    this.fixedLen = Math.ceil(this.lengthBits / 8);
-    this.minLen = this.fixedLen;
-    this.maxLen = this.fixedLen;
+    this.fixedSize = Math.ceil(this.lengthBits / 8);
+    this.minSize = this.fixedSize;
+    this.maxSize = this.fixedSize;
     // To cache mask for trailing zero bits validation
     this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
   }
@@ -96,7 +96,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
   // Serialization + deserialization
 
   value_serializedSize(): number {
-    return this.fixedLen;
+    return this.fixedSize;
   }
 
   value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
@@ -106,11 +106,11 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
 
   value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
     output.set(value.uint8Array, offset);
-    return offset + this.fixedLen;
+    return offset + this.fixedSize;
   }
 
   tree_serializedSize(): number {
-    return this.fixedLen;
+    return this.fixedSize;
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
@@ -120,8 +120,8 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
-    packedNodeRootsToBytes(output, offset, this.fixedLen, nodes);
-    return offset + this.fixedLen;
+    packedNodeRootsToBytes(output, offset, this.fixedSize, nodes);
+    return offset + this.fixedSize;
   }
 
   tree_getLength(node: Node): number {
@@ -139,7 +139,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
   fromJson(json: unknown): BitArray {
     // TODO: Validate
     const bytes = fromHexString(json as string);
-    return this.value_deserializeFromBytes(bytes, 0, this.fixedLen);
+    return this.value_deserializeFromBytes(bytes, 0, this.fixedSize);
   }
 
   toJson(value: BitArray): unknown {
@@ -150,8 +150,8 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
 
   private assertValidLength(data: Uint8Array, start: number, end: number): void {
     const size = end - start;
-    if (end - start !== this.fixedLen) {
-      throw Error(`BitVector size ${size} must be exactly ${this.fixedLen}`);
+    if (end - start !== this.fixedSize) {
+      throw Error(`BitVector size ${size} must be exactly ${this.fixedSize}`);
     }
 
     // If lengthBits is not aligned to bytes, ensure trailing bits are zeroed

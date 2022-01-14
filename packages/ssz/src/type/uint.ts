@@ -10,9 +10,9 @@ export class UintNumberType extends BasicType<number> {
   // Immutable characteristics
   readonly byteLength: number;
   readonly itemsPerChunk: number;
-  readonly fixedLen: number;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number;
+  readonly minSize: number;
+  readonly maxSize: number;
   private readonly maxDecimalStr: string;
 
   constructor(byteLength: number, private readonly clipInfinity?: boolean, private readonly setBitwise?: boolean) {
@@ -20,9 +20,9 @@ export class UintNumberType extends BasicType<number> {
     this.typeName = `uint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
-    this.fixedLen = byteLength;
-    this.minLen = byteLength;
-    this.maxLen = byteLength;
+    this.fixedSize = byteLength;
+    this.minSize = byteLength;
+    this.maxSize = byteLength;
     this.maxDecimalStr = (BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1)).toString(10);
   }
 
@@ -158,18 +158,18 @@ export class UintBigintType extends BasicType<bigint> {
   // Immutable characteristics
   readonly byteLength: number;
   readonly itemsPerChunk: number;
-  readonly fixedLen: number;
-  readonly minLen: number;
-  readonly maxLen: number;
+  readonly fixedSize: number;
+  readonly minSize: number;
+  readonly maxSize: number;
 
   constructor(byteLength: number, readonly setBitwise?: boolean) {
     super();
     this.typeName = `uintBigint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
-    this.fixedLen = byteLength;
-    this.minLen = byteLength;
-    this.maxLen = byteLength;
+    this.fixedSize = byteLength;
+    this.minSize = byteLength;
+    this.maxSize = byteLength;
   }
 
   readonly defaultValue = BigInt(0);

@@ -192,7 +192,7 @@ export function value_toJsonArray<ElementType extends Type<unknown>>(
  */
 export function assertValidArrayLength(length: number, arrayProps: ArrayProps, checkNonDecimalLength?: boolean): void {
   if (checkNonDecimalLength && length % 1 !== 0) {
-    throw Error("size not multiple of element fixedLen");
+    throw Error("size not multiple of element fixedSize");
   }
 
   // Vector + List length validation
