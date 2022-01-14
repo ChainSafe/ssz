@@ -6,6 +6,10 @@ export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = 
   id: string;
   valueBefore: ValueOf<CT>;
   valueAfter: ValueOf<CT>;
+  /** Don't run TreeView test */
+  skipTreeView?: boolean;
+  /** Don't run TreeViewDU test */
+  skipTreeViewDU?: boolean;
   /**
    * Allow fn() to return void, and expect tvBefore to be mutated
    */
@@ -43,13 +47,13 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
 
   describeFn(`${type.typeName} TreeView mutations`, () => {
     for (const testCase of ops) {
-      const {id, valueBefore, valueAfter, fn} = testCase;
+      const {id, valueBefore, valueAfter, skipTreeView, skipTreeViewDU, fn} = testCase;
 
       // Skip tests if ONLY_ID is set
       const onlyId = process.env.ONLY_ID;
 
       const treeViewId = `${id} - TreeView`;
-      if (!onlyId || treeViewId.includes(onlyId)) {
+      if ((!onlyId || treeViewId.includes(onlyId)) && !skipTreeView) {
         it(treeViewId, () => {
           const tvBefore = type.toView(valueBefore);
 
@@ -60,7 +64,7 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
       }
 
       const treeViewDUId = `${id} - TreeViewDU`;
-      if (!onlyId || treeViewDUId.includes(onlyId)) {
+      if ((!onlyId || treeViewDUId.includes(onlyId)) && !skipTreeViewDU) {
         it(treeViewDUId, () => {
           const tvBefore = type.toViewDU(valueBefore) as TreeViewDU<CT>;
 
