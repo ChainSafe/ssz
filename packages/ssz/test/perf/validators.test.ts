@@ -36,7 +36,8 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
       set_exitEpoch: (tb) => (tb.exitEpoch = 6435),
       get_pubkey: (tb) => tb.pubkey,
       hashTreeRoot: (tb) => tb.hashTreeRoot(),
-      createProof: (tb) => tb.createProof([["exitEpoch"]]),
+      // TODO: @wemeetagain
+      // createProof: (tb) => tb.createProof([["exitEpoch"]]),
       serialize: (tb) => tb.serialize(),
       set_exitEpoch_and_hashTreeRoot: (tb) => {
         tb.exitEpoch = 6435;
