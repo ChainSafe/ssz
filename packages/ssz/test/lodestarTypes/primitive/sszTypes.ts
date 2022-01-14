@@ -1,4 +1,4 @@
-import {ByteVectorType, UintNumberType, BooleanType} from "../../../src";
+import {ByteVectorType, UintNumberType, UintBigintType, BooleanType} from "../../../src";
 
 export const Boolean = new BooleanType();
 export const Byte = new UintNumberType(1);
@@ -13,22 +13,22 @@ export const Uint16 = new UintNumberType(2);
 export const Uint32 = new UintNumberType(4);
 // TODO
 // export const Number64 = new Number64UintType();
-export const Number64 = new UintNumberType(8);
+export const UintNumber64 = new UintNumberType(8);
 // TODO
 // export const Uint64 = new BigIntUintType({byteLength: 8});
 // export const Uint128 = new BigIntUintType({byteLength: 16});
 // export const Uint256 = new BigIntUintType({byteLength: 32});
-export const Uint64 = new UintNumberType(8);
-export const Uint128 = new UintNumberType(16);
-export const Uint256 = new UintNumberType(32);
+export const UintBigint64 = new UintBigintType(8);
+export const Uint128 = new UintBigintType(16);
+export const Uint256 = new UintBigintType(32);
 
 // Custom types, defined for type hinting and readability
-export const Slot = Number64;
-export const Epoch = Number64;
-export const CommitteeIndex = Number64;
-export const SubCommitteeIndex = Number64;
-export const ValidatorIndex = Number64;
-export const Gwei = Uint64;
+export const Slot = UintNumber64;
+export const Epoch = UintNumber64;
+export const CommitteeIndex = UintNumber64;
+export const SubCommitteeIndex = UintNumber64;
+export const ValidatorIndex = UintNumber64;
+export const Gwei = UintBigint64;
 export const Root = new ByteVectorType(32);
 // TODO
 // export const Root = new RootType({

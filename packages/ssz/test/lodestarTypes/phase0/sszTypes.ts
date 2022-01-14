@@ -35,8 +35,8 @@ const {
 const {
   Boolean,
   Bytes32,
-  Number64,
-  Uint64,
+  UintNumber64,
+  UintBigint64,
   Slot,
   Epoch,
   CommitteeIndex,
@@ -92,7 +92,7 @@ export const DepositMessage = new ContainerType(
   {
     pubkey: BLSPubkey,
     withdrawalCredentials: Bytes32,
-    amount: Number64,
+    amount: UintNumber64,
   },
   {
     casingMap: {
@@ -107,7 +107,7 @@ export const DepositData = new ContainerType(
   {
     pubkey: BLSPubkey,
     withdrawalCredentials: Bytes32,
-    amount: Number64,
+    amount: UintNumber64,
     signature: BLSSignature,
   },
   {
@@ -125,8 +125,8 @@ export const DepositDataRootList = new ListCompositeType(Root, 2 ** DEPOSIT_CONT
 export const DepositEvent = new ContainerType(
   {
     depositData: DepositData,
-    blockNumber: Number64,
-    index: Number64,
+    blockNumber: UintNumber64,
+    index: UintNumber64,
   },
   {
     casingMap: {
@@ -140,7 +140,7 @@ export const DepositEvent = new ContainerType(
 export const Eth1Data = new ContainerType(
   {
     depositRoot: Root,
-    depositCount: Number64,
+    depositCount: UintNumber64,
     blockHash: Bytes32,
   },
   {
@@ -157,9 +157,9 @@ export const Eth1DataVotes = new ListCompositeType(Eth1Data, EPOCHS_PER_ETH1_VOT
 export const Eth1DataOrdered = new ContainerType(
   {
     depositRoot: Root,
-    depositCount: Number64,
+    depositCount: UintNumber64,
     blockHash: Bytes32,
-    blockNumber: Number64,
+    blockNumber: UintNumber64,
   },
   {
     casingMap: {
@@ -234,7 +234,7 @@ export const Validator = new ContainerType(
   {
     pubkey: BLSPubkey,
     withdrawalCredentials: Bytes32,
-    effectiveBalance: Number64,
+    effectiveBalance: UintNumber64,
     slashed: Boolean,
     activationEligibilityEpoch: Epoch,
     activationEpoch: Epoch,
@@ -257,7 +257,7 @@ export const Validator = new ContainerType(
 
 // Export as stand-alone for direct tree optimizations
 export const Validators = new ListCompositeType(Validator, VALIDATOR_REGISTRY_LIMIT);
-export const Balances = new ListBasicType(Number64, VALIDATOR_REGISTRY_LIMIT);
+export const Balances = new ListBasicType(UintNumber64, VALIDATOR_REGISTRY_LIMIT);
 export const RandaoMixes = new VectorCompositeType(Bytes32, EPOCHS_PER_HISTORICAL_VECTOR);
 export const Slashings = new VectorBasicType(Gwei, EPOCHS_PER_SLASHINGS_VECTOR);
 export const JustificationBits = new BitVectorType(JUSTIFICATION_BITS_LENGTH);
@@ -458,7 +458,7 @@ export const EpochAttestations = new ListCompositeType(PendingAttestation, MAX_A
 export const BeaconState = new ContainerType(
   {
     // Misc
-    genesisTime: Number64,
+    genesisTime: UintNumber64,
     genesisValidatorsRoot: Root,
     slot: Slot,
     fork: Fork,
@@ -470,7 +470,7 @@ export const BeaconState = new ContainerType(
     // Eth1
     eth1Data: Eth1Data,
     eth1DataVotes: Eth1DataVotes,
-    eth1DepositIndex: Number64,
+    eth1DepositIndex: UintNumber64,
     // Registry
     validators: Validators,
     balances: Balances,
@@ -573,13 +573,13 @@ export const Status = new ContainerType(
   }
 );
 
-export const Goodbye = Uint64;
+export const Goodbye = UintBigint64;
 
-export const Ping = Uint64;
+export const Ping = UintBigint64;
 
 export const Metadata = new ContainerType(
   {
-    seqNumber: Uint64,
+    seqNumber: UintBigint64,
     attnets: AttestationSubnets,
   },
   {
@@ -593,8 +593,8 @@ export const Metadata = new ContainerType(
 export const BeaconBlocksByRangeRequest = new ContainerType(
   {
     startSlot: Slot,
-    count: Number64,
-    step: Number64,
+    count: UintNumber64,
+    step: UintNumber64,
   },
   {
     casingMap: {
@@ -613,7 +613,7 @@ export const BeaconBlocksByRootRequest = new ListCompositeType(Root, MAX_REQUEST
 export const Genesis = new ContainerType(
   {
     genesisValidatorsRoot: Root,
-    genesisTime: Uint64,
+    genesisTime: UintNumber64,
     genesisForkVersion: Version,
   },
   {

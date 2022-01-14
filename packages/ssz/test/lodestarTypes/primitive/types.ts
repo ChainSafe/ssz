@@ -14,8 +14,8 @@ export type Bytes96 = ValueOf<typeof ssz.Bytes96>;
 export type Uint8 = ValueOf<typeof ssz.Uint8>;
 export type Uint16 = ValueOf<typeof ssz.Uint16>;
 export type Uint32 = ValueOf<typeof ssz.Uint32>;
-export type Number64 = ValueOf<typeof ssz.Number64>;
-export type Uint64 = ValueOf<typeof ssz.Uint64>;
+export type Number64 = ValueOf<typeof ssz.UintNumber64>;
+export type Uint64 = ValueOf<typeof ssz.UintBigint64>;
 export type Uint128 = ValueOf<typeof ssz.Uint128>;
 export type Uint256 = ValueOf<typeof ssz.Uint256>;
 

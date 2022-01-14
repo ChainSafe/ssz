@@ -1,8 +1,7 @@
-import {ByteVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src";
+import {ByteListType, ByteVectorType, ContainerType, ListCompositeType, VectorCompositeType} from "../../../src";
 import {ssz as primitiveSsz} from "../primitive";
 import {ssz as phase0Ssz} from "../phase0";
 import {ssz as altairSsz} from "../altair";
-import {Uint256} from "../primitive/sszTypes";
 import {preset} from "../params";
 
 const {
@@ -14,14 +13,14 @@ const {
   SLOTS_PER_HISTORICAL_ROOT,
 } = preset;
 
-const {Bytes20, Bytes32, Number64, Slot, ValidatorIndex, Root, BLSSignature, Uint8} = primitiveSsz;
+const {Bytes20, Bytes32, UintNumber64, Slot, ValidatorIndex, Root, BLSSignature, Uint256} = primitiveSsz;
 
 /**
  * ByteList[MAX_BYTES_PER_TRANSACTION]
  *
  * Spec v1.0.1
  */
-export const Transaction = new ListBasicType(primitiveSsz.Byte, MAX_BYTES_PER_TRANSACTION);
+export const Transaction = new ByteListType(MAX_BYTES_PER_TRANSACTION);
 
 /**
  * Union[OpaqueTransaction]
@@ -32,25 +31,25 @@ export const Transactions = new ListCompositeType(Transaction, MAX_TRANSACTIONS_
 
 const executionPayloadFields = {
   parentHash: Root,
-  coinbase: Bytes20,
+  feeRecipient: Bytes20,
   stateRoot: Bytes32,
   receiptRoot: Bytes32,
   logsBloom: new ByteVectorType(BYTES_PER_LOGS_BLOOM),
   random: Bytes32,
-  blockNumber: Number64,
-  gasLimit: Number64,
-  gasUsed: Number64,
-  timestamp: Number64,
+  blockNumber: UintNumber64,
+  gasLimit: UintNumber64,
+  gasUsed: UintNumber64,
+  timestamp: UintNumber64,
   // TODO: if there is perf issue, consider making ByteListType
-  extraData: new ListBasicType(Uint8, MAX_EXTRA_DATA_BYTES),
-  baseFeePerGas: Bytes32,
+  extraData: new ByteListType(MAX_EXTRA_DATA_BYTES),
+  baseFeePerGas: Uint256,
   // Extra payload fields
   blockHash: Root,
 };
 
 const executionPayloadCasingMap = {
   parentHash: "parent_hash",
-  coinbase: "coinbase",
+  feeRecipient: "fee_recipient",
   stateRoot: "state_root",
   receiptRoot: "receipt_root",
   logsBloom: "logs_bloom",
@@ -64,29 +63,6 @@ const executionPayloadCasingMap = {
   blockHash: "block_hash",
 };
 
-/**
- * ```python
- * class ExecutionPayload(Container):
- *     # Execution block header fields
- *     parent_hash: Hash32
- *     coinbase: Bytes20  # 'beneficiary' in the yellow paper
- *     state_root: Bytes32
- *     receipt_root: Bytes32  # 'receipts root' in the yellow paper
- *     logs_bloom: ByteVector[BYTES_PER_LOGS_BLOOM]
- *     random: Bytes32  # 'difficulty' in the yellow paper
- *     block_number: uint64  # 'number' in the yellow paper
- *     gas_limit: uint64
- *     gas_used: uint64
- *     timestamp: uint64
- *     extra_data: ByteList[MAX_EXTRA_DATA_BYTES]
- *     base_fee_per_gas: Bytes32  # base fee introduced in EIP-1559, little-endian serialized
- *     # Extra payload fields
- *     block_hash: Hash32  # Hash of execution block
- *     transactions: List[Transaction, MAX_TRANSACTIONS_PER_PAYLOAD]
- * ```
- *
- * Spec v1.0.1
- */
 export const ExecutionPayload = new ContainerType(
   {
     ...executionPayloadFields,
@@ -100,15 +76,6 @@ export const ExecutionPayload = new ContainerType(
   }
 );
 
-/**
- * ```python
- * class ExecutionPayload(Container):
- *     ...
- *     transactions_root: Root
- * ```
- *
- * Spec v1.0.1
- */
 export const ExecutionPayloadHeader = new ContainerType(
   {
     ...executionPayloadFields,
@@ -183,7 +150,7 @@ export const HistoricalBatch = new ContainerType(
 // and we cannot keep order doing that
 export const BeaconState = new ContainerType(
   {
-    genesisTime: Number64,
+    genesisTime: UintNumber64,
     genesisValidatorsRoot: Root,
     slot: primitiveSsz.Slot,
     fork: phase0Ssz.Fork,
@@ -195,7 +162,7 @@ export const BeaconState = new ContainerType(
     // Eth1
     eth1Data: phase0Ssz.Eth1Data,
     eth1DataVotes: phase0Ssz.Eth1DataVotes,
-    eth1DepositIndex: Number64,
+    eth1DepositIndex: UintNumber64,
     // Registry
     validators: phase0Ssz.Validators,
     balances: phase0Ssz.Balances,

@@ -14,8 +14,8 @@ const {
 
 const {
   Bytes32,
-  Number64,
-  Uint64,
+  UintNumber64,
+  UintBigint64,
   Slot,
   SubCommitteeIndex,
   ValidatorIndex,
@@ -30,7 +30,7 @@ export const SyncSubnets = new BitVectorType(SYNC_COMMITTEE_SUBNET_COUNT);
 
 export const Metadata = new ContainerType(
   {
-    seqNumber: Uint64,
+    seqNumber: UintBigint64,
     attnets: phase0Ssz.AttestationSubnets,
     syncnets: SyncSubnets,
   },
@@ -186,13 +186,13 @@ export const SignedBeaconBlock = new ContainerType({
 });
 
 export const EpochParticipation = new ListBasicType(ParticipationFlags, VALIDATOR_REGISTRY_LIMIT);
-export const InactivityScores = new ListBasicType(Number64, VALIDATOR_REGISTRY_LIMIT);
+export const InactivityScores = new ListBasicType(UintNumber64, VALIDATOR_REGISTRY_LIMIT);
 
 // we don't reuse phase0.BeaconState fields since we need to replace some keys
 // and we cannot keep order doing that
 export const BeaconState = new ContainerType(
   {
-    genesisTime: Number64,
+    genesisTime: UintNumber64,
     genesisValidatorsRoot: Root,
     slot: Slot,
     fork: phase0Ssz.Fork,
@@ -204,7 +204,7 @@ export const BeaconState = new ContainerType(
     // Eth1
     eth1Data: phase0Ssz.Eth1Data,
     eth1DataVotes: phase0Ssz.Eth1DataVotes,
-    eth1DepositIndex: Number64,
+    eth1DepositIndex: UintNumber64,
     // Registry
     validators: phase0Ssz.Validators,
     balances: phase0Ssz.Balances,
@@ -254,24 +254,22 @@ export const LightClientSnapshot = new ContainerType(
 
 export const LightClientUpdate = new ContainerType(
   {
-    header: phase0Ssz.BeaconBlockHeader,
+    attestedHeader: phase0Ssz.BeaconBlockHeader,
     nextSyncCommittee: SyncCommittee,
     nextSyncCommitteeBranch: new VectorCompositeType(Bytes32, NEXT_SYNC_COMMITTEE_DEPTH),
-    finalityHeader: phase0Ssz.BeaconBlockHeader,
+    finalizedHeader: phase0Ssz.BeaconBlockHeader,
     finalityBranch: new VectorCompositeType(Bytes32, FINALIZED_ROOT_DEPTH),
-    syncCommitteeBits: new BitVectorType(SYNC_COMMITTEE_SIZE),
-    syncCommitteeSignature: BLSSignature,
+    syncCommitteeAggregate: SyncAggregate,
     forkVersion: Version,
   },
   {
     casingMap: {
-      header: "header",
+      attestedHeader: "attested_header",
       nextSyncCommittee: "next_sync_committee",
       nextSyncCommitteeBranch: "next_sync_committee_branch",
-      finalityHeader: "finality_header",
+      finalizedHeader: "finalized_header",
       finalityBranch: "finality_branch",
-      syncCommitteeBits: "sync_committee_bits",
-      syncCommitteeSignature: "sync_committee_signature",
+      syncCommitteeAggregate: "sync_committee_aggregate",
       forkVersion: "fork_version",
     },
   }

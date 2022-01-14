@@ -32,9 +32,9 @@ type Types = Record<string, Type<any>>;
 const extraTypes = {
   Eth1Block: new ContainerType(
     {
-      timestamp: ssz.Number64,
+      timestamp: ssz.UintNumber64,
       depositRoot: ssz.Root,
-      depositCount: ssz.Number64,
+      depositCount: ssz.UintNumber64,
     },
     {jsonCase: "snake"}
   ),
@@ -60,6 +60,10 @@ export function sszStatic(fork: ForkName): void {
 // - Runs spec tests until 1 test fails. Then it persists its name
 // - On the next run of the command it will solo that test such that's easily debuggable
 // - Once that tests pass it will remove the flag file and allow to run all tests again in the next run
+//
+// example:
+// $ RUN_ONLY_FAILED_TEST=true RENDER_JSON=true LODESTAR_FORK=merge yarn test:spec-static-minimal
+//
 const failedTestFilepath = "failedTest.txt";
 const failedTestExists = fs.existsSync(failedTestFilepath);
 const failedTestStr = failedTestExists ? fs.readFileSync(failedTestFilepath, "utf8") : "";
