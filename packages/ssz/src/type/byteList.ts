@@ -6,8 +6,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString} from "../util/byteArray";
-import {mixInLength} from "../util/merkleize";
-import {maxChunksToDepth} from "../util/tree";
+import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
 import {CompositeType} from "./composite";
 

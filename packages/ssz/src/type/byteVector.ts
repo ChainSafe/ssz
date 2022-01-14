@@ -6,7 +6,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString} from "../util/byteArray";
-import {maxChunksToDepth} from "../util/tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {CompositeType} from "./composite";
 
 export type ByteVector = Uint8Array;

@@ -36,7 +36,6 @@ export function addLengthNode(chunksNode: Node, length: number): Node {
   // TODO: Add LeafNode.fromUint()
   const lengthNode = new LeafNode(zeroNode(0));
   lengthNode.setUint(4, 0, length);
-
   return new BranchNode(chunksNode, lengthNode);
 }
 

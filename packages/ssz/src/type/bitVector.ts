@@ -6,7 +6,7 @@ import {
   packedRootsBytesToNode,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {fromHexString, toHexString} from "../util/byteArray";
 import {CompositeType} from "./composite";
 import {BitArray} from "../value/bitArray";

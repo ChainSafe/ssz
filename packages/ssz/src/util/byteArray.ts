@@ -44,14 +44,3 @@ export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
   }
   return true;
 }
-
-export function getByteBits(target: Uint8Array, offset: number): boolean[] {
-  const byte = target[offset];
-  if (!byte) {
-    return [false, false, false, false, false, false, false, false];
-  }
-  const bits = Array.prototype.map
-    .call(byte.toString(2).padStart(8, "0"), (c) => (c === "1" ? true : false))
-    .reverse() as boolean[];
-  return bits;
-}

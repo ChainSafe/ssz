@@ -1,5 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {ValueOf} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {defaultValueVector, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";

@@ -1,5 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {BasicType, ValueOf} from "./abstract";
 import {CompositeType} from "./composite";
 import {

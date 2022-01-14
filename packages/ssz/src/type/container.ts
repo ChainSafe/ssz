@@ -1,6 +1,6 @@
 import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/persistent-merkle-tree";
 import Case from "case";
-import {maxChunksToDepth} from "../util/tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {SszErrorPath} from "../util/errorPath";
 import {Type, ValueOf} from "./abstract";
 import {CompositeType} from "./composite";

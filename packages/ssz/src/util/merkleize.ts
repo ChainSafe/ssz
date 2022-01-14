@@ -1,6 +1,18 @@
 import {hash} from "./hash";
 import {zeroNode} from "./zeros";
 
+/**
+ * Given maxChunkCount return the chunkDepth
+ * ```
+ * n: [0,1,2,3,4,5,6,7,8,9]
+ * d: [0,0,1,2,2,3,3,3,3,4]
+ * ```
+ */
+export function maxChunksToDepth(n: number): number {
+  if (n === 0) return 0;
+  return Math.ceil(Math.log2(n));
+}
+
 export function merkleizeSingleBuff(chunksBuff: Uint8Array, padFor?: number): Uint8Array {
   // TODO: Optimize
   const chunkCount = Math.ceil(chunksBuff.length / 32);

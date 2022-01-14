@@ -1,9 +1,8 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
-import {mixInLength} from "../util/merkleize";
+import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {ValueOf} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
-import {getLengthFromRootNode, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
+import {addLengthNode, getLengthFromRootNode, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -122,10 +121,7 @@ export class ListCompositeType<
   }
 
   tree_setLength(tree: Tree, length: number): void {
-    // TODO: Add LeafNode.fromUint()
-    const lengthNode = new LeafNode(zeroNode(0));
-    lengthNode.setUint(4, 0, length);
-    tree.setNode(LENGTH_GINDEX, lengthNode);
+    tree.rootNode = addLengthNode(tree.rootNode.left, length);
   }
 
   tree_getChunksNode(node: Node): Node {
