@@ -17,8 +17,8 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   const testDataSerializedStr =
     typeof testData.serialized === "string" ? testData.serialized : toHexString(testData.serialized);
 
-  if (process.env.RENDER_JSON) {
-    console.log(testData.jsonValue);
+  if (process.env.RENDER_JSON_RAW) {
+    console.log(JSON.stringify(testData.jsonValue, null, 2));
   }
 
   if (process.env.RENDER_SERIALIZED) {
@@ -29,6 +29,10 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   const testDataValue = wrapErr(() => type.fromJson(testData.jsonValue), "type.fromJson()");
   // Use our re-transformed to JSON to ensure the type is the safe
   const testDataJson = wrapErr(() => type.toJson(testDataValue), "type.toJson()");
+
+  if (process.env.RENDER_JSON) {
+    console.log(JSON.stringify(testDataJson, null, 2));
+  }
 
   function assertBytes(bytes: Uint8Array, msg: string): void {
     expect(toHexString(bytes)).to.equal(testDataSerializedStr, `Wrong serialized - ${msg}`);

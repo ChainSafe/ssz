@@ -385,6 +385,7 @@ export const ProposerSlashing = new ContainerType(
       signedHeader1: "signed_header_1",
       signedHeader2: "signed_header_2",
     },
+    typeName: "ProposerSlashing",
   }
 );
 
