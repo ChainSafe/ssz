@@ -74,21 +74,15 @@ export const BeaconBlockHeader = new ContainerType(
   }
 );
 
-export const SignedBeaconBlockHeader = new ContainerType(
-  {
-    message: BeaconBlockHeader,
-    signature: BLSSignature,
-  },
-  {case: "notransform"}
-);
+export const SignedBeaconBlockHeader = new ContainerType({
+  message: BeaconBlockHeader,
+  signature: BLSSignature,
+});
 
-export const Checkpoint = new ContainerType(
-  {
-    epoch: Epoch,
-    root: Root,
-  },
-  {case: "notransform"}
-);
+export const Checkpoint = new ContainerType({
+  epoch: Epoch,
+  root: Root,
+});
 
 export const CommitteeBits = new BitListType(MAX_VALIDATORS_PER_COMMITTEE);
 
@@ -366,13 +360,10 @@ export const AttesterSlashing = new ContainerType(
   }
 );
 
-export const Deposit = new ContainerType(
-  {
-    proof: new VectorCompositeType(Bytes32, DEPOSIT_CONTRACT_TREE_DEPTH + 1),
-    data: DepositData,
-  },
-  {case: "notransform"}
-);
+export const Deposit = new ContainerType({
+  proof: new VectorCompositeType(Bytes32, DEPOSIT_CONTRACT_TREE_DEPTH + 1),
+  data: DepositData,
+});
 
 export const ProposerSlashing = new ContainerType(
   {
@@ -402,13 +393,10 @@ export const VoluntaryExit = new ContainerType(
   }
 );
 
-export const SignedVoluntaryExit = new ContainerType(
-  {
-    message: VoluntaryExit,
-    signature: BLSSignature,
-  },
-  {case: "notransform"}
-);
+export const SignedVoluntaryExit = new ContainerType({
+  message: VoluntaryExit,
+  signature: BLSSignature,
+});
 
 // Block types
 // ===========
@@ -457,13 +445,10 @@ export const BeaconBlock = new ContainerType(
   }
 );
 
-export const SignedBeaconBlock = new ContainerType(
-  {
-    message: BeaconBlock,
-    signature: BLSSignature,
-  },
-  {case: "notransform"}
-);
+export const SignedBeaconBlock = new ContainerType({
+  message: BeaconBlock,
+  signature: BLSSignature,
+});
 
 // State types
 // ===========
@@ -561,13 +546,10 @@ export const AggregateAndProof = new ContainerType(
   }
 );
 
-export const SignedAggregateAndProof = new ContainerType(
-  {
-    message: AggregateAndProof,
-    signature: BLSSignature,
-  },
-  {case: "notransform"}
-);
+export const SignedAggregateAndProof = new ContainerType({
+  message: AggregateAndProof,
+  signature: BLSSignature,
+});
 
 // ReqResp types
 // =============

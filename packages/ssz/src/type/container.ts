@@ -33,7 +33,7 @@ type KeyCase =
   //Same as squish
   | "pascal";
 
-type CasingMap<Fields extends Record<string, unknown>> = {[K in keyof Fields]: string};
+type CasingMap<Fields extends Record<string, unknown>> = Partial<{[K in keyof Fields]: string}>;
 
 export class ContainerType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
   ValueOfFields<Fields>,
@@ -451,10 +451,11 @@ function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
   jsonCase?: KeyCase
 ): string {
   if (casingMap) {
-    if (!casingMap[fieldName]) {
+    const keyFromCaseMap = casingMap[fieldName];
+    if (keyFromCaseMap === undefined) {
       throw Error(`casingMap[${fieldName}] not defined`);
     }
-    return casingMap[fieldName];
+    return keyFromCaseMap;
   } else if (jsonCase) {
     return Case[jsonCase](fieldName as string);
   } else {

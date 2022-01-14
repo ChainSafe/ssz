@@ -48,6 +48,22 @@ const executionPayloadFields = {
   blockHash: Root,
 };
 
+const executionPayloadCasingMap = {
+  parentHash: "parent_hash",
+  feeRecipient: "fee_recipient",
+  stateRoot: "state_root",
+  receiptsRoot: "receipts_root",
+  logsBloom: "logs_bloom",
+  random: "random",
+  blockNumber: "block_number",
+  gasLimit: "gas_limit",
+  gasUsed: "gas_used",
+  timestamp: "timestamp",
+  extraData: "extra_data",
+  baseFeePerGas: "base_fee_per_gas",
+  blockHash: "block_hash",
+};
+
 /**
  * ```python
  * class ExecutionPayload(Container):
@@ -71,10 +87,18 @@ const executionPayloadFields = {
  *
  * Spec v1.0.1
  */
-export const ExecutionPayload = new ContainerType({
-  ...executionPayloadFields,
-  transactions: Transactions,
-});
+export const ExecutionPayload = new ContainerType(
+  {
+    ...executionPayloadFields,
+    transactions: Transactions,
+  },
+  {
+    casingMap: {
+      ...executionPayloadCasingMap,
+      transactions: "transactions",
+    },
+  }
+);
 
 /**
  * ```python
@@ -85,81 +109,119 @@ export const ExecutionPayload = new ContainerType({
  *
  * Spec v1.0.1
  */
-export const ExecutionPayloadHeader = new ContainerType({
-  ...executionPayloadFields,
-  transactionsRoot: Root,
-});
+export const ExecutionPayloadHeader = new ContainerType(
+  {
+    ...executionPayloadFields,
+    transactionsRoot: Root,
+  },
+  {
+    casingMap: {
+      ...executionPayloadCasingMap,
+      transactionsRoot: "transactions_root",
+    },
+  }
+);
 
-export const BeaconBlockBody = new ContainerType({
-  ...altairSsz.BeaconBlockBody.fields,
-  executionPayload: ExecutionPayload,
-});
+export const BeaconBlockBody = new ContainerType(
+  {
+    ...altairSsz.BeaconBlockBody.fields,
+    executionPayload: ExecutionPayload,
+  },
+  {
+    casingMap: {
+      ...altairSsz.BeaconBlockBody.opts?.casingMap,
+      executionPayload: "execution_payload",
+    },
+  }
+);
 
-export const BeaconBlock = new ContainerType({
-  slot: Slot,
-  proposerIndex: ValidatorIndex,
-  // Reclare expandedType() with altair block and altair state
-  parentRoot: Root,
-  stateRoot: Root,
-  body: BeaconBlockBody,
-});
+export const BeaconBlock = new ContainerType(
+  {
+    slot: Slot,
+    proposerIndex: ValidatorIndex,
+    // Reclare expandedType() with altair block and altair state
+    parentRoot: Root,
+    stateRoot: Root,
+    body: BeaconBlockBody,
+  },
+  {casingMap: altairSsz.BeaconBlock.opts?.casingMap}
+);
 
 export const SignedBeaconBlock = new ContainerType({
   message: BeaconBlock,
   signature: BLSSignature,
 });
 
-export const PowBlock = new ContainerType({
-  blockHash: Root,
-  parentHash: Root,
-  totalDifficulty: Uint256,
-  difficulty: Uint256,
-});
+export const PowBlock = new ContainerType(
+  {
+    blockHash: Root,
+    parentHash: Root,
+    totalDifficulty: Uint256,
+  },
+  {
+    casingMap: {
+      blockHash: "block_hash",
+      parentHash: "parent_hash",
+      totalDifficulty: "total_difficulty",
+    },
+  }
+);
 
 // Re-declare with the new expanded type
 export const HistoricalBlockRoots = new VectorCompositeType(Root, SLOTS_PER_HISTORICAL_ROOT);
 export const HistoricalStateRoots = new VectorCompositeType(Root, SLOTS_PER_HISTORICAL_ROOT);
 
-export const HistoricalBatch = new ContainerType({
-  blockRoots: Root,
-  stateRoots: Root,
-});
+export const HistoricalBatch = new ContainerType(
+  {
+    blockRoots: Root,
+    stateRoots: Root,
+  },
+  {casingMap: phase0Ssz.HistoricalBatch.opts?.casingMap}
+);
 
 // we don't reuse phase0.BeaconState fields since we need to replace some keys
 // and we cannot keep order doing that
-export const BeaconState = new ContainerType({
-  genesisTime: Number64,
-  genesisValidatorsRoot: Root,
-  slot: primitiveSsz.Slot,
-  fork: phase0Ssz.Fork,
-  // History
-  latestBlockHeader: phase0Ssz.BeaconBlockHeader,
-  blockRoots: HistoricalBlockRoots,
-  stateRoots: HistoricalStateRoots,
-  historicalRoots: new ListCompositeType(Root, HISTORICAL_ROOTS_LIMIT),
-  // Eth1
-  eth1Data: phase0Ssz.Eth1Data,
-  eth1DataVotes: phase0Ssz.Eth1DataVotes,
-  eth1DepositIndex: Number64,
-  // Registry
-  validators: phase0Ssz.Validators,
-  balances: phase0Ssz.Balances,
-  randaoMixes: phase0Ssz.RandaoMixes,
-  // Slashings
-  slashings: phase0Ssz.Slashings,
-  // Participation
-  previousEpochParticipation: altairSsz.EpochParticipation,
-  currentEpochParticipation: altairSsz.EpochParticipation,
-  // Finality
-  justificationBits: phase0Ssz.JustificationBits,
-  previousJustifiedCheckpoint: phase0Ssz.Checkpoint,
-  currentJustifiedCheckpoint: phase0Ssz.Checkpoint,
-  finalizedCheckpoint: phase0Ssz.Checkpoint,
-  // Inactivity
-  inactivityScores: altairSsz.InactivityScores,
-  // Sync
-  currentSyncCommittee: altairSsz.SyncCommittee,
-  nextSyncCommittee: altairSsz.SyncCommittee,
-  // Execution
-  latestExecutionPayloadHeader: ExecutionPayloadHeader, // [New in Merge]
-});
+export const BeaconState = new ContainerType(
+  {
+    genesisTime: Number64,
+    genesisValidatorsRoot: Root,
+    slot: primitiveSsz.Slot,
+    fork: phase0Ssz.Fork,
+    // History
+    latestBlockHeader: phase0Ssz.BeaconBlockHeader,
+    blockRoots: HistoricalBlockRoots,
+    stateRoots: HistoricalStateRoots,
+    historicalRoots: new ListCompositeType(Root, HISTORICAL_ROOTS_LIMIT),
+    // Eth1
+    eth1Data: phase0Ssz.Eth1Data,
+    eth1DataVotes: phase0Ssz.Eth1DataVotes,
+    eth1DepositIndex: Number64,
+    // Registry
+    validators: phase0Ssz.Validators,
+    balances: phase0Ssz.Balances,
+    randaoMixes: phase0Ssz.RandaoMixes,
+    // Slashings
+    slashings: phase0Ssz.Slashings,
+    // Participation
+    previousEpochParticipation: altairSsz.EpochParticipation,
+    currentEpochParticipation: altairSsz.EpochParticipation,
+    // Finality
+    justificationBits: phase0Ssz.JustificationBits,
+    previousJustifiedCheckpoint: phase0Ssz.Checkpoint,
+    currentJustifiedCheckpoint: phase0Ssz.Checkpoint,
+    finalizedCheckpoint: phase0Ssz.Checkpoint,
+    // Inactivity
+    inactivityScores: altairSsz.InactivityScores,
+    // Sync
+    currentSyncCommittee: altairSsz.SyncCommittee,
+    nextSyncCommittee: altairSsz.SyncCommittee,
+    // Execution
+    latestExecutionPayloadHeader: ExecutionPayloadHeader, // [New in Merge]
+  },
+  {
+    casingMap: {
+      ...altairSsz.BeaconState.opts?.casingMap,
+      latestExecutionPayloadHeader: "latest_execution_payload_header",
+    },
+  }
+);

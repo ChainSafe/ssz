@@ -36,7 +36,8 @@ export const Metadata = new ContainerType(
   },
   {
     casingMap: {
-      ...phase0Ssz.Metadata.opts?.casingMap,
+      seqNumber: "seq_number",
+      attnets: "attnets",
       syncnets: "syncnets",
     },
   }
@@ -111,7 +112,7 @@ export const SignedContributionAndProof = new ContainerType(
     message: ContributionAndProof,
     signature: BLSSignature,
   },
-  {case: "notransform", typeName: "SignedContributionAndProof"}
+  {typeName: "SignedContributionAndProof"}
 );
 
 export const SyncAggregatorSelectionData = new ContainerType(
@@ -179,13 +180,10 @@ export const BeaconBlock = new ContainerType(
   {casingMap: phase0Ssz.BeaconBlock.opts?.casingMap}
 );
 
-export const SignedBeaconBlock = new ContainerType(
-  {
-    message: BeaconBlock,
-    signature: BLSSignature,
-  },
-  {case: "notransform"}
-);
+export const SignedBeaconBlock = new ContainerType({
+  message: BeaconBlock,
+  signature: BLSSignature,
+});
 
 export const EpochParticipation = new ListBasicType(ParticipationFlags, VALIDATOR_REGISTRY_LIMIT);
 export const InactivityScores = new ListBasicType(Number64, VALIDATOR_REGISTRY_LIMIT);
