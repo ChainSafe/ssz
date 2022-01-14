@@ -88,7 +88,7 @@ export class ListCompositeType<
   // Serialization + deserialization
 
   value_serializedSize(value: ValueOf<ElementType>[]): number {
-    return value_serializedSizeArrayComposite(this.elementType, value, this);
+    return value_serializedSizeArrayComposite(this.elementType, value.length, value);
   }
 
   value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {

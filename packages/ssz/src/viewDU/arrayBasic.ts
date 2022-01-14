@@ -64,7 +64,6 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       this.nodes[chunkIndex] = node;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.type.elementType.tree_getFromPackedNode(node, index) as ValueOf<ElementType>;
   }
 
@@ -108,6 +107,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     const lenFullNodes = Math.floor(this.length / itemsPerChunk);
     const remainder = this.length % itemsPerChunk;
 
+    // TODO Optimize: caching the variables used in the loop above it
     for (let n = 0; n < lenFullNodes; n++) {
       const leafNode = this.nodes[n];
       // TODO: Implement add a fast bulk packed element reader in the elementType
@@ -149,7 +149,6 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       nodesChangedSorted.push(this.nodes[index]);
     }
 
-    // TODO: Generalize for Vectors
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     // TODO: Ensure fast setNodesAtDepth() method is correct
     const newChunksNode = setNodesAtDepth(this.type.chunkDepth, chunksNode, indexes, nodesChangedSorted);
@@ -169,5 +168,11 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   protected clearCache(): void {
     this.nodes = [];
     this.nodesPopulated = false;
+    // Must clear nodesChanged since this.nodes will be empty
+    this.nodesChanged.clear();
+    if (this.dirtyLength) {
+      this._length = this.type.tree_getLength(this._rootNode);
+      this.dirtyLength = false;
+    }
   }
 }

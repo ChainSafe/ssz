@@ -76,11 +76,11 @@ export class ArrayCompositeTreeViewDU<
       this.nodes[index] = node;
     }
 
-    // TODO: To only run .commit() in the child views that actually change, use again
-    // the invalidateParent() hook and add indexes to a `this.dirtyChildViews.add(index)`
+    // Keep a reference to the new view to call .commit on it latter
     const view = this.type.elementType.getViewDU(node, this.caches[index]);
-
     this.viewsChanged.set(index, view);
+
+    // Persist child's view cache if it has any
     const viewCache = this.type.elementType.cacheOfViewDU(view);
     if (viewCache) {
       this.caches[index] = viewCache;
@@ -90,14 +90,17 @@ export class ArrayCompositeTreeViewDU<
   }
 
   set(index: number, view: CompositeViewDU<ElementType>): void {
-    // Commit any temp data and transfer cache
-    const node = this.type.elementType.commitViewDU(view);
+    // Is it really necessary to commit the node here now?
+    // > I don't know, probably not under normal usage
+    this.nodes[index] = this.type.elementType.commitViewDU(view);
 
-    // Should transfer cache?
-    this.caches[index] = this.type.elementType.cacheOfViewDU(view);
+    // Is it really necessary to transfer the cache here?
+    // > Yes, because there could be some old cache that will persist if changes stop being made
+    const viewCache = this.type.elementType.cacheOfViewDU(view);
+    if (viewCache) {
+      this.caches[index] = viewCache;
+    }
 
-    // Do not commit to the tree, but update the node in leafNodes
-    this.nodes[index] = node;
     this.viewsChanged.set(index, view);
   }
 
@@ -142,13 +145,13 @@ export class ArrayCompositeTreeViewDU<
     const indexes = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
     const nodesChangedSorted: Node[] = [];
     for (const index of indexes) {
+      // TODO: .sort() and get in one single iteration
       const view = this.viewsChanged.get(index);
       if (view) {
         nodesChangedSorted.push(this.type.elementType.commitViewDU(view));
       }
     }
 
-    // TODO: Generalize for Vectors
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     // TODO: Ensure fast setNodesAtDepth() method is correct
     const newChunksNode = setNodesAtDepth(this.type.chunkDepth, chunksNode, indexes, nodesChangedSorted);
@@ -169,5 +172,10 @@ export class ArrayCompositeTreeViewDU<
     this.nodes = [];
     this.caches = [];
     this.nodesPopulated = false;
+    // No need to clear this.viewsChanged since they have no effect on the cache
+    if (this.dirtyLength) {
+      this._length = this.type.tree_getLength(this._rootNode);
+      this.dirtyLength = false;
+    }
   }
 }

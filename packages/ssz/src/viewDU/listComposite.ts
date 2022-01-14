@@ -8,6 +8,7 @@ export class ListCompositeTreeViewDU<
   push(view: CompositeViewDU<ElementType>): void {
     this.dirtyLength = true;
     const index = this._length++;
+    // No need for pre-initialization like in ListBasic.push since ArrayCompositeTreeViewDU.set() doesn't do a get node
     this.set(index, view);
   }
 }

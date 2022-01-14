@@ -3,7 +3,6 @@ import {BasicType, ValueOf} from "./abstract";
 import {CompositeType} from "./composite";
 import {LENGTH_GINDEX, maxChunksToDepth} from "../util/tree";
 import {
-  getLengthFromRootNode,
   value_deserializeFromBytesArrayBasic,
   value_fromJsonArray,
   value_toJsonArray,
@@ -94,7 +93,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   }
 
   tree_serializedSize(node: Node): number {
-    return getLengthFromRootNode(node) * this.elementType.byteLength;
+    return this.tree_getLength(node) * this.elementType.byteLength;
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {

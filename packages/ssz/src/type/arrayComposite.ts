@@ -19,11 +19,9 @@ export type ArrayProps = {
 
 export function value_serializedSizeArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
-  value: ValueOf<ElementType>[],
-  arrayProps: ArrayProps
+  length: number,
+  value: ValueOf<ElementType>[]
 ): number {
-  const length = arrayProps.length ? arrayProps.length : value.length;
-
   // Variable Length
   if (elementType.fixedSize === null) {
     let size = 0;
@@ -80,13 +78,14 @@ export function value_deserializeFromBytesArrayComposite<
   end: number,
   arrayProps: ArrayProps
 ): ValueOf<ElementType>[] {
-  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end);
 
   const values: ValueOf<ElementType>[] = [];
 
   // offests include the last element end
-  for (let i = 0; i < offsets.length - 1; i++) {
+  for (let i = 0; i < length; i++) {
     const startEl = offsets[i];
     const endEl = offsets[i + 1];
     values.push(elementType.value_deserializeFromBytes(data, startEl, endEl));
@@ -150,11 +149,10 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
 
   // Fixed length
   else {
-    let index = offset;
     for (let i = 0; i < nodes.length; i++) {
-      index = elementType.tree_serializeToBytes(output, index, nodes[i]);
+      offset = elementType.tree_serializeToBytes(output, offset, nodes[i]);
     }
-    return index;
+    return offset;
   }
 }
 
@@ -166,14 +164,14 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   end: number,
   arrayProps: ArrayProps
 ): Node {
-  const offsets = getOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
-  const length = offsets.length;
+  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end);
 
   const nodes: Node[] = [];
 
   // offests include the last element end
-  for (let i = 0; i < offsets.length - 1; i++) {
+  for (let i = 0; i < length; i++) {
     const startEl = offsets[i];
     const endEl = offsets[i + 1];
     nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl));
@@ -208,8 +206,8 @@ export function value_getRootsArrayComposite<ElementType extends CompositeType<u
   return roots;
 }
 
-function getOffsetsArrayComposite(
-  fixedSize: null | number,
+function readOffsetsArrayComposite(
+  elementFixedSize: null | number,
   data: Uint8Array,
   start: number,
   end: number,
@@ -220,22 +218,22 @@ function getOffsetsArrayComposite(
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
-  if (fixedSize === null) {
-    offsets = getVariableOffsetsArrayComposite(data.buffer, data.byteOffset + start, end - start);
+  if (elementFixedSize === null) {
+    offsets = readVariableOffsetsArrayComposite(data.buffer, data.byteOffset + start, size);
   }
 
   // Fixed length
   else {
-    if (fixedSize === 0) {
+    if (elementFixedSize === 0) {
       throw Error("element fixed length is 0");
     }
-    if (size % fixedSize !== 0) {
-      throw Error(`size ${size} is not multiple of element fixedSize ${fixedSize}`);
+    if (size % elementFixedSize !== 0) {
+      throw Error(`size ${size} is not multiple of element fixedSize ${elementFixedSize}`);
     }
 
-    const length = size / fixedSize;
+    const length = size / elementFixedSize;
     for (let i = 0; i < length; i++) {
-      offsets.push(i * fixedSize);
+      offsets.push(i * elementFixedSize);
     }
   }
 
@@ -245,25 +243,29 @@ function getOffsetsArrayComposite(
   return offsets;
 }
 
-function getVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: number, length: number): number[] {
-  if (length === 0) {
+/**
+ * Reads the values of contiguous variable offsets. Provided buffer includes offsets that point to position
+ * within `size`. This function also validates that all offsets are in range.
+ */
+function readVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: number, size: number): number[] {
+  if (size === 0) {
     return [];
   }
   const offsets: number[] = [];
   // all elements are variable-sized
   // indices contain offsets, which are indices deeper in the byte array
-  const fixedSection = new DataView(buffer, byteOffset, length);
+  const fixedSection = new DataView(buffer, byteOffset, size);
   const firstOffset = fixedSection.getUint32(0, true);
   let currentOffset = firstOffset;
   let nextOffset;
   let currentIndex = 0;
   let nextIndex = 0;
   while (currentIndex < firstOffset) {
-    if (currentOffset > length) {
+    if (currentOffset > size) {
       throw new Error("Offset out of bounds");
     }
     nextIndex = currentIndex + 4;
-    nextOffset = nextIndex === firstOffset ? length : fixedSection.getUint32(nextIndex, true);
+    nextOffset = nextIndex === firstOffset ? size : fixedSection.getUint32(nextIndex, true);
     if (currentOffset > nextOffset) {
       throw new Error("Offsets must be increasing");
     }

@@ -32,7 +32,6 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 > {
   protected nodes: Node[] = [];
   protected caches: unknown[];
-  protected views: unknown[] = [];
   protected readonly nodesChanged = new Set<number>();
   protected readonly viewsChanged = new Map<number, unknown>();
   private nodesPopulated: boolean;
@@ -104,6 +103,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     this.nodes = [];
     this.caches = [];
     this.nodesPopulated = false;
+    // No need to clear this.viewsChanged since they have no effect on the cache
   }
 }
 
@@ -180,14 +180,14 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
             this.nodes[index] = node;
           }
 
-          // TODO: To only run .commit() in the child views that actually change, use again
-          // the invalidateParent() hook and add indexes to a `this.dirtyChildViews.add(index)`
+          // Keep a reference to the new view to call .commit on it latter
           const view = fieldTypeComposite.getViewDU(node, this.caches[index]);
           this.viewsChanged.set(index, view);
 
-          const cache = fieldTypeComposite.cacheOfViewDU(view);
-          if (cache) {
-            this.caches[index] = cache;
+          // Persist child's view cache if it has any
+          const viewCache = fieldTypeComposite.cacheOfViewDU(view);
+          if (viewCache) {
+            this.caches[index] = viewCache;
           }
 
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -196,14 +196,18 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         // Expects TreeViewDU of fieldName
         set: function (this: CustomContainerTreeViewDU, view: unknown) {
-          // Commit any temp data and transfer cache
-          const node = fieldTypeComposite.commitViewDU(view);
+          // Is it really necessary to commit the node here now?
+          // > I don't know, probably not under normal usage
+          this.nodes[index] = fieldTypeComposite.commitViewDU(view);
 
-          // Should transfer cache?
-          this.caches[index] = fieldTypeComposite.cacheOfViewDU(view);
+          // Is it really necessary to transfer the cache here?
+          // > Yes, because there could be some old cache that will persist if changes stop being made
+          const viewCache = fieldTypeComposite.cacheOfViewDU(view);
+          if (viewCache) {
+            this.caches[index] = viewCache;
+          }
 
           // Do not commit to the tree, but update the node in leafNodes
-          this.nodes[index] = node;
           this.viewsChanged.set(index, view);
         },
       });

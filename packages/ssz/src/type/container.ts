@@ -283,6 +283,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   /**
    * Deserializer helper: Returns the bytes ranges of all fields, both variable and fixed size.
+   * Fields may not be contiguous in the serialized bytes, so the returned ranges are [start, end].
    * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
    * - For variable size fields does a first pass over the fixed section to read offsets
    */
@@ -298,21 +299,22 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     }
 
     // Read offsets in one pass
-    const variableOffsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
+    const offsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
+    offsets.push(end);
 
-    // Merge fieldRangesFixedLen + fieldRangesVarLen in one array
-    let variableIndex = 0;
-    let fixedIndex = 0;
+    // Merge fieldRangesFixedLen + offsets in one array
+    let variableIdx = 0;
+    let fixedIdx = 0;
     const fieldRanges: BytesRange[] = [];
 
     for (let i = 0; i < this.isFixedLen.length; i++) {
       if (this.isFixedLen[i]) {
         // push from fixLen ranges ++
-        fieldRanges.push(this.fieldRangesFixedLen[fixedIndex++]);
+        fieldRanges.push(this.fieldRangesFixedLen[fixedIdx++]);
       } else {
         // push from varLen ranges ++
-        fieldRanges.push({start: variableOffsets[variableIndex], end: variableOffsets[variableIndex + 1]});
-        variableIndex++;
+        fieldRanges.push({start: offsets[variableIdx], end: offsets[variableIdx + 1]});
+        variableIdx++;
       }
     }
     return fieldRanges;
@@ -361,7 +363,6 @@ function readVariableOffsets(
 
     offsets.push(offset);
   }
-  offsets.push(end);
 
   return offsets;
 }

@@ -52,19 +52,19 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
     this.type.elementType.tree_setToPackedNode(leafNode, index, value);
 
     // Commit immediately
-    const gindex = this.type.getGindexBitStringAtChunkIndex(chunkIndex);
-    this.tree.setNode(gindex, leafNode);
+    this.tree.setNodeAtDepth(this.type.depth, chunkIndex, leafNode);
   }
 
   getAll(): ValueOf<ElementType>[] {
+    const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
-    const chunkCount = Math.ceil(this.length / this.type.itemsPerChunk);
+    const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
     const leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
 
     const values: ValueOf<ElementType>[] = [];
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
-    const lenFullNodes = Math.floor(this.length / itemsPerChunk);
-    const remainder = this.length % itemsPerChunk;
+    const lenFullNodes = Math.floor(length / itemsPerChunk);
+    const remainder = length % itemsPerChunk;
 
     for (let n = 0; n < lenFullNodes; n++) {
       const leafNode = leafNodes[n];
