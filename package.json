@@ -5,7 +5,6 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "yarn build",
     "clean": "rm -rf ./packages/*/lib ./packages/*/*.tsbuildinfo",
     "build": "yarn clean && lerna run build",
     "lint": "lerna run lint --no-bail",
