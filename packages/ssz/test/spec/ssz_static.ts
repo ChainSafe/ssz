@@ -96,7 +96,12 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
           continue;
         }
 
-        it(testId, () => {
+        it(testId, function () {
+          // Mainnet must deal with big full states and hash each one multiple times
+          if (preset === "mainnet") {
+            this.timeout(30 * 1000);
+          }
+
           try {
             const testData = parseSszStaticTestcase(path.join(caseDir, testId));
             runValidSszTest(sszTypeNoUint, testData);
