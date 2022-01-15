@@ -10,7 +10,8 @@ import {BranchNode, hashObjectToUint8Array, Node} from "@chainsafe/persistent-me
  */
 export class BranchNodeStruct<T> extends Node {
   constructor(private readonly valueToNode: (value: T) => Node, readonly value: T) {
-    super();
+    // First null value is to save an extra variable to check if a node has a root or not
+    super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
   }
 
   get rootHashObject(): HashObject {

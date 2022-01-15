@@ -1,4 +1,4 @@
-import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, ByteViews} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
@@ -112,7 +112,7 @@ export class UintNumberType extends BasicType<number> {
     }
 
     const value = this.value_deserializeFromBytes(data, start, end);
-    const node = new LeafNode(zeroNode(0));
+    const node = LeafNode.fromZero();
     node.setUint(this.byteLength, 0, value, this.clipInfinity);
     return node;
   }
@@ -287,7 +287,7 @@ export class UintBigintType extends BasicType<bigint> {
     }
 
     const value = this.value_deserializeFromBytes(data, start, end);
-    const node = new LeafNode(zeroNode(0));
+    const node = LeafNode.fromZero();
     node.setUintBigint(this.byteLength, 0, value);
     return node;
   }

@@ -1,4 +1,4 @@
-import {LeafNode, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, ValueOf} from "../type/abstract";
 import {ArrayBasicTreeView} from "./arrayBasic";
 
@@ -12,7 +12,7 @@ export class ListBasicTreeView<ElementType extends BasicType<unknown>> extends A
       // TODO: Optimize: This `inNewNode` could be ommitted but it would cause a full navigation in .set()
       // Benchmark the cost of that navigation vs the extra math here
       // TODO: Optimize: prevent double initialization
-      const leafNode = new LeafNode(zeroNode(0));
+      const leafNode = LeafNode.fromZero();
       this.type.elementType.tree_setToPackedNode(leafNode, length, value);
 
       // Commit immediately

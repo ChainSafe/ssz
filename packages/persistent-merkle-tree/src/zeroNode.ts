@@ -1,6 +1,6 @@
 import {BranchNode, LeafNode, Node} from "./node";
 
-const zeroes: Node[] = [new LeafNode(new Uint8Array(32))];
+const zeroes: Node[] = [LeafNode.fromZero()];
 
 export function zeroNode(depth: number): Node {
   if (depth >= zeroes.length) {

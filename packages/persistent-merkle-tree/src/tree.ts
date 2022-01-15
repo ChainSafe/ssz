@@ -111,7 +111,7 @@ export class Tree {
   }
 
   setRoot(index: Gindex | GindexBitstring, root: Uint8Array): void {
-    this.setNode(index, new LeafNode(root));
+    this.setNode(index, LeafNode.fromRoot(root));
   }
 
   /**

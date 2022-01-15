@@ -2,7 +2,6 @@ import {
   BranchNode,
   LeafNode,
   Node,
-  zeroNode,
   getNodesAtDepth,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
@@ -26,6 +25,9 @@ import {Type, BasicType, ValueOf, ByteViews} from "./abstract";
  * ```
  */
 export function getLengthFromRootNode(node: Node): number {
+  // Length is represented as a Uint32 at the start of the chunk:
+  // 4 = 4 bytes in Uint32
+  // 0 = 0 offset bytes in Node's data
   return (node.right as LeafNode).getUint(4, 0);
 }
 export function getChunksNodeFromRootNode(node: Node): Node {
@@ -33,9 +35,16 @@ export function getChunksNodeFromRootNode(node: Node): Node {
 }
 
 export function addLengthNode(chunksNode: Node, length: number): Node {
-  // TODO: Add LeafNode.fromUint()
-  const lengthNode = new LeafNode(zeroNode(0));
-  lengthNode.setUint(4, 0, length);
+  return new BranchNode(chunksNode, LeafNode.fromUint32(length));
+}
+
+export function setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
+  const lengthNode =
+    newLength !== undefined
+      ? // If newLength is set, create a new node for length
+        LeafNode.fromUint32(newLength)
+      : // else re-use existing node
+        (rootNode.right as LeafNode);
   return new BranchNode(chunksNode, lengthNode);
 }
 

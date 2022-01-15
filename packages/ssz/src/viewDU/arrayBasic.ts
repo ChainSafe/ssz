@@ -76,9 +76,10 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       // TODO: This assumes that node has already been populated
       nodeChanged = this.nodes[chunkIndex];
     } else {
-      const nodePrev =
-        this.nodes[chunkIndex] ?? (getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex) as LeafNode);
-      nodeChanged = new LeafNode(nodePrev);
+      const nodePrev = (this.nodes[chunkIndex] ??
+        getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex)) as LeafNode;
+
+      nodeChanged = nodePrev.clone();
       // Store the changed node in the nodes cache
       this.nodes[chunkIndex] = nodeChanged;
       this.nodesChanged.add(chunkIndex);

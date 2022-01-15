@@ -1,4 +1,4 @@
-import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, ByteViews} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
@@ -28,7 +28,7 @@ export class BooleanType extends BasicType<boolean> {
       case 0:
         return false;
       default:
-        throw new Error(`Invalid boolean value: ${data.uint8Array[start]}`);
+        throw new Error(`Boolean: invalid value: ${data.uint8Array[start]}`);
     }
   }
 
@@ -41,14 +41,16 @@ export class BooleanType extends BasicType<boolean> {
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const size = end - start;
     if (size !== 1) {
-      throw Error(`Invalid size ${size} expected 1`);
+      throw Error(`Boolean: invalid size ${size} expected 1`);
     }
 
     // TODO: Optimize and validate data
-    const leafNode = new LeafNode(zeroNode(0));
-    // TODO: Assumes LeafNode has 4 byte uints are primary unit
-    leafNode.setUint(4, 0, data.uint8Array[start]);
-    return leafNode;
+    const value = data.uint8Array[start];
+    if (value > 1) {
+      throw Error(`Boolean: invalid value ${value}`);
+    }
+
+    return LeafNode.fromUint32(value);
   }
 
   // Fast tree opts

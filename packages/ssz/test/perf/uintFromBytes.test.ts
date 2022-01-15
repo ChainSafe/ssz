@@ -271,5 +271,5 @@ function getLeafNode(): LeafNode {
   dataView.setBigUint64(8, BigInt(30e9 + 2));
   dataView.setBigUint64(16, BigInt(30e9 + 3));
   dataView.setBigUint64(24, BigInt(30e9 + 4));
-  return new LeafNode(new Uint8Array(arrayBuffer));
+  return LeafNode.fromRoot(new Uint8Array(arrayBuffer));
 }

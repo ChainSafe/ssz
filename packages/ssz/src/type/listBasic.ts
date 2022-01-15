@@ -1,4 +1,4 @@
-import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, ValueOf} from "./abstract";
 import {CompositeType, ByteViews} from "./composite";
 import {
@@ -9,6 +9,7 @@ import {
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
   addLengthNode,
+  setChunksNode,
 } from "./arrayBasic";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {ArrayBasicType} from "../view/arrayBasic";
@@ -121,14 +122,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   }
 
   tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
-    let lengthNode: LeafNode;
-    if (newLength !== undefined) {
-      lengthNode = new LeafNode(zeroNode(0));
-      lengthNode.setUint(4, 0, newLength);
-    } else {
-      lengthNode = rootNode.right as LeafNode;
-    }
-    return new BranchNode(chunksNode, lengthNode);
+    return setChunksNode(rootNode, chunksNode, newLength);
   }
 
   // Merkleization

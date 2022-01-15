@@ -7,7 +7,7 @@ describe("BooleanType / tree", () => {
   const booleanType = new BooleanType();
 
   it("Single value", () => {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
     booleanType.tree_setToNode(leafNode, true);
 
     expect(toHexString(leafNode.root)).to.equal("0x0100000000000000000000000000000000000000000000000000000000000000");
@@ -16,7 +16,7 @@ describe("BooleanType / tree", () => {
   });
 
   it("Packed node", () => {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
     booleanType.tree_setToPackedNode(leafNode, 0, true);
 
     expect(toHexString(leafNode.root)).to.equal("0x0100000000000000000000000000000000000000000000000000000000000000");

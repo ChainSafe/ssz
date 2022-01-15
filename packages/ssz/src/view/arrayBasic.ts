@@ -48,7 +48,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
     const leafNodePrev = this.tree.getNodeAtDepth(this.type.depth, chunkIndex) as LeafNode;
 
     // Create a new node to preserve immutability
-    const leafNode = new LeafNode(leafNodePrev);
+    const leafNode = leafNodePrev.clone();
     this.type.elementType.tree_setToPackedNode(leafNode, index, value);
 
     // Commit immediately

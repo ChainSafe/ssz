@@ -1,23 +1,36 @@
 import {HashObject} from "@chainsafe/as-sha256";
-import {hashObjectToUint8Array, hashTwoObjects, isHashObject, uint8ArrayToHashObject} from "./hash";
+import {hashObjectToUint8Array, hashTwoObjects, uint8ArrayToHashObject} from "./hash";
 
 const TWO_POWER_32 = 2 ** 32;
 
 export abstract class Node implements HashObject {
-  // this is to save an extra variable to check if a node has a root or not
-  h0 = null as unknown as number;
-  h1 = 0;
-  h2 = 0;
-  h3 = 0;
-  h4 = 0;
-  h5 = 0;
-  h6 = 0;
-  h7 = 0;
+  /**
+   * May be null. This is to save an extra variable to check if a node has a root or not
+   */
+  h0: number;
+  h1: number;
+  h2: number;
+  h3: number;
+  h4: number;
+  h5: number;
+  h6: number;
+  h7: number;
 
   abstract root: Uint8Array;
   abstract rootHashObject: HashObject;
   abstract left: Node;
   abstract right: Node;
+
+  constructor(h0: number, h1: number, h2: number, h3: number, h4: number, h5: number, h6: number, h7: number) {
+    this.h0 = h0;
+    this.h1 = h1;
+    this.h2 = h2;
+    this.h3 = h3;
+    this.h4 = h4;
+    this.h5 = h5;
+    this.h6 = h6;
+    this.h7 = h7;
+  }
 
   applyHash(root: HashObject): void {
     this.h0 = root.h0;
@@ -37,9 +50,15 @@ export abstract class Node implements HashObject {
 
 export class BranchNode extends Node {
   constructor(private _left: Node, private _right: Node) {
-    super();
-    if (!_left) throw new Error("Left node is undefined");
-    if (!_right) throw new Error("Right node is undefined");
+    // First null value is to save an extra variable to check if a node has a root or not
+    super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
+
+    if (!_left) {
+      throw new Error("Left node is undefined");
+    }
+    if (!_right) {
+      throw new Error("Right node is undefined");
+    }
   }
 
   get rootHashObject(): HashObject {
@@ -75,14 +94,36 @@ export class BranchNode extends Node {
 }
 
 export class LeafNode extends Node {
-  constructor(_root: Uint8Array | HashObject) {
-    super();
-    if (isHashObject(_root)) {
-      this.applyHash(_root);
-    } else {
-      if (_root.length !== 32) throw new Error(`Root length ${_root.length} must be 32`);
-      this.applyHash(uint8ArrayToHashObject(_root));
-    }
+  static fromRoot(root: Uint8Array): LeafNode {
+    return this.fromHashObject(uint8ArrayToHashObject(root));
+  }
+
+  /**
+   * New LeafNode from existing HashObject.
+   */
+  static fromHashObject(ho: HashObject): LeafNode {
+    return new LeafNode(ho.h0, ho.h1, ho.h2, ho.h3, ho.h4, ho.h5, ho.h6, ho.h7);
+  }
+
+  /**
+   * New LeafNode with its internal value set to zero. Consider using `zeroNode(0)` if you don't need to mutate.
+   */
+  static fromZero(): LeafNode {
+    return new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+  }
+
+  /**
+   * LeafNode with HashObject `(uint32, 0, 0, 0, 0, 0, 0, 0)`.
+   */
+  static fromUint32(uint32: number): LeafNode {
+    return new LeafNode(uint32, 0, 0, 0, 0, 0, 0, 0);
+  }
+
+  /**
+   * Create a new LeafNode with the same internal values. The returned instance is safe to mutate
+   */
+  clone(): LeafNode {
+    return LeafNode.fromHashObject(this);
   }
 
   get rootHashObject(): HashObject {

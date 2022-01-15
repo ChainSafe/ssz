@@ -144,15 +144,15 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
             // TODO: This assumes that node has already been populated
             nodeChanged = this.nodes[index] as LeafNode;
           } else {
-            const nodePrev = this.nodes[index] ?? (getNodeAtDepth(this._rootNode, this.type.depth, index) as LeafNode);
+            const nodePrev = (this.nodes[index] ?? getNodeAtDepth(this._rootNode, this.type.depth, index)) as LeafNode;
 
-            nodeChanged = new LeafNode(nodePrev);
+            nodeChanged = nodePrev.clone();
             // Store the changed node in the nodes cache
             this.nodes[index] = nodeChanged;
             this.nodesChanged.add(index);
           }
 
-          fieldTypeBasic.tree_setToNode(nodeChanged as LeafNode, value);
+          fieldTypeBasic.tree_setToNode(nodeChanged, value);
         },
       });
     }

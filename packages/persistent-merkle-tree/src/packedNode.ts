@@ -25,16 +25,16 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   for (let i = 0; i < fullNodeCount; i++) {
     const offset = start + i * 32;
     leafNodes.push(
-      new LeafNode({
-        h0: dataView.getInt32(offset + 0, true),
-        h1: dataView.getInt32(offset + 4, true),
-        h2: dataView.getInt32(offset + 8, true),
-        h3: dataView.getInt32(offset + 12, true),
-        h4: dataView.getInt32(offset + 16, true),
-        h5: dataView.getInt32(offset + 20, true),
-        h6: dataView.getInt32(offset + 24, true),
-        h7: dataView.getInt32(offset + 28, true),
-      })
+      new LeafNode(
+        dataView.getInt32(offset + 0, true),
+        dataView.getInt32(offset + 4, true),
+        dataView.getInt32(offset + 8, true),
+        dataView.getInt32(offset + 12, true),
+        dataView.getInt32(offset + 16, true),
+        dataView.getInt32(offset + 20, true),
+        dataView.getInt32(offset + 24, true),
+        dataView.getInt32(offset + 28, true)
+      )
     );
   }
 
@@ -43,16 +43,7 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
 
   // Last node
   if (remainderBytes > 0) {
-    const node = new LeafNode({
-      h0: 0,
-      h1: 0,
-      h2: 0,
-      h3: 0,
-      h4: 0,
-      h5: 0,
-      h6: 0,
-      h7: 0,
-    });
+    const node = new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
     leafNodes.push(node);
 
     // Loop to dynamically copy the full h values
