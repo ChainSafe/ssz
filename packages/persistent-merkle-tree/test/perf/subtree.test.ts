@@ -9,10 +9,11 @@ describe("packedRootsBytesToLeafNodes", () => {
     const end = start + bytes;
 
     const data = new Uint8Array(bytes + offset);
+    const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
     data.set(Buffer.alloc(bytes, 0xdd));
 
     itBench(`packedRootsBytesToLeafNodes bytes ${bytes} offset ${offset} `, () => {
-      packedRootsBytesToLeafNodes(data, start, end);
+      packedRootsBytesToLeafNodes(dataView, start, end);
     });
   }
 });

@@ -1,5 +1,4 @@
-import {HashObject} from "@chainsafe/as-sha256";
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {
   LeafNode,
   subtreeFillToContents,
@@ -12,12 +11,6 @@ import {
 } from "../../src";
 
 describe("Track the performance of different Tree methods", () => {
-  setBenchOpts({
-    maxMs: 60 * 1000,
-    minMs: 30 * 1000,
-    runs: 10,
-  });
-
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
   // add 1 to countToDepth for mix_in_length spec
   const depth = countToDepth(BigInt(Math.ceil(VALIDATOR_REGISTRY_LIMIT / 4))) + 1;
@@ -28,6 +21,7 @@ describe("Track the performance of different Tree methods", () => {
   const gindex = toGindex(depth, BigInt(index));
   const gindexBitstring = toGindexBitstring(depth, index);
   const newHashObject = uint8ArrayToHashObject(newRoot);
+  const newNode = new LeafNode(newHashObject);
 
   const numLoop = 10_000;
   /** May need to run these tests separately to compare the performance */
@@ -58,32 +52,18 @@ describe("Track the performance of different Tree methods", () => {
     }
   });
 
-  // 5% faster than getRoot
-  itBench("getHashObject - gindex", () => {
-    for (let i = 0; i < numLoop; i++) {
-      tree.getHashObject(gindex);
-    }
-  });
-
-  // 15% faster than setRoot
-  itBench("setHashObject - gindex", () => {
-    for (let i = 0; i < numLoop; i++) {
-      tree.setHashObject(gindex, newHashObject);
-    }
-  });
-
   itBench("getHashObject then setHashObject", () => {
     for (let i = 0; i < numLoop; i++) {
-      tree.getHashObject(gindex);
-      tree.setHashObject(gindex, newHashObject);
+      tree.getNode(gindex);
+      tree.setNode(gindex, newNode);
     }
   });
 
-  /* Double the speed compared to getHashObject then setHashObject */
-  itBench("hashObjectFn", () => {
-    const hashObjectFn = (hashObject: HashObject) => newHashObject;
+  /* Double the speed compared to get then set */
+  itBench("setNodeWithFn", () => {
+    const getNewNodeFn = (): Node => newNode;
     for (let i = 0; i < numLoop; i++) {
-      tree.setHashObjectFn(gindex, hashObjectFn);
+      tree.setNodeWithFn(gindex, getNewNodeFn);
     }
   });
 });

@@ -1,13 +1,7 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {uint8ArrayToHashObject, hash, hashTwoObjects} from "../../src/hash";
 
 describe("hash", () => {
-  setBenchOpts({
-    maxMs: 30 * 1000,
-    minMs: 10 * 1000,
-    runs: 512,
-  });
-
   const root1 = new Uint8Array(32);
   const root2 = new Uint8Array(32);
   for (let i = 0; i < root1.length; i++) {
@@ -29,5 +23,4 @@ describe("hash", () => {
   itBench(`hashTwoObjects ${iterations} times`, () => {
     for (let j = 0; j < iterations; j++) hashTwoObjects(obj1, obj2);
   });
-
 });

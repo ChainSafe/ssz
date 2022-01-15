@@ -44,30 +44,10 @@ describe("tree / setNodes", () => {
   });
 
   itBench({
-    id: "tree.setNodes - gindexes",
-    beforeEach: () => tree.clone(),
-    fn: (tree) => {
-      const gindexes2: bigint[] = [];
-      for (let i = 0; i < indexes.length; i++) {
-        gindexes2.push(toGindex(depth, BigInt(i)));
-      }
-      tree.setNodes(gindexes2, nodes);
-    },
-  });
-
-  itBench({
-    id: "tree.setNodes - gindexes precomputed",
-    beforeEach: () => tree.clone(),
-    fn: (tree) => {
-      tree.setNodes(gindexes, nodes);
-    },
-  });
-
-  itBench({
     id: "tree.setNodesAtDepth - indexes",
     beforeEach: () => tree.clone(),
     fn: (tree) => {
-      setNodesAtDepth(depth, tree.rootNode, indexes, nodes);
+      setNodesAtDepth(tree.rootNode, depth, indexes, nodes);
     },
   });
 });
