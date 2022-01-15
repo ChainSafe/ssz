@@ -1,7 +1,8 @@
 import {Node, Proof, Tree} from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
 import {merkleizeSingleBuff} from "../util/merkleize";
-import {Type, ValueOf} from "./abstract";
+import {Type, ValueOf, ByteViews} from "./abstract";
+export {ByteViews};
 
 /**
  * Proof path

@@ -1,5 +1,5 @@
 import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {BasicType} from "./abstract";
+import {BasicType, ByteViews} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -16,19 +16,19 @@ export class BooleanType extends BasicType<boolean> {
 
   // bytes serdes
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: boolean): number {
-    output[offset] = value ? 1 : 0;
+  value_serializeToBytes(output: ByteViews, offset: number, value: boolean): number {
+    output.uint8Array[offset] = value ? 1 : 0;
     return offset + 1;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number): boolean {
-    switch (data[start]) {
+  value_deserializeFromBytes(data: ByteViews, start: number): boolean {
+    switch (data.uint8Array[start]) {
       case 1:
         return true;
       case 0:
         return false;
       default:
-        throw new Error(`Invalid boolean value: ${data[start]}`);
+        throw new Error(`Invalid boolean value: ${data.uint8Array[start]}`);
     }
   }
 

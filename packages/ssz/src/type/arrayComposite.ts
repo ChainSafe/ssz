@@ -1,5 +1,5 @@
 import {Node, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "./abstract";
+import {ValueOf, ByteViews} from "./abstract";
 import {CompositeType} from "./composite";
 import {addLengthNode, assertValidArrayLength} from "./arrayBasic";
 
@@ -43,17 +43,16 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
 export function value_serializeToBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
-  output: Uint8Array,
+  output: ByteViews,
   offset: number,
   value: ValueOf<ElementType>[]
 ): number {
   // Variable length
   if (elementType.fixedSize === null) {
     let variableIndex = offset + length * 4;
-    const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
     for (let i = 0; i < length; i++) {
       // write offset
-      fixedSection.setUint32(i * 4, variableIndex - offset, true);
+      output.dataView.setUint32(offset + i * 4, variableIndex - offset, true);
       // write serialized element to variable section
       variableIndex = elementType.value_serializeToBytes(output, variableIndex, value[i]);
     }
@@ -73,12 +72,12 @@ export function value_deserializeFromBytesArrayComposite<
   ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>
 >(
   elementType: ElementType,
-  data: Uint8Array,
+  data: ByteViews,
   start: number,
   end: number,
   arrayProps: ArrayProps
 ): ValueOf<ElementType>[] {
-  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end - start); // The offsets are relative to the start
 
@@ -164,7 +163,8 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   end: number,
   arrayProps: ArrayProps
 ): Node {
-  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data, start, end, arrayProps);
+  const dataView = new DataView(data.buffer, data.byteLength, data.byteLength);
+  const offsets = readOffsetsArrayComposite(elementType.fixedSize, dataView, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end - start); // The offsets are relative to the start
 
@@ -208,7 +208,7 @@ export function value_getRootsArrayComposite<ElementType extends CompositeType<u
 
 function readOffsetsArrayComposite(
   elementFixedSize: null | number,
-  data: Uint8Array,
+  data: DataView,
   start: number,
   end: number,
   arrayProps: ArrayProps
@@ -219,7 +219,7 @@ function readOffsetsArrayComposite(
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
   if (elementFixedSize === null) {
-    offsets = readVariableOffsetsArrayComposite(data.buffer, data.byteOffset + start, size);
+    offsets = readVariableOffsetsArrayComposite(data, start, size);
   }
 
   // Fixed length
@@ -247,15 +247,14 @@ function readOffsetsArrayComposite(
  * Reads the values of contiguous variable offsets. Provided buffer includes offsets that point to position
  * within `size`. This function also validates that all offsets are in range.
  */
-function readVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: number, size: number): number[] {
+function readVariableOffsetsArrayComposite(dataView: DataView, offset: number, size: number): number[] {
   if (size === 0) {
     return [];
   }
   const offsets: number[] = [];
   // all elements are variable-sized
   // indices contain offsets, which are indices deeper in the byte array
-  const fixedSection = new DataView(buffer, byteOffset, size);
-  const firstOffset = fixedSection.getUint32(0, true);
+  const firstOffset = dataView.getUint32(offset, true);
   let currentOffset = firstOffset;
   let nextOffset;
   let currentIndex = 0;
@@ -265,7 +264,7 @@ function readVariableOffsetsArrayComposite(buffer: ArrayBufferLike, byteOffset: 
       throw new Error("Offset out of bounds");
     }
     nextIndex = currentIndex + 4;
-    nextOffset = nextIndex === firstOffset ? size : fixedSection.getUint32(nextIndex, true);
+    nextOffset = nextIndex === firstOffset ? size : dataView.getUint32(offset + nextIndex, true);
     if (currentOffset > nextOffset) {
       throw new Error("Offsets must be increasing");
     }

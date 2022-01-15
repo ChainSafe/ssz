@@ -1,10 +1,14 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {BasicType} from "./abstract";
+import {BasicType, ByteViews} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
-const BIGINT_4_BYTES = BigInt(32);
+const BIGINT_2_64 = BigInt(2) ** BigInt(64);
+const BIGINT_2_128 = BigInt(2) ** BigInt(128);
+const BIGINT_2_192 = BigInt(2) ** BigInt(192);
+const NUMBER_2_32 = 2 ** 32;
+const NUMBER_32_MAX = 0xffffffff;
 
 export class UintNumberType extends BasicType<number> {
   readonly typeName: string;
@@ -18,6 +22,14 @@ export class UintNumberType extends BasicType<number> {
 
   constructor(byteLength: number, private readonly clipInfinity?: boolean, private readonly setBitwise?: boolean) {
     super();
+
+    if (byteLength > 8) {
+      throw Error("UintNumber limit is byteLength = 8");
+    }
+    if (Math.log2(byteLength) % 1 !== 0) {
+      throw Error("byteLength must be a power of 2");
+    }
+
     this.typeName = `uint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
@@ -31,40 +43,54 @@ export class UintNumberType extends BasicType<number> {
 
   // Serialization + deserialization
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: number): number {
-    if (this.byteLength > 6 && value === Infinity) {
-      for (let i = offset; i < offset + this.byteLength; i++) {
-        output[i] = 0xff;
-      }
-    } else {
-      let v = value;
-      const MAX_BYTE = 0xff;
-      for (let i = 0; i < this.byteLength; i++) {
-        output[offset + i] = v & MAX_BYTE;
-        v = Math.floor(v / 256);
-      }
+  value_serializeToBytes({dataView}: ByteViews, offset: number, value: number): number {
+    switch (this.byteLength) {
+      case 1:
+        dataView.setInt8(offset, value);
+        break;
+      case 2:
+        dataView.setUint16(offset, value, true);
+        break;
+      case 4:
+        dataView.setUint32(offset, value, true);
+        break;
+      case 8:
+        dataView.setUint32(offset, value & NUMBER_32_MAX, true);
+        value = value / NUMBER_32_MAX;
+        dataView.setUint32(offset + 4, value & NUMBER_32_MAX, true);
+        break;
+      default:
+        throw Error(`Invalid byteLength: ${this.byteLength}`);
     }
+
     return offset + this.byteLength;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): number {
+  value_deserializeFromBytes({dataView}: ByteViews, start: number, end: number): number {
     const size = end - start;
     if (size !== this.byteLength) {
       throw Error(`Invalid size ${size} expected ${this.byteLength}`);
     }
 
-    let isInfinity = true;
-    let output = 0;
-    for (let i = 0; i < this.byteLength; i++) {
-      output += data[start + i] * 2 ** (8 * i);
-      if (data[start + i] !== 0xff) {
-        isInfinity = false;
+    switch (this.byteLength) {
+      case 1:
+        return dataView.getUint8(start);
+      case 2:
+        return dataView.getUint16(start, true);
+      case 4:
+        return dataView.getUint32(start, true);
+      case 8: {
+        const a = dataView.getUint32(start, true);
+        const b = dataView.getUint32(start, true);
+        if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
+          return Infinity;
+        } else {
+          return b * NUMBER_2_32 + a;
+        }
       }
+      default:
+        throw Error(`Invalid byteLength: ${this.byteLength}`);
     }
-    if (this.clipInfinity && isInfinity) {
-      return Infinity;
-    }
-    return output;
   }
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
@@ -165,6 +191,11 @@ export class UintBigintType extends BasicType<bigint> {
 
   constructor(byteLength: number, readonly setBitwise?: boolean) {
     super();
+
+    if (Math.log2(byteLength) % 1 !== 0) {
+      throw Error("byteLength must be a power of 2");
+    }
+
     this.typeName = `uintBigint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
@@ -177,64 +208,67 @@ export class UintBigintType extends BasicType<bigint> {
 
   // Serialization + deserialization
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): bigint {
+  value_serializeToBytes({dataView}: ByteViews, offset: number, value: bigint): number {
+    switch (this.byteLength) {
+      case 1:
+        dataView.setInt8(offset, Number(value));
+        break;
+      case 2:
+        dataView.setUint16(offset, Number(value), true);
+        break;
+      case 4:
+        dataView.setUint32(offset, Number(value), true);
+        break;
+      case 8:
+        dataView.setBigUint64(offset, value, true);
+        break;
+      default: {
+        for (let i = 0; i < this.byteLength; i += 8) {
+          if (i > 0) value = value / BIGINT_2_64;
+          const lo = BigInt.asUintN(64, value);
+          dataView.setBigUint64(offset + i, lo, true);
+        }
+      }
+    }
+
+    return offset + this.byteLength;
+  }
+
+  value_deserializeFromBytes({dataView}: ByteViews, start: number, end: number): bigint {
     const size = end - start;
     if (size !== this.byteLength) {
       throw Error(`Invalid size ${size} expected ${this.byteLength}`);
     }
 
-    // Motivation:
-    //   Creating BigInts and bitshifting is more expensive than
-    // number bitshifting.
-    // Implementation:
-    //   Iterate throuth the bytearray, bitshifting the data into a 'groupOutput' number, byte by byte
-    // After each 4 bytes, bitshift the groupOutput into the bigint output and clear the groupOutput out
-    // After iterating through the bytearray,
-    // There may be additional data in the groupOutput if the bytearray if the bytearray isn't divisible by 4
-    let output = BigInt(0);
-    let groupIndex = 0,
-      groupOutput = 0;
-    for (let i = 0; i < this.byteLength; i++) {
-      groupOutput += data[start + i] << (8 * (i % 4));
-      if ((i + 1) % 4 === 0) {
-        // Left shift returns a signed integer and the output may have become negative
-        // In that case, the output needs to be converted to unsigned integer
-        if (groupOutput < 0) {
-          groupOutput >>>= 0;
-        }
-        // Optimization to set the output the first time, forgoing BigInt addition
-        if (groupIndex === 0) {
-          output = BigInt(groupOutput);
-        } else {
-          output += BigInt(groupOutput) << BigInt(32 * groupIndex);
-        }
-        groupIndex++;
-        groupOutput = 0;
+    // Note: pre-assigning the right function at the constructor to avoid this switch is not faster
+    switch (this.byteLength) {
+      case 1:
+        return BigInt(dataView.getUint8(start));
+      case 2:
+        return BigInt(dataView.getUint16(start, true));
+      case 4:
+        return BigInt(dataView.getUint32(start, true));
+      case 8:
+        return dataView.getBigUint64(start, true);
+      case 16: {
+        const a = dataView.getBigUint64(start, true);
+        const b = dataView.getBigUint64(start + 8, true);
+        return b * BIGINT_2_64 + a;
       }
+      case 32: {
+        const a = dataView.getBigUint64(start, true);
+        const b = dataView.getBigUint64(start + 8, true);
+        const c = dataView.getBigUint64(start + 16, true);
+        const d = dataView.getBigUint64(start + 24, true);
+        return d * BIGINT_2_192 + c * BIGINT_2_128 + b * BIGINT_2_64 + a;
+      }
+      default:
+        throw Error(`Invalid byteLength: ${this.byteLength}`);
     }
-    // if this.byteLength isn't a multiple of 4, there will be additional data
-    if (groupOutput) {
-      output += BigInt(groupOutput >>> 0) << BigInt(32 * groupIndex);
-    }
-    return output;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: bigint): number {
-    // Motivation
-    // BigInt bit shifting and BigInt allocation is slower compared to number
-    // For every 4 bytes, we extract value to groupedBytes
-    // and do bit shifting on the number
-    let v = value;
-    let groupedBytes = Number(BigInt.asUintN(32, v));
-    for (let i = 0; i < this.byteLength; i++) {
-      output[offset + i] = Number(groupedBytes & 0xff);
-      if ((i + 1) % 4 !== 0) {
-        groupedBytes >>= 8;
-      } else {
-        v >>= BIGINT_4_BYTES;
-        groupedBytes = Number(BigInt.asUintN(32, v));
-      }
-    }
+  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+    (node as LeafNode).writeToBytes(output, offset, this.byteLength);
     return offset + this.byteLength;
   }
 
@@ -248,11 +282,6 @@ export class UintBigintType extends BasicType<bigint> {
     const chunk = new Uint8Array(32);
     chunk.set(data.slice(start, end));
     return new LeafNode(chunk);
-  }
-
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    (node as LeafNode).writeToBytes(output, offset, this.byteLength);
-    return offset + this.byteLength;
   }
 
   // Fast Tree access

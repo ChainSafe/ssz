@@ -7,7 +7,7 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, BasicType, ValueOf} from "./abstract";
+import {Type, BasicType, ValueOf, ByteViews} from "./abstract";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -63,7 +63,7 @@ export type ArrayProps = {
 export function value_serializeToBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   length: number,
-  output: Uint8Array,
+  output: ByteViews,
   offset: number,
   value: ValueOf<ElementType>[]
 ): number {
@@ -76,7 +76,7 @@ export function value_serializeToBytesArrayBasic<ElementType extends BasicType<u
 
 export function value_deserializeFromBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
-  data: Uint8Array,
+  data: ByteViews,
   start: number,
   end: number,
   arrayProps: ArrayProps

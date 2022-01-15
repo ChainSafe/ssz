@@ -12,6 +12,11 @@ export type Path = (string | number)[];
 
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
 
+export type ByteViews = {
+  uint8Array: Uint8Array;
+  dataView: DataView;
+};
+
 /**
  * # Serialization
  * - serialize
@@ -88,36 +93,40 @@ export abstract class Type<V> {
   // - Add proofs
   // - Move to schema?
   abstract value_serializedSize(value: V): number;
-  abstract value_serializeToBytes(output: Uint8Array, offset: number, value: V): number;
-  abstract value_deserializeFromBytes(data: Uint8Array, start: number, end: number): V;
+  abstract value_serializeToBytes(output: ByteViews, offset: number, value: V): number;
+  abstract value_deserializeFromBytes(data: ByteViews, start: number, end: number): V;
   abstract tree_serializedSize(node: Node): number;
   abstract tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number;
   abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node;
 
   // Un-performant path but useful for testing and prototyping
   value_toTree(value: V): Node {
-    const bytes = new Uint8Array(this.value_serializedSize(value));
-    this.value_serializeToBytes(bytes, 0, value);
-    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, value);
+    return this.tree_deserializeFromBytes(uint8Array, 0, uint8Array.length);
   }
 
   // Un-performant path but useful for testing and prototyping
   tree_toValue(node: Node): V {
-    const bytes = new Uint8Array(this.tree_serializedSize(node));
-    this.tree_serializeToBytes(bytes, 0, node);
-    return this.value_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = new Uint8Array(this.tree_serializedSize(node));
+    const dataView = new DataView(uint8Array.buffer);
+    this.tree_serializeToBytes(uint8Array, 0, node);
+    return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 
   // User-friendly API
 
   serialize(value: V): Uint8Array {
-    const output = new Uint8Array(this.value_serializedSize(value));
-    this.value_serializeToBytes(output, 0, value);
-    return output;
+    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, value);
+    return uint8Array;
   }
 
-  deserialize(data: Uint8Array): V {
-    return this.value_deserializeFromBytes(data, 0, data.length);
+  deserialize(uint8Array: Uint8Array): V {
+    const dataView = new DataView(uint8Array.buffer);
+    return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 
   // Merkleization
@@ -150,9 +159,10 @@ export abstract class BasicType<V> extends Type<V> {
   }
 
   hashTreeRoot(value: V): Uint8Array {
-    const output = new Uint8Array(32);
-    this.value_serializeToBytes(output, 0, value);
-    return output;
+    const uint8Array = new Uint8Array(32);
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, value);
+    return uint8Array;
   }
 
   abstract tree_getFromNode(leafNode: LeafNode): V;

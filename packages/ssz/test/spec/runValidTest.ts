@@ -1,6 +1,8 @@
 import {expect} from "chai";
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, fromHexString, toHexString, Type} from "../../src";
+import {Type} from "../../src/type/abstract";
+import {fromHexString, toHexString} from "../../src/util/byteArray";
+import {CompositeType} from "../../src/type/composite";
 
 type ValidTestCaseData = {
   root: string;

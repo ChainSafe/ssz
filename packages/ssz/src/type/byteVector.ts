@@ -7,7 +7,7 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString} from "../util/byteArray";
 import {maxChunksToDepth} from "../util/merkleize";
-import {CompositeType} from "./composite";
+import {CompositeType, ByteViews} from "./composite";
 
 export type ByteVector = Uint8Array;
 
@@ -66,14 +66,14 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
     return this.fixedSize;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ByteVector): number {
-    output.set(value, offset);
+  value_serializeToBytes(output: ByteViews, offset: number, value: ByteVector): number {
+    output.uint8Array.set(value, offset);
     return offset + this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteVector {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteVector {
     // TODO: Validate length
-    return data.slice(start, end);
+    return data.uint8Array.slice(start, end);
   }
 
   tree_serializedSize(): number {

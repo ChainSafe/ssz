@@ -1,6 +1,6 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {BasicType, ValueOf} from "./abstract";
+import {BasicType, ValueOf, ByteViews} from "./abstract";
 import {CompositeType} from "./composite";
 import {
   defaultValueVector,
@@ -87,11 +87,11 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return this.fixedSize;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOf<ElementType>[] {
     return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
@@ -128,9 +128,10 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   // Merkleization
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
-    const roots = new Uint8Array(this.fixedSize);
-    value_serializeToBytesArrayBasic(this.elementType, this.length, roots, 0, value);
-    return roots;
+    const uint8Array = new Uint8Array(this.fixedSize);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+    value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
+    return uint8Array;
   }
 
   // JSON

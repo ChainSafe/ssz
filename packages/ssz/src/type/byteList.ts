@@ -8,7 +8,7 @@ import {
 import {fromHexString, toHexString} from "../util/byteArray";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
-import {CompositeType} from "./composite";
+import {CompositeType, ByteViews} from "./composite";
 
 export type ByteList = Uint8Array;
 
@@ -66,14 +66,14 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
     return value.length;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ByteList): number {
-    output.set(value, offset);
+  value_serializeToBytes(output: ByteViews, offset: number, value: ByteList): number {
+    output.uint8Array.set(value, offset);
     return offset + value.length;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ByteList {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteList {
     // TODO: Validate length
-    return data.slice(start, end);
+    return data.uint8Array.slice(start, end);
   }
 
   tree_serializedSize(node: Node): number {

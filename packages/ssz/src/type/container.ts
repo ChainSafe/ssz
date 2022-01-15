@@ -2,7 +2,7 @@ import {Node, getNodesAtDepth, subtreeFillToContents, Tree} from "@chainsafe/per
 import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Type, ValueOf} from "./abstract";
-import {CompositeType} from "./composite";
+import {CompositeType, ByteViews} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
 import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
 import {
@@ -147,17 +147,15 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return totalSize;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfFields<Fields>): number {
+  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOfFields<Fields>): number {
     let fixedIndex = offset;
     let variableIndex = offset + this.fixedEnd;
-
-    const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       if (fieldType.fixedSize === null) {
         // write offset
-        fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
+        output.dataView.setUint32(fixedIndex, variableIndex, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.value_serializeToBytes(output, variableIndex, value[fieldName]);
@@ -168,8 +166,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return variableIndex;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfFields<Fields> {
-    const fieldRanges = this.getFieldRanges(data, start, end);
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfFields<Fields> {
+    const fieldRanges = this.getFieldRanges(data.dataView, start, end);
     const value = {} as {[K in keyof Fields]: unknown};
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
@@ -218,7 +216,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const fieldRanges = this.getFieldRanges(data, start, end);
+    const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const fieldRanges = this.getFieldRanges(dataView, start, end);
     const nodes: Node[] = [];
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
@@ -285,7 +284,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
    * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
    * - For variable size fields does a first pass over the fixed section to read offsets
    */
-  private getFieldRanges(data: Uint8Array, start: number, end: number): BytesRange[] {
+  private getFieldRanges(data: DataView, start: number, end: number): BytesRange[] {
     if (this.variableOffsetsPosition.length === 0) {
       // Validate fixed length container
       const size = end - start;
@@ -323,7 +322,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
  * Returns the byte ranges of all variable size fields.
  */
 function readVariableOffsets(
-  data: Uint8Array,
+  data: DataView,
   start: number,
   end: number,
   fixedEnd: number,
@@ -338,12 +337,11 @@ function readVariableOffsets(
   // Note: `fixedSizes[i] = null` if that field has variable length
 
   const size = end - start;
-  const fixedSection = new DataView(data.buffer, data.byteOffset + start, fixedEnd);
 
   // with the fixed sizes, we can read the offsets, and store for our single pass
   const offsets: number[] = [];
   for (let i = 0; i < variableOffsetsPosition.length; i++) {
-    const offset = fixedSection.getUint32(variableOffsetsPosition[i], true);
+    const offset = data.getUint32(start + variableOffsetsPosition[i], true);
 
     // Validate offsets. If the list is empty the offset points to the end of the buffer, offset == size
     if (offset > size) {

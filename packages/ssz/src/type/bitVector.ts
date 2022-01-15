@@ -8,7 +8,7 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {fromHexString, toHexString} from "../util/byteArray";
-import {CompositeType} from "./composite";
+import {CompositeType, ByteViews} from "./composite";
 import {BitArray} from "../value/bitArray";
 import {BitArrayTreeView} from "../view/bitArray";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray";
@@ -99,14 +99,14 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
     return this.fixedSize;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
-    output.set(value.uint8Array, offset);
+  value_serializeToBytes(output: ByteViews, offset: number, value: BitArray): number {
+    output.uint8Array.set(value.uint8Array, offset);
     return offset + this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
-    this.assertValidLength(data, start, end);
-    return new BitArray(data.slice(start, end), this.lengthBits);
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): BitArray {
+    this.assertValidLength(data.uint8Array, start, end);
+    return new BitArray(data.uint8Array.slice(start, end), this.lengthBits);
   }
 
   tree_serializedSize(): number {
@@ -138,8 +138,9 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
 
   fromJson(json: unknown): BitArray {
     // TODO: Validate
-    const bytes = fromHexString(json as string);
-    return this.value_deserializeFromBytes(bytes, 0, this.fixedSize);
+    const uint8Array = fromHexString(json as string);
+    const dataView = new DataView(uint8Array.buffer);
+    return this.value_deserializeFromBytes({uint8Array, dataView}, 0, this.fixedSize);
   }
 
   toJson(value: BitArray): unknown {

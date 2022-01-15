@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Type} from "../../../src";
+import {Type} from "../../../src/type/abstract";
 import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest";
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */

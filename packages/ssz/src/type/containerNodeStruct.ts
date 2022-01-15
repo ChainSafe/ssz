@@ -21,11 +21,13 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
 
   tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
     const {value} = node as BranchNodeStruct<ValueOfFields<Fields>>;
-    return this.value_serializeToBytes(output, offset, value);
+    const dataView = new DataView(output.buffer, output.byteOffset, output.byteLength);
+    return this.value_serializeToBytes({uint8Array: output, dataView}, offset, value);
   }
 
   tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const value = this.value_deserializeFromBytes(data, start, end);
+    const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const value = this.value_deserializeFromBytes({uint8Array: data, dataView}, start, end);
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 

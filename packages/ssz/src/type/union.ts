@@ -1,5 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "./abstract";
+import {Type, ByteViews} from "./abstract";
 import {CompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 import {NoneType} from "./none";
@@ -97,13 +97,13 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     return 1 + this.types[value.selector].value_serializedSize(value.value);
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOfTypes<Types>): number {
-    output[offset] = value.selector;
+  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOfTypes<Types>): number {
+    output.uint8Array[offset] = value.selector;
     return this.types[value.selector].value_serializeToBytes(output, offset + 1, value.value);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOfTypes<Types> {
-    const selector = data[start];
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfTypes<Types> {
+    const selector = data.uint8Array[start];
     if (selector > this.maxSelector) {
       throw Error(`Invalid selector ${selector}`);
     }

@@ -1,6 +1,6 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {ValueOf} from "./abstract";
+import {ValueOf, ByteViews} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {defaultValueVector, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
@@ -93,11 +93,11 @@ export class VectorCompositeType<
     return value_serializedSizeArrayComposite(this.elementType, this.length, value);
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOf<ElementType>[] {
     return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
   }
 

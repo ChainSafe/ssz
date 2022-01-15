@@ -1,6 +1,6 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, ValueOf} from "./abstract";
-import {CompositeType} from "./composite";
+import {CompositeType, ByteViews} from "./composite";
 import {
   value_deserializeFromBytesArrayBasic,
   value_fromJsonArray,
@@ -84,11 +84,11 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     return value.length * this.elementType.byteLength;
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOf<ElementType>[] {
     return value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
   }
 
@@ -138,9 +138,10 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array {
-    const roots = new Uint8Array(this.value_serializedSize(value));
-    value_serializeToBytesArrayBasic(this.elementType, value.length, roots, 0, value);
-    return roots;
+    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+    value_serializeToBytesArrayBasic(this.elementType, value.length, {uint8Array, dataView}, 0, value);
+    return uint8Array;
   }
 
   // JSON

@@ -1,6 +1,6 @@
 import {BranchNode, LeafNode, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
-import {ValueOf} from "./abstract";
+import {ValueOf, ByteViews} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {addLengthNode, getLengthFromRootNode, value_fromJsonArray, value_toJsonArray} from "./arrayBasic";
 import {
@@ -90,11 +90,11 @@ export class ListCompositeType<
     return value_serializedSizeArrayComposite(this.elementType, value.length, value);
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: ValueOf<ElementType>[]): number {
+  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
     return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): ValueOf<ElementType>[] {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOf<ElementType>[] {
     return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
   }
 

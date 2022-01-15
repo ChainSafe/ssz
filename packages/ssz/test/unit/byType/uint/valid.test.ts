@@ -1,4 +1,4 @@
-import {UintBigintType, UintNumberType} from "../../../../src";
+import {UintBigintType, UintNumberType} from "../../../../src/type/uint";
 import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({

@@ -1,5 +1,5 @@
 import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {BasicType} from "./abstract";
+import {BasicType, ByteViews} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -17,11 +17,11 @@ export class NoneType extends BasicType<null> {
 
   // bytes serdes
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: null): number {
+  value_serializeToBytes(output: ByteViews, offset: number, value: null): number {
     return offset;
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number): null {
+  value_deserializeFromBytes(data: ByteViews, start: number): null {
     return null;
   }
 

@@ -8,7 +8,7 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString} from "../util/byteArray";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
-import {CompositeType} from "./composite";
+import {CompositeType, ByteViews} from "./composite";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
 import {BitArrayTreeView} from "../view/bitArray";
@@ -82,13 +82,13 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     return bitLenToSerializedLength(value.bitLen);
   }
 
-  value_serializeToBytes(output: Uint8Array, offset: number, value: BitArray): number {
-    output.set(value.uint8Array, offset);
-    return applyPaddingBit(output, offset, value.bitLen);
+  value_serializeToBytes(output: ByteViews, offset: number, value: BitArray): number {
+    output.uint8Array.set(value.uint8Array, offset);
+    return applyPaddingBit(output.uint8Array, offset, value.bitLen);
   }
 
-  value_deserializeFromBytes(data: Uint8Array, start: number, end: number): BitArray {
-    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): BitArray {
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
     return new BitArray(uint8Array, bitLen);
   }
 
@@ -132,8 +132,9 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
 
   fromJson(json: unknown): BitArray {
     // TODO: Validate
-    const bytes = fromHexString(json as string);
-    return this.value_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = fromHexString(json as string);
+    const dataView = new DataView(uint8Array.buffer);
+    return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 
   toJson(value: BitArray): unknown {
