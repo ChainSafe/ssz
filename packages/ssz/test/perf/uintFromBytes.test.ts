@@ -21,13 +21,40 @@ describe("Uint64 deserialize", () => {
 
       // Single leafNode
 
-      itBench(`UintBigint${bitLength} x ${numElements} deserialize`, () => {
+      before("Create random bytes", () => {
+        const firstValue = byteLength >= 8 ? 30e9 : 2 ** (bitLength - 1);
+        const maxValue = byteLength >= 8 ? Number.MAX_SAFE_INTEGER : 2 ** bitLength;
+
+        arrayBuffer = new ArrayBuffer(numElements * byteLength);
+        uint8Array = new Uint8Array(arrayBuffer);
+        dataView = new DataView(arrayBuffer);
+
+        for (let i = 0; i < numElements; i++) {
+          const value = (firstValue + i) % maxValue;
+          switch (byteLength) {
+            case 1:
+              dataView.setUint8(i * byteLength, value);
+              break;
+            case 2:
+              dataView.setUint16(i * byteLength, value, true);
+              break;
+            case 4:
+              dataView.setUint32(i * byteLength, value, true);
+              break;
+            case 8:
+              dataView.setBigUint64(i * byteLength, BigInt(value), true);
+              break;
+          }
+        }
+      });
+
+      itBench(`UintBigint${bitLength} x ${numElements} tree_deserialize`, () => {
         for (let i = 0; i < numElements; i++) {
           uintNumberType.tree_deserializeFromBytes({uint8Array, dataView}, i * byteLength, (i + 1) * byteLength);
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} serialize`, () => {
+      itBench(`UintBigint${bitLength} x ${numElements} tree_serialize`, () => {
         const arrayBuf = new ArrayBuffer(arrayBuffer.byteLength);
         const dataView = new DataView(arrayBuf);
         const uint8Array = new Uint8Array(arrayBuf);
@@ -81,13 +108,13 @@ describe("Uint64 deserialize", () => {
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} deserialize`, () => {
+      itBench(`UintBigint${bitLength} x ${numElements} value_deserialize`, () => {
         for (let i = 0; i < numElements; i++) {
           uintNumberType.value_deserializeFromBytes({uint8Array, dataView}, i * byteLength, (i + 1) * byteLength);
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} serialize`, () => {
+      itBench(`UintBigint${bitLength} x ${numElements} value_serialize`, () => {
         const arrayBuf = new ArrayBuffer(arrayBuffer.byteLength);
         const dataView = new DataView(arrayBuf);
         for (let i = 0; i < numElements; i++) {
