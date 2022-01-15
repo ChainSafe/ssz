@@ -1,5 +1,8 @@
 import {itBench} from "@dapplion/benchmark";
+import {Node} from "../../src/node";
 import {packedRootsBytesToLeafNodes} from "../../src/packedNode";
+import {subtreeFillToContents} from "../../src/subtree";
+import {zeroNode} from "../../src/zeroNode";
 
 describe("packedRootsBytesToLeafNodes", () => {
   const bytes = 4 * 1000;
@@ -17,3 +20,24 @@ describe("packedRootsBytesToLeafNodes", () => {
     });
   }
 });
+
+describe("subtreeFillToContents", () => {
+  const depth = 40;
+  const nodesCount = 250_000;
+
+  itBench({
+    id: `subtreeFillToContents depth ${depth} count ${nodesCount}`,
+    beforeEach: () => getNodesArray(nodesCount),
+    fn: (nodes) => {
+      subtreeFillToContents(nodes, depth);
+    },
+  });
+});
+
+function getNodesArray(len: number): Node[] {
+  const nodes: Node[] = [];
+  for (let i = 0; i < len; i++) {
+    nodes.push(zeroNode(0));
+  }
+  return nodes;
+}
