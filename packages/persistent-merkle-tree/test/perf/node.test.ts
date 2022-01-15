@@ -5,7 +5,7 @@ describe("HashObject LeafNode", () => {
   // Number of new nodes created in processAttestations() on average
   const nodesPerSlot = 250_000 / 32;
 
-  const zeroLeafNode = new LeafNode({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0});
+  const zeroLeafNode = LeafNode.fromZero();
 
   itBench(`getNodeH() x${nodesPerSlot} avg hindex`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
@@ -36,7 +36,7 @@ describe("HashObject LeafNode", () => {
 
   itBench(`new LeafNode() x${nodesPerSlot}`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
-      new LeafNode(zeroLeafNode);
+      LeafNode.fromHashObject(zeroLeafNode);
     }
   });
 });

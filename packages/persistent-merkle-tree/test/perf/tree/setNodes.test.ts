@@ -20,8 +20,8 @@ describe("tree / setNodes", () => {
   const gindexes: bigint[] = [];
 
   let tree: Tree;
-  const initialNode = new LeafNode(Buffer.alloc(32, 0xaa));
-  const changedNode = new LeafNode(Buffer.alloc(32, 0xbb));
+  const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
+  const changedNode = LeafNode.fromRoot(Buffer.alloc(32, 0xbb));
 
   before("Get base tree and data", () => {
     const length = Math.ceil(vc / itemsPerChunk);

@@ -39,20 +39,20 @@ function resetNodes(node: Node): void {
 function createValidator(i: number): Node {
   const nodes: Node[] = [];
   // pubkey, 48 bytes => 2 nodes
-  const pubkeyNode1 = new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10)));
-  const pubkeyNode2 = new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10)));
+  const pubkeyNode1 = newLeafNodeFilled(i);
+  const pubkeyNode2 = newLeafNodeFilled(i);
   nodes.push(new BranchNode(pubkeyNode1, pubkeyNode2));
   // withdrawalCredentials, 32 bytes => 1 node
-  nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
+  nodes.push(newLeafNodeFilled(i));
   // effectiveBalance, 8 bytes => 1 node
-  nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
+  nodes.push(newLeafNodeFilled(i));
   // slashed => 1 node
-  nodes.push(new LeafNode(new Uint8Array(32)));
+  nodes.push(LeafNode.fromRoot(new Uint8Array(32)));
   // 4 epoch nodes, 8 bytes => 1 node
-  nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
-  nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
-  nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
-  nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
+  nodes.push(newLeafNodeFilled(i));
+  nodes.push(newLeafNodeFilled(i));
+  nodes.push(newLeafNodeFilled(i));
+  nodes.push(newLeafNodeFilled(i));
 
   return subtreeFillToContents(nodes, countToDepth(BigInt(nodes.length)));
 }
@@ -61,4 +61,8 @@ function createValidatorList(numValidator: number): Node {
   const validators = Array.from({length: numValidator}, (_, i) => createValidator(i));
   // add 1 to countToDepth for mix_in_length spec
   return subtreeFillToContents(validators, countToDepth(BigInt(numValidator)) + 1);
+}
+
+function newLeafNodeFilled(i: number): LeafNode {
+  return LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 10)));
 }

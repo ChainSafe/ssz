@@ -8,14 +8,17 @@ describe("tree / getNodes", () => {
 
   let tree: Tree;
   const expectedNodes: Node[] = [];
-  const initialNode = new LeafNode(Buffer.alloc(32, 0xaa));
+  const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
 
   before("Get base tree and data", () => {
+    // Create a second array since subtreeFillToContents mutates the array
+    const nodes: Node[] = [];
     for (let i = 0; i < length; i++) {
       expectedNodes.push(initialNode);
+      nodes.push(initialNode);
     }
 
-    tree = new Tree(subtreeFillToContents(expectedNodes, depth));
+    tree = new Tree(subtreeFillToContents(nodes, depth));
   });
 
   it("getNodesAtDepth", () => {

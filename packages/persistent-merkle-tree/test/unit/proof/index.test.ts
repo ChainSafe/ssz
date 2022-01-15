@@ -6,7 +6,7 @@ import {Node, LeafNode, BranchNode} from "../../../src/node";
 // Create a tree with leaves of different values
 function createTree(depth: number, index = 0): Node {
   if (!depth) {
-    return new LeafNode(Buffer.alloc(32, index));
+    return LeafNode.fromRoot(Buffer.alloc(32, index));
   }
   return new BranchNode(createTree(depth - 1, 2 ** depth + index), createTree(depth - 1, 2 ** depth + index + 1));
 }

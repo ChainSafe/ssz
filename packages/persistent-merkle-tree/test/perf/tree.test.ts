@@ -21,7 +21,7 @@ describe("Track the performance of different Tree methods", () => {
   const gindex = toGindex(depth, BigInt(index));
   const gindexBitstring = toGindexBitstring(depth, index);
   const newHashObject = uint8ArrayToHashObject(newRoot);
-  const newNode = new LeafNode(newHashObject);
+  const newNode = LeafNode.fromHashObject(newHashObject);
 
   const numLoop = 10_000;
   /** May need to run these tests separately to compare the performance */
@@ -73,7 +73,7 @@ function createBalanceList(count: number, depth: number): Node {
   const numChunk = Math.ceil(count / 4);
   const nodes: Node[] = [];
   for (let i = 0; i < numChunk; i++) {
-    nodes.push(new LeafNode(new Uint8Array(Array.from({length: 32}, () => i % 10))));
+    nodes.push(LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 10))));
   }
 
   return subtreeFillToContents(nodes, depth);

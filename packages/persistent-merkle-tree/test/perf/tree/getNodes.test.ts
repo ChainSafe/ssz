@@ -14,7 +14,7 @@ describe("tree / getNodesAtDepth", () => {
   const length = vc;
 
   let tree: Tree;
-  const initialNode = new LeafNode(Buffer.alloc(32, 0xaa));
+  const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
 
   before("Get base tree and data", () => {
     const initialNodes: Node[] = [];

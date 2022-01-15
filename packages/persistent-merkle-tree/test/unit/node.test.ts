@@ -37,7 +37,7 @@ describe("LeafNode uint", () => {
   ];
 
   for (const {nodeValue, testCases, asHex} of testCasesNode) {
-    const leafNode = new LeafNode({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0, ...nodeValue});
+    const leafNode = LeafNode.fromHashObject({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0, ...nodeValue});
     for (const {bytes, offset, value} of testCases) {
       it(`getUint, ${JSON.stringify(nodeValue)} bytes: ${bytes} offset: ${offset}`, () => {
         // Use the unsigned right shift operator. By default bitwise ops convert to signed 32 bit numbers.
@@ -62,7 +62,7 @@ describe("LeafNode single bytes", () => {
   }
 
   it("Write full root with setUint", () => {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
     for (let i = 0; i < 32; i++) {
       leafNode.setUint(1, i, i + 1);
     }
@@ -70,7 +70,7 @@ describe("LeafNode single bytes", () => {
   });
 
   it("Write full root with setUintBigint", () => {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
     for (let i = 0; i < 32; i++) {
       leafNode.setUintBigint(1, i, BigInt(i + 1));
     }
@@ -79,7 +79,7 @@ describe("LeafNode single bytes", () => {
 
   it("Get full root with getUint", () => {
     const out = Buffer.alloc(32, 0);
-    const leafNode = new LeafNode(buf);
+    const leafNode = LeafNode.fromRoot(buf);
     for (let i = 0; i < 32; i++) {
       out[i] = leafNode.getUint(1, i);
     }
@@ -88,7 +88,7 @@ describe("LeafNode single bytes", () => {
 
   it("Get full root with getUintBigint", () => {
     const out = Buffer.alloc(32, 0);
-    const leafNode = new LeafNode(buf);
+    const leafNode = LeafNode.fromRoot(buf);
     for (let i = 0; i < 32; i++) {
       out[i] = Number(leafNode.getUintBigint(1, i));
     }
@@ -98,7 +98,7 @@ describe("LeafNode single bytes", () => {
 
 describe("setUint getUint - all small values", () => {
   for (let bytes = 1; bytes <= 8; bytes *= 2) {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0xff));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0xff));
 
     for (let offset = 0; offset < 32; offset += bytes) {
       it(`setUint getUint bytes ${bytes} offset ${offset}`, () => {
@@ -112,7 +112,7 @@ describe("setUint getUint - all small values", () => {
 
 describe("setUintBigint getUintBigint - all small values", () => {
   for (let bytes = 1; bytes <= 32; bytes *= 2) {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0xff));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0xff));
 
     for (let offset = 0; offset < 32; offset += bytes) {
       it(`setUint getUint bytes ${bytes} offset ${offset}`, () => {
@@ -128,7 +128,7 @@ describe("setUint getUint - some big values", () => {
   const bytes = 8;
 
   for (const value of [Number.MAX_SAFE_INTEGER, 0xffffffff + 1, 0xaabbccddee]) {
-    const leafNode = new LeafNode(Buffer.alloc(32, 0));
+    const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
 
     for (let offset = 0; offset < 1; offset += bytes) {
       it(`setUint getUint value ${value} offset ${offset}`, () => {
@@ -154,7 +154,7 @@ describe("setUintBigint getUintBigint - some big values", () => {
     const numBytesNextPow2 = Math.pow(2, Math.floor(Math.log2(numBytes - 1)) + 1);
 
     for (let bytes = numBytesNextPow2; bytes <= 32; bytes *= 2) {
-      const leafNode = new LeafNode(Buffer.alloc(32, 0));
+      const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
 
       for (let offset = 0; offset < 1; offset += bytes) {
         it(`setUint getUint value ${value} bytes ${bytes} offset ${offset}`, () => {

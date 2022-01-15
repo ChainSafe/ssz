@@ -28,7 +28,8 @@ describe("fixed-depth tree iteration", () => {
   it("should properly navigate a custom tree", () => {
     const depth = 4;
     const length = 1 << depth;
-    const leaves = Array.from({length: length}, (_, i) => new LeafNode(Buffer.alloc(32, i)));
+    const leaves = Array.from({length: length}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
+    const expectedLeaves = [...leaves];
     const tree = new Tree(subtreeFillToContents(leaves, depth));
     // i = startIx
     // j = count
@@ -37,7 +38,7 @@ describe("fixed-depth tree iteration", () => {
       for (let j = length - i - 1; j > 1; j--) {
         let k = i;
         for (const n of tree.iterateNodesAtDepth(depth, i, j)) {
-          expect(n.root).to.be.deep.equal(leaves[k].root);
+          expect(n.root).to.be.deep.equal(expectedLeaves[k].root);
           k++;
         }
         expect(k - i, `startIx=${i} count=${j} currIx=${k}`).to.be.eql(j);
@@ -75,7 +76,7 @@ describe("subtree mutation", () => {
     const tree1 = tree.clone();
     tree1.setRoot(BigInt(4), newRoot);
     const tree2 = tree.clone();
-    tree2.setNode(BigInt(4), new LeafNode(newHashObject));
+    tree2.setNode(BigInt(4), LeafNode.fromHashObject(newHashObject));
     expect(toHex(tree1.root)).to.be.equal(toHex(tree2.root));
   });
 });
@@ -84,10 +85,10 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
   it("Should compute root correctly after setting a leaf", () => {
     const depth = 4;
     const tree = new Tree(zeroNode(depth));
-    tree.setNode(BigInt(18), new LeafNode(Buffer.alloc(32, 2)));
+    tree.setNode(BigInt(18), LeafNode.fromRoot(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
     // setHashObjectFn
-    const getNewNodeFn = (): Node => new LeafNode(byteArrayToHashObject(Buffer.alloc(32, 2)));
+    const getNewNodeFn = (): Node => LeafNode.fromHashObject(byteArrayToHashObject(Buffer.alloc(32, 2)));
     const tree2 = new Tree(zeroNode(depth));
     tree2.setNodeWithFn(BigInt(18), getNewNodeFn);
     expect(toHex(tree2.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
@@ -96,12 +97,12 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
   it("Should compute root correctly after setting 3 leafs", () => {
     const depth = 5;
     const tree = new Tree(zeroNode(depth));
-    tree.setNode(BigInt(18), new LeafNode(Buffer.alloc(32, 2)));
-    tree.setNode(BigInt(46), new LeafNode(Buffer.alloc(32, 2)));
-    tree.setNode(BigInt(60), new LeafNode(Buffer.alloc(32, 2)));
+    tree.setNode(BigInt(18), LeafNode.fromRoot(Buffer.alloc(32, 2)));
+    tree.setNode(BigInt(46), LeafNode.fromRoot(Buffer.alloc(32, 2)));
+    tree.setNode(BigInt(60), LeafNode.fromRoot(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
     // setHashObjectFn
-    const getNewNodeFn = (): Node => new LeafNode(byteArrayToHashObject(Buffer.alloc(32, 2)));
+    const getNewNodeFn = (): Node => LeafNode.fromHashObject(byteArrayToHashObject(Buffer.alloc(32, 2)));
     const tree2 = new Tree(zeroNode(depth));
     tree2.setNodeWithFn(BigInt(18), getNewNodeFn);
     tree2.setNodeWithFn(BigInt(46), getNewNodeFn);
@@ -112,13 +113,6 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
   it("Should throw for gindex 0", () => {
     const tree = new Tree(zeroNode(2));
     expect(() => tree.setNode(BigInt(0), zeroNode(1))).to.throw("Invalid gindex");
-  });
-
-  it.skip("Should expand a subtree", () => {
-    const depth = 2;
-    const tree = new Tree(zeroNode(depth));
-    tree.setNode(BigInt(15), zeroNode(0));
-    expect(tree.getRoot(BigInt(14))).to.deep.equal(zeroNode(0));
   });
 });
 
@@ -157,7 +151,7 @@ describe("Tree batch setNodes", () => {
 
     // Run correct setNode() method for each and grab all tree roots
     for (let i = 0; i < gindexesBigint.length; i++) {
-      treeOk.setNode(gindexesBigint[i], new LeafNode(Buffer.alloc(32, gindexes[i])));
+      treeOk.setNode(gindexesBigint[i], LeafNode.fromRoot(Buffer.alloc(32, gindexes[i])));
     }
 
     // For the large test cases, only compare the rootNode root (gindex 1)
@@ -170,7 +164,7 @@ describe("Tree batch setNodes", () => {
         chunksNode,
         depth,
         indexes,
-        gindexes.map((nodeValue) => new LeafNode(Buffer.alloc(32, nodeValue)))
+        gindexes.map((nodeValue) => LeafNode.fromRoot(Buffer.alloc(32, nodeValue)))
       );
       tree.rootNode = newChunksNode;
       const roots = getTreeRoots(tree, maxGindex);

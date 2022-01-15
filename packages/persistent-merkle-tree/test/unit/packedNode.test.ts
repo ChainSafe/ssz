@@ -13,56 +13,58 @@ describe("subtree / packedNode single node", () => {
     {
       id: "One byte",
       size: 1,
-      nodes: [new LeafNode({h0: 0x07, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      nodes: [LeafNode.fromHashObject({h0: 0x07, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x07",
     },
     {
       id: "Two bytes",
       size: 2,
-      nodes: [new LeafNode({h0: 0x0708, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      nodes: [LeafNode.fromHashObject({h0: 0x0708, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x0807",
     },
     {
       id: "Three bytes",
       size: 3,
-      nodes: [new LeafNode({h0: 0x070809, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      nodes: [LeafNode.fromHashObject({h0: 0x070809, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x090807",
     },
     {
       id: "Four bytes",
       size: 4,
-      nodes: [new LeafNode({h0: 0x0708090a, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      nodes: [LeafNode.fromHashObject({h0: 0x0708090a, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x0a090807",
     },
     {
       id: "Odd last bytes",
       size: 31,
-      nodes: [new LeafNode({h0: 0x0102, h1: 0x0304, h2: 0, h3: 0, h4: 0x0102, h5: 0x0304, h6: 0, h7: 0x0d0e0f})],
+      nodes: [
+        LeafNode.fromHashObject({h0: 0x0102, h1: 0x0304, h2: 0, h3: 0, h4: 0x0102, h5: 0x0304, h6: 0, h7: 0x0d0e0f}),
+      ],
       outStr: "0x020100000403000000000000000000000201000004030000000000000f0e0d",
     },
     {
       id: "2 h values",
       size: 8,
-      nodes: [new LeafNode({h0: 0x0708090a, h1: 0x01020304, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      nodes: [LeafNode.fromHashObject({h0: 0x0708090a, h1: 0x01020304, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x0a09080704030201",
     },
     {
       id: "32 bytes zero",
       size: 32,
-      nodes: [new LeafNode({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      nodes: [LeafNode.fromHashObject({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x0000000000000000000000000000000000000000000000000000000000000000",
     },
     {
       id: "32 bytes same",
       size: 32,
-      nodes: [new LeafNode(Buffer.alloc(32, 0xdd))],
+      nodes: [LeafNode.fromRoot(Buffer.alloc(32, 0xdd))],
       outStr: "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
     },
     {
       id: "32 bytes random",
       size: 32,
       nodes: [
-        new LeafNode({
+        LeafNode.fromHashObject({
           h0: 928805656,
           h1: 695963229,
           h2: 4049923874,
