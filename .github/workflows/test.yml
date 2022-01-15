@@ -10,10 +10,10 @@ jobs:
       - uses: actions/checkout@v1
       - name: Bootstrap
         run: yarn
-      - name: Check types
-        run: yarn check-types
       - name: Build
         run: yarn build
+      - name: Check types
+        run: yarn check-types
       - name: Lint
         run: yarn lint
       - name: Tests

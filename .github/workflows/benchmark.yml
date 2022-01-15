@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: "14.16.0"
-      - run: yarn
+      - run: yarn && yarn build
 
       - name: Run benchmarks
         run: yarn benchmark
