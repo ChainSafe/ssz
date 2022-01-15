@@ -154,7 +154,7 @@ export class ArrayCompositeTreeViewDU<
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     // TODO: Ensure fast setNodesAtDepth() method is correct
-    const newChunksNode = setNodesAtDepth(this.type.chunkDepth, chunksNode, indexes, nodesChangedSorted);
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodesChangedSorted);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,

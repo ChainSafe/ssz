@@ -91,7 +91,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     const indexes = nodesChangedSorted.map((entry) => entry.index);
     const nodes = nodesChangedSorted.map((entry) => entry.node);
 
-    this._rootNode = setNodesAtDepth(this.type.depth, this._rootNode, indexes, nodes);
+    this._rootNode = setNodesAtDepth(this._rootNode, this.type.depth, indexes, nodes);
 
     this.nodesChanged.clear();
     this.viewsChanged.clear();

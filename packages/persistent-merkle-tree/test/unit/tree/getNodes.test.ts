@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {getNodesAtDepth, getNodesAtDepthIndexes, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src";
+import {getNodesAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src";
 
 describe("tree / getNodes", () => {
   const depth = 40;
@@ -20,11 +20,6 @@ describe("tree / getNodes", () => {
 
   it("getNodesAtDepth", () => {
     const nodes = getNodesAtDepth(tree.rootNode, depth, 0, length);
-    assertValidNodes(nodes, expectedNodes);
-  });
-
-  it("getNodesAtDepthIndexes", () => {
-    const nodes = getNodesAtDepthIndexes(tree.rootNode, depth, 0, length);
     assertValidNodes(nodes, expectedNodes);
   });
 
