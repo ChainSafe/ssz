@@ -79,14 +79,16 @@ describe("subtree / packedNode single node", () => {
 
   for (const {id, size, nodes, outStr} of testCases) {
     it(`${id} - packedNodeRootsToBytes`, () => {
-      const out = new Uint8Array(size);
-      packedNodeRootsToBytes(out, 0, size, nodes);
-      expect("0x" + Buffer.from(out).toString("hex")).to.equal(outStr);
+      const uint8Array = new Uint8Array(size);
+      const dataView = new DataView(uint8Array, uint8Array.byteOffset, uint8Array.byteLength);
+      packedNodeRootsToBytes(dataView, 0, size, nodes);
+      expect("0x" + Buffer.from(uint8Array).toString("hex")).to.equal(outStr);
     });
 
     it(`${id} - packedRootsBytesToLeafNodes`, () => {
-      const data = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));
-      const nodesRes = packedRootsBytesToLeafNodes(data, 0, size);
+      const uint8Array = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));
+      const dataView = new DataView(uint8Array, uint8Array.byteOffset, uint8Array.byteLength);
+      const nodesRes = packedRootsBytesToLeafNodes(dataView, 0, size);
       expect(onlyHashObject(nodesRes[0].rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
     });
   }
