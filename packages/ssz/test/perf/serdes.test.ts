@@ -13,6 +13,7 @@ import {
   BitArray,
   UintNumberType,
   ByteVectorType,
+  ContainerNodeStructType,
 } from "../../src";
 import {Validator} from "../lodestarTypes/phase0/sszTypes";
 
@@ -22,7 +23,6 @@ describe("SSZ (de)serialize", () => {
   const Uint64Bigint = new UintBigintType(8);
   const Root = new ByteVectorType(32);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   runTestCase("Simple object", new ContainerType({a: Uint64Bigint, b: Uint64Bigint, c: Uint64Bigint}));
   runTestCase(
     "aggregationBits",
@@ -45,7 +45,41 @@ describe("SSZ (de)serialize", () => {
       fillArray(arrLen, uint8ArrayFill(32, 0xaa))
     );
 
-    runTestCase(`List(Validator) ${arrLen}`, new ListCompositeType(Validator, arrLen), () =>
+    // ✓ List(Validator) 100000 binary -> struct                             9.366237 ops/s    106.7665 ms/op   x0.121         12 runs   1.81 s
+    // ✓ List(Validator) 100000 binary -> tree_backed                        2.660476 ops/s    375.8727 ms/op   x0.416         38 runs   15.4 s
+    // ✓ List(Validator) 100000 struct -> binary                             37.25235 ops/s    26.84394 ms/op   x0.157         17 runs  0.974 s
+    // ✓ List(Validator) 100000 tree_backed -> binary                        8.274093 ops/s    120.8592 ms/op   x0.663        204 runs   25.2 s
+    //
+    //
+    // For binary -> struct:
+    // - 54% of time is spent on garbage collector.
+    //   Removing the ByteVector uint8Array.slice() step, time is reduced by x2 and time in of GC to 32%
+    // - 10% spent on slice uint8Array. However it causes a lot of GC so uint8Array.slice accounts for > 60%
+    //
+    // binary -> tree_backed:
+    // - subtreeFillToContents of each object takes most of the time
+    //
+    // struct -> binary:
+    // - ???
+    //
+    // For tree_backed -> binary:
+    // - 25% of the time spent traversing the Validator object with getNodesAtDepth
+    const ValidatorContainer = new ContainerType(Validator.fields, Validator.opts);
+    runTestCase(`List(Validator) ${arrLen}`, new ListCompositeType(ValidatorContainer, arrLen), () =>
+      fillArray(arrLen, {
+        pubkey: uint8ArrayFill(48, 0xaa),
+        withdrawalCredentials: uint8ArrayFill(32, 0xaa),
+        effectiveBalance: 32e9,
+        slashed: false,
+        activationEligibilityEpoch: 1e6,
+        activationEpoch: 2e6,
+        exitEpoch: 3e6,
+        withdrawableEpoch: 4e6,
+      })
+    );
+
+    const ValidatorNodeStruct = new ContainerNodeStructType(Validator.fields, Validator.opts);
+    runTestCase(`List(Validator-NS) ${arrLen}`, new ListCompositeType(ValidatorNodeStruct, arrLen), () =>
       fillArray(arrLen, {
         pubkey: uint8ArrayFill(48, 0xaa),
         withdrawalCredentials: uint8ArrayFill(32, 0xaa),
@@ -78,13 +112,13 @@ describe("SSZ (de)serialize", () => {
       type.deserializeToView(bytes);
     });
 
-    // itBench(`${id} struct -> tree_backed`, () => {
-    //   type.toView(struct);
-    // });
-
-    // itBench(`${id} tree_backed -> struct`, () => {
-    //   view.toValue();
-    // });
+    // Don't track struct <-> tree_backed conversions since they are not required to be fast
+    itBench({id: `${id} struct -> tree_backed`, noThreshold: true}, () => {
+      type.toView(struct);
+    });
+    itBench({id: `${id} tree_backed -> struct`, noThreshold: true}, () => {
+      view.toValue();
+    });
 
     itBench(`${id} struct -> binary`, () => {
       type.serialize(struct);
