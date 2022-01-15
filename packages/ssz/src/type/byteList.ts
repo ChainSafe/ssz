@@ -74,7 +74,7 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
   }
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteList {
-    // TODO: Validate length
+    this.validateSize(end - start);
     return data.uint8Array.slice(start, end);
   }
 
@@ -92,6 +92,7 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    this.validateSize(end - start);
     const chunksNode = packedRootsBytesToNode(this.chunkDepth, data.dataView, start, end);
     return addLengthNode(chunksNode, end - start);
   }
@@ -118,5 +119,11 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
 
   toJson(value: ByteList): unknown {
     return toHexString(value);
+  }
+
+  private validateSize(size: number): void {
+    if (size > this.limitBytes) {
+      throw Error(`ByteVector invalid size ${size} limit ${this.limitBytes}`);
+    }
   }
 }

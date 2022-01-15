@@ -74,7 +74,7 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   }
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteVector {
-    // TODO: Validate length
+    this.validateSize(end - start);
     return data.uint8Array.slice(start, end);
   }
 
@@ -89,6 +89,7 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    this.validateSize(end - start);
     return packedRootsBytesToNode(this.chunkDepth, data.dataView, start, end);
   }
 
@@ -110,5 +111,11 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
 
   toJson(value: ByteVector): unknown {
     return toHexString(value);
+  }
+
+  private validateSize(size: number): void {
+    if (size !== this.lengthBytes) {
+      throw Error(`ByteVector invalid size ${size} expected ${this.lengthBytes}`);
+    }
   }
 }
