@@ -104,13 +104,13 @@ export class ListCompositeType<
     return tree_serializedSizeArrayComposite(this.elementType, length, this.chunkDepth, chunksNode);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const chunksNode = this.tree_getChunksNode(node);
     const length = this.tree_getLength(node);
     return tree_serializeToBytesArrayComposite(this.elementType, length, this.chunkDepth, chunksNode, output, offset);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     return tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
   }
 

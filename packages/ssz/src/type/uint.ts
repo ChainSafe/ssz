@@ -1,13 +1,14 @@
-import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {BasicType, ByteViews} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
-const BIGINT_2_64 = BigInt(2) ** BigInt(64);
-const BIGINT_2_128 = BigInt(2) ** BigInt(128);
-const BIGINT_2_192 = BigInt(2) ** BigInt(192);
-const NUMBER_2_32 = 2 ** 32;
+const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);
+const BIGINT_2_POW_128 = BigInt(2) ** BigInt(128);
+const BIGINT_2_POW_192 = BigInt(2) ** BigInt(192);
+// const BIGINT_64_MAX = BigInt("0xffffffffffffffff");
+const NUMBER_2_POW_32 = 2 ** 32;
 const NUMBER_32_MAX = 0xffffffff;
 
 export class UintNumberType extends BasicType<number> {
@@ -55,9 +56,14 @@ export class UintNumberType extends BasicType<number> {
         dataView.setUint32(offset, value, true);
         break;
       case 8:
-        dataView.setUint32(offset, value & NUMBER_32_MAX, true);
-        value = value / NUMBER_32_MAX;
-        dataView.setUint32(offset + 4, value & NUMBER_32_MAX, true);
+        if (value === Infinity) {
+          // TODO: Benchmark if it's faster to set BIGINT_64_MAX once
+          dataView.setUint32(offset, 0xffffffff);
+          dataView.setUint32(offset + 4, 0xffffffff);
+        } else {
+          dataView.setUint32(offset, value & 0xffffffff, true);
+          dataView.setUint32(offset + 4, (value / NUMBER_2_POW_32) & 0xffffffff, true);
+        }
         break;
       default:
         throw Error(`Invalid byteLength: ${this.byteLength}`);
@@ -81,11 +87,11 @@ export class UintNumberType extends BasicType<number> {
         return dataView.getUint32(start, true);
       case 8: {
         const a = dataView.getUint32(start, true);
-        const b = dataView.getUint32(start, true);
+        const b = dataView.getUint32(start + 4, true);
         if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
           return Infinity;
         } else {
-          return b * NUMBER_2_32 + a;
+          return b * NUMBER_2_POW_32 + a;
         }
       }
       default:
@@ -93,21 +99,22 @@ export class UintNumberType extends BasicType<number> {
     }
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    (node as LeafNode).writeToBytes(output, offset, this.byteLength);
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
+    const value = (node as LeafNode).getUint(this.byteLength, 0, this.clipInfinity);
+    this.value_serializeToBytes(output, offset, value);
     return offset + this.byteLength;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const size = end - start;
     if (size !== this.byteLength) {
       throw Error(`Invalid size ${size} expected ${this.byteLength}`);
     }
 
-    // TODO: Optimize
-    const chunk = new Uint8Array(32);
-    chunk.set(data.slice(start, end));
-    return new LeafNode(chunk);
+    const value = this.value_deserializeFromBytes(data, start, end);
+    const node = new LeafNode(zeroNode(0));
+    node.setUint(this.byteLength, 0, value, this.clipInfinity);
+    return node;
   }
 
   // Fast Tree access
@@ -224,7 +231,7 @@ export class UintBigintType extends BasicType<bigint> {
         break;
       default: {
         for (let i = 0; i < this.byteLength; i += 8) {
-          if (i > 0) value = value / BIGINT_2_64;
+          if (i > 0) value = value / BIGINT_2_POW_64;
           const lo = BigInt.asUintN(64, value);
           dataView.setBigUint64(offset + i, lo, true);
         }
@@ -253,35 +260,36 @@ export class UintBigintType extends BasicType<bigint> {
       case 16: {
         const a = dataView.getBigUint64(start, true);
         const b = dataView.getBigUint64(start + 8, true);
-        return b * BIGINT_2_64 + a;
+        return b * BIGINT_2_POW_64 + a;
       }
       case 32: {
         const a = dataView.getBigUint64(start, true);
         const b = dataView.getBigUint64(start + 8, true);
         const c = dataView.getBigUint64(start + 16, true);
         const d = dataView.getBigUint64(start + 24, true);
-        return d * BIGINT_2_192 + c * BIGINT_2_128 + b * BIGINT_2_64 + a;
+        return d * BIGINT_2_POW_192 + c * BIGINT_2_POW_128 + b * BIGINT_2_POW_64 + a;
       }
       default:
         throw Error(`Invalid byteLength: ${this.byteLength}`);
     }
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    (node as LeafNode).writeToBytes(output, offset, this.byteLength);
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
+    const value = (node as LeafNode).getUintBigint(this.byteLength, 0);
+    this.value_serializeToBytes(output, offset, value);
     return offset + this.byteLength;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const size = end - start;
     if (size !== this.byteLength) {
       throw Error(`Invalid size ${size} expected ${this.byteLength}`);
     }
 
-    // TODO: Optimize
-    const chunk = new Uint8Array(32);
-    chunk.set(data.slice(start, end));
-    return new LeafNode(chunk);
+    const value = this.value_deserializeFromBytes(data, start, end);
+    const node = new LeafNode(zeroNode(0));
+    node.setUintBigint(this.byteLength, 0, value);
+    return node;
   }
 
   // Fast Tree access

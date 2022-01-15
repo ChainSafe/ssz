@@ -96,13 +96,13 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     return this.tree_getLength(node) * this.elementType.byteLength;
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const chunksNode = this.tree_getChunksNode(node);
     const length = this.tree_getLength(node);
     return tree_serializeToBytesArrayBasic(this.elementType, length, this.chunkDepth, output, offset, chunksNode);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     return tree_deserializeFromBytesArrayBasic(this.elementType, this.chunkDepth, data, start, end, this);
   }
 

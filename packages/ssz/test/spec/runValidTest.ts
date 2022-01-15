@@ -106,9 +106,10 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
 
   {
     // tree -> bytes
-    const output = new Uint8Array(type.tree_serializedSize(node));
-    type.tree_serializeToBytes(output, 0, node);
-    assertBytes(output, "type.tree_serializeToBytes");
+    const uint8Array = new Uint8Array(type.tree_serializedSize(node));
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+    type.tree_serializeToBytes({uint8Array, dataView}, 0, node);
+    assertBytes(uint8Array, "type.tree_serializeToBytes");
   }
 
   {
@@ -119,7 +120,9 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
 
   {
     // bytes -> tree
-    const node = type.tree_deserializeFromBytes(copy(testDataSerialized), 0, testDataSerialized.length);
+    const uint8Array = copy(testDataSerialized);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+    const node = type.tree_deserializeFromBytes({uint8Array, dataView}, 0, testDataSerialized.length);
     assertNode(node, "type.tree_deserializeFromBytes()");
   }
 

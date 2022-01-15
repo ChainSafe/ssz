@@ -1,21 +1,20 @@
 import {subtreeFillToContents} from "./subtree";
 import {Node, LeafNode, getNodeH, setNodeH} from "./node";
 
-export function packedRootsBytesToNode(depth: number, data: Uint8Array, start: number, end: number): Node {
-  const leafNodes = packedRootsBytesToLeafNodes(data, start, end);
+export function packedRootsBytesToNode(depth: number, dataView: DataView, start: number, end: number): Node {
+  const leafNodes = packedRootsBytesToLeafNodes(dataView, start, end);
   return subtreeFillToContents(leafNodes, depth);
 }
 
 /**
  * Optimized deserialization of linear bytes to consecutive leaf nodes
  */
-export function packedRootsBytesToLeafNodes(data: Uint8Array, start: number, end: number): Node[] {
+export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
   const size = end - start;
 
   // If the offset in data is not a multiple of 4, Uint32Array can't be used
   // > start offset of Uint32Array should be a multiple of 4
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
-  const dataView = new DataView(data.buffer, start, size);
 
   const fullNodeCount = Math.floor(size / 32);
   const leafNodes: LeafNode[] = [];
@@ -24,7 +23,7 @@ export function packedRootsBytesToLeafNodes(data: Uint8Array, start: number, end
 
   // TODO: Optimize, with this approach each h property is written twice
   for (let i = 0; i < fullNodeCount; i++) {
-    const offset = i * 32;
+    const offset = start + i * 32;
     leafNodes.push(
       new LeafNode({
         h0: dataView.getInt32(offset + 0, true),
@@ -59,14 +58,14 @@ export function packedRootsBytesToLeafNodes(data: Uint8Array, start: number, end
     // Loop to dynamically copy the full h values
     const fullHCount = Math.floor(remainderBytes / 4);
     for (let h = 0; h < fullHCount; h++) {
-      setNodeH(node, h, dataView.getInt32(fullNodeCount * 32 + h * 4, true));
+      setNodeH(node, h, dataView.getInt32(start + fullNodeCount * 32 + h * 4, true));
     }
 
     const remainderUint32 = size % 4;
     if (remainderUint32 > 0) {
       let h = 0;
       for (let i = 0; i < remainderUint32; i++) {
-        h |= data[start + size - remainderUint32 + i] << (i * 8);
+        h |= dataView.getUint8(start + size - remainderUint32 + i) << (i * 8);
       }
       setNodeH(node, fullHCount, h);
     }
@@ -78,11 +77,10 @@ export function packedRootsBytesToLeafNodes(data: Uint8Array, start: number, end
 /**
  * Optimized serialization of consecutive leave nodes to linear bytes
  */
-export function packedNodeRootsToBytes(data: Uint8Array, start: number, size: number, nodes: Node[]): void {
+export function packedNodeRootsToBytes(dataView: DataView, start: number, size: number, nodes: Node[]): void {
   // If the offset in data is not a multiple of 4, Uint32Array can't be used
   // > start offset of Uint32Array should be a multiple of 4
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
-  const dataView = new DataView(data.buffer, start, size);
 
   // Consider that the last node may only include partial data
   const remainderBytes = size % 32;
@@ -92,7 +90,7 @@ export function packedNodeRootsToBytes(data: Uint8Array, start: number, size: nu
   const fullNodeCount = Math.floor(size / 32);
   for (let i = 0; i < fullNodeCount; i++) {
     const node = nodes[i];
-    const offset = i * 32;
+    const offset = start + i * 32;
     dataView.setInt32(offset + 0, node.h0, true);
     dataView.setInt32(offset + 4, node.h1, true);
     dataView.setInt32(offset + 8, node.h2, true);
@@ -110,14 +108,14 @@ export function packedNodeRootsToBytes(data: Uint8Array, start: number, size: nu
     // Loop to dynamically copy the full h values
     const fullHCount = Math.floor(remainderBytes / 4);
     for (let h = 0; h < fullHCount; h++) {
-      dataView.setInt32(fullNodeCount * 32 + h * 4, getNodeH(node, h), true);
+      dataView.setInt32(start + fullNodeCount * 32 + h * 4, getNodeH(node, h), true);
     }
 
     const remainderUint32 = size % 4;
     if (remainderUint32 > 0) {
       const h = getNodeH(node, fullHCount);
       for (let i = 0; i < remainderUint32; i++) {
-        data[start + size - remainderUint32 + i] = (h >> (i * 8)) & 0xff;
+        dataView.setUint8(start + size - remainderUint32 + i, (h >> (i * 8)) & 0xff);
       }
     }
   }

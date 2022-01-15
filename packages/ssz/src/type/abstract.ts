@@ -12,6 +12,13 @@ export type Path = (string | number)[];
 
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
 
+/**
+ * Provide two views recursively to any deserialization operation:
+ * - For uint it's x10 times faster to read and write with DataView
+ * - For ByteArray and BitArray it's x10 times faster to slice a Uint8Array than an ArrayBuffer
+ *
+ * Providing both allows to optimize for both cases with the tiny overhead of creating a new view.
+ */
 export type ByteViews = {
   uint8Array: Uint8Array;
   dataView: DataView;
@@ -96,22 +103,22 @@ export abstract class Type<V> {
   abstract value_serializeToBytes(output: ByteViews, offset: number, value: V): number;
   abstract value_deserializeFromBytes(data: ByteViews, start: number, end: number): V;
   abstract tree_serializedSize(node: Node): number;
-  abstract tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number;
-  abstract tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node;
+  abstract tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number;
+  abstract tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node;
 
   // Un-performant path but useful for testing and prototyping
   value_toTree(value: V): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
-    return this.tree_deserializeFromBytes(uint8Array, 0, uint8Array.length);
+    return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 
   // Un-performant path but useful for testing and prototyping
   tree_toValue(node: Node): V {
     const uint8Array = new Uint8Array(this.tree_serializedSize(node));
     const dataView = new DataView(uint8Array.buffer);
-    this.tree_serializeToBytes(uint8Array, 0, node);
+    this.tree_serializeToBytes({uint8Array, dataView}, 0, node);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 

@@ -105,7 +105,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<un
   elementType: ElementType,
   length: number,
   depth: number,
-  output: Uint8Array,
+  output: ByteViews,
   offset: number,
   node: Node
 ): number {
@@ -113,7 +113,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<un
   const chunkCount = Math.ceil(size / 32);
 
   const nodes = getNodesAtDepth(node, depth, 0, chunkCount);
-  packedNodeRootsToBytes(output, offset, size, nodes);
+  packedNodeRootsToBytes(output.dataView, offset, size, nodes);
 
   return offset + size;
 }
@@ -122,7 +122,7 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<un
 export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   chunkDepth: number,
-  data: Uint8Array,
+  data: ByteViews,
   start: number,
   end: number,
   arrayProps: ArrayProps
@@ -132,7 +132,7 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   assertValidArrayLength(length, arrayProps, true);
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
-  const chunksNode = packedRootsBytesToNode(chunkDepth, data, start, end);
+  const chunksNode = packedRootsBytesToNode(chunkDepth, data.dataView, start, end);
 
   if (arrayProps.limit) {
     return addLengthNode(chunksNode, length);

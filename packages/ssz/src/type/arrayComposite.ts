@@ -127,7 +127,7 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   length: number,
   depth: number,
   node: Node,
-  output: Uint8Array,
+  output: ByteViews,
   offset: number
 ): number {
   const nodes = getNodesAtDepth(node, depth, 0, length);
@@ -136,10 +136,10 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   // Indices contain offsets, which are indices deeper in the byte array
   if (elementType.fixedSize === null) {
     let variableIndex = offset + length * 4;
-    const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
+    const {dataView} = output;
     for (let i = 0; i < nodes.length; i++) {
       // write offset
-      fixedSection.setUint32(i * 4, variableIndex - offset, true);
+      dataView.setUint32(offset + i * 4, variableIndex - offset, true);
       // write serialized element to variable section
       variableIndex = elementType.tree_serializeToBytes(output, variableIndex, nodes[i]);
     }
@@ -158,13 +158,12 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
 export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   chunkDepth: number,
-  data: Uint8Array,
+  data: ByteViews,
   start: number,
   end: number,
   arrayProps: ArrayProps
 ): Node {
-  const dataView = new DataView(data.buffer, data.byteLength, data.byteLength);
-  const offsets = readOffsetsArrayComposite(elementType.fixedSize, dataView, start, end, arrayProps);
+  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end - start); // The offsets are relative to the start
 

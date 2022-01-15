@@ -64,7 +64,7 @@ export function sszStatic(fork: ForkName): void {
 // example:
 // $ RUN_ONLY_FAILED_TEST=true RENDER_JSON=true LODESTAR_FORK=merge yarn test:spec-static-minimal
 //
-const failedTestFilepath = "failedTest.txt";
+const failedTestFilepath = ".failedTest.txt";
 const failedTestExists = fs.existsSync(failedTestFilepath);
 const failedTestStr = failedTestExists ? fs.readFileSync(failedTestFilepath, "utf8") : "";
 if (failedTestExists) {

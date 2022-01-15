@@ -52,8 +52,10 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
   }
 
   commitViewDU(view: Uint8Array): Node {
-    const bytes = this.serialize(view);
-    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = new Uint8Array(this.value_serializedSize(view));
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, view);
+    return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 
   cacheOfViewDU(): unknown {
@@ -80,17 +82,17 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
     return getLengthFromRootNode(node);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const chunksNode = getChunksNodeFromRootNode(node);
     const byteLen = getLengthFromRootNode(node);
     const chunkLen = Math.ceil(byteLen / 32);
     const nodes = getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkLen);
-    packedNodeRootsToBytes(output, offset, byteLen, nodes);
+    packedNodeRootsToBytes(output.dataView, offset, byteLen, nodes);
     return offset + byteLen;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const chunksNode = packedRootsBytesToNode(this.chunkDepth, data, start, end);
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    const chunksNode = packedRootsBytesToNode(this.chunkDepth, data.dataView, start, end);
     return addLengthNode(chunksNode, end - start);
   }
 

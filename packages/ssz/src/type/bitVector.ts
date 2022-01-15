@@ -85,8 +85,10 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
   }
 
   commitViewDU(view: BitArray): Node {
-    const bytes = this.serialize(view);
-    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = new Uint8Array(this.fixedSize);
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, view);
+    return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, this.fixedSize);
   }
 
   cacheOfViewDU(): unknown {
@@ -113,15 +115,15 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
     return this.fixedSize;
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const nodes = getNodesAtDepth(node, this.depth, 0, this.chunkCount);
-    packedNodeRootsToBytes(output, offset, this.fixedSize, nodes);
+    packedNodeRootsToBytes(output.dataView, offset, this.fixedSize, nodes);
     return offset + this.fixedSize;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    this.assertValidLength(data, start, end);
-    return packedRootsBytesToNode(this.depth, data, start, end);
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    this.assertValidLength(data.uint8Array, start, end);
+    return packedRootsBytesToNode(this.depth, data.dataView, start, end);
   }
 
   tree_getLength(node: Node): number {

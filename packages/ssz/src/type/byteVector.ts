@@ -52,8 +52,10 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
   }
 
   commitViewDU(view: Uint8Array): Node {
-    const bytes = this.serialize(view);
-    return this.tree_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = new Uint8Array(this.fixedSize);
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, view);
+    return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, this.fixedSize);
   }
 
   cacheOfViewDU(): unknown {
@@ -80,14 +82,14 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
     return this.fixedSize;
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const nodes = getNodesAtDepth(node, this.chunkDepth, 0, this.maxChunkCount);
-    packedNodeRootsToBytes(output, offset, this.fixedSize, nodes);
+    packedNodeRootsToBytes(output.dataView, offset, this.fixedSize, nodes);
     return offset + this.fixedSize;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    return packedRootsBytesToNode(this.chunkDepth, data, start, end);
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    return packedRootsBytesToNode(this.chunkDepth, data.dataView, start, end);
   }
 
   // Merkleization

@@ -25,11 +25,11 @@ export class NoneType extends BasicType<null> {
     return null;
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     return offset;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     return zeroNode(0);
   }
 

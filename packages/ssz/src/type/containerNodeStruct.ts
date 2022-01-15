@@ -1,5 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "./abstract";
+import {Type, ByteViews} from "./abstract";
 import {ContainerType, ContainerOptions} from "./container";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
@@ -19,15 +19,13 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return this.value_serializedSize((node as BranchNodeStruct<ValueOfFields<Fields>>).value);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const {value} = node as BranchNodeStruct<ValueOfFields<Fields>>;
-    const dataView = new DataView(output.buffer, output.byteOffset, output.byteLength);
-    return this.value_serializeToBytes({uint8Array: output, dataView}, offset, value);
+    return this.value_serializeToBytes(output, offset, value);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
-    const value = this.value_deserializeFromBytes({uint8Array: data, dataView}, start, end);
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    const value = this.value_deserializeFromBytes(data, start, end);
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
@@ -41,9 +39,11 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
+  // TODO: Optimize conversion
   private valueToTree(value: ValueOfFields<Fields>): Node {
-    // TODO: Optimize conversion
-    const bytes = this.serialize(value);
-    return super.tree_deserializeFromBytes(bytes, 0, bytes.length);
+    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const dataView = new DataView(uint8Array.buffer);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, value);
+    return super.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 }

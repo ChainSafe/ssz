@@ -68,12 +68,14 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   abstract cacheOfViewDU(view: TVDU): unknown;
 
   deserializeToView(data: Uint8Array): TV {
-    const node = this.tree_deserializeFromBytes(data, 0, data.length);
+    const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const node = this.tree_deserializeFromBytes({uint8Array: data, dataView}, 0, data.length);
     return this.getView(new Tree(node));
   }
 
   deserializeToViewDU(data: Uint8Array): TVDU {
-    const node = this.tree_deserializeFromBytes(data, 0, data.length);
+    const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    const node = this.tree_deserializeFromBytes({uint8Array: data, dataView}, 0, data.length);
     return this.getViewDU(node);
   }
 
@@ -161,7 +163,8 @@ export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown
 
   serialize(): Uint8Array {
     const output = new Uint8Array(this.type.tree_serializedSize(this.node));
-    this.type.tree_serializeToBytes(output, 0, this.node);
+    const dataView = new DataView(output.buffer, output.byteOffset, output.byteLength);
+    this.type.tree_serializeToBytes({uint8Array: output, dataView}, 0, this.node);
     return output;
   }
 

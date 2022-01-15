@@ -96,21 +96,22 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
     return bitLenToSerializedLength(getLengthFromRootNode(node));
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const chunksNode = getChunksNodeFromRootNode(node);
     const bitLen = getLengthFromRootNode(node);
 
     const byteLen = Math.ceil(bitLen / 8);
     const chunkLen = Math.ceil(byteLen / 32);
     const nodes = getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkLen);
-    packedNodeRootsToBytes(output, offset, byteLen, nodes);
+    packedNodeRootsToBytes(output.dataView, offset, byteLen, nodes);
 
-    return applyPaddingBit(output, offset, bitLen);
+    return applyPaddingBit(output.uint8Array, offset, bitLen);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data, start, end);
-    const chunksNode = packedRootsBytesToNode(this.chunkDepth, uint8Array, 0, uint8Array.length);
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+    const chunksNode = packedRootsBytesToNode(this.chunkDepth, dataView, 0, uint8Array.length);
     return addLengthNode(chunksNode, bitLen);
   }
 

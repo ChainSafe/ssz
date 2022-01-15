@@ -120,16 +120,16 @@ export class UnionType<Types extends Type<any>[]> extends CompositeType<
     return 1 + this.types[selector].value_serializedSize(valueNode);
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const selector = getLengthFromRootNode(node);
     const valueNode = node.left;
 
-    output[offset] = selector;
+    output.uint8Array[offset] = selector;
     return this.types[selector].tree_serializeToBytes(output, offset + 1, valueNode);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
-    const selector = data[start];
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    const selector = data.uint8Array[start];
     if (selector > this.maxSelector) {
       throw Error(`Invalid selector ${selector}`);
     }

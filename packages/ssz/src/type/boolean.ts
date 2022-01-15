@@ -32,12 +32,13 @@ export class BooleanType extends BasicType<boolean> {
     }
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
-    (node as LeafNode).writeToBytes(output, offset, 1);
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
+    // TODO: Assumes LeafNode has 4 byte uints are primary unit
+    output.uint8Array[offset] = (node as LeafNode).getUint(4, 0);
     return offset + 1;
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const size = end - start;
     if (size !== 1) {
       throw Error(`Invalid size ${size} expected 1`);
@@ -45,7 +46,8 @@ export class BooleanType extends BasicType<boolean> {
 
     // TODO: Optimize and validate data
     const leafNode = new LeafNode(zeroNode(0));
-    leafNode.setUint(4, 0, data[start]);
+    // TODO: Assumes LeafNode has 4 byte uints are primary unit
+    leafNode.setUint(4, 0, data.uint8Array[start]);
     return leafNode;
   }
 

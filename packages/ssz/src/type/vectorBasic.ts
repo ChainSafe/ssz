@@ -99,11 +99,11 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return this.fixedSize;
   }
 
-  tree_serializeToBytes(output: Uint8Array, offset: number, node: Node): number {
+  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     return tree_serializeToBytesArrayBasic(this.elementType, this.length, this.depth, output, offset, node);
   }
 
-  tree_deserializeFromBytes(data: Uint8Array, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     return tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
   }
 
