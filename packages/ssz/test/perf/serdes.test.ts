@@ -13,9 +13,8 @@ import {
   BitArray,
   UintNumberType,
   ByteVectorType,
-  ContainerNodeStructType,
 } from "../../src";
-import {Validator} from "../lodestarTypes/phase0/sszTypes";
+import {ValidatorContainer, ValidatorNodeStruct} from "../lodestarTypes/phase0/sszTypes";
 
 describe("SSZ (de)serialize", () => {
   const uint8 = new UintNumberType(1);
@@ -64,7 +63,6 @@ describe("SSZ (de)serialize", () => {
     //
     // For tree_backed -> binary:
     // - 25% of the time spent traversing the Validator object with getNodesAtDepth
-    const ValidatorContainer = new ContainerType(Validator.fields, Validator.opts);
     runTestCase(`List(Validator) ${arrLen}`, new ListCompositeType(ValidatorContainer, arrLen), () =>
       fillArray(arrLen, {
         pubkey: uint8ArrayFill(48, 0xaa),
@@ -78,7 +76,6 @@ describe("SSZ (de)serialize", () => {
       })
     );
 
-    const ValidatorNodeStruct = new ContainerNodeStructType(Validator.fields, Validator.opts);
     runTestCase(`List(Validator-NS) ${arrLen}`, new ListCompositeType(ValidatorNodeStruct, arrLen), () =>
       fillArray(arrLen, {
         pubkey: uint8ArrayFill(48, 0xaa),

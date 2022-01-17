@@ -1,10 +1,32 @@
+import * as sszAltair from "../lodestarTypes/altair/sszTypes";
 import {Attestation, SignedAggregateAndProof, SignedBeaconBlock} from "../lodestarTypes/phase0/types";
-import {SignedContributionAndProof} from "../lodestarTypes/altair/types";
+import {SignedContributionAndProof, BeaconState} from "../lodestarTypes/altair/types";
 import {BitArray} from "../../src";
 
 // Typical mainnet numbers
 const BITS_PER_ATTESTATION = 90;
 const ATTESTATIONS_PER_BLOCK = 90;
+
+export function getRandomState(validatorCount: number): BeaconState {
+  const state = sszAltair.BeaconState.defaultValue;
+  for (let i = 0; i < validatorCount; i++) {
+    state.balances.push(34788813514 + i);
+    state.currentEpochParticipation.push(3);
+    state.previousEpochParticipation.push(7);
+    state.inactivityScores.push(0);
+    state.validators.push({
+      pubkey: new Uint8Array(48),
+      withdrawalCredentials: new Uint8Array(32),
+      effectiveBalance: 32e9,
+      slashed: false,
+      activationEligibilityEpoch: i,
+      activationEpoch: i,
+      exitEpoch: Infinity,
+      withdrawableEpoch: Infinity,
+    });
+  }
+  return state;
+}
 
 export function getAttestation(i: number): Attestation {
   return {
@@ -107,4 +129,14 @@ function randomBytes(bytes: number): Uint8Array {
   // return Buffer.from(uint8Arr);
 
   return uint8Arr;
+}
+
+export function getOnce<T>(fn: () => T): () => T {
+  let value: T | null = null;
+  return function () {
+    if (value === null) {
+      value = fn();
+    }
+    return value;
+  };
 }
