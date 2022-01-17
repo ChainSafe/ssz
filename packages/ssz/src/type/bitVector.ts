@@ -86,7 +86,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
 
   commitViewDU(view: BitArray): Node {
     const uint8Array = new Uint8Array(this.fixedSize);
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, view);
     return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, this.fixedSize);
   }
@@ -141,7 +141,7 @@ export class BitVectorType extends CompositeType<BitArray, BitArrayTreeView, Bit
   fromJson(json: unknown): BitArray {
     // TODO: Validate
     const uint8Array = fromHexString(json as string);
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, this.fixedSize);
   }
 

@@ -109,7 +109,7 @@ export abstract class Type<V> {
   // Un-performant path but useful for testing and prototyping
   value_toTree(value: V): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
@@ -117,7 +117,7 @@ export abstract class Type<V> {
   // Un-performant path but useful for testing and prototyping
   tree_toValue(node: Node): V {
     const uint8Array = new Uint8Array(this.tree_serializedSize(node));
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.tree_serializeToBytes({uint8Array, dataView}, 0, node);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
@@ -126,13 +126,13 @@ export abstract class Type<V> {
 
   serialize(value: V): Uint8Array {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return uint8Array;
   }
 
   deserialize(uint8Array: Uint8Array): V {
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 
@@ -167,7 +167,7 @@ export abstract class BasicType<V> extends Type<V> {
 
   hashTreeRoot(value: V): Uint8Array {
     const uint8Array = new Uint8Array(32);
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return uint8Array;
   }

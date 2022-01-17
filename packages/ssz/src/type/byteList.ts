@@ -53,7 +53,7 @@ export class ByteListType extends CompositeType<ByteList, ByteList, ByteList> {
 
   commitViewDU(view: Uint8Array): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(view));
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, view);
     return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }

@@ -134,7 +134,7 @@ export class BitListType extends CompositeType<BitArray, BitArrayTreeView, BitAr
   fromJson(json: unknown): BitArray {
     // TODO: Validate
     const uint8Array = fromHexString(json as string);
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 

@@ -42,7 +42,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
   // TODO: Optimize conversion
   private valueToTree(value: ValueOfFields<Fields>): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
-    const dataView = new DataView(uint8Array.buffer);
+    const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return super.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
