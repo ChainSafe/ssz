@@ -1,3 +1,4 @@
+import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {testRunnerMemory} from "./testRunnerMemory";
 import {ssz} from "../lodestarTypes/phase0";
 import {
@@ -6,6 +7,7 @@ import {
   getBitsSingle,
   getSignedBeaconBlockPhase0,
 } from "../utils/generateEth2Objs";
+import {BranchNodeStruct} from "../../src/branchNodeStruct";
 
 // Results in Linux Dec 2021
 //
@@ -26,6 +28,25 @@ testRunnerMemoryBpi([
   // sum: 2279, all: 2251
   {id: "Attestation struct", getInstance: getAttestation},
   {id: "Attestation tree", getInstance: (i) => ssz.Attestation.toView(getAttestation(i))},
+
+  {id: "LeafNode zero", getInstance: (i) => LeafNode.fromUint32(i)},
+  {id: "Validator struct", getInstance: () => ssz.ValidatorContainer.defaultValue},
+  {id: "Validator tree", getInstance: () => ssz.ValidatorContainer.toView(ssz.ValidatorNodeStruct.defaultValue).node},
+  {
+    id: "ValidatorNodeStruct struct",
+    getInstance: () => ssz.ValidatorNodeStruct.defaultValue,
+  },
+  {
+    id: "ValidatorNodeStruct tree",
+    getInstance: () => ssz.ValidatorNodeStruct.toView(ssz.ValidatorNodeStruct.defaultValue).node,
+  },
+  {
+    id: "ValidatorNodeStruct valueToNode",
+    getInstance: () =>
+      (ssz.ValidatorNodeStruct.toView(ssz.ValidatorNodeStruct.defaultValue).node as BranchNodeStruct<any>)[
+        "valueToNode"
+      ],
+  },
 
   {id: "SignedAggregateAndProof struct", getInstance: getSignedAggregateAndProof},
   {

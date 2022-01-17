@@ -1,6 +1,7 @@
 import {
   BitListType,
   BitVectorType,
+  ContainerNodeStructType,
   ContainerType,
   ListBasicType,
   ListCompositeType,
@@ -254,6 +255,9 @@ export const Validator = new ContainerType(
     },
   }
 );
+
+export const ValidatorContainer = new ContainerType(Validator.fields, Validator.opts);
+export const ValidatorNodeStruct = new ContainerNodeStructType(Validator.fields, Validator.opts);
 
 // Export as stand-alone for direct tree optimizations
 export const Validators = new ListCompositeType(Validator, VALIDATOR_REGISTRY_LIMIT);

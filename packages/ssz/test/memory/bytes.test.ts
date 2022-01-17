@@ -7,11 +7,15 @@ import {testRunnerMemory} from "./testRunnerMemory";
 //
 // Results in Linux Dec 2021
 //
-// Uint8Array              32  bytes - 233.5 bytes / instance
-// Uint8Array              64  bytes - 265.8 bytes / instance
+// Uint8Array              32  bytes - 233.6 bytes / instance
+// Uint8Array              64  bytes - 265.9 bytes / instance
 // Uint8Array              128 bytes - 313.4 bytes / instance
 // Uint8Array              256 bytes - 441.3 bytes / instance
 // Uint8Array              512 bytes - 697.3 bytes / instance
+// Uint8Array              1024 bytes - 1212.1 bytes / instance
+// Uint8Array              2048 bytes - 2236.1 bytes / instance
+// Uint8Array              4096 bytes - 4284.1 bytes / instance
+// Uint8Array              8192 bytes - 8380.1 bytes / instance
 // Uint8Array(ArrayBuffer) 32  bytes - 218.7 bytes / instance
 // Uint8Array(ArrayBuffer) 64  bytes - 249.4 bytes / instance
 // Uint8Array(ArrayBuffer) 128 bytes - 313.4 bytes / instance
@@ -60,7 +64,7 @@ function testRunnerMemoryBpi(testCases: {getInstance: (bytes: number) => unknown
   const longestId = Math.max(...testCases.map(({id}) => id.length));
 
   for (const {id, getInstance} of testCases) {
-    for (let bytes = 32; bytes < 1024; bytes *= 2) {
+    for (let bytes = 32; bytes <= 8192; bytes *= 2) {
       const bpi = testRunnerMemory({
         getInstance: () => getInstance(bytes),
         convergeFactor: 0.2 / 100,
