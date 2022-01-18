@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import {expect} from "chai";
 import {uint8ArrayToHashObject, hash, hashTwoObjects, hashObjectToUint8Array} from "../src/hash";
 
 describe("hash", function () {

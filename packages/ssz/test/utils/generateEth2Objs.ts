@@ -1,11 +1,24 @@
 import * as sszAltair from "../lodestarTypes/altair/sszTypes";
-import {Attestation, SignedAggregateAndProof, SignedBeaconBlock} from "../lodestarTypes/phase0/types";
+import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types";
 import {SignedContributionAndProof, BeaconState} from "../lodestarTypes/altair/types";
 import {BitArray} from "../../src";
 
 // Typical mainnet numbers
 const BITS_PER_ATTESTATION = 90;
 const ATTESTATIONS_PER_BLOCK = 90;
+
+export function getValidator(i: number): Validator {
+  return {
+    pubkey: new Uint8Array(48),
+    withdrawalCredentials: new Uint8Array(32),
+    effectiveBalance: 32e9,
+    slashed: false,
+    activationEligibilityEpoch: i,
+    activationEpoch: i,
+    exitEpoch: Infinity,
+    withdrawableEpoch: Infinity,
+  };
+}
 
 export function getRandomState(validatorCount: number): BeaconState {
   const state = sszAltair.BeaconState.defaultValue;
@@ -14,16 +27,7 @@ export function getRandomState(validatorCount: number): BeaconState {
     state.currentEpochParticipation.push(3);
     state.previousEpochParticipation.push(7);
     state.inactivityScores.push(0);
-    state.validators.push({
-      pubkey: new Uint8Array(48),
-      withdrawalCredentials: new Uint8Array(32),
-      effectiveBalance: 32e9,
-      slashed: false,
-      activationEligibilityEpoch: i,
-      activationEpoch: i,
-      exitEpoch: Infinity,
-      withdrawableEpoch: Infinity,
-    });
+    state.validators.push(getValidator(i));
   }
   return state;
 }

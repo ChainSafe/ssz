@@ -3,16 +3,24 @@ import {Type, ByteViews} from "./abstract";
 import {ContainerType, ContainerOptions} from "./container";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
-import {BranchNodeStruct} from "../branchNodeStruct";
+import {BranchNodeStruct, BranchNodeStructSchema} from "../branchNodeStruct";
 import {ValueOfFields} from "../view/container";
 
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
+  private branchNodeStructSchema: BranchNodeStructSchema<ValueOfFields<Fields>>;
+
   constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
     super(fields, {
       ...opts,
       getContainerTreeViewClass,
       getContainerTreeViewDUClass,
     });
+
+    this.branchNodeStructSchema = {
+      valueToNode: this.valueToTree.bind(this),
+      hashTreeRoot: this.hashTreeRoot.bind(this),
+      cloneValue: this.cloneValue.bind(this),
+    };
   }
 
   tree_serializedSize(node: Node): number {
@@ -26,7 +34,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const value = this.value_deserializeFromBytes(data, start, end);
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+    return new BranchNodeStruct(this.branchNodeStructSchema, value);
   }
 
   // Overwrites for fast conversion node <-> value
@@ -36,7 +44,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
   }
 
   value_toTree(value: ValueOfFields<Fields>): Node {
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+    return new BranchNodeStruct(this.branchNodeStructSchema, value);
   }
 
   // TODO: Optimize conversion
@@ -45,5 +53,9 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return super.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+  }
+
+  private cloneValue(value: ValueOfFields<Fields>): ValueOfFields<Fields> {
+    return {...value};
   }
 }

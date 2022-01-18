@@ -62,6 +62,16 @@ export class ByteVectorType extends CompositeType<ByteVector, ByteVector, ByteVe
     return;
   }
 
+  // Overwrites for fast conversion view <-> value
+
+  toView(value: ByteVector): ByteVector {
+    return value;
+  }
+
+  toViewDU(value: ByteVector): ByteVector {
+    return value;
+  }
+
   // Serialization + deserialization
 
   value_serializedSize(): number {

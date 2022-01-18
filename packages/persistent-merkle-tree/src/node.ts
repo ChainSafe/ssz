@@ -1,5 +1,5 @@
-import {HashObject} from "@chainsafe/as-sha256";
-import {hashObjectToUint8Array, hashTwoObjects, uint8ArrayToHashObject} from "./hash";
+import {HashObject, byteArrayToHashObject} from "@chainsafe/as-sha256";
+import {hashObjectToUint8Array, hashTwoObjects} from "./hash";
 
 const TWO_POWER_32 = 2 ** 32;
 
@@ -63,7 +63,7 @@ export class BranchNode extends Node {
 
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
-      super.applyHash(hashTwoObjects(this.left.rootHashObject, this.right.rootHashObject));
+      this.applyHash(hashTwoObjects(this.left.rootHashObject, this.right.rootHashObject));
     }
     return this;
   }
@@ -95,7 +95,7 @@ export class BranchNode extends Node {
 
 export class LeafNode extends Node {
   static fromRoot(root: Uint8Array): LeafNode {
-    return this.fromHashObject(uint8ArrayToHashObject(root));
+    return this.fromHashObject(byteArrayToHashObject(root));
   }
 
   /**

@@ -1,5 +1,5 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "../type/abstract";
+import {Type, ValueOf} from "../type/abstract";
 import {CompositeType, TreeView} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container";
@@ -54,12 +54,12 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
         },
 
         set: function (this: CustomContainerTreeView, value: unknown) {
-          const node = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
-          const {value: prevNodeValue} = node;
+          const prevNode = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
+          const newNode = prevNode.clone();
 
           // TODO: Should this check for valid field name? Benchmark the cost
-          const newNodeValue = {...prevNodeValue, [fieldName]: value} as ValueOfFields<Fields>;
-          this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
+          newNode.value[fieldName] = value as ValueOf<Fields[keyof Fields]>;
+          this.tree.rootNode = newNode;
         },
       });
     }
@@ -81,13 +81,12 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
 
         // Expects TreeView of fieldName
         set: function (this: CustomContainerTreeView, view: unknown) {
-          const node = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
-          const {value: prevNodeValue} = node;
+          const prevNode = this.tree.rootNode as BranchNodeStruct<ValueOfFields<Fields>>;
+          const newNode = prevNode.clone();
 
           // TODO: Should this check for valid field name? Benchmark the cost
-          const value = fieldTypeComposite.toValueFromView(view) as unknown;
-          const newNodeValue = {...prevNodeValue, [fieldName]: value} as ValueOfFields<Fields>;
-          this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
+          newNode.value[fieldName] = fieldTypeComposite.toValueFromView(view) as ValueOf<Fields[keyof Fields]>;
+          this.tree.rootNode = newNode;
         },
       });
     }

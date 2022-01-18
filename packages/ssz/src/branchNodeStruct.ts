@@ -1,5 +1,12 @@
-import {HashObject} from "@chainsafe/as-sha256";
+import {HashObject, byteArrayToHashObject} from "@chainsafe/as-sha256";
 import {BranchNode, hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
+
+export type BranchNodeStructSchema<V> = {
+  valueToNode(value: V): Node;
+  // TODO: Provide method to hashTreeRoot() to HashObject
+  hashTreeRoot(value: V): Uint8Array;
+  cloneValue(value: V): V;
+};
 
 /**
  * BranchNode whose children's data is represented as a struct, not a tree.
@@ -8,22 +15,28 @@ import {BranchNode, hashObjectToUint8Array, Node} from "@chainsafe/persistent-me
  * registry in Ethereum consensus `state.validators`. The tradeoff is that getting the hash, are proofs is more
  * expensive because the tree has to be recreated every time.
  */
-export class BranchNodeStruct<T> extends Node {
-  constructor(private readonly valueToNode: (value: T) => Node, readonly value: T) {
+export class BranchNodeStruct<V> extends Node {
+  constructor(private readonly schema: BranchNodeStructSchema<V>, readonly value: V) {
     // First null value is to save an extra variable to check if a node has a root or not
     super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
   }
 
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
-      const node = this.valueToNode(this.value);
-      super.applyHash(node.rootHashObject);
+      const root = this.schema.hashTreeRoot(this.value);
+      this.applyHash(byteArrayToHashObject(root));
     }
     return this;
   }
 
   get root(): Uint8Array {
-    return hashObjectToUint8Array(this.rootHashObject);
+    if (this.h0 === null) {
+      const root = this.schema.hashTreeRoot(this.value);
+      this.applyHash(byteArrayToHashObject(root));
+      return root;
+    } else {
+      return hashObjectToUint8Array(this.rootHashObject);
+    }
   }
 
   isLeaf(): boolean {
@@ -31,11 +44,11 @@ export class BranchNodeStruct<T> extends Node {
   }
 
   get left(): Node {
-    return this.valueToNode(this.value).left;
+    return this.schema.valueToNode(this.value).left;
   }
 
   get right(): Node {
-    return this.valueToNode(this.value).right;
+    return this.schema.valueToNode(this.value).right;
   }
 
   rebindLeft(left: Node): Node {
@@ -44,5 +57,13 @@ export class BranchNodeStruct<T> extends Node {
 
   rebindRight(right: Node): Node {
     return new BranchNode(this.left, right);
+  }
+
+  /**
+   * Returns new BranchNodeStruct with same schema and a shallow copy of value
+   * `newValue = this.schema.cloneValue(value)`
+   */
+  clone(): BranchNodeStruct<V> {
+    return new BranchNodeStruct(this.schema, this.schema.cloneValue(this.value));
   }
 }

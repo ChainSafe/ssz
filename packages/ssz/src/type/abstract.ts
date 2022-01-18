@@ -144,6 +144,10 @@ export abstract class Type<V> {
 
   abstract fromJson(json: unknown): V;
   abstract toJson(value: V): unknown;
+
+  // Clone (for BranchNodeStruct)
+
+  abstract clone(value: V): V;
 }
 
 export abstract class BasicType<V> extends Type<V> {
@@ -170,6 +174,11 @@ export abstract class BasicType<V> extends Type<V> {
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return uint8Array;
+  }
+
+  // All basic types are represented by Javascripts primitive types that don't require clone
+  clone(value: V): V {
+    return value;
   }
 
   abstract tree_getFromNode(leafNode: LeafNode): V;
