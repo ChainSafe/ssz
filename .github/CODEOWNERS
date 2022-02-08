@@ -8,4 +8,4 @@
 # precedence. When someone opens a pull request that only
 # modifies md files, only md owners and not the global
 # owner(s) will be requested for a review.
-*.md    @RyRy79261 @ColinSchwarz @wemeetagain @tuyennhv @dapplion
+*.md    @wemeetagain @tuyennhv @dapplion @philknows
