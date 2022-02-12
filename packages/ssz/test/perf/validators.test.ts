@@ -25,19 +25,21 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
     {id: "ContainerNodeStructType", value: validatorLeafNodeStructTB, type: ValidatorNodeStruct},
   ];
 
-  const ops: Record<string, (treeBacked: CompositeViewDU<typeof ValidatorDef>, type: typeof ValidatorDef) => unknown> =
-    {
-      get_exitEpoch: (tb) => tb.exitEpoch,
-      set_exitEpoch: (tb) => (tb.exitEpoch = 6435),
-      get_pubkey: (tb) => tb.pubkey,
-      hashTreeRoot: (tb) => tb.hashTreeRoot(),
-      createProof: (tb) => tb.createProof([["exitEpoch"]]),
-      serialize: (tb) => tb.serialize(),
-      set_exitEpoch_and_hashTreeRoot: (tb) => {
-        tb.exitEpoch = 6435;
-        tb.hashTreeRoot();
-      },
-    };
+  const ops: Record<
+    string,
+    (treeBacked: CompositeViewDU<typeof ValidatorContainer>, type: typeof ValidatorContainer) => unknown
+  > = {
+    get_exitEpoch: (tb) => tb.exitEpoch,
+    set_exitEpoch: (tb) => (tb.exitEpoch = 6435),
+    get_pubkey: (tb) => tb.pubkey,
+    hashTreeRoot: (tb) => tb.hashTreeRoot(),
+    createProof: (tb) => tb.createProof([["exitEpoch"]]),
+    serialize: (tb) => tb.serialize(),
+    set_exitEpoch_and_hashTreeRoot: (tb) => {
+      tb.exitEpoch = 6435;
+      tb.hashTreeRoot();
+    },
+  };
 
   for (const [opId, op] of Object.entries(ops)) {
     for (const {id: valueId, value, type} of values) {
