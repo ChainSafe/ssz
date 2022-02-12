@@ -10,7 +10,7 @@ AssemblyScript implementation of SHA256.
 `yarn add @chainsafe/as-sha256`
 
 ```typescript
-import SHA256 from "@chainsafe/as-sha256";
+import {digest, digest64, SHA256} from "@chainsafe/as-sha256";
 
 let hash: Uint8Array;
 
@@ -20,10 +20,10 @@ const sha256 = new SHA256();
 hash = sha256.init().update(Buffer.from("Hello world")).final();
 
 // or use a one-pass interface
-hash = SHA256.digest(Buffer.from("Hello world"));
+hash = digest(Buffer.from("Hello world"));
 
 // or use a faster one-pass interface for hashing (only) 64 bytes
-hash = SHA256.digest64(Buffer.from("abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh"));
+hash = digest64(Buffer.from("abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh"));
 ```
 
 ### License

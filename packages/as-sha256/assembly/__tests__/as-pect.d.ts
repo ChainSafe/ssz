@@ -92,7 +92,6 @@ declare function test(description: string, callback: () => void): void;
  */
 declare function throws(description: string, callback: () => void, message?: string): void;
 
-
 /**
  * This function creates a test that is expected to fail. This is useful to verify if a given
  * behavior is expected to throw.
@@ -257,7 +256,6 @@ declare function log<T>(value: T | null): void;
  */
 // @ts-ignore
 declare class Expectation<T> {
-
   /**
    * Create a new expectation.
    *
@@ -534,7 +532,7 @@ declare class Expectation<T> {
    * expect<i32[]>([1, 2, 3]).toContain(3);
    * ```
    */
-   // @ts-ignore: expected value should be known at compile time
+  // @ts-ignore: expected value should be known at compile time
   toContain(expected: valueof<T>, message?: string): void;
 
   /**
@@ -668,9 +666,9 @@ declare class Performance {
   public static reportVariance(value: bool): void;
 }
 /**
- * Assemblyscript uses reference counting to perform garbage collection.  This means when you 
+ * Assemblyscript uses reference counting to perform garbage collection.  This means when you
  * allocate a managed object and return it, it's reference count is one.  If another variable aliases
- * it then the reference count goes up. This static class contains a few convenience methods for 
+ * it then the reference count goes up. This static class contains a few convenience methods for
  * developers to test the current number of blocks allocated on the heap to make sure you aren't leaking
  * references, e.i. keeping references to objects you expect to be collected.
  */
@@ -809,7 +807,6 @@ declare class RTrace {
   public static activeTestBlocks(): usize[];
 }
 
-
 /**
  * This class is static and contains private global values that contain metadata about the Actual
  * value.
@@ -834,7 +831,6 @@ declare class Actual {
    */
   public static clear(): void;
 }
-
 
 /**
  * This class is static and contains private global values that contain metadata about the Expected

@@ -2,19 +2,19 @@ module.exports = function (config) {
     config.set({
         frameworks: ['mocha', 'chai'],
         files: [
-            'test/index.spec.js'
+            'test/unit/index.test.ts'
         ],
         preprocessors: {
-            'test/index.spec.js': ['webpack']
+            'test/unit/index.test.ts': ['webpack']
         },
         webpack: {
             mode: "production",
             module: {
                 rules: [
                     {
-                        test: /\.js?$/,
+                        test: /\.ts?$/,
                         exclude: /node_modules/,
-                        loader: 'babel-loader',
+                        loader: 'ts-loader',
                     },
                 ]
             },
