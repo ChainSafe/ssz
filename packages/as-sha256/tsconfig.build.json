@@ -1,0 +1,28 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
+
+    "outDir": "lib",
+    "target": "esnext",
+    "module": "commonjs",
+    "pretty": true,
+
+    "strict": true,
+    "sourceMap": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": false,
+    "preserveWatchOutput": true
+  }
+}
