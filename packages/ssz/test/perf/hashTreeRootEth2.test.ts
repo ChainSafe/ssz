@@ -1,4 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
+import {hashTwoObjects, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
 import * as sszPhase0 from "../lodestarTypes/phase0/sszTypes";
 import * as sszAltair from "../lodestarTypes/altair/sszTypes";
 import {
@@ -52,36 +53,6 @@ describe("HashTreeRoot frequent eth2 objects", () => {
     });
   }
 
-  // Average performance of SHA256 is 0.750 us/hash, 1.25 us/hash64
-  // Hashing 300_000 validators takes
-  // 8 * 300_000 + 300_000 = 2_700_000 hashes or 3.375s best possible time
-  //
-  // Validator requires 8 hash64
-  //
-  // pubkey
-  // pubkey + wc
-  // ef + sl
-  // acEE + acE
-  // eE + wE
-  // d2 i0+i1
-  // d2 i2+i3
-  // d1 i0+i1
-  //
-  // pubkey: BLSPubkey,
-  // withdrawalCredentials: Bytes32,
-  // effectiveBalance: UintNum64,
-  // slashed: Boolean,
-  // activationEligibilityEpoch: Epoch,
-  // activationEpoch: Epoch,
-  // exitEpoch: Epoch,
-  // withdrawableEpoch: Epoch,
-  for (const count of [2_700_000]) {
-    const a = Buffer.alloc(32, 0xaa);
-    itBench(`hash64 x${count}`, () => {
-      for (let i = 0; i < count; i++) hash64(a, a);
-    });
-  }
-
   for (const validatorCount of [300_000]) {
     // Compute once for all benchmarks only if run
     const getStateVc = getOnce(() => getRandomState(validatorCount));
@@ -112,4 +83,59 @@ describe("HashTreeRoot frequent eth2 objects", () => {
       });
     }
   }
+});
+
+describe("HashTreeRoot individual components", () => {
+  // Average performance of SHA256 is 0.750 us/hash, 1.25 us/hash64
+  // Hashing 300_000 validators takes
+  // 8 * 300_000 + 300_000 = 2_700_000 hashes or 3.375s best possible time
+  //
+  // Validator requires 8 hash64
+  //
+  // pubkey
+  // pubkey + wc
+  // ef + sl
+  // acEE + acE
+  // eE + wE
+  // d2 i0+i1
+  // d2 i2+i3
+  // d1 i0+i1
+  //
+  // pubkey: BLSPubkey,
+  // withdrawalCredentials: Bytes32,
+  // effectiveBalance: UintNum64,
+  // slashed: Boolean,
+  // activationEligibilityEpoch: Epoch,
+  // activationEpoch: Epoch,
+  // exitEpoch: Epoch,
+  // withdrawableEpoch: Epoch,
+
+  // hash64 calls per eth2 object
+  // - aggregationBits bitLen = 120
+  // - 90 attestations per block, all other ops empty
+  //
+  // Attestation                | 18
+  // SignedAggregateAndProof    | 28
+  // SyncCommitteeMessage       | 6
+  // SignedContributionAndProof | 19
+  // SignedBeaconBlock          | 1740
+  // Validator                  | 8
+
+  for (const count of [18, 1740, 2_700_000]) {
+    const buf = Buffer.alloc(32, 0xaa);
+    const ho = uint8ArrayToHashObject(buf);
+
+    itBench(`hash64 x${count}`, () => {
+      for (let i = 0; i < count; i++) hash64(buf, buf);
+    });
+
+    itBench(`hashTwoObjects x${count}`, () => {
+      for (let i = 0; i < count; i++) hashTwoObjects(ho, ho);
+    });
+  }
+
+  // Optimizing Attestation
+  // struct  27.64500 us/op
+  // tree    20.27000 us/op
+  // hash64  22.78400 us/op
 });
