@@ -20,6 +20,10 @@ import {ArrayType} from "./array";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
+export type ListCompositeOpts = {
+  typeName?: string;
+};
+
 /**
  * List: ordered variable-length homogeneous collection, limited to N values
  *
@@ -46,13 +50,13 @@ export class ListCompositeType<
   readonly isViewMutable = true;
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number) {
+  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {
     super(elementType);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
     if (limit === 0) throw Error("List limit must be > 0");
 
-    this.typeName = `List[${elementType.typeName}, ${limit}]`;
+    this.typeName = opts?.typeName ?? `List[${elementType.typeName}, ${limit}]`;
     this.maxChunkCount = this.limit;
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     // Depth includes the extra level for the length node

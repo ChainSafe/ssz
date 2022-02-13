@@ -19,6 +19,10 @@ import {ArrayType} from "./array";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
+export type VectorCompositeOpts = {
+  typeName?: string;
+};
+
 /**
  * Vector: Ordered fixed-length homogeneous collection, with N values
  *
@@ -45,13 +49,13 @@ export class VectorCompositeType<
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, readonly length: number) {
+  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorCompositeOpts) {
     super(elementType);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
     if (length === 0) throw Error("Vector length must be > 0");
 
-    this.typeName = `Vector[${elementType.typeName}, ${length}]`;
+    this.typeName = opts?.typeName ?? `Vector[${elementType.typeName}, ${length}]`;
     this.maxChunkCount = length;
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;

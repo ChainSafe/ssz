@@ -18,6 +18,10 @@ import {ArrayType} from "./array";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
+export type ListBasicOpts = {
+  typeName?: string;
+};
+
 /**
  * List: ordered variable-length homogeneous collection, limited to N values
  *
@@ -41,13 +45,13 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   readonly isViewMutable = true;
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number) {
+  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListBasicOpts) {
     super(elementType);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
     if (limit === 0) throw Error("List limit must be > 0");
 
-    this.typeName = `List[${elementType.typeName}, ${limit}]`;
+    this.typeName = opts?.typeName ?? `List[${elementType.typeName}, ${limit}]`;
     // TODO Check that itemsPerChunk is an integer
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
