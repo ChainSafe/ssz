@@ -102,14 +102,14 @@ export function value_deserializeFromBytesArrayComposite<
 ): ValueOf<ElementType>[] {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
-  offsets.push(end - start); // The offsets are relative to the start
 
   const values = new Array<ValueOf<ElementType>>(length);
 
   // offests include the last element end
   for (let i = 0; i < length; i++) {
+    // The offsets are relative to the start
     const startEl = start + offsets[i];
-    const endEl = start + offsets[i + 1];
+    const endEl = i === length - 1 ? end : start + offsets[i + 1];
     values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl);
   }
 
@@ -188,14 +188,14 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
 ): Node {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
-  offsets.push(end - start); // The offsets are relative to the start
 
   const nodes = new Array<Node>(length);
 
   // offests include the last element end
   for (let i = 0; i < length; i++) {
+    // The offsets are relative to the start
     const startEl = start + offsets[i];
-    const endEl = start + offsets[i + 1];
+    const endEl = i === length - 1 ? end : start + offsets[i + 1];
     nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, endEl);
   }
 
@@ -233,9 +233,9 @@ function readOffsetsArrayComposite(
   start: number,
   end: number,
   arrayProps: ArrayProps
-): number[] {
+): Uint32Array {
   const size = end - start;
-  let offsets: number[];
+  let offsets: Uint32Array;
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
@@ -255,7 +255,7 @@ function readOffsetsArrayComposite(
     }
 
     const length = size / elementFixedSize;
-    offsets = new Array<number>(length);
+    offsets = new Uint32Array(length);
 
     for (let i = 0; i < length; i++) {
       offsets[i] = i * elementFixedSize;
@@ -272,9 +272,9 @@ function readOffsetsArrayComposite(
  * Reads the values of contiguous variable offsets. Provided buffer includes offsets that point to position
  * within `size`. This function also validates that all offsets are in range.
  */
-function readVariableOffsetsArrayComposite(dataView: DataView, start: number, size: number): number[] {
+function readVariableOffsetsArrayComposite(dataView: DataView, start: number, size: number): Uint32Array {
   if (size === 0) {
-    return [];
+    return new Uint32Array(0);
   }
 
   // all elements are variable-sized
@@ -296,7 +296,8 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
   }
 
   const offsetCount = offsetDataLength / 4;
-  const offsets = [firstOffset];
+  const offsets = new Uint32Array(offsetCount);
+  offsets[0] = firstOffset;
 
   // ArrayComposite has a contiguous section of offsets, then the data
   //
@@ -312,7 +313,7 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
 
   for (let offsetIdx = 1; offsetIdx < offsetCount; offsetIdx++) {
     const offset = dataView.getUint32(start + offsetIdx * 4, true);
-    offsets.push(offset);
+    offsets[offsetIdx] = offset;
 
     // Offsets must point to data within the Array bytes section
     if (offset > size) {

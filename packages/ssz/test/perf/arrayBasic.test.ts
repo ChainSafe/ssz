@@ -40,6 +40,11 @@ describe("ListBasicType types", () => {
         for (let i = 0; i < len; i++) uint8Array[i] = 7;
       });
 
+      itBench(`Uint32Array.set len ${len}`, () => {
+        const uint32Array = new Uint32Array(len);
+        for (let i = 0; i < len; i++) uint32Array[i] = 7;
+      });
+
       itBench(`Array.push len ${len} empty Array - object`, () => {
         const array: unknown[] = [];
         for (let i = 0; i < len; i++) array.push(sampleObj);
