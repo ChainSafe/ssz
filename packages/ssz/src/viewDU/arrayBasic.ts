@@ -117,7 +117,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       this.nodesPopulated = true;
     }
 
-    const values: ValueOf<ElementType>[] = [];
+    const values = new Array<ValueOf<ElementType>>(this.length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(this.length / itemsPerChunk);
     const remainder = this.length % itemsPerChunk;
@@ -131,21 +131,20 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       // ```
       // if performance here is a problem
       for (let i = 0; i < itemsPerChunk; i++) {
-        values.push(
-          this.type.elementType.tree_getFromPackedNode(leafNode, n * itemsPerChunk + i) as ValueOf<ElementType>
-        );
+        values[n * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(
+          leafNode,
+          i
+        ) as ValueOf<ElementType>;
       }
     }
 
     if (remainder > 0) {
       const leafNode = this.nodes[lenFullNodes];
       for (let i = 0; i < remainder; i++) {
-        values.push(
-          this.type.elementType.tree_getFromPackedNode(
-            leafNode,
-            lenFullNodes * itemsPerChunk + i
-          ) as ValueOf<ElementType>
-        );
+        values[lenFullNodes * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(
+          leafNode,
+          i
+        ) as ValueOf<ElementType>;
       }
     }
 
@@ -159,14 +158,14 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
 
     // Numerical sort ascending
     const indexes = Array.from(this.nodesChanged.keys()).sort((a, b) => a - b);
-    const nodesChangedSorted: LeafNode[] = [];
-    for (const index of indexes) {
-      nodesChangedSorted.push(this.nodes[index]);
+    const nodes = new Array<LeafNode>(indexes.length);
+    for (let i = 0; i < indexes.length; i++) {
+      nodes[i] = this.nodes[indexes[i]];
     }
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     // TODO: Ensure fast setNodesAtDepth() method is correct
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodesChangedSorted);
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,

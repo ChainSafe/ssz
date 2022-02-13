@@ -187,7 +187,7 @@ describe("Tree batch setNodes", () => {
 });
 
 function getTreeRoots(tree: Tree, maxGindex: number): string[] {
-  const roots: string[] = [];
+  const roots = new Array<string>(maxGindex);
   for (let i = 1; i < maxGindex; i++) {
     roots[i] = toHex(tree.getNode(BigInt(i)).root);
   }

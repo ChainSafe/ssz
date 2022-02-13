@@ -17,24 +17,22 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
 
   const fullNodeCount = Math.floor(size / 32);
-  const leafNodes: LeafNode[] = [];
+  const leafNodes = new Array<LeafNode>(Math.ceil(size / 32));
 
   // Efficiently construct the tree writing to hashObjects directly
 
   // TODO: Optimize, with this approach each h property is written twice
   for (let i = 0; i < fullNodeCount; i++) {
     const offset = start + i * 32;
-    leafNodes.push(
-      new LeafNode(
-        dataView.getInt32(offset + 0, true),
-        dataView.getInt32(offset + 4, true),
-        dataView.getInt32(offset + 8, true),
-        dataView.getInt32(offset + 12, true),
-        dataView.getInt32(offset + 16, true),
-        dataView.getInt32(offset + 20, true),
-        dataView.getInt32(offset + 24, true),
-        dataView.getInt32(offset + 28, true)
-      )
+    leafNodes[i] = new LeafNode(
+      dataView.getInt32(offset + 0, true),
+      dataView.getInt32(offset + 4, true),
+      dataView.getInt32(offset + 8, true),
+      dataView.getInt32(offset + 12, true),
+      dataView.getInt32(offset + 16, true),
+      dataView.getInt32(offset + 20, true),
+      dataView.getInt32(offset + 24, true),
+      dataView.getInt32(offset + 28, true)
     );
   }
 
@@ -44,7 +42,7 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   // Last node
   if (remainderBytes > 0) {
     const node = new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
-    leafNodes.push(node);
+    leafNodes[fullNodeCount] = node;
 
     // Loop to dynamically copy the full h values
     const fullHCount = Math.floor(remainderBytes / 4);

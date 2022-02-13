@@ -358,7 +358,7 @@ export function setNodesAtDepth(rootNode: Node, nodesDepth: number, indexes: num
    * Contiguous filled stack of parent nodes. It get filled in the first descent
    * Indexed by depthi
    */
-  const parentNodeStack: Node[] = [];
+  const parentNodeStack = new Array<Node>(nodesDepth);
 
   /**
    * Temp stack of left parent nodes, index by depthi.
@@ -367,7 +367,7 @@ export function setNodesAtDepth(rootNode: Node, nodesDepth: number, indexes: num
    * parentNodeStack[depthi].left = leftParentNodeStack[depthi]
    * ```
    */
-  const leftParentNodeStack: (Node | undefined)[] = [];
+  const leftParentNodeStack = new Array<Node | undefined>(nodesDepth);
 
   // Ignore first bit "1", then substract 1 to get to the parent
   const depthiRoot = nodesDepth - 1;
@@ -513,9 +513,6 @@ export function getNodesAtDepth(rootNode: Node, depth: number, startIndex: numbe
     }
   }
 
-  const nodes: Node[] = [];
-  const endIndex = startIndex + count;
-
   // Ignore first bit "1", then substract 1 to get to the parent
   const depthiRoot = depth - 1;
   const depthiParent = 0;
@@ -524,24 +521,25 @@ export function getNodesAtDepth(rootNode: Node, depth: number, startIndex: numbe
 
   // Contiguous filled stack of parent nodes. It get filled in the first descent
   // Indexed by depthi
-  const parentNodeStack: Node[] = [];
-  const isLeftStack: boolean[] = [];
+  const parentNodeStack = new Array<Node>(depth);
+  const isLeftStack = new Array<boolean>(depth);
+  const nodes = new Array<Node>(count);
 
   // Insert root node to make the loop below general
   parentNodeStack[depthiRoot] = rootNode;
 
-  for (let index = startIndex; index < endIndex; index++) {
+  for (let i = 0; i < count; i++) {
     for (let d = depthi; d >= depthiParent; d--) {
       if (d !== depthi) {
         parentNodeStack[d] = node;
       }
 
-      const isLeft = isLeftNode(d, index);
+      const isLeft = isLeftNode(d, startIndex + i);
       isLeftStack[d] = isLeft;
       node = isLeft ? node.left : node.right;
     }
 
-    nodes.push(node);
+    nodes[i] = node;
 
     // Find the first depth where navigation when left.
     // Store that height and go right from there
@@ -577,8 +575,8 @@ export function* iterateNodesAtDepth(
 
   // Contiguous filled stack of parent nodes. It get filled in the first descent
   // Indexed by depthi
-  const parentNodeStack: Node[] = [];
-  const isLeftStack: boolean[] = [];
+  const parentNodeStack = new Array<Node>(depth);
+  const isLeftStack = new Array<boolean>(depth);
 
   // Insert root node to make the loop below general
   parentNodeStack[depthiRoot] = rootNode;
@@ -649,7 +647,7 @@ export function treeZeroAfterIndex(rootNode: Node, nodesDepth: number, index: nu
    * Contiguous filled stack of parent nodes. It get filled in the first descent
    * Indexed by depthi
    */
-  const parentNodeStack: Node[] = [];
+  const parentNodeStack = new Array<Node>(nodesDepth);
 
   // Ignore first bit "1", then substract 1 to get to the parent
   const depthiRoot = nodesDepth - 1;

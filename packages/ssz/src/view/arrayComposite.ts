@@ -84,10 +84,10 @@ export class ArrayCompositeTreeView<
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const views: CompositeView<ElementType>[] = [];
-    for (let i = 0; i < nodes.length; i++) {
+    const views = new Array<CompositeView<ElementType>>(length);
+    for (let i = 0; i < length; i++) {
       // TODO: Optimize
-      views.push(this.type.elementType.getView(new Tree(nodes[i])));
+      views[i] = this.type.elementType.getView(new Tree(nodes[i]));
     }
     return views;
   }
@@ -101,9 +101,9 @@ export class ArrayCompositeTreeView<
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const values: ValueOf<ElementType>[] = [];
-    for (let i = 0; i < nodes.length; i++) {
-      values.push(this.type.elementType.tree_toValue(nodes[i]));
+    const values = new Array<ValueOf<ElementType>>(length);
+    for (let i = 0; i < length; i++) {
+      values[i] = this.type.elementType.tree_toValue(nodes[i]);
     }
     return values;
   }

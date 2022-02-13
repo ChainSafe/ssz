@@ -87,9 +87,9 @@ function testRunnerMemoryBpi(testCases: TestCase[]): void {
 }
 
 function createArray(len: number): number[] {
-  const items: number[] = [];
+  const items = new Array<number>(len);
   for (let i = 0; i < len; i++) {
-    items.push(i);
+    items[i] = i;
   }
   return items;
 }

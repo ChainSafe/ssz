@@ -94,9 +94,9 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
 
     const chunkCount = Math.ceil(byteLen / 32);
     const startIndex = concatGindices([rootGindex, toGindex(this.depth, BigInt(0))]);
-    const gindices: Gindex[] = [];
+    const gindices = new Array<Gindex>(chunkCount);
     for (let i = 0, gindex = startIndex; i < chunkCount; i++, gindex++) {
-      gindices.push(gindex);
+      gindices[i] = gindex;
     }
 
     // include the length chunk

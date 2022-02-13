@@ -25,9 +25,9 @@ describe("tree / setNodes", () => {
 
   before("Get base tree and data", () => {
     const length = Math.ceil(vc / itemsPerChunk);
-    const initialNodes: Node[] = [];
+    const initialNodes = new Array<Node>(length);
     for (let i = 0; i < length; i++) {
-      initialNodes.push(initialNode);
+      initialNodes[i] = initialNode;
     }
 
     tree = new Tree(subtreeFillToContents(initialNodes, depth));

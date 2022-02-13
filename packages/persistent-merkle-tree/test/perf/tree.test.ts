@@ -71,9 +71,9 @@ describe("Track the performance of different Tree methods", () => {
 function createBalanceList(count: number, depth: number): Node {
   // each balance has 2 bytes => each chunk contains 4 balance
   const numChunk = Math.ceil(count / 4);
-  const nodes: Node[] = [];
+  const nodes = new Array<Node>(numChunk);
   for (let i = 0; i < numChunk; i++) {
-    nodes.push(LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 10))));
+    nodes[i] = LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 10)));
   }
 
   return subtreeFillToContents(nodes, depth);

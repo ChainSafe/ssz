@@ -1,5 +1,5 @@
 /** Globally cache this information. @see getUint8ByteToBitBooleanArray */
-const uint8ByteToBitBooleanArrays: boolean[][] = [];
+const uint8ByteToBitBooleanArrays = new Array<boolean[]>(256);
 
 /**
  * BitArray may be represented as an array of bits or compressed into an array of bytes.
@@ -114,7 +114,7 @@ export class BitArray {
    * Returns an array with the indexes which have a bit set to true
    */
   intersectValues<T>(values: T[]): T[] {
-    const yes = [];
+    const yes: T[] = [];
 
     if (values.length !== this.bitLen) {
       throw Error(`Must not intersect values of length ${values.length} != bitLen ${this.bitLen}`);
@@ -217,9 +217,9 @@ export class BitArray {
   }
 
   toBoolArray(): boolean[] {
-    const bitBoolArr: boolean[] = [];
+    const bitBoolArr = new Array<boolean>(this.bitLen);
     for (let i = 0; i < this.bitLen; i++) {
-      bitBoolArr.push(this.get(i));
+      bitBoolArr[i] = this.get(i);
     }
     return bitBoolArr;
   }
@@ -242,13 +242,13 @@ function computeUint8ByteToBitBooleanArray(byte: number): boolean[] {
   // this returns little endian
   const binaryStr = byte.toString(2);
   const binaryLength = binaryStr.length;
-  const bits: boolean[] = [];
+  const bits = new Array<boolean>(8);
   for (let i = 0; i < 8; i++) {
-    if (i < binaryLength) {
-      bits.push(binaryStr[binaryLength - i - 1] === "1" ? true : false);
-    } else {
-      bits.push(false);
-    }
+    bits[i] =
+      i < binaryLength
+        ? //
+          binaryStr[binaryLength - i - 1] === "1"
+        : false;
   }
   return bits;
 }

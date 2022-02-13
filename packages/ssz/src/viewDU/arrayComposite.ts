@@ -142,8 +142,8 @@ export class ArrayCompositeTreeViewDU<
   getAllReadonly(): CompositeViewDU<ElementType>[] {
     this.populateAllNodes();
 
-    const views: CompositeViewDU<ElementType>[] = [];
-    for (let i = 0; i < this.length; i++) {
+    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    for (let i = 0; i < this._length; i++) {
       views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
     }
     return views;
@@ -155,8 +155,8 @@ export class ArrayCompositeTreeViewDU<
   getAllReadonlyValues(): ValueOf<ElementType>[] {
     this.populateAllNodes();
 
-    const values: ValueOf<ElementType>[] = [];
-    for (let i = 0; i < this.length; i++) {
+    const values = new Array<ValueOf<ElementType>>(this._length);
+    for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }
     return values;

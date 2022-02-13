@@ -11,12 +11,12 @@ describe("tree / zeroAfterIndex", () => {
       it(`depth ${depth} length ${length}`, () => {
         const tree = new Tree(zeroNode(depth));
 
-        const treeRootAtIndex: Uint8Array[] = [];
+        const treeRootAtIndex = new Array<Uint8Array>(length);
 
         for (let i = 0; i < length; i++) {
           const root = Buffer.alloc(32, i + 16);
           tree.setNode(toGindex(depth, BigInt(i)), LeafNode.fromRoot(root));
-          treeRootAtIndex.push(tree.root);
+          treeRootAtIndex[i] = tree.root;
         }
 
         for (let i = 0; i < length; i++) {

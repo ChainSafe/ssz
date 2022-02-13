@@ -1,7 +1,7 @@
 import {ByteVector} from "../interface";
 
 // Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
-const hexByByte: string[] = [];
+const hexByByte = new Array<string>(256);
 
 export function toHexString(bytes: Uint8Array | ByteVector): string {
   let hex = "0x";
@@ -27,12 +27,13 @@ export function fromHexString(hex: string): Uint8Array {
     throw new Error(`hex string length ${hex.length} must be multiple of 2`);
   }
 
-  const bytes: number[] = [];
-  for (let i = 0, len = hex.length; i < len; i += 2) {
-    const byte = parseInt(hex.slice(i, i + 2), 16);
-    bytes.push(byte);
+  const byteLen = hex.length / 2;
+  const bytes = new Uint8Array(byteLen);
+  for (let i = 0; i < byteLen; i++) {
+    const byte = parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
+    bytes[i] = byte;
   }
-  return new Uint8Array(bytes);
+  return bytes;
 }
 
 export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {

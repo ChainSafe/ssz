@@ -80,7 +80,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
     const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
     const leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
 
-    const values: ValueOf<ElementType>[] = [];
+    const values = new Array<ValueOf<ElementType>>(length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(length / itemsPerChunk);
     const remainder = length % itemsPerChunk;
@@ -93,21 +93,20 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
       // ```
       // if performance here is a problem
       for (let i = 0; i < itemsPerChunk; i++) {
-        values.push(
-          this.type.elementType.tree_getFromPackedNode(leafNode, n * itemsPerChunk + i) as ValueOf<ElementType>
-        );
+        values[n * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(
+          leafNode,
+          i
+        ) as ValueOf<ElementType>;
       }
     }
 
     if (remainder > 0) {
       const leafNode = leafNodes[lenFullNodes];
       for (let i = 0; i < remainder; i++) {
-        values.push(
-          this.type.elementType.tree_getFromPackedNode(
-            leafNode,
-            lenFullNodes * itemsPerChunk + i
-          ) as ValueOf<ElementType>
-        );
+        values[lenFullNodes * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(
+          leafNode,
+          i
+        ) as ValueOf<ElementType>;
       }
     }
 

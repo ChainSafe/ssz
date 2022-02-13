@@ -104,13 +104,13 @@ export function value_deserializeFromBytesArrayComposite<
   const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end - start); // The offsets are relative to the start
 
-  const values: ValueOf<ElementType>[] = [];
+  const values = new Array<ValueOf<ElementType>>(length);
 
   // offests include the last element end
   for (let i = 0; i < length; i++) {
     const startEl = start + offsets[i];
     const endEl = start + offsets[i + 1];
-    values.push(elementType.value_deserializeFromBytes(data, startEl, endEl));
+    values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl);
   }
 
   return values;
@@ -190,13 +190,13 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   const length = offsets.length; // Capture length before pushing end offset
   offsets.push(end - start); // The offsets are relative to the start
 
-  const nodes: Node[] = [];
+  const nodes = new Array<Node>(length);
 
   // offests include the last element end
   for (let i = 0; i < length; i++) {
     const startEl = start + offsets[i];
     const endEl = start + offsets[i + 1];
-    nodes.push(elementType.tree_deserializeFromBytes(data, startEl, endEl));
+    nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, endEl);
   }
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
@@ -218,10 +218,10 @@ export function value_getRootsArrayComposite<ElementType extends CompositeType<u
   length: number,
   value: ValueOf<ElementType>[]
 ): Uint8Array[] {
-  const roots: Uint8Array[] = [];
+  const roots = new Array<Uint8Array>(length);
 
   for (let i = 0; i < length; i++) {
-    roots.push(elementType.hashTreeRoot(value[i]));
+    roots[i] = elementType.hashTreeRoot(value[i]);
   }
 
   return roots;
@@ -235,7 +235,7 @@ function readOffsetsArrayComposite(
   arrayProps: ArrayProps
 ): number[] {
   const size = end - start;
-  let offsets: number[] = [];
+  let offsets: number[];
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
@@ -255,8 +255,10 @@ function readOffsetsArrayComposite(
     }
 
     const length = size / elementFixedSize;
+    offsets = new Array<number>(length);
+
     for (let i = 0; i < length; i++) {
-      offsets.push(i * elementFixedSize);
+      offsets[i] = i * elementFixedSize;
     }
   }
 

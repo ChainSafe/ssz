@@ -35,9 +35,9 @@ describe("subtreeFillToContents", () => {
 });
 
 function getNodesArray(len: number): Node[] {
-  const nodes: Node[] = [];
+  const nodes = new Array<Node>(len);
   for (let i = 0; i < len; i++) {
-    nodes.push(zeroNode(0));
+    nodes[i] = zeroNode(0);
   }
   return nodes;
 }

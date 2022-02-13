@@ -27,12 +27,12 @@ describe("subtreeFillToContents", () => {
 
     for (let count = 1; count <= maxIndex; count *= 2) {
       it(`subtreeFillToContents depth ${depth} count ${count}`, () => {
-        const nodes: LeafNode[] = [];
-        const expectedNodes: LeafNode[] = [];
+        const nodes = new Array<LeafNode>(count);
+        const expectedNodes = new Array<LeafNode>(count);
         for (let i = 0; i < count; i++) {
           const node = LeafNode.fromZero();
-          nodes.push(node);
-          expectedNodes.push(node);
+          nodes[i] = node;
+          expectedNodes[i] = node;
         }
 
         const node = subtreeFillToContents(nodes, depth);

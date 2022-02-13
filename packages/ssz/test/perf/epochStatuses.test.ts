@@ -24,9 +24,9 @@ describe("processAttestations() epochStatuses", () => {
 });
 
 function getEpochParticipation(len: number, value: number): number[] {
-  const arr: number[] = [];
+  const arr = new Array<number>(len);
   for (let i = 0; i < len; i++) {
-    arr.push(value);
+    arr[i] = value;
   }
   return arr;
 }

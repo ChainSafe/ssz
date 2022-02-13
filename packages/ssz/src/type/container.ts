@@ -251,12 +251,12 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const fieldRanges = this.getFieldRanges(data.dataView, start, end);
-    const nodes: Node[] = [];
+    const nodes = new Array<Node>(this.fieldsEntries.length);
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
-      nodes.push(fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end));
+      nodes[i] = fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
     }
 
     return subtreeFillToContents(nodes, this.depth);
@@ -265,11 +265,11 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   // Merkleization
 
   protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
-    const roots: Uint8Array[] = [];
+    const roots = new Array<Uint8Array>(this.fieldsEntries.length);
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
-      roots.push(fieldType.hashTreeRoot(struct[fieldName]));
+      roots[i] = fieldType.hashTreeRoot(struct[fieldName]);
     }
 
     return roots;
@@ -406,15 +406,15 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     // Merge fieldRangesFixedLen + offsets in one array
     let variableIdx = 0;
     let fixedIdx = 0;
-    const fieldRanges: BytesRange[] = [];
+    const fieldRanges = new Array<BytesRange>(this.isFixedLen.length);
 
     for (let i = 0; i < this.isFixedLen.length; i++) {
       if (this.isFixedLen[i]) {
         // push from fixLen ranges ++
-        fieldRanges.push(this.fieldRangesFixedLen[fixedIdx++]);
+        fieldRanges[i] = this.fieldRangesFixedLen[fixedIdx++];
       } else {
         // push from varLen ranges ++
-        fieldRanges.push({start: offsets[variableIdx], end: offsets[variableIdx + 1]});
+        fieldRanges[i] = {start: offsets[variableIdx], end: offsets[variableIdx + 1]};
         variableIdx++;
       }
     }
@@ -443,7 +443,7 @@ function readVariableOffsets(
   const size = end - start;
 
   // with the fixed sizes, we can read the offsets, and store for our single pass
-  const offsets: number[] = [];
+  const offsets = new Array<number>(variableOffsetsPosition.length);
   for (let i = 0; i < variableOffsetsPosition.length; i++) {
     const offset = data.getUint32(start + variableOffsetsPosition[i], true);
 
@@ -461,7 +461,7 @@ function readVariableOffsets(
       }
     }
 
-    offsets.push(offset);
+    offsets[i] = offset;
   }
 
   return offsets;

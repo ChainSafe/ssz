@@ -53,17 +53,17 @@ describe("Tree opts with low depth", () => {
 });
 
 function linspace(len: number): number[] {
-  const values: number[] = [];
+  const values = new Array<number>(len);
   for (let i = 0; i < len; i++) {
-    values.push(i);
+    values[i] = i;
   }
   return values;
 }
 
 function fillArray<T>(len: number, fill: T): T[] {
-  const values: T[] = [];
+  const values = new Array<T>(len);
   for (let i = 0; i < len; i++) {
-    values.push(fill);
+    values[i] = fill;
   }
   return values;
 }

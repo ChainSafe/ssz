@@ -75,18 +75,21 @@ export function value_deserializeFromBytesArrayBasic<ElementType extends BasicTy
   end: number,
   arrayProps: ArrayProps
 ): ValueOf<ElementType>[] {
-  const values: ValueOf<ElementType>[] = [];
   const elSize = elementType.byteLength;
 
   // Vector + List length validation
   const length = (end - start) / elSize;
   assertValidArrayLength(length, arrayProps, true);
 
+  const values = new Array<ValueOf<ElementType>>(length);
+
   for (let i = 0; i < length; i++) {
     // TODO: If faster, consider skipping size check for uint types
-    values.push(
-      elementType.value_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize) as ValueOf<ElementType>
-    );
+    values[i] = elementType.value_deserializeFromBytes(
+      data,
+      start + i * elSize,
+      start + (i + 1) * elSize
+    ) as ValueOf<ElementType>;
   }
 
   return values;
@@ -149,9 +152,9 @@ export function value_fromJsonArray<ElementType extends Type<unknown>>(
 
   assertValidArrayLength(json.length, arrayProps);
 
-  const value: ValueOf<ElementType>[] = [];
+  const value = new Array<ValueOf<ElementType>>(json.length);
   for (let i = 0; i < json.length; i++) {
-    value.push(elementType.fromJson(json[i]) as ValueOf<ElementType>);
+    value[i] = elementType.fromJson(json[i]) as ValueOf<ElementType>;
   }
   return value;
 }
@@ -166,9 +169,9 @@ export function value_toJsonArray<ElementType extends Type<unknown>>(
 ): unknown[] {
   const length = arrayProps.isList ? value.length : arrayProps.length;
 
-  const json: unknown[] = [];
+  const json = new Array<unknown>(length);
   for (let i = 0; i < length; i++) {
-    json.push(elementType.toJson(value[i]) as ValueOf<ElementType>);
+    json[i] = elementType.toJson(value[i]) as ValueOf<ElementType>;
   }
   return json;
 }
@@ -180,10 +183,10 @@ export function value_cloneArray<ElementType extends Type<unknown>>(
   elementType: ElementType,
   value: ValueOf<ElementType>[]
 ): ValueOf<ElementType>[] {
-  const newValue: ValueOf<ElementType>[] = [];
+  const newValue = new Array<ValueOf<ElementType>>(value.length);
 
   for (let i = 0; i < value.length; i++) {
-    newValue.push(elementType.clone(value[i]) as ValueOf<ElementType>);
+    newValue[i] = elementType.clone(value[i]) as ValueOf<ElementType>;
   }
 
   return newValue;
@@ -214,9 +217,9 @@ export function value_defaultValueArray<ElementType extends Type<unknown>>(
   elementType: ElementType,
   length: number
 ): ValueOf<ElementType>[] {
-  const values: ValueOf<ElementType>[] = [];
+  const values = new Array<ValueOf<ElementType>>(length);
   for (let i = 0; i < length; i++) {
-    values.push(elementType.defaultValue as ValueOf<ElementType>);
+    values[i] = elementType.defaultValue as ValueOf<ElementType>;
   }
   return values;
 }

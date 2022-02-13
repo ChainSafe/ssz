@@ -17,9 +17,9 @@ describe("tree / getNodesAtDepth", () => {
   const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
 
   before("Get base tree and data", () => {
-    const initialNodes: Node[] = [];
+    const initialNodes = new Array<Node>(length);
     for (let i = 0; i < length; i++) {
-      initialNodes.push(initialNode);
+      initialNodes[i] = initialNode;
     }
 
     tree = new Tree(subtreeFillToContents(initialNodes, depth));
@@ -35,9 +35,9 @@ describe("tree / getNodesAtDepth", () => {
   itBench({
     id: "tree.getNodesAtDepth - push all nodes",
     fn: () => {
-      const nodes: Node[] = [];
+      const nodes = new Array<Node>(length);
       for (let i = 0; i < length; i++) {
-        nodes.push(initialNode);
+        nodes[i] = initialNode;
       }
     },
   });
