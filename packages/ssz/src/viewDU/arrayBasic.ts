@@ -1,6 +1,6 @@
 import {getNodeAtDepth, getNodesAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
+import {ArrayLikeWritable, BasicType} from "../type/basic";
 import {TreeViewDU} from "../type/composite";
 import {ArrayBasicType} from "../view/arrayBasic";
 
@@ -102,11 +102,11 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
    */
-  getAll(): ValueOf<ElementType>[] {
+  getAll(): ArrayLike<ValueOf<ElementType>> {
     if (!this.nodesPopulated) {
       const nodesPrev = this.nodes;
       const chunksNode = this.type.tree_getChunksNode(this.node);
-      const chunkCount = Math.ceil(this.length / this.type.itemsPerChunk);
+      const chunkCount = Math.ceil(this._length / this.type.itemsPerChunk);
       this.nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
 
       // Re-apply changed nodes
@@ -117,10 +117,10 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       this.nodesPopulated = true;
     }
 
-    const values = new Array<ValueOf<ElementType>>(this.length);
+    const values = this.type.elementType.value_newArrayOf(this._length) as ArrayLikeWritable<ValueOf<ElementType>>;
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
-    const lenFullNodes = Math.floor(this.length / itemsPerChunk);
-    const remainder = this.length % itemsPerChunk;
+    const lenFullNodes = Math.floor(this._length / itemsPerChunk);
+    const remainder = this._length % itemsPerChunk;
 
     // TODO Optimize: caching the variables used in the loop above it
     for (let n = 0; n < lenFullNodes; n++) {

@@ -1,6 +1,6 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews} from "./abstract";
-import {BasicType} from "./basic";
+import {ArrayLikeWritable, BasicType} from "./basic";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -168,6 +168,20 @@ export class UintNumberType extends BasicType<number> {
       leafNode.bitwiseOrUint(this.byteLength, offsetBytes, value);
     } else {
       leafNode.setUint(this.byteLength, offsetBytes, value, this.clipInfinity);
+    }
+  }
+
+  value_newArrayOf(length: number): ArrayLikeWritable<number> {
+    switch (this.byteLength) {
+      case 1:
+        return new Uint8Array(length);
+      case 2:
+        return new Uint16Array(length);
+      case 4:
+        return new Uint32Array(length);
+      case 8: {
+        return new Array<number>(length);
+      }
     }
   }
 
