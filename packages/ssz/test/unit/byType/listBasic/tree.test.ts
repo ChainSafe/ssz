@@ -164,7 +164,7 @@ runViewTestMutation({
           for (let i = 0; i < values.length; i++) {
             values[i] += deltasByIdx[i];
           }
-          return ListN64Uint64NumberType.toViewDU(values);
+          return ListN64Uint64NumberType.toViewDU(values as number[]);
         },
       };
     }),

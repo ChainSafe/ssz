@@ -1,11 +1,6 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {Type} from "./abstract";
 
-export interface ArrayLikeWritable<T> {
-  [n: number]: T;
-  readonly length: number;
-}
-
 /**
  * Represents a basic type as defined in the spec:
  * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#basic-types
@@ -42,11 +37,6 @@ export abstract class BasicType<V> extends Type<V> {
   equals(a: V, b: V): boolean {
     // All basic types are represented by primitive Javascript types, the operator === is sufficient
     return a === b;
-  }
-
-  /** INTERNAL METHOD: Return an ArrayLike data structure of fixed `length` */
-  value_newArrayOf(length: number): ArrayLikeWritable<V> {
-    return new Array<V>(length);
   }
 
   /** INTERNAL METHOD: Efficiently get a value from a LeafNode (not packed) */

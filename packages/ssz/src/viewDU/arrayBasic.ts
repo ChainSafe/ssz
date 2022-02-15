@@ -1,6 +1,6 @@
 import {getNodeAtDepth, getNodesAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
-import {ArrayLikeWritable, BasicType} from "../type/basic";
+import {BasicType} from "../type/basic";
 import {TreeViewDU} from "../type/composite";
 import {ArrayBasicType} from "../view/arrayBasic";
 
@@ -102,7 +102,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
    */
-  getAll(): ArrayLike<ValueOf<ElementType>> {
+  getAll(): ValueOf<ElementType>[] {
     if (!this.nodesPopulated) {
       const nodesPrev = this.nodes;
       const chunksNode = this.type.tree_getChunksNode(this.node);
@@ -117,7 +117,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       this.nodesPopulated = true;
     }
 
-    const values = this.type.elementType.value_newArrayOf(this._length) as ArrayLikeWritable<ValueOf<ElementType>>;
+    const values = new Array<ValueOf<ElementType>>(this._length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(this._length / itemsPerChunk);
     const remainder = this._length % itemsPerChunk;

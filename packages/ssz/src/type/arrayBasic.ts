@@ -59,7 +59,7 @@ export function value_serializeToBytesArrayBasic<ElementType extends BasicType<u
   length: number,
   output: ByteViews,
   offset: number,
-  value: ValueOf<ElementType>[]
+  value: ArrayLike<ValueOf<ElementType>>
 ): number {
   const elSize = elementType.byteLength;
   for (let i = 0; i < length; i++) {

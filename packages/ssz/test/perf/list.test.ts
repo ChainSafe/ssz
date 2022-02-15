@@ -64,7 +64,7 @@ describe("subtreeFillToContents", function () {
     for (let i = 0, len = deltas.length; i < len; i++) {
       balances[i] += deltas[i];
     }
-    tbBalances64.type.toViewDU(balances);
+    tbBalances64.type.toViewDU(balances as number[]);
   });
 
   const newBalances = new BigUint64Array(numBalances);

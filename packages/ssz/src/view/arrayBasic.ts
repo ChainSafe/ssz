@@ -1,6 +1,6 @@
 import {getNodesAtDepth, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
-import {ArrayLikeWritable, BasicType} from "../type/basic";
+import {BasicType} from "../type/basic";
 import {CompositeType, TreeView, TreeViewDU} from "../type/composite";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
@@ -74,13 +74,13 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
    */
-  getAll(): ArrayLike<ValueOf<ElementType>> {
+  getAll(): ValueOf<ElementType>[] {
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
     const leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
 
-    const values = this.type.elementType.value_newArrayOf(length) as ArrayLikeWritable<ValueOf<ElementType>>;
+    const values = new Array<ValueOf<ElementType>>(length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(length / itemsPerChunk);
     const remainder = length % itemsPerChunk;
