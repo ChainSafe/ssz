@@ -1,3 +1,4 @@
+import {expect} from "chai";
 import {ListCompositeType, UintNumberType, ContainerType, ListBasicType} from "../../../../src";
 import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
@@ -61,4 +62,18 @@ runTypeTestInvalid({
       error: "First offset must be > 0",
     },
   ],
+});
+
+// Invalid types at constructor time
+
+describe("Invalid ListBasicType at constructor", () => {
+  const compositeType = new ListBasicType(uint16, 2);
+
+  it("limit must be > 0", () => {
+    expect(() => new ListCompositeType(compositeType, 0)).to.throw();
+  });
+
+  it("ElementType must be basic", () => {
+    expect(() => new ListCompositeType(uint16 as unknown as typeof compositeType, 2)).to.throw();
+  });
 });

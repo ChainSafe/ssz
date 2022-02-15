@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray";
 import {BitVectorType} from "../../../src";
+import {linspace} from "../../utils/misc";
 
 const BITS_PER_BYTE = 8;
 
@@ -12,19 +13,18 @@ describe("aggregationBits", function () {
 });
 
 describe("BitArray.intersectValues", () => {
-  const bitLen = 2 * 8;
-  const bitVectorType = new BitVectorType(bitLen);
-  const indexes = Array.from({length: bitLen}, (_, i) => i);
-
-  const testCases: {id: string; bitList: number[]; yes: number[]}[] = [
-    {id: "zero values", bitList: [0b00000000, 0b00000000], yes: []},
-    {id: "one value", bitList: [0b00001000, 0b00000000], yes: [3]},
-    {id: "many values", bitList: [0b01100001, 0b01000100], yes: [0, 5, 6, 10, 14]},
-    {id: "all values", bitList: [0b11111111, 0b11111111], yes: indexes},
+  const testCases: {id: string; bitLen: number; bitList: number[]; yes: number[]}[] = [
+    {id: "zero values", bitLen: 16, bitList: [0b00000000, 0b00000000], yes: []},
+    {id: "one value", bitLen: 16, bitList: [0b00001000, 0b00000000], yes: [3]},
+    {id: "many values", bitLen: 16, bitList: [0b01100001, 0b01000100], yes: [0, 5, 6, 10, 14]},
+    {id: "many values odd", bitLen: 15, bitList: [0b01100001, 0b01000100], yes: [0, 5, 6, 10, 14]},
+    {id: "all values", bitLen: 16, bitList: [0b11111111, 0b11111111], yes: linspace(16)},
   ];
 
-  for (const {id, bitList, yes} of testCases) {
-    const bitArrayValue = new BitArray(new Uint8Array(bitList), 8 * bitList.length);
+  for (const {id, bitLen, bitList, yes} of testCases) {
+    const bitVectorType = new BitVectorType(bitLen);
+    const indexes = linspace(bitLen);
+    const bitArrayValue = new BitArray(new Uint8Array(bitList), bitLen);
     const bitArrayView = bitVectorType.toView(bitArrayValue);
     const bitArrayViewDU = bitVectorType.toViewDU(bitArrayValue);
 

@@ -27,6 +27,7 @@ for (const listBasicUintType of [
         id: "push basic x5",
         valueBefore: [],
         valueAfter: [1, 2, 3, 4, 5],
+        assertFn: (tv) => expect(tv.length).equals(5, "Wrong length"),
         fn: (tv) => {
           for (let i = 1; i <= 5; i++) {
             tv.push(i);

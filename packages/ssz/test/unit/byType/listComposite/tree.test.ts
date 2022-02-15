@@ -29,6 +29,7 @@ runViewTestMutation({
         {a: 1, b: 1},
         {a: 2, b: 2},
       ],
+      assertFn: (tv) => expect(tv.length).equals(2, "Wrong length"),
       fn: (tv) => {
         tv.push(containerUintsType.toViewDU({a: 1, b: 1}));
         tv.push(containerUintsType.toViewDU({a: 2, b: 2}));

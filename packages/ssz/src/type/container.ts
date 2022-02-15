@@ -84,10 +84,6 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     this.typeName = opts?.typeName ?? renderContainerTypeName(fields);
 
     this.maxChunkCount = Object.keys(fields).length;
-    if (this.maxChunkCount === 0) {
-      throw Error("fields must not be empty");
-    }
-
     this.depth = maxChunksToDepth(this.maxChunkCount);
 
     // Precalculated data for faster serdes
@@ -432,10 +428,6 @@ function readVariableOffsets(
   fixedEnd: number,
   variableOffsetsPosition: number[]
 ): number[] {
-  if (variableOffsetsPosition.length === 0) {
-    return [];
-  }
-
   // Since variable-sized values can be interspersed with fixed-sized values, we precalculate
   // the offset indices so we can more easily deserialize the fields in once pass first we get the fixed sizes
   // Note: `fixedSizes[i] = null` if that field has variable length

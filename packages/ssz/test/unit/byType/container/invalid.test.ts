@@ -1,25 +1,27 @@
-import {ContainerType, ListBasicType, UintNumberType} from "../../../../src";
-import {uint16NumType} from "../../../utils/primitiveTypes";
+import {expect} from "chai";
+import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src";
+import {byteType, uint16NumType} from "../../../utils/primitiveTypes";
 import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
 runTypeTestInvalid({
-  type: new ContainerType({a: uint16NumType}, {typeName: "FixedSizeObject"}),
+  type: new ContainerType({a: uint16NumType}),
   values: [
     // error is empty because struct and tree throw different errors
-    {serialized: "", error: ""},
-    {serialized: "00", error: ""},
+    {serialized: ""},
+    {serialized: "00"},
+
+    {id: "Not an object", json: "{}"},
+    {id: "Null", json: null},
+    {id: "Missing key", json: {}},
   ],
 });
 
 runTypeTestInvalid({
-  type: new ContainerType(
-    {a: uint16NumType, list: new ListBasicType(uint16NumType, 100)},
-    {typeName: "VariableSizeObject"}
-  ),
+  type: new ContainerType({a: uint16NumType, list: new ListBasicType(uint16NumType, 100)}),
   values: [
     // error is empty because struct and tree throw different errors
-    {serialized: "", error: ""},
-    {serialized: "00", error: ""},
+    {serialized: ""},
+    {serialized: "00"},
   ],
 });
 
@@ -67,4 +69,27 @@ runTypeTestInvalid({
       error: "First offset must equal to fixedEnd",
     },
   ],
+});
+
+// Invalid types at constructor time
+
+describe("Invalid ContainerType at constructor", () => {
+  it("Must have > 0 fields", () => {
+    expect(() => new ContainerType({})).to.throw();
+  });
+
+  it("Incomplete casing map", () => {
+    expect(
+      () =>
+        new ContainerType(
+          {a: byteType},
+          // Set casing map to a value that does not include all fields
+          {casingMap: {b: "b"} as unknown as {a: string}}
+        )
+    ).to.throw();
+  });
+
+  it("ContainerNodeStructType of not immutable types", () => {
+    expect(() => new ContainerNodeStructType({list: new ListBasicType(byteType, 2)})).to.throw();
+  });
 });

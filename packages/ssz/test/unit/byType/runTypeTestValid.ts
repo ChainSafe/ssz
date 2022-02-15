@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {toHexString, UnionType} from "../../../src";
+import {toHexString, TreeViewDU, UnionType} from "../../../src";
 import {Type} from "../../../src/type/abstract";
 import {isCompositeType} from "../../../src/type/composite";
 import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest";
@@ -141,6 +141,16 @@ export function runTypeTestValid<T>({
           const viewDU2 = type.toViewDUFromView(view);
           expect(toHexString(type.commitView(view).root)).equals(rootHex, "Wrong recovered View");
           expect(toHexString(type.commitViewDU(viewDU2).root)).equals(rootHex, "Wrong recovered ViewDU");
+
+          // Cache manipulation
+          const viewDUCache = type.cacheOfViewDU(viewDU);
+          type.getViewDU(node, viewDUCache);
+
+          if (viewDU instanceof TreeViewDU) {
+            // Clone without cache
+            const clonedNoCache = viewDU.clone(true);
+            expect(clonedNoCache.cache).deep.equals(viewDUCache, "Cloned cache should be empty");
+          }
         }
       });
     }

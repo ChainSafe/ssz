@@ -16,6 +16,8 @@ export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = 
    * Allow fn() to return void, and expect tvBefore to be mutated
    */
   fn: (treeView: CompositeViewDU<CT>) => CompositeViewDU<CT> | void;
+  /** Extra assertions to run after fn() */
+  assertFn?: (treeView: CompositeViewDU<CT>) => void;
 };
 
 const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeType<unknown, unknown, unknown>>(
@@ -46,7 +48,8 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
 
   describeFn(`${type.typeName} TreeView mutations`, () => {
     for (const testCase of ops) {
-      const {id, valueBefore, valueAfter, skipTreeView, skipTreeViewDU, skipCloneMutabilityViewDU, fn} = testCase;
+      const {id, valueBefore, valueAfter, skipTreeView, skipTreeViewDU, skipCloneMutabilityViewDU, fn, assertFn} =
+        testCase;
 
       // Skip tests if ONLY_ID is set
       const onlyId = process.env.ONLY_ID;
@@ -59,6 +62,8 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
           const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
 
           assertValidView(tvAfter as TreeViewDU<CT>, valueAfter, "after mutation");
+
+          if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
         });
       }
 
@@ -78,8 +83,12 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
             );
           }
 
+          if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
+
           type.commitViewDU(tvAfter);
           assertValidView(tvAfter as TreeViewDU<CT>, valueAfter, "after mutation");
+
+          if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
 
           if (!skipCloneMutabilityViewDU) {
             // Ensure correct mutability of clone and caches

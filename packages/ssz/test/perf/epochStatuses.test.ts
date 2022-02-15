@@ -1,6 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
 import {CompositeViewDU} from "../../src";
 import {EpochParticipation} from "../lodestarTypes/altair/sszTypes";
+import {fillArray, linspace} from "../utils/misc";
 
 describe("processAttestations() epochStatuses", () => {
   const len = 250_000;
@@ -10,7 +11,7 @@ describe("processAttestations() epochStatuses", () => {
   itBench<CompositeViewDU<typeof EpochParticipation>, CompositeViewDU<typeof EpochParticipation>>({
     id: `epochParticipation len ${len} rws ${readWrites}`,
     before: () => {
-      const epochParticipation = getEpochParticipation(len, 3);
+      const epochParticipation = fillArray(len, 3);
       return EpochParticipation.toViewDU(epochParticipation);
     },
     beforeEach: (epochParticipation) => epochParticipation.clone(),
@@ -22,22 +23,6 @@ describe("processAttestations() epochStatuses", () => {
     },
   });
 });
-
-function getEpochParticipation(len: number, value: number): number[] {
-  const arr = new Array<number>(len);
-  for (let i = 0; i < len; i++) {
-    arr[i] = value;
-  }
-  return arr;
-}
-
-function linspace(len: number): number[] {
-  const arr: number[] = [];
-  for (let i = 0; i < len; i++) {
-    arr.push(0);
-  }
-  return arr;
-}
 
 function shuffle<T>(arr: T[]): T[] {
   const _arr: T[] = [...arr];

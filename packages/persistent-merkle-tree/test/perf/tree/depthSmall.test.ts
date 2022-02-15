@@ -1,5 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
 import {getNodeAtDepth, getNodesAtDepth, setNodeAtDepth, setNodesAtDepth, zeroNode} from "../../../src";
+import {linspace, fillArray} from "../../utils/misc";
 
 describe("Tree opts with low depth", () => {
   const runsFactor = 100_000;
@@ -51,19 +52,3 @@ describe("Tree opts with low depth", () => {
     });
   }
 });
-
-function linspace(len: number): number[] {
-  const values = new Array<number>(len);
-  for (let i = 0; i < len; i++) {
-    values[i] = i;
-  }
-  return values;
-}
-
-function fillArray<T>(len: number, fill: T): T[] {
-  const values = new Array<T>(len);
-  for (let i = 0; i < len; i++) {
-    values[i] = fill;
-  }
-  return values;
-}
