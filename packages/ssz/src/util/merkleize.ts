@@ -1,8 +1,12 @@
-import {hash} from "./hash";
+import SHA256 from "@chainsafe/as-sha256";
 import {zeroHash} from "./zeros";
 
-export function merkleize(chunks: Uint8Array[], padFor?: number): Uint8Array {
-  const layerCount = bitLength(nextPowerOf2(padFor ?? chunks.length) - 1);
+export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
+  return SHA256.digest64(Buffer.concat([bytes32A, bytes32B]));
+}
+
+export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
+  const layerCount = bitLength(nextPowerOf2(padFor) - 1);
   if (chunks.length == 0) {
     return zeroHash(layerCount);
   }
@@ -22,7 +26,7 @@ export function merkleize(chunks: Uint8Array[], padFor?: number): Uint8Array {
     }
 
     for (let i = 0; i < paddedChunkCount; i += 2) {
-      chunks[i / 2] = hash(chunks[i], chunks[i + 1]);
+      chunks[i / 2] = hash64(chunks[i], chunks[i + 1]);
     }
 
     chunkCount = paddedChunkCount / 2;
@@ -51,25 +55,16 @@ export function splitIntoRootChunks(longChunk: Uint8Array): Uint8Array[] {
 export function mixInLength(root: Uint8Array, length: number): Uint8Array {
   const lengthBuf = Buffer.alloc(32);
   lengthBuf.writeUIntLE(length, 0, 6);
-  return hash(root, lengthBuf);
+  return hash64(root, lengthBuf);
 }
 
-// x2 faster than bitLengthStr()
+// x2 faster than bitLengthStr() which uses Number.toString(2)
 export function bitLength(i: number): number {
   if (i === 0) {
     return 0;
   }
 
   return Math.floor(Math.log2(i)) + 1;
-}
-
-export function bitLengthStr(n: number): number {
-  // Make this more efficient
-  const bitstring = n.toString(2);
-  if (bitstring === "0") {
-    return 0;
-  }
-  return bitstring.length;
 }
 
 /**
@@ -87,9 +82,4 @@ export function maxChunksToDepth(n: number): number {
 /** @ignore */
 export function nextPowerOf2(n: number): number {
   return n <= 0 ? 1 : Math.pow(2, bitLength(n - 1));
-}
-
-/** @ignore */
-export function previousPowerOf2(n: number): number {
-  return n === 0 ? 1 : Math.pow(2, bitLength(n) - 1);
 }
