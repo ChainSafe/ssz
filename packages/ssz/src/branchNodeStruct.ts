@@ -1,5 +1,5 @@
 import {HashObject} from "@chainsafe/as-sha256";
-import {BranchNode, hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
+import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
 
 /**
  * BranchNode whose children's data is represented as a struct, not a tree.
@@ -36,13 +36,5 @@ export class BranchNodeStruct<T> extends Node {
 
   get right(): Node {
     return this.valueToNode(this.value).right;
-  }
-
-  rebindLeft(left: Node): Node {
-    return new BranchNode(left, this.right);
-  }
-
-  rebindRight(right: Node): Node {
-    return new BranchNode(this.left, right);
   }
 }

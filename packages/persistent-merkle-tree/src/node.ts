@@ -52,10 +52,6 @@ export abstract class Node implements HashObject {
 
   /** Returns true if the node is a `LeafNode` */
   abstract isLeaf(): boolean;
-  /** Returns a new node with a new left child and the existing right child */
-  abstract rebindLeft(left: Node): Node;
-  /** Returns a new node with a new right child and the existing left child */
-  abstract rebindRight(right: Node): Node;
 }
 
 /**
@@ -95,14 +91,6 @@ export class BranchNode extends Node {
 
   get right(): Node {
     return this._right;
-  }
-
-  rebindLeft(left: Node): Node {
-    return new BranchNode(left, this.right);
-  }
-
-  rebindRight(right: Node): Node {
-    return new BranchNode(this.left, right);
   }
 }
 
@@ -159,14 +147,6 @@ export class LeafNode extends Node {
   }
 
   get right(): Node {
-    throw Error("LeafNode has no right node");
-  }
-
-  rebindLeft(): Node {
-    throw Error("LeafNode has no left node");
-  }
-
-  rebindRight(): Node {
     throw Error("LeafNode has no right node");
   }
 

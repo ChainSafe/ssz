@@ -282,9 +282,9 @@ function rebindNodeToRoot(bitstring: GindexBitstring, parentNodes: Node[], newNo
   // by one since the first bit in bitstring was ignored in the previous loop
   for (let i = bitstring.length - 1; i >= 1; i--) {
     if (bitstring[i] === "1") {
-      node = parentNodes[i - 1].rebindRight(node);
+      node = new BranchNode(parentNodes[i - 1].left, node);
     } else {
-      node = parentNodes[i - 1].rebindLeft(node);
+      node = new BranchNode(node, parentNodes[i - 1].right);
     }
   }
 
@@ -405,11 +405,11 @@ export function setNodesAtDepth(rootNode: Node, nodesDepth: number, indexes: num
     //  / \
     // x   x
     //
-    //   -    If only the left node exists, rebindLeft
+    //   -    If only the left node exists, rebind left
     //  / \
     // x   -
     //
-    //   -    If this is the right node, only the right node exists, rebindRight
+    //   -    If this is the right node, only the right node exists, rebind right
     //  / \
     // -   x
 
