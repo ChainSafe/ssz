@@ -42,38 +42,11 @@ export function sszStatic(fork: ForkName): void {
   }
 }
 
-// RUN_ONLY_FAILED_TEST mode:
-// - Runs spec tests until 1 test fails. Then it persists its name
-// - On the next run of the command it will solo that test such that's easily debuggable
-// - Once that tests pass it will remove the flag file and allow to run all tests again in the next run
-//
-// example:
-// $ RUN_ONLY_FAILED_TEST=true RENDER_JSON=true LODESTAR_FORK=bellatrix yarn test:spec-static-minimal
-//
-const failedTestFilepath = ".failedTest.txt";
-const failedTestExists = fs.existsSync(failedTestFilepath);
-const failedTestStr = failedTestExists ? fs.readFileSync(failedTestFilepath, "utf8") : "";
-if (failedTestExists) {
-  console.log("failedTestStr", failedTestStr);
-}
-
-const {RUN_ONLY_FAILED_TEST} = process.env;
-if (RUN_ONLY_FAILED_TEST) {
-  process.env.ONLY_CASE = failedTestStr.split(":")[0];
-  process.env.ONLY_ID = failedTestStr.split(":")[1] ?? "";
-}
-
 function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName, preset: string): void {
   const typeDir = path.join(SPEC_TEST_LOCATION, `tests/${preset}/${forkName}/ssz_static/${typeName}`);
 
   for (const caseName of fs.readdirSync(typeDir)) {
-    const caseId = `${preset}/${forkName}/ssz_static/${typeName}/${caseName}`;
-    const onlyCase = process.env.ONLY_CASE;
-    if (onlyCase && !caseId.includes(onlyCase)) {
-      continue;
-    }
-
-    describe(caseId, () => {
+    describe(`${preset}/${forkName}/ssz_static/${typeName}/${caseName}`, () => {
       const sszTypeNoUint = replaceUintTypeWithUintBigintType(sszType);
       const caseDir = path.join(typeDir, caseName);
       for (const testId of fs.readdirSync(caseDir)) {
@@ -88,24 +61,12 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
             this.timeout(30 * 1000);
           }
 
-          try {
-            const testData = parseSszStaticTestcase(path.join(caseDir, testId));
-            const {node, json} = runValidSszTest(sszTypeNoUint, testData);
+          const testData = parseSszStaticTestcase(path.join(caseDir, testId));
+          const {node, json} = runValidSszTest(sszTypeNoUint, testData);
 
-            // Run auto-generated proof tests only for minimal
-            if (isCompositeType(sszTypeNoUint) && preset !== "mainnet") {
-              runProofTestOnAllJsonPaths({type: sszTypeNoUint, node, json, rootHex: testData.root});
-            }
-
-            if (RUN_ONLY_FAILED_TEST && failedTestExists) {
-              fs.unlinkSync(failedTestFilepath);
-            }
-          } catch (e) {
-            if (RUN_ONLY_FAILED_TEST && !failedTestExists) {
-              fs.writeFileSync(failedTestFilepath, `${caseId}:${testId}`);
-              process.exit(666);
-            }
-            throw e;
+          // Run auto-generated proof tests only for minimal
+          if (isCompositeType(sszTypeNoUint) && preset !== "mainnet") {
+            runProofTestOnAllJsonPaths({type: sszTypeNoUint, node, json, rootHex: testData.root});
           }
         });
       }

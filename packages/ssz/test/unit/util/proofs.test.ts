@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {BitVectorType, BitListType, ContainerType} from "../../src";
+import {BitVectorType, BitListType, ContainerType} from "../../../src";
 
 /** Pick bitLen to fill 2 nodes */
 const bitLen2Nodes = 8 * 32 * 2;

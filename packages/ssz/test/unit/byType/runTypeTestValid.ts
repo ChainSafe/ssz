@@ -71,41 +71,28 @@ export function runTypeTestValid<T>({
   notEqualValues?: {id: string; a: T; b: T}[];
 }): void {
   describe(`${typeName ?? type.typeName} valid`, () => {
-    // Skip tests if ONLY_ID is set
-    const onlyId = process.env.ONLY_ID;
+    if (defaultValue !== undefined) {
+      it("defaultValue", () => {
+        expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(toJsonOrString(type.toJson(defaultValue)));
+      });
+    }
 
-    if (!onlyId) {
-      if (defaultValue !== undefined) {
-        it("defaultValue", () => {
-          expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(
-            toJsonOrString(type.toJson(defaultValue))
-          );
-        });
-      }
+    if (minSize !== undefined) {
+      it("minSize", () => {
+        expect(type.minSize).to.equal(minSize);
+      });
+    }
 
-      if (minSize !== undefined) {
-        it("minSize", () => {
-          expect(type.minSize).to.equal(minSize);
-        });
-      }
-
-      if (maxSize !== undefined) {
-        it("maxSize", () => {
-          expect(type.maxSize).to.equal(maxSize);
-        });
-      }
+    if (maxSize !== undefined) {
+      it("maxSize", () => {
+        expect(type.maxSize).to.equal(maxSize);
+      });
     }
 
     for (let i = 0; i < values.length; i++) {
       const testCase = values[i];
 
-      const testId = `${typeName ?? type.typeName} value ${i} - ${testCase.id ?? testCase.serialized}`;
-      // Skip tests if ONLY_ID is set
-      if (onlyId && !testId.includes(onlyId)) {
-        continue;
-      }
-
-      it(testId, () => {
+      it(`${typeName ?? type.typeName} value ${i} - ${testCase.id ?? testCase.serialized}`, () => {
         let rootHex: string;
         if (typeof testCase.root === "string") {
           rootHex = testCase.root;
