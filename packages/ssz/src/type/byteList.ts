@@ -79,7 +79,8 @@ export class ByteListType extends ByteArrayType {
     return addLengthNode(chunksNode, end - start);
   }
 
-  tree_getByteLen(node: Node): number {
+  tree_getByteLen(node?: Node): number {
+    if (!node) throw new Error("ByteListType requires a node to get leaves");
     return getLengthFromRootNode(node);
   }
 

@@ -75,6 +75,7 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
 
       if (this.elementType.fixedSize === null) {
         if (!rootNode) {
+          /* istanbul ignore next - unreachable code */
           throw new Error("Array of variable size requires tree argument to get leaves");
         }
 

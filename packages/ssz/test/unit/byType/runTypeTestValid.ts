@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {UnionType} from "../../../src";
+import {toHexString, UnionType} from "../../../src";
 import {Type} from "../../../src/type/abstract";
 import {isCompositeType} from "../../../src/type/composite";
 import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest";
@@ -124,12 +124,23 @@ export function runTypeTestValid<T>({
         });
 
         // Test proofs functionality for all JSON paths
-        if (isCompositeType(type)) {
-          if (type instanceof UnionType) {
-            return; // Proofs not implemented for UnionType
-          }
-
+        if (
+          isCompositeType(type) &&
+          // Proofs not implemented for UnionType
+          !(type instanceof UnionType)
+        ) {
           runProofTestOnAllJsonPaths({type, node, json, rootHex});
+
+          // Test tree_getLeafGindices()
+          // TODO: Assert result
+          type.tree_getLeafGindices(BigInt(0), node);
+
+          // View-ViewDU conversions
+          const viewDU = type.getViewDU(node);
+          const view = type.toViewFromViewDU(viewDU);
+          const viewDU2 = type.toViewDUFromView(view);
+          expect(toHexString(type.commitView(view).root)).equals(rootHex, "Wrong recovered View");
+          expect(toHexString(type.commitViewDU(viewDU2).root)).equals(rootHex, "Wrong recovered ViewDU");
         }
       });
     }

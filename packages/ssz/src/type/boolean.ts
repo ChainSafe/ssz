@@ -25,7 +25,9 @@ export class BooleanType extends BasicType<boolean> {
     return offset + 1;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number): boolean {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): boolean {
+    this.assertValidSize(end - start);
+
     switch (data.uint8Array[start]) {
       case 1:
         return true;
@@ -43,12 +45,8 @@ export class BooleanType extends BasicType<boolean> {
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    const size = end - start;
-    if (size !== 1) {
-      throw Error(`Boolean: invalid size ${size} expected 1`);
-    }
+    this.assertValidSize(end - start);
 
-    // TODO: Optimize and validate data
     const value = data.uint8Array[start];
     if (value > 1) {
       throw Error(`Boolean: invalid value ${value}`);

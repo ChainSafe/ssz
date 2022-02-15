@@ -1,6 +1,8 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {Type} from "./abstract";
 
+/* eslint-disable @typescript-eslint/member-ordering */
+
 /**
  * Represents a basic type as defined in the spec:
  * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#basic-types
@@ -19,6 +21,12 @@ export abstract class BasicType<V> extends Type<V> {
 
   tree_serializedSize(): number {
     return this.byteLength;
+  }
+
+  protected assertValidSize(size: number): void {
+    if (size !== this.byteLength) {
+      throw Error(`BasicType invalid size ${size} expected ${this.byteLength}`);
+    }
   }
 
   hashTreeRoot(value: V): Uint8Array {

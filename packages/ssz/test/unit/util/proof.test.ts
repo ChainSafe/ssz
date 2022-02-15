@@ -21,6 +21,23 @@ describe("Create proof of Array of Objects", () => {
     expect(parentObjFromProof.list.get(0).toValue()).to.deep.equal(parentObj.list.get(0).toValue());
     expect(parentObjFromProof.list.toValue()).to.deep.equal(parentObj.list.toValue());
   });
+
+  it("Verify proof", () => {
+    const parentObj = ArrayObject.defaultView;
+    const simpleObj = SimpleObject.defaultView;
+
+    parentObj.list.push(simpleObj);
+    const proof = parentObj.createProof([["list", 0]]);
+
+    const root = parentObj.hashTreeRoot();
+    root[0]++; // Change the root to invalidate the proof (++ overflows)
+    expect(() => ArrayObject.createFromProof(proof, root)).to.throw();
+  });
+
+  it("Prevent navigation beyond basic types", () => {
+    const simpleObj = SimpleObject.defaultView;
+    expect(() => simpleObj.createProof([["a", 0]])).to.throw();
+  });
 });
 
 describe("Create proof of NodeStruct", () => {

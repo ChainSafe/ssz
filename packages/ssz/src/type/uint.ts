@@ -103,10 +103,7 @@ export class UintNumberType extends BasicType<number> {
   }
 
   value_deserializeFromBytes({dataView}: ByteViews, start: number, end: number): number {
-    const size = end - start;
-    if (size !== this.byteLength) {
-      throw Error(`Invalid size ${size} expected ${this.byteLength}`);
-    }
+    this.assertValidSize(end - start);
 
     switch (this.byteLength) {
       case 1:
@@ -134,10 +131,7 @@ export class UintNumberType extends BasicType<number> {
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    const size = end - start;
-    if (size !== this.byteLength) {
-      throw Error(`Invalid size ${size} expected ${this.byteLength}`);
-    }
+    this.assertValidSize(end - start);
 
     const value = this.value_deserializeFromBytes(data, start, end);
     const node = LeafNode.fromZero();

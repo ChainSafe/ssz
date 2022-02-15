@@ -82,16 +82,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   }
 
   tree_getLeafGindices(rootGindex: bigint, rootNode?: Node): Gindex[] {
-    let byteLen: number;
-    if (this.fixedSize === null) {
-      if (!rootNode) {
-        throw new Error("variable type requires tree argument to get leaves");
-      }
-      byteLen = Math.ceil(this.tree_getByteLen(rootNode));
-    } else {
-      byteLen = this.fixedSize;
-    }
-
+    const byteLen = this.tree_getByteLen(rootNode);
     const chunkCount = Math.ceil(byteLen / 32);
     const startIndex = concatGindices([rootGindex, toGindex(this.depth, BigInt(0))]);
     const gindices = new Array<Gindex>(chunkCount);
@@ -107,7 +98,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return gindices;
   }
 
-  abstract tree_getByteLen(node: Node): number;
+  abstract tree_getByteLen(node?: Node): number;
 
   // JSON
 

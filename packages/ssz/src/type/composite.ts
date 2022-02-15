@@ -232,6 +232,11 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     return root;
   }
 
+  // For debugging and testing this feature
+  protected getCachedPermanentRoot(value: V): Uint8Array | undefined {
+    return (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+  }
+
   abstract readonly maxChunkCount: number;
   // TODO: Optimize, return an array of diverse data types to reduce data conversions
   // - For arrays of numbers the most optimal return is an array of uint8, uint32, etc

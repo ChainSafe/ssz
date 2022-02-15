@@ -83,7 +83,8 @@ export class BitListType extends BitArrayType {
     return addLengthNode(chunksNode, bitLen);
   }
 
-  tree_getByteLen(node: Node): number {
+  tree_getByteLen(node?: Node): number {
+    if (!node) throw new Error("BitListType requires a node to get leaves");
     return Math.ceil(getLengthFromRootNode(node) / 8);
   }
 
