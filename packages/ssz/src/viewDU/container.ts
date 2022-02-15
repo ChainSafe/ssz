@@ -1,8 +1,9 @@
 import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
-import {CompositeType, isCompositeType, CompositeTypeAny, TreeViewDU} from "../type/composite";
+import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
 import {ContainerTypeGeneric} from "../view/container";
+import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

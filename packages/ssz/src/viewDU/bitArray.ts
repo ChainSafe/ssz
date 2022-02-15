@@ -1,6 +1,7 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 import {BitArray} from "../value/bitArray";
-import {CompositeType, TreeViewDU} from "../type/composite";
+import {CompositeType} from "../type/composite";
+import {TreeViewDU} from "./abstract";
 
 /**
  * Thin wrapper around BitArray to upstream changes after `this.commit()`

@@ -1,7 +1,8 @@
 import {getNodeAtDepth, Gindex, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
 import {isBasicType, BasicType} from "../type/basic";
-import {isCompositeType, CompositeType, TreeView} from "../type/composite";
+import {isCompositeType, CompositeType} from "../type/composite";
+import {TreeView} from "./abstract";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;

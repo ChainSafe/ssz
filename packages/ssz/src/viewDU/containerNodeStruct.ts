@@ -1,9 +1,10 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
-import {isCompositeType, TreeViewDU} from "../type/composite";
+import {isCompositeType} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTypeGeneric, ValueOfFields} from "../view/container";
 import {ContainerTreeViewDUTypeConstructor} from "./container";
+import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

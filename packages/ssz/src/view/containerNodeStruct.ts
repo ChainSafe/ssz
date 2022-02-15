@@ -1,8 +1,9 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
-import {isCompositeType, TreeView} from "../type/composite";
+import {isCompositeType} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container";
+import {TreeView} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

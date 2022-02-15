@@ -1,7 +1,8 @@
 import {getNodeAtDepth, getNodesAtDepth, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
-import {CompositeType, TreeViewDU, CompositeView, CompositeViewDU} from "../type/composite";
+import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeType} from "../view/arrayComposite";
+import {TreeViewDU} from "./abstract";
 
 export type ArrayCompositeTreeViewDUCache = {
   nodes: Node[];
