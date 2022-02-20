@@ -22,7 +22,7 @@ export {ByteArrayType} from "./type/byteArray";
 // Base type clases
 export {Type, ValueOf, JsonPath} from "./type/abstract";
 export {BasicType, isBasicType} from "./type/basic";
-export {CompositeType, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite";
+export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite";
 export {TreeView} from "./view/abstract";
 export {TreeViewDU} from "./viewDU/abstract";
 
