@@ -109,9 +109,8 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
     }
   }
 
-  // TODO:
   // Change class name
-  // Object.defineProperty(CustomContainerTreeView, "name", {value: typeName, writable: false});
+  Object.defineProperty(CustomContainerTreeViewDU, "name", {value: type.typeName, writable: false});
 
   return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields>;
 }
