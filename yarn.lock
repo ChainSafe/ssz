@@ -1185,14 +1185,6 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
-"@chainsafe/lodestar-params@^0.26.0":
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.26.0.tgz#fa727a96abe1ce9d653e01621a7667b461a8c497"
-  integrity sha512-3F4UxTSBWEB62DctrHbFllTHN+Ye/2SjzXjYwzLc5BwOaz+iNbSUH3+A1yOo5Ww/n3c/11gS35zP0r/58QEznw==
-  dependencies:
-    "@chainsafe/ssz" "^0.8.11"
-    js-yaml "^3.13.1"
-
 "@chainsafe/lodestar-params@^0.31.0":
   version "0.31.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.31.0.tgz#fbce7d33ac6c448796208c8f4da1f3073680af99"
@@ -1200,6 +1192,13 @@
   dependencies:
     "@chainsafe/ssz" "^0.8.17"
     js-yaml "^4.1.0"
+
+"@chainsafe/lodestar-params@^0.34.0":
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.34.0.tgz#f55e6c02f144243a9e661a3d14cb543383f365aa"
+  integrity sha512-pvDQ4CEJsQebSfGp82bOeECqqofWaUUHCWfinlN3X55hMI4OwxSp4XNVUujARwo5lHvfZnmD/zImIg8SZbngFA==
+  dependencies:
+    "@chainsafe/ssz" "^0.8.20"
 
 "@chainsafe/lodestar-spec-test-util@^0.31.0":
   version "0.31.0"
@@ -1216,13 +1215,13 @@
     snappyjs "^0.6.0"
     tar "^6.0.5"
 
-"@chainsafe/lodestar-types@^0.26.0":
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.26.0.tgz#cc07a840ce84d2e8f7aa8fafa297166fe5ab427f"
-  integrity sha512-rUVdU3yh85AUg3AfgHLjWMMFZRtNSjtQt6D3bzJjEg+XGDXUewHAtUY9PRlzKPOC6Lw0NcUe9rq1weKvcTBSjg==
+"@chainsafe/lodestar-types@^0.34.0":
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.34.0.tgz#a17c0bb398208efbf07bd72570e8571fca431857"
+  integrity sha512-StYRf/4SvPegbP54CUDvGG9XmkHcvFQWoeX1vvIWn8q+gR7k7+6IoOpKHhIlYggKUkFP8T8akjHIdjB7hPLfmQ==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.26.0"
-    "@chainsafe/ssz" "^0.8.11"
+    "@chainsafe/lodestar-params" "^0.34.0"
+    "@chainsafe/ssz" "^0.8.20"
 
 "@chainsafe/lodestar-utils@^0.31.0":
   version "0.31.0"
