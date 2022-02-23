@@ -1185,6 +1185,11 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
+"@chainsafe/lodestar-params@0.34.0-dev.63+a222e4274e":
+  version "0.34.0-dev.63"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.34.0-dev.63.tgz#6f1a4cf91c305e1b9d6efb4995b793b3ffbe79ff"
+  integrity sha512-mtANNPrUF0fsitloDifj3LC/hv/ilMqmTGE68rlqee2f3movtOiu9QxVnSLO5bCUpPwFH1huRvLbBwJRdI6bNA==
+
 "@chainsafe/lodestar-params@^0.31.0":
   version "0.31.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.31.0.tgz#fbce7d33ac6c448796208c8f4da1f3073680af99"
@@ -1192,13 +1197,6 @@
   dependencies:
     "@chainsafe/ssz" "^0.8.17"
     js-yaml "^4.1.0"
-
-"@chainsafe/lodestar-params@^0.34.0":
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-params/-/lodestar-params-0.34.0.tgz#f55e6c02f144243a9e661a3d14cb543383f365aa"
-  integrity sha512-pvDQ4CEJsQebSfGp82bOeECqqofWaUUHCWfinlN3X55hMI4OwxSp4XNVUujARwo5lHvfZnmD/zImIg8SZbngFA==
-  dependencies:
-    "@chainsafe/ssz" "^0.8.20"
 
 "@chainsafe/lodestar-spec-test-util@^0.31.0":
   version "0.31.0"
@@ -1215,12 +1213,12 @@
     snappyjs "^0.6.0"
     tar "^6.0.5"
 
-"@chainsafe/lodestar-types@^0.34.0":
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.34.0.tgz#a17c0bb398208efbf07bd72570e8571fca431857"
-  integrity sha512-StYRf/4SvPegbP54CUDvGG9XmkHcvFQWoeX1vvIWn8q+gR7k7+6IoOpKHhIlYggKUkFP8T8akjHIdjB7hPLfmQ==
+"@chainsafe/lodestar-types@0.34.0-dev.63":
+  version "0.34.0-dev.63"
+  resolved "https://registry.yarnpkg.com/@chainsafe/lodestar-types/-/lodestar-types-0.34.0-dev.63.tgz#dd2faf08eb93c4bd31f10015db5505da6fbc0be6"
+  integrity sha512-9nM+wtFknNkp/OGyssypehOstWk8TxtMesmvcsGwN0rfe6zWt/1NVsAvH5/yMvDrE2NHrMdprgC0QEk3XqLyug==
   dependencies:
-    "@chainsafe/lodestar-params" "^0.34.0"
+    "@chainsafe/lodestar-params" "0.34.0-dev.63+a222e4274e"
     "@chainsafe/ssz" "^0.8.20"
 
 "@chainsafe/lodestar-utils@^0.31.0":
