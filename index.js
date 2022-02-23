@@ -440,83 +440,34 @@ module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
-/***/ 8712:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.StringType = void 0;
-
-var _ssz = __webpack_require__(8005);
-
-/* eslint-disable @typescript-eslint/naming-convention */
-class StringType extends _ssz.BasicType {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  struct_getSerializedLength(data) {
-    throw new Error("unsupported ssz operation");
-  }
-
-  struct_convertToJson(value) {
-    return value;
-  }
-
-  struct_convertFromJson(data) {
-    return data;
-  }
-
-  struct_assertValidValue(data) {
-    throw new Error("unsupported ssz operation");
-  }
-
-  serialize() {
-    throw new Error("unsupported ssz type for serialization");
-  }
-
-  struct_serializeToBytes() {
-    throw new Error("unsupported ssz type for serialization");
-  }
-
-  struct_deserializeFromBytes() {
-    throw new Error("unsupported ssz operation");
-  }
-
-  struct_defaultValue() {
-    return "something";
-  }
-
-}
-
-exports.StringType = StringType;
-//# sourceMappingURL=StringType.js.map
-
-/***/ }),
-
 /***/ 5340:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ssz = exports.ts = void 0;
-
-var _ts = _interopRequireWildcard(__webpack_require__(4768));
-
-exports.ts = _ts;
-
-var _ssz = _interopRequireWildcard(__webpack_require__(801));
-
-exports.ssz = _ssz;
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+exports.ts = __importStar(__webpack_require__(4768));
+exports.ssz = __importStar(__webpack_require__(801));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -526,74 +477,80 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.allForks = void 0;
-
-var _phase = __webpack_require__(9695);
-
-var _altair = __webpack_require__(2164);
-
-/* eslint-disable @typescript-eslint/naming-convention */
-
+const phase0_1 = __webpack_require__(9695);
+const altair_1 = __webpack_require__(2164);
+const bellatrix_1 = __webpack_require__(1439);
 /**
  * Index the ssz types that differ by fork
  * A record of AllForksSSZTypes indexed by fork
  */
-const allForks = {
-  phase0: {
-    BeaconBlockBody: _phase.ssz.BeaconBlockBody,
-    BeaconBlock: _phase.ssz.BeaconBlock,
-    SignedBeaconBlock: _phase.ssz.SignedBeaconBlock,
-    BeaconState: _phase.ssz.BeaconState,
-    Metadata: _phase.ssz.Metadata
-  },
-  altair: {
-    BeaconBlockBody: _altair.ssz.BeaconBlockBody,
-    BeaconBlock: _altair.ssz.BeaconBlock,
-    SignedBeaconBlock: _altair.ssz.SignedBeaconBlock,
-    BeaconState: _altair.ssz.BeaconState,
-    Metadata: _altair.ssz.Metadata
-  }
+exports.allForks = {
+    phase0: {
+        BeaconBlockBody: phase0_1.ssz.BeaconBlockBody,
+        BeaconBlock: phase0_1.ssz.BeaconBlock,
+        SignedBeaconBlock: phase0_1.ssz.SignedBeaconBlock,
+        BeaconState: phase0_1.ssz.BeaconState,
+        Metadata: phase0_1.ssz.Metadata,
+    },
+    altair: {
+        BeaconBlockBody: altair_1.ssz.BeaconBlockBody,
+        BeaconBlock: altair_1.ssz.BeaconBlock,
+        SignedBeaconBlock: altair_1.ssz.SignedBeaconBlock,
+        BeaconState: altair_1.ssz.BeaconState,
+        Metadata: altair_1.ssz.Metadata,
+    },
+    bellatrix: {
+        BeaconBlockBody: bellatrix_1.ssz.BeaconBlockBody,
+        BeaconBlock: bellatrix_1.ssz.BeaconBlock,
+        SignedBeaconBlock: bellatrix_1.ssz.SignedBeaconBlock,
+        BeaconState: bellatrix_1.ssz.BeaconState,
+        Metadata: altair_1.ssz.Metadata,
+    },
 };
-exports.allForks = allForks;
 //# sourceMappingURL=sszTypes.js.map
 
 /***/ }),
 
 /***/ 4768:
-/***/ (() => {
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 //# sourceMappingURL=types.js.map
 
 /***/ }),
 
 /***/ 2164:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ssz = exports.ts = void 0;
-
-var _ts = _interopRequireWildcard(__webpack_require__(6120));
-
-exports.ts = _ts;
-
-var _ssz = _interopRequireWildcard(__webpack_require__(7088));
-
-exports.ssz = _ssz;
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+exports.ts = __importStar(__webpack_require__(1254));
+exports.ssz = __importStar(__webpack_require__(7088));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -603,529 +560,572 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.LightClientStore = exports.LightClientUpdate = exports.LightClientSnapshot = exports.BeaconState = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.SyncAggregate = exports.SyncCommitteeBits = exports.SyncAggregatorSelectionData = exports.SignedContributionAndProof = exports.ContributionAndProof = exports.SyncCommitteeContribution = exports.SyncCommitteeMessage = exports.SyncCommittee = exports.Metadata = exports.SyncSubnets = void 0;
-
-var _lodestarParams = __webpack_require__(5949);
-
-var _ssz = __webpack_require__(8005);
-
-var _phase = __webpack_require__(9695);
-
-var _primitive = __webpack_require__(5579);
-
-var _lazyVar = __webpack_require__(7121);
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-const {
-  Bytes32,
-  Number64,
-  Uint64,
-  Slot,
-  SubCommitteeIndex,
-  ValidatorIndex,
-  Gwei,
-  Root,
-  Version,
-  BLSPubkey,
-  BLSSignature,
-  ParticipationFlags
-} = _primitive.ssz; // So the expandedRoots can be referenced, and break the circular dependency
-
-const typesRef = new _lazyVar.LazyVariable();
-const SyncSubnets = new _ssz.BitVectorType({
-  length: _lodestarParams.SYNC_COMMITTEE_SUBNET_COUNT
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LightClientUpdate = exports.BeaconState = exports.InactivityScores = exports.EpochParticipation = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.SyncAggregate = exports.SyncCommitteeBits = exports.SyncAggregatorSelectionData = exports.SignedContributionAndProof = exports.ContributionAndProof = exports.SyncCommitteeContribution = exports.SyncCommitteeMessage = exports.SyncCommittee = exports.Metadata = exports.SyncSubnets = void 0;
+const ssz_1 = __webpack_require__(8005);
+const lodestar_params_1 = __webpack_require__(5949);
+const phase0_1 = __webpack_require__(9695);
+const primitive_1 = __webpack_require__(5579);
+const lazyVar_1 = __webpack_require__(7121);
+const { Bytes32, Number64, Slot, SubcommitteeIndex, ValidatorIndex, Gwei, Root, Version, BLSPubkey, BLSSignature, ParticipationFlags, } = primitive_1.ssz;
+// So the expandedRoots can be referenced, and break the circular dependency
+const typesRef = new lazyVar_1.LazyVariable();
+exports.SyncSubnets = new ssz_1.BitVectorType({
+    length: lodestar_params_1.SYNC_COMMITTEE_SUBNET_COUNT,
 });
-exports.SyncSubnets = SyncSubnets;
-const Metadata = new _ssz.ContainerType({
-  fields: {
-    seqNumber: Uint64,
-    attnets: _phase.ssz.AttestationSubnets,
-    syncnets: SyncSubnets
-  }
+exports.Metadata = new ssz_1.ContainerType({
+    fields: {
+        ...phase0_1.ssz.Metadata.fields,
+        syncnets: exports.SyncSubnets,
+    },
+    // New keys are strictly appended, phase0 key order is preserved
+    casingMap: {
+        ...phase0_1.ssz.Metadata.casingMap,
+        syncnets: "syncnets",
+    },
 });
-exports.Metadata = Metadata;
-const SyncCommittee = new _ssz.ContainerType({
-  fields: {
-    pubkeys: new _ssz.VectorType({
-      elementType: BLSPubkey,
-      length: _lodestarParams.SYNC_COMMITTEE_SIZE
-    }),
-    aggregatePubkey: BLSPubkey
-  }
+exports.SyncCommittee = new ssz_1.ContainerType({
+    fields: {
+        pubkeys: new ssz_1.VectorType({ elementType: BLSPubkey, length: lodestar_params_1.SYNC_COMMITTEE_SIZE }),
+        aggregatePubkey: BLSPubkey,
+    },
+    casingMap: {
+        pubkeys: "pubkeys",
+        aggregatePubkey: "aggregate_pubkey",
+    },
 });
-exports.SyncCommittee = SyncCommittee;
-const SyncCommitteeMessage = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    beaconBlockRoot: Root,
-    validatorIndex: ValidatorIndex,
-    signature: BLSSignature
-  }
+exports.SyncCommitteeMessage = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        beaconBlockRoot: Root,
+        validatorIndex: ValidatorIndex,
+        signature: BLSSignature,
+    },
+    casingMap: {
+        slot: "slot",
+        beaconBlockRoot: "beacon_block_root",
+        validatorIndex: "validator_index",
+        signature: "signature",
+    },
 });
-exports.SyncCommitteeMessage = SyncCommitteeMessage;
-const SyncCommitteeContribution = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    beaconBlockRoot: Root,
-    subCommitteeIndex: SubCommitteeIndex,
-    aggregationBits: new _ssz.BitVectorType({
-      length: _lodestarParams.SYNC_COMMITTEE_SIZE / _lodestarParams.SYNC_COMMITTEE_SUBNET_COUNT
-    }),
-    signature: BLSSignature
-  }
+exports.SyncCommitteeContribution = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        beaconBlockRoot: Root,
+        subcommitteeIndex: SubcommitteeIndex,
+        aggregationBits: new ssz_1.BitVectorType({ length: lodestar_params_1.SYNC_COMMITTEE_SIZE / lodestar_params_1.SYNC_COMMITTEE_SUBNET_COUNT }),
+        signature: BLSSignature,
+    },
+    casingMap: {
+        slot: "slot",
+        beaconBlockRoot: "beacon_block_root",
+        subcommitteeIndex: "subcommittee_index",
+        aggregationBits: "aggregation_bits",
+        signature: "signature",
+    },
 });
-exports.SyncCommitteeContribution = SyncCommitteeContribution;
-const ContributionAndProof = new _ssz.ContainerType({
-  fields: {
-    aggregatorIndex: ValidatorIndex,
-    contribution: SyncCommitteeContribution,
-    selectionProof: BLSSignature
-  }
+exports.ContributionAndProof = new ssz_1.ContainerType({
+    fields: {
+        aggregatorIndex: ValidatorIndex,
+        contribution: exports.SyncCommitteeContribution,
+        selectionProof: BLSSignature,
+    },
+    casingMap: {
+        aggregatorIndex: "aggregator_index",
+        contribution: "contribution",
+        selectionProof: "selection_proof",
+    },
 });
-exports.ContributionAndProof = ContributionAndProof;
-const SignedContributionAndProof = new _ssz.ContainerType({
-  fields: {
-    message: ContributionAndProof,
-    signature: BLSSignature
-  }
+exports.SignedContributionAndProof = new ssz_1.ContainerType({
+    fields: {
+        message: exports.ContributionAndProof,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
 });
-exports.SignedContributionAndProof = SignedContributionAndProof;
-const SyncAggregatorSelectionData = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    subCommitteeIndex: SubCommitteeIndex
-  }
+exports.SyncAggregatorSelectionData = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        subcommitteeIndex: SubcommitteeIndex,
+    },
+    casingMap: {
+        slot: "slot",
+        subcommitteeIndex: "subcommittee_index",
+    },
 });
-exports.SyncAggregatorSelectionData = SyncAggregatorSelectionData;
-const SyncCommitteeBits = new _ssz.BitVectorType({
-  length: _lodestarParams.SYNC_COMMITTEE_SIZE
+exports.SyncCommitteeBits = new ssz_1.BitVectorType({
+    length: lodestar_params_1.SYNC_COMMITTEE_SIZE,
 });
-exports.SyncCommitteeBits = SyncCommitteeBits;
-const SyncAggregate = new _ssz.ContainerType({
-  fields: {
-    syncCommitteeBits: SyncCommitteeBits,
-    syncCommitteeSignature: BLSSignature
-  }
-}); // Re-declare with the new expanded type
-
-exports.SyncAggregate = SyncAggregate;
-const HistoricalBlockRoots = new _ssz.VectorType({
-  elementType: new _ssz.RootType({
-    expandedType: () => typesRef.get().BeaconBlock
-  }),
-  length: _lodestarParams.SLOTS_PER_HISTORICAL_ROOT
+exports.SyncAggregate = new ssz_1.ContainerType({
+    fields: {
+        syncCommitteeBits: exports.SyncCommitteeBits,
+        syncCommitteeSignature: BLSSignature,
+    },
+    casingMap: {
+        syncCommitteeBits: "sync_committee_bits",
+        syncCommitteeSignature: "sync_committee_signature",
+    },
 });
-exports.HistoricalBlockRoots = HistoricalBlockRoots;
-const HistoricalStateRoots = new _ssz.VectorType({
-  elementType: new _ssz.RootType({
-    expandedType: () => typesRef.get().BeaconState
-  }),
-  length: _lodestarParams.SLOTS_PER_HISTORICAL_ROOT
+// Re-declare with the new expanded type
+exports.HistoricalBlockRoots = new ssz_1.VectorType({
+    elementType: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconBlock }),
+    length: lodestar_params_1.SLOTS_PER_HISTORICAL_ROOT,
 });
-exports.HistoricalStateRoots = HistoricalStateRoots;
-const HistoricalBatch = new _ssz.ContainerType({
-  fields: {
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots
-  }
+exports.HistoricalStateRoots = new ssz_1.VectorType({
+    elementType: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconState }),
+    length: lodestar_params_1.SLOTS_PER_HISTORICAL_ROOT,
 });
-exports.HistoricalBatch = HistoricalBatch;
-const BeaconBlockBody = new _ssz.ContainerType({
-  fields: _objectSpread(_objectSpread({}, _phase.ssz.BeaconBlockBody.fields), {}, {
-    syncAggregate: SyncAggregate
-  })
+exports.HistoricalBatch = new ssz_1.ContainerType({
+    fields: {
+        blockRoots: exports.HistoricalBlockRoots,
+        stateRoots: exports.HistoricalStateRoots,
+    },
+    casingMap: phase0_1.ssz.HistoricalBatch.casingMap,
 });
-exports.BeaconBlockBody = BeaconBlockBody;
-const BeaconBlock = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    proposerIndex: ValidatorIndex,
-    // Reclare expandedType() with altair block and altair state
-    parentRoot: new _ssz.RootType({
-      expandedType: () => typesRef.get().BeaconBlock
-    }),
-    stateRoot: new _ssz.RootType({
-      expandedType: () => typesRef.get().BeaconState
-    }),
-    body: BeaconBlockBody
-  }
+exports.BeaconBlockBody = new ssz_1.ContainerType({
+    fields: {
+        ...phase0_1.ssz.BeaconBlockBody.fields,
+        syncAggregate: exports.SyncAggregate,
+    },
+    casingMap: {
+        ...phase0_1.ssz.BeaconBlockBody.casingMap,
+        syncAggregate: "sync_aggregate",
+    },
 });
-exports.BeaconBlock = BeaconBlock;
-const SignedBeaconBlock = new _ssz.ContainerType({
-  fields: {
-    message: BeaconBlock,
-    signature: BLSSignature
-  }
-}); //we don't reuse phase0.BeaconState fields since we need to replace some keys
-//and we cannot keep order doing that
-
-exports.SignedBeaconBlock = SignedBeaconBlock;
-const BeaconState = new _ssz.ContainerType({
-  fields: {
-    genesisTime: Number64,
-    genesisValidatorsRoot: Root,
-    slot: Slot,
-    fork: _phase.ssz.Fork,
-    // History
-    latestBlockHeader: _phase.ssz.BeaconBlockHeader,
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots,
-    historicalRoots: new _ssz.ListType({
-      elementType: new _ssz.RootType({
-        expandedType: HistoricalBatch
-      }),
-      limit: _lodestarParams.HISTORICAL_ROOTS_LIMIT
-    }),
-    // Eth1
-    eth1Data: _phase.ssz.Eth1Data,
-    eth1DataVotes: new _ssz.ListType({
-      elementType: _phase.ssz.Eth1Data,
-      limit: _lodestarParams.EPOCHS_PER_ETH1_VOTING_PERIOD * _lodestarParams.SLOTS_PER_EPOCH
-    }),
-    eth1DepositIndex: Number64,
-    // Registry
-    validators: new _ssz.ListType({
-      elementType: _phase.ssz.Validator,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    balances: new _ssz.ListType({
-      elementType: Gwei,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    randaoMixes: new _ssz.VectorType({
-      elementType: Bytes32,
-      length: _lodestarParams.EPOCHS_PER_HISTORICAL_VECTOR
-    }),
-    // Slashings
-    slashings: new _ssz.VectorType({
-      elementType: Gwei,
-      length: _lodestarParams.EPOCHS_PER_SLASHINGS_VECTOR
-    }),
-    // Participation
-    previousEpochParticipation: new _ssz.ListType({
-      elementType: ParticipationFlags,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    currentEpochParticipation: new _ssz.ListType({
-      elementType: ParticipationFlags,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    // Finality
-    justificationBits: new _ssz.BitVectorType({
-      length: _lodestarParams.JUSTIFICATION_BITS_LENGTH
-    }),
-    previousJustifiedCheckpoint: _phase.ssz.Checkpoint,
-    currentJustifiedCheckpoint: _phase.ssz.Checkpoint,
-    finalizedCheckpoint: _phase.ssz.Checkpoint,
-    // Inactivity
-    inactivityScores: new _ssz.ListType({
-      elementType: Number64,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    // Sync
-    currentSyncCommittee: SyncCommittee,
-    nextSyncCommittee: SyncCommittee
-  }
+exports.BeaconBlock = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        proposerIndex: ValidatorIndex,
+        // Reclare expandedType() with altair block and altair state
+        parentRoot: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconBlock }),
+        stateRoot: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconState }),
+        body: exports.BeaconBlockBody,
+    },
+    casingMap: phase0_1.ssz.BeaconBlock.casingMap,
 });
-exports.BeaconState = BeaconState;
-const LightClientSnapshot = new _ssz.ContainerType({
-  fields: {
-    header: _phase.ssz.BeaconBlockHeader,
-    nextSyncCommittee: SyncCommittee,
-    currentSyncCommittee: SyncCommittee
-  }
+exports.SignedBeaconBlock = new ssz_1.ContainerType({
+    fields: {
+        message: exports.BeaconBlock,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
 });
-exports.LightClientSnapshot = LightClientSnapshot;
-const LightClientUpdate = new _ssz.ContainerType({
-  fields: {
-    header: _phase.ssz.BeaconBlockHeader,
-    nextSyncCommittee: SyncCommittee,
-    nextSyncCommitteeBranch: new _ssz.VectorType({
-      elementType: Bytes32,
-      length: _lodestarParams.NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2
-    }),
-    finalityHeader: _phase.ssz.BeaconBlockHeader,
-    finalityBranch: new _ssz.VectorType({
-      elementType: Bytes32,
-      length: _lodestarParams.FINALIZED_ROOT_INDEX_FLOORLOG2
-    }),
-    syncCommitteeBits: new _ssz.BitVectorType({
-      length: _lodestarParams.SYNC_COMMITTEE_SIZE
-    }),
-    syncCommitteeSignature: BLSSignature,
-    forkVersion: Version
-  }
+exports.EpochParticipation = new ssz_1.ListType({ elementType: ParticipationFlags, limit: lodestar_params_1.VALIDATOR_REGISTRY_LIMIT });
+exports.InactivityScores = new ssz_1.ListType({ elementType: Number64, limit: lodestar_params_1.VALIDATOR_REGISTRY_LIMIT });
+// we don't reuse phase0.BeaconState fields since we need to replace some keys
+// and we cannot keep order doing that
+exports.BeaconState = new ssz_1.ContainerType({
+    fields: {
+        genesisTime: Number64,
+        genesisValidatorsRoot: Root,
+        slot: Slot,
+        fork: phase0_1.ssz.Fork,
+        // History
+        latestBlockHeader: phase0_1.ssz.BeaconBlockHeader,
+        blockRoots: exports.HistoricalBlockRoots,
+        stateRoots: exports.HistoricalStateRoots,
+        historicalRoots: new ssz_1.ListType({
+            elementType: new ssz_1.RootType({ expandedType: exports.HistoricalBatch }),
+            limit: lodestar_params_1.HISTORICAL_ROOTS_LIMIT,
+        }),
+        // Eth1
+        eth1Data: phase0_1.ssz.Eth1Data,
+        eth1DataVotes: phase0_1.ssz.Eth1DataVotes,
+        eth1DepositIndex: Number64,
+        // Registry
+        validators: new ssz_1.ListType({ elementType: phase0_1.ssz.Validator, limit: lodestar_params_1.VALIDATOR_REGISTRY_LIMIT }),
+        balances: new ssz_1.ListType({ elementType: Number64, limit: lodestar_params_1.VALIDATOR_REGISTRY_LIMIT }),
+        randaoMixes: new ssz_1.VectorType({ elementType: Bytes32, length: lodestar_params_1.EPOCHS_PER_HISTORICAL_VECTOR }),
+        // Slashings
+        slashings: new ssz_1.VectorType({ elementType: Gwei, length: lodestar_params_1.EPOCHS_PER_SLASHINGS_VECTOR }),
+        // Participation
+        previousEpochParticipation: exports.EpochParticipation,
+        currentEpochParticipation: exports.EpochParticipation,
+        // Finality
+        justificationBits: new ssz_1.BitVectorType({ length: lodestar_params_1.JUSTIFICATION_BITS_LENGTH }),
+        previousJustifiedCheckpoint: phase0_1.ssz.Checkpoint,
+        currentJustifiedCheckpoint: phase0_1.ssz.Checkpoint,
+        finalizedCheckpoint: phase0_1.ssz.Checkpoint,
+        // Inactivity
+        inactivityScores: exports.InactivityScores,
+        // Sync
+        currentSyncCommittee: exports.SyncCommittee,
+        nextSyncCommittee: exports.SyncCommittee,
+    },
+    casingMap: {
+        ...phase0_1.ssz.BeaconState.casingMap,
+        inactivityScores: "inactivity_scores",
+        currentSyncCommittee: "current_sync_committee",
+        nextSyncCommittee: "next_sync_committee",
+    },
 });
-exports.LightClientUpdate = LightClientUpdate;
-const LightClientStore = new _ssz.ContainerType({
-  fields: {
-    snapshot: LightClientSnapshot,
-    validUpdates: new _ssz.ListType({
-      elementType: LightClientUpdate,
-      limit: _lodestarParams.EPOCHS_PER_SYNC_COMMITTEE_PERIOD * _lodestarParams.SLOTS_PER_EPOCH
-    })
-  }
-}); // MUST set typesRef here, otherwise expandedType() calls will throw
-
-exports.LightClientStore = LightClientStore;
-typesRef.set({
-  BeaconBlock,
-  BeaconState
+exports.LightClientUpdate = new ssz_1.ContainerType({
+    fields: {
+        attestedHeader: phase0_1.ssz.BeaconBlockHeader,
+        nextSyncCommittee: exports.SyncCommittee,
+        nextSyncCommitteeBranch: new ssz_1.VectorType({
+            elementType: Bytes32,
+            length: lodestar_params_1.NEXT_SYNC_COMMITTEE_DEPTH,
+        }),
+        finalizedHeader: phase0_1.ssz.BeaconBlockHeader,
+        finalityBranch: new ssz_1.VectorType({ elementType: Bytes32, length: lodestar_params_1.FINALIZED_ROOT_DEPTH }),
+        syncAggregate: exports.SyncAggregate,
+        forkVersion: Version,
+    },
+    casingMap: {
+        attestedHeader: "attested_header",
+        nextSyncCommittee: "next_sync_committee",
+        nextSyncCommitteeBranch: "next_sync_committee_branch",
+        finalizedHeader: "finalized_header",
+        finalityBranch: "finality_branch",
+        syncAggregate: "sync_aggregate",
+        forkVersion: "fork_version",
+    },
 });
+// MUST set typesRef here, otherwise expandedType() calls will throw
+typesRef.set({ BeaconBlock: exports.BeaconBlock, BeaconState: exports.BeaconState });
 //# sourceMappingURL=sszTypes.js.map
 
 /***/ }),
 
-/***/ 6372:
-/***/ (() => {
+/***/ 1254:
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
-//# sourceMappingURL=beacon.js.map
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+//# sourceMappingURL=types.js.map
 
 /***/ }),
 
-/***/ 8926:
-/***/ (() => {
+/***/ 1439:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-//# sourceMappingURL=committee.js.map
-
-/***/ }),
-
-/***/ 6120:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
-
-var _sync = __webpack_require__(6560);
-
-Object.keys(_sync).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _sync[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _sync[key];
-    }
-  });
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
 });
-
-var _committee = __webpack_require__(8926);
-
-Object.keys(_committee).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _committee[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _committee[key];
-    }
-  });
-});
-
-var _beacon = __webpack_require__(6372);
-
-Object.keys(_beacon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _beacon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _beacon[key];
-    }
-  });
-});
-
-var _types = __webpack_require__(9424);
-
-Object.keys(_types).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _types[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _types[key];
-    }
-  });
-});
-
-var _misc = __webpack_require__(5229);
-
-Object.keys(_misc).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _misc[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _misc[key];
-    }
-  });
-});
-
-var _operations = __webpack_require__(4708);
-
-Object.keys(_operations).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _operations[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _operations[key];
-    }
-  });
-});
-
-var _validator = __webpack_require__(4681);
-
-Object.keys(_validator).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _validator[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _validator[key];
-    }
-  });
-});
-
-var _wire = __webpack_require__(902);
-
-Object.keys(_wire).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _wire[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _wire[key];
-    }
-  });
-});
-
-var _api = __webpack_require__(5734);
-
-Object.keys(_api).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _api[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _api[key];
-    }
-  });
-});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ssz = exports.ts = void 0;
+exports.ts = __importStar(__webpack_require__(8737));
+exports.ssz = __importStar(__webpack_require__(6200));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
 
-/***/ 6560:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=sync.js.map
-
-/***/ }),
-
-/***/ 902:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=wire.js.map
-
-/***/ }),
-
-/***/ 9957:
+/***/ 6200:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-var _exportNames = {
-  ssz: true
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BeaconState = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.PowBlock = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.ExecutionPayloadHeader = exports.ExecutionPayload = exports.Transactions = exports.Transaction = void 0;
+const ssz_1 = __webpack_require__(8005);
+const lodestar_params_1 = __webpack_require__(5949);
+const primitive_1 = __webpack_require__(5579);
+const phase0_1 = __webpack_require__(9695);
+const altair_1 = __webpack_require__(2164);
+const lazyVar_1 = __webpack_require__(7121);
+const sszTypes_1 = __webpack_require__(6823);
+const { Bytes20, Bytes32, Number64, Slot, ValidatorIndex, Root, BLSSignature, Uint8 } = primitive_1.ssz;
+// So the expandedRoots can be referenced, and break the circular dependency
+const typesRef = new lazyVar_1.LazyVariable();
+/**
+ * ByteList[MAX_BYTES_PER_TRANSACTION]
+ *
+ * Spec v1.0.1
+ */
+exports.Transaction = new ssz_1.ListType({ elementType: ssz_1.byteType, limit: lodestar_params_1.MAX_BYTES_PER_TRANSACTION });
+exports.Transactions = new ssz_1.ListType({
+    elementType: exports.Transaction,
+    limit: lodestar_params_1.MAX_TRANSACTIONS_PER_PAYLOAD,
+});
+const executionPayloadFields = {
+    parentHash: Root,
+    feeRecipient: Bytes20,
+    stateRoot: Bytes32,
+    receiptsRoot: Bytes32,
+    logsBloom: new ssz_1.ByteVectorType({ length: lodestar_params_1.BYTES_PER_LOGS_BLOOM }),
+    random: Bytes32,
+    blockNumber: Number64,
+    gasLimit: Number64,
+    gasUsed: Number64,
+    timestamp: Number64,
+    // TODO: if there is perf issue, consider making ByteListType
+    extraData: new ssz_1.ListType({ limit: lodestar_params_1.MAX_EXTRA_DATA_BYTES, elementType: Uint8 }),
+    baseFeePerGas: sszTypes_1.Uint256,
+    // Extra payload fields
+    blockHash: Root,
 };
-exports.ssz = void 0;
-
-var _types = __webpack_require__(1234);
-
-Object.keys(_types).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _types[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _types[key];
-    }
-  });
+const executionPayloadCasingMap = {
+    parentHash: "parent_hash",
+    feeRecipient: "fee_recipient",
+    stateRoot: "state_root",
+    receiptsRoot: "receipts_root",
+    logsBloom: "logs_bloom",
+    random: "random",
+    blockNumber: "block_number",
+    gasLimit: "gas_limit",
+    gasUsed: "gas_used",
+    timestamp: "timestamp",
+    extraData: "extra_data",
+    baseFeePerGas: "base_fee_per_gas",
+    blockHash: "block_hash",
+};
+/**
+ * ```python
+ * class ExecutionPayload(Container):
+ *     # Execution block header fields
+ *     parent_hash: Hash32
+ *     coinbase: Bytes20  # 'beneficiary' in the yellow paper
+ *     state_root: Bytes32
+ *     receipt_root: Bytes32  # 'receipts root' in the yellow paper
+ *     logs_bloom: ByteVector[BYTES_PER_LOGS_BLOOM]
+ *     random: Bytes32  # 'difficulty' in the yellow paper
+ *     block_number: uint64  # 'number' in the yellow paper
+ *     gas_limit: uint64
+ *     gas_used: uint64
+ *     timestamp: uint64
+ *     extra_data: ByteList[MAX_EXTRA_DATA_BYTES]
+ *     base_fee_per_gas: Bytes32  # base fee introduced in EIP-1559, little-endian serialized
+ *     # Extra payload fields
+ *     block_hash: Hash32  # Hash of execution block
+ *     transactions: List[Transaction, MAX_TRANSACTIONS_PER_PAYLOAD]
+ * ```
+ *
+ * Spec v1.0.1
+ */
+exports.ExecutionPayload = new ssz_1.ContainerType({
+    fields: {
+        ...executionPayloadFields,
+        transactions: exports.Transactions,
+    },
+    casingMap: {
+        ...executionPayloadCasingMap,
+        transactions: "transactions",
+    },
 });
-
-var _ssz = _interopRequireWildcard(__webpack_require__(3455));
-
-exports.ssz = _ssz;
-
-var _StringType = __webpack_require__(8712);
-
-Object.keys(_StringType).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _StringType[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _StringType[key];
-    }
-  });
+/**
+ * ```python
+ * class ExecutionPayload(Container):
+ *     ...
+ *     transactions_root: Root
+ * ```
+ *
+ * Spec v1.0.1
+ */
+exports.ExecutionPayloadHeader = new ssz_1.ContainerType({
+    fields: {
+        ...executionPayloadFields,
+        transactionsRoot: Root,
+    },
+    casingMap: {
+        ...executionPayloadCasingMap,
+        transactionsRoot: "transactions_root",
+    },
 });
+exports.BeaconBlockBody = new ssz_1.ContainerType({
+    fields: {
+        ...altair_1.ssz.BeaconBlockBody.fields,
+        executionPayload: exports.ExecutionPayload,
+    },
+    casingMap: {
+        ...altair_1.ssz.BeaconBlockBody.casingMap,
+        executionPayload: "execution_payload",
+    },
+});
+exports.BeaconBlock = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        proposerIndex: ValidatorIndex,
+        // Reclare expandedType() with altair block and altair state
+        parentRoot: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconBlock }),
+        stateRoot: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconState }),
+        body: exports.BeaconBlockBody,
+    },
+    casingMap: altair_1.ssz.BeaconBlock.casingMap,
+});
+exports.SignedBeaconBlock = new ssz_1.ContainerType({
+    fields: {
+        message: exports.BeaconBlock,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
+});
+exports.PowBlock = new ssz_1.ContainerType({
+    fields: {
+        blockHash: Root,
+        parentHash: Root,
+        totalDifficulty: sszTypes_1.Uint256,
+    },
+    casingMap: {
+        blockHash: "block_hash",
+        parentHash: "parent_hash",
+        totalDifficulty: "total_difficulty",
+    },
+});
+// Re-declare with the new expanded type
+exports.HistoricalBlockRoots = new ssz_1.VectorType({
+    elementType: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconBlock }),
+    length: lodestar_params_1.SLOTS_PER_HISTORICAL_ROOT,
+});
+exports.HistoricalStateRoots = new ssz_1.VectorType({
+    elementType: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconState }),
+    length: lodestar_params_1.SLOTS_PER_HISTORICAL_ROOT,
+});
+exports.HistoricalBatch = new ssz_1.ContainerType({
+    fields: {
+        blockRoots: exports.HistoricalBlockRoots,
+        stateRoots: exports.HistoricalStateRoots,
+    },
+    casingMap: phase0_1.ssz.HistoricalBatch.casingMap,
+});
+// we don't reuse phase0.BeaconState fields since we need to replace some keys
+// and we cannot keep order doing that
+exports.BeaconState = new ssz_1.ContainerType({
+    fields: {
+        genesisTime: Number64,
+        genesisValidatorsRoot: Root,
+        slot: primitive_1.ssz.Slot,
+        fork: phase0_1.ssz.Fork,
+        // History
+        latestBlockHeader: phase0_1.ssz.BeaconBlockHeader,
+        blockRoots: exports.HistoricalBlockRoots,
+        stateRoots: exports.HistoricalStateRoots,
+        historicalRoots: new ssz_1.ListType({
+            elementType: new ssz_1.RootType({ expandedType: exports.HistoricalBatch }),
+            limit: lodestar_params_1.HISTORICAL_ROOTS_LIMIT,
+        }),
+        // Eth1
+        eth1Data: phase0_1.ssz.Eth1Data,
+        eth1DataVotes: phase0_1.ssz.Eth1DataVotes,
+        eth1DepositIndex: Number64,
+        // Registry
+        validators: phase0_1.ssz.Validators,
+        balances: phase0_1.ssz.Balances,
+        randaoMixes: phase0_1.ssz.RandaoMixes,
+        // Slashings
+        slashings: phase0_1.ssz.Slashings,
+        // Participation
+        previousEpochParticipation: altair_1.ssz.EpochParticipation,
+        currentEpochParticipation: altair_1.ssz.EpochParticipation,
+        // Finality
+        justificationBits: phase0_1.ssz.JustificationBits,
+        previousJustifiedCheckpoint: phase0_1.ssz.Checkpoint,
+        currentJustifiedCheckpoint: phase0_1.ssz.Checkpoint,
+        finalizedCheckpoint: phase0_1.ssz.Checkpoint,
+        // Inactivity
+        inactivityScores: altair_1.ssz.InactivityScores,
+        // Sync
+        currentSyncCommittee: altair_1.ssz.SyncCommittee,
+        nextSyncCommittee: altair_1.ssz.SyncCommittee,
+        // Execution
+        latestExecutionPayloadHeader: exports.ExecutionPayloadHeader, // [New in Bellatrix]
+    },
+    casingMap: {
+        ...altair_1.ssz.BeaconState.casingMap,
+        latestExecutionPayloadHeader: "latest_execution_payload_header",
+    },
+});
+// MUST set typesRef here, otherwise expandedType() calls will throw
+typesRef.set({ BeaconBlock: exports.BeaconBlock, BeaconState: exports.BeaconState });
+//# sourceMappingURL=sszTypes.js.map
 
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+/***/ }),
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+/***/ 8737:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+//# sourceMappingURL=types.js.map
+
+/***/ }),
+
+/***/ 9957:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.StringType = exports.ssz = void 0;
+__exportStar(__webpack_require__(1234), exports);
+exports.ssz = __importStar(__webpack_require__(3455));
+// String type
+var StringType_1 = __webpack_require__(9118);
+Object.defineProperty(exports, "StringType", ({ enumerable: true, get: function () { return StringType_1.StringType; } }));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
 
 /***/ 9695:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ssz = exports.ts = void 0;
-
-var _ts = _interopRequireWildcard(__webpack_require__(405));
-
-exports.ts = _ts;
-
-var _ssz = _interopRequireWildcard(__webpack_require__(5928));
-
-exports.ssz = _ssz;
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+exports.ts = __importStar(__webpack_require__(8436));
+exports.ssz = __importStar(__webpack_require__(5928));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -1135,686 +1135,565 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.SlashingProtectionAttestationLowerBound = exports.SlashingProtectionAttestation = exports.SlashingProtectionBlock = exports.Genesis = exports.BeaconBlocksByRootRequest = exports.BeaconBlocksByRangeRequest = exports.Metadata = exports.Ping = exports.Goodbye = exports.Status = exports.SignedAggregateAndProof = exports.AggregateAndProof = exports.CommitteeAssignment = exports.BeaconState = exports.EpochAttestations = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.SignedVoluntaryExit = exports.VoluntaryExit = exports.ProposerSlashing = exports.Deposit = exports.AttesterSlashing = exports.Attestation = exports.SigningData = exports.PendingAttestation = exports.IndexedAttestation = exports.AttestationData = exports.Validator = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.ENRForkID = exports.ForkData = exports.Fork = exports.Eth1DataOrdered = exports.Eth1Data = exports.DepositEvent = exports.DepositDataRootList = exports.DepositData = exports.DepositMessage = exports.CommitteeIndices = exports.CommitteeBits = exports.Checkpoint = exports.SignedBeaconBlockHeader = exports.BeaconBlockHeader = exports.AttestationSubnets = void 0;
-
-var _lodestarParams = __webpack_require__(5949);
-
-var _ssz = __webpack_require__(8005);
-
-var _primitive = __webpack_require__(5579);
-
-var _lazyVar = __webpack_require__(7121);
-
-const {
-  Boolean,
-  Bytes32,
-  Number64,
-  Uint64,
-  Slot,
-  Epoch,
-  CommitteeIndex,
-  ValidatorIndex,
-  Gwei,
-  Root,
-  Version,
-  ForkDigest,
-  BLSPubkey,
-  BLSSignature,
-  Domain
-} = _primitive.ssz; // So the expandedRoots can be referenced, and break the circular dependency
-
-const typesRef = new _lazyVar.LazyVariable(); // Misc types
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Genesis = exports.BeaconBlocksByRootRequest = exports.BeaconBlocksByRangeRequest = exports.Metadata = exports.Ping = exports.Goodbye = exports.Status = exports.SignedAggregateAndProof = exports.AggregateAndProof = exports.CommitteeAssignment = exports.BeaconState = exports.EpochAttestations = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.SignedVoluntaryExit = exports.VoluntaryExit = exports.ProposerSlashing = exports.Deposit = exports.AttesterSlashing = exports.Attestation = exports.SigningData = exports.PendingAttestation = exports.IndexedAttestation = exports.AttestationData = exports.JustificationBits = exports.Slashings = exports.RandaoMixes = exports.Balances = exports.Validators = exports.Validator = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.ENRForkID = exports.ForkData = exports.Fork = exports.Eth1DataOrdered = exports.Eth1DataVotes = exports.Eth1Data = exports.DepositEvent = exports.DepositDataRootList = exports.DepositData = exports.DepositMessage = exports.CommitteeIndices = exports.CommitteeBits = exports.Checkpoint = exports.SignedBeaconBlockHeader = exports.BeaconBlockHeader = exports.AttestationSubnets = void 0;
+const ssz_1 = __webpack_require__(8005);
+const lodestar_params_1 = __webpack_require__(5949);
+const primitive_1 = __webpack_require__(5579);
+const lazyVar_1 = __webpack_require__(7121);
+const { Boolean, Bytes32, Number64, Uint64, Slot, Epoch, CommitteeIndex, ValidatorIndex, Gwei, Root, Version, ForkDigest, BLSPubkey, BLSSignature, Domain, } = primitive_1.ssz;
+// So the expandedRoots can be referenced, and break the circular dependency
+const typesRef = new lazyVar_1.LazyVariable();
+// Misc types
 // ==========
-
-const AttestationSubnets = new _ssz.BitVectorType({
-  length: _lodestarParams.ATTESTATION_SUBNET_COUNT
+exports.AttestationSubnets = new ssz_1.BitVectorType({
+    length: lodestar_params_1.ATTESTATION_SUBNET_COUNT,
 });
-exports.AttestationSubnets = AttestationSubnets;
-const BeaconBlockHeader = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    proposerIndex: ValidatorIndex,
-    parentRoot: Root,
-    stateRoot: Root,
-    bodyRoot: Root
-  }
+exports.BeaconBlockHeader = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        proposerIndex: ValidatorIndex,
+        parentRoot: Root,
+        stateRoot: Root,
+        bodyRoot: Root,
+    },
+    casingMap: {
+        slot: "slot",
+        proposerIndex: "proposer_index",
+        parentRoot: "parent_root",
+        stateRoot: "state_root",
+        bodyRoot: "body_root",
+    },
 });
-exports.BeaconBlockHeader = BeaconBlockHeader;
-const SignedBeaconBlockHeader = new _ssz.ContainerType({
-  fields: {
-    message: BeaconBlockHeader,
-    signature: BLSSignature
-  }
+exports.SignedBeaconBlockHeader = new ssz_1.ContainerType({
+    fields: {
+        message: exports.BeaconBlockHeader,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
 });
-exports.SignedBeaconBlockHeader = SignedBeaconBlockHeader;
-const Checkpoint = new _ssz.ContainerType({
-  fields: {
-    epoch: Epoch,
-    root: Root
-  }
+exports.Checkpoint = new ssz_1.ContainerType({
+    fields: {
+        epoch: Epoch,
+        root: Root,
+    },
+    expectedCase: "notransform",
 });
-exports.Checkpoint = Checkpoint;
-const CommitteeBits = new _ssz.BitListType({
-  limit: _lodestarParams.MAX_VALIDATORS_PER_COMMITTEE
+exports.CommitteeBits = new ssz_1.BitListType({
+    limit: lodestar_params_1.MAX_VALIDATORS_PER_COMMITTEE,
 });
-exports.CommitteeBits = CommitteeBits;
-const CommitteeIndices = new _ssz.ListType({
-  elementType: ValidatorIndex,
-  limit: _lodestarParams.MAX_VALIDATORS_PER_COMMITTEE
+exports.CommitteeIndices = new ssz_1.ListType({
+    elementType: ValidatorIndex,
+    limit: lodestar_params_1.MAX_VALIDATORS_PER_COMMITTEE,
 });
-exports.CommitteeIndices = CommitteeIndices;
-const DepositMessage = new _ssz.ContainerType({
-  fields: {
-    pubkey: BLSPubkey,
-    withdrawalCredentials: Bytes32,
-    amount: Gwei
-  }
+exports.DepositMessage = new ssz_1.ContainerType({
+    fields: {
+        pubkey: BLSPubkey,
+        withdrawalCredentials: Bytes32,
+        amount: Number64,
+    },
+    casingMap: {
+        pubkey: "pubkey",
+        withdrawalCredentials: "withdrawal_credentials",
+        amount: "amount",
+    },
 });
-exports.DepositMessage = DepositMessage;
-const DepositData = new _ssz.ContainerType({
-  fields: {
-    pubkey: BLSPubkey,
-    withdrawalCredentials: Bytes32,
-    amount: Gwei,
-    signature: BLSSignature
-  }
+exports.DepositData = new ssz_1.ContainerType({
+    fields: {
+        // Fields order is strickly preserved
+        ...exports.DepositMessage.fields,
+        signature: BLSSignature,
+    },
+    casingMap: {
+        ...exports.DepositMessage.casingMap,
+        signature: "signature",
+    },
 });
-exports.DepositData = DepositData;
-const DepositDataRootList = new _ssz.ListType({
-  elementType: new _ssz.RootType({
-    expandedType: DepositData
-  }),
-  limit: 2 ** _lodestarParams.DEPOSIT_CONTRACT_TREE_DEPTH
+exports.DepositDataRootList = new ssz_1.ListType({
+    elementType: new ssz_1.RootType({ expandedType: exports.DepositData }),
+    limit: 2 ** lodestar_params_1.DEPOSIT_CONTRACT_TREE_DEPTH,
 });
-exports.DepositDataRootList = DepositDataRootList;
-const DepositEvent = new _ssz.ContainerType({
-  fields: {
-    depositData: DepositData,
-    blockNumber: Number64,
-    index: Number64
-  }
+exports.DepositEvent = new ssz_1.ContainerType({
+    fields: {
+        depositData: exports.DepositData,
+        blockNumber: Number64,
+        index: Number64,
+    },
+    // Custom type, not in the consensus specs
+    casingMap: {
+        depositData: "deposit_data",
+        blockNumber: "block_number",
+        index: "index",
+    },
 });
-exports.DepositEvent = DepositEvent;
-const Eth1Data = new _ssz.ContainerType({
-  fields: {
-    depositRoot: Root,
-    depositCount: Number64,
-    blockHash: Bytes32
-  }
+exports.Eth1Data = new ssz_1.ContainerType({
+    fields: {
+        depositRoot: Root,
+        depositCount: Number64,
+        blockHash: Bytes32,
+    },
+    casingMap: {
+        depositRoot: "deposit_root",
+        depositCount: "deposit_count",
+        blockHash: "block_hash",
+    },
 });
-exports.Eth1Data = Eth1Data;
-const Eth1DataOrdered = new _ssz.ContainerType({
-  fields: {
-    depositRoot: Root,
-    depositCount: Number64,
-    blockHash: Bytes32,
-    blockNumber: Number64
-  }
+exports.Eth1DataVotes = new ssz_1.ListType({
+    elementType: exports.Eth1Data,
+    limit: lodestar_params_1.EPOCHS_PER_ETH1_VOTING_PERIOD * lodestar_params_1.SLOTS_PER_EPOCH,
 });
-exports.Eth1DataOrdered = Eth1DataOrdered;
-const Fork = new _ssz.ContainerType({
-  fields: {
-    previousVersion: Version,
-    currentVersion: Version,
-    epoch: Epoch
-  }
+exports.Eth1DataOrdered = new ssz_1.ContainerType({
+    fields: {
+        // Fields order is strickly preserved
+        ...exports.Eth1Data.fields,
+        blockNumber: Number64,
+    },
+    // Custom type, not in the consensus specs
+    casingMap: {
+        ...exports.Eth1Data.casingMap,
+        blockNumber: "block_number",
+    },
 });
-exports.Fork = Fork;
-const ForkData = new _ssz.ContainerType({
-  fields: {
-    currentVersion: Version,
-    genesisValidatorsRoot: Root
-  }
+exports.Fork = new ssz_1.ContainerType({
+    fields: {
+        previousVersion: Version,
+        currentVersion: Version,
+        epoch: Epoch,
+    },
+    casingMap: {
+        previousVersion: "previous_version",
+        currentVersion: "current_version",
+        epoch: "epoch",
+    },
 });
-exports.ForkData = ForkData;
-const ENRForkID = new _ssz.ContainerType({
-  fields: {
-    forkDigest: ForkDigest,
-    nextForkVersion: Version,
-    nextForkEpoch: Epoch
-  }
+exports.ForkData = new ssz_1.ContainerType({
+    fields: {
+        currentVersion: Version,
+        genesisValidatorsRoot: Root,
+    },
+    casingMap: {
+        currentVersion: "current_version",
+        genesisValidatorsRoot: "genesis_validators_root",
+    },
 });
-exports.ENRForkID = ENRForkID;
-const HistoricalBlockRoots = new _ssz.VectorType({
-  elementType: new _ssz.RootType({
-    expandedType: () => typesRef.get().BeaconBlock
-  }),
-  length: _lodestarParams.SLOTS_PER_HISTORICAL_ROOT
+exports.ENRForkID = new ssz_1.ContainerType({
+    fields: {
+        forkDigest: ForkDigest,
+        nextForkVersion: Version,
+        nextForkEpoch: Epoch,
+    },
+    casingMap: {
+        forkDigest: "fork_digest",
+        nextForkVersion: "next_fork_version",
+        nextForkEpoch: "next_fork_epoch",
+    },
 });
-exports.HistoricalBlockRoots = HistoricalBlockRoots;
-const HistoricalStateRoots = new _ssz.VectorType({
-  elementType: new _ssz.RootType({
-    expandedType: () => typesRef.get().BeaconState
-  }),
-  length: _lodestarParams.SLOTS_PER_HISTORICAL_ROOT
+exports.HistoricalBlockRoots = new ssz_1.VectorType({
+    elementType: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconBlock }),
+    length: lodestar_params_1.SLOTS_PER_HISTORICAL_ROOT,
 });
-exports.HistoricalStateRoots = HistoricalStateRoots;
-const HistoricalBatch = new _ssz.ContainerType({
-  fields: {
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots
-  }
+exports.HistoricalStateRoots = new ssz_1.VectorType({
+    elementType: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconState }),
+    length: lodestar_params_1.SLOTS_PER_HISTORICAL_ROOT,
 });
-exports.HistoricalBatch = HistoricalBatch;
-const Validator = new _ssz.ContainerType({
-  fields: {
-    pubkey: BLSPubkey,
-    withdrawalCredentials: Bytes32,
-    effectiveBalance: Gwei,
-    slashed: Boolean,
-    activationEligibilityEpoch: Epoch,
-    activationEpoch: Epoch,
-    exitEpoch: Epoch,
-    withdrawableEpoch: Epoch
-  }
-}); // Misc dependants
-
-exports.Validator = Validator;
-const AttestationData = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    index: CommitteeIndex,
-    beaconBlockRoot: Root,
-    source: Checkpoint,
-    target: Checkpoint
-  }
+exports.HistoricalBatch = new ssz_1.ContainerType({
+    fields: {
+        blockRoots: exports.HistoricalBlockRoots,
+        stateRoots: exports.HistoricalStateRoots,
+    },
+    casingMap: {
+        blockRoots: "block_roots",
+        stateRoots: "state_roots",
+    },
 });
-exports.AttestationData = AttestationData;
-const IndexedAttestation = new _ssz.ContainerType({
-  fields: {
-    attestingIndices: CommitteeIndices,
-    data: AttestationData,
-    signature: BLSSignature
-  }
+exports.Validator = new ssz_1.ContainerLeafNodeStructType({
+    fields: {
+        pubkey: BLSPubkey,
+        withdrawalCredentials: Bytes32,
+        effectiveBalance: Number64,
+        slashed: Boolean,
+        activationEligibilityEpoch: Epoch,
+        activationEpoch: Epoch,
+        exitEpoch: Epoch,
+        withdrawableEpoch: Epoch,
+    },
+    casingMap: {
+        pubkey: "pubkey",
+        withdrawalCredentials: "withdrawal_credentials",
+        effectiveBalance: "effective_balance",
+        slashed: "slashed",
+        activationEligibilityEpoch: "activation_eligibility_epoch",
+        activationEpoch: "activation_epoch",
+        exitEpoch: "exit_epoch",
+        withdrawableEpoch: "withdrawable_epoch",
+    },
 });
-exports.IndexedAttestation = IndexedAttestation;
-const PendingAttestation = new _ssz.ContainerType({
-  fields: {
-    aggregationBits: CommitteeBits,
-    data: AttestationData,
-    inclusionDelay: Slot,
-    proposerIndex: ValidatorIndex
-  }
+// Export as stand-alone for direct tree optimizations
+exports.Validators = new ssz_1.ListType({ elementType: exports.Validator, limit: lodestar_params_1.VALIDATOR_REGISTRY_LIMIT });
+exports.Balances = new ssz_1.ListType({ elementType: Number64, limit: lodestar_params_1.VALIDATOR_REGISTRY_LIMIT });
+exports.RandaoMixes = new ssz_1.VectorType({ elementType: Bytes32, length: lodestar_params_1.EPOCHS_PER_HISTORICAL_VECTOR });
+exports.Slashings = new ssz_1.VectorType({ elementType: Gwei, length: lodestar_params_1.EPOCHS_PER_SLASHINGS_VECTOR });
+exports.JustificationBits = new ssz_1.BitVectorType({ length: lodestar_params_1.JUSTIFICATION_BITS_LENGTH });
+// Misc dependants
+exports.AttestationData = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        index: CommitteeIndex,
+        beaconBlockRoot: Root,
+        source: exports.Checkpoint,
+        target: exports.Checkpoint,
+    },
+    casingMap: {
+        slot: "slot",
+        index: "index",
+        beaconBlockRoot: "beacon_block_root",
+        source: "source",
+        target: "target",
+    },
 });
-exports.PendingAttestation = PendingAttestation;
-const SigningData = new _ssz.ContainerType({
-  fields: {
-    objectRoot: Root,
-    domain: Domain
-  }
-}); // Operations types
+exports.IndexedAttestation = new ssz_1.ContainerType({
+    fields: {
+        attestingIndices: exports.CommitteeIndices,
+        data: exports.AttestationData,
+        signature: BLSSignature,
+    },
+    casingMap: {
+        attestingIndices: "attesting_indices",
+        data: "data",
+        signature: "signature",
+    },
+});
+exports.PendingAttestation = new ssz_1.ContainerType({
+    fields: {
+        aggregationBits: exports.CommitteeBits,
+        data: exports.AttestationData,
+        inclusionDelay: Slot,
+        proposerIndex: ValidatorIndex,
+    },
+    casingMap: {
+        aggregationBits: "aggregation_bits",
+        data: "data",
+        inclusionDelay: "inclusion_delay",
+        proposerIndex: "proposer_index",
+    },
+});
+exports.SigningData = new ssz_1.ContainerType({
+    fields: {
+        objectRoot: Root,
+        domain: Domain,
+    },
+    casingMap: {
+        objectRoot: "object_root",
+        domain: "domain",
+    },
+});
+// Operations types
 // ================
-
-exports.SigningData = SigningData;
-const Attestation = new _ssz.ContainerType({
-  fields: {
-    aggregationBits: CommitteeBits,
-    data: AttestationData,
-    signature: BLSSignature
-  }
+exports.Attestation = new ssz_1.ContainerType({
+    fields: {
+        aggregationBits: exports.CommitteeBits,
+        data: exports.AttestationData,
+        signature: BLSSignature,
+    },
+    casingMap: {
+        aggregationBits: "aggregation_bits",
+        data: "data",
+        signature: "signature",
+    },
 });
-exports.Attestation = Attestation;
-const AttesterSlashing = new _ssz.ContainerType({
-  fields: {
-    attestation1: IndexedAttestation,
-    attestation2: IndexedAttestation
-  }
+exports.AttesterSlashing = new ssz_1.ContainerType({
+    fields: {
+        attestation1: exports.IndexedAttestation,
+        attestation2: exports.IndexedAttestation,
+    },
+    // Declaration time casingMap for toJson/fromJson for container <=> json data
+    casingMap: {
+        attestation1: "attestation_1",
+        attestation2: "attestation_2",
+    },
 });
-exports.AttesterSlashing = AttesterSlashing;
-const Deposit = new _ssz.ContainerType({
-  fields: {
-    proof: new _ssz.VectorType({
-      elementType: Bytes32,
-      length: _lodestarParams.DEPOSIT_CONTRACT_TREE_DEPTH + 1
-    }),
-    data: DepositData
-  }
+exports.Deposit = new ssz_1.ContainerType({
+    fields: {
+        proof: new ssz_1.VectorType({ elementType: Bytes32, length: lodestar_params_1.DEPOSIT_CONTRACT_TREE_DEPTH + 1 }),
+        data: exports.DepositData,
+    },
+    expectedCase: "notransform",
 });
-exports.Deposit = Deposit;
-const ProposerSlashing = new _ssz.ContainerType({
-  fields: {
-    signedHeader1: SignedBeaconBlockHeader,
-    signedHeader2: SignedBeaconBlockHeader
-  }
+exports.ProposerSlashing = new ssz_1.ContainerType({
+    fields: {
+        signedHeader1: exports.SignedBeaconBlockHeader,
+        signedHeader2: exports.SignedBeaconBlockHeader,
+    },
+    // Declaration time casingMap for toJson/fromJson for container <=> json data
+    casingMap: {
+        signedHeader1: "signed_header_1",
+        signedHeader2: "signed_header_2",
+    },
 });
-exports.ProposerSlashing = ProposerSlashing;
-const VoluntaryExit = new _ssz.ContainerType({
-  fields: {
-    epoch: Epoch,
-    validatorIndex: ValidatorIndex
-  }
+exports.VoluntaryExit = new ssz_1.ContainerType({
+    fields: {
+        epoch: Epoch,
+        validatorIndex: ValidatorIndex,
+    },
+    casingMap: {
+        epoch: "epoch",
+        validatorIndex: "validator_index",
+    },
 });
-exports.VoluntaryExit = VoluntaryExit;
-const SignedVoluntaryExit = new _ssz.ContainerType({
-  fields: {
-    message: VoluntaryExit,
-    signature: BLSSignature
-  }
-}); // Block types
+exports.SignedVoluntaryExit = new ssz_1.ContainerType({
+    fields: {
+        message: exports.VoluntaryExit,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
+});
+// Block types
 // ===========
-
-exports.SignedVoluntaryExit = SignedVoluntaryExit;
-const BeaconBlockBody = new _ssz.ContainerType({
-  fields: {
-    randaoReveal: BLSSignature,
-    eth1Data: Eth1Data,
-    graffiti: Bytes32,
-    proposerSlashings: new _ssz.ListType({
-      elementType: ProposerSlashing,
-      limit: _lodestarParams.MAX_PROPOSER_SLASHINGS
-    }),
-    attesterSlashings: new _ssz.ListType({
-      elementType: AttesterSlashing,
-      limit: _lodestarParams.MAX_ATTESTER_SLASHINGS
-    }),
-    attestations: new _ssz.ListType({
-      elementType: Attestation,
-      limit: _lodestarParams.MAX_ATTESTATIONS
-    }),
-    deposits: new _ssz.ListType({
-      elementType: Deposit,
-      limit: _lodestarParams.MAX_DEPOSITS
-    }),
-    voluntaryExits: new _ssz.ListType({
-      elementType: SignedVoluntaryExit,
-      limit: _lodestarParams.MAX_VOLUNTARY_EXITS
-    })
-  }
+exports.BeaconBlockBody = new ssz_1.ContainerType({
+    fields: {
+        randaoReveal: BLSSignature,
+        eth1Data: exports.Eth1Data,
+        graffiti: Bytes32,
+        proposerSlashings: new ssz_1.ListType({ elementType: exports.ProposerSlashing, limit: lodestar_params_1.MAX_PROPOSER_SLASHINGS }),
+        attesterSlashings: new ssz_1.ListType({ elementType: exports.AttesterSlashing, limit: lodestar_params_1.MAX_ATTESTER_SLASHINGS }),
+        attestations: new ssz_1.ListType({ elementType: exports.Attestation, limit: lodestar_params_1.MAX_ATTESTATIONS }),
+        deposits: new ssz_1.ListType({ elementType: exports.Deposit, limit: lodestar_params_1.MAX_DEPOSITS }),
+        voluntaryExits: new ssz_1.ListType({ elementType: exports.SignedVoluntaryExit, limit: lodestar_params_1.MAX_VOLUNTARY_EXITS }),
+    },
+    casingMap: {
+        randaoReveal: "randao_reveal",
+        eth1Data: "eth1_data",
+        graffiti: "graffiti",
+        proposerSlashings: "proposer_slashings",
+        attesterSlashings: "attester_slashings",
+        attestations: "attestations",
+        deposits: "deposits",
+        voluntaryExits: "voluntary_exits",
+    },
 });
-exports.BeaconBlockBody = BeaconBlockBody;
-const BeaconBlock = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    proposerIndex: ValidatorIndex,
-    parentRoot: new _ssz.RootType({
-      expandedType: () => typesRef.get().BeaconBlock
-    }),
-    stateRoot: new _ssz.RootType({
-      expandedType: () => typesRef.get().BeaconState
-    }),
-    body: BeaconBlockBody
-  }
+exports.BeaconBlock = new ssz_1.ContainerType({
+    fields: {
+        slot: Slot,
+        proposerIndex: ValidatorIndex,
+        parentRoot: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconBlock }),
+        stateRoot: new ssz_1.RootType({ expandedType: () => typesRef.get().BeaconState }),
+        body: exports.BeaconBlockBody,
+    },
+    casingMap: {
+        slot: "slot",
+        proposerIndex: "proposer_index",
+        parentRoot: "parent_root",
+        stateRoot: "state_root",
+        body: "body",
+    },
 });
-exports.BeaconBlock = BeaconBlock;
-const SignedBeaconBlock = new _ssz.ContainerType({
-  fields: {
-    message: BeaconBlock,
-    signature: BLSSignature
-  }
-}); // State types
+exports.SignedBeaconBlock = new ssz_1.ContainerType({
+    fields: {
+        message: exports.BeaconBlock,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
+});
+// State types
 // ===========
-
-exports.SignedBeaconBlock = SignedBeaconBlock;
-const EpochAttestations = new _ssz.ListType({
-  elementType: PendingAttestation,
-  limit: _lodestarParams.MAX_ATTESTATIONS * _lodestarParams.SLOTS_PER_EPOCH
+exports.EpochAttestations = new ssz_1.ListType({
+    elementType: exports.PendingAttestation,
+    limit: lodestar_params_1.MAX_ATTESTATIONS * lodestar_params_1.SLOTS_PER_EPOCH,
 });
-exports.EpochAttestations = EpochAttestations;
-const BeaconState = new _ssz.ContainerType({
-  fields: {
-    // Misc
-    genesisTime: Number64,
-    genesisValidatorsRoot: Root,
-    slot: Slot,
-    fork: Fork,
-    // History
-    latestBlockHeader: BeaconBlockHeader,
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots,
-    historicalRoots: new _ssz.ListType({
-      elementType: new _ssz.RootType({
-        expandedType: HistoricalBatch
-      }),
-      limit: _lodestarParams.HISTORICAL_ROOTS_LIMIT
-    }),
-    // Eth1
-    eth1Data: Eth1Data,
-    eth1DataVotes: new _ssz.ListType({
-      elementType: Eth1Data,
-      limit: _lodestarParams.EPOCHS_PER_ETH1_VOTING_PERIOD * _lodestarParams.SLOTS_PER_EPOCH
-    }),
-    eth1DepositIndex: Number64,
-    // Registry
-    validators: new _ssz.ListType({
-      elementType: Validator,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    balances: new _ssz.ListType({
-      elementType: Gwei,
-      limit: _lodestarParams.VALIDATOR_REGISTRY_LIMIT
-    }),
-    randaoMixes: new _ssz.VectorType({
-      elementType: Bytes32,
-      length: _lodestarParams.EPOCHS_PER_HISTORICAL_VECTOR
-    }),
-    // Slashings
-    slashings: new _ssz.VectorType({
-      elementType: Gwei,
-      length: _lodestarParams.EPOCHS_PER_SLASHINGS_VECTOR
-    }),
-    // Attestations
-    previousEpochAttestations: EpochAttestations,
-    currentEpochAttestations: EpochAttestations,
-    // Finality
-    justificationBits: new _ssz.BitVectorType({
-      length: _lodestarParams.JUSTIFICATION_BITS_LENGTH
-    }),
-    previousJustifiedCheckpoint: Checkpoint,
-    currentJustifiedCheckpoint: Checkpoint,
-    finalizedCheckpoint: Checkpoint
-  }
-}); // Validator types
+exports.BeaconState = new ssz_1.ContainerType({
+    fields: {
+        // Misc
+        genesisTime: Number64,
+        genesisValidatorsRoot: Root,
+        slot: Slot,
+        fork: exports.Fork,
+        // History
+        latestBlockHeader: exports.BeaconBlockHeader,
+        blockRoots: exports.HistoricalBlockRoots,
+        stateRoots: exports.HistoricalStateRoots,
+        historicalRoots: new ssz_1.ListType({
+            elementType: new ssz_1.RootType({ expandedType: exports.HistoricalBatch }),
+            limit: lodestar_params_1.HISTORICAL_ROOTS_LIMIT,
+        }),
+        // Eth1
+        eth1Data: exports.Eth1Data,
+        eth1DataVotes: exports.Eth1DataVotes,
+        eth1DepositIndex: Number64,
+        // Registry
+        validators: exports.Validators,
+        balances: exports.Balances,
+        randaoMixes: exports.RandaoMixes,
+        // Slashings
+        slashings: exports.Slashings,
+        // Attestations
+        previousEpochAttestations: exports.EpochAttestations,
+        currentEpochAttestations: exports.EpochAttestations,
+        // Finality
+        justificationBits: exports.JustificationBits,
+        previousJustifiedCheckpoint: exports.Checkpoint,
+        currentJustifiedCheckpoint: exports.Checkpoint,
+        finalizedCheckpoint: exports.Checkpoint,
+    },
+    casingMap: {
+        genesisTime: "genesis_time",
+        genesisValidatorsRoot: "genesis_validators_root",
+        slot: "slot",
+        fork: "fork",
+        latestBlockHeader: "latest_block_header",
+        blockRoots: "block_roots",
+        stateRoots: "state_roots",
+        historicalRoots: "historical_roots",
+        eth1Data: "eth1_data",
+        eth1DataVotes: "eth1_data_votes",
+        eth1DepositIndex: "eth1_deposit_index",
+        validators: "validators",
+        balances: "balances",
+        randaoMixes: "randao_mixes",
+        slashings: "slashings",
+        previousEpochAttestations: "previous_epoch_attestations",
+        currentEpochAttestations: "current_epoch_attestations",
+        justificationBits: "justification_bits",
+        previousJustifiedCheckpoint: "previous_justified_checkpoint",
+        currentJustifiedCheckpoint: "current_justified_checkpoint",
+        finalizedCheckpoint: "finalized_checkpoint",
+    },
+});
+// Validator types
 // ===============
-
-exports.BeaconState = BeaconState;
-const CommitteeAssignment = new _ssz.ContainerType({
-  fields: {
-    validators: CommitteeIndices,
-    committeeIndex: CommitteeIndex,
-    slot: Slot
-  }
+exports.CommitteeAssignment = new ssz_1.ContainerType({
+    fields: {
+        validators: exports.CommitteeIndices,
+        committeeIndex: CommitteeIndex,
+        slot: Slot,
+    },
+    // Custom type, not in the consensus specs
+    casingMap: {
+        validators: "validators",
+        committeeIndex: "committee_index",
+        slot: "slot",
+    },
 });
-exports.CommitteeAssignment = CommitteeAssignment;
-const AggregateAndProof = new _ssz.ContainerType({
-  fields: {
-    aggregatorIndex: ValidatorIndex,
-    aggregate: Attestation,
-    selectionProof: BLSSignature
-  }
+exports.AggregateAndProof = new ssz_1.ContainerType({
+    fields: {
+        aggregatorIndex: ValidatorIndex,
+        aggregate: exports.Attestation,
+        selectionProof: BLSSignature,
+    },
+    casingMap: {
+        aggregatorIndex: "aggregator_index",
+        aggregate: "aggregate",
+        selectionProof: "selection_proof",
+    },
 });
-exports.AggregateAndProof = AggregateAndProof;
-const SignedAggregateAndProof = new _ssz.ContainerType({
-  fields: {
-    message: AggregateAndProof,
-    signature: BLSSignature
-  }
-}); // ReqResp types
+exports.SignedAggregateAndProof = new ssz_1.ContainerType({
+    fields: {
+        message: exports.AggregateAndProof,
+        signature: BLSSignature,
+    },
+    expectedCase: "notransform",
+});
+// ReqResp types
 // =============
-
-exports.SignedAggregateAndProof = SignedAggregateAndProof;
-const Status = new _ssz.ContainerType({
-  fields: {
-    forkDigest: ForkDigest,
-    finalizedRoot: Root,
-    finalizedEpoch: Epoch,
-    headRoot: Root,
-    headSlot: Slot
-  }
+exports.Status = new ssz_1.ContainerType({
+    fields: {
+        forkDigest: ForkDigest,
+        finalizedRoot: Root,
+        finalizedEpoch: Epoch,
+        headRoot: Root,
+        headSlot: Slot,
+    },
+    casingMap: {
+        forkDigest: "fork_digest",
+        finalizedRoot: "finalized_root",
+        finalizedEpoch: "finalized_epoch",
+        headRoot: "head_root",
+        headSlot: "head_slot",
+    },
 });
-exports.Status = Status;
-const Goodbye = Uint64;
-exports.Goodbye = Goodbye;
-const Ping = Uint64;
-exports.Ping = Ping;
-const Metadata = new _ssz.ContainerType({
-  fields: {
-    seqNumber: Uint64,
-    attnets: AttestationSubnets
-  }
+exports.Goodbye = Uint64;
+exports.Ping = Uint64;
+exports.Metadata = new ssz_1.ContainerType({
+    fields: {
+        seqNumber: Uint64,
+        attnets: exports.AttestationSubnets,
+    },
+    casingMap: {
+        seqNumber: "seq_number",
+        attnets: "attnets",
+    },
 });
-exports.Metadata = Metadata;
-const BeaconBlocksByRangeRequest = new _ssz.ContainerType({
-  fields: {
-    startSlot: Slot,
-    count: Number64,
-    step: Number64
-  }
+exports.BeaconBlocksByRangeRequest = new ssz_1.ContainerType({
+    fields: {
+        startSlot: Slot,
+        count: Number64,
+        step: Number64,
+    },
+    casingMap: {
+        startSlot: "start_slot",
+        count: "count",
+        step: "step",
+    },
 });
-exports.BeaconBlocksByRangeRequest = BeaconBlocksByRangeRequest;
-const BeaconBlocksByRootRequest = new _ssz.ListType({
-  elementType: Root,
-  limit: _lodestarParams.MAX_REQUEST_BLOCKS
-}); // Api types
+exports.BeaconBlocksByRootRequest = new ssz_1.ListType({ elementType: Root, limit: lodestar_params_1.MAX_REQUEST_BLOCKS });
+// Api types
 // =========
-
-exports.BeaconBlocksByRootRequest = BeaconBlocksByRootRequest;
-const Genesis = new _ssz.ContainerType({
-  fields: {
-    genesisValidatorsRoot: Root,
-    genesisTime: Uint64,
-    genesisForkVersion: Version
-  }
-}); // Non-speced types
-// ================
-
-exports.Genesis = Genesis;
-const SlashingProtectionBlock = new _ssz.ContainerType({
-  fields: {
-    slot: Slot,
-    signingRoot: Root
-  }
+exports.Genesis = new ssz_1.ContainerType({
+    fields: {
+        genesisValidatorsRoot: Root,
+        genesisTime: Uint64,
+        genesisForkVersion: Version,
+    },
+    // From beacon-apis
+    casingMap: {
+        genesisValidatorsRoot: "genesis_validators_root",
+        genesisTime: "genesis_time",
+        genesisForkVersion: "genesis_fork_version",
+    },
 });
-exports.SlashingProtectionBlock = SlashingProtectionBlock;
-const SlashingProtectionAttestation = new _ssz.ContainerType({
-  fields: {
-    sourceEpoch: Epoch,
-    targetEpoch: Epoch,
-    signingRoot: Root
-  }
-});
-exports.SlashingProtectionAttestation = SlashingProtectionAttestation;
-const SlashingProtectionAttestationLowerBound = new _ssz.ContainerType({
-  fields: {
-    minSourceEpoch: Epoch,
-    minTargetEpoch: Epoch
-  }
-}); // MUST set typesRef here, otherwise expandedType() calls will throw
-
-exports.SlashingProtectionAttestationLowerBound = SlashingProtectionAttestationLowerBound;
-typesRef.set({
-  BeaconBlock,
-  BeaconState
-});
+// MUST set typesRef here, otherwise expandedType() calls will throw
+typesRef.set({ BeaconBlock: exports.BeaconBlock, BeaconState: exports.BeaconState });
 //# sourceMappingURL=sszTypes.js.map
 
 /***/ }),
 
-/***/ 5734:
-/***/ (() => {
+/***/ 8436:
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
-//# sourceMappingURL=api.js.map
-
-/***/ }),
-
-/***/ 9840:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=block.js.map
-
-/***/ }),
-
-/***/ 405:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var _misc = __webpack_require__(5229);
-
-Object.keys(_misc).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _misc[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _misc[key];
-    }
-  });
-});
-
-var _operations = __webpack_require__(4708);
-
-Object.keys(_operations).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _operations[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _operations[key];
-    }
-  });
-});
-
-var _block = __webpack_require__(9840);
-
-Object.keys(_block).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _block[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _block[key];
-    }
-  });
-});
-
-var _state = __webpack_require__(6741);
-
-Object.keys(_state).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _state[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _state[key];
-    }
-  });
-});
-
-var _validator = __webpack_require__(4681);
-
-Object.keys(_validator).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _validator[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _validator[key];
-    }
-  });
-});
-
-var _wire = __webpack_require__(5681);
-
-Object.keys(_wire).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _wire[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _wire[key];
-    }
-  });
-});
-
-var _api = __webpack_require__(5734);
-
-Object.keys(_api).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _api[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _api[key];
-    }
-  });
-});
-
-var _types = __webpack_require__(9424);
-
-Object.keys(_types).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _types[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _types[key];
-    }
-  });
-});
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 5229:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=misc.js.map
-
-/***/ }),
-
-/***/ 4708:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=operations.js.map
-
-/***/ }),
-
-/***/ 6741:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=state.js.map
-
-/***/ }),
-
-/***/ 4681:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=validator.js.map
-
-/***/ }),
-
-/***/ 5681:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=wire.js.map
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+//# sourceMappingURL=types.js.map
 
 /***/ }),
 
 /***/ 5579:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ssz = exports.ts = void 0;
-
-var _ts = _interopRequireWildcard(__webpack_require__(9424));
-
-exports.ts = _ts;
-
-var _ssz = _interopRequireWildcard(__webpack_require__(6823));
-
-exports.ssz = _ssz;
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+exports.ts = __importStar(__webpack_require__(9424));
+exports.ssz = __importStar(__webpack_require__(6823));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -1824,213 +1703,155 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.ParticipationFlags = exports.Domain = exports.BLSSignature = exports.BLSPubkey = exports.ForkDigest = exports.DomainType = exports.Version = exports.Root = exports.Gwei = exports.ValidatorIndex = exports.SubCommitteeIndex = exports.CommitteeIndex = exports.Epoch = exports.Slot = exports.Uint256 = exports.Uint128 = exports.Uint64 = exports.Number64 = exports.Uint32 = exports.Uint16 = exports.Uint8 = exports.Bytes96 = exports.Bytes48 = exports.Bytes32 = exports.Bytes8 = exports.Bytes4 = exports.Boolean = void 0;
-
-var _ssz = __webpack_require__(8005);
-
-const Boolean = _ssz.booleanType;
-exports.Boolean = Boolean;
-const Bytes4 = new _ssz.ByteVectorType({
-  length: 4
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ExecutionAddress = exports.ParticipationFlags = exports.Domain = exports.BLSSignature = exports.BLSPubkey = exports.ForkDigest = exports.DomainType = exports.Version = exports.Root = exports.Gwei = exports.ValidatorIndex = exports.SubcommitteeIndex = exports.CommitteeIndex = exports.Epoch = exports.Slot = exports.Uint256 = exports.Uint128 = exports.Uint64 = exports.Number64 = exports.Uint32 = exports.Uint16 = exports.Uint8 = exports.Bytes96 = exports.Bytes48 = exports.Bytes32 = exports.Bytes20 = exports.Bytes8 = exports.Bytes4 = exports.Boolean = void 0;
+const ssz_1 = __webpack_require__(8005);
+exports.Boolean = ssz_1.booleanType;
+exports.Bytes4 = new ssz_1.ByteVectorType({ length: 4 });
+exports.Bytes8 = new ssz_1.ByteVectorType({ length: 8 });
+exports.Bytes20 = new ssz_1.ByteVectorType({ length: 20 });
+exports.Bytes32 = new ssz_1.ByteVectorType({ length: 32 });
+exports.Bytes48 = new ssz_1.ByteVectorType({ length: 48 });
+exports.Bytes96 = new ssz_1.ByteVectorType({ length: 96 });
+exports.Uint8 = ssz_1.byteType;
+exports.Uint16 = new ssz_1.NumberUintType({ byteLength: 2 });
+exports.Uint32 = ssz_1.number32Type;
+exports.Number64 = new ssz_1.Number64UintType();
+exports.Uint64 = new ssz_1.BigIntUintType({ byteLength: 8 });
+exports.Uint128 = new ssz_1.BigIntUintType({ byteLength: 16 });
+exports.Uint256 = new ssz_1.BigIntUintType({ byteLength: 32 });
+// Custom types, defined for type hinting and readability
+exports.Slot = exports.Number64;
+exports.Epoch = exports.Number64;
+exports.CommitteeIndex = exports.Number64;
+exports.SubcommitteeIndex = exports.Number64;
+exports.ValidatorIndex = exports.Number64;
+exports.Gwei = exports.Uint64;
+exports.Root = new ssz_1.RootType({
+    expandedType: () => {
+        throw new Error("Generic Root type has no expanded type");
+    },
 });
-exports.Bytes4 = Bytes4;
-const Bytes8 = new _ssz.ByteVectorType({
-  length: 8
-});
-exports.Bytes8 = Bytes8;
-const Bytes32 = new _ssz.ByteVectorType({
-  length: 32
-});
-exports.Bytes32 = Bytes32;
-const Bytes48 = new _ssz.ByteVectorType({
-  length: 48
-});
-exports.Bytes48 = Bytes48;
-const Bytes96 = new _ssz.ByteVectorType({
-  length: 96
-});
-exports.Bytes96 = Bytes96;
-const Uint8 = _ssz.byteType;
-exports.Uint8 = Uint8;
-const Uint16 = new _ssz.NumberUintType({
-  byteLength: 2
-});
-exports.Uint16 = Uint16;
-const Uint32 = _ssz.number32Type;
-exports.Uint32 = Uint32;
-const Number64 = new _ssz.NumberUintType({
-  byteLength: 8
-});
-exports.Number64 = Number64;
-const Uint64 = new _ssz.BigIntUintType({
-  byteLength: 8
-});
-exports.Uint64 = Uint64;
-const Uint128 = new _ssz.BigIntUintType({
-  byteLength: 16
-});
-exports.Uint128 = Uint128;
-const Uint256 = new _ssz.BigIntUintType({
-  byteLength: 32
-}); // Custom types, defined for type hinting and readability
-
-exports.Uint256 = Uint256;
-const Slot = Number64;
-exports.Slot = Slot;
-const Epoch = Number64;
-exports.Epoch = Epoch;
-const CommitteeIndex = Number64;
-exports.CommitteeIndex = CommitteeIndex;
-const SubCommitteeIndex = Number64;
-exports.SubCommitteeIndex = SubCommitteeIndex;
-const ValidatorIndex = Number64;
-exports.ValidatorIndex = ValidatorIndex;
-const Gwei = Uint64;
-exports.Gwei = Gwei;
-const Root = new _ssz.RootType({
-  expandedType: () => {
-    throw new Error("Generic Root type has no expanded type");
-  }
-});
-exports.Root = Root;
-const Version = Bytes4;
-exports.Version = Version;
-const DomainType = Bytes4;
-exports.DomainType = DomainType;
-const ForkDigest = Bytes4;
-exports.ForkDigest = ForkDigest;
-const BLSPubkey = Bytes48;
-exports.BLSPubkey = BLSPubkey;
-const BLSSignature = Bytes96;
-exports.BLSSignature = BLSSignature;
-const Domain = Bytes32;
-exports.Domain = Domain;
-const ParticipationFlags = Uint8;
-exports.ParticipationFlags = ParticipationFlags;
+exports.Version = exports.Bytes4;
+exports.DomainType = exports.Bytes4;
+exports.ForkDigest = exports.Bytes4;
+exports.BLSPubkey = exports.Bytes48;
+exports.BLSSignature = exports.Bytes96;
+exports.Domain = exports.Bytes32;
+exports.ParticipationFlags = exports.Uint8;
+exports.ExecutionAddress = exports.Bytes20;
 //# sourceMappingURL=sszTypes.js.map
 
 /***/ }),
 
 /***/ 9424:
-/***/ (() => {
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 //# sourceMappingURL=types.js.map
 
 /***/ }),
 
 /***/ 3455:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
-var _exportNames = {
-  allForks: true,
-  phase0: true,
-  altair: true
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-Object.defineProperty(exports, "phase0", ({
-  enumerable: true,
-  get: function () {
-    return _phase.ssz;
-  }
-}));
-Object.defineProperty(exports, "altair", ({
-  enumerable: true,
-  get: function () {
-    return _altair.ssz;
-  }
-}));
-exports.allForks = void 0;
-
-var _sszTypes = __webpack_require__(6823);
-
-Object.keys(_sszTypes).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _sszTypes[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _sszTypes[key];
-    }
-  });
-});
-
-var _phase = __webpack_require__(9695);
-
-var _altair = __webpack_require__(2164);
-
-var _allForks = __webpack_require__(5340);
-
-const allForks = _allForks.ssz.allForks;
-exports.allForks = allForks;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.allForks = exports.bellatrix = exports.altair = exports.phase0 = void 0;
+__exportStar(__webpack_require__(6823), exports);
+var phase0_1 = __webpack_require__(9695);
+Object.defineProperty(exports, "phase0", ({ enumerable: true, get: function () { return phase0_1.ssz; } }));
+var altair_1 = __webpack_require__(2164);
+Object.defineProperty(exports, "altair", ({ enumerable: true, get: function () { return altair_1.ssz; } }));
+var bellatrix_1 = __webpack_require__(1439);
+Object.defineProperty(exports, "bellatrix", ({ enumerable: true, get: function () { return bellatrix_1.ssz; } }));
+const allForks_1 = __webpack_require__(5340);
+exports.allForks = allForks_1.ssz.allForks;
 //# sourceMappingURL=sszTypes.js.map
 
 /***/ }),
 
 /***/ 1234:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.allForks = exports.bellatrix = exports.altair = exports.phase0 = void 0;
+__exportStar(__webpack_require__(9424), exports);
+var phase0_1 = __webpack_require__(9695);
+Object.defineProperty(exports, "phase0", ({ enumerable: true, get: function () { return phase0_1.ts; } }));
+var altair_1 = __webpack_require__(2164);
+Object.defineProperty(exports, "altair", ({ enumerable: true, get: function () { return altair_1.ts; } }));
+var bellatrix_1 = __webpack_require__(1439);
+Object.defineProperty(exports, "bellatrix", ({ enumerable: true, get: function () { return bellatrix_1.ts; } }));
+var allForks_1 = __webpack_require__(5340);
+Object.defineProperty(exports, "allForks", ({ enumerable: true, get: function () { return allForks_1.ts; } }));
+//# sourceMappingURL=types.js.map
+
+/***/ }),
+
+/***/ 9118:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-var _exportNames = {
-  phase0: true,
-  altair: true,
-  allForks: true
-};
-Object.defineProperty(exports, "phase0", ({
-  enumerable: true,
-  get: function () {
-    return _phase.ts;
-  }
-}));
-Object.defineProperty(exports, "altair", ({
-  enumerable: true,
-  get: function () {
-    return _altair.ts;
-  }
-}));
-Object.defineProperty(exports, "allForks", ({
-  enumerable: true,
-  get: function () {
-    return _allForks.ts;
-  }
-}));
-
-var _types = __webpack_require__(9424);
-
-Object.keys(_types).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _types[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _types[key];
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.StringType = void 0;
+const ssz_1 = __webpack_require__(8005);
+/* eslint-disable @typescript-eslint/naming-convention */
+class StringType extends ssz_1.BasicType {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    struct_getSerializedLength(data) {
+        throw new Error("unsupported ssz operation");
     }
-  });
-});
-
-var _phase = __webpack_require__(9695);
-
-var _altair = __webpack_require__(2164);
-
-var _allForks = __webpack_require__(5340);
-//# sourceMappingURL=types.js.map
+    struct_convertToJson(value) {
+        return value;
+    }
+    struct_convertFromJson(data) {
+        return data;
+    }
+    struct_assertValidValue(data) {
+        throw new Error("unsupported ssz operation");
+    }
+    serialize() {
+        throw new Error("unsupported ssz type for serialization");
+    }
+    struct_serializeToBytes() {
+        throw new Error("unsupported ssz type for serialization");
+    }
+    struct_deserializeFromBytes() {
+        throw new Error("unsupported ssz operation");
+    }
+    struct_defaultValue() {
+        return "something";
+    }
+}
+exports.StringType = StringType;
+//# sourceMappingURL=StringType.js.map
 
 /***/ }),
 
@@ -2039,349 +1860,23 @@ var _allForks = __webpack_require__(5340);
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LazyVariable = void 0;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 class LazyVariable {
-  constructor() {
-    _defineProperty(this, "var", {
-      set: false
-    });
-  }
-
-  get() {
-    if (!this.var.set) throw Error("variable not set");
-    return this.var.value;
-  }
-
-  set(value) {
-    this.var = {
-      set: true,
-      value
-    };
-  }
-
+    constructor() {
+        this.var = { set: false };
+    }
+    get() {
+        if (!this.var.set)
+            throw Error("variable not set");
+        return this.var.value;
+    }
+    set(value) {
+        this.var = { set: true, value };
+    }
 }
-
 exports.LazyVariable = LazyVariable;
 //# sourceMappingURL=lazyVar.js.map
-
-/***/ }),
-
-/***/ 5392:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var process = __webpack_require__(4406);
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.setActivePreset = setActivePreset;
-exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = exports.SYNC_COMMITTEE_SIZE = exports.MAX_VOLUNTARY_EXITS = exports.MAX_DEPOSITS = exports.MAX_ATTESTATIONS = exports.MAX_ATTESTER_SLASHINGS = exports.MAX_PROPOSER_SLASHINGS = exports.PROPORTIONAL_SLASHING_MULTIPLIER = exports.MIN_SLASHING_PENALTY_QUOTIENT = exports.INACTIVITY_PENALTY_QUOTIENT = exports.PROPOSER_REWARD_QUOTIENT = exports.WHISTLEBLOWER_REWARD_QUOTIENT = exports.BASE_REWARD_FACTOR = exports.VALIDATOR_REGISTRY_LIMIT = exports.HISTORICAL_ROOTS_LIMIT = exports.EPOCHS_PER_SLASHINGS_VECTOR = exports.EPOCHS_PER_HISTORICAL_VECTOR = exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = exports.SLOTS_PER_HISTORICAL_ROOT = exports.EPOCHS_PER_ETH1_VOTING_PERIOD = exports.MAX_SEED_LOOKAHEAD = exports.MIN_SEED_LOOKAHEAD = exports.SLOTS_PER_EPOCH = exports.MIN_ATTESTATION_INCLUSION_DELAY = exports.EFFECTIVE_BALANCE_INCREMENT = exports.MAX_EFFECTIVE_BALANCE = exports.MIN_DEPOSIT_AMOUNT = exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = exports.HYSTERESIS_UPWARD_MULTIPLIER = exports.HYSTERESIS_DOWNWARD_MULTIPLIER = exports.HYSTERESIS_QUOTIENT = exports.SHUFFLE_ROUND_COUNT = exports.MAX_VALIDATORS_PER_COMMITTEE = exports.TARGET_COMMITTEE_SIZE = exports.MAX_COMMITTEES_PER_SLOT = exports.ACTIVE_PRESET = void 0;
-
-var _preset = __webpack_require__(7082);
-
-var _mainnet = __webpack_require__(9410);
-
-var _minimal = __webpack_require__(1020);
-
-var _process, _process$env;
-
-const presets = {
-  [_preset.PresetName.mainnet]: _mainnet.preset,
-  [_preset.PresetName.minimal]: _minimal.preset
-};
-
-function parsePresetName(name) {
-  var _PresetName;
-
-  return (_PresetName = _preset.PresetName[name]) !== null && _PresetName !== void 0 ? _PresetName : _preset.PresetName.mainnet;
-}
-/**
- * The preset name currently exported by this library
- *
- * The `LODESTAR_PRESET` environment variable is used to select the active preset
- * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
- *
- * The active preset can be manually overridden with `setActivePreset`
- */
-
-
-let ACTIVE_PRESET = parsePresetName((_process = process) === null || process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.LODESTAR_PRESET); // These variables must be exported individually and explicitly
-// in order to be accessible as top-level exports
-
-exports.ACTIVE_PRESET = ACTIVE_PRESET;
-let {
-  MAX_COMMITTEES_PER_SLOT,
-  TARGET_COMMITTEE_SIZE,
-  MAX_VALIDATORS_PER_COMMITTEE,
-  SHUFFLE_ROUND_COUNT,
-  HYSTERESIS_QUOTIENT,
-  HYSTERESIS_DOWNWARD_MULTIPLIER,
-  HYSTERESIS_UPWARD_MULTIPLIER,
-  SAFE_SLOTS_TO_UPDATE_JUSTIFIED,
-  MIN_DEPOSIT_AMOUNT,
-  MAX_EFFECTIVE_BALANCE,
-  EFFECTIVE_BALANCE_INCREMENT,
-  MIN_ATTESTATION_INCLUSION_DELAY,
-  SLOTS_PER_EPOCH,
-  MIN_SEED_LOOKAHEAD,
-  MAX_SEED_LOOKAHEAD,
-  EPOCHS_PER_ETH1_VOTING_PERIOD,
-  SLOTS_PER_HISTORICAL_ROOT,
-  MIN_EPOCHS_TO_INACTIVITY_PENALTY,
-  EPOCHS_PER_HISTORICAL_VECTOR,
-  EPOCHS_PER_SLASHINGS_VECTOR,
-  HISTORICAL_ROOTS_LIMIT,
-  VALIDATOR_REGISTRY_LIMIT,
-  BASE_REWARD_FACTOR,
-  WHISTLEBLOWER_REWARD_QUOTIENT,
-  PROPOSER_REWARD_QUOTIENT,
-  INACTIVITY_PENALTY_QUOTIENT,
-  MIN_SLASHING_PENALTY_QUOTIENT,
-  PROPORTIONAL_SLASHING_MULTIPLIER,
-  MAX_PROPOSER_SLASHINGS,
-  MAX_ATTESTER_SLASHINGS,
-  MAX_ATTESTATIONS,
-  MAX_DEPOSITS,
-  MAX_VOLUNTARY_EXITS,
-  SYNC_COMMITTEE_SIZE,
-  EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
-  INACTIVITY_PENALTY_QUOTIENT_ALTAIR,
-  MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR,
-  PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR
-} = presets[ACTIVE_PRESET];
-/**
- * Override the active preset
- *
- * WARNING: Lodestar libraries rely on preset values being _constant_, so the active preset must be set _before_ loading any other lodestar libraries.
- *
- * Only call this function if you _really_ know what you are doing.
- */
-
-exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR;
-exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR;
-exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = INACTIVITY_PENALTY_QUOTIENT_ALTAIR;
-exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = EPOCHS_PER_SYNC_COMMITTEE_PERIOD;
-exports.SYNC_COMMITTEE_SIZE = SYNC_COMMITTEE_SIZE;
-exports.MAX_VOLUNTARY_EXITS = MAX_VOLUNTARY_EXITS;
-exports.MAX_DEPOSITS = MAX_DEPOSITS;
-exports.MAX_ATTESTATIONS = MAX_ATTESTATIONS;
-exports.MAX_ATTESTER_SLASHINGS = MAX_ATTESTER_SLASHINGS;
-exports.MAX_PROPOSER_SLASHINGS = MAX_PROPOSER_SLASHINGS;
-exports.PROPORTIONAL_SLASHING_MULTIPLIER = PROPORTIONAL_SLASHING_MULTIPLIER;
-exports.MIN_SLASHING_PENALTY_QUOTIENT = MIN_SLASHING_PENALTY_QUOTIENT;
-exports.INACTIVITY_PENALTY_QUOTIENT = INACTIVITY_PENALTY_QUOTIENT;
-exports.PROPOSER_REWARD_QUOTIENT = PROPOSER_REWARD_QUOTIENT;
-exports.WHISTLEBLOWER_REWARD_QUOTIENT = WHISTLEBLOWER_REWARD_QUOTIENT;
-exports.BASE_REWARD_FACTOR = BASE_REWARD_FACTOR;
-exports.VALIDATOR_REGISTRY_LIMIT = VALIDATOR_REGISTRY_LIMIT;
-exports.HISTORICAL_ROOTS_LIMIT = HISTORICAL_ROOTS_LIMIT;
-exports.EPOCHS_PER_SLASHINGS_VECTOR = EPOCHS_PER_SLASHINGS_VECTOR;
-exports.EPOCHS_PER_HISTORICAL_VECTOR = EPOCHS_PER_HISTORICAL_VECTOR;
-exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = MIN_EPOCHS_TO_INACTIVITY_PENALTY;
-exports.SLOTS_PER_HISTORICAL_ROOT = SLOTS_PER_HISTORICAL_ROOT;
-exports.EPOCHS_PER_ETH1_VOTING_PERIOD = EPOCHS_PER_ETH1_VOTING_PERIOD;
-exports.MAX_SEED_LOOKAHEAD = MAX_SEED_LOOKAHEAD;
-exports.MIN_SEED_LOOKAHEAD = MIN_SEED_LOOKAHEAD;
-exports.SLOTS_PER_EPOCH = SLOTS_PER_EPOCH;
-exports.MIN_ATTESTATION_INCLUSION_DELAY = MIN_ATTESTATION_INCLUSION_DELAY;
-exports.EFFECTIVE_BALANCE_INCREMENT = EFFECTIVE_BALANCE_INCREMENT;
-exports.MAX_EFFECTIVE_BALANCE = MAX_EFFECTIVE_BALANCE;
-exports.MIN_DEPOSIT_AMOUNT = MIN_DEPOSIT_AMOUNT;
-exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = SAFE_SLOTS_TO_UPDATE_JUSTIFIED;
-exports.HYSTERESIS_UPWARD_MULTIPLIER = HYSTERESIS_UPWARD_MULTIPLIER;
-exports.HYSTERESIS_DOWNWARD_MULTIPLIER = HYSTERESIS_DOWNWARD_MULTIPLIER;
-exports.HYSTERESIS_QUOTIENT = HYSTERESIS_QUOTIENT;
-exports.SHUFFLE_ROUND_COUNT = SHUFFLE_ROUND_COUNT;
-exports.MAX_VALIDATORS_PER_COMMITTEE = MAX_VALIDATORS_PER_COMMITTEE;
-exports.TARGET_COMMITTEE_SIZE = TARGET_COMMITTEE_SIZE;
-exports.MAX_COMMITTEES_PER_SLOT = MAX_COMMITTEES_PER_SLOT;
-
-function setActivePreset(presetName) {
-  exports.ACTIVE_PRESET = ACTIVE_PRESET = parsePresetName(presetName);
-  const preset = presets[ACTIVE_PRESET]; // Unfortunately, there is no way to dynamically update all of these variables
-  // so they must be updated individually and explicitly
-
-  exports.MAX_COMMITTEES_PER_SLOT = MAX_COMMITTEES_PER_SLOT = preset.MAX_COMMITTEES_PER_SLOT;
-  exports.TARGET_COMMITTEE_SIZE = TARGET_COMMITTEE_SIZE = preset.TARGET_COMMITTEE_SIZE;
-  exports.MAX_VALIDATORS_PER_COMMITTEE = MAX_VALIDATORS_PER_COMMITTEE = preset.MAX_VALIDATORS_PER_COMMITTEE;
-  exports.SHUFFLE_ROUND_COUNT = SHUFFLE_ROUND_COUNT = preset.SHUFFLE_ROUND_COUNT;
-  exports.HYSTERESIS_QUOTIENT = HYSTERESIS_QUOTIENT = preset.HYSTERESIS_QUOTIENT;
-  exports.HYSTERESIS_DOWNWARD_MULTIPLIER = HYSTERESIS_DOWNWARD_MULTIPLIER = preset.HYSTERESIS_DOWNWARD_MULTIPLIER;
-  exports.HYSTERESIS_UPWARD_MULTIPLIER = HYSTERESIS_UPWARD_MULTIPLIER = preset.HYSTERESIS_UPWARD_MULTIPLIER;
-  exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = SAFE_SLOTS_TO_UPDATE_JUSTIFIED = preset.SAFE_SLOTS_TO_UPDATE_JUSTIFIED;
-  exports.MIN_DEPOSIT_AMOUNT = MIN_DEPOSIT_AMOUNT = preset.MIN_DEPOSIT_AMOUNT;
-  exports.MAX_EFFECTIVE_BALANCE = MAX_EFFECTIVE_BALANCE = preset.MAX_EFFECTIVE_BALANCE;
-  exports.EFFECTIVE_BALANCE_INCREMENT = EFFECTIVE_BALANCE_INCREMENT = preset.EFFECTIVE_BALANCE_INCREMENT;
-  exports.MIN_ATTESTATION_INCLUSION_DELAY = MIN_ATTESTATION_INCLUSION_DELAY = preset.MIN_ATTESTATION_INCLUSION_DELAY;
-  exports.SLOTS_PER_EPOCH = SLOTS_PER_EPOCH = preset.SLOTS_PER_EPOCH;
-  exports.MIN_SEED_LOOKAHEAD = MIN_SEED_LOOKAHEAD = preset.MIN_SEED_LOOKAHEAD;
-  exports.MAX_SEED_LOOKAHEAD = MAX_SEED_LOOKAHEAD = preset.MAX_SEED_LOOKAHEAD;
-  exports.EPOCHS_PER_ETH1_VOTING_PERIOD = EPOCHS_PER_ETH1_VOTING_PERIOD = preset.EPOCHS_PER_ETH1_VOTING_PERIOD;
-  exports.SLOTS_PER_HISTORICAL_ROOT = SLOTS_PER_HISTORICAL_ROOT = preset.SLOTS_PER_HISTORICAL_ROOT;
-  exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = MIN_EPOCHS_TO_INACTIVITY_PENALTY = preset.MIN_EPOCHS_TO_INACTIVITY_PENALTY;
-  exports.EPOCHS_PER_HISTORICAL_VECTOR = EPOCHS_PER_HISTORICAL_VECTOR = preset.EPOCHS_PER_HISTORICAL_VECTOR;
-  exports.EPOCHS_PER_SLASHINGS_VECTOR = EPOCHS_PER_SLASHINGS_VECTOR = preset.EPOCHS_PER_SLASHINGS_VECTOR;
-  exports.HISTORICAL_ROOTS_LIMIT = HISTORICAL_ROOTS_LIMIT = preset.HISTORICAL_ROOTS_LIMIT;
-  exports.VALIDATOR_REGISTRY_LIMIT = VALIDATOR_REGISTRY_LIMIT = preset.VALIDATOR_REGISTRY_LIMIT;
-  exports.BASE_REWARD_FACTOR = BASE_REWARD_FACTOR = preset.BASE_REWARD_FACTOR;
-  exports.WHISTLEBLOWER_REWARD_QUOTIENT = WHISTLEBLOWER_REWARD_QUOTIENT = preset.WHISTLEBLOWER_REWARD_QUOTIENT;
-  exports.PROPOSER_REWARD_QUOTIENT = PROPOSER_REWARD_QUOTIENT = preset.PROPOSER_REWARD_QUOTIENT;
-  exports.INACTIVITY_PENALTY_QUOTIENT = INACTIVITY_PENALTY_QUOTIENT = preset.INACTIVITY_PENALTY_QUOTIENT;
-  exports.MIN_SLASHING_PENALTY_QUOTIENT = MIN_SLASHING_PENALTY_QUOTIENT = preset.MIN_SLASHING_PENALTY_QUOTIENT;
-  exports.PROPORTIONAL_SLASHING_MULTIPLIER = PROPORTIONAL_SLASHING_MULTIPLIER = preset.PROPORTIONAL_SLASHING_MULTIPLIER;
-  exports.MAX_PROPOSER_SLASHINGS = MAX_PROPOSER_SLASHINGS = preset.MAX_PROPOSER_SLASHINGS;
-  exports.MAX_ATTESTER_SLASHINGS = MAX_ATTESTER_SLASHINGS = preset.MAX_ATTESTER_SLASHINGS;
-  exports.MAX_ATTESTATIONS = MAX_ATTESTATIONS = preset.MAX_ATTESTATIONS;
-  exports.MAX_DEPOSITS = MAX_DEPOSITS = preset.MAX_DEPOSITS;
-  exports.MAX_VOLUNTARY_EXITS = MAX_VOLUNTARY_EXITS = preset.MAX_VOLUNTARY_EXITS;
-  exports.SYNC_COMMITTEE_SIZE = SYNC_COMMITTEE_SIZE = preset.SYNC_COMMITTEE_SIZE;
-  exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = EPOCHS_PER_SYNC_COMMITTEE_PERIOD = preset.EPOCHS_PER_SYNC_COMMITTEE_PERIOD;
-  exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = INACTIVITY_PENALTY_QUOTIENT_ALTAIR = preset.INACTIVITY_PENALTY_QUOTIENT_ALTAIR;
-  exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = preset.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR;
-  exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = preset.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR;
-}
-//# sourceMappingURL=activePreset.js.map
-
-/***/ }),
-
-/***/ 6305:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2 = exports.NEXT_SYNC_COMMITTEE_INDEX = exports.FINALIZED_ROOT_INDEX_FLOORLOG2 = exports.FINALIZED_ROOT_INDEX = exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = exports.MAX_REQUEST_BLOCKS = exports.SYNC_COMMITTEE_SUBNET_COUNT = exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = exports.ATTESTATION_SUBNET_COUNT = exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = exports.RANDOM_SUBNETS_PER_VALIDATOR = exports.TARGET_AGGREGATORS_PER_COMMITTEE = exports.PARTICIPATION_FLAG_WEIGHTS = exports.WEIGHT_DENOMINATOR = exports.PROPOSER_WEIGHT = exports.SYNC_REWARD_WEIGHT = exports.TIMELY_HEAD_WEIGHT = exports.TIMELY_TARGET_WEIGHT = exports.TIMELY_SOURCE_WEIGHT = exports.TIMELY_HEAD_FLAG_INDEX = exports.TIMELY_TARGET_FLAG_INDEX = exports.TIMELY_SOURCE_FLAG_INDEX = exports.DOMAIN_CONTRIBUTION_AND_PROOF = exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = exports.DOMAIN_SYNC_COMMITTEE = exports.DOMAIN_AGGREGATE_AND_PROOF = exports.DOMAIN_SELECTION_PROOF = exports.DOMAIN_VOLUNTARY_EXIT = exports.DOMAIN_DEPOSIT = exports.DOMAIN_RANDAO = exports.DOMAIN_BEACON_ATTESTER = exports.DOMAIN_BEACON_PROPOSER = exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = exports.BLS_WITHDRAWAL_PREFIX = exports.JUSTIFICATION_BITS_LENGTH = exports.DEPOSIT_CONTRACT_TREE_DEPTH = exports.BASE_REWARDS_PER_EPOCH = exports.FAR_FUTURE_EPOCH = exports.GENESIS_EPOCH = exports.GENESIS_SLOT = void 0;
-// Misc
-const GENESIS_SLOT = 0;
-exports.GENESIS_SLOT = GENESIS_SLOT;
-const GENESIS_EPOCH = 0;
-exports.GENESIS_EPOCH = GENESIS_EPOCH;
-const FAR_FUTURE_EPOCH = Infinity;
-exports.FAR_FUTURE_EPOCH = FAR_FUTURE_EPOCH;
-const BASE_REWARDS_PER_EPOCH = 4;
-exports.BASE_REWARDS_PER_EPOCH = BASE_REWARDS_PER_EPOCH;
-const DEPOSIT_CONTRACT_TREE_DEPTH = 2 ** 5; // 32
-
-exports.DEPOSIT_CONTRACT_TREE_DEPTH = DEPOSIT_CONTRACT_TREE_DEPTH;
-const JUSTIFICATION_BITS_LENGTH = 4; // Withdrawal prefixes
-
-exports.JUSTIFICATION_BITS_LENGTH = JUSTIFICATION_BITS_LENGTH;
-const BLS_WITHDRAWAL_PREFIX = Uint8Array.from([0]);
-exports.BLS_WITHDRAWAL_PREFIX = BLS_WITHDRAWAL_PREFIX;
-const ETH1_ADDRESS_WITHDRAWAL_PREFIX = Uint8Array.from([0]); // Domain types
-
-exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = ETH1_ADDRESS_WITHDRAWAL_PREFIX;
-const DOMAIN_BEACON_PROPOSER = Uint8Array.from([0, 0, 0, 0]);
-exports.DOMAIN_BEACON_PROPOSER = DOMAIN_BEACON_PROPOSER;
-const DOMAIN_BEACON_ATTESTER = Uint8Array.from([1, 0, 0, 0]);
-exports.DOMAIN_BEACON_ATTESTER = DOMAIN_BEACON_ATTESTER;
-const DOMAIN_RANDAO = Uint8Array.from([2, 0, 0, 0]);
-exports.DOMAIN_RANDAO = DOMAIN_RANDAO;
-const DOMAIN_DEPOSIT = Uint8Array.from([3, 0, 0, 0]);
-exports.DOMAIN_DEPOSIT = DOMAIN_DEPOSIT;
-const DOMAIN_VOLUNTARY_EXIT = Uint8Array.from([4, 0, 0, 0]);
-exports.DOMAIN_VOLUNTARY_EXIT = DOMAIN_VOLUNTARY_EXIT;
-const DOMAIN_SELECTION_PROOF = Uint8Array.from([5, 0, 0, 0]);
-exports.DOMAIN_SELECTION_PROOF = DOMAIN_SELECTION_PROOF;
-const DOMAIN_AGGREGATE_AND_PROOF = Uint8Array.from([6, 0, 0, 0]);
-exports.DOMAIN_AGGREGATE_AND_PROOF = DOMAIN_AGGREGATE_AND_PROOF;
-const DOMAIN_SYNC_COMMITTEE = Uint8Array.from([7, 0, 0, 0]);
-exports.DOMAIN_SYNC_COMMITTEE = DOMAIN_SYNC_COMMITTEE;
-const DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = Uint8Array.from([8, 0, 0, 0]);
-exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF;
-const DOMAIN_CONTRIBUTION_AND_PROOF = Uint8Array.from([9, 0, 0, 0]); // Participation flag indices
-
-exports.DOMAIN_CONTRIBUTION_AND_PROOF = DOMAIN_CONTRIBUTION_AND_PROOF;
-const TIMELY_SOURCE_FLAG_INDEX = 0;
-exports.TIMELY_SOURCE_FLAG_INDEX = TIMELY_SOURCE_FLAG_INDEX;
-const TIMELY_TARGET_FLAG_INDEX = 1;
-exports.TIMELY_TARGET_FLAG_INDEX = TIMELY_TARGET_FLAG_INDEX;
-const TIMELY_HEAD_FLAG_INDEX = 2; // Incentivization weights
-
-exports.TIMELY_HEAD_FLAG_INDEX = TIMELY_HEAD_FLAG_INDEX;
-const TIMELY_SOURCE_WEIGHT = BigInt(14);
-exports.TIMELY_SOURCE_WEIGHT = TIMELY_SOURCE_WEIGHT;
-const TIMELY_TARGET_WEIGHT = BigInt(26);
-exports.TIMELY_TARGET_WEIGHT = TIMELY_TARGET_WEIGHT;
-const TIMELY_HEAD_WEIGHT = BigInt(14);
-exports.TIMELY_HEAD_WEIGHT = TIMELY_HEAD_WEIGHT;
-const SYNC_REWARD_WEIGHT = BigInt(2);
-exports.SYNC_REWARD_WEIGHT = SYNC_REWARD_WEIGHT;
-const PROPOSER_WEIGHT = BigInt(8);
-exports.PROPOSER_WEIGHT = PROPOSER_WEIGHT;
-const WEIGHT_DENOMINATOR = BigInt(64); // altair misc
-
-exports.WEIGHT_DENOMINATOR = WEIGHT_DENOMINATOR;
-const PARTICIPATION_FLAG_WEIGHTS = [TIMELY_SOURCE_WEIGHT, TIMELY_TARGET_WEIGHT, TIMELY_HEAD_WEIGHT]; // phase0 validator
-
-exports.PARTICIPATION_FLAG_WEIGHTS = PARTICIPATION_FLAG_WEIGHTS;
-const TARGET_AGGREGATORS_PER_COMMITTEE = 16;
-exports.TARGET_AGGREGATORS_PER_COMMITTEE = TARGET_AGGREGATORS_PER_COMMITTEE;
-const RANDOM_SUBNETS_PER_VALIDATOR = 1;
-exports.RANDOM_SUBNETS_PER_VALIDATOR = RANDOM_SUBNETS_PER_VALIDATOR;
-const EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = 256;
-/** Rationale: https://github.com/ethereum/eth2.0-specs/blob/dev/specs/phase0/p2p-interface.md#why-are-there-attestation_subnet_count-attestation-subnets */
-
-exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION;
-const ATTESTATION_SUBNET_COUNT = 64; // altair validator
-
-exports.ATTESTATION_SUBNET_COUNT = ATTESTATION_SUBNET_COUNT;
-const TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = 4;
-exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE;
-const SYNC_COMMITTEE_SUBNET_COUNT = 4;
-exports.SYNC_COMMITTEE_SUBNET_COUNT = SYNC_COMMITTEE_SUBNET_COUNT;
-const MAX_REQUEST_BLOCKS = 2 ** 10; // 1024
-//
-
-exports.MAX_REQUEST_BLOCKS = MAX_REQUEST_BLOCKS;
-const MIN_SYNC_COMMITTEE_PARTICIPANTS = 1; // Lightclient pre-computed
-
-/**
- * ```ts
- * config.types.altair.BeaconState.getPathGindex(["finalizedCheckpoint", "root"])
- * ```
- */
-
-exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = MIN_SYNC_COMMITTEE_PARTICIPANTS;
-const FINALIZED_ROOT_INDEX = 105;
-/**
- * ```ts
- * Math.floor(Math.log2(FINALIZED_ROOT_INDEX))
- * ```
- */
-
-exports.FINALIZED_ROOT_INDEX = FINALIZED_ROOT_INDEX;
-const FINALIZED_ROOT_INDEX_FLOORLOG2 = 6;
-/**
- * ```ts
- * config.types.altair.BeaconState.getPathGindex(["nextSyncCommittee"])
- * ```
- */
-
-exports.FINALIZED_ROOT_INDEX_FLOORLOG2 = FINALIZED_ROOT_INDEX_FLOORLOG2;
-const NEXT_SYNC_COMMITTEE_INDEX = 55;
-/**
- * ```ts
- * Math.floor(Math.log2(NEXT_SYNC_COMMITTEE_INDEX))
- * ```
- */
-
-exports.NEXT_SYNC_COMMITTEE_INDEX = NEXT_SYNC_COMMITTEE_INDEX;
-const NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2 = 5;
-exports.NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2 = NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2;
-//# sourceMappingURL=constants.js.map
 
 /***/ }),
 
@@ -2390,426 +1885,229 @@ exports.NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG2 = NEXT_SYNC_COMMITTEE_INDEX_FLOORLOG
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ForkName = void 0;
-
 /**
  * Forks in order of occurance
  */
-let ForkName;
-exports.ForkName = ForkName;
-
+var ForkName;
 (function (ForkName) {
-  ForkName["phase0"] = "phase0";
-  ForkName["altair"] = "altair";
-})(ForkName || (exports.ForkName = ForkName = {}));
+    ForkName["phase0"] = "phase0";
+    ForkName["altair"] = "altair";
+    ForkName["bellatrix"] = "bellatrix";
+})(ForkName = exports.ForkName || (exports.ForkName = {}));
 //# sourceMappingURL=forkName.js.map
 
 /***/ }),
 
 /***/ 5949:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
+/* provided dependency */ var process = __webpack_require__(4406);
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
 }));
-
-var _constants = __webpack_require__(6305);
-
-Object.keys(_constants).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _constants[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _constants[key];
-    }
-  });
-});
-
-var _preset = __webpack_require__(7082);
-
-Object.keys(_preset).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _preset[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _preset[key];
-    }
-  });
-});
-
-var _activePreset = __webpack_require__(5392);
-
-Object.keys(_activePreset).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _activePreset[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _activePreset[key];
-    }
-  });
-});
-
-var _forkName = __webpack_require__(3086);
-
-Object.keys(_forkName).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _forkName[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _forkName[key];
-    }
-  });
-});
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+var _a;
+var _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MAX_TRANSACTIONS_PER_PAYLOAD = exports.MAX_BYTES_PER_TRANSACTION = exports.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX = exports.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX = exports.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX = exports.UPDATE_TIMEOUT = exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = exports.SYNC_COMMITTEE_SIZE = exports.MAX_VOLUNTARY_EXITS = exports.MAX_DEPOSITS = exports.MAX_ATTESTATIONS = exports.MAX_ATTESTER_SLASHINGS = exports.MAX_PROPOSER_SLASHINGS = exports.PROPORTIONAL_SLASHING_MULTIPLIER = exports.MIN_SLASHING_PENALTY_QUOTIENT = exports.INACTIVITY_PENALTY_QUOTIENT = exports.PROPOSER_REWARD_QUOTIENT = exports.WHISTLEBLOWER_REWARD_QUOTIENT = exports.BASE_REWARD_FACTOR = exports.VALIDATOR_REGISTRY_LIMIT = exports.HISTORICAL_ROOTS_LIMIT = exports.EPOCHS_PER_SLASHINGS_VECTOR = exports.EPOCHS_PER_HISTORICAL_VECTOR = exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = exports.SLOTS_PER_HISTORICAL_ROOT = exports.EPOCHS_PER_ETH1_VOTING_PERIOD = exports.MAX_SEED_LOOKAHEAD = exports.MIN_SEED_LOOKAHEAD = exports.SLOTS_PER_EPOCH = exports.MIN_ATTESTATION_INCLUSION_DELAY = exports.EFFECTIVE_BALANCE_INCREMENT = exports.MAX_EFFECTIVE_BALANCE = exports.MIN_DEPOSIT_AMOUNT = exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = exports.HYSTERESIS_UPWARD_MULTIPLIER = exports.HYSTERESIS_DOWNWARD_MULTIPLIER = exports.HYSTERESIS_QUOTIENT = exports.SHUFFLE_ROUND_COUNT = exports.MAX_VALIDATORS_PER_COMMITTEE = exports.TARGET_COMMITTEE_SIZE = exports.MAX_COMMITTEES_PER_SLOT = exports.activePreset = exports.ACTIVE_PRESET = exports.PresetName = exports.presetToJson = exports.ForkName = void 0;
+exports.INTERVALS_PER_SLOT = exports.SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY = exports.NEXT_SYNC_COMMITTEE_INDEX = exports.NEXT_SYNC_COMMITTEE_DEPTH = exports.NEXT_SYNC_COMMITTEE_GINDEX = exports.FINALIZED_ROOT_INDEX = exports.FINALIZED_ROOT_DEPTH = exports.FINALIZED_ROOT_GINDEX = exports.GENESIS_BASE_FEE_PER_GAS = exports.GENESIS_GAS_LIMIT = exports.MAX_REQUEST_BLOCKS = exports.SYNC_COMMITTEE_SUBNET_SIZE = exports.SYNC_COMMITTEE_SUBNET_COUNT = exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = exports.ATTESTATION_SUBNET_COUNT = exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = exports.RANDOM_SUBNETS_PER_VALIDATOR = exports.TARGET_AGGREGATORS_PER_COMMITTEE = exports.PARTICIPATION_FLAG_WEIGHTS = exports.WEIGHT_DENOMINATOR = exports.PROPOSER_WEIGHT = exports.SYNC_REWARD_WEIGHT = exports.TIMELY_HEAD_WEIGHT = exports.TIMELY_TARGET_WEIGHT = exports.TIMELY_SOURCE_WEIGHT = exports.TIMELY_HEAD_FLAG_INDEX = exports.TIMELY_TARGET_FLAG_INDEX = exports.TIMELY_SOURCE_FLAG_INDEX = exports.DOMAIN_CONTRIBUTION_AND_PROOF = exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = exports.DOMAIN_SYNC_COMMITTEE = exports.DOMAIN_AGGREGATE_AND_PROOF = exports.DOMAIN_SELECTION_PROOF = exports.DOMAIN_VOLUNTARY_EXIT = exports.DOMAIN_DEPOSIT = exports.DOMAIN_RANDAO = exports.DOMAIN_BEACON_ATTESTER = exports.DOMAIN_BEACON_PROPOSER = exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = exports.BLS_WITHDRAWAL_PREFIX = exports.JUSTIFICATION_BITS_LENGTH = exports.DEPOSIT_CONTRACT_TREE_DEPTH = exports.BASE_REWARDS_PER_EPOCH = exports.FAR_FUTURE_EPOCH = exports.GENESIS_EPOCH = exports.GENESIS_SLOT = exports.MAX_EXTRA_DATA_BYTES = exports.BYTES_PER_LOGS_BLOOM = void 0;
+const presetName_1 = __webpack_require__(1582);
+Object.defineProperty(exports, "PresetName", ({ enumerable: true, get: function () { return presetName_1.PresetName; } }));
+const mainnet_1 = __webpack_require__(9410);
+const minimal_1 = __webpack_require__(1020);
+const presetStatus_1 = __webpack_require__(8845);
+const setPreset_1 = __webpack_require__(8691);
+__exportStar(__webpack_require__(3273), exports);
+var forkName_1 = __webpack_require__(3086);
+Object.defineProperty(exports, "ForkName", ({ enumerable: true, get: function () { return forkName_1.ForkName; } }));
+var json_1 = __webpack_require__(1369);
+Object.defineProperty(exports, "presetToJson", ({ enumerable: true, get: function () { return json_1.presetToJson; } }));
+const presets = {
+    [presetName_1.PresetName.mainnet]: mainnet_1.preset,
+    [presetName_1.PresetName.minimal]: minimal_1.preset,
+};
+// Once this file is imported, freeze the preset so calling setActivePreset() will throw an error
+presetStatus_1.presetStatus.frozen = true;
+/**
+ * The preset name currently exported by this library
+ *
+ * The `LODESTAR_PRESET` environment variable is used to select the active preset
+ * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
+ *
+ * The active preset can be manually overridden with `setActivePreset`
+ */
+exports.ACTIVE_PRESET = setPreset_1.userSelectedPreset || presetName_1.PresetName[(_b = process === null || process === void 0 ? void 0 : process.env) === null || _b === void 0 ? void 0 : _b.LODESTAR_PRESET] || presetName_1.PresetName.mainnet;
+exports.activePreset = presets[exports.ACTIVE_PRESET];
+// These variables must be exported individually and explicitly
+// in order to be accessible as top-level exports
+_a = presets[exports.ACTIVE_PRESET], exports.MAX_COMMITTEES_PER_SLOT = _a.MAX_COMMITTEES_PER_SLOT, exports.TARGET_COMMITTEE_SIZE = _a.TARGET_COMMITTEE_SIZE, exports.MAX_VALIDATORS_PER_COMMITTEE = _a.MAX_VALIDATORS_PER_COMMITTEE, exports.SHUFFLE_ROUND_COUNT = _a.SHUFFLE_ROUND_COUNT, exports.HYSTERESIS_QUOTIENT = _a.HYSTERESIS_QUOTIENT, exports.HYSTERESIS_DOWNWARD_MULTIPLIER = _a.HYSTERESIS_DOWNWARD_MULTIPLIER, exports.HYSTERESIS_UPWARD_MULTIPLIER = _a.HYSTERESIS_UPWARD_MULTIPLIER, exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = _a.SAFE_SLOTS_TO_UPDATE_JUSTIFIED, exports.MIN_DEPOSIT_AMOUNT = _a.MIN_DEPOSIT_AMOUNT, exports.MAX_EFFECTIVE_BALANCE = _a.MAX_EFFECTIVE_BALANCE, exports.EFFECTIVE_BALANCE_INCREMENT = _a.EFFECTIVE_BALANCE_INCREMENT, exports.MIN_ATTESTATION_INCLUSION_DELAY = _a.MIN_ATTESTATION_INCLUSION_DELAY, exports.SLOTS_PER_EPOCH = _a.SLOTS_PER_EPOCH, exports.MIN_SEED_LOOKAHEAD = _a.MIN_SEED_LOOKAHEAD, exports.MAX_SEED_LOOKAHEAD = _a.MAX_SEED_LOOKAHEAD, exports.EPOCHS_PER_ETH1_VOTING_PERIOD = _a.EPOCHS_PER_ETH1_VOTING_PERIOD, exports.SLOTS_PER_HISTORICAL_ROOT = _a.SLOTS_PER_HISTORICAL_ROOT, exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = _a.MIN_EPOCHS_TO_INACTIVITY_PENALTY, exports.EPOCHS_PER_HISTORICAL_VECTOR = _a.EPOCHS_PER_HISTORICAL_VECTOR, exports.EPOCHS_PER_SLASHINGS_VECTOR = _a.EPOCHS_PER_SLASHINGS_VECTOR, exports.HISTORICAL_ROOTS_LIMIT = _a.HISTORICAL_ROOTS_LIMIT, exports.VALIDATOR_REGISTRY_LIMIT = _a.VALIDATOR_REGISTRY_LIMIT, exports.BASE_REWARD_FACTOR = _a.BASE_REWARD_FACTOR, exports.WHISTLEBLOWER_REWARD_QUOTIENT = _a.WHISTLEBLOWER_REWARD_QUOTIENT, exports.PROPOSER_REWARD_QUOTIENT = _a.PROPOSER_REWARD_QUOTIENT, exports.INACTIVITY_PENALTY_QUOTIENT = _a.INACTIVITY_PENALTY_QUOTIENT, exports.MIN_SLASHING_PENALTY_QUOTIENT = _a.MIN_SLASHING_PENALTY_QUOTIENT, exports.PROPORTIONAL_SLASHING_MULTIPLIER = _a.PROPORTIONAL_SLASHING_MULTIPLIER, exports.MAX_PROPOSER_SLASHINGS = _a.MAX_PROPOSER_SLASHINGS, exports.MAX_ATTESTER_SLASHINGS = _a.MAX_ATTESTER_SLASHINGS, exports.MAX_ATTESTATIONS = _a.MAX_ATTESTATIONS, exports.MAX_DEPOSITS = _a.MAX_DEPOSITS, exports.MAX_VOLUNTARY_EXITS = _a.MAX_VOLUNTARY_EXITS, exports.SYNC_COMMITTEE_SIZE = _a.SYNC_COMMITTEE_SIZE, exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = _a.EPOCHS_PER_SYNC_COMMITTEE_PERIOD, exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = _a.INACTIVITY_PENALTY_QUOTIENT_ALTAIR, exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = _a.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR, exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = _a.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR, exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = _a.MIN_SYNC_COMMITTEE_PARTICIPANTS, exports.UPDATE_TIMEOUT = _a.UPDATE_TIMEOUT, exports.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX = _a.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX, exports.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX = _a.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX, exports.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX = _a.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX, exports.MAX_BYTES_PER_TRANSACTION = _a.MAX_BYTES_PER_TRANSACTION, exports.MAX_TRANSACTIONS_PER_PAYLOAD = _a.MAX_TRANSACTIONS_PER_PAYLOAD, exports.BYTES_PER_LOGS_BLOOM = _a.BYTES_PER_LOGS_BLOOM, exports.MAX_EXTRA_DATA_BYTES = _a.MAX_EXTRA_DATA_BYTES;
+////////////
+// Constants
+////////////
+// Exported directly on the index for faster accessing without commonjs compiled star import shenanigans
+// Misc
+exports.GENESIS_SLOT = 0;
+exports.GENESIS_EPOCH = 0;
+exports.FAR_FUTURE_EPOCH = Infinity;
+exports.BASE_REWARDS_PER_EPOCH = 4;
+exports.DEPOSIT_CONTRACT_TREE_DEPTH = 2 ** 5; // 32
+exports.JUSTIFICATION_BITS_LENGTH = 4;
+// Withdrawal prefixes
+exports.BLS_WITHDRAWAL_PREFIX = Uint8Array.from([0]);
+exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = Uint8Array.from([1]);
+// Domain types
+exports.DOMAIN_BEACON_PROPOSER = Uint8Array.from([0, 0, 0, 0]);
+exports.DOMAIN_BEACON_ATTESTER = Uint8Array.from([1, 0, 0, 0]);
+exports.DOMAIN_RANDAO = Uint8Array.from([2, 0, 0, 0]);
+exports.DOMAIN_DEPOSIT = Uint8Array.from([3, 0, 0, 0]);
+exports.DOMAIN_VOLUNTARY_EXIT = Uint8Array.from([4, 0, 0, 0]);
+exports.DOMAIN_SELECTION_PROOF = Uint8Array.from([5, 0, 0, 0]);
+exports.DOMAIN_AGGREGATE_AND_PROOF = Uint8Array.from([6, 0, 0, 0]);
+exports.DOMAIN_SYNC_COMMITTEE = Uint8Array.from([7, 0, 0, 0]);
+exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = Uint8Array.from([8, 0, 0, 0]);
+exports.DOMAIN_CONTRIBUTION_AND_PROOF = Uint8Array.from([9, 0, 0, 0]);
+// Participation flag indices
+exports.TIMELY_SOURCE_FLAG_INDEX = 0;
+exports.TIMELY_TARGET_FLAG_INDEX = 1;
+exports.TIMELY_HEAD_FLAG_INDEX = 2;
+// Incentivization weights
+exports.TIMELY_SOURCE_WEIGHT = 14;
+exports.TIMELY_TARGET_WEIGHT = 26;
+exports.TIMELY_HEAD_WEIGHT = 14;
+exports.SYNC_REWARD_WEIGHT = 2;
+exports.PROPOSER_WEIGHT = 8;
+exports.WEIGHT_DENOMINATOR = 64;
+// altair misc
+exports.PARTICIPATION_FLAG_WEIGHTS = [exports.TIMELY_SOURCE_WEIGHT, exports.TIMELY_TARGET_WEIGHT, exports.TIMELY_HEAD_WEIGHT];
+// phase0 validator
+exports.TARGET_AGGREGATORS_PER_COMMITTEE = 16;
+exports.RANDOM_SUBNETS_PER_VALIDATOR = 1;
+exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = 256;
+/** Rationale: https://github.com/ethereum/eth2.0-specs/blob/dev/specs/phase0/p2p-interface.md#why-are-there-attestation_subnet_count-attestation-subnets */
+exports.ATTESTATION_SUBNET_COUNT = 64;
+// altair validator
+exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = 16;
+exports.SYNC_COMMITTEE_SUBNET_COUNT = 4;
+exports.SYNC_COMMITTEE_SUBNET_SIZE = Math.floor(exports.SYNC_COMMITTEE_SIZE / exports.SYNC_COMMITTEE_SUBNET_COUNT);
+exports.MAX_REQUEST_BLOCKS = 2 ** 10; // 1024
+// Bellatrix constants - Spec v1.0.1
+// Genesis testing settings
+// Note: These configuration settings do not apply to the mainnet and are utilized only by pure Merge testing.
+exports.GENESIS_GAS_LIMIT = 30000000;
+exports.GENESIS_BASE_FEE_PER_GAS = BigInt(1000000000);
+// Lightclient pre-computed
+/**
+ * ```ts
+ * config.types.altair.BeaconState.getPathGindex(["finalizedCheckpoint", "root"])
+ * ```
+ */
+exports.FINALIZED_ROOT_GINDEX = 105;
+/**
+ * ```ts
+ * Math.floor(Math.log2(FINALIZED_ROOT_GINDEX))
+ * ```
+ */
+exports.FINALIZED_ROOT_DEPTH = 6;
+exports.FINALIZED_ROOT_INDEX = 41;
+/**
+ * ```ts
+ * config.types.altair.BeaconState.getPathGindex(["nextSyncCommittee"])
+ * ```
+ */
+exports.NEXT_SYNC_COMMITTEE_GINDEX = 55;
+/**
+ * ```ts
+ * Math.floor(Math.log2(NEXT_SYNC_COMMITTEE_GINDEX))
+ * ```
+ */
+exports.NEXT_SYNC_COMMITTEE_DEPTH = 5;
+exports.NEXT_SYNC_COMMITTEE_INDEX = 23;
+/**
+ * Optimistic sync
+ */
+exports.SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY = 128;
+exports.INTERVALS_PER_SLOT = 3;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
 
-/***/ 8641:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var _interface = __webpack_require__(5163);
-
-Object.keys(_interface).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _interface[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _interface[key];
-    }
-  });
-});
-
-var _ssz = __webpack_require__(9652);
-
-Object.keys(_ssz).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _ssz[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _ssz[key];
-    }
-  });
-});
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 5163:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=interface.js.map
-
-/***/ }),
-
-/***/ 9652:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.AltairPreset = void 0;
-
-var _ssz = __webpack_require__(8005);
-
-/* eslint-disable @typescript-eslint/naming-convention */
-const Number64 = new _ssz.NumberUintType({
-  byteLength: 8
-});
-const BigInt64 = new _ssz.BigIntUintType({
-  byteLength: 8
-});
-const AltairPreset = new _ssz.ContainerType({
-  fields: {
-    SYNC_COMMITTEE_SIZE: Number64,
-    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: Number64,
-    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: BigInt64,
-    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: BigInt64,
-    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: BigInt64
-  }
-});
-exports.AltairPreset = AltairPreset;
-//# sourceMappingURL=ssz.js.map
-
-/***/ }),
-
-/***/ 7082:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var _presetName = __webpack_require__(2495);
-
-Object.keys(_presetName).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _presetName[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _presetName[key];
-    }
-  });
-});
-
-var _interface = __webpack_require__(4124);
-
-Object.keys(_interface).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _interface[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _interface[key];
-    }
-  });
-});
-
-var _ssz = __webpack_require__(4234);
-
-Object.keys(_ssz).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _ssz[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _ssz[key];
-    }
-  });
-});
-
-var _phase = __webpack_require__(2841);
-
-Object.keys(_phase).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _phase[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _phase[key];
-    }
-  });
-});
-
-var _altair = __webpack_require__(8641);
-
-Object.keys(_altair).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _altair[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _altair[key];
-    }
-  });
-});
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 4124:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=interface.js.map
-
-/***/ }),
-
-/***/ 2841:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var _interface = __webpack_require__(6999);
-
-Object.keys(_interface).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _interface[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _interface[key];
-    }
-  });
-});
-
-var _ssz = __webpack_require__(5010);
-
-Object.keys(_ssz).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _ssz[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _ssz[key];
-    }
-  });
-});
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 6999:
-/***/ (() => {
-
-"use strict";
-
-//# sourceMappingURL=interface.js.map
-
-/***/ }),
-
-/***/ 5010:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.Phase0Preset = void 0;
-
-var _ssz = __webpack_require__(8005);
-
-/* eslint-disable @typescript-eslint/naming-convention */
-const Number64 = new _ssz.NumberUintType({
-  byteLength: 8
-});
-const BigInt64 = new _ssz.BigIntUintType({
-  byteLength: 8
-});
-const Phase0Preset = new _ssz.ContainerType({
-  fields: {
-    // Misc
-    MAX_COMMITTEES_PER_SLOT: Number64,
-    TARGET_COMMITTEE_SIZE: Number64,
-    MAX_VALIDATORS_PER_COMMITTEE: Number64,
-    SHUFFLE_ROUND_COUNT: Number64,
-    HYSTERESIS_QUOTIENT: Number64,
-    HYSTERESIS_DOWNWARD_MULTIPLIER: Number64,
-    HYSTERESIS_UPWARD_MULTIPLIER: Number64,
-    // Fork choice
-    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: Number64,
-    // Gwei Values
-    MIN_DEPOSIT_AMOUNT: BigInt64,
-    MAX_EFFECTIVE_BALANCE: BigInt64,
-    EFFECTIVE_BALANCE_INCREMENT: BigInt64,
-    // Time parameters
-    MIN_ATTESTATION_INCLUSION_DELAY: Number64,
-    SLOTS_PER_EPOCH: Number64,
-    MIN_SEED_LOOKAHEAD: Number64,
-    MAX_SEED_LOOKAHEAD: Number64,
-    EPOCHS_PER_ETH1_VOTING_PERIOD: Number64,
-    SLOTS_PER_HISTORICAL_ROOT: Number64,
-    MIN_EPOCHS_TO_INACTIVITY_PENALTY: Number64,
-    // State vector lengths
-    EPOCHS_PER_HISTORICAL_VECTOR: Number64,
-    EPOCHS_PER_SLASHINGS_VECTOR: Number64,
-    HISTORICAL_ROOTS_LIMIT: Number64,
-    VALIDATOR_REGISTRY_LIMIT: Number64,
-    // Reward and penalty quotients
-    BASE_REWARD_FACTOR: BigInt64,
-    WHISTLEBLOWER_REWARD_QUOTIENT: BigInt64,
-    PROPOSER_REWARD_QUOTIENT: BigInt64,
-    INACTIVITY_PENALTY_QUOTIENT: BigInt64,
-    MIN_SLASHING_PENALTY_QUOTIENT: BigInt64,
-    PROPORTIONAL_SLASHING_MULTIPLIER: BigInt64,
-    // Max operations per block
-    MAX_PROPOSER_SLASHINGS: Number64,
-    MAX_ATTESTER_SLASHINGS: Number64,
-    MAX_ATTESTATIONS: Number64,
-    MAX_DEPOSITS: Number64,
-    MAX_VOLUNTARY_EXITS: Number64
-  }
-});
-exports.Phase0Preset = Phase0Preset;
-//# sourceMappingURL=ssz.js.map
-
-/***/ }),
-
-/***/ 2495:
+/***/ 3273:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+//# sourceMappingURL=index.js.map
 
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+/***/ }),
+
+/***/ 1369:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.presetToJson = void 0;
+/**
+ * Render BeaconPreset to JSON strings
+ * - Numbers: Render as a quoted decimal string
+ */
+function presetToJson(preset) {
+    const json = {};
+    for (const key of Object.keys(preset)) {
+        json[key] = serializePresetValue(preset[key]);
+    }
+    return json;
+}
+exports.presetToJson = presetToJson;
+/**
+ * Type Wrapper to ensure that all values of BeaconPreset are number.
+ * If there are more types, expand this function with a type switch
+ */
+function serializePresetValue(value) {
+    return value.toString(10);
+}
+//# sourceMappingURL=json.js.map
+
+/***/ }),
+
+/***/ 1582:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PresetName = void 0;
-let PresetName;
-exports.PresetName = PresetName;
-
+var PresetName;
 (function (PresetName) {
-  PresetName["mainnet"] = "mainnet";
-  PresetName["minimal"] = "minimal";
-})(PresetName || (exports.PresetName = PresetName = {}));
+    PresetName["mainnet"] = "mainnet";
+    PresetName["minimal"] = "minimal";
+})(PresetName = exports.PresetName || (exports.PresetName = {}));
 //# sourceMappingURL=presetName.js.map
 
 /***/ }),
 
-/***/ 4234:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 8845:
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.BeaconPreset = void 0;
-
-var _ssz = __webpack_require__(8005);
-
-var _phase = __webpack_require__(2841);
-
-var _altair = __webpack_require__(8641);
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-const BeaconPreset = new _ssz.ContainerType({
-  fields: _objectSpread(_objectSpread({}, _phase.Phase0Preset.fields), _altair.AltairPreset.fields)
-});
-exports.BeaconPreset = BeaconPreset;
-//# sourceMappingURL=ssz.js.map
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.presetStatus = void 0;
+exports.presetStatus = {
+    frozen: false,
+};
+//# sourceMappingURL=presetStatus.js.map
 
 /***/ }),
 
@@ -2818,22 +2116,40 @@ exports.BeaconPreset = BeaconPreset;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.altair = void 0;
-
 /* eslint-disable @typescript-eslint/naming-convention */
-const altair = {
-  SYNC_COMMITTEE_SIZE: 512,
-  EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 256,
-  INACTIVITY_PENALTY_QUOTIENT_ALTAIR: BigInt(50331648),
-  MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: BigInt(64),
-  PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: BigInt(2)
+exports.altair = {
+    SYNC_COMMITTEE_SIZE: 512,
+    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 256,
+    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
+    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
+    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
+    MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
+    UPDATE_TIMEOUT: 8192,
 };
-exports.altair = altair;
 //# sourceMappingURL=altair.js.map
+
+/***/ }),
+
+/***/ 8717:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.bellatrix = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.bellatrix = {
+    INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
+    MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
+    PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
+    MAX_BYTES_PER_TRANSACTION: 1073741824,
+    MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
+    BYTES_PER_LOGS_BLOOM: 256,
+    MAX_EXTRA_DATA_BYTES: 32,
+};
+//# sourceMappingURL=bellatrix.js.map
 
 /***/ }),
 
@@ -2842,28 +2158,17 @@ exports.altair = altair;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.preset = exports.commit = void 0;
-
-var _phase = __webpack_require__(9804);
-
-var _altair = __webpack_require__(5533);
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-const commit = "v1.1.0-alpha.7";
-exports.commit = commit;
-
-const preset = _objectSpread(_objectSpread({}, _phase.phase0), _altair.altair);
-
-exports.preset = preset;
+const phase0_1 = __webpack_require__(9804);
+const altair_1 = __webpack_require__(5533);
+const bellatrix_1 = __webpack_require__(8717);
+exports.commit = "v1.1.9";
+exports.preset = {
+    ...phase0_1.phase0,
+    ...altair_1.altair,
+    ...bellatrix_1.bellatrix,
+};
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -2873,96 +2178,90 @@ exports.preset = preset;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.phase0 = void 0;
-
 /* eslint-disable @typescript-eslint/naming-convention */
-// Mainnet preset
-const phase0 = {
-  // Misc
-  // ---------------------------------------------------------------
-  // 2**6 (= 64)
-  MAX_COMMITTEES_PER_SLOT: 64,
-  // 2**7 (= 128)
-  TARGET_COMMITTEE_SIZE: 128,
-  // 2**11 (= 2,048)
-  MAX_VALIDATORS_PER_COMMITTEE: 2048,
-  // See issue 563
-  SHUFFLE_ROUND_COUNT: 90,
-  // 4
-  HYSTERESIS_QUOTIENT: 4,
-  // 1 (minus 0.25)
-  HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
-  // 5 (plus 1.25)
-  HYSTERESIS_UPWARD_MULTIPLIER: 5,
-  // Fork Choice
-  // ---------------------------------------------------------------
-  // 2**3 (= 8)
-  SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 8,
-  // Gwei values
-  // ---------------------------------------------------------------
-  // 2**0 * 10**9 (= 1,000,000,000) Gwei
-  MIN_DEPOSIT_AMOUNT: BigInt(1000000000),
-  // 2**5 * 10**9 (= 32,000,000,000) Gwei
-  MAX_EFFECTIVE_BALANCE: BigInt(32000000000),
-  // 2**0 * 10**9 (= 1,000,000,000) Gwei
-  EFFECTIVE_BALANCE_INCREMENT: BigInt(1000000000),
-  // Time parameters
-  // ---------------------------------------------------------------
-  // 2**0 (= 1) slots 12 seconds
-  MIN_ATTESTATION_INCLUSION_DELAY: 1,
-  // 2**5 (= 32) slots 6.4 minutes
-  SLOTS_PER_EPOCH: 32,
-  // 2**0 (= 1) epochs 6.4 minutes
-  MIN_SEED_LOOKAHEAD: 1,
-  // 2**2 (= 4) epochs 25.6 minutes
-  MAX_SEED_LOOKAHEAD: 4,
-  // 2**6 (= 64) epochs ~6.8 hours
-  EPOCHS_PER_ETH1_VOTING_PERIOD: 64,
-  // 2**13 (= 8,192) slots ~13 hours
-  SLOTS_PER_HISTORICAL_ROOT: 8192,
-  // 2**2 (= 4) epochs 25.6 minutes
-  MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
-  // State vector lengths
-  // ---------------------------------------------------------------
-  // 2**16 (= 65,536) epochs ~0.8 years
-  EPOCHS_PER_HISTORICAL_VECTOR: 65536,
-  // 2**13 (= 8,192) epochs ~36 days
-  EPOCHS_PER_SLASHINGS_VECTOR: 8192,
-  // 2**24 (= 16,777,216) historical roots, ~26,131 years
-  HISTORICAL_ROOTS_LIMIT: 16777216,
-  // 2**40 (= 1,099,511,627,776) validator spots
-  VALIDATOR_REGISTRY_LIMIT: 1099511627776,
-  // Reward and penalty quotients
-  // ---------------------------------------------------------------
-  // 2**6 (= 64)
-  BASE_REWARD_FACTOR: BigInt(64),
-  // 2**9 (= 512)
-  WHISTLEBLOWER_REWARD_QUOTIENT: BigInt(512),
-  // 2**3 (= 8)
-  PROPOSER_REWARD_QUOTIENT: BigInt(8),
-  // 2**26 (= 67,108,864)
-  INACTIVITY_PENALTY_QUOTIENT: BigInt(67108864),
-  // 2**7 (= 128) (lower safety margin at Phase 0 genesis)
-  MIN_SLASHING_PENALTY_QUOTIENT: BigInt(128),
-  PROPORTIONAL_SLASHING_MULTIPLIER: BigInt(1),
-  // Max operations per block
-  // ---------------------------------------------------------------
-  // 2**4 (= 16)
-  MAX_PROPOSER_SLASHINGS: 16,
-  // 2**1 (= 2)
-  MAX_ATTESTER_SLASHINGS: 2,
-  // 2**7 (= 128)
-  MAX_ATTESTATIONS: 128,
-  // 2**4 (= 16)
-  MAX_DEPOSITS: 16,
-  // 2**4 (= 16)
-  MAX_VOLUNTARY_EXITS: 16
+exports.phase0 = {
+    // Misc
+    // ---------------------------------------------------------------
+    // 2**6 (= 64)
+    MAX_COMMITTEES_PER_SLOT: 64,
+    // 2**7 (= 128)
+    TARGET_COMMITTEE_SIZE: 128,
+    // 2**11 (= 2,048)
+    MAX_VALIDATORS_PER_COMMITTEE: 2048,
+    // See issue 563
+    SHUFFLE_ROUND_COUNT: 90,
+    // 4
+    HYSTERESIS_QUOTIENT: 4,
+    // 1 (minus 0.25)
+    HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
+    // 5 (plus 1.25)
+    HYSTERESIS_UPWARD_MULTIPLIER: 5,
+    // Fork Choice
+    // ---------------------------------------------------------------
+    // 2**3 (= 8)
+    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 8,
+    // Gwei values
+    // ---------------------------------------------------------------
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    MIN_DEPOSIT_AMOUNT: 1000000000,
+    // 2**5 * 10**9 (= 32,000,000,000) Gwei
+    MAX_EFFECTIVE_BALANCE: 32000000000,
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    EFFECTIVE_BALANCE_INCREMENT: 1000000000,
+    // Time parameters
+    // ---------------------------------------------------------------
+    // 2**0 (= 1) slots 12 seconds
+    MIN_ATTESTATION_INCLUSION_DELAY: 1,
+    // 2**5 (= 32) slots 6.4 minutes
+    SLOTS_PER_EPOCH: 32,
+    // 2**0 (= 1) epochs 6.4 minutes
+    MIN_SEED_LOOKAHEAD: 1,
+    // 2**2 (= 4) epochs 25.6 minutes
+    MAX_SEED_LOOKAHEAD: 4,
+    // 2**6 (= 64) epochs ~6.8 hours
+    EPOCHS_PER_ETH1_VOTING_PERIOD: 64,
+    // 2**13 (= 8,192) slots ~13 hours
+    SLOTS_PER_HISTORICAL_ROOT: 8192,
+    // 2**2 (= 4) epochs 25.6 minutes
+    MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
+    // State vector lengths
+    // ---------------------------------------------------------------
+    // 2**16 (= 65,536) epochs ~0.8 years
+    EPOCHS_PER_HISTORICAL_VECTOR: 65536,
+    // 2**13 (= 8,192) epochs ~36 days
+    EPOCHS_PER_SLASHINGS_VECTOR: 8192,
+    // 2**24 (= 16,777,216) historical roots, ~26,131 years
+    HISTORICAL_ROOTS_LIMIT: 16777216,
+    // 2**40 (= 1,099,511,627,776) validator spots
+    VALIDATOR_REGISTRY_LIMIT: 1099511627776,
+    // Reward and penalty quotients
+    // ---------------------------------------------------------------
+    // 2**6 (= 64)
+    BASE_REWARD_FACTOR: 64,
+    // 2**9 (= 512)
+    WHISTLEBLOWER_REWARD_QUOTIENT: 512,
+    // 2**3 (= 8)
+    PROPOSER_REWARD_QUOTIENT: 8,
+    // 2**26 (= 67,108,864)
+    INACTIVITY_PENALTY_QUOTIENT: 67108864,
+    // 2**7 (= 128) (lower safety margin at Phase 0 genesis)
+    MIN_SLASHING_PENALTY_QUOTIENT: 128,
+    PROPORTIONAL_SLASHING_MULTIPLIER: 1,
+    // Max operations per block
+    // ---------------------------------------------------------------
+    // 2**4 (= 16)
+    MAX_PROPOSER_SLASHINGS: 16,
+    // 2**1 (= 2)
+    MAX_ATTESTER_SLASHINGS: 2,
+    // 2**7 (= 128)
+    MAX_ATTESTATIONS: 128,
+    // 2**4 (= 16)
+    MAX_DEPOSITS: 16,
+    // 2**4 (= 16)
+    MAX_VOLUNTARY_EXITS: 16,
 };
-exports.phase0 = phase0;
 //# sourceMappingURL=phase0.js.map
 
 /***/ }),
@@ -2972,22 +2271,40 @@ exports.phase0 = phase0;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.altair = void 0;
-
 /* eslint-disable @typescript-eslint/naming-convention */
-const altair = {
-  SYNC_COMMITTEE_SIZE: 32,
-  EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8,
-  INACTIVITY_PENALTY_QUOTIENT_ALTAIR: BigInt(50331648),
-  MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: BigInt(64),
-  PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: BigInt(2)
+exports.altair = {
+    SYNC_COMMITTEE_SIZE: 32,
+    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8,
+    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
+    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
+    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
+    MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
+    UPDATE_TIMEOUT: 64,
 };
-exports.altair = altair;
 //# sourceMappingURL=altair.js.map
+
+/***/ }),
+
+/***/ 2713:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.bellatrix = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.bellatrix = {
+    INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
+    MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
+    PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
+    MAX_BYTES_PER_TRANSACTION: 1073741824,
+    MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
+    BYTES_PER_LOGS_BLOOM: 256,
+    MAX_EXTRA_DATA_BYTES: 32,
+};
+//# sourceMappingURL=bellatrix.js.map
 
 /***/ }),
 
@@ -2996,28 +2313,17 @@ exports.altair = altair;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.preset = exports.commit = void 0;
-
-var _phase = __webpack_require__(5900);
-
-var _altair = __webpack_require__(5478);
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-const commit = "v1.1.0-alpha.7";
-exports.commit = commit;
-
-const preset = _objectSpread(_objectSpread({}, _phase.phase0), _altair.altair);
-
-exports.preset = preset;
+const phase0_1 = __webpack_require__(5900);
+const altair_1 = __webpack_require__(5478);
+const bellatrix_1 = __webpack_require__(2713);
+exports.commit = "v1.1.9";
+exports.preset = {
+    ...phase0_1.phase0,
+    ...altair_1.altair,
+    ...bellatrix_1.bellatrix,
+};
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -3027,105 +2333,146 @@ exports.preset = preset;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.phase0 = void 0;
-
 /* eslint-disable @typescript-eslint/naming-convention */
-// Minimal preset
-const phase0 = {
-  // Misc
-  // ---------------------------------------------------------------
-  // [customized] Just 4 committees for slot for testing purposes
-  MAX_COMMITTEES_PER_SLOT: 4,
-  // [customized] unsecure, but fast
-  TARGET_COMMITTEE_SIZE: 4,
-  // 2**11 (= 2,048)
-  MAX_VALIDATORS_PER_COMMITTEE: 2048,
-  // [customized] Faster, but unsecure.
-  SHUFFLE_ROUND_COUNT: 10,
-  // 4
-  HYSTERESIS_QUOTIENT: 4,
-  // 1 (minus 0.25)
-  HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
-  // 5 (plus 1.25)
-  HYSTERESIS_UPWARD_MULTIPLIER: 5,
-  // Fork Choice
-  // ---------------------------------------------------------------
-  // 2**1 (= 1)
-  SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 2,
-  // Gwei values
-  // ---------------------------------------------------------------
-  // 2**0 * 10**9 (= 1,000,000,000) Gwei
-  MIN_DEPOSIT_AMOUNT: BigInt(1000000000),
-  // 2**5 * 10**9 (= 32,000,000,000) Gwei
-  MAX_EFFECTIVE_BALANCE: BigInt(32000000000),
-  // 2**0 * 10**9 (= 1,000,000,000) Gwei
-  EFFECTIVE_BALANCE_INCREMENT: BigInt(1000000000),
-  // Time parameters
-  // ---------------------------------------------------------------
-  // 2**0 (= 1) slots 6 seconds
-  MIN_ATTESTATION_INCLUSION_DELAY: 1,
-  // [customized] fast epochs
-  SLOTS_PER_EPOCH: 8,
-  // 2**0 (= 1) epochs
-  MIN_SEED_LOOKAHEAD: 1,
-  // 2**2 (= 4) epochs
-  MAX_SEED_LOOKAHEAD: 4,
-  // [customized] higher frequency new deposits from eth1 for testing
-  EPOCHS_PER_ETH1_VOTING_PERIOD: 4,
-  // [customized] smaller state
-  SLOTS_PER_HISTORICAL_ROOT: 64,
-
-  /*
-  // 2**8 (= 256) epochs
-  MIN_VALIDATOR_WITHDRAWABILITY_DELAY: 256,
-  // [customized] higher frequency of committee turnover and faster time to acceptable voluntary exit
-  SHARD_COMMITTEE_PERIOD: 64,
-  */
-  // 2**2 (= 4) epochs
-  MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
-  // State vector lengths
-  // ---------------------------------------------------------------
-  // [customized] smaller state
-  EPOCHS_PER_HISTORICAL_VECTOR: 64,
-  // [customized] smaller state
-  EPOCHS_PER_SLASHINGS_VECTOR: 64,
-  // 2**24 (= 16,777,216) historical roots
-  HISTORICAL_ROOTS_LIMIT: 16777216,
-  // 2**40 (= 1,099,511,627,776) validator spots
-  VALIDATOR_REGISTRY_LIMIT: 1099511627776,
-  // Reward and penalty quotients
-  // ---------------------------------------------------------------
-  // 2**6 (= 64)
-  BASE_REWARD_FACTOR: BigInt(64),
-  // 2**9 (= 512)
-  WHISTLEBLOWER_REWARD_QUOTIENT: BigInt(512),
-  // 2**3 (= 8)
-  PROPOSER_REWARD_QUOTIENT: BigInt(8),
-  // [customized] 2**25 (= 33,554,432)
-  INACTIVITY_PENALTY_QUOTIENT: BigInt(33554432),
-  // [customized] 2**6 (= 64)
-  MIN_SLASHING_PENALTY_QUOTIENT: BigInt(64),
-  // [customized] 2 (lower safety margin than Phase 0 genesis but different than mainnet config for testing)
-  PROPORTIONAL_SLASHING_MULTIPLIER: BigInt(2),
-  // Max operations per block
-  // ---------------------------------------------------------------
-  // 2**4 (= 16)
-  MAX_PROPOSER_SLASHINGS: 16,
-  // 2**1 (= 2)
-  MAX_ATTESTER_SLASHINGS: 2,
-  // 2**7 (= 128)
-  MAX_ATTESTATIONS: 128,
-  // 2**4 (= 16)
-  MAX_DEPOSITS: 16,
-  // 2**4 (= 16)
-  MAX_VOLUNTARY_EXITS: 16
+exports.phase0 = {
+    // Misc
+    // ---------------------------------------------------------------
+    // [customized] Just 4 committees for slot for testing purposes
+    MAX_COMMITTEES_PER_SLOT: 4,
+    // [customized] unsecure, but fast
+    TARGET_COMMITTEE_SIZE: 4,
+    // 2**11 (= 2,048)
+    MAX_VALIDATORS_PER_COMMITTEE: 2048,
+    // [customized] Faster, but unsecure.
+    SHUFFLE_ROUND_COUNT: 10,
+    // 4
+    HYSTERESIS_QUOTIENT: 4,
+    // 1 (minus 0.25)
+    HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
+    // 5 (plus 1.25)
+    HYSTERESIS_UPWARD_MULTIPLIER: 5,
+    // Fork Choice
+    // ---------------------------------------------------------------
+    // 2**1 (= 1)
+    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 2,
+    // Gwei values
+    // ---------------------------------------------------------------
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    MIN_DEPOSIT_AMOUNT: 1000000000,
+    // 2**5 * 10**9 (= 32,000,000,000) Gwei
+    MAX_EFFECTIVE_BALANCE: 32000000000,
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    EFFECTIVE_BALANCE_INCREMENT: 1000000000,
+    // Time parameters
+    // ---------------------------------------------------------------
+    // 2**0 (= 1) slots 6 seconds
+    MIN_ATTESTATION_INCLUSION_DELAY: 1,
+    // [customized] fast epochs
+    SLOTS_PER_EPOCH: 8,
+    // 2**0 (= 1) epochs
+    MIN_SEED_LOOKAHEAD: 1,
+    // 2**2 (= 4) epochs
+    MAX_SEED_LOOKAHEAD: 4,
+    // [customized] higher frequency new deposits from eth1 for testing
+    EPOCHS_PER_ETH1_VOTING_PERIOD: 4,
+    // [customized] smaller state
+    SLOTS_PER_HISTORICAL_ROOT: 64,
+    /*
+    // 2**8 (= 256) epochs
+    MIN_VALIDATOR_WITHDRAWABILITY_DELAY: 256,
+    // [customized] higher frequency of committee turnover and faster time to acceptable voluntary exit
+    SHARD_COMMITTEE_PERIOD: 64,
+    */
+    // 2**2 (= 4) epochs
+    MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
+    // State vector lengths
+    // ---------------------------------------------------------------
+    // [customized] smaller state
+    EPOCHS_PER_HISTORICAL_VECTOR: 64,
+    // [customized] smaller state
+    EPOCHS_PER_SLASHINGS_VECTOR: 64,
+    // 2**24 (= 16,777,216) historical roots
+    HISTORICAL_ROOTS_LIMIT: 16777216,
+    // 2**40 (= 1,099,511,627,776) validator spots
+    VALIDATOR_REGISTRY_LIMIT: 1099511627776,
+    // Reward and penalty quotients
+    // ---------------------------------------------------------------
+    // 2**6 (= 64)
+    BASE_REWARD_FACTOR: 64,
+    // 2**9 (= 512)
+    WHISTLEBLOWER_REWARD_QUOTIENT: 512,
+    // 2**3 (= 8)
+    PROPOSER_REWARD_QUOTIENT: 8,
+    // [customized] 2**25 (= 33,554,432)
+    INACTIVITY_PENALTY_QUOTIENT: 33554432,
+    // [customized] 2**6 (= 64)
+    MIN_SLASHING_PENALTY_QUOTIENT: 64,
+    // [customized] 2 (lower safety margin than Phase 0 genesis but different than mainnet config for testing)
+    PROPORTIONAL_SLASHING_MULTIPLIER: 2,
+    // Max operations per block
+    // ---------------------------------------------------------------
+    // 2**4 (= 16)
+    MAX_PROPOSER_SLASHINGS: 16,
+    // 2**1 (= 2)
+    MAX_ATTESTER_SLASHINGS: 2,
+    // 2**7 (= 128)
+    MAX_ATTESTATIONS: 128,
+    // 2**4 (= 16)
+    MAX_DEPOSITS: 16,
+    // 2**4 (= 16)
+    MAX_VOLUNTARY_EXITS: 16,
 };
-exports.phase0 = phase0;
 //# sourceMappingURL=phase0.js.map
+
+/***/ }),
+
+/***/ 8691:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.setActivePreset = exports.userSelectedPreset = exports.PresetName = void 0;
+const presetName_1 = __webpack_require__(1582);
+Object.defineProperty(exports, "PresetName", ({ enumerable: true, get: function () { return presetName_1.PresetName; } }));
+const presetStatus_1 = __webpack_require__(8845);
+/**
+ * The preset name currently exported by this library
+ *
+ * The `LODESTAR_PRESET` environment variable is used to select the active preset
+ * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
+ *
+ * The active preset can be manually overridden with `setActivePreset`
+ */
+exports.userSelectedPreset = null;
+/**
+ * Override the active preset
+ *
+ * WARNING: Lodestar libraries rely on preset values being _constant_, so the active preset must be set _before_ loading any other lodestar libraries.
+ *
+ * Only call this function if you _really_ know what you are doing.
+ */
+function setActivePreset(presetName) {
+    if (presetStatus_1.presetStatus.frozen) {
+        throw Error(`Lodestar preset is already frozen. You must call setActivePreset() at the top of your
+application entry point, before importing @chainsafe/lodestar-params, or any library that may import it.
+
+\`\`\`
+// index.ts
+import {setActivePreset, PresetName} from "@chainsafe/lodestar-params/preset"
+setActivePreset(PresetName.minimal)
+// Now you can safely import from other paths and consume params
+import {SLOTS_PER_EPOCH} from "@chainsafe/lodestar-params"
+console.log({SLOTS_PER_EPOCH})
+\`\`\`
+`);
+    }
+    exports.userSelectedPreset = presetName;
+}
+exports.setActivePreset = setActivePreset;
+//# sourceMappingURL=setPreset.js.map
 
 /***/ }),
 
@@ -4932,6 +4279,7 @@ function ForkMe() {
 ;// CONCATENATED MODULE: ./src/components/Header.tsx
 /* eslint-disable max-len */
 
+var SPEC_VERSION = "1.1.9";
 function Header() {
   return /*#__PURE__*/react.createElement("div", {
     className: "section"
@@ -4942,11 +4290,11 @@ function Header() {
   }, "Simple Serialize", /*#__PURE__*/react.createElement("span", {
     className: "is-size-6"
   }, /*#__PURE__*/react.createElement("img", {
-    src: "https://img.shields.io/badge/ETH2_Spec_Version-0.11.2-2e86c1.svg"
-  }))), /*#__PURE__*/react.createElement("p", null, "Simple Serialize (SSZ) is a serialization and merkleization standard created specifically for Eth2. Find the specification", " ", /*#__PURE__*/react.createElement("a", {
+    src: "https://img.shields.io/badge/Consensus_Spec_Version-".concat(SPEC_VERSION, "-2e86c1.svg")
+  }))), /*#__PURE__*/react.createElement("p", null, "Simple Serialize (SSZ) is a serialization and merkleization standard created specifically for Ethereum consensus. Find the specification", " ", /*#__PURE__*/react.createElement("a", {
     target: "_blank",
     rel: "noreferrer",
-    href: "https://github.com/ethereum/eth2.0-specs/blob/v0.11.2/ssz/simple-serialize.md"
+    href: "https://github.com/ethereum/consensus-specs/blob/v".concat(SPEC_VERSION, "/ssz/simple-serialize.md")
   }, "here."))));
 }
 // EXTERNAL MODULE: ../../node_modules/core-js/modules/es.object.set-prototype-of.js
@@ -10568,12 +9916,14 @@ function types_objectWithoutPropertiesLoose(source, excluded) { if (source == nu
 
 var phase0 = lodestar_types_lib.ssz.phase0,
     altair = lodestar_types_lib.ssz.altair,
+    bellatrix = lodestar_types_lib.ssz.bellatrix,
     allForks = lodestar_types_lib.ssz.allForks,
-    primitive = types_objectWithoutProperties(lodestar_types_lib.ssz, ["phase0", "altair", "allForks"]);
+    primitive = types_objectWithoutProperties(lodestar_types_lib.ssz, ["phase0", "altair", "bellatrix", "allForks"]);
 
 var forks = {
   phase0: _objectSpread(_objectSpread({}, phase0), primitive),
-  altair: _objectSpread(_objectSpread(_objectSpread({}, phase0), altair), primitive)
+  altair: _objectSpread(_objectSpread(_objectSpread({}, phase0), altair), primitive),
+  bellatrix: _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, phase0), altair), bellatrix), primitive)
 };
 function typeNames(types) {
   return Object.keys(types).sort();
@@ -11541,7 +10891,7 @@ var Tabs = /*#__PURE__*/function (_React$Component) {
 
 
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = JSON.parse('{"HO":{"JV":"^0.26.0","lR":"^0.8.19"}}');
+const package_namespaceObject = JSON.parse('{"HO":{"JV":"0.34.0-dev.63","lR":"^0.8.19"}}');
 ;// CONCATENATED MODULE: ./src/components/Footer.tsx
 
 
@@ -29642,7 +28992,7 @@ exports.bitIndexBigInt = bitIndexBigInt;
 function toGindex(depth, index) {
     const anchor = BigInt(1) << BigInt(depth);
     if (index >= anchor) {
-        throw new Error("index too large for depth");
+        throw new Error(`index ${index} too large for depth ${depth}`);
     }
     return anchor | index;
 }
