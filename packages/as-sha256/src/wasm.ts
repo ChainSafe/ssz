@@ -1,9 +1,7 @@
 import loader from "@assemblyscript/loader";
-import {Buffer} from "buffer";
-// @ts-ignore
-import wasmCode from "../build/optimized.wasm";
+import {wasmCode} from "./wasmCode";
 
-const module = new WebAssembly.Module(Buffer.from(wasmCode, "binary"));
+const _module = new WebAssembly.Module(wasmCode);
 
 export interface WasmContext {
   readonly INPUT_LENGTH: number;
@@ -26,5 +24,5 @@ export interface WasmContext {
 }
 
 export function newInstance(): WasmContext {
-  return loader.instantiateSync(module);
+  return loader.instantiateSync(_module);
 }
