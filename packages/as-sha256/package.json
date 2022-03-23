@@ -19,7 +19,7 @@
     "build"
   ],
   "scripts": {
-    "prebuild": "rm -rf ./dist",
+    "prebuild": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
     "prepublish": "yarn build",
     "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
     "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime none --validate --debug",
