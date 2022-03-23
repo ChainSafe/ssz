@@ -1,6 +1,7 @@
 import {newInstance} from "./wasm";
 import {HashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
-export {HashObject, byteArrayToHashObject, hashObjectToByteArray};
+import SHA256 from "./sha256";
+export {HashObject, byteArrayToHashObject, hashObjectToByteArray, SHA256};
 
 const ctx = newInstance();
 const wasmInputValue = ctx.input.value;
