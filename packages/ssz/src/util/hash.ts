@@ -1,11 +1,11 @@
 /** @module ssz */
-import SHA256, {HashObject} from "@chainsafe/as-sha256";
+import {digest, HashObject} from "@chainsafe/as-sha256";
 
 /**
  * Hash used for hashTreeRoot
  */
 export function hash(...inputs: Uint8Array[]): Uint8Array {
-  return SHA256.digest(Buffer.concat(inputs));
+  return digest(Buffer.concat(inputs));
 }
 
 /**
