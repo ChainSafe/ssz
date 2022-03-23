@@ -10,8 +10,8 @@ describe("Create proof of Array of Objects", () => {
   const ArrayObject = new ContainerType({list: new ListCompositeType(SimpleObject, 100)}, {typeName: "ArrayObject"});
 
   it("should include all leaves of path to composite type", () => {
-    const parentObj = ArrayObject.defaultView;
-    const simpleObj = SimpleObject.defaultView;
+    const parentObj = ArrayObject.defaultView();
+    const simpleObj = SimpleObject.defaultView();
 
     parentObj.list.push(simpleObj);
     const proof = parentObj.createProof([["list", 0]]);
@@ -23,8 +23,8 @@ describe("Create proof of Array of Objects", () => {
   });
 
   it("Verify proof", () => {
-    const parentObj = ArrayObject.defaultView;
-    const simpleObj = SimpleObject.defaultView;
+    const parentObj = ArrayObject.defaultView();
+    const simpleObj = SimpleObject.defaultView();
 
     parentObj.list.push(simpleObj);
     const proof = parentObj.createProof([["list", 0]]);
@@ -35,7 +35,7 @@ describe("Create proof of Array of Objects", () => {
   });
 
   it("Prevent navigation beyond basic types", () => {
-    const simpleObj = SimpleObject.defaultView;
+    const simpleObj = SimpleObject.defaultView();
     expect(() => simpleObj.createProof([["a", 0]])).to.throw();
   });
 });
@@ -48,12 +48,12 @@ describe("Create proof of NodeStruct", () => {
   );
 
   it("should include all leaves of path to composite type", () => {
-    const parentObj = ArrayObject.defaultView;
+    const parentObj = ArrayObject.defaultView();
     parentObj.a = 0xff;
     parentObj.c = Buffer.alloc(32, 0xff);
 
     parentObj.list.push(SimpleObject.toView({a: 0x1001, b: 0x1002}));
-    parentObj.list.push(SimpleObject.defaultView);
+    parentObj.list.push(SimpleObject.defaultView());
     parentObj.list.push(SimpleObject.toView({a: 0x1201, b: 0x1202}));
 
     const proof = parentObj.createProof([

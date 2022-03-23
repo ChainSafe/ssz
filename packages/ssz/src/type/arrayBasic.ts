@@ -219,7 +219,7 @@ export function value_defaultValueArray<ElementType extends Type<unknown>>(
 ): ValueOf<ElementType>[] {
   const values = new Array<ValueOf<ElementType>>(length);
   for (let i = 0; i < length; i++) {
-    values[i] = elementType.defaultValue as ValueOf<ElementType>;
+    values[i] = elementType.defaultValue() as ValueOf<ElementType>;
   }
   return values;
 }

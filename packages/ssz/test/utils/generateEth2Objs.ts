@@ -8,7 +8,7 @@ const BITS_PER_ATTESTATION = 90;
 const ATTESTATIONS_PER_BLOCK = 90;
 
 export function getRandomState(validatorCount: number): BeaconState {
-  const state = sszAltair.BeaconState.defaultValue;
+  const state = sszAltair.BeaconState.defaultValue();
   for (let i = 0; i < validatorCount; i++) {
     state.balances.push(34788813514 + i);
     state.currentEpochParticipation.push(3);

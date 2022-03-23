@@ -9,7 +9,7 @@ describe("ByteVectorType proofs", () => {
     expect(() => rootType.getPropertyType()).to.throw();
     expect(() => rootType.getIndexProperty()).to.throw();
 
-    const containerRoot = containerRootType.defaultViewDU;
+    const containerRoot = containerRootType.defaultViewDU();
     const proof = containerRoot.createProof([["root", 0]]);
     const proofAll = containerRoot.createProof([["root"]]);
     expect(proof).to.deep.equal(proofAll, "Proof for byte index 0 must equal proof for all data");

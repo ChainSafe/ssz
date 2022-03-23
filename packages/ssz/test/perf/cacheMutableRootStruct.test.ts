@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {BitVectorType, ContainerType, UintBigintType} from "../../src";
+import {BitVectorType, ContainerType, UintBigintType, ValueOf} from "../../src";
 
 describe("cachePermanentRootStruct", () => {
   const uint64 = new UintBigintType(8);
@@ -20,18 +20,18 @@ describe("cachePermanentRootStruct", () => {
     {cachePermanentRootStruct: true}
   );
 
-  itBench<typeof TestStruct.defaultValue, typeof TestStruct.defaultValue>({
+  itBench<ValueOf<typeof TestStruct>, ValueOf<typeof TestStruct>>({
     id: "cachePermanentRootStruct no cache",
-    before: () => TestStruct.defaultValue,
+    before: () => TestStruct.defaultValue(),
     beforeEach: (value) => value,
     fn: (value) => {
       TestStruct.hashTreeRoot(value);
     },
   });
 
-  itBench<typeof TestStruct.defaultValue, typeof TestStruct.defaultValue>({
+  itBench<ValueOf<typeof TestStruct>, ValueOf<typeof TestStruct>>({
     id: "cachePermanentRootStruct with cache",
-    before: () => TestStructCache.defaultValue,
+    before: () => TestStructCache.defaultValue(),
     beforeEach: (value) => value,
     fn: (value) => {
       TestStructCache.hashTreeRoot(value);

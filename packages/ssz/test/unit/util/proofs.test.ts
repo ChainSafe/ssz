@@ -8,7 +8,7 @@ describe("Proofs / Stop navigating into some types", () => {
   for (const bitArrayType of [new BitVectorType(bitLen2Nodes), new BitListType(bitLen2Nodes)])
     it(`${bitArrayType.typeName} - should return proof of all`, () => {
       const bitVectorContainerType = new ContainerType({a: bitArrayType});
-      const bitVectorContainerView = bitVectorContainerType.defaultViewDU;
+      const bitVectorContainerView = bitVectorContainerType.defaultViewDU();
 
       const proofAll = bitVectorContainerView.createProof([["a"]]);
       const proofOneBit = bitVectorContainerView.createProof([["a", 1]]);

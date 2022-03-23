@@ -40,7 +40,7 @@ import {ValueOf} from "@chainsafe/ssz";
 type Keypair = ValueOf<typeof Keypair>
 
 // Now you can perform different operations on Keypair objects
-const keypair = Keypair.defaultValue; // Create a default Keypair
+const keypair = Keypair.defaultValue(); // Create a default Keypair
 
 keypair.privateKey; // => Uint8Array [0,0,0,...], length 32
 keypair.publicKey; // => Uint8Array [0,0,0, ...], length 48
@@ -109,10 +109,10 @@ const C = new ContainerType({
 });
 
 // Create a tree view based on the default value
-const c = C.defaultView;
+const c = C.defaultView();
 
 // SSZ operations
-c.serialize() === C.hashTreeRoot(C.defaultValue);
+c.serialize() === C.hashTreeRoot(C.defaultValue());
 const root = c.hashTreeRoot();
 
 // Getters
@@ -157,10 +157,10 @@ const C = new ContainerType({
 });
 
 // Create a tree view DU based on the default value
-const c = C.defaultViewDU;
+const c = C.defaultViewDU();
 
 // SSZ operations
-c.serialize() === C.hashTreeRoot(C.defaultValue);
+c.serialize() === C.hashTreeRoot(C.defaultValue());
 const root = c.hashTreeRoot();
 
 // Getters

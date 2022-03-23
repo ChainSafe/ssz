@@ -130,9 +130,9 @@ describe("BitArray errors", () => {
 describe("BitArray TreeView - ensure no recursive loops", () => {
   const bitLen = 8;
   const bitVector = new BitVectorType(bitLen);
-  const bitArrayValue = bitVector.defaultValue;
-  const bitArrayView = bitVector.defaultView;
-  const bitArrayViewDU = bitVector.defaultViewDU;
+  const bitArrayValue = bitVector.defaultValue();
+  const bitArrayView = bitVector.defaultView();
+  const bitArrayViewDU = bitVector.defaultViewDU();
   const indexes = Array.from({length: bitLen}, () => 0);
 
   type KeysOfFns<T extends BitArray> = {

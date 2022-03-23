@@ -79,13 +79,13 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   }
 
   /** New instance of a recursive zero'ed value converted to Tree View */
-  get defaultView(): TV {
-    return this.toView(this.defaultValue);
+  defaultView(): TV {
+    return this.toView(this.defaultValue());
   }
 
   /** New instance of a recursive zero'ed value converted to Deferred Update Tree View */
-  get defaultViewDU(): TVDU {
-    return this.toViewDU(this.defaultValue);
+  defaultViewDU(): TVDU {
+    return this.toViewDU(this.defaultValue());
   }
 
   /**

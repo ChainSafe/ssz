@@ -96,7 +96,7 @@ for (const ContainerTypeTest of [ContainerType, ContainerNodeStructType]) {
 
   describe(`${containerUint64.typeName} drop caches`, () => {
     it("Make some changes then get previous value", () => {
-      const view = containerUint64.defaultViewDU;
+      const view = containerUint64.defaultViewDU();
       const bytesBefore = toHexString(view.serialize());
 
       // Make changes to view and clone them to new view

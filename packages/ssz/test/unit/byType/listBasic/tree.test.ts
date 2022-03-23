@@ -174,8 +174,8 @@ runViewTestMutation({
 
 describe("ListBasicType tree reads", () => {
   for (const [id, view] of Object.entries({
-    view: ListN64Uint64NumberType.defaultView,
-    viewDU: ListN64Uint64NumberType.defaultViewDU,
+    view: ListN64Uint64NumberType.defaultView(),
+    viewDU: ListN64Uint64NumberType.defaultViewDU(),
   })) {
     it(`ListN64Uint64NumberType ${id} .getAll`, () => {
       const values: number[] = [];
@@ -199,7 +199,7 @@ describe("ListBasicType tree reads", () => {
 
 describe("ListBasicType drop caches", () => {
   it("Make some changes then get previous value", () => {
-    const view = ListN64Uint64NumberType.defaultViewDU;
+    const view = ListN64Uint64NumberType.defaultViewDU();
     const bytesBefore = toHexString(view.serialize());
 
     // Make changes to view and clone them to new view

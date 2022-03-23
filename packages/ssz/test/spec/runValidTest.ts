@@ -64,7 +64,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
 
   {
     // value - not equals
-    const defaultValue = type.defaultValue;
+    const defaultValue = type.defaultValue();
     const defaultSerialized = wrapErr(() => type.serialize(defaultValue), "serialize default");
     if (toHexString(defaultSerialized) !== testDataSerializedHex) {
       const isEqual = wrapErr(() => type.equals(testDataValue, defaultValue), "type.equals()");

@@ -17,7 +17,7 @@ export type TypeTestValid = {
 /**
  * Generate various tests for a given type and and array of VALID values. Tests:
  * - [x] .clone()
- * - [x] .defaultValue
+ * - [x] .defaultValue()
  * - [x] .deserialize()
  * - [x] .serialize()
  * - [x] .equals()
@@ -73,7 +73,9 @@ export function runTypeTestValid<T>({
   describe(`${typeName ?? type.typeName} valid`, () => {
     if (defaultValue !== undefined) {
       it("defaultValue", () => {
-        expect(toJsonOrString(type.toJson(type.defaultValue))).to.deep.equal(toJsonOrString(type.toJson(defaultValue)));
+        expect(toJsonOrString(type.toJson(type.defaultValue()))).to.deep.equal(
+          toJsonOrString(type.toJson(defaultValue))
+        );
       });
     }
 

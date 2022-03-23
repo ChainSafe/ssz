@@ -39,7 +39,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     // For example, this example below won't persist the pushed values to the list:
     // ```ts
     // const type = ContainerNodeStructType({a: new ListBasicType(byteType, 1)});
-    // const view = type.defaultViewDU;
+    // const view = type.defaultViewDU();
     // view.a.push(0)
     // ```
     // because the ListBasicViewDU in view.a will never propagate the changes upwards to its ContainerNodeStructType.

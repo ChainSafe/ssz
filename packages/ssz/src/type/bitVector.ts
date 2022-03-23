@@ -50,7 +50,7 @@ export class BitVectorType extends BitArrayType {
     this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
   }
 
-  get defaultValue(): BitArray {
+  defaultValue(): BitArray {
     return BitArray.fromBitLen(this.lengthBits);
   }
 

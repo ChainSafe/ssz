@@ -38,7 +38,7 @@ export class BitListType extends BitArrayType {
     this.maxSize = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
   }
 
-  get defaultValue(): BitArray {
+  defaultValue(): BitArray {
     return BitArray.fromBitLen(0);
   }
 

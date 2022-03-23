@@ -5,7 +5,7 @@ describe("cachePermanentRootStruct", () => {
   it("should cache permanent root struct", () => {
     const byteType = new UintNumberType(1);
     const type = new ContainerType({a: byteType, b: byteType}, {cachePermanentRootStruct: true});
-    const value = type.defaultValue;
+    const value = type.defaultValue();
 
     expect(type["getCachedPermanentRoot"](value)).to.equal(undefined, "Should not have cached root");
 

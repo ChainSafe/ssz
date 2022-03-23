@@ -27,7 +27,7 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
     super();
   }
 
-  get defaultValue(): ValueOf<ElementType>[] {
+  defaultValue(): ValueOf<ElementType>[] {
     return value_defaultValueArray(this.elementType, this.defaultLen);
   }
 

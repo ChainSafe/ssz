@@ -83,11 +83,11 @@ describe("ListCompositeType tree reads", () => {
 
   for (const [id, {view, elementToView}] of Object.entries({
     view: {
-      view: listOfContainersType.defaultView,
+      view: listOfContainersType.defaultView(),
       elementToView: containerUintsType.toView.bind(containerUintsType),
     },
     viewDU: {
-      view: listOfContainersType.defaultViewDU,
+      view: listOfContainersType.defaultViewDU(),
       elementToView: containerUintsType.toViewDU.bind(containerUintsType),
     },
   })) {
@@ -156,7 +156,7 @@ describe("ListCompositeType tree reads", () => {
 
 describe("ListCompositeType drop caches", () => {
   it("Make some changes then get previous value", () => {
-    const view = listOfContainersType.defaultViewDU;
+    const view = listOfContainersType.defaultViewDU();
     const bytesBefore = toHexString(view.serialize());
 
     // Make changes to view and clone them to new view
@@ -171,7 +171,7 @@ describe("ListCompositeType drop caches", () => {
 describe("ListCompositeType.sliceTo", () => {
   it("Slice List at multiple length", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
-    const listView = listType.defaultViewDU;
+    const listView = listType.defaultViewDU();
     const listRoots: string[] = [];
 
     for (let i = 0; i < 16; i++) {

@@ -3,10 +3,10 @@ import {ssz} from "../../lodestarTypes";
 
 describe("Various issues and regressions of Eth2 types", () => {
   it("Should push state.validators to ViewDU and update length", () => {
-    const validatorValue = ssz.phase0.Validator.defaultValue;
+    const validatorValue = ssz.phase0.Validator.defaultValue();
     const validatorViewDU = ssz.phase0.Validator.toViewDU(validatorValue);
 
-    const state = ssz.phase0.BeaconState.defaultViewDU;
+    const state = ssz.phase0.BeaconState.defaultViewDU();
 
     expect(ssz.phase0.Validators.toJson(state.validators.toValue())).to.deep.equal([], "Wrong value before push");
 

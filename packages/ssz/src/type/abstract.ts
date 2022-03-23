@@ -47,8 +47,6 @@ export type ByteViews = {
  * - Manipulate views
  */
 export abstract class Type<V> {
-  /** New instance of a recursive zero'ed value of this type */
-  abstract readonly defaultValue: V;
   /**
    * If `true`, the type is basic.
    *
@@ -112,6 +110,9 @@ export abstract class Type<V> {
   }
 
   // User-friendly API
+
+  /** New instance of a recursive zero'ed value of this type */
+  abstract defaultValue(): V;
 
   /** Serialize a value to binary data */
   serialize(value: V): Uint8Array {

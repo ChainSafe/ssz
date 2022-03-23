@@ -13,7 +13,9 @@ export class NoneType extends BasicType<null> {
   readonly minSize = 0;
   readonly maxSize = 0;
 
-  readonly defaultValue = null;
+  defaultValue(): null {
+    return null;
+  }
 
   // bytes serdes
 

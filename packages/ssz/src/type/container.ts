@@ -130,10 +130,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
   }
 
-  get defaultValue(): ValueOfFields<Fields> {
+  defaultValue(): ValueOfFields<Fields> {
     const value = {} as ValueOfFields<Fields>;
     for (const {fieldName, fieldType} of this.fieldsEntries) {
-      value[fieldName] = fieldType.defaultValue as ValueOf<Fields[keyof Fields]>;
+      value[fieldName] = fieldType.defaultValue() as ValueOf<Fields[keyof Fields]>;
     }
     return value;
   }

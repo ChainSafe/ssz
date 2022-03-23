@@ -16,7 +16,9 @@ export class BooleanType extends BasicType<boolean> {
   readonly minSize = 1;
   readonly maxSize = 1;
 
-  readonly defaultValue = false;
+  defaultValue(): boolean {
+    return false;
+  }
 
   // Serialization + deserialization
 

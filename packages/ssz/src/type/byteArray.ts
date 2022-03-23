@@ -19,7 +19,7 @@ export type ByteArray = Uint8Array;
 export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, ByteArray> {
   readonly isViewMutable = false;
 
-  get defaultValue(): ByteArray {
+  defaultValue(): ByteArray {
     // Since it's a byte array the minSize is bytes is the default size
     return new Uint8Array(this.minSize);
   }

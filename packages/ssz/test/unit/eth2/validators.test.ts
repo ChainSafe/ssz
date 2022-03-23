@@ -61,7 +61,7 @@ describe("Container with BranchNodeStruct", function () {
     const ValidatorsListType = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
 
     it("edit then read", () => {
-      const validatorListTB = ValidatorsListType.defaultViewDU;
+      const validatorListTB = ValidatorsListType.defaultViewDU();
       for (let i = 0; i < 10; i++) {
         const validator_ = {...validator, withdrawableEpoch: i};
         validatorListTB.push(ValidatorNodeStruct.toViewDU(validator_));
@@ -76,7 +76,7 @@ describe("Container with BranchNodeStruct", function () {
     });
 
     it("readonlyValuesListOfLeafNodeStruct", () => {
-      const validatorListTB = ValidatorsListType.defaultViewDU;
+      const validatorListTB = ValidatorsListType.defaultViewDU();
       const validatorsFlat: Validator[] = [];
       for (let i = 0; i < 10; i++) {
         const validator_ = {...validator, withdrawableEpoch: i};
@@ -91,7 +91,7 @@ describe("Container with BranchNodeStruct", function () {
     });
 
     it("return each property as struct backed", () => {
-      const validatorListTB = ValidatorsListType.defaultViewDU;
+      const validatorListTB = ValidatorsListType.defaultViewDU();
       validatorListTB.push(ValidatorNodeStruct.toViewDU(validator));
       for (const key of Object.keys(validator) as (keyof typeof validator)[]) {
         expect(validatorListTB.get(0)[key]).to.deep.equal(validator[key], `wrong ${key} value`);
@@ -99,7 +99,7 @@ describe("Container with BranchNodeStruct", function () {
     });
 
     it("validator.toValue()", () => {
-      const validatorListTB = ValidatorsListType.defaultViewDU;
+      const validatorListTB = ValidatorsListType.defaultViewDU();
       validatorListTB.push(ValidatorNodeStruct.toViewDU(validator));
       expect(validatorListTB.get(0).toValue()).to.deep.equal(validator);
     });

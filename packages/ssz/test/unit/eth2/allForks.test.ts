@@ -55,9 +55,9 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
   // - Non-generic arguments for functions
   // - Getting types with slot, then calling deserialize + serialize
 
-  const beaconStatePhase0 = ssz.phase0.BeaconState.defaultViewDU;
-  const beaconStateAltair = ssz.altair.BeaconState.defaultViewDU;
-  const beaconStateBellatrix = ssz.bellatrix.BeaconState.defaultViewDU;
+  const beaconStatePhase0 = ssz.phase0.BeaconState.defaultViewDU();
+  const beaconStateAltair = ssz.altair.BeaconState.defaultViewDU();
+  const beaconStateBellatrix = ssz.bellatrix.BeaconState.defaultViewDU();
   const beaconStateAllForks = beaconStatePhase0 as BeaconStateAllForks;
 
   const cachedBeaconStatePhase0 = getCachedBeaconState(beaconStatePhase0);
@@ -169,7 +169,7 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
   });
 
   it("AllForks - Getting type with slot", () => {
-    const state = getForkTypeAllForks(ForkName.phase0).defaultViewDU;
+    const state = getForkTypeAllForks(ForkName.phase0).defaultViewDU();
 
     // @ts-expect-error state AnyFork has no specific fork property
     state.currentEpochAttestations;
@@ -190,49 +190,49 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
   });
 
   it("AllForks - serialize with a generic type", () => {
-    getForkTypeAllForks(ForkName.phase0).serialize(ssz.phase0.BeaconState.defaultValue);
-    getForkTypeAllForks(ForkName.altair).serialize(ssz.altair.BeaconState.defaultValue);
-    getForkTypeAllForks(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconState.defaultValue);
+    getForkTypeAllForks(ForkName.phase0).serialize(ssz.phase0.BeaconState.defaultValue());
+    getForkTypeAllForks(ForkName.altair).serialize(ssz.altair.BeaconState.defaultValue());
+    getForkTypeAllForks(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconState.defaultValue());
 
     // getForkTypesAnyFork() requires an non-existent type that has the fields from all forks merged
     getForkTypeAllForks(ForkName.bellatrix).serialize({
       genesisTime: 0,
-      genesisValidatorsRoot: ssz.Root.defaultValue,
+      genesisValidatorsRoot: ssz.Root.defaultValue(),
       slot: 0,
-      fork: ssz.phase0.Fork.defaultValue,
+      fork: ssz.phase0.Fork.defaultValue(),
       // History
-      latestBlockHeader: ssz.phase0.BeaconBlockHeader.defaultValue,
-      blockRoots: ssz.phase0.HistoricalBlockRoots.defaultValue,
-      stateRoots: ssz.phase0.HistoricalStateRoots.defaultValue,
+      latestBlockHeader: ssz.phase0.BeaconBlockHeader.defaultValue(),
+      blockRoots: ssz.phase0.HistoricalBlockRoots.defaultValue(),
+      stateRoots: ssz.phase0.HistoricalStateRoots.defaultValue(),
       historicalRoots: [],
       // Eth1
-      eth1Data: ssz.phase0.Eth1Data.defaultValue,
+      eth1Data: ssz.phase0.Eth1Data.defaultValue(),
       eth1DataVotes: [],
       eth1DepositIndex: 0,
       // Registry
       validators: [],
       balances: [],
-      randaoMixes: ssz.phase0.RandaoMixes.defaultValue,
+      randaoMixes: ssz.phase0.RandaoMixes.defaultValue(),
       // Slashings
-      slashings: ssz.phase0.Slashings.defaultValue,
+      slashings: ssz.phase0.Slashings.defaultValue(),
       // Attestations
       previousEpochAttestations: [],
       currentEpochAttestations: [],
       // Finality
-      justificationBits: ssz.phase0.JustificationBits.defaultValue,
-      previousJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue,
-      currentJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue,
-      finalizedCheckpoint: ssz.phase0.Checkpoint.defaultValue,
+      justificationBits: ssz.phase0.JustificationBits.defaultValue(),
+      previousJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue(),
+      currentJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue(),
+      finalizedCheckpoint: ssz.phase0.Checkpoint.defaultValue(),
 
       // altair fork
       previousEpochParticipation: [],
       currentEpochParticipation: [],
       inactivityScores: [],
-      currentSyncCommittee: ssz.altair.SyncCommittee.defaultValue,
-      nextSyncCommittee: ssz.altair.SyncCommittee.defaultValue,
+      currentSyncCommittee: ssz.altair.SyncCommittee.defaultValue(),
+      nextSyncCommittee: ssz.altair.SyncCommittee.defaultValue(),
 
       // bellatrix fork
-      latestExecutionPayloadHeader: ssz.bellatrix.ExecutionPayloadHeader.defaultValue,
+      latestExecutionPayloadHeader: ssz.bellatrix.ExecutionPayloadHeader.defaultValue(),
     });
   });
 
@@ -254,7 +254,7 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
   });
 
   it("AllForkFields - Getting type with slot", () => {
-    const state = getForkTypeAllForkFields(ForkName.phase0).defaultViewDU;
+    const state = getForkTypeAllForkFields(ForkName.phase0).defaultViewDU();
 
     // @ts-expect-error state AllForks has no specific fork property
     state.currentEpochAttestations;
@@ -277,22 +277,22 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
   });
 
   it("AllForkFields - serialize with a generic type", () => {
-    getForkTypeAllForkFields(ForkName.phase0).serialize(ssz.phase0.BeaconState.defaultValue);
-    getForkTypeAllForkFields(ForkName.altair).serialize(ssz.altair.BeaconState.defaultValue);
-    getForkTypeAllForkFields(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconState.defaultValue);
+    getForkTypeAllForkFields(ForkName.phase0).serialize(ssz.phase0.BeaconState.defaultValue());
+    getForkTypeAllForkFields(ForkName.altair).serialize(ssz.altair.BeaconState.defaultValue());
+    getForkTypeAllForkFields(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconState.defaultValue());
 
     // getForkTypesAnyFork() requires an non-existent type that has the fields from all forks merged
     if (alwaysFalse) return;
     getForkTypeAllForkFields(ForkName.phase0).serialize({
       genesisTime: 0,
-      genesisValidatorsRoot: ssz.Root.defaultValue,
+      genesisValidatorsRoot: ssz.Root.defaultValue(),
       slot: 0,
-      fork: ssz.phase0.Fork.defaultValue,
-      latestBlockHeader: ssz.phase0.BeaconBlockHeader.defaultValue,
+      fork: ssz.phase0.Fork.defaultValue(),
+      latestBlockHeader: ssz.phase0.BeaconBlockHeader.defaultValue(),
       blockRoots: [],
       stateRoots: [],
       historicalRoots: [],
-      eth1Data: ssz.phase0.Eth1Data.defaultValue,
+      eth1Data: ssz.phase0.Eth1Data.defaultValue(),
       eth1DataVotes: [],
       eth1DepositIndex: 0,
       validators: [],
@@ -304,10 +304,10 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
       previousEpochAttestations: [],
       currentEpochAttestations: [],
 
-      justificationBits: ssz.phase0.JustificationBits.defaultValue,
-      previousJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue,
-      currentJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue,
-      finalizedCheckpoint: ssz.phase0.Checkpoint.defaultValue,
+      justificationBits: ssz.phase0.JustificationBits.defaultValue(),
+      previousJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue(),
+      currentJustifiedCheckpoint: ssz.phase0.Checkpoint.defaultValue(),
+      finalizedCheckpoint: ssz.phase0.Checkpoint.defaultValue(),
     });
   });
 
@@ -323,12 +323,12 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
     const viewDU = null as unknown as CompositeViewDU<typeof ssz.phase0.BeaconState>;
 
     const typeMashup = null as unknown as allForks.AllForksSSZTypes["BeaconState"];
-    typeMashup.serialize(ssz.phase0.BeaconState.defaultValue);
+    typeMashup.serialize(ssz.phase0.BeaconState.defaultValue());
 
     typeMashup.serialize(beaconStateAllForks.toValue());
 
     // Return Value
-    assertValue(typeMashup.defaultValue);
+    assertValue(typeMashup.defaultValue());
     assertValue(typeMashup.tree_toValue(node));
     assertValue(typeMashup.deserialize(bytes));
     assertValue(typeMashup.fromJson(json));
@@ -346,12 +346,12 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
     typeMashup.toViewDU(value);
 
     // Return View
-    assertView(typeMashup.defaultView);
+    assertView(typeMashup.defaultView());
     assertView(typeMashup.getView(tree));
     assertView(typeMashup.deserializeToView(bytes));
     assertView(typeMashup.toView(value));
     assertView(typeMashup.toViewFromViewDU(viewDU));
-    assertViewDU(typeMashup.defaultViewDU);
+    assertViewDU(typeMashup.defaultViewDU());
     assertViewDU(typeMashup.getViewDU(node));
     assertViewDU(typeMashup.deserializeToViewDU(bytes));
     assertViewDU(typeMashup.toViewDU(value));
@@ -366,9 +366,9 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
     typeMashup.toViewDUFromView(view);
     typeMashup.toViewFromViewDU(viewDU);
 
-    genericArgBeaconStateAllForks(typeMashup.defaultViewDU);
-    genericArgCachedBeaconStateAllForks(getCachedBeaconState(typeMashup.defaultViewDU));
-    genericArgBeaconStateAllForks(getCachedBeaconState(typeMashup.defaultViewDU));
+    genericArgBeaconStateAllForks(typeMashup.defaultViewDU());
+    genericArgCachedBeaconStateAllForks(getCachedBeaconState(typeMashup.defaultViewDU()));
+    genericArgBeaconStateAllForks(getCachedBeaconState(typeMashup.defaultViewDU()));
 
     function assertValue(state: phase0.BeaconState | altair.BeaconState | bellatrix.BeaconState): void {
       state;
@@ -406,9 +406,9 @@ describe("Eth2 allForks block", () => {
     | typeof ssz.bellatrix.BeaconBlock.fields
   >;
 
-  const beaconBlockPhase0 = ssz.phase0.BeaconBlock.defaultValue;
-  const beaconBlockAltair = ssz.altair.BeaconBlock.defaultValue;
-  const beaconBlockBellatrix = ssz.bellatrix.BeaconBlock.defaultValue;
+  const beaconBlockPhase0 = ssz.phase0.BeaconBlock.defaultValue();
+  const beaconBlockAltair = ssz.altair.BeaconBlock.defaultValue();
+  const beaconBlockBellatrix = ssz.bellatrix.BeaconBlock.defaultValue();
   const beaconBlockAllForks = beaconBlockPhase0 as BeaconBlockAllForks;
 
   function nonGenericArgBeaconBlockAllForks(block: BeaconBlockAllForks): void {
@@ -435,7 +435,7 @@ describe("Eth2 allForks block", () => {
   });
 
   it("AllForks - Getting type with slot", () => {
-    const block = getForkTypesAllForks(ForkName.phase0).defaultValue;
+    const block = getForkTypesAllForks(ForkName.phase0).defaultValue();
 
     // @ts-expect-error state AnyFork has no specific fork property
     block.body.syncAggregate;
@@ -452,13 +452,13 @@ describe("Eth2 allForks block", () => {
   });
 
   it("AllForks - serialize with a generic type", () => {
-    getForkTypesAllForks(ForkName.phase0).serialize(ssz.phase0.BeaconBlock.defaultValue);
-    getForkTypesAllForks(ForkName.altair).serialize(ssz.altair.BeaconBlock.defaultValue);
-    getForkTypesAllForks(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconBlock.defaultValue);
+    getForkTypesAllForks(ForkName.phase0).serialize(ssz.phase0.BeaconBlock.defaultValue());
+    getForkTypesAllForks(ForkName.altair).serialize(ssz.altair.BeaconBlock.defaultValue());
+    getForkTypesAllForks(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconBlock.defaultValue());
   });
 
   it("AllForkFields - Getting type with slot", () => {
-    const block = getForkTypesAllForkFields(ForkName.phase0).defaultValue;
+    const block = getForkTypesAllForkFields(ForkName.phase0).defaultValue();
 
     // @ts-expect-error state AnyFork has no specific fork property
     block.body.syncAggregate;
@@ -475,9 +475,9 @@ describe("Eth2 allForks block", () => {
   });
 
   it("AllForkFields - serialize with a generic type", () => {
-    getForkTypesAllForkFields(ForkName.phase0).serialize(ssz.phase0.BeaconBlock.defaultValue);
-    getForkTypesAllForkFields(ForkName.altair).serialize(ssz.altair.BeaconBlock.defaultValue);
-    getForkTypesAllForkFields(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconBlock.defaultValue);
+    getForkTypesAllForkFields(ForkName.phase0).serialize(ssz.phase0.BeaconBlock.defaultValue());
+    getForkTypesAllForkFields(ForkName.altair).serialize(ssz.altair.BeaconBlock.defaultValue());
+    getForkTypesAllForkFields(ForkName.bellatrix).serialize(ssz.bellatrix.BeaconBlock.defaultValue());
 
     // getForkTypesAllForkFields() requires a type that has an optional union of all fork types
     // A block of an imaginary fork where only bellatrix is on is accepted too
@@ -485,18 +485,18 @@ describe("Eth2 allForks block", () => {
     getForkTypesAllForkFields(ForkName.bellatrix).serialize({
       slot: 0,
       proposerIndex: 0,
-      parentRoot: ssz.Root.defaultValue,
-      stateRoot: ssz.Root.defaultValue,
+      parentRoot: ssz.Root.defaultValue(),
+      stateRoot: ssz.Root.defaultValue(),
       body: {
-        randaoReveal: ssz.BLSSignature.defaultValue,
-        eth1Data: ssz.phase0.Eth1Data.defaultValue,
-        graffiti: ssz.Root.defaultValue,
+        randaoReveal: ssz.BLSSignature.defaultValue(),
+        eth1Data: ssz.phase0.Eth1Data.defaultValue(),
+        graffiti: ssz.Root.defaultValue(),
         proposerSlashings: [],
         attesterSlashings: [],
         attestations: [],
         deposits: [],
         voluntaryExits: [],
-        executionPayload: ssz.bellatrix.ExecutionPayload.defaultValue,
+        executionPayload: ssz.bellatrix.ExecutionPayload.defaultValue(),
       },
     });
   });

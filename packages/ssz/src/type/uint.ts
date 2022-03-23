@@ -72,7 +72,9 @@ export class UintNumberType extends BasicType<number> {
     this.setBitwiseOR = opts?.setBitwiseOR === true;
   }
 
-  readonly defaultValue: number = 0;
+  defaultValue(): number {
+    return 0;
+  }
 
   // Serialization + deserialization
 
@@ -244,7 +246,9 @@ export class UintBigintType extends BasicType<bigint> {
     this.maxSize = byteLength;
   }
 
-  readonly defaultValue = BigInt(0);
+  defaultValue(): bigint {
+    return BigInt(0);
+  }
 
   // Serialization + deserialization
 

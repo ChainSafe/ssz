@@ -20,7 +20,7 @@ describe("SSZ get property", () => {
   const times = 100_000;
 
   for (const {id, type} of testCases) {
-    const stateStruct = type.defaultValue;
+    const stateStruct = type.defaultValue();
     stateStruct.b = 1400;
     const stateTree = type.toViewDU(stateStruct);
 

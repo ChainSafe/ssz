@@ -73,10 +73,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     this.maxSelector = this.types.length - 1;
   }
 
-  get defaultValue(): ValueOfTypes<Types> {
+  defaultValue(): ValueOfTypes<Types> {
     return {
       selector: 0,
-      value: this.types[0].defaultValue as unknown,
+      value: this.types[0].defaultValue() as unknown,
     } as ValueOfTypes<Types>;
   }
 

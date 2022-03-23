@@ -10,7 +10,7 @@ describe("BasicList", () => {
     const uint8Type = new UintNumberType(uintBytes);
     const uint8ListType = new ListBasicType(uint8Type, limit);
 
-    const uint8ListTree = uint8ListType.defaultView;
+    const uint8ListTree = uint8ListType.defaultView();
     const uint8ListStruct: number[] = [];
 
     // Populate tree
@@ -57,7 +57,7 @@ describe("BasicList", () => {
     const uint8Type = new UintNumberType(uintBytes);
     const uint8ListType = new ListBasicType(uint8Type, limit);
 
-    const uint8ListTree = uint8ListType.defaultViewDU;
+    const uint8ListTree = uint8ListType.defaultViewDU();
     const uint8ListStruct: number[] = [];
 
     // Populate tree
