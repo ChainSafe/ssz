@@ -22,13 +22,15 @@ export interface WasmContext {
   digest64(inPtr: number, outPtr: number): void;
 }
 
-export function newInstance(): WasmContext {
-  return new WebAssembly.Instance(_module, {
-    env: {
-      // modified from https://github.com/AssemblyScript/assemblyscript/blob/v0.9.2/lib/loader/index.js#L70
-      abort: function (msg: number, file: number, line: number, col: number) {
-        throw Error(`abort: ${msg}:${file}:${line}:${col}`);
-      },
+const importObj = {
+  env: {
+    // modified from https://github.com/AssemblyScript/assemblyscript/blob/v0.9.2/lib/loader/index.js#L70
+    abort: function (msg: number, file: number, line: number, col: number) {
+      throw Error(`abort: ${msg}:${file}:${line}:${col}`);
     },
-  }).exports as unknown as WasmContext;
+  },
+};
+
+export function newInstance(): WasmContext {
+  return new WebAssembly.Instance(_module, importObj).exports as unknown as WasmContext;
 }
