@@ -1,4 +1,3 @@
-import loader from "@assemblyscript/loader";
 import {wasmCode} from "./wasmCode";
 
 const _module = new WebAssembly.Module(wasmCode);
@@ -24,5 +23,12 @@ export interface WasmContext {
 }
 
 export function newInstance(): WasmContext {
-  return loader.instantiateSync(_module);
+  return new WebAssembly.Instance(_module, {
+    env: {
+      // modified from https://github.com/AssemblyScript/assemblyscript/blob/v0.9.2/lib/loader/index.js#L70
+      abort: function (msg: number, file: number, line: number, col: number) {
+        throw Error(`abort: ${msg}:${file}:${line}:${col}`);
+      },
+    },
+  }).exports as unknown as WasmContext;
 }
