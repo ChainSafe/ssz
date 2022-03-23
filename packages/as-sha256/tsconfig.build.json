@@ -1,9 +1,12 @@
 {
+  "include": ["src"],
   "compilerOptions": {
-    "target": "es2019",
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
+
+    "outDir": "lib",
+    "target": "esnext",
     "module": "commonjs",
     "pretty": true,
-    "lib": ["dom", "es2020", "esnext.bigint", "es2020.string", "es2020.symbol.wellknown"],
 
     "strict": true,
     "sourceMap": true,
@@ -19,7 +22,7 @@
     "esModuleInterop": true,
     "declaration": true,
     "declarationMap": true,
-    "incremental": true,
+    "incremental": false,
     "preserveWatchOutput": true
   }
 }

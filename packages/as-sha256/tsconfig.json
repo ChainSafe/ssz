@@ -1,7 +1,7 @@
 {
+  "include": ["src", "test"],
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "incremental": false,
+    "incremental": true
   }
 }
