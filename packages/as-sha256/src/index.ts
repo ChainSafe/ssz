@@ -9,11 +9,6 @@ const wasmOutputValue = ctx.output.value;
 const inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 const outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
 const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
-const inputDataView = new DataView(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
-// extracting numbers from Uint32Array causes more memory
-// uint32OutputArray = new Uint32Array(ctx.memory.buffer, wasmOutputValue, 32);
-
-const NUMBER_2_POW_32 = 2 ** 32;
 
 export function digest(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
@@ -73,97 +68,6 @@ export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObj
 
   // extracting numbers from Uint32Array causes more memory
   return byteArrayToHashObject(outputUint8Array);
-}
-
-enum HashInputType {
-  HashObject,
-  Uint8Array,
-  Uint64,
-}
-
-type HashInput =
-  | {type: HashInputType.HashObject; hashObject: HashObject}
-  | {type: HashInputType.Uint8Array; uint8Array: Uint8Array}
-  | {type: HashInputType.Uint64; uint64: number};
-
-enum HashOutputType {
-  HashObject,
-  Uint8Array,
-}
-
-function setHashInput(input: HashInput, offset32: number): void {
-  switch (input.type) {
-    case HashInputType.HashObject: {
-      const offset4 = offset32 * 8;
-      const {hashObject} = input;
-      inputUint32Array[offset4 + 0] = hashObject.h0;
-      inputUint32Array[offset4 + 1] = hashObject.h1;
-      inputUint32Array[offset4 + 2] = hashObject.h2;
-      inputUint32Array[offset4 + 3] = hashObject.h3;
-      inputUint32Array[offset4 + 4] = hashObject.h4;
-      inputUint32Array[offset4 + 5] = hashObject.h5;
-      inputUint32Array[offset4 + 6] = hashObject.h6;
-      inputUint32Array[offset4 + 7] = hashObject.h7;
-      break;
-    }
-
-    case HashInputType.Uint8Array: {
-      inputUint8Array.set(input.uint8Array, offset32 * 32);
-      break;
-    }
-
-    case HashInputType.Uint64: {
-      const offset4 = offset32 * 8;
-      const offset1 = offset32 * 32;
-      inputDataView.setUint32(offset1, input.uint64 & 0xffffffff, true);
-      inputDataView.setUint32(offset1 + 4, (input.uint64 / NUMBER_2_POW_32) & 0xffffffff, true);
-      inputUint32Array[offset4 + 2] = 0;
-      inputUint32Array[offset4 + 3] = 0;
-      inputUint32Array[offset4 + 4] = 0;
-      inputUint32Array[offset4 + 5] = 0;
-      inputUint32Array[offset4 + 6] = 0;
-      inputUint32Array[offset4 + 7] = 0;
-    }
-  }
-}
-
-export function digest64TypedData(
-  input1: HashInput,
-  input2: HashInput,
-  outputType: HashOutputType.HashObject
-): HashObject;
-
-export function digest64TypedData(
-  input1: HashInput,
-  input2: HashInput,
-  outputType: HashOutputType.Uint8Array
-): Uint8Array;
-
-/**
- * Digest 2 objects, each has 8 properties from h0 to h7.
- * The performance is a little bit better than digest64 due to the use of Uint32Array
- * and the memory is a little bit better than digest64 due to no temporary Uint8Array.
- * @returns
- */
-export function digest64TypedData(
-  input1: HashInput,
-  input2: HashInput,
-  outputType: HashOutputType
-): HashObject | Uint8Array {
-  setHashInput(input1, 0);
-  setHashInput(input2, 1);
-
-  ctx.digest64(wasmInputValue, wasmOutputValue);
-
-  switch (outputType) {
-    case HashOutputType.HashObject:
-      // extracting numbers from Uint32Array causes more memory
-      return byteArrayToHashObject(outputUint8Array);
-
-    case HashOutputType.Uint8Array:
-      // TODO: Benchmark fastest way to copy bytes
-      return outputUint8Array.slice(0, 32);
-  }
 }
 
 function update(data: Uint8Array): void {
