@@ -14,7 +14,7 @@ module.exports = function (config) {
                     {
                         test: /\.ts?$/,
                         exclude: /node_modules/,
-                        loader: 'babel-loader',
+                        loader: 'ts-loader',
                     },
                 ]
             },
