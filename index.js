@@ -15,6 +15,602 @@ module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
+/***/ 188:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ForkName = void 0;
+/**
+ * Forks in order of occurance
+ */
+var ForkName;
+(function (ForkName) {
+    ForkName["phase0"] = "phase0";
+    ForkName["altair"] = "altair";
+    ForkName["bellatrix"] = "bellatrix";
+})(ForkName = exports.ForkName || (exports.ForkName = {}));
+//# sourceMappingURL=forkName.js.map
+
+/***/ }),
+
+/***/ 8163:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+/* provided dependency */ var process = __webpack_require__(4406);
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+var _a;
+var _b;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MAX_TRANSACTIONS_PER_PAYLOAD = exports.MAX_BYTES_PER_TRANSACTION = exports.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX = exports.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX = exports.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX = exports.UPDATE_TIMEOUT = exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = exports.SYNC_COMMITTEE_SIZE = exports.MAX_VOLUNTARY_EXITS = exports.MAX_DEPOSITS = exports.MAX_ATTESTATIONS = exports.MAX_ATTESTER_SLASHINGS = exports.MAX_PROPOSER_SLASHINGS = exports.PROPORTIONAL_SLASHING_MULTIPLIER = exports.MIN_SLASHING_PENALTY_QUOTIENT = exports.INACTIVITY_PENALTY_QUOTIENT = exports.PROPOSER_REWARD_QUOTIENT = exports.WHISTLEBLOWER_REWARD_QUOTIENT = exports.BASE_REWARD_FACTOR = exports.VALIDATOR_REGISTRY_LIMIT = exports.HISTORICAL_ROOTS_LIMIT = exports.EPOCHS_PER_SLASHINGS_VECTOR = exports.EPOCHS_PER_HISTORICAL_VECTOR = exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = exports.SLOTS_PER_HISTORICAL_ROOT = exports.EPOCHS_PER_ETH1_VOTING_PERIOD = exports.MAX_SEED_LOOKAHEAD = exports.MIN_SEED_LOOKAHEAD = exports.SLOTS_PER_EPOCH = exports.MIN_ATTESTATION_INCLUSION_DELAY = exports.EFFECTIVE_BALANCE_INCREMENT = exports.MAX_EFFECTIVE_BALANCE = exports.MIN_DEPOSIT_AMOUNT = exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = exports.HYSTERESIS_UPWARD_MULTIPLIER = exports.HYSTERESIS_DOWNWARD_MULTIPLIER = exports.HYSTERESIS_QUOTIENT = exports.SHUFFLE_ROUND_COUNT = exports.MAX_VALIDATORS_PER_COMMITTEE = exports.TARGET_COMMITTEE_SIZE = exports.MAX_COMMITTEES_PER_SLOT = exports.activePreset = exports.ACTIVE_PRESET = exports.PresetName = exports.presetToJson = exports.ForkName = void 0;
+exports.INTERVALS_PER_SLOT = exports.SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY = exports.NEXT_SYNC_COMMITTEE_INDEX = exports.NEXT_SYNC_COMMITTEE_DEPTH = exports.NEXT_SYNC_COMMITTEE_GINDEX = exports.FINALIZED_ROOT_INDEX = exports.FINALIZED_ROOT_DEPTH = exports.FINALIZED_ROOT_GINDEX = exports.GENESIS_BASE_FEE_PER_GAS = exports.GENESIS_GAS_LIMIT = exports.MAX_REQUEST_BLOCKS = exports.SYNC_COMMITTEE_SUBNET_SIZE = exports.SYNC_COMMITTEE_SUBNET_COUNT = exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = exports.ATTESTATION_SUBNET_COUNT = exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = exports.RANDOM_SUBNETS_PER_VALIDATOR = exports.TARGET_AGGREGATORS_PER_COMMITTEE = exports.PARTICIPATION_FLAG_WEIGHTS = exports.WEIGHT_DENOMINATOR = exports.PROPOSER_WEIGHT = exports.SYNC_REWARD_WEIGHT = exports.TIMELY_HEAD_WEIGHT = exports.TIMELY_TARGET_WEIGHT = exports.TIMELY_SOURCE_WEIGHT = exports.TIMELY_HEAD_FLAG_INDEX = exports.TIMELY_TARGET_FLAG_INDEX = exports.TIMELY_SOURCE_FLAG_INDEX = exports.DOMAIN_CONTRIBUTION_AND_PROOF = exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = exports.DOMAIN_SYNC_COMMITTEE = exports.DOMAIN_AGGREGATE_AND_PROOF = exports.DOMAIN_SELECTION_PROOF = exports.DOMAIN_VOLUNTARY_EXIT = exports.DOMAIN_DEPOSIT = exports.DOMAIN_RANDAO = exports.DOMAIN_BEACON_ATTESTER = exports.DOMAIN_BEACON_PROPOSER = exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = exports.BLS_WITHDRAWAL_PREFIX = exports.JUSTIFICATION_BITS_LENGTH = exports.DEPOSIT_CONTRACT_TREE_DEPTH = exports.BASE_REWARDS_PER_EPOCH = exports.FAR_FUTURE_EPOCH = exports.GENESIS_EPOCH = exports.GENESIS_SLOT = exports.MAX_EXTRA_DATA_BYTES = exports.BYTES_PER_LOGS_BLOOM = void 0;
+const presetName_1 = __webpack_require__(8664);
+Object.defineProperty(exports, "PresetName", ({ enumerable: true, get: function () { return presetName_1.PresetName; } }));
+const mainnet_1 = __webpack_require__(731);
+const minimal_1 = __webpack_require__(9838);
+const presetStatus_1 = __webpack_require__(4558);
+const setPreset_1 = __webpack_require__(5415);
+__exportStar(__webpack_require__(8706), exports);
+var forkName_1 = __webpack_require__(188);
+Object.defineProperty(exports, "ForkName", ({ enumerable: true, get: function () { return forkName_1.ForkName; } }));
+var json_1 = __webpack_require__(6387);
+Object.defineProperty(exports, "presetToJson", ({ enumerable: true, get: function () { return json_1.presetToJson; } }));
+const presets = {
+    [presetName_1.PresetName.mainnet]: mainnet_1.preset,
+    [presetName_1.PresetName.minimal]: minimal_1.preset,
+};
+// Once this file is imported, freeze the preset so calling setActivePreset() will throw an error
+presetStatus_1.presetStatus.frozen = true;
+/**
+ * The preset name currently exported by this library
+ *
+ * The `LODESTAR_PRESET` environment variable is used to select the active preset
+ * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
+ *
+ * The active preset can be manually overridden with `setActivePreset`
+ */
+exports.ACTIVE_PRESET = setPreset_1.userSelectedPreset || presetName_1.PresetName[(_b = process === null || process === void 0 ? void 0 : process.env) === null || _b === void 0 ? void 0 : _b.LODESTAR_PRESET] || presetName_1.PresetName.mainnet;
+exports.activePreset = presets[exports.ACTIVE_PRESET];
+// These variables must be exported individually and explicitly
+// in order to be accessible as top-level exports
+_a = presets[exports.ACTIVE_PRESET], exports.MAX_COMMITTEES_PER_SLOT = _a.MAX_COMMITTEES_PER_SLOT, exports.TARGET_COMMITTEE_SIZE = _a.TARGET_COMMITTEE_SIZE, exports.MAX_VALIDATORS_PER_COMMITTEE = _a.MAX_VALIDATORS_PER_COMMITTEE, exports.SHUFFLE_ROUND_COUNT = _a.SHUFFLE_ROUND_COUNT, exports.HYSTERESIS_QUOTIENT = _a.HYSTERESIS_QUOTIENT, exports.HYSTERESIS_DOWNWARD_MULTIPLIER = _a.HYSTERESIS_DOWNWARD_MULTIPLIER, exports.HYSTERESIS_UPWARD_MULTIPLIER = _a.HYSTERESIS_UPWARD_MULTIPLIER, exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = _a.SAFE_SLOTS_TO_UPDATE_JUSTIFIED, exports.MIN_DEPOSIT_AMOUNT = _a.MIN_DEPOSIT_AMOUNT, exports.MAX_EFFECTIVE_BALANCE = _a.MAX_EFFECTIVE_BALANCE, exports.EFFECTIVE_BALANCE_INCREMENT = _a.EFFECTIVE_BALANCE_INCREMENT, exports.MIN_ATTESTATION_INCLUSION_DELAY = _a.MIN_ATTESTATION_INCLUSION_DELAY, exports.SLOTS_PER_EPOCH = _a.SLOTS_PER_EPOCH, exports.MIN_SEED_LOOKAHEAD = _a.MIN_SEED_LOOKAHEAD, exports.MAX_SEED_LOOKAHEAD = _a.MAX_SEED_LOOKAHEAD, exports.EPOCHS_PER_ETH1_VOTING_PERIOD = _a.EPOCHS_PER_ETH1_VOTING_PERIOD, exports.SLOTS_PER_HISTORICAL_ROOT = _a.SLOTS_PER_HISTORICAL_ROOT, exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = _a.MIN_EPOCHS_TO_INACTIVITY_PENALTY, exports.EPOCHS_PER_HISTORICAL_VECTOR = _a.EPOCHS_PER_HISTORICAL_VECTOR, exports.EPOCHS_PER_SLASHINGS_VECTOR = _a.EPOCHS_PER_SLASHINGS_VECTOR, exports.HISTORICAL_ROOTS_LIMIT = _a.HISTORICAL_ROOTS_LIMIT, exports.VALIDATOR_REGISTRY_LIMIT = _a.VALIDATOR_REGISTRY_LIMIT, exports.BASE_REWARD_FACTOR = _a.BASE_REWARD_FACTOR, exports.WHISTLEBLOWER_REWARD_QUOTIENT = _a.WHISTLEBLOWER_REWARD_QUOTIENT, exports.PROPOSER_REWARD_QUOTIENT = _a.PROPOSER_REWARD_QUOTIENT, exports.INACTIVITY_PENALTY_QUOTIENT = _a.INACTIVITY_PENALTY_QUOTIENT, exports.MIN_SLASHING_PENALTY_QUOTIENT = _a.MIN_SLASHING_PENALTY_QUOTIENT, exports.PROPORTIONAL_SLASHING_MULTIPLIER = _a.PROPORTIONAL_SLASHING_MULTIPLIER, exports.MAX_PROPOSER_SLASHINGS = _a.MAX_PROPOSER_SLASHINGS, exports.MAX_ATTESTER_SLASHINGS = _a.MAX_ATTESTER_SLASHINGS, exports.MAX_ATTESTATIONS = _a.MAX_ATTESTATIONS, exports.MAX_DEPOSITS = _a.MAX_DEPOSITS, exports.MAX_VOLUNTARY_EXITS = _a.MAX_VOLUNTARY_EXITS, exports.SYNC_COMMITTEE_SIZE = _a.SYNC_COMMITTEE_SIZE, exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = _a.EPOCHS_PER_SYNC_COMMITTEE_PERIOD, exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = _a.INACTIVITY_PENALTY_QUOTIENT_ALTAIR, exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = _a.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR, exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = _a.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR, exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = _a.MIN_SYNC_COMMITTEE_PARTICIPANTS, exports.UPDATE_TIMEOUT = _a.UPDATE_TIMEOUT, exports.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX = _a.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX, exports.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX = _a.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX, exports.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX = _a.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX, exports.MAX_BYTES_PER_TRANSACTION = _a.MAX_BYTES_PER_TRANSACTION, exports.MAX_TRANSACTIONS_PER_PAYLOAD = _a.MAX_TRANSACTIONS_PER_PAYLOAD, exports.BYTES_PER_LOGS_BLOOM = _a.BYTES_PER_LOGS_BLOOM, exports.MAX_EXTRA_DATA_BYTES = _a.MAX_EXTRA_DATA_BYTES;
+////////////
+// Constants
+////////////
+// Exported directly on the index for faster accessing without commonjs compiled star import shenanigans
+// Misc
+exports.GENESIS_SLOT = 0;
+exports.GENESIS_EPOCH = 0;
+exports.FAR_FUTURE_EPOCH = Infinity;
+exports.BASE_REWARDS_PER_EPOCH = 4;
+exports.DEPOSIT_CONTRACT_TREE_DEPTH = 2 ** 5; // 32
+exports.JUSTIFICATION_BITS_LENGTH = 4;
+// Withdrawal prefixes
+exports.BLS_WITHDRAWAL_PREFIX = Uint8Array.from([0]);
+exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = Uint8Array.from([1]);
+// Domain types
+exports.DOMAIN_BEACON_PROPOSER = Uint8Array.from([0, 0, 0, 0]);
+exports.DOMAIN_BEACON_ATTESTER = Uint8Array.from([1, 0, 0, 0]);
+exports.DOMAIN_RANDAO = Uint8Array.from([2, 0, 0, 0]);
+exports.DOMAIN_DEPOSIT = Uint8Array.from([3, 0, 0, 0]);
+exports.DOMAIN_VOLUNTARY_EXIT = Uint8Array.from([4, 0, 0, 0]);
+exports.DOMAIN_SELECTION_PROOF = Uint8Array.from([5, 0, 0, 0]);
+exports.DOMAIN_AGGREGATE_AND_PROOF = Uint8Array.from([6, 0, 0, 0]);
+exports.DOMAIN_SYNC_COMMITTEE = Uint8Array.from([7, 0, 0, 0]);
+exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = Uint8Array.from([8, 0, 0, 0]);
+exports.DOMAIN_CONTRIBUTION_AND_PROOF = Uint8Array.from([9, 0, 0, 0]);
+// Participation flag indices
+exports.TIMELY_SOURCE_FLAG_INDEX = 0;
+exports.TIMELY_TARGET_FLAG_INDEX = 1;
+exports.TIMELY_HEAD_FLAG_INDEX = 2;
+// Incentivization weights
+exports.TIMELY_SOURCE_WEIGHT = 14;
+exports.TIMELY_TARGET_WEIGHT = 26;
+exports.TIMELY_HEAD_WEIGHT = 14;
+exports.SYNC_REWARD_WEIGHT = 2;
+exports.PROPOSER_WEIGHT = 8;
+exports.WEIGHT_DENOMINATOR = 64;
+// altair misc
+exports.PARTICIPATION_FLAG_WEIGHTS = [exports.TIMELY_SOURCE_WEIGHT, exports.TIMELY_TARGET_WEIGHT, exports.TIMELY_HEAD_WEIGHT];
+// phase0 validator
+exports.TARGET_AGGREGATORS_PER_COMMITTEE = 16;
+exports.RANDOM_SUBNETS_PER_VALIDATOR = 1;
+exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = 256;
+/** Rationale: https://github.com/ethereum/eth2.0-specs/blob/dev/specs/phase0/p2p-interface.md#why-are-there-attestation_subnet_count-attestation-subnets */
+exports.ATTESTATION_SUBNET_COUNT = 64;
+// altair validator
+exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = 16;
+exports.SYNC_COMMITTEE_SUBNET_COUNT = 4;
+exports.SYNC_COMMITTEE_SUBNET_SIZE = Math.floor(exports.SYNC_COMMITTEE_SIZE / exports.SYNC_COMMITTEE_SUBNET_COUNT);
+exports.MAX_REQUEST_BLOCKS = 2 ** 10; // 1024
+// Bellatrix constants - Spec v1.0.1
+// Genesis testing settings
+// Note: These configuration settings do not apply to the mainnet and are utilized only by pure Merge testing.
+exports.GENESIS_GAS_LIMIT = 30000000;
+exports.GENESIS_BASE_FEE_PER_GAS = BigInt(1000000000);
+// Lightclient pre-computed
+/**
+ * ```ts
+ * config.types.altair.BeaconState.getPathGindex(["finalizedCheckpoint", "root"])
+ * ```
+ */
+exports.FINALIZED_ROOT_GINDEX = 105;
+/**
+ * ```ts
+ * Math.floor(Math.log2(FINALIZED_ROOT_GINDEX))
+ * ```
+ */
+exports.FINALIZED_ROOT_DEPTH = 6;
+exports.FINALIZED_ROOT_INDEX = 41;
+/**
+ * ```ts
+ * config.types.altair.BeaconState.getPathGindex(["nextSyncCommittee"])
+ * ```
+ */
+exports.NEXT_SYNC_COMMITTEE_GINDEX = 55;
+/**
+ * ```ts
+ * Math.floor(Math.log2(NEXT_SYNC_COMMITTEE_GINDEX))
+ * ```
+ */
+exports.NEXT_SYNC_COMMITTEE_DEPTH = 5;
+exports.NEXT_SYNC_COMMITTEE_INDEX = 23;
+/**
+ * Optimistic sync
+ */
+exports.SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY = 128;
+exports.INTERVALS_PER_SLOT = 3;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 8706:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 6387:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.presetToJson = void 0;
+/**
+ * Render BeaconPreset to JSON strings
+ * - Numbers: Render as a quoted decimal string
+ */
+function presetToJson(preset) {
+    const json = {};
+    for (const key of Object.keys(preset)) {
+        json[key] = serializePresetValue(preset[key]);
+    }
+    return json;
+}
+exports.presetToJson = presetToJson;
+/**
+ * Type Wrapper to ensure that all values of BeaconPreset are number.
+ * If there are more types, expand this function with a type switch
+ */
+function serializePresetValue(value) {
+    return value.toString(10);
+}
+//# sourceMappingURL=json.js.map
+
+/***/ }),
+
+/***/ 8664:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.PresetName = void 0;
+var PresetName;
+(function (PresetName) {
+    PresetName["mainnet"] = "mainnet";
+    PresetName["minimal"] = "minimal";
+})(PresetName = exports.PresetName || (exports.PresetName = {}));
+//# sourceMappingURL=presetName.js.map
+
+/***/ }),
+
+/***/ 4558:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.presetStatus = void 0;
+exports.presetStatus = {
+    frozen: false,
+};
+//# sourceMappingURL=presetStatus.js.map
+
+/***/ }),
+
+/***/ 2171:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.altair = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.altair = {
+    SYNC_COMMITTEE_SIZE: 512,
+    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 256,
+    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
+    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
+    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
+    MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
+    UPDATE_TIMEOUT: 8192,
+};
+//# sourceMappingURL=altair.js.map
+
+/***/ }),
+
+/***/ 1729:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.bellatrix = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.bellatrix = {
+    INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
+    MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
+    PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
+    MAX_BYTES_PER_TRANSACTION: 1073741824,
+    MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
+    BYTES_PER_LOGS_BLOOM: 256,
+    MAX_EXTRA_DATA_BYTES: 32,
+};
+//# sourceMappingURL=bellatrix.js.map
+
+/***/ }),
+
+/***/ 731:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.preset = exports.commit = void 0;
+const phase0_1 = __webpack_require__(2905);
+const altair_1 = __webpack_require__(2171);
+const bellatrix_1 = __webpack_require__(1729);
+exports.commit = "v1.1.9";
+exports.preset = {
+    ...phase0_1.phase0,
+    ...altair_1.altair,
+    ...bellatrix_1.bellatrix,
+};
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 2905:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.phase0 = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.phase0 = {
+    // Misc
+    // ---------------------------------------------------------------
+    // 2**6 (= 64)
+    MAX_COMMITTEES_PER_SLOT: 64,
+    // 2**7 (= 128)
+    TARGET_COMMITTEE_SIZE: 128,
+    // 2**11 (= 2,048)
+    MAX_VALIDATORS_PER_COMMITTEE: 2048,
+    // See issue 563
+    SHUFFLE_ROUND_COUNT: 90,
+    // 4
+    HYSTERESIS_QUOTIENT: 4,
+    // 1 (minus 0.25)
+    HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
+    // 5 (plus 1.25)
+    HYSTERESIS_UPWARD_MULTIPLIER: 5,
+    // Fork Choice
+    // ---------------------------------------------------------------
+    // 2**3 (= 8)
+    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 8,
+    // Gwei values
+    // ---------------------------------------------------------------
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    MIN_DEPOSIT_AMOUNT: 1000000000,
+    // 2**5 * 10**9 (= 32,000,000,000) Gwei
+    MAX_EFFECTIVE_BALANCE: 32000000000,
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    EFFECTIVE_BALANCE_INCREMENT: 1000000000,
+    // Time parameters
+    // ---------------------------------------------------------------
+    // 2**0 (= 1) slots 12 seconds
+    MIN_ATTESTATION_INCLUSION_DELAY: 1,
+    // 2**5 (= 32) slots 6.4 minutes
+    SLOTS_PER_EPOCH: 32,
+    // 2**0 (= 1) epochs 6.4 minutes
+    MIN_SEED_LOOKAHEAD: 1,
+    // 2**2 (= 4) epochs 25.6 minutes
+    MAX_SEED_LOOKAHEAD: 4,
+    // 2**6 (= 64) epochs ~6.8 hours
+    EPOCHS_PER_ETH1_VOTING_PERIOD: 64,
+    // 2**13 (= 8,192) slots ~13 hours
+    SLOTS_PER_HISTORICAL_ROOT: 8192,
+    // 2**2 (= 4) epochs 25.6 minutes
+    MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
+    // State vector lengths
+    // ---------------------------------------------------------------
+    // 2**16 (= 65,536) epochs ~0.8 years
+    EPOCHS_PER_HISTORICAL_VECTOR: 65536,
+    // 2**13 (= 8,192) epochs ~36 days
+    EPOCHS_PER_SLASHINGS_VECTOR: 8192,
+    // 2**24 (= 16,777,216) historical roots, ~26,131 years
+    HISTORICAL_ROOTS_LIMIT: 16777216,
+    // 2**40 (= 1,099,511,627,776) validator spots
+    VALIDATOR_REGISTRY_LIMIT: 1099511627776,
+    // Reward and penalty quotients
+    // ---------------------------------------------------------------
+    // 2**6 (= 64)
+    BASE_REWARD_FACTOR: 64,
+    // 2**9 (= 512)
+    WHISTLEBLOWER_REWARD_QUOTIENT: 512,
+    // 2**3 (= 8)
+    PROPOSER_REWARD_QUOTIENT: 8,
+    // 2**26 (= 67,108,864)
+    INACTIVITY_PENALTY_QUOTIENT: 67108864,
+    // 2**7 (= 128) (lower safety margin at Phase 0 genesis)
+    MIN_SLASHING_PENALTY_QUOTIENT: 128,
+    PROPORTIONAL_SLASHING_MULTIPLIER: 1,
+    // Max operations per block
+    // ---------------------------------------------------------------
+    // 2**4 (= 16)
+    MAX_PROPOSER_SLASHINGS: 16,
+    // 2**1 (= 2)
+    MAX_ATTESTER_SLASHINGS: 2,
+    // 2**7 (= 128)
+    MAX_ATTESTATIONS: 128,
+    // 2**4 (= 16)
+    MAX_DEPOSITS: 16,
+    // 2**4 (= 16)
+    MAX_VOLUNTARY_EXITS: 16,
+};
+//# sourceMappingURL=phase0.js.map
+
+/***/ }),
+
+/***/ 8759:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.altair = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.altair = {
+    SYNC_COMMITTEE_SIZE: 32,
+    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8,
+    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
+    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
+    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
+    MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
+    UPDATE_TIMEOUT: 64,
+};
+//# sourceMappingURL=altair.js.map
+
+/***/ }),
+
+/***/ 3371:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.bellatrix = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.bellatrix = {
+    INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
+    MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
+    PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
+    MAX_BYTES_PER_TRANSACTION: 1073741824,
+    MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
+    BYTES_PER_LOGS_BLOOM: 256,
+    MAX_EXTRA_DATA_BYTES: 32,
+};
+//# sourceMappingURL=bellatrix.js.map
+
+/***/ }),
+
+/***/ 9838:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.preset = exports.commit = void 0;
+const phase0_1 = __webpack_require__(9233);
+const altair_1 = __webpack_require__(8759);
+const bellatrix_1 = __webpack_require__(3371);
+exports.commit = "v1.1.9";
+exports.preset = {
+    ...phase0_1.phase0,
+    ...altair_1.altair,
+    ...bellatrix_1.bellatrix,
+};
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 9233:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.phase0 = void 0;
+/* eslint-disable @typescript-eslint/naming-convention */
+exports.phase0 = {
+    // Misc
+    // ---------------------------------------------------------------
+    // [customized] Just 4 committees for slot for testing purposes
+    MAX_COMMITTEES_PER_SLOT: 4,
+    // [customized] unsecure, but fast
+    TARGET_COMMITTEE_SIZE: 4,
+    // 2**11 (= 2,048)
+    MAX_VALIDATORS_PER_COMMITTEE: 2048,
+    // [customized] Faster, but unsecure.
+    SHUFFLE_ROUND_COUNT: 10,
+    // 4
+    HYSTERESIS_QUOTIENT: 4,
+    // 1 (minus 0.25)
+    HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
+    // 5 (plus 1.25)
+    HYSTERESIS_UPWARD_MULTIPLIER: 5,
+    // Fork Choice
+    // ---------------------------------------------------------------
+    // 2**1 (= 1)
+    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 2,
+    // Gwei values
+    // ---------------------------------------------------------------
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    MIN_DEPOSIT_AMOUNT: 1000000000,
+    // 2**5 * 10**9 (= 32,000,000,000) Gwei
+    MAX_EFFECTIVE_BALANCE: 32000000000,
+    // 2**0 * 10**9 (= 1,000,000,000) Gwei
+    EFFECTIVE_BALANCE_INCREMENT: 1000000000,
+    // Time parameters
+    // ---------------------------------------------------------------
+    // 2**0 (= 1) slots 6 seconds
+    MIN_ATTESTATION_INCLUSION_DELAY: 1,
+    // [customized] fast epochs
+    SLOTS_PER_EPOCH: 8,
+    // 2**0 (= 1) epochs
+    MIN_SEED_LOOKAHEAD: 1,
+    // 2**2 (= 4) epochs
+    MAX_SEED_LOOKAHEAD: 4,
+    // [customized] higher frequency new deposits from eth1 for testing
+    EPOCHS_PER_ETH1_VOTING_PERIOD: 4,
+    // [customized] smaller state
+    SLOTS_PER_HISTORICAL_ROOT: 64,
+    /*
+    // 2**8 (= 256) epochs
+    MIN_VALIDATOR_WITHDRAWABILITY_DELAY: 256,
+    // [customized] higher frequency of committee turnover and faster time to acceptable voluntary exit
+    SHARD_COMMITTEE_PERIOD: 64,
+    */
+    // 2**2 (= 4) epochs
+    MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
+    // State vector lengths
+    // ---------------------------------------------------------------
+    // [customized] smaller state
+    EPOCHS_PER_HISTORICAL_VECTOR: 64,
+    // [customized] smaller state
+    EPOCHS_PER_SLASHINGS_VECTOR: 64,
+    // 2**24 (= 16,777,216) historical roots
+    HISTORICAL_ROOTS_LIMIT: 16777216,
+    // 2**40 (= 1,099,511,627,776) validator spots
+    VALIDATOR_REGISTRY_LIMIT: 1099511627776,
+    // Reward and penalty quotients
+    // ---------------------------------------------------------------
+    // 2**6 (= 64)
+    BASE_REWARD_FACTOR: 64,
+    // 2**9 (= 512)
+    WHISTLEBLOWER_REWARD_QUOTIENT: 512,
+    // 2**3 (= 8)
+    PROPOSER_REWARD_QUOTIENT: 8,
+    // [customized] 2**25 (= 33,554,432)
+    INACTIVITY_PENALTY_QUOTIENT: 33554432,
+    // [customized] 2**6 (= 64)
+    MIN_SLASHING_PENALTY_QUOTIENT: 64,
+    // [customized] 2 (lower safety margin than Phase 0 genesis but different than mainnet config for testing)
+    PROPORTIONAL_SLASHING_MULTIPLIER: 2,
+    // Max operations per block
+    // ---------------------------------------------------------------
+    // 2**4 (= 16)
+    MAX_PROPOSER_SLASHINGS: 16,
+    // 2**1 (= 2)
+    MAX_ATTESTER_SLASHINGS: 2,
+    // 2**7 (= 128)
+    MAX_ATTESTATIONS: 128,
+    // 2**4 (= 16)
+    MAX_DEPOSITS: 16,
+    // 2**4 (= 16)
+    MAX_VOLUNTARY_EXITS: 16,
+};
+//# sourceMappingURL=phase0.js.map
+
+/***/ }),
+
+/***/ 5415:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.setActivePreset = exports.userSelectedPreset = exports.PresetName = void 0;
+const presetName_1 = __webpack_require__(8664);
+Object.defineProperty(exports, "PresetName", ({ enumerable: true, get: function () { return presetName_1.PresetName; } }));
+const presetStatus_1 = __webpack_require__(4558);
+/**
+ * The preset name currently exported by this library
+ *
+ * The `LODESTAR_PRESET` environment variable is used to select the active preset
+ * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
+ *
+ * The active preset can be manually overridden with `setActivePreset`
+ */
+exports.userSelectedPreset = null;
+/**
+ * Override the active preset
+ *
+ * WARNING: Lodestar libraries rely on preset values being _constant_, so the active preset must be set _before_ loading any other lodestar libraries.
+ *
+ * Only call this function if you _really_ know what you are doing.
+ */
+function setActivePreset(presetName) {
+    if (presetStatus_1.presetStatus.frozen) {
+        throw Error(`Lodestar preset is already frozen. You must call setActivePreset() at the top of your
+application entry point, before importing @chainsafe/lodestar-params, or any library that may import it.
+
+\`\`\`
+// index.ts
+import {setActivePreset, PresetName} from "@chainsafe/lodestar-params/preset"
+setActivePreset(PresetName.minimal)
+// Now you can safely import from other paths and consume params
+import {SLOTS_PER_EPOCH} from "@chainsafe/lodestar-params"
+console.log({SLOTS_PER_EPOCH})
+\`\`\`
+`);
+    }
+    exports.userSelectedPreset = presetName;
+}
+exports.setActivePreset = setActivePreset;
+//# sourceMappingURL=setPreset.js.map
+
+/***/ }),
+
 /***/ 5340:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -138,7 +734,7 @@ exports.ssz = __importStar(__webpack_require__(7088));
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LightClientUpdate = exports.BeaconState = exports.InactivityScores = exports.EpochParticipation = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.SyncAggregate = exports.SyncCommitteeBits = exports.SyncAggregatorSelectionData = exports.SignedContributionAndProof = exports.ContributionAndProof = exports.SyncCommitteeContribution = exports.SyncCommitteeMessage = exports.SyncCommittee = exports.Metadata = exports.SyncSubnets = void 0;
 const ssz_1 = __webpack_require__(8005);
-const lodestar_params_1 = __webpack_require__(5949);
+const lodestar_params_1 = __webpack_require__(8163);
 const phase0_1 = __webpack_require__(9695);
 const primitive_1 = __webpack_require__(5579);
 const lazyVar_1 = __webpack_require__(7121);
@@ -413,7 +1009,7 @@ exports.ssz = __importStar(__webpack_require__(6200));
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BeaconState = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.PowBlock = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.ExecutionPayloadHeader = exports.ExecutionPayload = exports.Transactions = exports.Transaction = void 0;
 const ssz_1 = __webpack_require__(8005);
-const lodestar_params_1 = __webpack_require__(5949);
+const lodestar_params_1 = __webpack_require__(8163);
 const primitive_1 = __webpack_require__(5579);
 const phase0_1 = __webpack_require__(9695);
 const altair_1 = __webpack_require__(2164);
@@ -713,7 +1309,7 @@ exports.ssz = __importStar(__webpack_require__(5928));
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Genesis = exports.BeaconBlocksByRootRequest = exports.BeaconBlocksByRangeRequest = exports.Metadata = exports.Ping = exports.Goodbye = exports.Status = exports.SignedAggregateAndProof = exports.AggregateAndProof = exports.CommitteeAssignment = exports.BeaconState = exports.EpochAttestations = exports.SignedBeaconBlock = exports.BeaconBlock = exports.BeaconBlockBody = exports.SignedVoluntaryExit = exports.VoluntaryExit = exports.ProposerSlashing = exports.Deposit = exports.AttesterSlashing = exports.Attestation = exports.SigningData = exports.PendingAttestation = exports.IndexedAttestation = exports.AttestationData = exports.JustificationBits = exports.Slashings = exports.RandaoMixes = exports.Balances = exports.Validators = exports.Validator = exports.HistoricalBatch = exports.HistoricalStateRoots = exports.HistoricalBlockRoots = exports.ENRForkID = exports.ForkData = exports.Fork = exports.Eth1DataOrdered = exports.Eth1DataVotes = exports.Eth1Data = exports.DepositEvent = exports.DepositDataRootList = exports.DepositData = exports.DepositMessage = exports.CommitteeIndices = exports.CommitteeBits = exports.Checkpoint = exports.SignedBeaconBlockHeader = exports.BeaconBlockHeader = exports.AttestationSubnets = void 0;
 const ssz_1 = __webpack_require__(8005);
-const lodestar_params_1 = __webpack_require__(5949);
+const lodestar_params_1 = __webpack_require__(8163);
 const primitive_1 = __webpack_require__(5579);
 const lazyVar_1 = __webpack_require__(7121);
 const { Boolean, Bytes32, Number64, Uint64, Slot, Epoch, CommitteeIndex, ValidatorIndex, Gwei, Root, Version, ForkDigest, BLSPubkey, BLSSignature, Domain, } = primitive_1.ssz;
@@ -1452,602 +2048,6 @@ class LazyVariable {
 }
 exports.LazyVariable = LazyVariable;
 //# sourceMappingURL=lazyVar.js.map
-
-/***/ }),
-
-/***/ 3086:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ForkName = void 0;
-/**
- * Forks in order of occurance
- */
-var ForkName;
-(function (ForkName) {
-    ForkName["phase0"] = "phase0";
-    ForkName["altair"] = "altair";
-    ForkName["bellatrix"] = "bellatrix";
-})(ForkName = exports.ForkName || (exports.ForkName = {}));
-//# sourceMappingURL=forkName.js.map
-
-/***/ }),
-
-/***/ 5949:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-/* provided dependency */ var process = __webpack_require__(4406);
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-var _a;
-var _b;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MAX_TRANSACTIONS_PER_PAYLOAD = exports.MAX_BYTES_PER_TRANSACTION = exports.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX = exports.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX = exports.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX = exports.UPDATE_TIMEOUT = exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = exports.SYNC_COMMITTEE_SIZE = exports.MAX_VOLUNTARY_EXITS = exports.MAX_DEPOSITS = exports.MAX_ATTESTATIONS = exports.MAX_ATTESTER_SLASHINGS = exports.MAX_PROPOSER_SLASHINGS = exports.PROPORTIONAL_SLASHING_MULTIPLIER = exports.MIN_SLASHING_PENALTY_QUOTIENT = exports.INACTIVITY_PENALTY_QUOTIENT = exports.PROPOSER_REWARD_QUOTIENT = exports.WHISTLEBLOWER_REWARD_QUOTIENT = exports.BASE_REWARD_FACTOR = exports.VALIDATOR_REGISTRY_LIMIT = exports.HISTORICAL_ROOTS_LIMIT = exports.EPOCHS_PER_SLASHINGS_VECTOR = exports.EPOCHS_PER_HISTORICAL_VECTOR = exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = exports.SLOTS_PER_HISTORICAL_ROOT = exports.EPOCHS_PER_ETH1_VOTING_PERIOD = exports.MAX_SEED_LOOKAHEAD = exports.MIN_SEED_LOOKAHEAD = exports.SLOTS_PER_EPOCH = exports.MIN_ATTESTATION_INCLUSION_DELAY = exports.EFFECTIVE_BALANCE_INCREMENT = exports.MAX_EFFECTIVE_BALANCE = exports.MIN_DEPOSIT_AMOUNT = exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = exports.HYSTERESIS_UPWARD_MULTIPLIER = exports.HYSTERESIS_DOWNWARD_MULTIPLIER = exports.HYSTERESIS_QUOTIENT = exports.SHUFFLE_ROUND_COUNT = exports.MAX_VALIDATORS_PER_COMMITTEE = exports.TARGET_COMMITTEE_SIZE = exports.MAX_COMMITTEES_PER_SLOT = exports.activePreset = exports.ACTIVE_PRESET = exports.PresetName = exports.presetToJson = exports.ForkName = void 0;
-exports.INTERVALS_PER_SLOT = exports.SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY = exports.NEXT_SYNC_COMMITTEE_INDEX = exports.NEXT_SYNC_COMMITTEE_DEPTH = exports.NEXT_SYNC_COMMITTEE_GINDEX = exports.FINALIZED_ROOT_INDEX = exports.FINALIZED_ROOT_DEPTH = exports.FINALIZED_ROOT_GINDEX = exports.GENESIS_BASE_FEE_PER_GAS = exports.GENESIS_GAS_LIMIT = exports.MAX_REQUEST_BLOCKS = exports.SYNC_COMMITTEE_SUBNET_SIZE = exports.SYNC_COMMITTEE_SUBNET_COUNT = exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = exports.ATTESTATION_SUBNET_COUNT = exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = exports.RANDOM_SUBNETS_PER_VALIDATOR = exports.TARGET_AGGREGATORS_PER_COMMITTEE = exports.PARTICIPATION_FLAG_WEIGHTS = exports.WEIGHT_DENOMINATOR = exports.PROPOSER_WEIGHT = exports.SYNC_REWARD_WEIGHT = exports.TIMELY_HEAD_WEIGHT = exports.TIMELY_TARGET_WEIGHT = exports.TIMELY_SOURCE_WEIGHT = exports.TIMELY_HEAD_FLAG_INDEX = exports.TIMELY_TARGET_FLAG_INDEX = exports.TIMELY_SOURCE_FLAG_INDEX = exports.DOMAIN_CONTRIBUTION_AND_PROOF = exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = exports.DOMAIN_SYNC_COMMITTEE = exports.DOMAIN_AGGREGATE_AND_PROOF = exports.DOMAIN_SELECTION_PROOF = exports.DOMAIN_VOLUNTARY_EXIT = exports.DOMAIN_DEPOSIT = exports.DOMAIN_RANDAO = exports.DOMAIN_BEACON_ATTESTER = exports.DOMAIN_BEACON_PROPOSER = exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = exports.BLS_WITHDRAWAL_PREFIX = exports.JUSTIFICATION_BITS_LENGTH = exports.DEPOSIT_CONTRACT_TREE_DEPTH = exports.BASE_REWARDS_PER_EPOCH = exports.FAR_FUTURE_EPOCH = exports.GENESIS_EPOCH = exports.GENESIS_SLOT = exports.MAX_EXTRA_DATA_BYTES = exports.BYTES_PER_LOGS_BLOOM = void 0;
-const presetName_1 = __webpack_require__(1582);
-Object.defineProperty(exports, "PresetName", ({ enumerable: true, get: function () { return presetName_1.PresetName; } }));
-const mainnet_1 = __webpack_require__(9410);
-const minimal_1 = __webpack_require__(1020);
-const presetStatus_1 = __webpack_require__(8845);
-const setPreset_1 = __webpack_require__(8691);
-__exportStar(__webpack_require__(3273), exports);
-var forkName_1 = __webpack_require__(3086);
-Object.defineProperty(exports, "ForkName", ({ enumerable: true, get: function () { return forkName_1.ForkName; } }));
-var json_1 = __webpack_require__(1369);
-Object.defineProperty(exports, "presetToJson", ({ enumerable: true, get: function () { return json_1.presetToJson; } }));
-const presets = {
-    [presetName_1.PresetName.mainnet]: mainnet_1.preset,
-    [presetName_1.PresetName.minimal]: minimal_1.preset,
-};
-// Once this file is imported, freeze the preset so calling setActivePreset() will throw an error
-presetStatus_1.presetStatus.frozen = true;
-/**
- * The preset name currently exported by this library
- *
- * The `LODESTAR_PRESET` environment variable is used to select the active preset
- * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
- *
- * The active preset can be manually overridden with `setActivePreset`
- */
-exports.ACTIVE_PRESET = setPreset_1.userSelectedPreset || presetName_1.PresetName[(_b = process === null || process === void 0 ? void 0 : process.env) === null || _b === void 0 ? void 0 : _b.LODESTAR_PRESET] || presetName_1.PresetName.mainnet;
-exports.activePreset = presets[exports.ACTIVE_PRESET];
-// These variables must be exported individually and explicitly
-// in order to be accessible as top-level exports
-_a = presets[exports.ACTIVE_PRESET], exports.MAX_COMMITTEES_PER_SLOT = _a.MAX_COMMITTEES_PER_SLOT, exports.TARGET_COMMITTEE_SIZE = _a.TARGET_COMMITTEE_SIZE, exports.MAX_VALIDATORS_PER_COMMITTEE = _a.MAX_VALIDATORS_PER_COMMITTEE, exports.SHUFFLE_ROUND_COUNT = _a.SHUFFLE_ROUND_COUNT, exports.HYSTERESIS_QUOTIENT = _a.HYSTERESIS_QUOTIENT, exports.HYSTERESIS_DOWNWARD_MULTIPLIER = _a.HYSTERESIS_DOWNWARD_MULTIPLIER, exports.HYSTERESIS_UPWARD_MULTIPLIER = _a.HYSTERESIS_UPWARD_MULTIPLIER, exports.SAFE_SLOTS_TO_UPDATE_JUSTIFIED = _a.SAFE_SLOTS_TO_UPDATE_JUSTIFIED, exports.MIN_DEPOSIT_AMOUNT = _a.MIN_DEPOSIT_AMOUNT, exports.MAX_EFFECTIVE_BALANCE = _a.MAX_EFFECTIVE_BALANCE, exports.EFFECTIVE_BALANCE_INCREMENT = _a.EFFECTIVE_BALANCE_INCREMENT, exports.MIN_ATTESTATION_INCLUSION_DELAY = _a.MIN_ATTESTATION_INCLUSION_DELAY, exports.SLOTS_PER_EPOCH = _a.SLOTS_PER_EPOCH, exports.MIN_SEED_LOOKAHEAD = _a.MIN_SEED_LOOKAHEAD, exports.MAX_SEED_LOOKAHEAD = _a.MAX_SEED_LOOKAHEAD, exports.EPOCHS_PER_ETH1_VOTING_PERIOD = _a.EPOCHS_PER_ETH1_VOTING_PERIOD, exports.SLOTS_PER_HISTORICAL_ROOT = _a.SLOTS_PER_HISTORICAL_ROOT, exports.MIN_EPOCHS_TO_INACTIVITY_PENALTY = _a.MIN_EPOCHS_TO_INACTIVITY_PENALTY, exports.EPOCHS_PER_HISTORICAL_VECTOR = _a.EPOCHS_PER_HISTORICAL_VECTOR, exports.EPOCHS_PER_SLASHINGS_VECTOR = _a.EPOCHS_PER_SLASHINGS_VECTOR, exports.HISTORICAL_ROOTS_LIMIT = _a.HISTORICAL_ROOTS_LIMIT, exports.VALIDATOR_REGISTRY_LIMIT = _a.VALIDATOR_REGISTRY_LIMIT, exports.BASE_REWARD_FACTOR = _a.BASE_REWARD_FACTOR, exports.WHISTLEBLOWER_REWARD_QUOTIENT = _a.WHISTLEBLOWER_REWARD_QUOTIENT, exports.PROPOSER_REWARD_QUOTIENT = _a.PROPOSER_REWARD_QUOTIENT, exports.INACTIVITY_PENALTY_QUOTIENT = _a.INACTIVITY_PENALTY_QUOTIENT, exports.MIN_SLASHING_PENALTY_QUOTIENT = _a.MIN_SLASHING_PENALTY_QUOTIENT, exports.PROPORTIONAL_SLASHING_MULTIPLIER = _a.PROPORTIONAL_SLASHING_MULTIPLIER, exports.MAX_PROPOSER_SLASHINGS = _a.MAX_PROPOSER_SLASHINGS, exports.MAX_ATTESTER_SLASHINGS = _a.MAX_ATTESTER_SLASHINGS, exports.MAX_ATTESTATIONS = _a.MAX_ATTESTATIONS, exports.MAX_DEPOSITS = _a.MAX_DEPOSITS, exports.MAX_VOLUNTARY_EXITS = _a.MAX_VOLUNTARY_EXITS, exports.SYNC_COMMITTEE_SIZE = _a.SYNC_COMMITTEE_SIZE, exports.EPOCHS_PER_SYNC_COMMITTEE_PERIOD = _a.EPOCHS_PER_SYNC_COMMITTEE_PERIOD, exports.INACTIVITY_PENALTY_QUOTIENT_ALTAIR = _a.INACTIVITY_PENALTY_QUOTIENT_ALTAIR, exports.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR = _a.MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR, exports.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR = _a.PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR, exports.MIN_SYNC_COMMITTEE_PARTICIPANTS = _a.MIN_SYNC_COMMITTEE_PARTICIPANTS, exports.UPDATE_TIMEOUT = _a.UPDATE_TIMEOUT, exports.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX = _a.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX, exports.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX = _a.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX, exports.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX = _a.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX, exports.MAX_BYTES_PER_TRANSACTION = _a.MAX_BYTES_PER_TRANSACTION, exports.MAX_TRANSACTIONS_PER_PAYLOAD = _a.MAX_TRANSACTIONS_PER_PAYLOAD, exports.BYTES_PER_LOGS_BLOOM = _a.BYTES_PER_LOGS_BLOOM, exports.MAX_EXTRA_DATA_BYTES = _a.MAX_EXTRA_DATA_BYTES;
-////////////
-// Constants
-////////////
-// Exported directly on the index for faster accessing without commonjs compiled star import shenanigans
-// Misc
-exports.GENESIS_SLOT = 0;
-exports.GENESIS_EPOCH = 0;
-exports.FAR_FUTURE_EPOCH = Infinity;
-exports.BASE_REWARDS_PER_EPOCH = 4;
-exports.DEPOSIT_CONTRACT_TREE_DEPTH = 2 ** 5; // 32
-exports.JUSTIFICATION_BITS_LENGTH = 4;
-// Withdrawal prefixes
-exports.BLS_WITHDRAWAL_PREFIX = Uint8Array.from([0]);
-exports.ETH1_ADDRESS_WITHDRAWAL_PREFIX = Uint8Array.from([1]);
-// Domain types
-exports.DOMAIN_BEACON_PROPOSER = Uint8Array.from([0, 0, 0, 0]);
-exports.DOMAIN_BEACON_ATTESTER = Uint8Array.from([1, 0, 0, 0]);
-exports.DOMAIN_RANDAO = Uint8Array.from([2, 0, 0, 0]);
-exports.DOMAIN_DEPOSIT = Uint8Array.from([3, 0, 0, 0]);
-exports.DOMAIN_VOLUNTARY_EXIT = Uint8Array.from([4, 0, 0, 0]);
-exports.DOMAIN_SELECTION_PROOF = Uint8Array.from([5, 0, 0, 0]);
-exports.DOMAIN_AGGREGATE_AND_PROOF = Uint8Array.from([6, 0, 0, 0]);
-exports.DOMAIN_SYNC_COMMITTEE = Uint8Array.from([7, 0, 0, 0]);
-exports.DOMAIN_SYNC_COMMITTEE_SELECTION_PROOF = Uint8Array.from([8, 0, 0, 0]);
-exports.DOMAIN_CONTRIBUTION_AND_PROOF = Uint8Array.from([9, 0, 0, 0]);
-// Participation flag indices
-exports.TIMELY_SOURCE_FLAG_INDEX = 0;
-exports.TIMELY_TARGET_FLAG_INDEX = 1;
-exports.TIMELY_HEAD_FLAG_INDEX = 2;
-// Incentivization weights
-exports.TIMELY_SOURCE_WEIGHT = 14;
-exports.TIMELY_TARGET_WEIGHT = 26;
-exports.TIMELY_HEAD_WEIGHT = 14;
-exports.SYNC_REWARD_WEIGHT = 2;
-exports.PROPOSER_WEIGHT = 8;
-exports.WEIGHT_DENOMINATOR = 64;
-// altair misc
-exports.PARTICIPATION_FLAG_WEIGHTS = [exports.TIMELY_SOURCE_WEIGHT, exports.TIMELY_TARGET_WEIGHT, exports.TIMELY_HEAD_WEIGHT];
-// phase0 validator
-exports.TARGET_AGGREGATORS_PER_COMMITTEE = 16;
-exports.RANDOM_SUBNETS_PER_VALIDATOR = 1;
-exports.EPOCHS_PER_RANDOM_SUBNET_SUBSCRIPTION = 256;
-/** Rationale: https://github.com/ethereum/eth2.0-specs/blob/dev/specs/phase0/p2p-interface.md#why-are-there-attestation_subnet_count-attestation-subnets */
-exports.ATTESTATION_SUBNET_COUNT = 64;
-// altair validator
-exports.TARGET_AGGREGATORS_PER_SYNC_SUBCOMMITTEE = 16;
-exports.SYNC_COMMITTEE_SUBNET_COUNT = 4;
-exports.SYNC_COMMITTEE_SUBNET_SIZE = Math.floor(exports.SYNC_COMMITTEE_SIZE / exports.SYNC_COMMITTEE_SUBNET_COUNT);
-exports.MAX_REQUEST_BLOCKS = 2 ** 10; // 1024
-// Bellatrix constants - Spec v1.0.1
-// Genesis testing settings
-// Note: These configuration settings do not apply to the mainnet and are utilized only by pure Merge testing.
-exports.GENESIS_GAS_LIMIT = 30000000;
-exports.GENESIS_BASE_FEE_PER_GAS = BigInt(1000000000);
-// Lightclient pre-computed
-/**
- * ```ts
- * config.types.altair.BeaconState.getPathGindex(["finalizedCheckpoint", "root"])
- * ```
- */
-exports.FINALIZED_ROOT_GINDEX = 105;
-/**
- * ```ts
- * Math.floor(Math.log2(FINALIZED_ROOT_GINDEX))
- * ```
- */
-exports.FINALIZED_ROOT_DEPTH = 6;
-exports.FINALIZED_ROOT_INDEX = 41;
-/**
- * ```ts
- * config.types.altair.BeaconState.getPathGindex(["nextSyncCommittee"])
- * ```
- */
-exports.NEXT_SYNC_COMMITTEE_GINDEX = 55;
-/**
- * ```ts
- * Math.floor(Math.log2(NEXT_SYNC_COMMITTEE_GINDEX))
- * ```
- */
-exports.NEXT_SYNC_COMMITTEE_DEPTH = 5;
-exports.NEXT_SYNC_COMMITTEE_INDEX = 23;
-/**
- * Optimistic sync
- */
-exports.SAFE_SLOTS_TO_IMPORT_OPTIMISTICALLY = 128;
-exports.INTERVALS_PER_SLOT = 3;
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 3273:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 1369:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.presetToJson = void 0;
-/**
- * Render BeaconPreset to JSON strings
- * - Numbers: Render as a quoted decimal string
- */
-function presetToJson(preset) {
-    const json = {};
-    for (const key of Object.keys(preset)) {
-        json[key] = serializePresetValue(preset[key]);
-    }
-    return json;
-}
-exports.presetToJson = presetToJson;
-/**
- * Type Wrapper to ensure that all values of BeaconPreset are number.
- * If there are more types, expand this function with a type switch
- */
-function serializePresetValue(value) {
-    return value.toString(10);
-}
-//# sourceMappingURL=json.js.map
-
-/***/ }),
-
-/***/ 1582:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.PresetName = void 0;
-var PresetName;
-(function (PresetName) {
-    PresetName["mainnet"] = "mainnet";
-    PresetName["minimal"] = "minimal";
-})(PresetName = exports.PresetName || (exports.PresetName = {}));
-//# sourceMappingURL=presetName.js.map
-
-/***/ }),
-
-/***/ 8845:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.presetStatus = void 0;
-exports.presetStatus = {
-    frozen: false,
-};
-//# sourceMappingURL=presetStatus.js.map
-
-/***/ }),
-
-/***/ 5533:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.altair = void 0;
-/* eslint-disable @typescript-eslint/naming-convention */
-exports.altair = {
-    SYNC_COMMITTEE_SIZE: 512,
-    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 256,
-    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
-    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
-    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
-    MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
-    UPDATE_TIMEOUT: 8192,
-};
-//# sourceMappingURL=altair.js.map
-
-/***/ }),
-
-/***/ 8717:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.bellatrix = void 0;
-/* eslint-disable @typescript-eslint/naming-convention */
-exports.bellatrix = {
-    INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
-    MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
-    PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
-    MAX_BYTES_PER_TRANSACTION: 1073741824,
-    MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
-    BYTES_PER_LOGS_BLOOM: 256,
-    MAX_EXTRA_DATA_BYTES: 32,
-};
-//# sourceMappingURL=bellatrix.js.map
-
-/***/ }),
-
-/***/ 9410:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.preset = exports.commit = void 0;
-const phase0_1 = __webpack_require__(9804);
-const altair_1 = __webpack_require__(5533);
-const bellatrix_1 = __webpack_require__(8717);
-exports.commit = "v1.1.9";
-exports.preset = {
-    ...phase0_1.phase0,
-    ...altair_1.altair,
-    ...bellatrix_1.bellatrix,
-};
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 9804:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.phase0 = void 0;
-/* eslint-disable @typescript-eslint/naming-convention */
-exports.phase0 = {
-    // Misc
-    // ---------------------------------------------------------------
-    // 2**6 (= 64)
-    MAX_COMMITTEES_PER_SLOT: 64,
-    // 2**7 (= 128)
-    TARGET_COMMITTEE_SIZE: 128,
-    // 2**11 (= 2,048)
-    MAX_VALIDATORS_PER_COMMITTEE: 2048,
-    // See issue 563
-    SHUFFLE_ROUND_COUNT: 90,
-    // 4
-    HYSTERESIS_QUOTIENT: 4,
-    // 1 (minus 0.25)
-    HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
-    // 5 (plus 1.25)
-    HYSTERESIS_UPWARD_MULTIPLIER: 5,
-    // Fork Choice
-    // ---------------------------------------------------------------
-    // 2**3 (= 8)
-    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 8,
-    // Gwei values
-    // ---------------------------------------------------------------
-    // 2**0 * 10**9 (= 1,000,000,000) Gwei
-    MIN_DEPOSIT_AMOUNT: 1000000000,
-    // 2**5 * 10**9 (= 32,000,000,000) Gwei
-    MAX_EFFECTIVE_BALANCE: 32000000000,
-    // 2**0 * 10**9 (= 1,000,000,000) Gwei
-    EFFECTIVE_BALANCE_INCREMENT: 1000000000,
-    // Time parameters
-    // ---------------------------------------------------------------
-    // 2**0 (= 1) slots 12 seconds
-    MIN_ATTESTATION_INCLUSION_DELAY: 1,
-    // 2**5 (= 32) slots 6.4 minutes
-    SLOTS_PER_EPOCH: 32,
-    // 2**0 (= 1) epochs 6.4 minutes
-    MIN_SEED_LOOKAHEAD: 1,
-    // 2**2 (= 4) epochs 25.6 minutes
-    MAX_SEED_LOOKAHEAD: 4,
-    // 2**6 (= 64) epochs ~6.8 hours
-    EPOCHS_PER_ETH1_VOTING_PERIOD: 64,
-    // 2**13 (= 8,192) slots ~13 hours
-    SLOTS_PER_HISTORICAL_ROOT: 8192,
-    // 2**2 (= 4) epochs 25.6 minutes
-    MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
-    // State vector lengths
-    // ---------------------------------------------------------------
-    // 2**16 (= 65,536) epochs ~0.8 years
-    EPOCHS_PER_HISTORICAL_VECTOR: 65536,
-    // 2**13 (= 8,192) epochs ~36 days
-    EPOCHS_PER_SLASHINGS_VECTOR: 8192,
-    // 2**24 (= 16,777,216) historical roots, ~26,131 years
-    HISTORICAL_ROOTS_LIMIT: 16777216,
-    // 2**40 (= 1,099,511,627,776) validator spots
-    VALIDATOR_REGISTRY_LIMIT: 1099511627776,
-    // Reward and penalty quotients
-    // ---------------------------------------------------------------
-    // 2**6 (= 64)
-    BASE_REWARD_FACTOR: 64,
-    // 2**9 (= 512)
-    WHISTLEBLOWER_REWARD_QUOTIENT: 512,
-    // 2**3 (= 8)
-    PROPOSER_REWARD_QUOTIENT: 8,
-    // 2**26 (= 67,108,864)
-    INACTIVITY_PENALTY_QUOTIENT: 67108864,
-    // 2**7 (= 128) (lower safety margin at Phase 0 genesis)
-    MIN_SLASHING_PENALTY_QUOTIENT: 128,
-    PROPORTIONAL_SLASHING_MULTIPLIER: 1,
-    // Max operations per block
-    // ---------------------------------------------------------------
-    // 2**4 (= 16)
-    MAX_PROPOSER_SLASHINGS: 16,
-    // 2**1 (= 2)
-    MAX_ATTESTER_SLASHINGS: 2,
-    // 2**7 (= 128)
-    MAX_ATTESTATIONS: 128,
-    // 2**4 (= 16)
-    MAX_DEPOSITS: 16,
-    // 2**4 (= 16)
-    MAX_VOLUNTARY_EXITS: 16,
-};
-//# sourceMappingURL=phase0.js.map
-
-/***/ }),
-
-/***/ 5478:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.altair = void 0;
-/* eslint-disable @typescript-eslint/naming-convention */
-exports.altair = {
-    SYNC_COMMITTEE_SIZE: 32,
-    EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8,
-    INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
-    MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
-    PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
-    MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
-    UPDATE_TIMEOUT: 64,
-};
-//# sourceMappingURL=altair.js.map
-
-/***/ }),
-
-/***/ 2713:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.bellatrix = void 0;
-/* eslint-disable @typescript-eslint/naming-convention */
-exports.bellatrix = {
-    INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
-    MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
-    PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
-    MAX_BYTES_PER_TRANSACTION: 1073741824,
-    MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
-    BYTES_PER_LOGS_BLOOM: 256,
-    MAX_EXTRA_DATA_BYTES: 32,
-};
-//# sourceMappingURL=bellatrix.js.map
-
-/***/ }),
-
-/***/ 1020:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.preset = exports.commit = void 0;
-const phase0_1 = __webpack_require__(5900);
-const altair_1 = __webpack_require__(5478);
-const bellatrix_1 = __webpack_require__(2713);
-exports.commit = "v1.1.9";
-exports.preset = {
-    ...phase0_1.phase0,
-    ...altair_1.altair,
-    ...bellatrix_1.bellatrix,
-};
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 5900:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.phase0 = void 0;
-/* eslint-disable @typescript-eslint/naming-convention */
-exports.phase0 = {
-    // Misc
-    // ---------------------------------------------------------------
-    // [customized] Just 4 committees for slot for testing purposes
-    MAX_COMMITTEES_PER_SLOT: 4,
-    // [customized] unsecure, but fast
-    TARGET_COMMITTEE_SIZE: 4,
-    // 2**11 (= 2,048)
-    MAX_VALIDATORS_PER_COMMITTEE: 2048,
-    // [customized] Faster, but unsecure.
-    SHUFFLE_ROUND_COUNT: 10,
-    // 4
-    HYSTERESIS_QUOTIENT: 4,
-    // 1 (minus 0.25)
-    HYSTERESIS_DOWNWARD_MULTIPLIER: 1,
-    // 5 (plus 1.25)
-    HYSTERESIS_UPWARD_MULTIPLIER: 5,
-    // Fork Choice
-    // ---------------------------------------------------------------
-    // 2**1 (= 1)
-    SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 2,
-    // Gwei values
-    // ---------------------------------------------------------------
-    // 2**0 * 10**9 (= 1,000,000,000) Gwei
-    MIN_DEPOSIT_AMOUNT: 1000000000,
-    // 2**5 * 10**9 (= 32,000,000,000) Gwei
-    MAX_EFFECTIVE_BALANCE: 32000000000,
-    // 2**0 * 10**9 (= 1,000,000,000) Gwei
-    EFFECTIVE_BALANCE_INCREMENT: 1000000000,
-    // Time parameters
-    // ---------------------------------------------------------------
-    // 2**0 (= 1) slots 6 seconds
-    MIN_ATTESTATION_INCLUSION_DELAY: 1,
-    // [customized] fast epochs
-    SLOTS_PER_EPOCH: 8,
-    // 2**0 (= 1) epochs
-    MIN_SEED_LOOKAHEAD: 1,
-    // 2**2 (= 4) epochs
-    MAX_SEED_LOOKAHEAD: 4,
-    // [customized] higher frequency new deposits from eth1 for testing
-    EPOCHS_PER_ETH1_VOTING_PERIOD: 4,
-    // [customized] smaller state
-    SLOTS_PER_HISTORICAL_ROOT: 64,
-    /*
-    // 2**8 (= 256) epochs
-    MIN_VALIDATOR_WITHDRAWABILITY_DELAY: 256,
-    // [customized] higher frequency of committee turnover and faster time to acceptable voluntary exit
-    SHARD_COMMITTEE_PERIOD: 64,
-    */
-    // 2**2 (= 4) epochs
-    MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
-    // State vector lengths
-    // ---------------------------------------------------------------
-    // [customized] smaller state
-    EPOCHS_PER_HISTORICAL_VECTOR: 64,
-    // [customized] smaller state
-    EPOCHS_PER_SLASHINGS_VECTOR: 64,
-    // 2**24 (= 16,777,216) historical roots
-    HISTORICAL_ROOTS_LIMIT: 16777216,
-    // 2**40 (= 1,099,511,627,776) validator spots
-    VALIDATOR_REGISTRY_LIMIT: 1099511627776,
-    // Reward and penalty quotients
-    // ---------------------------------------------------------------
-    // 2**6 (= 64)
-    BASE_REWARD_FACTOR: 64,
-    // 2**9 (= 512)
-    WHISTLEBLOWER_REWARD_QUOTIENT: 512,
-    // 2**3 (= 8)
-    PROPOSER_REWARD_QUOTIENT: 8,
-    // [customized] 2**25 (= 33,554,432)
-    INACTIVITY_PENALTY_QUOTIENT: 33554432,
-    // [customized] 2**6 (= 64)
-    MIN_SLASHING_PENALTY_QUOTIENT: 64,
-    // [customized] 2 (lower safety margin than Phase 0 genesis but different than mainnet config for testing)
-    PROPORTIONAL_SLASHING_MULTIPLIER: 2,
-    // Max operations per block
-    // ---------------------------------------------------------------
-    // 2**4 (= 16)
-    MAX_PROPOSER_SLASHINGS: 16,
-    // 2**1 (= 2)
-    MAX_ATTESTER_SLASHINGS: 2,
-    // 2**7 (= 128)
-    MAX_ATTESTATIONS: 128,
-    // 2**4 (= 16)
-    MAX_DEPOSITS: 16,
-    // 2**4 (= 16)
-    MAX_VOLUNTARY_EXITS: 16,
-};
-//# sourceMappingURL=phase0.js.map
-
-/***/ }),
-
-/***/ 8691:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setActivePreset = exports.userSelectedPreset = exports.PresetName = void 0;
-const presetName_1 = __webpack_require__(1582);
-Object.defineProperty(exports, "PresetName", ({ enumerable: true, get: function () { return presetName_1.PresetName; } }));
-const presetStatus_1 = __webpack_require__(8845);
-/**
- * The preset name currently exported by this library
- *
- * The `LODESTAR_PRESET` environment variable is used to select the active preset
- * If `LODESTAR_PRESET` is not set, the default is `mainnet`.
- *
- * The active preset can be manually overridden with `setActivePreset`
- */
-exports.userSelectedPreset = null;
-/**
- * Override the active preset
- *
- * WARNING: Lodestar libraries rely on preset values being _constant_, so the active preset must be set _before_ loading any other lodestar libraries.
- *
- * Only call this function if you _really_ know what you are doing.
- */
-function setActivePreset(presetName) {
-    if (presetStatus_1.presetStatus.frozen) {
-        throw Error(`Lodestar preset is already frozen. You must call setActivePreset() at the top of your
-application entry point, before importing @chainsafe/lodestar-params, or any library that may import it.
-
-\`\`\`
-// index.ts
-import {setActivePreset, PresetName} from "@chainsafe/lodestar-params/preset"
-setActivePreset(PresetName.minimal)
-// Now you can safely import from other paths and consume params
-import {SLOTS_PER_EPOCH} from "@chainsafe/lodestar-params"
-console.log({SLOTS_PER_EPOCH})
-\`\`\`
-`);
-    }
-    exports.userSelectedPreset = presetName;
-}
-exports.setActivePreset = setActivePreset;
-//# sourceMappingURL=setPreset.js.map
 
 /***/ }),
 
@@ -8072,7 +8072,7 @@ var es_array_buffer_slice = __webpack_require__(2994);
 // EXTERNAL MODULE: ../../node_modules/core-js/modules/es.typed-array.uint8-array.js
 var es_typed_array_uint8_array = __webpack_require__(3675);
 // EXTERNAL MODULE: ../../node_modules/core-js/modules/es.typed-array.copy-within.js
-var es_typed_array_copy_within = __webpack_require__(9877);
+var es_typed_array_copy_within = __webpack_require__(5825);
 // EXTERNAL MODULE: ../../node_modules/core-js/modules/es.typed-array.every.js
 var es_typed_array_every = __webpack_require__(7170);
 // EXTERNAL MODULE: ../../node_modules/core-js/modules/es.typed-array.fill.js
@@ -18587,7 +18587,7 @@ hiddenKeys[HIDDEN] = true;
 
 /***/ }),
 
-/***/ 9877:
+/***/ 5825:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -26811,20 +26811,18 @@ function toGindexBitstring(depth, index) {
 }
 exports.toGindexBitstring = toGindexBitstring;
 function convertGindexToBitstring(gindex) {
-    let bitstring;
     if (typeof gindex === "string") {
-        if (!gindex.length) {
+        if (gindex.length === 0) {
             throw new Error(ERR_INVALID_GINDEX);
         }
-        bitstring = gindex;
+        return gindex;
     }
     else {
         if (gindex < 1) {
             throw new Error(ERR_INVALID_GINDEX);
         }
-        bitstring = gindex.toString(2);
+        return gindex.toString(2);
     }
-    return bitstring;
 }
 exports.convertGindexToBitstring = convertGindexToBitstring;
 // Get the depth (root starting at 0) necessary to cover a subtree of `count` elements.
@@ -27023,10 +27021,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 __exportStar(__webpack_require__(1797), exports);
 __exportStar(__webpack_require__(6108), exports);
 __exportStar(__webpack_require__(4508), exports);
-__exportStar(__webpack_require__(2692), exports);
+__exportStar(__webpack_require__(2921), exports);
+__exportStar(__webpack_require__(5071), exports);
 __exportStar(__webpack_require__(3258), exports);
 __exportStar(__webpack_require__(550), exports);
-__exportStar(__webpack_require__(5071), exports);
+__exportStar(__webpack_require__(2692), exports);
 
 
 /***/ }),
@@ -27037,20 +27036,22 @@ __exportStar(__webpack_require__(5071), exports);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.compose = exports.identity = exports.LeafNode = exports.BranchNode = exports.Node = void 0;
+exports.bitwiseOrNodeH = exports.setNodeH = exports.getNodeH = exports.compose = exports.identity = exports.LeafNode = exports.BranchNode = exports.Node = void 0;
 const hash_1 = __webpack_require__(6108);
-const ERR_INVALID_TREE = "Invalid tree";
+const TWO_POWER_32 = 2 ** 32;
+/**
+ * An immutable binary merkle tree node
+ */
 class Node {
-    constructor() {
-        // this is to save an extra variable to check if a node has a root or not
-        this.h0 = null;
-        this.h1 = 0;
-        this.h2 = 0;
-        this.h3 = 0;
-        this.h4 = 0;
-        this.h5 = 0;
-        this.h6 = 0;
-        this.h7 = 0;
+    constructor(h0, h1, h2, h3, h4, h5, h6, h7) {
+        this.h0 = h0;
+        this.h1 = h1;
+        this.h2 = h2;
+        this.h3 = h3;
+        this.h4 = h4;
+        this.h5 = h5;
+        this.h6 = h6;
+        this.h7 = h7;
     }
     applyHash(root) {
         this.h0 = root.h0;
@@ -27064,13 +27065,21 @@ class Node {
     }
 }
 exports.Node = Node;
+/**
+ * An immutable binary merkle tree node that has a `left` and `right` child
+ */
 class BranchNode extends Node {
     constructor(_left, _right) {
-        super();
+        // First null value is to save an extra variable to check if a node has a root or not
+        super(null, 0, 0, 0, 0, 0, 0, 0);
         this._left = _left;
         this._right = _right;
-        if (!_left || !_right)
-            throw new Error(ERR_INVALID_TREE);
+        if (!_left) {
+            throw new Error("Left node is undefined");
+        }
+        if (!_right) {
+            throw new Error("Right node is undefined");
+        }
     }
     get rootHashObject() {
         if (this.h0 === null) {
@@ -27090,25 +27099,38 @@ class BranchNode extends Node {
     get right() {
         return this._right;
     }
-    rebindLeft(left) {
-        return new BranchNode(left, this.right);
-    }
-    rebindRight(right) {
-        return new BranchNode(this.left, right);
-    }
 }
 exports.BranchNode = BranchNode;
+/**
+ * An immutable binary merkle tree node that has no children
+ */
 class LeafNode extends Node {
-    constructor(_root) {
-        super();
-        if (hash_1.isHashObject(_root)) {
-            this.applyHash(_root);
-        }
-        else {
-            if (_root.length !== 32)
-                throw new Error(ERR_INVALID_TREE);
-            this.applyHash(hash_1.uint8ArrayToHashObject(_root));
-        }
+    static fromRoot(root) {
+        return this.fromHashObject(hash_1.uint8ArrayToHashObject(root));
+    }
+    /**
+     * New LeafNode from existing HashObject.
+     */
+    static fromHashObject(ho) {
+        return new LeafNode(ho.h0, ho.h1, ho.h2, ho.h3, ho.h4, ho.h5, ho.h6, ho.h7);
+    }
+    /**
+     * New LeafNode with its internal value set to zero. Consider using `zeroNode(0)` if you don't need to mutate.
+     */
+    static fromZero() {
+        return new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+    }
+    /**
+     * LeafNode with HashObject `(uint32, 0, 0, 0, 0, 0, 0, 0)`.
+     */
+    static fromUint32(uint32) {
+        return new LeafNode(uint32, 0, 0, 0, 0, 0, 0, 0);
+    }
+    /**
+     * Create a new LeafNode with the same internal values. The returned instance is safe to mutate
+     */
+    clone() {
+        return LeafNode.fromHashObject(this);
     }
     get rootHashObject() {
         return this;
@@ -27125,11 +27147,159 @@ class LeafNode extends Node {
     get right() {
         throw Error("LeafNode has no right node");
     }
-    rebindLeft() {
-        throw Error("LeafNode has no left node");
+    writeToBytes(data, start, size) {
+        // TODO: Optimize
+        data.set(this.root.slice(0, size), start);
     }
-    rebindRight() {
-        throw Error("LeafNode has no right node");
+    getUint(uintBytes, offsetBytes, clipInfinity) {
+        const hIndex = Math.floor(offsetBytes / 4);
+        // number has to be masked from an h value
+        if (uintBytes < 4) {
+            const bitIndex = (offsetBytes % 4) * 8;
+            const h = getNodeH(this, hIndex);
+            if (uintBytes === 1) {
+                return 0xff & (h >> bitIndex);
+            }
+            else {
+                return 0xffff & (h >> bitIndex);
+            }
+        }
+        // number equals the h value
+        else if (uintBytes === 4) {
+            return getNodeH(this, hIndex) >>> 0;
+        }
+        // number spans 2 h values
+        else if (uintBytes === 8) {
+            const low = getNodeH(this, hIndex);
+            const high = getNodeH(this, hIndex + 1);
+            if (high === 0) {
+                return low >>> 0;
+            }
+            else if (high === -1 && low === -1 && clipInfinity) {
+                // Limit uint returns
+                return Infinity;
+            }
+            else {
+                return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
+            }
+        }
+        // Bigger uint can't be represented
+        else {
+            throw Error("uintBytes > 8");
+        }
+    }
+    getUintBigint(uintBytes, offsetBytes) {
+        const hIndex = Math.floor(offsetBytes / 4);
+        // number has to be masked from an h value
+        if (uintBytes < 4) {
+            const bitIndex = (offsetBytes % 4) * 8;
+            const h = getNodeH(this, hIndex);
+            if (uintBytes === 1) {
+                return BigInt(0xff & (h >> bitIndex));
+            }
+            else {
+                return BigInt(0xffff & (h >> bitIndex));
+            }
+        }
+        // number equals the h value
+        else if (uintBytes === 4) {
+            return BigInt(getNodeH(this, hIndex) >>> 0);
+        }
+        // number spans multiple h values
+        else {
+            const hRange = Math.ceil(uintBytes / 4);
+            let v = BigInt(0);
+            for (let i = 0; i < hRange; i++) {
+                v += BigInt(getNodeH(this, hIndex + i) >>> 0) << BigInt(32 * i);
+            }
+            return v;
+        }
+    }
+    setUint(uintBytes, offsetBytes, value, clipInfinity) {
+        const hIndex = Math.floor(offsetBytes / 4);
+        // number has to be masked from an h value
+        if (uintBytes < 4) {
+            const bitIndex = (offsetBytes % 4) * 8;
+            let h = getNodeH(this, hIndex);
+            if (uintBytes === 1) {
+                h &= ~(0xff << bitIndex);
+                h |= ( true && value) << bitIndex;
+            }
+            else {
+                h &= ~(0xffff << bitIndex);
+                h |= ( true && value) << bitIndex;
+            }
+            setNodeH(this, hIndex, h);
+        }
+        // number equals the h value
+        else if (uintBytes === 4) {
+            setNodeH(this, hIndex, value);
+        }
+        // number spans 2 h values
+        else if (uintBytes === 8) {
+            if (value === Infinity && clipInfinity) {
+                setNodeH(this, hIndex, -1);
+                setNodeH(this, hIndex + 1, -1);
+            }
+            else {
+                setNodeH(this, hIndex, value & 0xffffffff);
+                setNodeH(this, hIndex + 1, (value / TWO_POWER_32) & 0xffffffff);
+            }
+        }
+        // Bigger uint can't be represented
+        else {
+            throw Error("uintBytes > 8");
+        }
+    }
+    setUintBigint(uintBytes, offsetBytes, valueBN) {
+        const hIndex = Math.floor(offsetBytes / 4);
+        // number has to be masked from an h value
+        if (uintBytes < 4) {
+            const value = Number(valueBN);
+            const bitIndex = (offsetBytes % 4) * 8;
+            let h = getNodeH(this, hIndex);
+            if (uintBytes === 1) {
+                h &= ~(0xff << bitIndex);
+                h |= ( true && value) << bitIndex;
+            }
+            else {
+                h &= ~(0xffff << bitIndex);
+                h |= ( true && value) << bitIndex;
+            }
+            setNodeH(this, hIndex, h);
+        }
+        // number equals the h value
+        else if (uintBytes === 4) {
+            setNodeH(this, hIndex, Number(valueBN));
+        }
+        // number spans multiple h values
+        else {
+            const hEnd = hIndex + Math.ceil(uintBytes / 4);
+            for (let i = hIndex; i < hEnd; i++) {
+                setNodeH(this, i, Number(valueBN & BigInt(0xffffffff)));
+                valueBN = valueBN >> BigInt(32);
+            }
+        }
+    }
+    bitwiseOrUint(uintBytes, offsetBytes, value) {
+        const hIndex = Math.floor(offsetBytes / 4);
+        // number has to be masked from an h value
+        if (uintBytes < 4) {
+            const bitIndex = (offsetBytes % 4) * 8;
+            bitwiseOrNodeH(this, hIndex, value << bitIndex);
+        }
+        // number equals the h value
+        else if (uintBytes === 4) {
+            bitwiseOrNodeH(this, hIndex, value);
+        }
+        // number spans multiple h values
+        else {
+            const hEnd = hIndex + Math.ceil(uintBytes / 4);
+            for (let i = hIndex; i < hEnd; i++) {
+                bitwiseOrNodeH(this, i, value & 0xffffffff);
+                value >>= 32;
+            }
+        }
     }
 }
 exports.LeafNode = LeafNode;
@@ -27143,6 +27313,168 @@ function compose(inner, outer) {
     };
 }
 exports.compose = compose;
+function getNodeH(node, hIndex) {
+    if (hIndex === 0)
+        return node.h0;
+    else if (hIndex === 1)
+        return node.h1;
+    else if (hIndex === 2)
+        return node.h2;
+    else if (hIndex === 3)
+        return node.h3;
+    else if (hIndex === 4)
+        return node.h4;
+    else if (hIndex === 5)
+        return node.h5;
+    else if (hIndex === 6)
+        return node.h6;
+    else if (hIndex === 7)
+        return node.h7;
+    else
+        throw Error("hIndex > 7");
+}
+exports.getNodeH = getNodeH;
+function setNodeH(node, hIndex, value) {
+    if (hIndex === 0)
+        node.h0 = value;
+    else if (hIndex === 1)
+        node.h1 = value;
+    else if (hIndex === 2)
+        node.h2 = value;
+    else if (hIndex === 3)
+        node.h3 = value;
+    else if (hIndex === 4)
+        node.h4 = value;
+    else if (hIndex === 5)
+        node.h5 = value;
+    else if (hIndex === 6)
+        node.h6 = value;
+    else if (hIndex === 7)
+        node.h7 = value;
+    else
+        throw Error("hIndex > 7");
+}
+exports.setNodeH = setNodeH;
+function bitwiseOrNodeH(node, hIndex, value) {
+    if (hIndex === 0)
+        node.h0 |= value;
+    else if (hIndex === 1)
+        node.h1 |= value;
+    else if (hIndex === 2)
+        node.h2 |= value;
+    else if (hIndex === 3)
+        node.h3 |= value;
+    else if (hIndex === 4)
+        node.h4 |= value;
+    else if (hIndex === 5)
+        node.h5 |= value;
+    else if (hIndex === 6)
+        node.h6 |= value;
+    else if (hIndex === 7)
+        node.h7 |= value;
+    else
+        throw Error("hIndex > 7");
+}
+exports.bitwiseOrNodeH = bitwiseOrNodeH;
+
+
+/***/ }),
+
+/***/ 2921:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.packedNodeRootsToBytes = exports.packedRootsBytesToLeafNodes = exports.packedRootsBytesToNode = void 0;
+const subtree_1 = __webpack_require__(3258);
+const node_1 = __webpack_require__(4508);
+function packedRootsBytesToNode(depth, dataView, start, end) {
+    const leafNodes = packedRootsBytesToLeafNodes(dataView, start, end);
+    return subtree_1.subtreeFillToContents(leafNodes, depth);
+}
+exports.packedRootsBytesToNode = packedRootsBytesToNode;
+/**
+ * Optimized deserialization of linear bytes to consecutive leaf nodes
+ */
+function packedRootsBytesToLeafNodes(dataView, start, end) {
+    const size = end - start;
+    // If the offset in data is not a multiple of 4, Uint32Array can't be used
+    // > start offset of Uint32Array should be a multiple of 4
+    // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
+    const fullNodeCount = Math.floor(size / 32);
+    const leafNodes = new Array(Math.ceil(size / 32));
+    // Efficiently construct the tree writing to hashObjects directly
+    // TODO: Optimize, with this approach each h property is written twice
+    for (let i = 0; i < fullNodeCount; i++) {
+        const offset = start + i * 32;
+        leafNodes[i] = new node_1.LeafNode(dataView.getInt32(offset + 0, true), dataView.getInt32(offset + 4, true), dataView.getInt32(offset + 8, true), dataView.getInt32(offset + 12, true), dataView.getInt32(offset + 16, true), dataView.getInt32(offset + 20, true), dataView.getInt32(offset + 24, true), dataView.getInt32(offset + 28, true));
+    }
+    // Consider that the last node may only include partial data
+    const remainderBytes = size % 32;
+    // Last node
+    if (remainderBytes > 0) {
+        const node = new node_1.LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+        leafNodes[fullNodeCount] = node;
+        // Loop to dynamically copy the full h values
+        const fullHCount = Math.floor(remainderBytes / 4);
+        for (let h = 0; h < fullHCount; h++) {
+            node_1.setNodeH(node, h, dataView.getInt32(start + fullNodeCount * 32 + h * 4, true));
+        }
+        const remainderUint32 = size % 4;
+        if (remainderUint32 > 0) {
+            let h = 0;
+            for (let i = 0; i < remainderUint32; i++) {
+                h |= dataView.getUint8(start + size - remainderUint32 + i) << (i * 8);
+            }
+            node_1.setNodeH(node, fullHCount, h);
+        }
+    }
+    return leafNodes;
+}
+exports.packedRootsBytesToLeafNodes = packedRootsBytesToLeafNodes;
+/**
+ * Optimized serialization of consecutive leave nodes to linear bytes
+ */
+function packedNodeRootsToBytes(dataView, start, size, nodes) {
+    // If the offset in data is not a multiple of 4, Uint32Array can't be used
+    // > start offset of Uint32Array should be a multiple of 4
+    // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
+    // Consider that the last node may only include partial data
+    const remainderBytes = size % 32;
+    // Full nodes
+    // Efficiently get hashObjects data into data
+    const fullNodeCount = Math.floor(size / 32);
+    for (let i = 0; i < fullNodeCount; i++) {
+        const node = nodes[i];
+        const offset = start + i * 32;
+        dataView.setInt32(offset + 0, node.h0, true);
+        dataView.setInt32(offset + 4, node.h1, true);
+        dataView.setInt32(offset + 8, node.h2, true);
+        dataView.setInt32(offset + 12, node.h3, true);
+        dataView.setInt32(offset + 16, node.h4, true);
+        dataView.setInt32(offset + 20, node.h5, true);
+        dataView.setInt32(offset + 24, node.h6, true);
+        dataView.setInt32(offset + 28, node.h7, true);
+    }
+    // Last node
+    if (remainderBytes > 0) {
+        const node = nodes[fullNodeCount];
+        // Loop to dynamically copy the full h values
+        const fullHCount = Math.floor(remainderBytes / 4);
+        for (let h = 0; h < fullHCount; h++) {
+            dataView.setInt32(start + fullNodeCount * 32 + h * 4, node_1.getNodeH(node, h), true);
+        }
+        const remainderUint32 = size % 4;
+        if (remainderUint32 > 0) {
+            const h = node_1.getNodeH(node, fullHCount);
+            for (let i = 0; i < remainderUint32; i++) {
+                dataView.setUint8(start + size - remainderUint32 + i, (h >> (i * 8)) & 0xff);
+            }
+        }
+    }
+}
+exports.packedNodeRootsToBytes = packedNodeRootsToBytes;
 
 
 /***/ }),
@@ -27274,10 +27606,10 @@ function createSingleProof(rootNode, index) {
 }
 exports.createSingleProof = createSingleProof;
 function createNodeFromSingleProof(gindex, leaf, witnesses) {
-    let node = new node_1.LeafNode(leaf);
+    let node = node_1.LeafNode.fromRoot(leaf);
     const w = witnesses.reverse();
     while (gindex > 1) {
-        const sibling = new node_1.LeafNode(w.pop());
+        const sibling = node_1.LeafNode.fromRoot(w.pop());
         if (gindex % BigInt(2) === BigInt(0)) {
             node = new node_1.BranchNode(node, sibling);
         }
@@ -27344,7 +27676,7 @@ function treeOffsetProofToNode(offsets, leaves) {
         throw new Error("Proof must contain gt 0 leaves");
     }
     else if (leaves.length === 1) {
-        return new node_1.LeafNode(leaves[0]);
+        return node_1.LeafNode.fromRoot(leaves[0]);
     }
     else {
         // the offset popped from the list is the # of leaves in the left subtree
@@ -27539,9 +27871,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.subtreeFillToContents = exports.subtreeFillToLength = exports.subtreeFillToDepth = void 0;
 const node_1 = __webpack_require__(4508);
 const zeroNode_1 = __webpack_require__(2692);
-const ERR_NAVIGATION = "Navigation error";
-const ERR_TOO_MANY_NODES = "Too many nodes";
-// subtree filling
 function subtreeFillToDepth(bottom, depth) {
     let node = bottom;
     while (depth > 0) {
@@ -27554,14 +27883,14 @@ exports.subtreeFillToDepth = subtreeFillToDepth;
 function subtreeFillToLength(bottom, depth, length) {
     const maxLength = 1 << depth;
     if (length > maxLength)
-        throw new Error(ERR_TOO_MANY_NODES);
+        throw new Error("ERR_TOO_MANY_NODES");
     if (length === maxLength)
         return subtreeFillToDepth(bottom, depth);
     if (depth === 0) {
         if (length === 1)
             return bottom;
         else
-            throw new Error(ERR_NAVIGATION);
+            throw new Error("ERR_NAVIGATION");
     }
     if (depth === 1) {
         return new node_1.BranchNode(bottom, length > 1 ? bottom : zeroNode_1.zeroNode(0));
@@ -27575,27 +27904,43 @@ function subtreeFillToLength(bottom, depth, length) {
     }
 }
 exports.subtreeFillToLength = subtreeFillToLength;
+/**
+ * WARNING: Mutates the provided nodes array.
+ * TODO: Don't mutate the nodes array.
+ */
 function subtreeFillToContents(nodes, depth) {
     const maxLength = 2 ** depth;
-    if (nodes.length > maxLength)
-        throw new Error(ERR_TOO_MANY_NODES);
+    if (nodes.length > maxLength) {
+        throw new Error(`nodes.length ${nodes.length} over maxIndex at depth ${depth}`);
+    }
+    if (nodes.length === 0) {
+        return zeroNode_1.zeroNode(depth);
+    }
     if (depth === 0) {
-        if (!nodes.length)
-            return zeroNode_1.zeroNode(0);
         return nodes[0];
     }
     if (depth === 1) {
-        if (!nodes.length)
-            return zeroNode_1.zeroNode(1);
-        return new node_1.BranchNode(nodes[0], nodes[1] || zeroNode_1.zeroNode(0));
+        return nodes.length > 1
+            ? // All nodes at depth 1 available
+                new node_1.BranchNode(nodes[0], nodes[1])
+            : // Pad with zero node
+                new node_1.BranchNode(nodes[0], zeroNode_1.zeroNode(0));
     }
-    const pivot = Math.floor(maxLength / 2);
-    if (nodes.length <= pivot) {
-        return new node_1.BranchNode(subtreeFillToContents(nodes, depth - 1), zeroNode_1.zeroNode(depth - 1));
+    let count = nodes.length;
+    for (let d = depth; d > 0; d--) {
+        const countRemainder = count % 2;
+        const countEven = count - countRemainder;
+        // For each depth level compute the new BranchNodes and overwrite the nodes array
+        for (let i = 0; i < countEven; i += 2) {
+            nodes[i / 2] = new node_1.BranchNode(nodes[i], nodes[i + 1]);
+        }
+        if (countRemainder > 0) {
+            nodes[countEven / 2] = new node_1.BranchNode(nodes[countEven], zeroNode_1.zeroNode(depth - d));
+        }
+        // If there was remainer, 2 nodes are added to the count
+        count = countEven / 2 + countRemainder;
     }
-    else {
-        return new node_1.BranchNode(subtreeFillToContents(nodes.slice(0, Number(pivot)), depth - 1), subtreeFillToContents(nodes.slice(Number(pivot)), depth - 1));
-    }
+    return nodes[0];
 }
 exports.subtreeFillToContents = subtreeFillToContents;
 
@@ -27608,18 +27953,22 @@ exports.subtreeFillToContents = subtreeFillToContents;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Tree = void 0;
+exports.treeZeroAfterIndex = exports.iterateNodesAtDepth = exports.getNodesAtDepth = exports.setNodesAtDepth = exports.setNodeAtDepth = exports.getNodeAtDepth = exports.setNodeWithFn = exports.setNode = exports.getNode = exports.Tree = void 0;
+const zeroNode_1 = __webpack_require__(2692);
 const gindex_1 = __webpack_require__(1797);
 const node_1 = __webpack_require__(4508);
 const proof_1 = __webpack_require__(5071);
 const single_1 = __webpack_require__(7951);
-const zeroNode_1 = __webpack_require__(2692);
-const ERR_INVALID_TREE = "Invalid tree operation";
-const ERR_PARAM_LT_ZERO = "Param must be >= 0";
-const ERR_COUNT_GT_DEPTH = "Count extends beyond depth limit";
+/**
+ * Binary merkle tree
+ *
+ * Wrapper around immutable `Node` to support mutability.
+ *
+ * Mutability between a parent tree and subtree is achieved by maintaining a `hook` callback, which updates the parent when the subtree is updated.
+ */
 class Tree {
     constructor(node, hook) {
-        this._node = node;
+        this._rootNode = node;
         if (hook) {
             if (typeof WeakRef === "undefined") {
                 this.hook = hook;
@@ -27629,25 +27978,35 @@ class Tree {
             }
         }
     }
+    /**
+     * Create a `Tree` from a `Proof` object
+     */
     static createFromProof(proof) {
         return new Tree(proof_1.createNodeFromProof(proof));
     }
+    /**
+     * The root node of the tree
+     */
     get rootNode() {
-        return this._node;
+        return this._rootNode;
     }
-    set rootNode(n) {
-        this._node = n;
+    /**
+     *
+     * Setting the root node will trigger a call to the tree's `hook` if it exists.
+     */
+    set rootNode(newRootNode) {
+        this._rootNode = newRootNode;
         if (this.hook) {
             // WeakRef should not change status during a program's execution
             // So, use WeakRef feature detection to assume the type of this.hook
             // to minimize the memory footprint of Tree
             if (typeof WeakRef === "undefined") {
-                this.hook(this);
+                this.hook(newRootNode);
             }
             else {
                 const hookVar = this.hook.deref();
                 if (hookVar) {
-                    hookVar(this);
+                    hookVar(newRootNode);
                 }
                 else {
                     // Hook has been garbage collected, no need to keep the hookRef
@@ -27656,299 +28015,595 @@ class Tree {
             }
         }
     }
+    /**
+     * The root hash of the tree
+     */
     get root() {
         return this.rootNode.root;
     }
-    getNode(index) {
-        let node = this.rootNode;
-        const bitstring = gindex_1.convertGindexToBitstring(index);
-        for (let i = 1; i < bitstring.length; i++) {
-            if (bitstring[i] === "1") {
-                if (node.isLeaf())
-                    throw new Error(ERR_INVALID_TREE);
-                node = node.right;
-            }
-            else {
-                if (node.isLeaf())
-                    throw new Error(ERR_INVALID_TREE);
-                node = node.left;
-            }
-        }
-        return node;
-    }
-    setNode(gindex, n, expand = false) {
-        // Pre-compute entire bitstring instead of using an iterator (25% faster)
-        let bitstring;
-        if (typeof gindex === "string") {
-            bitstring = gindex;
-        }
-        else {
-            if (gindex < 1) {
-                throw new Error("Invalid gindex < 1");
-            }
-            bitstring = gindex.toString(2);
-        }
-        const parentNodes = this.getParentNodes(bitstring, expand);
-        this.rebindNodeToRoot(bitstring, parentNodes, n);
-    }
-    getRoot(index) {
-        return this.getNode(index).root;
-    }
-    getHashObject(index) {
-        return this.getNode(index);
-    }
-    setRoot(index, root, expand = false) {
-        this.setNode(index, new node_1.LeafNode(root), expand);
-    }
-    setHashObject(index, hashObject, expand = false) {
-        this.setNode(index, new node_1.LeafNode(hashObject), expand);
-    }
     /**
-     * Traverse from root node to node, get hash object, then apply the function to get new node
-     * and set the new node. This is a convenient method to avoid traversing the tree 2 times to
-     * get and set.
+     * Return a copy of the tree
      */
-    setHashObjectFn(gindex, hashObjectFn, expand = false) {
-        // Pre-compute entire bitstring instead of using an iterator (25% faster)
-        let bitstring;
-        if (typeof gindex === "string") {
-            bitstring = gindex;
-        }
-        else {
-            if (gindex < 1) {
-                throw new Error("Invalid gindex < 1");
-            }
-            bitstring = gindex.toString(2);
-        }
-        const parentNodes = this.getParentNodes(bitstring, expand);
-        const lastParentNode = parentNodes[parentNodes.length - 1];
-        const lastBit = bitstring[bitstring.length - 1];
-        const oldNode = lastBit === "1" ? lastParentNode.right : lastParentNode.left;
-        const newNode = new node_1.LeafNode(hashObjectFn(oldNode));
-        this.rebindNodeToRoot(bitstring, parentNodes, newNode);
-    }
-    getSubtree(index) {
-        return new Tree(this.getNode(index), (v) => this.setNode(index, v.rootNode));
-    }
-    setSubtree(index, v, expand = false) {
-        this.setNode(index, v.rootNode, expand);
-    }
     clone() {
         return new Tree(this.rootNode);
     }
+    /**
+     * Return the subtree at the specified gindex.
+     *
+     * Note: The returned subtree will have a `hook` attached to the parent tree.
+     * Updates to the subtree will result in updates to the parent.
+     */
+    getSubtree(index) {
+        return new Tree(this.getNode(index), (node) => this.setNode(index, node));
+    }
+    /**
+     * Return the node at the specified gindex.
+     */
+    getNode(gindex) {
+        return getNode(this.rootNode, gindex);
+    }
+    /**
+     * Return the node at the specified depth and index.
+     *
+     * Supports index up to `Number.MAX_SAFE_INTEGER`.
+     */
+    getNodeAtDepth(depth, index) {
+        return getNodeAtDepth(this.rootNode, depth, index);
+    }
+    /**
+     * Return the hash at the specified gindex.
+     */
+    getRoot(index) {
+        return this.getNode(index).root;
+    }
+    /**
+     * Set the node at at the specified gindex.
+     */
+    setNode(gindex, n) {
+        this.rootNode = setNode(this.rootNode, gindex, n);
+    }
+    /**
+     * Traverse to the node at the specified gindex,
+     * then apply the function to get a new node and set the node at the specified gindex with the result.
+     *
+     * This is a convenient method to avoid traversing the tree 2 times to
+     * get and set.
+     */
+    setNodeWithFn(gindex, getNewNode) {
+        this.rootNode = setNodeWithFn(this.rootNode, gindex, getNewNode);
+    }
+    /**
+     * Set the node at the specified depth and index.
+     *
+     * Supports index up to `Number.MAX_SAFE_INTEGER`.
+     */
+    setNodeAtDepth(depth, index, node) {
+        this.rootNode = setNodeAtDepth(this.rootNode, depth, index, node);
+    }
+    /**
+     * Set the hash at the specified gindex.
+     *
+     * Note: This will set a new `LeafNode` at the specified gindex.
+     */
+    setRoot(index, root) {
+        this.setNode(index, node_1.LeafNode.fromRoot(root));
+    }
+    /**
+     * Fast read-only iteration
+     * In-order traversal of nodes at `depth`
+     * starting from the `startIndex`-indexed node
+     * iterating through `count` nodes
+     *
+     * Supports index up to `Number.MAX_SAFE_INTEGER`.
+     */
+    getNodesAtDepth(depth, startIndex, count) {
+        return getNodesAtDepth(this.rootNode, depth, startIndex, count);
+    }
+    /**
+     * Fast read-only iteration
+     * In-order traversal of nodes at `depth`
+     * starting from the `startIndex`-indexed node
+     * iterating through `count` nodes
+     *
+     * Supports index up to `Number.MAX_SAFE_INTEGER`.
+     */
+    iterateNodesAtDepth(depth, startIndex, count) {
+        return iterateNodesAtDepth(this.rootNode, depth, startIndex, count);
+    }
+    /**
+     * Return a merkle proof for the node at the specified gindex.
+     */
     getSingleProof(index) {
         return single_1.createSingleProof(this.rootNode, index)[1];
     }
     /**
-     * Fast read-only iteration
-     * In-order traversal of nodes at `depth`
-     * starting from the `startIndex`-indexed node
-     * iterating through `count` nodes
+     * Return a merkle proof for the proof input.
+     *
+     * This method can be used to create multiproofs.
      */
-    *iterateNodesAtDepth(depth, startIndex, count) {
-        // Strategy:
-        // First nagivate to the starting Gindex node,
-        // At each level record the tuple (current node, the navigation direction) in a list (Left=0, Right=1)
-        // Once we reach the starting Gindex node, the list will be length == depth
-        // Begin emitting nodes: Outer loop:
-        //   Yield the current node
-        //   Inner loop
-        //     pop off the end of the list
-        //     If its (N, Left) (we've nav'd the left subtree, but not the right subtree)
-        //       push (N, Right) and set set node as the n.right
-        //       push (N, Left) and set node as n.left until list length == depth
-        //   Inner loop until the list length == depth
-        // Outer loop until the list is empty or the yield count == count
-        if (startIndex < 0 || count < 0 || depth < 0) {
-            throw new Error(ERR_PARAM_LT_ZERO);
-        }
-        if (BigInt(1) << BigInt(depth) < startIndex + count) {
-            throw new Error(ERR_COUNT_GT_DEPTH);
-        }
-        if (count === 0) {
-            return;
-        }
-        if (depth === 0) {
-            yield this.rootNode;
-            return;
-        }
-        let node = this.rootNode;
-        let currCount = 0;
-        const startGindex = gindex_1.toGindexBitstring(depth, startIndex);
-        const nav = [];
-        for (let i = 1; i < startGindex.length; i++) {
-            const bit = Number(startGindex[i]);
-            nav.push([node, bit]);
-            if (bit) {
-                if (node.isLeaf())
-                    throw new Error(ERR_INVALID_TREE);
-                node = node.right;
-            }
-            else {
-                if (node.isLeaf())
-                    throw new Error(ERR_INVALID_TREE);
-                node = node.left;
-            }
-        }
-        while (nav.length && currCount < count) {
-            yield node;
-            currCount++;
-            if (currCount === count) {
-                return;
-            }
-            do {
-                const [parentNode, direction] = nav.pop();
-                // if direction was left
-                if (!direction) {
-                    // now navigate right
-                    nav.push([parentNode, 1]);
-                    if (parentNode.isLeaf())
-                        throw new Error(ERR_INVALID_TREE);
-                    node = parentNode.right;
-                    // and then left as far as possible
-                    while (nav.length !== depth) {
-                        nav.push([node, 0]);
-                        if (node.isLeaf())
-                            throw new Error(ERR_INVALID_TREE);
-                        node = node.left;
-                    }
-                }
-            } while (nav.length && nav.length !== depth);
-        }
-    }
-    /**
-     * Fast read-only iteration
-     * In-order traversal of nodes at `depth`
-     * starting from the `startIndex`-indexed node
-     * iterating through `count` nodes
-     */
-    getNodesAtDepth(depth, startIndex, count) {
-        // Strategy:
-        // First nagivate to the starting Gindex node,
-        // At each level record the tuple (current node, the navigation direction) in a list (Left=0, Right=1)
-        // Once we reach the starting Gindex node, the list will be length == depth
-        // Begin emitting nodes: Outer loop:
-        //   Yield the current node
-        //   Inner loop
-        //     pop off the end of the list
-        //     If its (N, Left) (we've nav'd the left subtree, but not the right subtree)
-        //       push (N, Right) and set set node as the n.right
-        //       push (N, Left) and set node as n.left until list length == depth
-        //   Inner loop until the list length == depth
-        // Outer loop until the list is empty or the yield count == count
-        if (startIndex < 0 || count < 0 || depth < 0) {
-            throw new Error(ERR_PARAM_LT_ZERO);
-        }
-        if (BigInt(1) << BigInt(depth) < startIndex + count) {
-            throw new Error(ERR_COUNT_GT_DEPTH);
-        }
-        if (count === 0) {
-            return [];
-        }
-        if (depth === 0) {
-            return [this.rootNode];
-        }
-        const nodes = [];
-        let node = this.rootNode;
-        let currCount = 0;
-        const startGindex = gindex_1.toGindexBitstring(depth, startIndex);
-        const nav = [];
-        for (let i = 1; i < startGindex.length; i++) {
-            const bit = Number(startGindex[i]);
-            nav.push([node, bit]);
-            if (bit) {
-                if (node.isLeaf())
-                    throw new Error(ERR_INVALID_TREE);
-                node = node.right;
-            }
-            else {
-                if (node.isLeaf())
-                    throw new Error(ERR_INVALID_TREE);
-                node = node.left;
-            }
-        }
-        while (nav.length && currCount < count) {
-            nodes.push(node);
-            currCount++;
-            if (currCount === count) {
-                break;
-            }
-            do {
-                const [parentNode, direction] = nav.pop();
-                // if direction was left
-                if (!direction) {
-                    // now navigate right
-                    nav.push([parentNode, 1]);
-                    if (parentNode.isLeaf())
-                        throw new Error(ERR_INVALID_TREE);
-                    node = parentNode.right;
-                    // and then left as far as possible
-                    while (nav.length !== depth) {
-                        nav.push([node, 0]);
-                        if (node.isLeaf())
-                            throw new Error(ERR_INVALID_TREE);
-                        node = node.left;
-                    }
-                }
-            } while (nav.length && nav.length !== depth);
-        }
-        return nodes;
-    }
     getProof(input) {
         return proof_1.createProof(this.rootNode, input);
     }
-    /**
-     * Traverse the tree from root node, ignore the last bit to get all parent nodes
-     * of the specified bitstring.
-     */
-    getParentNodes(bitstring, expand = false) {
-        let node = this.rootNode;
-        // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
-        // backwards to rebind them "recursively" with the new nodes without using functions
-        const parentNodes = [this.rootNode];
-        // Ignore the first bit, left right directions are at bits [1,..]
-        // Ignore the last bit, no need to push the target node to the parentNodes array
-        for (let i = 1; i < bitstring.length - 1; i++) {
-            if (node.isLeaf()) {
-                if (!expand) {
-                    throw new Error(ERR_INVALID_TREE);
-                }
-                else {
-                    node = zeroNode_1.zeroNode(bitstring.length - i);
-                }
-            }
-            // Compare to string directly to prevent unnecessary type conversions
-            if (bitstring[i] === "1") {
-                node = node.right;
-            }
-            else {
-                node = node.left;
-            }
-            parentNodes.push(node);
-        }
-        return parentNodes;
-    }
-    /**
-     * Build a new tree structure from bitstring, parentNodes and a new node.
-     * Note: keep the same Tree, just mutate the root node.
-     */
-    rebindNodeToRoot(bitstring, parentNodes, newNode) {
-        let node = newNode;
-        // Ignore the first bit, left right directions are at bits [1,..]
-        // Iterate the list backwards including the last bit, but offset the parentNodes array
-        // by one since the first bit in bitstring was ignored in the previous loop
-        for (let i = bitstring.length - 1; i >= 1; i--) {
-            if (bitstring[i] === "1") {
-                node = parentNodes[i - 1].rebindRight(node);
-            }
-            else {
-                node = parentNodes[i - 1].rebindLeft(node);
-            }
-        }
-        this.rootNode = node;
-    }
 }
 exports.Tree = Tree;
+/**
+ * Return the node at the specified gindex.
+ */
+function getNode(rootNode, gindex) {
+    const gindexBitstring = gindex_1.convertGindexToBitstring(gindex);
+    let node = rootNode;
+    for (let i = 1; i < gindexBitstring.length; i++) {
+        if (node.isLeaf()) {
+            throw new Error(`Invalid tree - found leaf at depth ${i}`);
+        }
+        // If bit is set, means navigate right
+        node = gindexBitstring[i] === "1" ? node.right : node.left;
+    }
+    return node;
+}
+exports.getNode = getNode;
+/**
+ * Set the node at at the specified gindex.
+ * Returns the new root node.
+ */
+function setNode(rootNode, gindex, n) {
+    // Pre-compute entire bitstring instead of using an iterator (25% faster)
+    const gindexBitstring = gindex_1.convertGindexToBitstring(gindex);
+    const parentNodes = getParentNodes(rootNode, gindexBitstring);
+    return rebindNodeToRoot(gindexBitstring, parentNodes, n);
+}
+exports.setNode = setNode;
+/**
+ * Traverse to the node at the specified gindex,
+ * then apply the function to get a new node and set the node at the specified gindex with the result.
+ *
+ * This is a convenient method to avoid traversing the tree 2 times to
+ * get and set.
+ *
+ * Returns the new root node.
+ */
+function setNodeWithFn(rootNode, gindex, getNewNode) {
+    // Pre-compute entire bitstring instead of using an iterator (25% faster)
+    const gindexBitstring = gindex_1.convertGindexToBitstring(gindex);
+    const parentNodes = getParentNodes(rootNode, gindexBitstring);
+    const lastParentNode = parentNodes[parentNodes.length - 1];
+    const lastBit = gindexBitstring[gindexBitstring.length - 1];
+    const oldNode = lastBit === "1" ? lastParentNode.right : lastParentNode.left;
+    const newNode = getNewNode(oldNode);
+    return rebindNodeToRoot(gindexBitstring, parentNodes, newNode);
+}
+exports.setNodeWithFn = setNodeWithFn;
+/**
+ * Traverse the tree from root node, ignore the last bit to get all parent nodes
+ * of the specified bitstring.
+ */
+function getParentNodes(rootNode, bitstring) {
+    let node = rootNode;
+    // Keep a list of all parent nodes of node at gindex `index`. Then walk the list
+    // backwards to rebind them "recursively" with the new nodes without using functions
+    const parentNodes = [rootNode];
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Ignore the last bit, no need to push the target node to the parentNodes array
+    for (let i = 1; i < bitstring.length - 1; i++) {
+        // Compare to string directly to prevent unnecessary type conversions
+        if (bitstring[i] === "1") {
+            node = node.right;
+        }
+        else {
+            node = node.left;
+        }
+        parentNodes.push(node);
+    }
+    return parentNodes;
+}
+/**
+ * Build a new tree structure from bitstring, parentNodes and a new node.
+ * Returns the new root node.
+ */
+function rebindNodeToRoot(bitstring, parentNodes, newNode) {
+    let node = newNode;
+    // Ignore the first bit, left right directions are at bits [1,..]
+    // Iterate the list backwards including the last bit, but offset the parentNodes array
+    // by one since the first bit in bitstring was ignored in the previous loop
+    for (let i = bitstring.length - 1; i >= 1; i--) {
+        if (bitstring[i] === "1") {
+            node = new node_1.BranchNode(parentNodes[i - 1].left, node);
+        }
+        else {
+            node = new node_1.BranchNode(node, parentNodes[i - 1].right);
+        }
+    }
+    return node;
+}
+/**
+ * Supports index up to `Number.MAX_SAFE_INTEGER`.
+ */
+function getNodeAtDepth(rootNode, depth, index) {
+    if (depth === 0) {
+        return rootNode;
+    }
+    if (depth === 1) {
+        return index === 0 ? rootNode.left : rootNode.right;
+    }
+    // Ignore first bit "1", then substract 1 to get to the parent
+    const depthiRoot = depth - 1;
+    const depthiParent = 0;
+    let node = rootNode;
+    for (let d = depthiRoot; d >= depthiParent; d--) {
+        node = isLeftNode(d, index) ? node.left : node.right;
+    }
+    return node;
+}
+exports.getNodeAtDepth = getNodeAtDepth;
+/**
+ * Supports index up to `Number.MAX_SAFE_INTEGER`.
+ */
+function setNodeAtDepth(rootNode, nodesDepth, index, nodeChanged) {
+    // TODO: OPTIMIZE (if necessary)
+    return setNodesAtDepth(rootNode, nodesDepth, [index], [nodeChanged]);
+}
+exports.setNodeAtDepth = setNodeAtDepth;
+/**
+ * Set multiple nodes in batch, editing and traversing nodes strictly once.
+ *
+ * - gindexes MUST be sorted in ascending order beforehand.
+ * - All gindexes must be at the exact same depth.
+ * - Depth must be > 0, if 0 just replace the root node.
+ *
+ * Strategy: for each gindex in `gindexes` navigate to the depth of its parent,
+ * and create a new parent. Then calculate the closest common depth with the next
+ * gindex and navigate upwards creating or caching nodes as necessary. Loop and repeat.
+ *
+ * Supports index up to `Number.MAX_SAFE_INTEGER`.
+ */
+function setNodesAtDepth(rootNode, nodesDepth, indexes, nodes) {
+    // depth depthi   gindexes   indexes
+    // 0     1           1          0
+    // 1     0         2   3      0   1
+    // 2     -        4 5 6 7    0 1 2 3
+    // '10' means, at depth 1, node is at the left
+    //
+    // For index N check if the bit at position depthi is set to navigate right at depthi
+    // ```
+    // mask = 1 << depthi
+    // goRight = (N & mask) == mask
+    // ```
+    // If depth is 0 there's only one node max and the optimization below will cause a navigation error.
+    // For this case, check if there's a new root node and return it, otherwise the current rootNode.
+    if (nodesDepth === 0) {
+        return nodes.length > 0 ? nodes[0] : rootNode;
+    }
+    /**
+     * Contiguous filled stack of parent nodes. It get filled in the first descent
+     * Indexed by depthi
+     */
+    const parentNodeStack = new Array(nodesDepth);
+    /**
+     * Temp stack of left parent nodes, index by depthi.
+     * Node leftParentNodeStack[depthi] is a node at d = depthi - 1, such that:
+     * ```
+     * parentNodeStack[depthi].left = leftParentNodeStack[depthi]
+     * ```
+     */
+    const leftParentNodeStack = new Array(nodesDepth);
+    // Ignore first bit "1", then substract 1 to get to the parent
+    const depthiRoot = nodesDepth - 1;
+    const depthiParent = 0;
+    let depthi = depthiRoot;
+    let node = rootNode;
+    // Insert root node to make the loop below general
+    parentNodeStack[depthiRoot] = rootNode;
+    // TODO: Iterate to depth 32 to allow using bit ops
+    // for (; depthi >= 32; depthi--) {
+    //   node = node.left;
+    // }
+    for (let i = 0; i < indexes.length; i++) {
+        const index = indexes[i];
+        // Navigate down until parent depth, and store the chain of nodes
+        //
+        // Starts from latest common depth, so node is the parent node at `depthi`
+        // When persisting the next node, store at the `d - 1` since its the child of node at `depthi`
+        //
+        // Stops at the level above depthiParent. For the re-binding routing below node must be at depthiParent
+        for (let d = depthi; d > depthiParent; d--) {
+            node = isLeftNode(d, index) ? node.left : node.right;
+            parentNodeStack[d - 1] = node;
+        }
+        depthi = depthiParent;
+        // If this is the left node, check first it the next node is on the right
+        //
+        //   -    If both nodes exist, create new
+        //  / \
+        // x   x
+        //
+        //   -    If only the left node exists, rebind left
+        //  / \
+        // x   -
+        //
+        //   -    If this is the right node, only the right node exists, rebind right
+        //  / \
+        // -   x
+        // d = 0, mask = 1 << d = 1
+        const isLeftLeafNode = (index & 1) !== 1;
+        if (isLeftLeafNode) {
+            // Next node is the very next to the right of current node
+            if (index + 1 === indexes[i + 1]) {
+                node = new node_1.BranchNode(nodes[i], nodes[i + 1]);
+                // Move pointer one extra forward since node has consumed two nodes
+                i++;
+            }
+            else {
+                node = new node_1.BranchNode(nodes[i], node.right);
+            }
+        }
+        else {
+            node = new node_1.BranchNode(node.left, nodes[i]);
+        }
+        // Here `node` is the new BranchNode at depthi `depthiParent`
+        // Now climb upwards until finding the common node with the next index
+        // For the last iteration, climb to the root at `depthiRoot`
+        const isLastIndex = i >= indexes.length - 1;
+        const diffDepthi = isLastIndex ? depthiRoot : findDiffDepthi(index, indexes[i + 1]);
+        // When climbing up from a left node there are two possible paths
+        // 1. Go to the right of the parent: Store left node to rebind latter
+        // 2. Go another level up: Will never visit the left node again, so must rebind now
+        // 🡼 \     Rebind left only, will never visit this node again
+        // 🡽 /\
+        //
+        //    / 🡽  Rebind left only (same as above)
+        // 🡽 /\
+        //
+        // 🡽 /\ 🡾  Store left node to rebind the entire node when returning
+        //
+        // 🡼 \     Rebind right with left if exists, will never visit this node again
+        //   /\ 🡼
+        //
+        //    / 🡽  Rebind right with left if exists (same as above)
+        //   /\ 🡼
+        for (let d = depthiParent + 1; d <= diffDepthi; d++) {
+            // If node is on the left, store for latter
+            // If node is on the right merge with stored left node
+            if (isLeftNode(d, index)) {
+                if (isLastIndex || d !== diffDepthi) {
+                    // If it's last index, bind with parent since it won't navigate to the right anymore
+                    // Also, if still has to move upwards, rebind since the node won't be visited anymore
+                    node = new node_1.BranchNode(node, parentNodeStack[d].right);
+                }
+                else {
+                    // Only store the left node if it's at d = diffDepth
+                    leftParentNodeStack[d] = node;
+                    node = parentNodeStack[d];
+                }
+            }
+            else {
+                const leftNode = leftParentNodeStack[d];
+                if (leftNode !== undefined) {
+                    node = new node_1.BranchNode(leftNode, node);
+                    leftParentNodeStack[d] = undefined;
+                }
+                else {
+                    node = new node_1.BranchNode(parentNodeStack[d].left, node);
+                }
+            }
+        }
+        // Prepare next loop
+        // Go to the parent of the depth with diff, to switch branches to the right
+        depthi = diffDepthi;
+    }
+    // Done, return new root node
+    return node;
+}
+exports.setNodesAtDepth = setNodesAtDepth;
+/**
+ * Fast read-only iteration
+ * In-order traversal of nodes at `depth`
+ * starting from the `startIndex`-indexed node
+ * iterating through `count` nodes
+ *
+ * **Strategy**
+ * 1. Navigate down to parentDepth storing a stack of parents
+ * 2. At target level push current node
+ * 3. Go up to the first level that navigated left
+ * 4. Repeat (1) for next index
+ */
+function getNodesAtDepth(rootNode, depth, startIndex, count) {
+    // Optimized paths for short trees (x20 times faster)
+    if (depth === 0) {
+        return startIndex === 0 && count > 0 ? [rootNode] : [];
+    }
+    else if (depth === 1) {
+        if (count === 0) {
+            return [];
+        }
+        else if (count === 1) {
+            return startIndex === 0 ? [rootNode.left] : [rootNode.right];
+        }
+        else {
+            return [rootNode.left, rootNode.right];
+        }
+    }
+    // Ignore first bit "1", then substract 1 to get to the parent
+    const depthiRoot = depth - 1;
+    const depthiParent = 0;
+    let depthi = depthiRoot;
+    let node = rootNode;
+    // Contiguous filled stack of parent nodes. It get filled in the first descent
+    // Indexed by depthi
+    const parentNodeStack = new Array(depth);
+    const isLeftStack = new Array(depth);
+    const nodes = new Array(count);
+    // Insert root node to make the loop below general
+    parentNodeStack[depthiRoot] = rootNode;
+    for (let i = 0; i < count; i++) {
+        for (let d = depthi; d >= depthiParent; d--) {
+            if (d !== depthi) {
+                parentNodeStack[d] = node;
+            }
+            const isLeft = isLeftNode(d, startIndex + i);
+            isLeftStack[d] = isLeft;
+            node = isLeft ? node.left : node.right;
+        }
+        nodes[i] = node;
+        // Find the first depth where navigation when left.
+        // Store that height and go right from there
+        for (let d = depthiParent; d <= depthiRoot; d++) {
+            if (isLeftStack[d] === true) {
+                depthi = d;
+                break;
+            }
+        }
+        node = parentNodeStack[depthi];
+    }
+    return nodes;
+}
+exports.getNodesAtDepth = getNodesAtDepth;
+/**
+ * @see getNodesAtDepth but instead of pushing to an array, it yields
+ */
+function* iterateNodesAtDepth(rootNode, depth, startIndex, count) {
+    const endIndex = startIndex + count;
+    // Ignore first bit "1", then substract 1 to get to the parent
+    const depthiRoot = depth - 1;
+    const depthiParent = 0;
+    let depthi = depthiRoot;
+    let node = rootNode;
+    // Contiguous filled stack of parent nodes. It get filled in the first descent
+    // Indexed by depthi
+    const parentNodeStack = new Array(depth);
+    const isLeftStack = new Array(depth);
+    // Insert root node to make the loop below general
+    parentNodeStack[depthiRoot] = rootNode;
+    for (let index = startIndex; index < endIndex; index++) {
+        for (let d = depthi; d >= depthiParent; d--) {
+            if (d !== depthi) {
+                parentNodeStack[d] = node;
+            }
+            const isLeft = isLeftNode(d, index);
+            isLeftStack[d] = isLeft;
+            node = isLeft ? node.left : node.right;
+        }
+        yield node;
+        // Find the first depth where navigation when left.
+        // Store that height and go right from there
+        for (let d = depthiParent; d <= depthiRoot; d++) {
+            if (isLeftStack[d] === true) {
+                depthi = d;
+                break;
+            }
+        }
+        node = parentNodeStack[depthi];
+    }
+}
+exports.iterateNodesAtDepth = iterateNodesAtDepth;
+/**
+ * Zero's all nodes right of index with constant depth of `nodesDepth`.
+ *
+ * For example, zero-ing this tree at depth 2 after index 0
+ * ```
+ *    X              X
+ *  X   X    ->    X   0
+ * X X X X        X 0 0 0
+ * ```
+ *
+ * Or, zero-ing this tree at depth 3 after index 2
+ * ```
+ *        X                     X
+ *    X       X             X       0
+ *  X   X   X   X    ->   X   X   0   0
+ * X X X X X X X X       X X X 0 0 0 0 0
+ * ```
+ *
+ * The strategy is to first navigate down to `nodesDepth` and `index` and keep a stack of parents.
+ * Then navigate up re-binding:
+ * - If navigated to the left rebind with zeroNode()
+ * - If navigated to the right rebind with parent.left from the stack
+ */
+function treeZeroAfterIndex(rootNode, nodesDepth, index) {
+    // depth depthi   gindexes   indexes
+    // 0     1           1          0
+    // 1     0         2   3      0   1
+    // 2     -        4 5 6 7    0 1 2 3
+    // '10' means, at depth 1, node is at the left
+    //
+    // For index N check if the bit at position depthi is set to navigate right at depthi
+    // ```
+    // mask = 1 << depthi
+    // goRight = (N & mask) == mask
+    // ```
+    /**
+     * Contiguous filled stack of parent nodes. It get filled in the first descent
+     * Indexed by depthi
+     */
+    const parentNodeStack = new Array(nodesDepth);
+    // Ignore first bit "1", then substract 1 to get to the parent
+    const depthiRoot = nodesDepth - 1;
+    const depthiParent = 0;
+    let depthi = depthiRoot;
+    let node = rootNode;
+    // Insert root node to make the loop below general
+    parentNodeStack[depthiRoot] = rootNode;
+    // Navigate down until parent depth, and store the chain of nodes
+    //
+    // Stops at the depthiParent level. To rebind below down to `nodesDepth`
+    for (let d = depthi; d >= depthiParent; d--) {
+        node = isLeftNode(d, index) ? node.left : node.right;
+        parentNodeStack[d - 1] = node;
+    }
+    depthi = depthiParent;
+    // Now climb up re-binding with either zero of existing tree.
+    for (let d = depthiParent; d <= depthiRoot; d++) {
+        if (isLeftNode(d, index)) {
+            // If navigated to the left, then all the child nodes of the right node are NOT part of the new tree.
+            // So re-bind new `node` with a zeroNode at the current depth.
+            node = new node_1.BranchNode(node, zeroNode_1.zeroNode(d));
+        }
+        else {
+            // If navigated to the right, then all the child nodes of the left node are part of the new tree.
+            // So re-bind new `node` with the existing left node of the parent.
+            node = new node_1.BranchNode(parentNodeStack[d].left, node);
+        }
+    }
+    // Done, return new root node
+    return node;
+}
+exports.treeZeroAfterIndex = treeZeroAfterIndex;
+/**
+ * Returns true if the `index` at `depth` is a left node, false if it is a right node.
+ *
+ * Supports index up to `Number.MAX_SAFE_INTEGER`.
+ * In Eth2 case the biggest tree's index is 2**40 (VALIDATOR_REGISTRY_LIMIT)
+ */
+function isLeftNode(depthi, index) {
+    if (depthi > 31) {
+        // Javascript can only do bitwise ops with 32 bit numbers.
+        // Shifting left 1 by 32 wraps around and becomes 1.
+        // Get the high part of `index` and adjust depthi
+        const indexHi = (index / 2 ** 32) >>> 0;
+        const mask = 1 << (depthi - 32);
+        return (indexHi & mask) !== mask;
+    }
+    const mask = 1 << depthi;
+    return (index & mask) !== mask;
+}
+/**
+ * depth depthi   gindexes   indexes
+ * 0     1           1          0
+ * 1     0         2   3      0   1
+ * 2     -        4 5 6 7    0 1 2 3
+ *
+ * **Conditions**:
+ * - `from` and `to` must not be equal
+ *
+ * @param from Index
+ * @param to Index
+ */
+function findDiffDepthi(from, to) {
+    return (
+    // (0,0) -> 0 | (0,1) -> 1 | (0,2) -> 2
+    Math.ceil(Math.log2(-~(from ^ to))) -
+        // Must offset by one to match the depthi scale
+        1);
+}
 
 
 /***/ }),
@@ -27961,3457 +28616,40 @@ exports.Tree = Tree;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.zeroNode = void 0;
 const node_1 = __webpack_require__(4508);
-const zeroes = [new node_1.LeafNode(new Uint8Array(32))];
-function zeroNode(depth) {
-    if (depth >= zeroes.length) {
-        for (let i = zeroes.length; i <= depth; i++) {
+const zeroes = [node_1.LeafNode.fromZero()];
+/**
+ * Return the `Node` at a specified height from the merkle tree made of "zero data"
+ * ```
+ *           ...
+ *          /
+ *         x           <- height 2
+ *      /     \
+ *     x       x       <- height 1
+ *   /  \      /  \
+ * 0x0  0x0  0x0  0x0  <- height 0
+ * ```
+ */
+function zeroNode(height) {
+    if (height >= zeroes.length) {
+        for (let i = zeroes.length; i <= height; i++) {
             zeroes[i] = new node_1.BranchNode(zeroes[i - 1], zeroes[i - 1]);
         }
     }
-    return zeroes[depth];
+    return zeroes[height];
 }
 exports.zeroNode = zeroNode;
 
 
 /***/ }),
 
-/***/ 8199:
+/***/ 9157:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isBackedValue = void 0;
-const tree_1 = __webpack_require__(5170);
-function isBackedValue(value) {
-    return tree_1.isTreeBacked(value);
-}
-exports.isBackedValue = isBackedValue;
-//# sourceMappingURL=backedValue.js.map
-
-/***/ }),
-
-/***/ 4507:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(5170), exports);
-__exportStar(__webpack_require__(8199), exports);
-__exportStar(__webpack_require__(5457), exports);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 5457:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.readonlyEntries = exports.readonlyValues = void 0;
-const tree_1 = __webpack_require__(5170);
-function readonlyValues(obj) {
-    if (tree_1.isTreeBacked(obj) && obj.readonlyValues) {
-        return obj.readonlyValues();
-    }
-    else {
-        return Object.values(obj);
-    }
-}
-exports.readonlyValues = readonlyValues;
-function readonlyEntries(obj) {
-    if (tree_1.isTreeBacked(obj) && obj.readonlyEntries) {
-        return obj.readonlyEntries();
-    }
-    else {
-        return Object.entries(obj);
-    }
-}
-exports.readonlyEntries = readonlyEntries;
-//# sourceMappingURL=readonlyIterate.js.map
-
-/***/ }),
-
-/***/ 5170:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(6009), exports);
-__exportStar(__webpack_require__(867), exports);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 6009:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-//# sourceMappingURL=interface.js.map
-
-/***/ }),
-
-/***/ 867:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UnionTreeValue = exports.ContainerLeafNodeStructTreeValue = exports.ContainerTreeValue = exports.CompositeListTreeValue = exports.BasicListTreeValue = exports.CompositeArrayTreeValue = exports.BasicArrayTreeValue = exports.TreeValue = exports.TreeProxyHandler = exports.proxyWrapTreeValue = exports.getTreeValueClass = exports.createTreeBacked = exports.isTreeBacked = void 0;
-const types_1 = __webpack_require__(284);
-const byteArray_1 = __webpack_require__(2404);
-const tree_1 = __webpack_require__(3834);
-function isTreeBacked(value) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return value && value.type && value.tree && tree_1.isTree(value.tree);
-}
-exports.isTreeBacked = isTreeBacked;
-/**
- * Return an ES6 Proxy-wrapped tree value (ergonomic getter/setter/iteration)
- */
-function createTreeBacked(type, tree) {
-    const TreeValueClass = getTreeValueClass(type);
-    return proxyWrapTreeValue(new TreeValueClass(type, tree));
-}
-exports.createTreeBacked = createTreeBacked;
-function getTreeValueClass(type) {
-    if (types_1.isListType(type)) {
-        if (types_1.isBasicType(type.elementType)) {
-            return BasicListTreeValue;
-        }
-        else {
-            return CompositeListTreeValue;
-        }
-    }
-    else if (types_1.isVectorType(type)) {
-        if (types_1.isBasicType(type.elementType)) {
-            return BasicArrayTreeValue;
-        }
-        else {
-            return CompositeArrayTreeValue;
-        }
-    }
-    else if (types_1.isContainerType(type)) {
-        if (types_1.isContainerLeafNodeStructType(type)) {
-            return ContainerLeafNodeStructTreeValue;
-        }
-        else {
-            return ContainerTreeValue;
-        }
-    }
-    else if (types_1.isUnionType(type)) {
-        return UnionTreeValue;
-    }
-    throw Error("No TreeValueClass for type");
-}
-exports.getTreeValueClass = getTreeValueClass;
-/**
- * Wrap a TreeValue in a Proxy that adds ergonomic getter/setter
- */
-function proxyWrapTreeValue(value) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new Proxy(value, exports.TreeProxyHandler);
-}
-exports.proxyWrapTreeValue = proxyWrapTreeValue;
-/**
- * Proxy handler that adds ergonomic get/set and exposes TreeValue methods
- */
-exports.TreeProxyHandler = {
-    get(target, property) {
-        if (property in target) {
-            return target[property];
-        }
-        else {
-            return target.getProperty(property);
-        }
-    },
-    set(target, property, value) {
-        return target.setProperty(property, value);
-    },
-    ownKeys(target) {
-        return target.getPropertyNames();
-    },
-    getOwnPropertyDescriptor(target, property) {
-        if (target.type.getPropertyType(property)) {
-            return {
-                configurable: true,
-                enumerable: true,
-                writable: true,
-            };
-        }
-        else {
-            return undefined;
-        }
-    },
-};
-/**
- * Convenience wrapper around a type and tree
- */
-class TreeValue {
-    constructor(type, tree) {
-        this.type = type;
-        this.tree = tree;
-    }
-    clone() {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const TreeValueClass = Object.getPrototypeOf(this).constructor;
-        return proxyWrapTreeValue(new TreeValueClass(this.type, this.tree.clone()));
-    }
-    valueOf() {
-        return this.type.tree_convertToStruct(this.tree);
-    }
-    equals(other) {
-        if (isTreeBacked(other)) {
-            return byteArray_1.byteArrayEquals(this.hashTreeRoot(), other.hashTreeRoot());
-        }
-        else {
-            return this.type.struct_equals(this, other);
-        }
-    }
-    size() {
-        return this.type.tree_getSerializedLength(this.tree);
-    }
-    toStruct() {
-        return this.type.tree_convertToStruct(this.tree);
-    }
-    toBytes(output, offset) {
-        return this.type.tree_serializeToBytes(this.tree, output, offset);
-    }
-    serialize() {
-        const output = new Uint8Array(this.type.tree_getSerializedLength(this.tree));
-        this.toBytes(output, 0);
-        return output;
-    }
-    hashTreeRoot() {
-        return this.tree.root;
-    }
-    createProof(paths) {
-        return this.type.tree_createProof(this.tree, paths);
-    }
-    getPropertyNames() {
-        return this.type.tree_getPropertyNames(this.tree);
-    }
-    [Symbol.iterator]() {
-        return this.values();
-    }
-}
-exports.TreeValue = TreeValue;
-class BasicArrayTreeValue extends TreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    getProperty(property) {
-        return this.type.tree_getProperty(this.tree, property);
-    }
-    setProperty(property, value) {
-        return this.type.tree_setProperty(this.tree, property, value);
-    }
-    *keys() {
-        const propNames = this.getPropertyNames();
-        // pop off "length"
-        propNames.pop();
-        yield* propNames.map(String);
-    }
-    values() {
-        return this.type.tree_iterateValues(this.tree);
-    }
-    *entries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.values()) {
-            yield [String(keys[i]), value];
-            i++;
-        }
-    }
-    readonlyValues() {
-        return this.type.tree_readonlyIterateValues(this.tree);
-    }
-    *readonlyEntries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.readonlyValues()) {
-            yield [String(keys[i]), value];
-            i++;
-        }
-    }
-    keysArray() {
-        const propNames = this.getPropertyNames();
-        // pop off "length"
-        propNames.pop();
-        return propNames.map(String);
-    }
-    valuesArray() {
-        return this.type.tree_getValues(this.tree);
-    }
-    entriesArray() {
-        const keys = this.getPropertyNames();
-        const values = this.valuesArray();
-        const entries = [];
-        for (let i = 0; i < values.length; i++) {
-            entries.push([String(keys[i]), values[i]]);
-        }
-        return entries;
-    }
-    readonlyValuesArray() {
-        return this.type.tree_readonlyGetValues(this.tree);
-    }
-    readonlyEntriesArray() {
-        const keys = this.getPropertyNames();
-        const values = this.readonlyValuesArray();
-        const entries = [];
-        for (let i = 0; i < values.length; i++) {
-            entries.push([String(keys[i]), values[i]]);
-        }
-        return entries;
-    }
-}
-exports.BasicArrayTreeValue = BasicArrayTreeValue;
-class CompositeArrayTreeValue extends TreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    getProperty(property) {
-        if (property === "length") {
-            return this.type.tree_getProperty(this.tree, property);
-        }
-        return createTreeBacked(this.type.elementType, this.type.tree_getProperty(this.tree, property));
-    }
-    setProperty(property, value) {
-        return this.type.tree_setProperty(this.tree, property, isTreeBacked(value) ? value.tree : this.type.elementType.struct_convertToTree(value));
-    }
-    *keys() {
-        const propNames = this.getPropertyNames();
-        // pop off "length"
-        propNames.pop();
-        yield* propNames.map(String);
-    }
-    *values() {
-        for (const tree of this.type.tree_iterateValues(this.tree)) {
-            yield createTreeBacked(this.type.elementType, tree);
-        }
-    }
-    *entries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.values()) {
-            yield [String(keys[i]), value];
-            i++;
-        }
-    }
-    *readonlyValues() {
-        for (const tree of this.type.tree_readonlyIterateValues(this.tree)) {
-            yield createTreeBacked(this.type.elementType, tree);
-        }
-    }
-    *readonlyEntries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.readonlyValues()) {
-            yield [String(keys[i]), value];
-            i++;
-        }
-    }
-    keysArray() {
-        const propNames = this.getPropertyNames();
-        // pop off "length"
-        propNames.pop();
-        return propNames.map(String);
-    }
-    valuesArray() {
-        const values = [];
-        const rawValues = this.type.tree_getValues(this.tree);
-        for (let i = 0; i < rawValues.length; i++) {
-            values.push(createTreeBacked(this.type.elementType, rawValues[i]));
-        }
-        return values;
-    }
-    entriesArray() {
-        const keys = this.getPropertyNames();
-        const values = this.valuesArray();
-        const entries = [];
-        for (let i = 0; i < values.length; i++) {
-            entries.push([String(keys[i]), values[i]]);
-        }
-        return entries;
-    }
-    readonlyValuesArray() {
-        const values = [];
-        const rawValues = this.type.tree_readonlyGetValues(this.tree);
-        for (let i = 0; i < rawValues.length; i++) {
-            values.push(createTreeBacked(this.type.elementType, rawValues[i]));
-        }
-        return values;
-    }
-    readonlyEntriesArray() {
-        const keys = this.getPropertyNames();
-        const values = this.valuesArray();
-        const entries = [];
-        for (let i = 0; i < values.length; i++) {
-            entries.push([String(keys[i]), values[i]]);
-        }
-        return entries;
-    }
-}
-exports.CompositeArrayTreeValue = CompositeArrayTreeValue;
-class BasicListTreeValue extends BasicArrayTreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    push(...values) {
-        return this.type.tree_push(this.tree, ...values);
-    }
-    pop() {
-        return this.type.tree_pop(this.tree);
-    }
-}
-exports.BasicListTreeValue = BasicListTreeValue;
-class CompositeListTreeValue extends CompositeArrayTreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    push(...values) {
-        const convertedValues = values.map((value) => isTreeBacked(value) ? value.tree : this.type.elementType.struct_convertToTree(value));
-        return this.type.tree_push(this.tree, ...convertedValues);
-    }
-    pop() {
-        return this.type.tree_pop(this.tree);
-    }
-}
-exports.CompositeListTreeValue = CompositeListTreeValue;
-class ContainerTreeValue extends TreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    getProperty(property) {
-        if (!this.type.fields[property]) {
-            return undefined;
-        }
-        const propType = this.type.getPropertyType(property);
-        const propValue = this.type.tree_getProperty(this.tree, property);
-        if (!this.type.fieldInfos.get(property).isBasic) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return createTreeBacked(propType, propValue);
-        }
-        else {
-            return propValue;
-        }
-    }
-    setProperty(property, value) {
-        if (!this.type.fieldInfos.get(property).isBasic) {
-            if (isTreeBacked(value)) {
-                return this.type.tree_setProperty(this.tree, property, value.tree);
-            }
-            else {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const propType = this.type.getPropertyType(property);
-                return this.type.tree_setProperty(this.tree, property, propType.struct_convertToTree(value));
-            }
-        }
-        else {
-            return this.type.tree_setProperty(this.tree, property, value);
-        }
-    }
-    *keys() {
-        yield* this.getPropertyNames();
-    }
-    *values() {
-        for (const [_key, value] of this.entries()) {
-            yield value;
-        }
-    }
-    *entries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.type.tree_iterateValues(this.tree)) {
-            const propName = keys[i];
-            const propType = this.type.getPropertyType(propName);
-            if (types_1.isCompositeType(propType)) {
-                yield [propName, createTreeBacked(propType, value)];
-            }
-            else {
-                yield [propName, value];
-            }
-            i++;
-        }
-    }
-    *readonlyValues() {
-        for (const [_key, value] of this.readonlyEntries()) {
-            yield value;
-        }
-    }
-    *readonlyEntries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.type.tree_readonlyIterateValues(this.tree)) {
-            const propName = keys[i];
-            const propType = this.type.getPropertyType(propName);
-            if (types_1.isCompositeType(propType)) {
-                yield [propName, createTreeBacked(propType, value)];
-            }
-            else {
-                yield [propName, value];
-            }
-            i++;
-        }
-    }
-    keysArray() {
-        return this.getPropertyNames();
-    }
-    valuesArray() {
-        const values = [];
-        const entries = this.entriesArray();
-        for (let i = 0; i < entries.length; i++) {
-            values.push(entries[i][1]);
-        }
-        return values;
-    }
-    entriesArray() {
-        const keys = this.keysArray();
-        const values = this.valuesArray();
-        const entries = [];
-        for (let i = 0; i < values.length; i++) {
-            const key = keys[i];
-            const value = values[i];
-            const fieldType = this.type.getPropertyType(key);
-            if (types_1.isCompositeType(fieldType)) {
-                entries.push([key, createTreeBacked(fieldType, value)]);
-            }
-            else {
-                entries.push([key, value]);
-            }
-        }
-        return entries;
-    }
-    readonlyValuesArray() {
-        const values = [];
-        const entries = this.readonlyEntriesArray();
-        for (let i = 0; i < entries.length; i++) {
-            values.push(entries[i][1]);
-        }
-        return values;
-    }
-    readonlyEntriesArray() {
-        const keys = this.keysArray();
-        const values = this.readonlyValuesArray();
-        const entries = [];
-        for (let i = 0; i < values.length; i++) {
-            const key = keys[i];
-            const value = values[i];
-            const fieldType = this.type.getPropertyType(key);
-            if (types_1.isCompositeType(fieldType)) {
-                entries.push([key, createTreeBacked(fieldType, value)]);
-            }
-            else {
-                entries.push([key, value]);
-            }
-        }
-        return entries;
-    }
-}
-exports.ContainerTreeValue = ContainerTreeValue;
-/**
- * Custom TreeValue to be used in `ContainerLeafNodeStructType`.
- *
- * It skips extra work done in `ContainerTreeValue` since all data is represented as struct and should be returned
- * as struct, not as TreeBacked.
- */
-class ContainerLeafNodeStructTreeValue extends TreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    getProperty(property) {
-        return this.type.tree_getProperty(this.tree, property);
-    }
-    setProperty(property, value) {
-        return this.type.tree_setProperty(this.tree, property, value);
-    }
-    *keys() {
-        yield* this.getPropertyNames();
-    }
-    *values() {
-        for (const [_key, value] of this.entries()) {
-            yield value;
-        }
-    }
-    *entries() {
-        const keys = this.getPropertyNames();
-        let i = 0;
-        for (const value of this.type.tree_iterateValues(this.tree)) {
-            const propName = keys[i];
-            yield [propName, value];
-            i++;
-        }
-    }
-    *readonlyValues() {
-        yield* this.values();
-    }
-    *readonlyEntries() {
-        yield* this.entries();
-    }
-    keysArray() {
-        return this.getPropertyNames();
-    }
-    valuesArray() {
-        return this.type.tree_getValues(this.tree);
-    }
-    entriesArray() {
-        const keys = this.getPropertyNames();
-        const values = this.type.tree_getValues(this.tree);
-        return keys.map((key, i) => [key, values[i]]);
-    }
-    readonlyValuesArray() {
-        return this.valuesArray();
-    }
-    readonlyEntriesArray() {
-        return this.entriesArray();
-    }
-}
-exports.ContainerLeafNodeStructTreeValue = ContainerLeafNodeStructTreeValue;
-class UnionTreeValue extends TreeValue {
-    constructor(type, tree) {
-        super(type, tree);
-        this.type = type;
-    }
-    getProperty(property) {
-        if (property !== "selector" && property !== "value") {
-            throw new Error(`property ${property} does not exist in Union type`);
-        }
-        const propType = this.type.getPropertyTypeFromTree(this.tree, property);
-        const propValue = this.type.tree_getProperty(this.tree, property);
-        if (types_1.isCompositeType(propType)) {
-            return createTreeBacked(propType, propValue);
-        }
-        else {
-            return propValue;
-        }
-    }
-    setProperty(property, value) {
-        if (property !== "value") {
-            throw new Error(`Unsupport setting property ${property} for Union`);
-        }
-        return this.type.tree_setProperty(this.tree, property, value);
-    }
-    *keys() {
-        yield* this.getPropertyNames();
-    }
-    *values() {
-        for (const [_key, value] of this.entries()) {
-            yield value;
-        }
-    }
-    entries() {
-        throw new Error("Method not implemented for Union type");
-    }
-    readonlyValues() {
-        throw new Error("Method not implemented for Union type");
-    }
-    readonlyEntries() {
-        throw new Error("Method not implemented for Union type");
-    }
-    keysArray() {
-        throw new Error("Method not implemented for Union type");
-    }
-    valuesArray() {
-        throw new Error("Method not implemented for Union type");
-    }
-    entriesArray() {
-        throw new Error("Method not implemented for Union type");
-    }
-    readonlyValuesArray() {
-        throw new Error("Method not implemented for Union type");
-    }
-    readonlyEntriesArray() {
-        throw new Error("Method not implemented for Union type");
-    }
-}
-exports.UnionTreeValue = UnionTreeValue;
-//# sourceMappingURL=treeValue.js.map
-
-/***/ }),
-
-/***/ 8005:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.hash = void 0;
-__exportStar(__webpack_require__(1957), exports);
-__exportStar(__webpack_require__(284), exports);
-__exportStar(__webpack_require__(4507), exports);
-var compat_1 = __webpack_require__(4929);
-Object.defineProperty(exports, "hash", ({ enumerable: true, get: function () { return compat_1.hash; } }));
-__exportStar(__webpack_require__(2404), exports);
-__exportStar(__webpack_require__(3834), exports);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 1957:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/**
- * These interfaces are consistent across all backings.
- * As long as these interfaces are respected, the backing can be abstracted entirely.
- */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-//# sourceMappingURL=interface.js.map
-
-/***/ }),
-
-/***/ 6091:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BasicType = exports.isBasicType = exports.BASIC_TYPE = void 0;
-const type_1 = __webpack_require__(8398);
-exports.BASIC_TYPE = Symbol.for("ssz/BasicType");
-function isBasicType(type) {
-    return type_1.isTypeOf(type, exports.BASIC_TYPE);
-}
-exports.isBasicType = isBasicType;
-/**
- * A BasicType is a terminal type, which has no flexibility in its representation.
- *
- * It is serialized as, at maximum, 32 bytes and merkleized as, at maximum, a single chunk
- */
-class BasicType extends type_1.Type {
-    constructor() {
-        super();
-        this._typeSymbols.add(exports.BASIC_TYPE);
-    }
-    struct_clone(value) {
-        return value;
-    }
-    struct_equals(value1, value2) {
-        this.assertValidValue(value1);
-        this.assertValidValue(value2);
-        return value1 === value2;
-    }
-    /**
-     * Check if type has a variable number of elements (or subelements)
-     *
-     * For basic types, this is always false
-     */
-    hasVariableSerializedLength() {
-        return false;
-    }
-    getFixedSerializedLength() {
-        return this.struct_getSerializedLength();
-    }
-    getMaxSerializedLength() {
-        return this.struct_getSerializedLength();
-    }
-    getMinSerializedLength() {
-        return this.struct_getSerializedLength();
-    }
-    bytes_validate(data, offset) {
-        if (!data) {
-            throw new Error("Data is null or undefined");
-        }
-        if (data.length === 0) {
-            throw new Error("Data is empty");
-        }
-        const length = data.length - offset;
-        if (length < this.struct_getSerializedLength()) {
-            throw new Error(`Data length of ${length} is too small, expect ${this.struct_getSerializedLength()}`);
-        }
-        // accept data length > this.size()
-    }
-    struct_hashTreeRoot(value) {
-        const output = new Uint8Array(32);
-        this.struct_serializeToBytes(value, output, 0);
-        return output;
-    }
-}
-exports.BasicType = BasicType;
-//# sourceMappingURL=abstract.js.map
-
-/***/ }),
-
-/***/ 6136:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BooleanType = exports.isBooleanType = exports.BOOLEAN_TYPE = void 0;
-const type_1 = __webpack_require__(8398);
-const abstract_1 = __webpack_require__(6091);
-exports.BOOLEAN_TYPE = Symbol.for("ssz/BooleanType");
-function isBooleanType(type) {
-    return type_1.isTypeOf(type, exports.BOOLEAN_TYPE);
-}
-exports.isBooleanType = isBooleanType;
-class BooleanType extends abstract_1.BasicType {
-    constructor() {
-        super();
-        this._typeSymbols.add(exports.BOOLEAN_TYPE);
-    }
-    struct_getSerializedLength() {
-        return 1;
-    }
-    struct_assertValidValue(value) {
-        if (value !== true && value !== false) {
-            throw new Error("Boolean value must be true or false");
-        }
-    }
-    struct_defaultValue() {
-        return false;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        output[offset] = value ? 1 : 0;
-        return offset + 1;
-    }
-    struct_deserializeFromBytes(data, offset) {
-        this.bytes_validate(data, offset);
-        if (data[offset] === 1) {
-            return true;
-        }
-        else if (data[offset] === 0) {
-            return false;
-        }
-        else {
-            throw new Error("Invalid boolean value");
-        }
-    }
-    struct_convertFromJson(data) {
-        this.struct_assertValidValue(data);
-        return data;
-    }
-    struct_convertToJson(value) {
-        return value;
-    }
-}
-exports.BooleanType = BooleanType;
-//# sourceMappingURL=boolean.js.map
-
-/***/ }),
-
-/***/ 3599:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(6091), exports);
-__exportStar(__webpack_require__(6136), exports);
-__exportStar(__webpack_require__(2434), exports);
-__exportStar(__webpack_require__(4024), exports);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 2113:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.NoneType = exports.isNoneType = exports.NONE_TYPE = void 0;
-const type_1 = __webpack_require__(8398);
-const abstract_1 = __webpack_require__(6091);
-exports.NONE_TYPE = Symbol.for("ssz/NoneType");
-function isNoneType(type) {
-    return type_1.isTypeOf(type, exports.NONE_TYPE);
-}
-exports.isNoneType = isNoneType;
-class NoneType extends abstract_1.BasicType {
-    constructor() {
-        super();
-        this._typeSymbols.add(exports.NONE_TYPE);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_deserializeFromBytes(data, offset) {
-        return null;
-    }
-    struct_assertValidValue(value) {
-        if (value !== null) {
-            throw new Error("None value must be null");
-        }
-    }
-    struct_defaultValue() {
-        return null;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_getSerializedLength(value) {
-        return 0;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_serializeToBytes(value, output, offset) {
-        return 0;
-    }
-    struct_convertFromJson(data) {
-        this.assertValidValue(data);
-        return null;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_convertToJson(value, options) {
-        return null;
-    }
-}
-exports.NoneType = NoneType;
-//# sourceMappingURL=none.js.map
-
-/***/ }),
-
-/***/ 2434:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BigIntUintType = exports.isBigIntUintType = exports.BIGINT_UINT_TYPE = exports.Number64UintType = exports.NumberUintType = exports.isNumber64UintType = exports.isNumberUintType = exports.NUMBER_64_UINT_TYPE = exports.NUMBER_UINT_TYPE = exports.UintType = exports.isUintType = exports.UINT_TYPE = void 0;
-const bigInt_1 = __webpack_require__(6778);
-const type_1 = __webpack_require__(8398);
-const abstract_1 = __webpack_require__(6091);
-exports.UINT_TYPE = Symbol.for("ssz/UintType");
-function isUintType(type) {
-    return type_1.isTypeOf(type, exports.UINT_TYPE);
-}
-exports.isUintType = isUintType;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-class UintType extends abstract_1.BasicType {
-    constructor(options) {
-        super();
-        this.byteLength = options.byteLength;
-        this.infinityWhenBig = options.infinityWhenBig === true ? true : this.byteLength > 6;
-        this._typeSymbols.add(exports.UINT_TYPE);
-    }
-    struct_getSerializedLength() {
-        return this.byteLength;
-    }
-    /**
-     * Validate the exact byte length
-     */
-    bytes_validate_length(data, start, end) {
-        this.bytes_validate(data, start);
-        if (end !== undefined) {
-            const length = end - start;
-            if (length > this.struct_getSerializedLength()) {
-                throw new Error(`Data length of ${length} is too big, expect ${this.struct_getSerializedLength()}`);
-            }
-        }
-    }
-}
-exports.UintType = UintType;
-exports.NUMBER_UINT_TYPE = Symbol.for("ssz/NumberUintType");
-exports.NUMBER_64_UINT_TYPE = Symbol.for("ssz/Number64UintType");
-const BIGINT_4_BYTES = BigInt(32);
-function isNumberUintType(type) {
-    return type_1.isTypeOf(type, exports.NUMBER_UINT_TYPE);
-}
-exports.isNumberUintType = isNumberUintType;
-function isNumber64UintType(type) {
-    return type_1.isTypeOf(type, exports.NUMBER_64_UINT_TYPE);
-}
-exports.isNumber64UintType = isNumber64UintType;
-class NumberUintType extends UintType {
-    constructor(options) {
-        super(options);
-        this._typeSymbols.add(exports.NUMBER_UINT_TYPE);
-    }
-    struct_assertValidValue(value) {
-        if (value !== Infinity &&
-            (!Number.isSafeInteger(value) ||
-                value > bigInt_1.bigIntPow(BigInt(2), BigInt(8) * BigInt(this.byteLength)))) {
-            throw new Error("Uint value is not a number");
-        }
-        if (value < 0) {
-            throw new Error("Uint value must be gte 0");
-        }
-    }
-    struct_defaultValue() {
-        return 0;
-    }
-    struct_getMaxBigInt() {
-        if (this._maxBigInt === undefined) {
-            this._maxBigInt = bigInt_1.bigIntPow(BigInt(2), BigInt(this.byteLength * 8)) - BigInt(1);
-        }
-        return this._maxBigInt;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        if (this.byteLength > 6 && value === Infinity) {
-            for (let i = offset; i < offset + this.byteLength; i++) {
-                output[i] = 0xff;
-            }
-        }
-        else {
-            let v = value;
-            const MAX_BYTE = 0xff;
-            for (let i = 0; i < this.byteLength; i++) {
-                output[offset + i] = v & MAX_BYTE;
-                v = Math.floor(v / 256);
-            }
-        }
-        return offset + this.byteLength;
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        // if this is a standalone deserialization, we want to validate more strictly
-        if (end !== undefined) {
-            this.bytes_validate_length(data, start, end);
-        }
-        else {
-            this.bytes_validate(data, start);
-        }
-        let isInfinity = true;
-        let output = 0;
-        for (let i = 0; i < this.byteLength; i++) {
-            output += data[start + i] * 2 ** (8 * i);
-            if (data[start + i] !== 0xff) {
-                isInfinity = false;
-            }
-        }
-        if (this.infinityWhenBig && isInfinity) {
-            return Infinity;
-        }
-        return Number(output);
-    }
-    struct_convertFromJson(data) {
-        let n;
-        const bigN = BigInt(data);
-        if (this.infinityWhenBig && bigN === this.struct_getMaxBigInt()) {
-            n = Infinity;
-        }
-        else if (bigN < Number.MAX_SAFE_INTEGER) {
-            n = Number(bigN);
-        }
-        else {
-            throw new Error("Uint value unsafe");
-        }
-        this.assertValidValue(n);
-        return n;
-    }
-    struct_convertToJson(value) {
-        if (this.byteLength > 4) {
-            if (value === Infinity) {
-                return this.struct_getMaxBigInt().toString();
-            }
-            return String(value);
-        }
-        return value;
-    }
-}
-exports.NumberUintType = NumberUintType;
-const TWO_POWER_32 = 2 ** 32;
-/**
- * For 64 bit number, we want to operator on HashObject
- * over bytes to improve performance.
- */
-class Number64UintType extends NumberUintType {
-    constructor() {
-        super({ byteLength: 8 });
-        this._typeSymbols.add(exports.NUMBER_64_UINT_TYPE);
-    }
-    /**
-     * TODO: move this logic all the way to persistent-merkle-tree?
-     * That's save us 1 time to traverse the tree in the applyDelta scenario
-     */
-    struct_deserializeFromHashObject(data, byteOffset) {
-        const numberOffset = Math.floor(byteOffset / 8);
-        // a chunk contains 4 items
-        if (numberOffset < 0 || numberOffset > 3) {
-            throw new Error(`Invalid numberOffset ${numberOffset}`);
-        }
-        let low32Number = 0;
-        let high32Number = 0;
-        switch (numberOffset) {
-            case 0:
-                low32Number = data.h0 & 0xffffffff;
-                high32Number = data.h1 & 0xffffffff;
-                break;
-            case 1:
-                low32Number = data.h2 & 0xffffffff;
-                high32Number = data.h3 & 0xffffffff;
-                break;
-            case 2:
-                low32Number = data.h4 & 0xffffffff;
-                high32Number = data.h5 & 0xffffffff;
-                break;
-            case 3:
-                low32Number = data.h6 & 0xffffffff;
-                high32Number = data.h7 & 0xffffffff;
-                break;
-            default:
-                throw new Error(`Invalid offset ${numberOffset}`);
-        }
-        if (low32Number < 0)
-            low32Number = low32Number >>> 0;
-        if (high32Number === 0) {
-            return low32Number;
-        }
-        else if (high32Number < 0) {
-            high32Number = high32Number >>> 0;
-        }
-        if (low32Number === 0xffffffff && high32Number === 0xffffffff) {
-            return Infinity;
-        }
-        return high32Number * TWO_POWER_32 + low32Number;
-    }
-    struct_serializeToHashObject(value, output, byteOffset) {
-        const numberOffset = Math.floor(byteOffset / 8);
-        let low32Number;
-        let high32Number;
-        if (value !== Infinity) {
-            low32Number = value & 0xffffffff;
-            high32Number = Math.floor(value / TWO_POWER_32) & 0xffffffff;
-        }
-        else {
-            low32Number = 0xffffffff;
-            high32Number = 0xffffffff;
-        }
-        switch (numberOffset) {
-            case 0:
-                output.h0 = low32Number;
-                output.h1 = high32Number;
-                break;
-            case 1:
-                output.h2 = low32Number;
-                output.h3 = high32Number;
-                break;
-            case 2:
-                output.h4 = low32Number;
-                output.h5 = high32Number;
-                break;
-            case 3:
-                output.h6 = low32Number;
-                output.h7 = high32Number;
-                break;
-            default:
-                throw new Error(`Invalid offset ${numberOffset}`);
-        }
-        return numberOffset + 1;
-    }
-}
-exports.Number64UintType = Number64UintType;
-exports.BIGINT_UINT_TYPE = Symbol.for("ssz/BigIntUintType");
-function isBigIntUintType(type) {
-    return type_1.isTypeOf(type, exports.BIGINT_UINT_TYPE);
-}
-exports.isBigIntUintType = isBigIntUintType;
-class BigIntUintType extends UintType {
-    constructor(options) {
-        super(options);
-        this._typeSymbols.add(exports.BIGINT_UINT_TYPE);
-    }
-    struct_assertValidValue(value) {
-        if (typeof value !== "bigint") {
-            throw new Error("Uint value is not a bigint");
-        }
-        if (value < 0) {
-            throw new Error("Uint value must be gte 0");
-        }
-    }
-    struct_defaultValue() {
-        return BigInt(0);
-    }
-    struct_serializeToBytes(value, output, offset) {
-        // Motivation
-        // BigInt bit shifting and BigInt allocation is slower compared to number
-        // For every 4 bytes, we extract value to groupedBytes
-        // and do bit shifting on the number
-        let v = value;
-        let groupedBytes = Number(BigInt.asUintN(32, v));
-        for (let i = 0; i < this.byteLength; i++) {
-            output[offset + i] = Number(groupedBytes & 0xff);
-            if ((i + 1) % 4 !== 0) {
-                groupedBytes >>= 8;
-            }
-            else {
-                v >>= BIGINT_4_BYTES;
-                groupedBytes = Number(BigInt.asUintN(32, v));
-            }
-        }
-        return offset + this.byteLength;
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        if (end !== undefined) {
-            this.bytes_validate_length(data, start, end);
-        }
-        else {
-            this.bytes_validate(data, start);
-        }
-        // Motivation:
-        //   Creating BigInts and bitshifting is more expensive than
-        // number bitshifting.
-        // Implementation:
-        //   Iterate throuth the bytearray, bitshifting the data into a 'groupOutput' number, byte by byte
-        // After each 4 bytes, bitshift the groupOutput into the bigint output and clear the groupOutput out
-        // After iterating through the bytearray,
-        // There may be additional data in the groupOutput if the bytearray if the bytearray isn't divisible by 4
-        let output = BigInt(0);
-        let groupIndex = 0, groupOutput = 0;
-        for (let i = 0; i < this.byteLength; i++) {
-            groupOutput += data[start + i] << (8 * (i % 4));
-            if ((i + 1) % 4 === 0) {
-                // Left shift returns a signed integer and the output may have become negative
-                // In that case, the output needs to be converted to unsigned integer
-                if (groupOutput < 0) {
-                    groupOutput >>>= 0;
-                }
-                // Optimization to set the output the first time, forgoing BigInt addition
-                if (groupIndex === 0) {
-                    output = BigInt(groupOutput);
-                }
-                else {
-                    output += BigInt(groupOutput) << BigInt(32 * groupIndex);
-                }
-                groupIndex++;
-                groupOutput = 0;
-            }
-        }
-        // if this.byteLength isn't a multiple of 4, there will be additional data
-        if (groupOutput) {
-            output += BigInt(groupOutput >>> 0) << BigInt(32 * groupIndex);
-        }
-        return output;
-    }
-    struct_convertFromJson(data) {
-        const value = BigInt(data);
-        this.assertValidValue(value);
-        return value;
-    }
-    struct_convertToJson(value) {
-        if (this.byteLength > 4) {
-            return value.toString();
-        }
-        else {
-            return Number(value);
-        }
-    }
-}
-exports.BigIntUintType = BigIntUintType;
-//# sourceMappingURL=uint.js.map
-
-/***/ }),
-
-/***/ 4024:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.booleanType = exports.number32Type = exports.byteType = void 0;
-const uint_1 = __webpack_require__(2434);
-const boolean_1 = __webpack_require__(6136);
-exports.byteType = new uint_1.NumberUintType({ byteLength: 1 });
-exports.number32Type = new uint_1.NumberUintType({ byteLength: 4 });
-exports.booleanType = new boolean_1.BooleanType();
-//# sourceMappingURL=wellKnown.js.map
-
-/***/ }),
-
-/***/ 5390:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CompositeType = exports.isCompositeType = exports.COMPOSITE_TYPE = void 0;
-const backings_1 = __webpack_require__(4507);
-const type_1 = __webpack_require__(8398);
+exports.BranchNodeStruct = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
-const compat_1 = __webpack_require__(4929);
-const byteArray_1 = __webpack_require__(2404);
-exports.COMPOSITE_TYPE = Symbol.for("ssz/CompositeType");
-function isCompositeType(type) {
-    return type_1.isTypeOf(type, exports.COMPOSITE_TYPE);
-}
-exports.isCompositeType = isCompositeType;
-/**
- * A CompositeType is a type containing other types, and is flexible in its representation.
- *
- */
-class CompositeType extends type_1.Type {
-    constructor() {
-        super();
-        this._typeSymbols.add(exports.COMPOSITE_TYPE);
-    }
-    tree_equals(tree1, tree2) {
-        return byteArray_1.byteArrayEquals(tree1.root, tree2.root);
-    }
-    bytes_equals(bytes1, bytes2) {
-        return byteArray_1.byteArrayEquals(bytes1, bytes2);
-    }
-    tree_defaultValue() {
-        return new persistent_merkle_tree_1.Tree(this.tree_defaultNode());
-    }
-    tree_clone(value) {
-        return value.clone();
-    }
-    bytes_clone(value, start = 0, end = value.length) {
-        const bytes = new Uint8Array(end - start);
-        value.subarray(start, end).set(bytes);
-        return bytes;
-    }
-    struct_serialize(struct, data) {
-        const output = new Uint8Array(this.struct_getSerializedLength(struct));
-        return this.struct_serializeToBytes(struct, output, 0);
-    }
-    tree_serialize(tree, data) {
-        const output = new Uint8Array(this.tree_getSerializedLength(tree));
-        return this.tree_serializeToBytes(tree, output, 0);
-    }
-    bytes_validate(data, start, end, emptyOk) {
-        if (!data) {
-            throw new Error("Data is null or undefined");
-        }
-        if (data.length === 0 && !emptyOk) {
-            throw new Error("Data is empty");
-        }
-        if (start < 0) {
-            throw new Error(`Start param is negative: ${start}`);
-        }
-        if (start > data.length) {
-            throw new Error(`Start param: ${start} is greater than length: ${data.length}`);
-        }
-        if (end < 0) {
-            throw new Error(`End param is negative: ${end}`);
-        }
-        if (end > data.length) {
-            throw new Error(`End param: ${end} is greater than length: ${data.length}`);
-        }
-        const length = end - start;
-        const fixedLen = this.getFixedSerializedLength();
-        if (fixedLen !== null && length !== fixedLen) {
-            throw new Error(`Incorrect data length ${length}, expect ${fixedLen}`);
-        }
-        if (end - start < this.getMinSerializedLength()) {
-            throw new Error(`Data length ${length} is too small, expect at least ${this.getMinSerializedLength()}`);
-        }
-    }
-    struct_deserialize(data) {
-        return this.struct_deserializeFromBytes(data, 0, data.length);
-    }
-    tree_deserialize(data) {
-        return this.tree_deserializeFromBytes(data, 0, data.length);
-    }
-    struct_getChunkCount(struct) {
-        return this.getMaxChunkCount();
-    }
-    tree_getChunkCount(target) {
-        return this.getMaxChunkCount();
-    }
-    *struct_yieldChunkRoots(struct) {
-        const chunkCount = this.struct_getChunkCount(struct);
-        for (let i = 0; i < chunkCount; i++) {
-            yield this.struct_getRootAtChunkIndex(struct, i);
-        }
-    }
-    getChunkDepth() {
-        if (!this._chunkDepth) {
-            this._chunkDepth = persistent_merkle_tree_1.countToDepth(BigInt(this.getMaxChunkCount()));
-        }
-        return this._chunkDepth;
-    }
-    getGindexAtChunkIndex(index) {
-        return persistent_merkle_tree_1.toGindex(this.getChunkDepth(), BigInt(index));
-    }
-    getGindexBitStringAtChunkIndex(index) {
-        return persistent_merkle_tree_1.toGindexBitstring(this.getChunkDepth(), index);
-    }
-    tree_getSubtreeAtChunkIndex(target, index) {
-        return target.getSubtree(this.getGindexBitStringAtChunkIndex(index));
-    }
-    tree_setSubtreeAtChunkIndex(target, index, value, expand = false) {
-        target.setSubtree(this.getGindexBitStringAtChunkIndex(index), value, expand);
-    }
-    tree_getRootAtChunkIndex(target, index) {
-        return target.getRoot(this.getGindexBitStringAtChunkIndex(index));
-    }
-    tree_setRootAtChunkIndex(target, index, value, expand = false) {
-        target.setRoot(this.getGindexBitStringAtChunkIndex(index), value, expand);
-    }
-    /**
-     * Navigate to a subtype & gindex using a path
-     */
-    getPathInfo(path) {
-        const gindices = [];
-        let type = this;
-        for (const prop of path) {
-            if (!isCompositeType(type)) {
-                throw new Error("Invalid path: cannot navigate beyond a basic type");
-            }
-            gindices.push(type.getPropertyGindex(prop));
-            type = type.getPropertyType(prop);
-        }
-        return {
-            type,
-            gindex: persistent_merkle_tree_1.concatGindices(gindices),
-        };
-    }
-    getPathGindex(path) {
-        return this.getPathInfo(path).gindex;
-    }
-    tree_createProof(target, paths) {
-        const gindices = paths
-            .map((path) => {
-            const { type, gindex } = this.getPathInfo(path);
-            if (!isCompositeType(type)) {
-                return gindex;
-            }
-            else {
-                // if the path subtype is composite, include the gindices of all the leaves
-                return type.tree_getLeafGindices(type.hasVariableSerializedLength() ? target.getSubtree(gindex) : undefined, gindex);
-            }
-        })
-            .flat(1);
-        return target.getProof({
-            type: persistent_merkle_tree_1.ProofType.treeOffset,
-            gindices,
-        });
-    }
-    tree_createFromProof(root, proof) {
-        const tree = persistent_merkle_tree_1.Tree.createFromProof(proof);
-        if (!byteArray_1.byteArrayEquals(tree.root, root)) {
-            throw new Error("Proof does not match trusted root");
-        }
-        return tree;
-    }
-    tree_createFromProofUnsafe(proof) {
-        return persistent_merkle_tree_1.Tree.createFromProof(proof);
-    }
-    struct_hashTreeRoot(struct) {
-        return compat_1.merkleize(this.struct_yieldChunkRoots(struct), this.getMaxChunkCount());
-    }
-    tree_hashTreeRoot(tree) {
-        return tree.root;
-    }
-    // convenience
-    /**
-     * Valid value assertion
-     */
-    assertValidValue(value) {
-        this.struct_assertValidValue(value);
-    }
-    /**
-     * Equality
-     */
-    equals(value1, value2) {
-        if (backings_1.isBackedValue(value1) && backings_1.isBackedValue(value2)) {
-            return value1.equals(value2);
-        }
-        else {
-            return this.struct_equals(value1, value2);
-        }
-    }
-    /**
-     * Default constructor
-     */
-    defaultValue() {
-        return this.struct_defaultValue();
-    }
-    /**
-     * Clone / copy
-     */
-    clone(value) {
-        if (backings_1.isBackedValue(value)) {
-            return value.clone();
-        }
-        else {
-            return this.struct_clone(value);
-        }
-    }
-    // Serialization / Deserialization
-    /**
-     * Serialized byte length
-     */
-    size(value) {
-        if (backings_1.isBackedValue(value)) {
-            return value.size();
-        }
-        else {
-            return this.struct_getSerializedLength(value);
-        }
-    }
-    /**
-     * Maximal serialized byte length
-     */
-    maxSize() {
-        return this.getMaxSerializedLength();
-    }
-    /**
-     * Minimal serialized byte length
-     */
-    minSize() {
-        return this.getMinSerializedLength();
-    }
-    /**
-     * Low-level deserialization
-     */
-    fromBytes(data, start, end) {
-        return this.struct_deserializeFromBytes(data, start, end);
-    }
-    /**
-     * Deserialization
-     */
-    deserialize(data) {
-        return this.fromBytes(data, 0, data.length);
-    }
-    /**
-     * Low-level serialization
-     *
-     * Serializes to a pre-allocated Uint8Array
-     */
-    toBytes(value, output, offset) {
-        if (backings_1.isBackedValue(value)) {
-            return value.toBytes(output, offset);
-        }
-        else {
-            return this.struct_serializeToBytes(value, output, offset);
-        }
-    }
-    /**
-     * Serialization
-     */
-    serialize(value) {
-        if (backings_1.isBackedValue(value)) {
-            return value.serialize();
-        }
-        else {
-            const output = new Uint8Array(this.size(value));
-            this.toBytes(value, output, 0);
-            return output;
-        }
-    }
-    // Merkleization
-    /**
-     * Merkleization
-     */
-    hashTreeRoot(value) {
-        if (backings_1.isBackedValue(value)) {
-            return value.hashTreeRoot();
-        }
-        else {
-            return this.struct_hashTreeRoot(value);
-        }
-    }
-    /**
-     * Convert from a JSON-serializable object
-     */
-    fromJson(data, options) {
-        return this.struct_convertFromJson(data, options);
-    }
-    /**
-     * Convert to a JSON-serializable object
-     */
-    toJson(value, options) {
-        return this.struct_convertToJson(value, options);
-    }
-    createTreeBacked(tree) {
-        return backings_1.createTreeBacked(this, tree);
-    }
-    createTreeBackedFromStruct(value) {
-        return this.createTreeBacked(this.struct_convertToTree(value));
-    }
-    createTreeBackedFromBytes(data) {
-        return this.createTreeBacked(this.tree_deserialize(data));
-    }
-    createTreeBackedFromJson(data, options) {
-        return this.createTreeBackedFromStruct(this.struct_convertFromJson(data, options));
-    }
-    createTreeBackedFromProof(root, proof) {
-        return this.createTreeBacked(this.tree_createFromProof(root, proof));
-    }
-    createTreeBackedFromProofUnsafe(proof) {
-        return this.createTreeBacked(this.tree_createFromProofUnsafe(proof));
-    }
-    defaultTreeBacked() {
-        return backings_1.createTreeBacked(this, this.tree_defaultValue());
-    }
-}
-exports.CompositeType = CompositeType;
-//# sourceMappingURL=abstract.js.map
-
-/***/ }),
-
-/***/ 7783:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* eslint-disable @typescript-eslint/member-ordering */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CompositeArrayType = exports.BasicArrayType = void 0;
-const abstract_1 = __webpack_require__(5390);
-const errorPath_1 = __webpack_require__(203);
-const persistent_merkle_tree_1 = __webpack_require__(6647);
-const treeValue_1 = __webpack_require__(867);
-class BasicArrayType extends abstract_1.CompositeType {
-    constructor(options) {
-        super();
-        this.elementType = options.elementType;
-    }
-    struct_getSerializedLength(value) {
-        return this.elementType.struct_getSerializedLength() * this.struct_getLength(value);
-    }
-    getMaxSerializedLength() {
-        return this.getMaxLength() * this.elementType.getMaxSerializedLength();
-    }
-    getMinSerializedLength() {
-        return this.getMinLength() * this.elementType.getMinSerializedLength();
-    }
-    struct_assertValidValue(value) {
-        for (let i = 0; i < this.struct_getLength(value); i++) {
-            try {
-                this.elementType.struct_assertValidValue(value[i]);
-            }
-            catch (e) {
-                throw new Error(`Invalid element ${i}: ${e.message}`);
-            }
-        }
-    }
-    struct_equals(value1, value2) {
-        if (this.struct_getLength(value1) !== this.struct_getLength(value2)) {
-            return false;
-        }
-        for (let i = 0; i < this.struct_getLength(value1); i++) {
-            if (!this.elementType.struct_equals(value1[i], value2[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-    struct_clone(value) {
-        const newValue = this.struct_defaultValue();
-        for (let i = 0; i < this.struct_getLength(value); i++) {
-            newValue[i] = this.elementType.struct_clone(value[i]);
-        }
-        return newValue;
-    }
-    struct_deserializeFromBytes(data, start, end, emptyOk) {
-        this.bytes_validate(data, start, end, emptyOk);
-        const elementSize = this.elementType.struct_getSerializedLength();
-        return Array.from({ length: (end - start) / elementSize }, (_, i) => this.elementType.struct_deserializeFromBytes(data, start + i * elementSize));
-    }
-    struct_serializeToBytes(value, output, offset) {
-        const length = this.struct_getLength(value);
-        let index = offset;
-        for (let i = 0; i < length; i++) {
-            index = this.elementType.struct_serializeToBytes(value[i], output, index);
-        }
-        return index;
-    }
-    struct_getRootAtChunkIndex(value, index) {
-        const output = new Uint8Array(32);
-        const itemSize = this.elementType.struct_getSerializedLength();
-        const itemsInChunk = Math.floor(32 / itemSize);
-        const firstIndex = index * itemsInChunk;
-        // not inclusive
-        const lastIndex = Math.min(this.struct_getLength(value), firstIndex + itemsInChunk);
-        // i = array index, grows by 1
-        // j = data offset, grows by itemSize
-        for (let i = firstIndex, j = 0; i < lastIndex; i++, j += itemSize) {
-            this.elementType.struct_serializeToBytes(value[i], output, j);
-        }
-        return output;
-    }
-    struct_getPropertyNames(value) {
-        const length = this.struct_getLength(value);
-        return Array.from({ length }, (_, i) => i).concat(["length"]);
-    }
-    struct_convertFromJson(data) {
-        return Array.from({ length: data.length }, (_, i) => this.elementType.fromJson(data[i]));
-    }
-    struct_convertToJson(value) {
-        return Array.from({ length: this.struct_getLength(value) }, (_, i) => this.elementType.struct_convertToJson(value[i]));
-    }
-    struct_convertToTree(value) {
-        if (treeValue_1.isTreeBacked(value))
-            return value.tree.clone();
-        const contents = [];
-        for (const chunk of this.struct_yieldChunkRoots(value)) {
-            contents.push(new persistent_merkle_tree_1.LeafNode(chunk));
-        }
-        return new persistent_merkle_tree_1.Tree(persistent_merkle_tree_1.subtreeFillToContents(contents, this.getChunkDepth()));
-    }
-    tree_convertToStruct(target) {
-        const value = this.struct_defaultValue();
-        const length = this.tree_getLength(target);
-        for (let i = 0; i < length; i++) {
-            value[i] = this.tree_getValueAtIndex(target, i);
-        }
-        return value;
-    }
-    tree_getSerializedLength(target) {
-        return this.elementType.struct_getSerializedLength() * this.tree_getLength(target);
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        const target = this.tree_defaultValue();
-        const byteLength = end - start;
-        const chunkCount = Math.ceil(byteLength / 32);
-        for (let i = 0; i < chunkCount; i++) {
-            // view of the chunk, shared buffer from `data`
-            const dataChunk = new Uint8Array(data.buffer, data.byteOffset + start + i * 32, Math.min(32, byteLength - i * 32));
-            // copy chunk into new memory
-            const chunk = new Uint8Array(32);
-            chunk.set(dataChunk);
-            this.tree_setRootAtChunkIndex(target, i, chunk, true // expand tree as needed
-            );
-        }
-        return target;
-    }
-    tree_serializeToBytes(target, output, offset) {
-        const size = this.tree_getSerializedLength(target);
-        const fullChunkCount = Math.floor(size / 32);
-        const remainder = size % 32;
-        let i = 0;
-        if (fullChunkCount > 0) {
-            const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount);
-            for (; i < nodes.length; i++) {
-                output.set(nodes[i].root, offset + i * 32);
-            }
-        }
-        if (remainder) {
-            output.set(this.tree_getRootAtChunkIndex(target, fullChunkCount).slice(0, remainder), offset + i * 32);
-        }
-        return offset + size;
-    }
-    getPropertyGindex(prop) {
-        return this.getGindexAtChunkIndex(this.getChunkIndex(prop));
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getPropertyType(prop) {
-        return this.elementType;
-    }
-    *tree_iterateValues(target) {
-        const length = this.tree_getLength(target);
-        if (length === 0) {
-            return;
-        }
-        const elementSize = this.elementType.struct_getSerializedLength();
-        if (32 % elementSize !== 0) {
-            throw new Error("cannot handle a non-chunk-alignable elementType");
-        }
-        let left = length;
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target));
-        for (let i = 0; i < nodes.length; i++) {
-            const chunk = nodes[i].root;
-            for (let offset = 0; offset < 32; offset += elementSize) {
-                yield this.elementType.struct_deserializeFromBytes(chunk, offset);
-                left--;
-                if (left === 0) {
-                    return;
-                }
-            }
-        }
-    }
-    *tree_readonlyIterateValues(target) {
-        yield* this.tree_iterateValues(target);
-    }
-    tree_getValues(target) {
-        const length = this.tree_getLength(target);
-        if (length === 0) {
-            return [];
-        }
-        const elementSize = this.elementType.struct_getSerializedLength();
-        if (32 % elementSize !== 0) {
-            throw new Error("cannot handle a non-chunk-alignable elementType");
-        }
-        let left = length;
-        const values = [];
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getChunkCount(target));
-        out: for (let i = 0; i < nodes.length; i++) {
-            const chunk = nodes[i].root;
-            for (let offset = 0; offset < 32; offset += elementSize) {
-                values.push(this.elementType.struct_deserializeFromBytes(chunk, offset));
-                left--;
-                if (left === 0) {
-                    break out;
-                }
-            }
-        }
-        return values;
-    }
-    tree_readonlyGetValues(target) {
-        return this.tree_getValues(target);
-    }
-    getChunkOffset(index) {
-        const elementSize = this.elementType.struct_getSerializedLength();
-        return (index % Math.ceil(32 / elementSize)) * elementSize;
-    }
-    getChunkIndex(index) {
-        return Math.floor(index / Math.ceil(32 / this.elementType.struct_getSerializedLength()));
-    }
-    tree_getValueAtIndex(target, index) {
-        const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
-        return this.elementType.struct_deserializeFromBytes(chunk, this.getChunkOffset(index));
-    }
-    tree_setValueAtIndex(target, index, value, expand = false) {
-        const chunkGindexBitString = this.getGindexBitStringAtChunkIndex(this.getChunkIndex(index));
-        // copy data from old chunk, use new memory to set a new chunk
-        const chunk = new Uint8Array(32);
-        chunk.set(target.getRoot(chunkGindexBitString));
-        this.elementType.struct_serializeToBytes(value, chunk, this.getChunkOffset(index));
-        target.setRoot(chunkGindexBitString, chunk, expand);
-        return true;
-    }
-    tree_getProperty(target, property) {
-        const length = this.tree_getLength(target);
-        if (property === "length") {
-            return length;
-        }
-        const index = Number(property);
-        if (Number.isNaN(index) || index >= length) {
-            return undefined;
-        }
-        return this.tree_getValueAtIndex(target, index);
-    }
-    tree_setProperty(target, property, value, expand = false) {
-        return this.tree_setValueAtIndex(target, property, value, expand);
-    }
-    tree_deleteProperty(target, property) {
-        return this.tree_setProperty(target, property, this.elementType.struct_defaultValue());
-    }
-    tree_getPropertyNames(target) {
-        return Array.from({ length: this.tree_getLength(target) }, (_, i) => String(i)).concat("length");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    bytes_getVariableOffsets(target) {
-        return [];
-    }
-    tree_getLeafGindices(target, root = BigInt(1)) {
-        const chunkCount = this.tree_getChunkCount(target);
-        const startIndex = persistent_merkle_tree_1.concatGindices([root, persistent_merkle_tree_1.toGindex(this.getChunkDepth(), BigInt(0))]);
-        const gindices = [];
-        for (let i = 0, gindex = startIndex; i < chunkCount; i++, gindex++) {
-            gindices.push(gindex);
-        }
-        return gindices;
-    }
-}
-exports.BasicArrayType = BasicArrayType;
-class CompositeArrayType extends abstract_1.CompositeType {
-    constructor(options) {
-        super();
-        this.elementType = options.elementType;
-    }
-    struct_getSerializedLength(value) {
-        const fixedLen = this.elementType.getFixedSerializedLength();
-        if (fixedLen === null) {
-            let s = 0;
-            for (let i = 0; i < this.struct_getLength(value); i++) {
-                s += this.elementType.struct_getSerializedLength(value[i]) + 4;
-            }
-            return s;
-        }
-        else {
-            return fixedLen * this.struct_getLength(value);
-        }
-    }
-    getMaxSerializedLength() {
-        const elementFixedLen = this.elementType.getFixedSerializedLength();
-        if (elementFixedLen === null) {
-            return this.getMaxLength() * 4 + this.getMaxLength() * this.elementType.getMaxSerializedLength();
-        }
-        else {
-            return this.getMaxLength() * elementFixedLen;
-        }
-    }
-    getMinSerializedLength() {
-        const elementFixedLen = this.elementType.getFixedSerializedLength();
-        if (elementFixedLen === null) {
-            return this.getMinLength() * 4 + this.getMinLength() * this.elementType.getMinSerializedLength();
-        }
-        else {
-            return this.getMinLength() * elementFixedLen;
-        }
-    }
-    struct_assertValidValue(value) {
-        for (let i = 0; i < this.struct_getLength(value); i++) {
-            try {
-                this.elementType.struct_assertValidValue(value[i]);
-            }
-            catch (e) {
-                throw new Error(`Invalid element ${i}: ${e.message}`);
-            }
-        }
-    }
-    struct_equals(value1, value2) {
-        if (this.struct_getLength(value1) !== this.struct_getLength(value2)) {
-            return false;
-        }
-        for (let i = 0; i < this.struct_getLength(value1); i++) {
-            if (!this.elementType.struct_equals(value1[i], value2[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-    struct_clone(value) {
-        const newValue = this.struct_defaultValue();
-        for (let i = 0; i < this.struct_getLength(value); i++) {
-            newValue[i] = this.elementType.struct_clone(value[i]);
-        }
-        return newValue;
-    }
-    struct_deserializeFromBytes(data, start, end, emptyOk) {
-        this.bytes_validate(data, start, end, emptyOk);
-        if (start === end) {
-            return [];
-        }
-        const fixedLen = this.elementType.getFixedSerializedLength();
-        if (fixedLen === null) {
-            const value = [];
-            // all elements variable-sized
-            // indices contain offsets
-            let currentIndex = start;
-            let nextIndex;
-            // data exists between offsets
-            const fixedSection = new DataView(data.buffer, data.byteOffset);
-            const firstOffset = start + fixedSection.getUint32(start, true);
-            let currentOffset = firstOffset;
-            let nextOffset;
-            while (currentIndex < firstOffset) {
-                if (currentOffset > end) {
-                    throw new Error("Offset out of bounds");
-                }
-                nextIndex = currentIndex + 4;
-                nextOffset = nextIndex === firstOffset ? end : start + fixedSection.getUint32(nextIndex, true);
-                if (currentOffset > nextOffset) {
-                    throw new Error("Offsets must be increasing");
-                }
-                try {
-                    value.push(this.elementType.struct_deserializeFromBytes(data, currentOffset, nextOffset));
-                }
-                catch (e) {
-                    throw new errorPath_1.SszErrorPath(e, value.length);
-                }
-                currentIndex = nextIndex;
-                currentOffset = nextOffset;
-            }
-            if (firstOffset !== currentIndex) {
-                throw new Error("First offset skips variable data");
-            }
-            return value;
-        }
-        else {
-            const elementSize = fixedLen;
-            return Array.from({ length: (end - start) / elementSize }, (_, i) => this.elementType.struct_deserializeFromBytes(data, start + i * elementSize, start + (i + 1) * elementSize));
-        }
-    }
-    struct_serializeToBytes(value, output, offset) {
-        const length = this.struct_getLength(value);
-        if (this.elementType.hasVariableSerializedLength()) {
-            let variableIndex = offset + length * 4;
-            const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
-            for (let i = 0; i < length; i++) {
-                // write offset
-                fixedSection.setUint32(i * 4, variableIndex - offset, true);
-                // write serialized element to variable section
-                variableIndex = this.elementType.struct_serializeToBytes(value[i], output, variableIndex);
-            }
-            return variableIndex;
-        }
-        else {
-            let index = offset;
-            for (let i = 0; i < length; i++) {
-                index = this.elementType.struct_serializeToBytes(value[i], output, index);
-            }
-            return index;
-        }
-    }
-    struct_getRootAtChunkIndex(value, index) {
-        return this.elementType.hashTreeRoot(value[index]);
-    }
-    struct_getPropertyNames(value) {
-        const length = this.struct_getLength(value);
-        return Array.from({ length }, (_, i) => i).concat(["length"]);
-    }
-    struct_convertFromJson(data, options) {
-        return Array.from({ length: data.length }, (_, i) => this.elementType.struct_convertFromJson(data[i], options));
-    }
-    struct_convertToJson(value, options) {
-        return Array.from({ length: this.struct_getLength(value) }, (_, i) => this.elementType.struct_convertToJson(value[i], options));
-    }
-    struct_convertToTree(value) {
-        if (treeValue_1.isTreeBacked(value))
-            return value.tree.clone();
-        const contents = [];
-        for (const element of value) {
-            contents.push(this.elementType.struct_convertToTree(element).rootNode);
-        }
-        return new persistent_merkle_tree_1.Tree(persistent_merkle_tree_1.subtreeFillToContents(contents, this.getChunkDepth()));
-    }
-    tree_convertToStruct(target) {
-        const value = this.struct_defaultValue();
-        const length = this.tree_getLength(target);
-        for (let i = 0; i < length; i++) {
-            value[i] = this.elementType.tree_convertToStruct(this.tree_getSubtreeAtChunkIndex(target, i));
-        }
-        return value;
-    }
-    tree_getSerializedLength(target) {
-        const fixedLen = this.elementType.getFixedSerializedLength();
-        if (fixedLen === null) {
-            let s = 0;
-            for (let i = 0; i < this.tree_getLength(target); i++) {
-                s += this.elementType.tree_getSerializedLength(this.tree_getSubtreeAtChunkIndex(target, i)) + 4;
-            }
-            return s;
-        }
-        else {
-            return fixedLen * this.tree_getLength(target);
-        }
-    }
-    tree_serializeToBytes(target, output, offset) {
-        const length = this.tree_getLength(target);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, length);
-        if (this.elementType.hasVariableSerializedLength()) {
-            let variableIndex = offset + length * 4;
-            const fixedSection = new DataView(output.buffer, output.byteOffset + offset, length * 4);
-            for (let i = 0; i < nodes.length; i++) {
-                // write offset
-                fixedSection.setUint32(i * 4, variableIndex - offset, true);
-                // write serialized element to variable section
-                variableIndex = this.elementType.tree_serializeToBytes(new persistent_merkle_tree_1.Tree(nodes[i]), output, variableIndex);
-            }
-            return variableIndex;
-        }
-        else {
-            let index = offset;
-            for (let i = 0; i < nodes.length; i++) {
-                index = this.elementType.tree_serializeToBytes(new persistent_merkle_tree_1.Tree(nodes[i]), output, index);
-            }
-            return index;
-        }
-    }
-    getPropertyGindex(prop) {
-        return this.getGindexAtChunkIndex(prop);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getPropertyType(prop) {
-        return this.elementType;
-    }
-    tree_getProperty(target, property) {
-        const length = this.tree_getLength(target);
-        if (property === "length") {
-            return length;
-        }
-        const index = Number(property);
-        if (Number.isNaN(index)) {
-            return undefined;
-        }
-        if (index >= length) {
-            return undefined;
-        }
-        return this.tree_getSubtreeAtChunkIndex(target, index);
-    }
-    tree_setProperty(target, property, value, expand = false) {
-        this.tree_setSubtreeAtChunkIndex(target, property, value, expand);
-        return true;
-    }
-    tree_deleteProperty(target, property) {
-        return this.tree_setProperty(target, property, this.elementType.tree_defaultValue());
-    }
-    tree_getPropertyNames(target) {
-        return Array.from({ length: this.tree_getLength(target) }, (_, i) => i).concat(["length"]);
-    }
-    *tree_iterateValues(target) {
-        for (const gindex of persistent_merkle_tree_1.iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.tree_getLength(target)))) {
-            yield target.getSubtree(gindex);
-        }
-    }
-    *tree_readonlyIterateValues(target) {
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target));
-        for (let i = 0; i < nodes.length; i++) {
-            yield new persistent_merkle_tree_1.Tree(nodes[i]);
-        }
-    }
-    tree_getValues(target) {
-        const values = [];
-        const gindices = persistent_merkle_tree_1.getGindicesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target));
-        for (let i = 0; i < gindices.length; i++) {
-            values.push(target.getSubtree(gindices[i]));
-        }
-        return values;
-    }
-    tree_readonlyGetValues(target) {
-        const values = [];
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, this.tree_getLength(target));
-        for (let i = 0; i < nodes.length; i++) {
-            values.push(new persistent_merkle_tree_1.Tree(nodes[i]));
-        }
-        return values;
-    }
-    bytes_getVariableOffsets(target) {
-        if (this.elementType.hasVariableSerializedLength()) {
-            if (target.length === 0) {
-                return [];
-            }
-            const offsets = [];
-            // all elements are variable-sized
-            // indices contain offsets, which are indices deeper in the byte array
-            const fixedSection = new DataView(target.buffer, target.byteOffset);
-            const firstOffset = fixedSection.getUint32(0, true);
-            let currentOffset = firstOffset;
-            let nextOffset;
-            let currentIndex = 0;
-            let nextIndex = 0;
-            while (currentIndex < firstOffset) {
-                if (currentOffset > target.length) {
-                    throw new Error("Offset out of bounds");
-                }
-                nextIndex = currentIndex + 4;
-                nextOffset = nextIndex === firstOffset ? target.length : fixedSection.getUint32(nextIndex, true);
-                if (currentOffset > nextOffset) {
-                    throw new Error("Offsets must be increasing");
-                }
-                offsets.push([currentOffset, nextOffset]);
-                currentIndex = nextIndex;
-                currentOffset = nextOffset;
-            }
-            if (firstOffset !== currentIndex) {
-                throw new Error("First offset skips variable data");
-            }
-            return offsets;
-        }
-        else {
-            return [];
-        }
-    }
-    tree_getLeafGindices(target, root = BigInt(1)) {
-        // Underlying elements exist one per chunk
-        // Iterate through chunk gindices, recursively fetching leaf gindices from each chunk
-        const chunkCount = this.tree_getChunkCount(target);
-        const gindices = [];
-        const startIndex = persistent_merkle_tree_1.toGindex(this.getChunkDepth(), BigInt(0));
-        const extendedStartIndex = persistent_merkle_tree_1.concatGindices([root, startIndex]);
-        if (this.elementType.hasVariableSerializedLength()) {
-            if (!target) {
-                throw new Error("variable type requires tree argument to get leaves");
-            }
-            // variable-length elements must pass the underlying subtrees to determine the length
-            for (let i = 0, gindex = startIndex, extendedGindex = extendedStartIndex; i < chunkCount; i++, gindex++, extendedGindex++) {
-                gindices.push(...this.elementType.tree_getLeafGindices(target.getSubtree(gindex), extendedGindex));
-            }
-        }
-        else {
-            for (let i = 0, gindex = extendedStartIndex; i < chunkCount; i++, gindex++) {
-                gindices.push(...this.elementType.tree_getLeafGindices(undefined, gindex));
-            }
-        }
-        return gindices;
-    }
-}
-exports.CompositeArrayType = CompositeArrayType;
-//# sourceMappingURL=array.js.map
-
-/***/ }),
-
-/***/ 3329:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BitListType = exports.isBitListType = exports.BITLIST_TYPE = void 0;
-const list_1 = __webpack_require__(7970);
-const basic_1 = __webpack_require__(3599);
-const type_1 = __webpack_require__(8398);
-const byteArray_1 = __webpack_require__(2404);
-const constants_1 = __webpack_require__(7318);
-exports.BITLIST_TYPE = Symbol.for("ssz/BitListType");
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isBitListType(type) {
-    return type_1.isTypeOf(type, exports.BITLIST_TYPE);
-}
-exports.isBitListType = isBitListType;
-class BitListType extends list_1.BasicListType {
-    constructor(options) {
-        super({ elementType: basic_1.booleanType, ...options });
-        this._typeSymbols.add(exports.BITLIST_TYPE);
-    }
-    struct_getByte(value, index) {
-        const firstBitIndex = index * 8;
-        const lastBitIndex = Math.min(firstBitIndex + 7, value.length - 1);
-        let bitstring = "0b";
-        for (let i = lastBitIndex; i >= firstBitIndex; i--) {
-            bitstring += value[i] ? "1" : "0";
-        }
-        return Number(bitstring);
-    }
-    struct_getLength(value) {
-        return value.length;
-    }
-    struct_getByteLength(value) {
-        return Math.ceil(value.length / 8);
-    }
-    struct_getSerializedLength(value) {
-        if (value.length % 8 === 0) {
-            return this.struct_getByteLength(value) + 1;
-        }
-        else {
-            return this.struct_getByteLength(value);
-        }
-    }
-    getMaxSerializedLength() {
-        return Math.ceil((this.limit + 1) / 8);
-    }
-    getMinSerializedLength() {
-        return 1;
-    }
-    struct_getChunkCount(value) {
-        return Math.ceil(this.struct_getLength(value) / 256);
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        const value = [];
-        const toBool = (c) => (c === "1" ? true : false);
-        for (let i = start; i < end - 1; i++) {
-            let bitstring = data[i].toString(2);
-            bitstring = "0".repeat(8 - bitstring.length) + bitstring;
-            value.push(...Array.prototype.map.call(bitstring, toBool).reverse());
-        }
-        const lastByte = data[end - 1];
-        if (lastByte === 0) {
-            throw new Error("Invalid deserialized bitlist, padding bit required");
-        }
-        if (lastByte === 1) {
-            return value;
-        }
-        const lastBits = Array.prototype.map.call(lastByte.toString(2), toBool).reverse();
-        const last1 = lastBits.lastIndexOf(true);
-        value.push(...lastBits.slice(0, last1));
-        if (value.length > this.limit) {
-            throw new Error("Invalid deserialized bitlist, length greater than limit");
-        }
-        return value;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        const byteLength = this.struct_getByteLength(value);
-        for (let i = 0; i < byteLength; i++) {
-            output[offset + i] = this.struct_getByte(value, i);
-        }
-        const newOffset = offset + byteLength;
-        if (value.length % 8 === 0) {
-            output[newOffset] = 1;
-            return newOffset + 1;
-        }
-        else {
-            output[newOffset - 1] |= 1 << value.length % 8;
-            return newOffset;
-        }
-    }
-    struct_getRootAtChunkIndex(value, chunkIndex) {
-        const output = new Uint8Array(constants_1.BYTES_PER_CHUNK);
-        const byteLength = Math.min(constants_1.BYTES_PER_CHUNK, this.struct_getByteLength(value) - chunkIndex);
-        const byteOffset = chunkIndex * constants_1.BYTES_PER_CHUNK;
-        for (let i = 0; i < byteLength; i++) {
-            output[i] = this.struct_getByte(value, i + byteOffset);
-        }
-        return output;
-    }
-    struct_convertFromJson(data) {
-        const bytes = byteArray_1.fromHexString(data);
-        return this.struct_deserializeFromBytes(bytes, 0, bytes.length);
-    }
-    struct_convertToJson(value) {
-        return byteArray_1.toHexString(this.serialize(value));
-    }
-    tree_getByteLength(target) {
-        return Math.ceil(this.tree_getLength(target) / 8);
-    }
-    tree_getSerializedLength(target) {
-        const bitLength = this.tree_getLength(target);
-        if (bitLength % 8 === 0) {
-            return this.tree_getByteLength(target) + 1;
-        }
-        else {
-            return this.tree_getByteLength(target);
-        }
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        const lastByte = data[end - 1];
-        if (lastByte === 0) {
-            throw new Error("Invalid deserialized bitlist, padding bit required");
-        }
-        if (lastByte === 1) {
-            const target = super.tree_deserializeFromBytes(data, start, end - 1);
-            const length = (end - start - 1) * 8;
-            this.tree_setLength(target, length);
-            return target;
-        }
-        // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
-        const target = super.tree_deserializeFromBytes(data, start, end);
-        const lastGindexBitString = this.getGindexBitStringAtChunkIndex(Math.ceil((end - start) / 32) - 1);
-        // copy chunk into new memory
-        const lastChunk = new Uint8Array(32);
-        lastChunk.set(target.getRoot(lastGindexBitString));
-        const lastChunkByte = ((end - start) % 32) - 1;
-        // mask lastChunkByte
-        const lastByteBitLength = lastByte.toString(2).length - 1;
-        const length = (end - start - 1) * 8 + lastByteBitLength;
-        const mask = 0xff >> (8 - lastByteBitLength);
-        lastChunk[lastChunkByte] &= mask;
-        target.setRoot(lastGindexBitString, lastChunk);
-        this.tree_setLength(target, length);
-        return target;
-    }
-    tree_serializeToBytes(target, output, offset) {
-        const sizeNoPadding = this.tree_getByteLength(target);
-        const fullChunkCount = Math.floor(sizeNoPadding / 32);
-        const remainder = sizeNoPadding % 32;
-        let i = 0;
-        if (fullChunkCount > 0) {
-            const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fullChunkCount);
-            for (; i < nodes.length; i++) {
-                output.set(nodes[i].root, offset + i * 32);
-            }
-        }
-        if (remainder) {
-            output.set(this.tree_getRootAtChunkIndex(target, fullChunkCount).slice(0, remainder), offset + i * 32);
-        }
-        const bitLength = this.tree_getLength(target);
-        const size = this.tree_getSerializedLength(target);
-        const newOffset = offset + size;
-        // set padding bit
-        output[newOffset - 1] |= 1 << bitLength % 8;
-        return newOffset;
-    }
-    getBitOffset(index) {
-        return index % 8;
-    }
-    getChunkOffset(index) {
-        return Math.floor((index % 256) / 8);
-    }
-    getChunkIndex(index) {
-        return Math.floor(index / 256);
-    }
-    tree_getChunkCount(target) {
-        return Math.ceil(this.tree_getLength(target) / 256);
-    }
-    *tree_iterateValues(target) {
-        const length = this.tree_getLength(target);
-        const chunkCount = this.tree_getChunkCount(target);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
-        let i = 0;
-        for (let nodeIx = 0; nodeIx < nodes.length; nodeIx++) {
-            const chunk = nodes[nodeIx].root;
-            for (let j = 0; j < 256 && i < length; i++, j++) {
-                const byte = chunk[this.getChunkOffset(i)];
-                yield !!(byte & (1 << this.getBitOffset(i)));
-            }
-        }
-    }
-    tree_getValues(target) {
-        const length = this.tree_getLength(target);
-        const chunkCount = this.tree_getChunkCount(target);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
-        let i = 0;
-        const values = [];
-        for (let nodeIx = 0; nodeIx < nodes.length; nodeIx++) {
-            const chunk = nodes[nodeIx].root;
-            for (let j = 0; j < 256 && i < length; i++, j++) {
-                const byte = chunk[this.getChunkOffset(i)];
-                values.push(!!(byte & (1 << this.getBitOffset(i))));
-            }
-        }
-        return values;
-    }
-    tree_getValueAtIndex(target, index) {
-        const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
-        const byte = chunk[this.getChunkOffset(index)];
-        return !!(byte & (1 << this.getBitOffset(index)));
-    }
-    tree_setValueAtIndex(target, property, value, expand = false) {
-        const chunkGindexBitString = this.getGindexBitStringAtChunkIndex(this.getChunkIndex(property));
-        const chunk = new Uint8Array(32);
-        chunk.set(target.getRoot(chunkGindexBitString));
-        const byteOffset = this.getChunkOffset(property);
-        if (value) {
-            chunk[byteOffset] |= 1 << this.getBitOffset(property);
-        }
-        else {
-            chunk[byteOffset] &= 0xff ^ (1 << this.getBitOffset(property));
-        }
-        target.setRoot(chunkGindexBitString, chunk, expand);
-        return true;
-    }
-    getMaxChunkCount() {
-        return Math.ceil(this.limit / 256);
-    }
-}
-exports.BitListType = BitListType;
-//# sourceMappingURL=bitList.js.map
-
-/***/ }),
-
-/***/ 6284:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BitVectorType = exports.isBitVectorType = exports.BITVECTOR_TYPE = void 0;
-const vector_1 = __webpack_require__(8937);
-const basic_1 = __webpack_require__(3599);
-const type_1 = __webpack_require__(8398);
-const byteArray_1 = __webpack_require__(2404);
-const constants_1 = __webpack_require__(7318);
-exports.BITVECTOR_TYPE = Symbol.for("ssz/BitVectorType");
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isBitVectorType(type) {
-    return type_1.isTypeOf(type, exports.BITVECTOR_TYPE);
-}
-exports.isBitVectorType = isBitVectorType;
-class BitVectorType extends vector_1.BasicVectorType {
-    constructor(options) {
-        super({ elementType: basic_1.booleanType, ...options });
-        this._typeSymbols.add(exports.BITVECTOR_TYPE);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_getLength(value) {
-        return this.length;
-    }
-    // Override all length methods to understand .length as bits not bytes
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_getByteLength(value) {
-        return Math.ceil(this.length / 8);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_getSerializedLength(value) {
-        return Math.ceil(this.length / 8);
-    }
-    getFixedSerializedLength() {
-        return Math.ceil(this.length / 8);
-    }
-    getMaxSerializedLength() {
-        return Math.ceil(this.length / 8);
-    }
-    getMinSerializedLength() {
-        return Math.ceil(this.length / 8);
-    }
-    struct_getChunkCount(value) {
-        return Math.ceil(this.struct_getLength(value) / 256);
-    }
-    struct_getByte(value, index) {
-        const firstBitIndex = index * 8;
-        const lastBitIndex = Math.min(firstBitIndex + 7, value.length - 1);
-        let bitstring = "0b";
-        for (let i = lastBitIndex; i >= firstBitIndex; i--) {
-            bitstring += value[i] ? "1" : "0";
-        }
-        return Number(bitstring);
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (end - start !== this.size(null)) {
-            throw new Error("Invalid bitvector: length not equal to vector length");
-        }
-        const value = [];
-        for (let i = start; i < end - 1; i++) {
-            value.push(...byteArray_1.getByteBits(data, i));
-        }
-        const lastBitLength = this.length % 8;
-        if (!lastBitLength) {
-            // vector takes up the whole byte, no need for checks
-            value.push(...byteArray_1.getByteBits(data, end - 1));
-        }
-        else {
-            const lastBits = byteArray_1.getByteBits(data, end - 1);
-            if (lastBits.slice(lastBitLength).some((b) => b)) {
-                throw new Error("Invalid bitvector: nonzero bits past length");
-            }
-            value.push(...lastBits.slice(0, lastBitLength));
-        }
-        return value;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        const byteLength = this.struct_getByteLength(value);
-        for (let i = 0; i < byteLength; i++) {
-            output[offset + i] = this.struct_getByte(value, i);
-        }
-        return offset + byteLength;
-    }
-    struct_getRootAtChunkIndex(value, chunkIndex) {
-        const output = new Uint8Array(constants_1.BYTES_PER_CHUNK);
-        const byteLength = Math.min(constants_1.BYTES_PER_CHUNK, this.struct_getByteLength(value) - chunkIndex);
-        const byteOffset = chunkIndex * constants_1.BYTES_PER_CHUNK;
-        for (let i = 0; i < byteLength; i++) {
-            output[i] = this.struct_getByte(value, i + byteOffset);
-        }
-        return output;
-    }
-    struct_convertFromJson(data) {
-        const bytes = byteArray_1.fromHexString(data);
-        return this.fromBytes(bytes, 0, bytes.length);
-    }
-    struct_convertToJson(value) {
-        return byteArray_1.toHexString(this.serialize(value));
-    }
-    tree_getByteLength(target) {
-        return Math.ceil(this.tree_getLength(target) / 8);
-    }
-    tree_getSerializedLength(target) {
-        return this.tree_getByteLength(target);
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        // mask last byte to ensure it doesn't go over length
-        const lastByte = data[end - 1];
-        // If the data len fits full bytes this check must be skipped.
-        // Otherwise we must ensure that the extra bits are set to zero.
-        const lastByteBitLen = this.length % 8;
-        if (lastByteBitLen > 0) {
-            const mask = (0xff << lastByteBitLen) & 0xff;
-            if ((lastByte & mask) > 0) {
-                throw new Error("Invalid deserialized bitvector length");
-            }
-        }
-        return super.tree_deserializeFromBytes(data, start, end);
-    }
-    getBitOffset(index) {
-        return index % 8;
-    }
-    getChunkOffset(index) {
-        return Math.floor((index % 256) / 8);
-    }
-    getChunkIndex(index) {
-        return Math.floor(index / 256);
-    }
-    tree_getChunkCount(target) {
-        return Math.ceil(this.tree_getLength(target) / 256);
-    }
-    *tree_iterateValues(target) {
-        const length = this.tree_getLength(target);
-        const chunkCount = this.tree_getChunkCount(target);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
-        let i = 0;
-        for (let nodeIx = 0; nodeIx < nodes.length; nodeIx++) {
-            const chunk = nodes[nodeIx].root;
-            for (let j = 0; j < 256 && i < length; i++, j++) {
-                const byte = chunk[this.getChunkOffset(i)];
-                yield !!(byte & (1 << this.getBitOffset(i)));
-            }
-        }
-    }
-    tree_getValues(target) {
-        const length = this.tree_getLength(target);
-        const chunkCount = this.tree_getChunkCount(target);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, chunkCount);
-        let i = 0;
-        const values = [];
-        for (let nodeIx = 0; nodeIx < nodes.length; nodeIx++) {
-            const chunk = nodes[nodeIx].root;
-            for (let j = 0; j < 256 && i < length; i++, j++) {
-                const byte = chunk[this.getChunkOffset(i)];
-                values.push(!!(byte & (1 << this.getBitOffset(i))));
-            }
-        }
-        return values;
-    }
-    tree_getValueAtIndex(target, index) {
-        const chunk = this.tree_getRootAtChunkIndex(target, this.getChunkIndex(index));
-        const byte = chunk[this.getChunkOffset(index)];
-        return !!(byte & (1 << this.getBitOffset(index)));
-    }
-    tree_setProperty(target, property, value) {
-        const chunkGindexBitString = this.getGindexBitStringAtChunkIndex(this.getChunkIndex(property));
-        const chunk = new Uint8Array(32);
-        chunk.set(target.getRoot(chunkGindexBitString));
-        const byteOffset = this.getChunkOffset(property);
-        if (value) {
-            chunk[byteOffset] |= 1 << this.getBitOffset(property);
-        }
-        else {
-            chunk[byteOffset] &= 0xff ^ (1 << this.getBitOffset(property));
-        }
-        target.setRoot(chunkGindexBitString, chunk);
-        return true;
-    }
-    getMaxChunkCount() {
-        return Math.ceil(this.length / 256);
-    }
-}
-exports.BitVectorType = BitVectorType;
-//# sourceMappingURL=bitVector.js.map
-
-/***/ }),
-
-/***/ 4510:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ByteListType = exports.isByteListType = exports.BYTELIST_TYPE = void 0;
-const list_1 = __webpack_require__(7970);
-const basic_1 = __webpack_require__(3599);
-const type_1 = __webpack_require__(8398);
-const byteArray_1 = __webpack_require__(2404);
-const constants_1 = __webpack_require__(7318);
-exports.BYTELIST_TYPE = Symbol.for("ssz/ByteListType");
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isByteListType(type) {
-    return type_1.isTypeOf(type, exports.BYTELIST_TYPE);
-}
-exports.isByteListType = isByteListType;
-class ByteListType extends list_1.BasicListType {
-    constructor(options) {
-        super({ elementType: basic_1.byteType, ...options });
-        this._typeSymbols.add(exports.BYTELIST_TYPE);
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        const length = end - start;
-        const value = new Array(end - start);
-        for (let i = 0; i < length; i++) {
-            value[i] = data[start + i];
-        }
-        return value;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        const length = value.length;
-        output.set(value, offset);
-        return offset + length;
-    }
-    struct_convertFromJson(data) {
-        const bytes = byteArray_1.fromHexString(data);
-        return this.struct_deserializeFromBytes(bytes, 0, bytes.length);
-    }
-    struct_convertToJson(value) {
-        return byteArray_1.toHexString(this.serialize(value));
-    }
-    tree_convertToStruct(target) {
-        const length = this.tree_getLength(target);
-        const value = new Array(length);
-        const chunks = target.getNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
-        let chunkIx = 0;
-        let i;
-        for (i = 0; i < length - constants_1.BYTES_PER_CHUNK; i += constants_1.BYTES_PER_CHUNK) {
-            for (let j = 0; j < constants_1.BYTES_PER_CHUNK; j++) {
-                value[i + j] = chunks[chunkIx].root[j];
-            }
-            chunkIx++;
-        }
-        for (let j = 0; j < length - i; j++) {
-            value[i + j] = chunks[chunkIx].root[j];
-        }
-        return value; // value;
-    }
-}
-exports.ByteListType = ByteListType;
-//# sourceMappingURL=byteList.js.map
-
-/***/ }),
-
-/***/ 5825:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ByteVectorType = exports.isByteVectorType = exports.BYTEVECTOR_TYPE = void 0;
-const vector_1 = __webpack_require__(8937);
-const basic_1 = __webpack_require__(3599);
-const type_1 = __webpack_require__(8398);
-const byteArray_1 = __webpack_require__(2404);
-exports.BYTEVECTOR_TYPE = Symbol.for("ssz/ByteVectorType");
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isByteVectorType(type) {
-    return type_1.isTypeOf(type, exports.BYTEVECTOR_TYPE);
-}
-exports.isByteVectorType = isByteVectorType;
-class ByteVectorType extends vector_1.BasicVectorType {
-    constructor(options) {
-        super({ elementType: basic_1.byteType, ...options });
-        this._typeSymbols.add(exports.BYTEVECTOR_TYPE);
-    }
-    struct_defaultValue() {
-        return new Uint8Array(this.length);
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        const length = end - start;
-        if (length !== this.length) {
-            throw new Error(`Invalid deserialized vector length: expected ${this.length}, actual: ${length}`);
-        }
-        const value = new Uint8Array(length);
-        value.set(data.slice(start, end));
-        return value;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        output.set(value, offset);
-        return offset + this.length;
-    }
-    struct_convertFromJson(data) {
-        const value = byteArray_1.fromHexString(data);
-        if (value.length !== this.length) {
-            throw new Error(`Invalid JSON vector length: expected ${this.length}, actual: ${value.length}`);
-        }
-        return value;
-    }
-    struct_convertToJson(value) {
-        return byteArray_1.toHexString(value);
-    }
-    tree_convertToStruct(target) {
-        const value = new Uint8Array(this.length);
-        const chunks = target.getNodesAtDepth(this.getChunkDepth(), 0, this.getMaxChunkCount());
-        let chunkIx = 0;
-        if (this.length % 32 === 0) {
-            for (let i = 0; i < this.length; i += 32) {
-                value.set(chunks[chunkIx].root, i);
-                chunkIx++;
-            }
-        }
-        else {
-            let i;
-            for (i = 0; i < this.length - 32; i += 32) {
-                value.set(chunks[chunkIx].root, i);
-                chunkIx++;
-            }
-            value.set(chunks[chunkIx].root.subarray(0, this.length - i), i);
-        }
-        return value;
-    }
-}
-exports.ByteVectorType = ByteVectorType;
-//# sourceMappingURL=byteVector.js.map
-
-/***/ }),
-
-/***/ 9993:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ContainerType = exports.isContainerType = exports.CONTAINER_TYPE = void 0;
-const abstract_1 = __webpack_require__(5390);
-const type_1 = __webpack_require__(8398);
-const persistent_merkle_tree_1 = __webpack_require__(6647);
-const errorPath_1 = __webpack_require__(203);
-const json_1 = __webpack_require__(1027);
-const basic_1 = __webpack_require__(1033);
-const hash_1 = __webpack_require__(2738);
-const treeValue_1 = __webpack_require__(867);
-exports.CONTAINER_TYPE = Symbol.for("ssz/ContainerType");
-function isContainerType(type) {
-    return type_1.isTypeOf(type, exports.CONTAINER_TYPE);
-}
-exports.isContainerType = isContainerType;
-class ContainerType extends abstract_1.CompositeType {
-    constructor(options) {
-        super();
-        this.fields = { ...options.fields };
-        this.casingMap = options.casingMap;
-        this.expectedCase = options.expectedCase;
-        this._typeSymbols.add(exports.CONTAINER_TYPE);
-        this.fieldInfos = new Map();
-        let chunkIndex = 0;
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            this.fieldInfos.set(fieldName, {
-                isBasic: !abstract_1.isCompositeType(fieldType),
-                gIndexBitString: this.getGindexBitStringAtChunkIndex(chunkIndex),
-                gIndex: this.getGindexAtChunkIndex(chunkIndex),
-            });
-            chunkIndex++;
-        }
-    }
-    struct_defaultValue() {
-        const obj = {};
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            obj[fieldName] = fieldType.struct_defaultValue();
-        }
-        return obj;
-    }
-    struct_getSerializedLength(value) {
-        let s = 0;
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            const fixedLen = fieldType.getFixedSerializedLength();
-            if (fixedLen === null) {
-                s += fieldType.struct_getSerializedLength(value[fieldName]) + 4;
-            }
-            else {
-                s += fixedLen;
-            }
-        }
-        return s;
-    }
-    getMaxSerializedLength() {
-        let maxSize = 0;
-        for (const fieldType of Object.values(this.fields)) {
-            const fieldFixedLen = fieldType.getFixedSerializedLength();
-            if (fieldFixedLen === null) {
-                // +4 for the offset
-                maxSize += 4 + fieldType.getMaxSerializedLength();
-            }
-            else {
-                maxSize += fieldFixedLen;
-            }
-        }
-        return maxSize;
-    }
-    getMinSerializedLength() {
-        let maxSize = 0;
-        for (const fieldType of Object.values(this.fields)) {
-            const fieldFixedLen = fieldType.getFixedSerializedLength();
-            if (fieldFixedLen === null) {
-                // +4 for the offset
-                maxSize += 4 + fieldType.getMinSerializedLength();
-            }
-            else {
-                maxSize += fieldFixedLen;
-            }
-        }
-        return maxSize;
-    }
-    struct_assertValidValue(value) {
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                fieldType.struct_assertValidValue(value[fieldName]);
-            }
-            catch (e) {
-                throw new Error(`Invalid field ${fieldName}: ${e.message}`);
-            }
-        }
-    }
-    struct_equals(value1, value2) {
-        this.struct_assertValidValue(value1);
-        this.struct_assertValidValue(value2);
-        return Object.entries(this.fields).every(([fieldName, fieldType]) => {
-            return fieldType.struct_equals(value1[fieldName], value2[fieldName]);
-        });
-    }
-    struct_clone(value) {
-        const newValue = {};
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            newValue[fieldName] = fieldType.struct_clone(value[fieldName]);
-        }
-        return newValue;
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        let currentIndex = start;
-        let nextIndex = currentIndex;
-        const value = {};
-        // Since variable-sized values can be interspersed with fixed-sized values, we precalculate
-        // the offset indices so we can more easily deserialize the fields in once pass first we get the fixed sizes
-        // Note: `fixedSizes[i] = null` if that field has variable length
-        const fixedSizes = Object.values(this.fields).map((fieldType) => fieldType.getFixedSerializedLength());
-        // with the fixed sizes, we can read the offsets, and store for our single pass
-        const offsets = [];
-        const fixedSection = new DataView(data.buffer, data.byteOffset);
-        const fixedEnd = fixedSizes.reduce((index, size) => {
-            if (size === null) {
-                offsets.push(start + fixedSection.getUint32(index, true));
-                return index + 4;
-            }
-            else {
-                return index + size;
-            }
-        }, start);
-        offsets.push(end);
-        if (fixedEnd !== offsets[0]) {
-            throw new Error("Not all variable bytes consumed");
-        }
-        let offsetIndex = 0;
-        for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
-            try {
-                const fieldSize = fixedSizes[i];
-                if (fieldSize === null) {
-                    // variable-sized field
-                    if (offsets[offsetIndex] > end) {
-                        throw new Error("Offset out of bounds");
-                    }
-                    if (offsets[offsetIndex] > offsets[offsetIndex + 1]) {
-                        throw new Error("Offsets must be increasing");
-                    }
-                    value[fieldName] = fieldType.struct_deserializeFromBytes(data, offsets[offsetIndex], offsets[offsetIndex + 1]);
-                    offsetIndex++;
-                    currentIndex += 4;
-                }
-                else {
-                    // fixed-sized field
-                    nextIndex = currentIndex + fieldSize;
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    value[fieldName] = fieldType.struct_deserializeFromBytes(data, currentIndex, nextIndex);
-                    currentIndex = nextIndex;
-                }
-            }
-            catch (e) {
-                throw new errorPath_1.SszErrorPath(e, fieldName);
-            }
-        }
-        if (offsets.length > 1) {
-            if (offsetIndex !== offsets.length - 1) {
-                throw new Error("Not all variable bytes consumed");
-            }
-            if (currentIndex !== offsets[0]) {
-                throw new Error("Not all fixed bytes consumed");
-            }
-        }
-        else {
-            if (currentIndex !== end) {
-                throw new Error("Not all fixed bytes consumed");
-            }
-        }
-        return value;
-    }
-    struct_serializeToBytes(value, output, offset) {
-        let variableIndex = offset;
-        for (const fieldType of Object.values(this.fields)) {
-            const fixedLen = fieldType.getFixedSerializedLength();
-            variableIndex += fixedLen === null ? 4 : fixedLen;
-        }
-        const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
-        let fixedIndex = offset;
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            if (fieldType.hasVariableSerializedLength()) {
-                // write offset
-                fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
-                fixedIndex += 4;
-                // write serialized element to variable section
-                variableIndex = fieldType.toBytes(value[fieldName], output, variableIndex);
-            }
-            else {
-                fixedIndex = fieldType.toBytes(value[fieldName], output, fixedIndex);
-            }
-        }
-        return variableIndex;
-    }
-    struct_getRootAtChunkIndex(value, index) {
-        const fieldName = Object.keys(this.fields)[index];
-        const fieldType = this.fields[fieldName];
-        return fieldType.struct_hashTreeRoot(value[fieldName]);
-    }
-    struct_convertFromJson(data, options) {
-        if (typeof data !== "object") {
-            throw new Error("Invalid JSON container: expected Object");
-        }
-        const value = {};
-        const expectedCase = this.expectedCase || (options && options.case);
-        const customCasingMap = this.casingMap || (options && options.casingMap);
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            const expectedFieldName = json_1.toExpectedCase(fieldName, expectedCase, customCasingMap);
-            if (data[expectedFieldName] === undefined) {
-                throw new Error(`Invalid JSON container field: expected field ${expectedFieldName} is undefined`);
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            value[fieldName] = fieldType.fromJson(data[expectedFieldName], options);
-        }
-        return value;
-    }
-    struct_convertToJson(value, options) {
-        const data = {};
-        const expectedCase = this.expectedCase || (options && options.case);
-        const customCasingMap = this.casingMap || (options && options.casingMap);
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            data[json_1.toExpectedCase(fieldName, expectedCase, customCasingMap)] = fieldType.toJson(value[fieldName], options);
-        }
-        return data;
-    }
-    struct_convertToTree(value) {
-        if (treeValue_1.isTreeBacked(value))
-            return value.tree.clone();
-        return new persistent_merkle_tree_1.Tree(persistent_merkle_tree_1.subtreeFillToContents(Object.entries(this.fields).map(([fieldName, fieldType]) => {
-            if (!abstract_1.isCompositeType(fieldType)) {
-                return basic_1.basicTypeToLeafNode(fieldType, value[fieldName]);
-            }
-            else {
-                return fieldType.struct_convertToTree(value[fieldName]).rootNode;
-            }
-        }), this.getChunkDepth()));
-    }
-    struct_getPropertyNames() {
-        return Object.keys(this.fields);
-    }
-    bytes_getVariableOffsets(target) {
-        const types = Object.values(this.fields);
-        const offsets = [];
-        // variable-sized values can be interspersed with fixed-sized values
-        // variable-sized value indices are serialized as offsets, indices deeper in the byte array
-        let currentIndex = 0;
-        let nextIndex = 0;
-        const fixedSection = new DataView(target.buffer, target.byteOffset);
-        const fixedOffsets = [];
-        const variableOffsets = [];
-        let variableIndex = 0;
-        for (const [i, fieldType] of types.entries()) {
-            const fixedLen = fieldType.getFixedSerializedLength();
-            if (fixedLen === null) {
-                const offset = fixedSection.getUint32(currentIndex, true);
-                if (offset > target.length) {
-                    throw new Error("Offset out of bounds");
-                }
-                variableOffsets.push(offset);
-                currentIndex = nextIndex = currentIndex + 4;
-                variableIndex++;
-            }
-            else {
-                nextIndex = currentIndex + fixedLen;
-                fixedOffsets[i] = [currentIndex, nextIndex];
-                currentIndex = nextIndex;
-            }
-        }
-        variableOffsets.push(target.length);
-        variableIndex = 0;
-        for (const [i, fieldType] of types.entries()) {
-            if (fieldType.hasVariableSerializedLength()) {
-                if (variableOffsets[variableIndex] > variableOffsets[variableIndex + 1]) {
-                    throw new Error("Offsets must be increasing");
-                }
-                offsets.push([variableOffsets[variableIndex], variableOffsets[variableIndex + 1]]);
-                variableIndex++;
-            }
-            else {
-                offsets.push(fixedOffsets[i]);
-            }
-        }
-        return offsets;
-    }
-    tree_defaultNode() {
-        if (!this._defaultNode) {
-            this._defaultNode = persistent_merkle_tree_1.subtreeFillToContents(Object.values(this.fields).map((fieldType) => {
-                if (!abstract_1.isCompositeType(fieldType)) {
-                    return persistent_merkle_tree_1.zeroNode(0);
-                }
-                else {
-                    return fieldType.tree_defaultNode();
-                }
-            }), this.getChunkDepth());
-        }
-        return this._defaultNode;
-    }
-    tree_convertToStruct(target) {
-        const value = {};
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            const fieldInfo = this.fieldInfos.get(fieldName);
-            if (fieldInfo.isBasic) {
-                const chunk = target.getRoot(fieldInfo.gIndexBitString);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                value[fieldName] = fieldType.struct_deserializeFromBytes(chunk, 0);
-            }
-            else {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const compositeType = fieldType;
-                const subtree = target.getSubtree(fieldInfo.gIndexBitString);
-                value[fieldName] = compositeType.tree_convertToStruct(subtree);
-            }
-        }
-        return value;
-    }
-    tree_getSerializedLength(target) {
-        let s = 0;
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            const fixedLen = fieldType.getFixedSerializedLength();
-            if (fixedLen === null) {
-                s +=
-                    fieldType.tree_getSerializedLength(target.getSubtree(this.fieldInfos.get(fieldName).gIndexBitString)) + 4;
-            }
-            else {
-                s += fixedLen;
-            }
-        }
-        return s;
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        const target = this.tree_defaultValue();
-        const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
-        for (const [i, [fieldName, fieldType]] of Object.entries(this.fields).entries()) {
-            const [currentOffset, nextOffset] = offsets[i];
-            const { isBasic, gIndex: gindex } = this.fieldInfos.get(fieldName);
-            if (isBasic) {
-                // view of the chunk, shared buffer from `data`
-                const dataChunk = new Uint8Array(data.buffer, data.byteOffset + start + currentOffset, nextOffset - currentOffset);
-                const chunk = new Uint8Array(32);
-                // copy chunk into new memory
-                chunk.set(dataChunk);
-                target.setRoot(gindex, chunk);
-            }
-            else {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const compositeType = fieldType;
-                target.setSubtree(gindex, compositeType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset));
-            }
-        }
-        return target;
-    }
-    tree_serializeToBytes(target, output, offset) {
-        let variableIndex = offset;
-        for (const fieldType of Object.values(this.fields)) {
-            const fixedLen = fieldType.getFixedSerializedLength();
-            variableIndex += fixedLen === null ? 4 : fixedLen;
-        }
-        const fixedSection = new DataView(output.buffer, output.byteOffset + offset);
-        let fixedIndex = offset;
-        const fieldTypes = Object.values(this.fields);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
-        for (let i = 0; i < fieldTypes.length; i++) {
-            const fieldType = fieldTypes[i];
-            const node = nodes[i];
-            if (!abstract_1.isCompositeType(fieldType)) {
-                const s = fieldType.struct_getSerializedLength();
-                output.set(node.root.slice(0, s), fixedIndex);
-                fixedIndex += s;
-            }
-            else if (fieldType.hasVariableSerializedLength()) {
-                // write offset
-                fixedSection.setUint32(fixedIndex - offset, variableIndex - offset, true);
-                fixedIndex += 4;
-                // write serialized element to variable section
-                variableIndex = fieldType.tree_serializeToBytes(new persistent_merkle_tree_1.Tree(node), output, variableIndex);
-            }
-            else {
-                fixedIndex = fieldType.tree_serializeToBytes(new persistent_merkle_tree_1.Tree(node), output, fixedIndex);
-            }
-        }
-        return variableIndex;
-    }
-    getPropertyGindex(prop) {
-        const fieldInfo = this.fieldInfos.get(prop);
-        if (!fieldInfo) {
-            throw new Error(`Invalid container field name: ${String(prop)}`);
-        }
-        return fieldInfo.gIndex;
-    }
-    getPropertyType(prop) {
-        const type = this.fields[prop];
-        if (!type) {
-            throw new Error(`Invalid container field name: ${String(prop)}`);
-        }
-        return type;
-    }
-    tree_getPropertyNames() {
-        return Object.keys(this.fields);
-    }
-    tree_getProperty(target, prop) {
-        const fieldType = this.fields[prop];
-        const fieldInfo = this.fieldInfos.get(prop);
-        if (!fieldInfo) {
-            return undefined;
-        }
-        if (fieldInfo.isBasic) {
-            // Number64Uint wants to work on HashObject to improve performance
-            if (fieldType.struct_deserializeFromHashObject) {
-                const hashObject = target.getHashObject(fieldInfo.gIndexBitString);
-                return fieldType.struct_deserializeFromHashObject(hashObject, 0);
-            }
-            const chunk = target.getRoot(fieldInfo.gIndexBitString);
-            return fieldType.struct_deserializeFromBytes(chunk, 0);
-        }
-        else {
-            return target.getSubtree(fieldInfo.gIndexBitString);
-        }
-    }
-    tree_setProperty(target, property, value) {
-        const fieldType = this.fields[property];
-        const fieldInfo = this.fieldInfos.get(property);
-        if (!fieldInfo) {
-            throw new Error("Invalid container field name");
-        }
-        if (fieldInfo.isBasic) {
-            // Number64Uint wants to work on HashObject to improve performance
-            if (fieldType.struct_serializeToHashObject) {
-                const hashObject = hash_1.newHashObject();
-                fieldType.struct_serializeToHashObject(value, hashObject, 0);
-                target.setHashObject(fieldInfo.gIndexBitString, hashObject);
-                return true;
-            }
-            const chunk = new Uint8Array(32);
-            fieldType.struct_serializeToBytes(value, chunk, 0);
-            target.setRoot(fieldInfo.gIndexBitString, chunk);
-            return true;
-        }
-        else {
-            target.setSubtree(fieldInfo.gIndexBitString, value);
-            return true;
-        }
-    }
-    tree_deleteProperty(target, prop) {
-        const fieldInfo = this.fieldInfos.get(prop);
-        if (!fieldInfo) {
-            throw new Error("Invalid container field name");
-        }
-        const fieldType = this.fields[prop];
-        if (fieldInfo.isBasic) {
-            return this.tree_setProperty(target, prop, fieldType.struct_defaultValue());
-        }
-        else {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const compositeType = fieldType;
-            return this.tree_setProperty(target, prop, compositeType.tree_defaultValue());
-        }
-    }
-    *tree_iterateValues(target) {
-        const gindexIterator = persistent_merkle_tree_1.iterateAtDepth(this.getChunkDepth(), BigInt(0), BigInt(this.getMaxChunkCount()))[Symbol.iterator]();
-        for (const propType of Object.values(this.fields)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const { value, done } = gindexIterator.next();
-            if (done) {
-                return;
-            }
-            else {
-                if (!abstract_1.isCompositeType(propType)) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    yield propType.struct_deserializeFromBytes(value.root, 0);
-                }
-                else {
-                    yield target.getSubtree(value);
-                }
-            }
-        }
-    }
-    *tree_readonlyIterateValues(target) {
-        const fieldTypes = Object.values(this.fields);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
-        for (let i = 0; i < fieldTypes.length; i++) {
-            const fieldType = fieldTypes[i];
-            const node = nodes[i];
-            if (!abstract_1.isCompositeType(fieldType)) {
-                yield fieldType.struct_deserializeFromBytes(node.root, 0);
-            }
-            else {
-                yield new persistent_merkle_tree_1.Tree(node);
-            }
-        }
-    }
-    tree_getValues(target) {
-        const fieldTypes = Object.values(this.fields);
-        const gindices = persistent_merkle_tree_1.getGindicesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
-        const values = [];
-        for (let i = 0; i < fieldTypes.length; i++) {
-            const fieldType = fieldTypes[i];
-            if (!abstract_1.isCompositeType(fieldType)) {
-                values.push(fieldType.struct_deserializeFromBytes(target.getRoot(gindices[i]), 0));
-            }
-            else {
-                values.push(target.getSubtree(gindices[i]));
-            }
-        }
-        return values;
-    }
-    tree_readonlyGetValues(target) {
-        const fieldTypes = Object.values(this.fields);
-        const nodes = target.getNodesAtDepth(this.getChunkDepth(), 0, fieldTypes.length);
-        const values = [];
-        for (let i = 0; i < fieldTypes.length; i++) {
-            const fieldType = fieldTypes[i];
-            const node = nodes[i];
-            if (!abstract_1.isCompositeType(fieldType)) {
-                values.push(fieldType.struct_deserializeFromBytes(node.root, 0));
-            }
-            else {
-                values.push(new persistent_merkle_tree_1.Tree(node));
-            }
-        }
-        return values;
-    }
-    hasVariableSerializedLength() {
-        return Object.values(this.fields).some((fieldType) => fieldType.hasVariableSerializedLength());
-    }
-    getFixedSerializedLength() {
-        let fixedLen = 0;
-        for (const fieldType of Object.values(this.fields)) {
-            const fieldFixedLen = fieldType.getFixedSerializedLength();
-            if (fieldFixedLen === null) {
-                return null;
-            }
-            else {
-                fixedLen += fieldFixedLen;
-            }
-        }
-        return fixedLen;
-    }
-    getMaxChunkCount() {
-        return Object.keys(this.fields).length;
-    }
-    tree_getLeafGindices(target, root = BigInt(1)) {
-        const gindices = [];
-        for (const [fieldName, fieldType] of Object.entries(this.fields)) {
-            const { isBasic, gIndex: fieldGindex, gIndexBitString: gindexbitstring } = this.fieldInfos.get(fieldName);
-            const extendedFieldGindex = persistent_merkle_tree_1.concatGindices([root, fieldGindex]);
-            if (isBasic) {
-                gindices.push(extendedFieldGindex);
-            }
-            else {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const compositeType = fieldType;
-                if (fieldType.hasVariableSerializedLength()) {
-                    if (!target) {
-                        throw new Error("variable type requires tree argument to get leaves");
-                    }
-                    gindices.push(...compositeType.tree_getLeafGindices(target.getSubtree(gindexbitstring), extendedFieldGindex));
-                }
-                else {
-                    gindices.push(...compositeType.tree_getLeafGindices(undefined, extendedFieldGindex));
-                }
-            }
-        }
-        return gindices;
-    }
-}
-exports.ContainerType = ContainerType;
-//# sourceMappingURL=container.js.map
-
-/***/ }),
-
-/***/ 4669:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.readonlyValuesListOfLeafNodeStruct = exports.BranchNodeStruct = exports.ContainerLeafNodeStructType = exports.isContainerLeafNodeStructType = exports.CONTAINER_LEAF_NODE_STRUCT_TYPE = void 0;
-const persistent_merkle_tree_1 = __webpack_require__(6647);
-const treeValue_1 = __webpack_require__(867);
-const container_1 = __webpack_require__(9993);
-const type_1 = __webpack_require__(8398);
-exports.CONTAINER_LEAF_NODE_STRUCT_TYPE = Symbol.for("ssz/ContainerLeafNodeStructType");
-function isContainerLeafNodeStructType(type) {
-    return type_1.isTypeOf(type, exports.CONTAINER_LEAF_NODE_STRUCT_TYPE);
-}
-exports.isContainerLeafNodeStructType = isContainerLeafNodeStructType;
-/**
- * Container that when represented as a Tree its children's data is represented as a struct, not a tree.
- *
- * This approach is usefull for memory efficiency of data that is not modified often, for example the validators
- * registry in Ethereum consensus `state.validators`. The tradeoff is that getting the hash, are proofs is more
- * expensive because the tree has to be recreated every time.
- */
-class ContainerLeafNodeStructType extends container_1.ContainerType {
-    constructor(options) {
-        super(options);
-        this._typeSymbols.add(exports.CONTAINER_LEAF_NODE_STRUCT_TYPE);
-    }
-    /** Method to allow the Node to merkelize the struct */
-    toFullTree(value) {
-        return super.struct_convertToTree(value);
-    }
-    /** Overrides to return BranchNodeStruct instead of regular Tree */
-    createTreeBacked(tree) {
-        const value = new treeValue_1.ContainerLeafNodeStructTreeValue(this, tree);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return new Proxy(value, treeValue_1.TreeProxyHandler);
-    }
-    // struct_defaultValue   -> these comments acknowledge that this functions do not need to be overwritten
-    // struct_getSerializedLength
-    // getMaxSerializedLength
-    // getMinSerializedLength
-    // struct_assertValidValue
-    // struct_equals
-    // struct_clone
-    // struct_deserializeFromBytes
-    // struct_serializeToBytes
-    // struct_getRootAtChunkIndex
-    // struct_convertFromJson
-    // struct_convertToJson
-    struct_convertToTree(value) {
-        const node = new BranchNodeStruct(this, value);
-        return new persistent_merkle_tree_1.Tree(node);
-    }
-    // struct_convertToTree
-    // struct_getPropertyNames
-    // bytes_getVariableOffsets
-    tree_defaultNode() {
-        return new BranchNodeStruct(this, this.struct_defaultValue());
-    }
-    tree_convertToStruct(target) {
-        return target.rootNode.value;
-    }
-    // tree_getSerializedLength
-    tree_deserializeFromBytes(data, start, end) {
-        const value = this.struct_deserializeFromBytes(data, start, end);
-        const node = new BranchNodeStruct(this, value);
-        return new persistent_merkle_tree_1.Tree(node);
-    }
-    tree_serializeToBytes(target, output, offset) {
-        const { value } = target.rootNode;
-        return this.struct_serializeToBytes(value, output, offset);
-    }
-    // getPropertyGindex
-    // getPropertyType
-    // tree_getPropertyNames
-    tree_getProperty(target, property) {
-        return target.rootNode.value[property];
-    }
-    tree_setProperty(target, property, value) {
-        const { value: prevNodeValue } = target.rootNode;
-        // TODO: Should this check for valid field name? Benchmark the cost
-        const newNodeValue = { ...prevNodeValue, [property]: value };
-        target.rootNode = new BranchNodeStruct(this, newNodeValue);
-        return true;
-    }
-    tree_deleteProperty(target, prop) {
-        const chunkIndex = Object.keys(this.fields).findIndex((fieldName) => fieldName === prop);
-        if (chunkIndex === -1) {
-            throw new Error("Invalid container field name");
-        }
-        const fieldType = this.fields[prop];
-        return this.tree_setProperty(target, prop, fieldType.struct_defaultValue());
-    }
-    *tree_iterateValues(target) {
-        yield* Object.values(target.rootNode.value);
-    }
-    *tree_readonlyIterateValues(target) {
-        yield* this.tree_iterateValues(target);
-    }
-    tree_getValues(target) {
-        return Array.from(Object.values(target.rootNode.value));
-    }
-    tree_readonlyGetValues(target) {
-        return this.tree_getValues(target);
-    }
-}
-exports.ContainerLeafNodeStructType = ContainerLeafNodeStructType;
 /**
  * BranchNode whose children's data is represented as a struct, not a tree.
  *
@@ -31420,15 +28658,16 @@ exports.ContainerLeafNodeStructType = ContainerLeafNodeStructType;
  * expensive because the tree has to be recreated every time.
  */
 class BranchNodeStruct extends persistent_merkle_tree_1.Node {
-    constructor(type, value) {
-        super();
-        this.type = type;
+    constructor(valueToNode, value) {
+        // First null value is to save an extra variable to check if a node has a root or not
+        super(null, 0, 0, 0, 0, 0, 0, 0);
+        this.valueToNode = valueToNode;
         this.value = value;
     }
     get rootHashObject() {
         if (this.h0 === null) {
-            const tree = this.type.toFullTree(this.value);
-            super.applyHash(tree.rootNode.rootHashObject);
+            const node = this.valueToNode(this.value);
+            super.applyHash(node.rootHashObject);
         }
         return this;
     }
@@ -31439,91 +28678,260 @@ class BranchNodeStruct extends persistent_merkle_tree_1.Node {
         return false;
     }
     get left() {
-        const tree = this.type.toFullTree(this.value);
-        return tree.rootNode.left;
+        return this.valueToNode(this.value).left;
     }
     get right() {
-        const tree = this.type.toFullTree(this.value);
-        return tree.rootNode.right;
-    }
-    rebindLeft(left) {
-        return new persistent_merkle_tree_1.BranchNode(left, this.right);
-    }
-    rebindRight(right) {
-        return new persistent_merkle_tree_1.BranchNode(this.left, right);
+        return this.valueToNode(this.value).right;
     }
 }
 exports.BranchNodeStruct = BranchNodeStruct;
-/**
- * Custom readonlyValues to return non-tree backed values, but the raw struct inside BranchNodeStruct nodes.
- *
- * This function allows very efficient reads and iteration over the entire validators registry in Lodestar.
- */
-function readonlyValuesListOfLeafNodeStruct(objArr) {
-    const treeValue = objArr;
-    const { tree, type } = treeValue;
-    const nodes = tree.getNodesAtDepth(type.getChunkDepth(), 0, type.tree_getChunkCount(tree));
-    const values = [];
-    for (let i = 0, len = nodes.length; i < len; i++) {
-        const value = nodes[i].value;
-        if (value === undefined) {
-            throw Error("node is not a BranchNodeStruct");
-        }
-        values.push(value);
-    }
-    return values;
-}
-exports.readonlyValuesListOfLeafNodeStruct = readonlyValuesListOfLeafNodeStruct;
-//# sourceMappingURL=containerLeafNodeStruct.js.map
+//# sourceMappingURL=branchNodeStruct.js.map
 
 /***/ }),
 
-/***/ 7018:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(5390), exports);
-__exportStar(__webpack_require__(7783), exports);
-__exportStar(__webpack_require__(3329), exports);
-__exportStar(__webpack_require__(6284), exports);
-__exportStar(__webpack_require__(4510), exports);
-__exportStar(__webpack_require__(5825), exports);
-__exportStar(__webpack_require__(9993), exports);
-__exportStar(__webpack_require__(4669), exports);
-__exportStar(__webpack_require__(7970), exports);
-__exportStar(__webpack_require__(6920), exports);
-__exportStar(__webpack_require__(1849), exports);
-__exportStar(__webpack_require__(8937), exports);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 7970:
+/***/ 8005:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CompositeListType = exports.Number64ListType = exports.BasicListType = exports.ListType = exports.isListType = exports.LIST_TYPE = exports.LENGTH_GINDEX = void 0;
-const array_1 = __webpack_require__(7783);
-const basic_1 = __webpack_require__(3599);
-const type_1 = __webpack_require__(8398);
-const compat_1 = __webpack_require__(4929);
-const hash_1 = __webpack_require__(2738);
+exports.hash64 = exports.byteArrayEquals = exports.toHexString = exports.fromHexString = exports.getUint8ByteToBitBooleanArray = exports.BitArray = exports.TreeViewDU = exports.TreeView = exports.isCompositeType = exports.CompositeType = exports.isBasicType = exports.BasicType = exports.Type = exports.ByteArrayType = exports.BitArrayType = exports.ArrayType = exports.VectorCompositeType = exports.VectorBasicType = exports.UnionType = exports.UintNumberType = exports.UintBigintType = exports.NoneType = exports.ListCompositeType = exports.ListBasicType = exports.ContainerNodeStructType = exports.ContainerType = exports.ByteVectorType = exports.ByteListType = exports.BooleanType = exports.BitVectorType = exports.BitListType = void 0;
+// Types
+var bitList_1 = __webpack_require__(6629);
+Object.defineProperty(exports, "BitListType", ({ enumerable: true, get: function () { return bitList_1.BitListType; } }));
+var bitVector_1 = __webpack_require__(1736);
+Object.defineProperty(exports, "BitVectorType", ({ enumerable: true, get: function () { return bitVector_1.BitVectorType; } }));
+var boolean_1 = __webpack_require__(4213);
+Object.defineProperty(exports, "BooleanType", ({ enumerable: true, get: function () { return boolean_1.BooleanType; } }));
+var byteList_1 = __webpack_require__(4217);
+Object.defineProperty(exports, "ByteListType", ({ enumerable: true, get: function () { return byteList_1.ByteListType; } }));
+var byteVector_1 = __webpack_require__(7878);
+Object.defineProperty(exports, "ByteVectorType", ({ enumerable: true, get: function () { return byteVector_1.ByteVectorType; } }));
+var container_1 = __webpack_require__(5759);
+Object.defineProperty(exports, "ContainerType", ({ enumerable: true, get: function () { return container_1.ContainerType; } }));
+var containerNodeStruct_1 = __webpack_require__(9820);
+Object.defineProperty(exports, "ContainerNodeStructType", ({ enumerable: true, get: function () { return containerNodeStruct_1.ContainerNodeStructType; } }));
+var listBasic_1 = __webpack_require__(5963);
+Object.defineProperty(exports, "ListBasicType", ({ enumerable: true, get: function () { return listBasic_1.ListBasicType; } }));
+var listComposite_1 = __webpack_require__(534);
+Object.defineProperty(exports, "ListCompositeType", ({ enumerable: true, get: function () { return listComposite_1.ListCompositeType; } }));
+var none_1 = __webpack_require__(3300);
+Object.defineProperty(exports, "NoneType", ({ enumerable: true, get: function () { return none_1.NoneType; } }));
+var uint_1 = __webpack_require__(1703);
+Object.defineProperty(exports, "UintBigintType", ({ enumerable: true, get: function () { return uint_1.UintBigintType; } }));
+Object.defineProperty(exports, "UintNumberType", ({ enumerable: true, get: function () { return uint_1.UintNumberType; } }));
+var union_1 = __webpack_require__(12);
+Object.defineProperty(exports, "UnionType", ({ enumerable: true, get: function () { return union_1.UnionType; } }));
+var vectorBasic_1 = __webpack_require__(3127);
+Object.defineProperty(exports, "VectorBasicType", ({ enumerable: true, get: function () { return vectorBasic_1.VectorBasicType; } }));
+var vectorComposite_1 = __webpack_require__(7702);
+Object.defineProperty(exports, "VectorCompositeType", ({ enumerable: true, get: function () { return vectorComposite_1.VectorCompositeType; } }));
+// Base types
+var array_1 = __webpack_require__(443);
+Object.defineProperty(exports, "ArrayType", ({ enumerable: true, get: function () { return array_1.ArrayType; } }));
+var bitArray_1 = __webpack_require__(405);
+Object.defineProperty(exports, "BitArrayType", ({ enumerable: true, get: function () { return bitArray_1.BitArrayType; } }));
+var byteArray_1 = __webpack_require__(9636);
+Object.defineProperty(exports, "ByteArrayType", ({ enumerable: true, get: function () { return byteArray_1.ByteArrayType; } }));
+// Base type clases
+var abstract_1 = __webpack_require__(6298);
+Object.defineProperty(exports, "Type", ({ enumerable: true, get: function () { return abstract_1.Type; } }));
+var basic_1 = __webpack_require__(7262);
+Object.defineProperty(exports, "BasicType", ({ enumerable: true, get: function () { return basic_1.BasicType; } }));
+Object.defineProperty(exports, "isBasicType", ({ enumerable: true, get: function () { return basic_1.isBasicType; } }));
+var composite_1 = __webpack_require__(1347);
+Object.defineProperty(exports, "CompositeType", ({ enumerable: true, get: function () { return composite_1.CompositeType; } }));
+Object.defineProperty(exports, "isCompositeType", ({ enumerable: true, get: function () { return composite_1.isCompositeType; } }));
+var abstract_2 = __webpack_require__(9352);
+Object.defineProperty(exports, "TreeView", ({ enumerable: true, get: function () { return abstract_2.TreeView; } }));
+var abstract_3 = __webpack_require__(640);
+Object.defineProperty(exports, "TreeViewDU", ({ enumerable: true, get: function () { return abstract_3.TreeViewDU; } }));
+// Values
+var bitArray_2 = __webpack_require__(8676);
+Object.defineProperty(exports, "BitArray", ({ enumerable: true, get: function () { return bitArray_2.BitArray; } }));
+Object.defineProperty(exports, "getUint8ByteToBitBooleanArray", ({ enumerable: true, get: function () { return bitArray_2.getUint8ByteToBitBooleanArray; } }));
+// Utils
+var byteArray_2 = __webpack_require__(2404);
+Object.defineProperty(exports, "fromHexString", ({ enumerable: true, get: function () { return byteArray_2.fromHexString; } }));
+Object.defineProperty(exports, "toHexString", ({ enumerable: true, get: function () { return byteArray_2.toHexString; } }));
+Object.defineProperty(exports, "byteArrayEquals", ({ enumerable: true, get: function () { return byteArray_2.byteArrayEquals; } }));
+var merkleize_1 = __webpack_require__(1290);
+Object.defineProperty(exports, "hash64", ({ enumerable: true, get: function () { return merkleize_1.hash64; } }));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 6298:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Type = void 0;
+/**
+ * An SSZ type provides the following operations:
+ * - Serialization from/to bytes to either a value or a tree
+ * - Merkelization to compute the hashTreeRoot of both a value and a tree
+ * - Proof creation from trees
+ * - Create a View and a ViewDU instance from a tree
+ * - Manipulate views
+ */
+class Type {
+    /** INTERNAL METHOD: Merkleize value to tree */
+    value_toTree(value) {
+        // TODO: Un-performant path but useful for prototyping. Overwrite in Type if performance is important
+        const uint8Array = new Uint8Array(this.value_serializedSize(value));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        this.value_serializeToBytes({ uint8Array, dataView }, 0, value);
+        return this.tree_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
+    }
+    /** INTERNAL METHOD: Un-merkleize tree to value */
+    tree_toValue(node) {
+        // TODO: Un-performant path but useful for prototyping. Overwrite in Type if performance is important
+        const uint8Array = new Uint8Array(this.tree_serializedSize(node));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        this.tree_serializeToBytes({ uint8Array, dataView }, 0, node);
+        return this.value_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
+    }
+    /** Serialize a value to binary data */
+    serialize(value) {
+        const uint8Array = new Uint8Array(this.value_serializedSize(value));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        this.value_serializeToBytes({ uint8Array, dataView }, 0, value);
+        return uint8Array;
+    }
+    /** Deserialize binary data to value */
+    deserialize(uint8Array) {
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        return this.value_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
+    }
+}
+exports.Type = Type;
+//# sourceMappingURL=abstract.js.map
+
+/***/ }),
+
+/***/ 443:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ArrayType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
-const treeValue_1 = __webpack_require__(867);
+const composite_1 = __webpack_require__(1347);
+const arrayBasic_1 = __webpack_require__(8623);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * Array: ordered homogeneous collection
+ */
+class ArrayType extends composite_1.CompositeType {
+    constructor(elementType) {
+        super();
+        this.elementType = elementType;
+    }
+    defaultValue() {
+        return arrayBasic_1.value_defaultValueArray(this.elementType, this.defaultLen);
+    }
+    // Proofs
+    getPropertyType() {
+        return this.elementType;
+    }
+    getPropertyGindex(prop) {
+        if (typeof prop !== "number") {
+            throw Error(`Invalid array index: ${prop}`);
+        }
+        const chunkIdx = Math.floor(prop / this.itemsPerChunk);
+        return persistent_merkle_tree_1.toGindex(this.depth, BigInt(chunkIdx));
+    }
+    getIndexProperty(index) {
+        return index;
+    }
+    tree_getLeafGindices(rootGindex, rootNode) {
+        let length;
+        if (this.isList) {
+            if (!rootNode) {
+                throw new Error("List type requires tree argument to get leaves");
+            }
+            length = this.tree_getLength(rootNode);
+        }
+        else {
+            // Vectors don't need a rootNode to return length
+            length = this.tree_getLength(null);
+        }
+        const gindices = [];
+        if (composite_1.isCompositeType(this.elementType)) {
+            // Underlying elements exist one per chunk
+            // Iterate through chunk gindices, recursively fetching leaf gindices from each chunk
+            const startIndex = persistent_merkle_tree_1.toGindex(this.depth, BigInt(0));
+            const endGindex = startIndex + BigInt(length);
+            const extendedStartIndex = persistent_merkle_tree_1.concatGindices([rootGindex, startIndex]);
+            if (this.elementType.fixedSize === null) {
+                if (!rootNode) {
+                    /* istanbul ignore next - unreachable code */
+                    throw new Error("Array of variable size requires tree argument to get leaves");
+                }
+                // variable-length elements must pass the underlying subtrees to determine the length
+                for (let gindex = startIndex, extendedGindex = extendedStartIndex; gindex < endGindex; gindex++, extendedGindex++) {
+                    gindices.push(...this.elementType.tree_getLeafGindices(extendedGindex, persistent_merkle_tree_1.getNode(rootNode, gindex)));
+                }
+            }
+            else {
+                for (let i = 0, extendedGindex = extendedStartIndex; i < length; i++, extendedGindex++) {
+                    gindices.push(...this.elementType.tree_getLeafGindices(extendedGindex));
+                }
+            }
+        }
+        // Basic
+        else {
+            const chunkCount = Math.ceil(length / this.itemsPerChunk);
+            const startIndex = persistent_merkle_tree_1.concatGindices([rootGindex, persistent_merkle_tree_1.toGindex(this.depth, BigInt(0))]);
+            const endGindex = startIndex + BigInt(chunkCount);
+            for (let gindex = startIndex; gindex < endGindex; gindex++) {
+                gindices.push(gindex);
+            }
+        }
+        // include the length chunk
+        if (this.isList) {
+            gindices.push(persistent_merkle_tree_1.concatGindices([rootGindex, composite_1.LENGTH_GINDEX]));
+        }
+        return gindices;
+    }
+    // JSON
+    fromJson(json) {
+        // TODO: Do a better typesafe approach, all final classes of ArrayType implement ArrayProps
+        // There are multiple tests that cover this path for all clases
+        return arrayBasic_1.value_fromJsonArray(this.elementType, json, this);
+    }
+    toJson(value) {
+        return arrayBasic_1.value_toJsonArray(this.elementType, value, this);
+    }
+    clone(value) {
+        return arrayBasic_1.value_cloneArray(this.elementType, value);
+    }
+    equals(a, b) {
+        return arrayBasic_1.value_equals(this.elementType, a, b);
+    }
+}
+exports.ArrayType = ArrayType;
+//# sourceMappingURL=array.js.map
+
+/***/ }),
+
+/***/ 8623:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.assertValidArrayLength = exports.value_defaultValueArray = exports.value_equals = exports.value_cloneArray = exports.value_toJsonArray = exports.value_fromJsonArray = exports.tree_deserializeFromBytesArrayBasic = exports.tree_serializeToBytesArrayBasic = exports.value_deserializeFromBytesArrayBasic = exports.value_serializeToBytesArrayBasic = exports.setChunksNode = exports.addLengthNode = exports.getChunksNodeFromRootNode = exports.getLengthFromRootNode = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+// There's a matrix of Array-ish types that require a combination of this functions.
+// Regular class extends syntax doesn't work because it can only extend a single class.
+//
+// Type of array: List, Vector. Changes length property
+// Type of element: Basic, Composite. Changes merkelization if packing or not.
+// If Composite: Fixed len, Variable len. Changes the serialization requiring offsets.
 /**
  * SSZ Lists (variable-length arrays) include the length of the list in the tree
  * This length is always in the same index in the tree
@@ -31533,841 +28941,2710 @@ const treeValue_1 = __webpack_require__(867);
  * 2   3 // <-here
  * ```
  */
-exports.LENGTH_GINDEX = BigInt(3);
-exports.LIST_TYPE = Symbol.for("ssz/ListType");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isListType(type) {
-    return type_1.isTypeOf(type, exports.LIST_TYPE);
+function getLengthFromRootNode(node) {
+    // Length is represented as a Uint32 at the start of the chunk:
+    // 4 = 4 bytes in Uint32
+    // 0 = 0 offset bytes in Node's data
+    return node.right.getUint(4, 0);
 }
-exports.isListType = isListType;
-// Trick typescript into treating ListType as a constructor
-exports.ListType = 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ListType(options) {
-    if (basic_1.isNumber64UintType(options.elementType)) {
-        return new Number64ListType(options);
+exports.getLengthFromRootNode = getLengthFromRootNode;
+function getChunksNodeFromRootNode(node) {
+    return node.left;
+}
+exports.getChunksNodeFromRootNode = getChunksNodeFromRootNode;
+function addLengthNode(chunksNode, length) {
+    return new persistent_merkle_tree_1.BranchNode(chunksNode, persistent_merkle_tree_1.LeafNode.fromUint32(length));
+}
+exports.addLengthNode = addLengthNode;
+function setChunksNode(rootNode, chunksNode, newLength) {
+    const lengthNode = newLength !== undefined
+        ? // If newLength is set, create a new node for length
+            persistent_merkle_tree_1.LeafNode.fromUint32(newLength)
+        : // else re-use existing node
+            rootNode.right;
+    return new persistent_merkle_tree_1.BranchNode(chunksNode, lengthNode);
+}
+exports.setChunksNode = setChunksNode;
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+function value_serializeToBytesArrayBasic(elementType, length, output, offset, value) {
+    const elSize = elementType.byteLength;
+    for (let i = 0; i < length; i++) {
+        elementType.value_serializeToBytes(output, offset + i * elSize, value[i]);
     }
-    else if (basic_1.isBasicType(options.elementType)) {
-        return new BasicListType(options);
+    return offset + length * elSize;
+}
+exports.value_serializeToBytesArrayBasic = value_serializeToBytesArrayBasic;
+function value_deserializeFromBytesArrayBasic(elementType, data, start, end, arrayProps) {
+    const elSize = elementType.byteLength;
+    // Vector + List length validation
+    const length = (end - start) / elSize;
+    assertValidArrayLength(length, arrayProps, true);
+    const values = new Array(length);
+    for (let i = 0; i < length; i++) {
+        // TODO: If faster, consider skipping size check for uint types
+        values[i] = elementType.value_deserializeFromBytes(data, start + i * elSize, start + (i + 1) * elSize);
+    }
+    return values;
+}
+exports.value_deserializeFromBytesArrayBasic = value_deserializeFromBytesArrayBasic;
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+function tree_serializeToBytesArrayBasic(elementType, length, depth, output, offset, node) {
+    const size = elementType.byteLength * length;
+    const chunkCount = Math.ceil(size / 32);
+    const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, depth, 0, chunkCount);
+    persistent_merkle_tree_1.packedNodeRootsToBytes(output.dataView, offset, size, nodes);
+    return offset + size;
+}
+exports.tree_serializeToBytesArrayBasic = tree_serializeToBytesArrayBasic;
+// List of basic elements will pack them in merkelized form
+function tree_deserializeFromBytesArrayBasic(elementType, chunkDepth, data, start, end, arrayProps) {
+    // Vector + List length validation
+    const length = (end - start) / elementType.byteLength;
+    assertValidArrayLength(length, arrayProps, true);
+    // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
+    const chunksNode = persistent_merkle_tree_1.packedRootsBytesToNode(chunkDepth, data.dataView, start, end);
+    if (arrayProps.isList) {
+        return addLengthNode(chunksNode, length);
     }
     else {
-        return new CompositeListType(options);
-    }
-};
-class BasicListType extends array_1.BasicArrayType {
-    constructor(options) {
-        super(options);
-        this.limit = options.limit;
-        this._typeSymbols.add(exports.LIST_TYPE);
-    }
-    struct_defaultValue() {
-        return [];
-    }
-    struct_getLength(value) {
-        return value.length;
-    }
-    getMaxLength() {
-        return this.limit;
-    }
-    getMinLength() {
-        return 0;
-    }
-    bytes_validate(data, start, end) {
-        super.bytes_validate(data, start, end, true);
-        const length = end - start;
-        if (length > this.getMaxSerializedLength()) {
-            throw new Error(`Deserialized list length of ${length} is greater than limit ${this.getMaxSerializedLength()}`);
-        }
-        // make sure we can consume all of the data, or the generic spec test ComplexTestStruct_offset_7_plus_one failed
-        if (length % this.elementType.getFixedSerializedLength() !== 0) {
-            throw new Error(`Cannot consume ${length} bytes, element length ${this.elementType.getFixedSerializedLength()}`);
-        }
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        return super.struct_deserializeFromBytes(data, start, end, true);
-    }
-    struct_getChunkCount(value) {
-        return Math.ceil((value.length * this.elementType.struct_getSerializedLength()) / 32);
-    }
-    struct_hashTreeRoot(value) {
-        return compat_1.mixInLength(super.struct_hashTreeRoot(value), value.length);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_convertFromJson(data, options) {
-        if (!Array.isArray(data)) {
-            throw new Error("Invalid JSON list: expected an Array");
-        }
-        const maxLength = this.limit;
-        if (data.length > maxLength) {
-            throw new Error(`Invalid JSON list: length ${data.length} greater than limit ${maxLength}`);
-        }
-        return super.struct_convertFromJson(data);
-    }
-    struct_convertToTree(value) {
-        if (treeValue_1.isTreeBacked(value))
-            return value.tree.clone();
-        const tree = super.struct_convertToTree(value);
-        this.tree_setLength(tree, value.length);
-        return tree;
-    }
-    tree_defaultNode() {
-        if (!this._defaultNode) {
-            this._defaultNode = new persistent_merkle_tree_1.BranchNode(persistent_merkle_tree_1.zeroNode(super.getChunkDepth()), persistent_merkle_tree_1.zeroNode(0));
-        }
-        return this._defaultNode;
-    }
-    tree_defaultValue() {
-        return new persistent_merkle_tree_1.Tree(this.tree_defaultNode());
-    }
-    tree_getLength(target) {
-        return basic_1.number32Type.struct_deserializeFromBytes(target.getRoot(exports.LENGTH_GINDEX), 0);
-    }
-    tree_setLength(target, length) {
-        const chunk = new Uint8Array(32);
-        basic_1.number32Type.toBytes(length, chunk, 0);
-        target.setRoot(exports.LENGTH_GINDEX, chunk);
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        const length = (end - start) / this.elementType.struct_getSerializedLength();
-        if (!Number.isSafeInteger(length)) {
-            throw new Error("Deserialized list byte length must be divisible by element size");
-        }
-        if (length > this.limit) {
-            throw new Error("Deserialized list length greater than limit");
-        }
-        const value = super.tree_deserializeFromBytes(data, start, end);
-        this.tree_setLength(value, length);
-        return value;
-    }
-    tree_getChunkCount(target) {
-        return Math.ceil((this.tree_getLength(target) * this.elementType.struct_getSerializedLength()) / 32);
-    }
-    getChunkDepth() {
-        return super.getChunkDepth() + 1;
-    }
-    tree_setProperty(target, property, value) {
-        const length = this.tree_getLength(target);
-        if (property > length) {
-            throw new Error("Invalid length index");
-        }
-        else if (property == length) {
-            this.tree_pushSingle(target, value);
-            return true;
-        }
-        else {
-            return this.tree_setValueAtIndex(target, property, value);
-        }
-    }
-    tree_deleteProperty(target, property) {
-        const length = this.tree_getLength(target);
-        if (property > length) {
-            throw new Error("Invalid length index");
-        }
-        else if (property == length) {
-            this.tree_pop(target);
-            return true;
-        }
-        else {
-            return super.tree_deleteProperty(target, property);
-        }
-    }
-    tree_pushSingle(target, value) {
-        const length = this.tree_getLength(target);
-        const expand = this.getChunkIndex(length) != this.getChunkIndex(length + 1);
-        this.tree_setValueAtIndex(target, length, value, expand);
-        this.tree_setLength(target, length + 1);
-        return length + 1;
-    }
-    tree_push(target, ...values) {
-        let newLength;
-        for (const value of values)
-            newLength = this.tree_pushSingle(target, value);
-        return newLength || this.tree_getLength(target);
-    }
-    tree_pop(target) {
-        const length = this.tree_getLength(target);
-        const value = this.tree_getProperty(target, length - 1);
-        super.tree_deleteProperty(target, length - 1);
-        this.tree_setLength(target, length - 1);
-        return value;
-    }
-    hasVariableSerializedLength() {
-        return true;
-    }
-    getFixedSerializedLength() {
-        return null;
-    }
-    getMaxChunkCount() {
-        return Math.ceil((this.limit * this.elementType.size()) / 32);
-    }
-    tree_getLeafGindices(target, root = BigInt(1)) {
-        if (!target) {
-            throw new Error("variable type requires tree argument to get leaves");
-        }
-        const gindices = super.tree_getLeafGindices(target, root);
-        // include the length chunk
-        gindices.push(persistent_merkle_tree_1.concatGindices([root, exports.LENGTH_GINDEX]));
-        return gindices;
+        return chunksNode;
     }
 }
-exports.BasicListType = BasicListType;
-/** For Number64UintType, it takes 64 / 8 = 8 bytes per item, each chunk has 32 bytes = 4 items */
-const NUMBER64_LIST_NUM_ITEMS_PER_CHUNK = 4;
+exports.tree_deserializeFromBytesArrayBasic = tree_deserializeFromBytesArrayBasic;
 /**
- * An optimization for Number64 using HashObject and new method to work with deltas.
+ * @param length In List length = undefined, Vector length = fixed value
  */
-class Number64ListType extends BasicListType {
-    constructor(options) {
-        super(options);
+function value_fromJsonArray(elementType, json, arrayProps) {
+    if (!Array.isArray(json)) {
+        throw Error("JSON is not an array");
     }
-    /** @override */
-    tree_getValueAtIndex(target, index) {
-        const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
-        const hashObject = target.getHashObject(chunkGindex);
-        // 4 items per chunk
-        const offsetInChunk = (index % 4) * 8;
-        return this.elementType.struct_deserializeFromHashObject(hashObject, offsetInChunk);
+    assertValidArrayLength(json.length, arrayProps);
+    const value = new Array(json.length);
+    for (let i = 0; i < json.length; i++) {
+        value[i] = elementType.fromJson(json[i]);
     }
-    /** @override */
-    tree_setValueAtIndex(target, index, value, expand = false) {
-        const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
-        const hashObject = hash_1.cloneHashObject(target.getHashObject(chunkGindex));
-        // 4 items per chunk
-        const offsetInChunk = (index % 4) * 8;
-        this.elementType.struct_serializeToHashObject(value, hashObject, offsetInChunk);
-        target.setHashObject(chunkGindex, hashObject, expand);
-        return true;
-    }
-    /**
-     * delta > 0 increments the underlying value, delta < 0 decrements the underlying value
-     * returns the new value
-     **/
-    tree_applyDeltaAtIndex(target, index, delta) {
-        const chunkGindex = this.getGindexAtChunkIndex(this.getChunkIndex(index));
-        // 4 items per chunk
-        const offsetInChunk = (index % 4) * 8;
-        let value = 0;
-        const hashObjectFn = (hashObject) => {
-            const newHashObject = hash_1.cloneHashObject(hashObject);
-            value = this.elementType.struct_deserializeFromHashObject(newHashObject, offsetInChunk);
-            value += delta;
-            if (value < 0)
-                value = 0;
-            this.elementType.struct_serializeToHashObject(value, newHashObject, offsetInChunk);
-            return newHashObject;
-        };
-        // it's 1.8x faster to use setHashObjectFn instead of getHashObject and setHashObject
-        target.setHashObjectFn(chunkGindex, hashObjectFn);
-        return value;
-    }
-    /**
-     * The same to tree_applyUint64Delta but we do it in batch.
-     * returns the new value
-     **/
-    tree_applyDeltaInBatch(target, deltaByIndex) {
-        // work on the new tree to avoid the hook
-        const newTree = target.clone();
-        const newValues = [];
-        for (const [index, delta] of deltaByIndex.entries()) {
-            this.tree_applyDeltaAtIndex(newTree, index, delta);
-        }
-        // update target, the hook should run 1 time only
-        target.rootNode = newTree.rootNode;
-        return newValues;
-    }
-    /**
-     * delta > 0 means an increasement, delta < 0 means a decreasement
-     * returns the new tree and new values
-     **/
-    tree_newTreeFromDeltas(target, deltas) {
-        if (deltas.length !== this.tree_getLength(target)) {
-            throw new Error(`Expect delta length ${this.tree_getLength(target)}, actual ${deltas.length}`);
-        }
-        const chunkDepth = this.getChunkDepth();
-        const length = deltas.length;
-        let nodeIdx = 0;
-        const newLeafNodes = [];
-        const newValues = [];
-        const chunkCount = Math.ceil(length / NUMBER64_LIST_NUM_ITEMS_PER_CHUNK);
-        const currentNodes = target.getNodesAtDepth(chunkDepth, 0, chunkCount);
-        for (let i = 0; i < currentNodes.length; i++) {
-            const node = currentNodes[i];
-            const hashObject = hash_1.cloneHashObject(node);
-            for (let offset = 0; offset < NUMBER64_LIST_NUM_ITEMS_PER_CHUNK; offset++) {
-                const index = nodeIdx * NUMBER64_LIST_NUM_ITEMS_PER_CHUNK + offset;
-                if (index >= length)
-                    break;
-                let value = this.elementType.struct_deserializeFromHashObject(hashObject, offset * 8) + deltas[index];
-                if (value < 0)
-                    value = 0;
-                newValues.push(value);
-                // mutate hashObject at offset
-                this.elementType.struct_serializeToHashObject(value, hashObject, offset * 8);
-            }
-            newLeafNodes.push(new persistent_merkle_tree_1.LeafNode(hashObject));
-            nodeIdx++;
-        }
-        const newRootNode = persistent_merkle_tree_1.subtreeFillToContents(newLeafNodes, chunkDepth);
-        return [new persistent_merkle_tree_1.Tree(newRootNode), newValues];
-    }
+    return value;
 }
-exports.Number64ListType = Number64ListType;
-class CompositeListType extends array_1.CompositeArrayType {
-    constructor(options) {
-        super(options);
-        this.limit = options.limit;
-        this._typeSymbols.add(exports.LIST_TYPE);
-    }
-    hasVariableSerializedLength() {
-        return true;
-    }
-    getFixedSerializedLength() {
-        return null;
-    }
-    getMaxChunkCount() {
-        return this.limit;
-    }
-    struct_defaultValue() {
-        return [];
-    }
-    struct_getLength(value) {
-        return value.length;
-    }
-    getMaxLength() {
-        return this.limit;
-    }
-    getMinLength() {
-        return 0;
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end, true);
-        const value = super.struct_deserializeFromBytes(data, start, end, true);
-        if (value.length > this.limit) {
-            throw new Error(`Deserialized list length greater than limit: ${value.length} ${this.limit}`);
-        }
-        return value;
-    }
-    struct_getChunkCount(value) {
-        return value.length;
-    }
-    struct_hashTreeRoot(value) {
-        return compat_1.mixInLength(super.struct_hashTreeRoot(value), value.length);
-    }
-    struct_convertFromJson(data, options) {
-        if (!Array.isArray(data)) {
-            throw new Error("Invalid JSON list: expected an Array");
-        }
-        const maxLength = this.limit;
-        if (data.length > maxLength) {
-            throw new Error(`Invalid JSON list: length ${data.length} greater than limit ${maxLength}`);
-        }
-        return super.struct_convertFromJson(data, options);
-    }
-    tree_defaultNode() {
-        if (!this._defaultNode) {
-            this._defaultNode = new persistent_merkle_tree_1.BranchNode(persistent_merkle_tree_1.zeroNode(super.getChunkDepth()), persistent_merkle_tree_1.zeroNode(0));
-        }
-        return this._defaultNode;
-    }
-    tree_defaultValue() {
-        return new persistent_merkle_tree_1.Tree(this.tree_defaultNode());
-    }
-    struct_convertToTree(value) {
-        if (treeValue_1.isTreeBacked(value))
-            return value.tree.clone();
-        const tree = super.struct_convertToTree(value);
-        this.tree_setLength(tree, value.length);
-        return tree;
-    }
-    tree_getLength(target) {
-        return basic_1.number32Type.struct_deserializeFromBytes(target.getRoot(exports.LENGTH_GINDEX), 0);
-    }
-    tree_setLength(target, length) {
-        const chunk = new Uint8Array(32);
-        basic_1.number32Type.struct_serializeToBytes(length, chunk, 0);
-        target.setRoot(exports.LENGTH_GINDEX, chunk);
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        const target = this.tree_defaultValue();
-        const fixedLen = this.elementType.getFixedSerializedLength();
-        if (fixedLen === null) {
-            const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
-            if (offsets.length > this.limit) {
-                throw new Error("Deserialized list length greater than limit");
-            }
-            for (let i = 0; i < offsets.length; i++) {
-                const [currentOffset, nextOffset] = offsets[i];
-                this.tree_setSubtreeAtChunkIndex(target, i, this.elementType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset));
-            }
-            this.tree_setLength(target, offsets.length);
-        }
-        else {
-            const elementSize = fixedLen;
-            const length = (end - start) / elementSize;
-            if (!Number.isSafeInteger(length)) {
-                throw new Error("Deserialized list byte length must be divisible by element size");
-            }
-            if (length > this.limit) {
-                throw new Error("Deserialized list length greater than limit");
-            }
-            for (let i = 0; i < length; i++) {
-                this.tree_setSubtreeAtChunkIndex(target, i, this.elementType.tree_deserializeFromBytes(data, start + i * elementSize, start + (i + 1) * elementSize), true // expand tree as needed
-                );
-            }
-            this.tree_setLength(target, length);
-        }
-        return target;
-    }
-    tree_getChunkCount(target) {
-        return this.tree_getLength(target);
-    }
-    getChunkDepth() {
-        return super.getChunkDepth() + 1;
-    }
-    tree_setProperty(target, property, value) {
-        const length = this.tree_getLength(target);
-        if (property > length) {
-            throw new Error("Invalid length index");
-        }
-        else if (property == length) {
-            this.tree_pushSingle(target, value);
-        }
-        else {
-            this.tree_setSubtreeAtChunkIndex(target, property, value);
-        }
-        return true;
-    }
-    tree_deleteProperty(target, property) {
-        const length = this.tree_getLength(target);
-        if (property > length) {
-            throw new Error("Invalid length index");
-        }
-        else if (property == length) {
-            this.tree_pop(target);
-            return true;
-        }
-        else {
-            return super.tree_deleteProperty(target, property);
-        }
-    }
-    tree_pushSingle(target, value) {
-        const length = this.tree_getLength(target);
-        this.tree_setSubtreeAtChunkIndex(target, length, value, true);
-        this.tree_setLength(target, length + 1);
-        return length + 1;
-    }
-    tree_push(target, ...values) {
-        let newLength;
-        for (const value of values)
-            newLength = this.tree_pushSingle(target, value);
-        return newLength || this.tree_getLength(target);
-    }
-    tree_pop(target) {
-        const length = this.tree_getLength(target);
-        const value = this.tree_getProperty(target, length - 1);
-        this.tree_setSubtreeAtChunkIndex(target, length - 1, new persistent_merkle_tree_1.Tree(persistent_merkle_tree_1.zeroNode(0)));
-        this.tree_setLength(target, length - 1);
-        return value;
-    }
-    tree_getLeafGindices(target, root = BigInt(1)) {
-        if (!target) {
-            throw new Error("variable type requires tree argument to get leaves");
-        }
-        const gindices = super.tree_getLeafGindices(target, root);
-        // include the length chunk
-        gindices.push(persistent_merkle_tree_1.concatGindices([root, exports.LENGTH_GINDEX]));
-        return gindices;
-    }
-}
-exports.CompositeListType = CompositeListType;
-//# sourceMappingURL=list.js.map
-
-/***/ }),
-
-/***/ 6920:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RootType = exports.isRootType = exports.ROOT_TYPE = void 0;
-const byteVector_1 = __webpack_require__(5825);
-const type_1 = __webpack_require__(8398);
-const backings_1 = __webpack_require__(4507);
-const byteArray_1 = __webpack_require__(2404);
-exports.ROOT_TYPE = Symbol.for("ssz/RootType");
-function isRootType(type) {
-    return type_1.isTypeOf(type, exports.ROOT_TYPE);
-}
-exports.isRootType = isRootType;
-function convertRootToUint8Array(value) {
-    if (value instanceof Uint8Array) {
-        return value;
-    }
-    else if (backings_1.isTreeBacked(value)) {
-        return value.tree.root;
-    }
-    else if (Array.isArray(value)) {
-        return new Uint8Array(value);
-    }
-    else {
-        throw new Error("Unable to convert root to Uint8Array: not Uint8Array, tree-backed, or Array");
-    }
-}
-class RootType extends byteVector_1.ByteVectorType {
-    constructor(options) {
-        super({ length: 32 });
-        this._expandedType = options.expandedType;
-        this._typeSymbols.add(exports.ROOT_TYPE);
-    }
-    get expandedType() {
-        if (typeof this._expandedType === "function") {
-            this._expandedType = this._expandedType();
-        }
-        return this._expandedType;
-    }
-    struct_equals(value1, value2) {
-        return byteArray_1.byteArrayEquals(convertRootToUint8Array(value1), convertRootToUint8Array(value2));
-    }
-    equals(value1, value2) {
-        return this.struct_equals(value1, value2);
-    }
-}
-exports.RootType = RootType;
-//# sourceMappingURL=root.js.map
-
-/***/ }),
-
-/***/ 1849:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UnionType = exports.isUnionType = exports.UNION_TYPE = exports.VALUE_GINDEX = exports.SELECTOR_GINDEX = void 0;
-const persistent_merkle_tree_1 = __webpack_require__(6647);
-const backings_1 = __webpack_require__(4507);
-const basic_1 = __webpack_require__(1033);
-const none_1 = __webpack_require__(2113);
-const wellKnown_1 = __webpack_require__(4024);
-const type_1 = __webpack_require__(8398);
-const abstract_1 = __webpack_require__(5390);
+exports.value_fromJsonArray = value_fromJsonArray;
 /**
- * SSZ Union includes the selector (index of type) in the tree
- * This selector is always in the same index in the tree
- * ```
- *   1
- *  / \
- * 2   3 // <-here
- * ```
+ * @param length In List length = undefined, Vector length = fixed value
  */
-exports.SELECTOR_GINDEX = BigInt(3);
-/**
- * The value gindex in the tree.
- * ```
- *           1
- *          / \
- * here -> 2   3
- * ```
- */
-exports.VALUE_GINDEX = BigInt(2);
-exports.UNION_TYPE = Symbol.for("ssz/UnionType");
-function isUnionType(type) {
-    return type_1.isTypeOf(type, exports.UNION_TYPE);
+function value_toJsonArray(elementType, value, arrayProps) {
+    const length = arrayProps.isList ? value.length : arrayProps.length;
+    const json = new Array(length);
+    for (let i = 0; i < length; i++) {
+        json[i] = elementType.toJson(value[i]);
+    }
+    return json;
 }
-exports.isUnionType = isUnionType;
-class UnionType extends abstract_1.CompositeType {
-    constructor(options) {
-        super();
-        this.types = [...options.types];
-        this._typeSymbols.add(exports.UNION_TYPE);
+exports.value_toJsonArray = value_toJsonArray;
+/**
+ * Clone recursively an array of basic or composite types
+ */
+function value_cloneArray(elementType, value) {
+    const newValue = new Array(value.length);
+    for (let i = 0; i < value.length; i++) {
+        newValue[i] = elementType.clone(value[i]);
     }
-    struct_assertValidValue(wrappedValue) {
-        const { selector, value } = wrappedValue;
-        if (!(selector >= 0)) {
-            throw new Error("Invalid selector " + selector);
-        }
-        if (value === null) {
-            // May have None as first type option
-            if (selector !== 0) {
-                throw new Error(`Invalid selector ${selector} for null value`);
-            }
-            if (!none_1.isNoneType(this.types[selector])) {
-                throw new Error("None value of Union type must have None as first type option");
-            }
-        }
-        else {
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                this.types[selector].struct_assertValidValue(value);
-            }
-            catch (e) {
-                throw new Error(`Invalid value ${value} for selector ${selector}`);
-            }
-        }
+    return newValue;
+}
+exports.value_cloneArray = value_cloneArray;
+/**
+ * Check recursively if a type is structuraly equal. Returns early
+ */
+function value_equals(elementType, a, b) {
+    if (a.length !== b.length) {
+        return false;
     }
-    struct_equals(value1, value2) {
-        this.struct_assertValidValue(value1);
-        this.struct_assertValidValue(value2);
-        if (value1.selector !== value2.selector) {
+    for (let i = 0; i < a.length; i++) {
+        if (!elementType.equals(a[i], b[i])) {
             return false;
         }
-        return this.types[value1.selector].struct_equals(value1.value, value2.value);
     }
-    struct_defaultValue() {
-        return { selector: 0, value: this.types[0].defaultValue() };
+    return true;
+}
+exports.value_equals = value_equals;
+function value_defaultValueArray(elementType, length) {
+    const values = new Array(length);
+    for (let i = 0; i < length; i++) {
+        values[i] = elementType.defaultValue();
     }
-    tree_defaultNode() {
-        if (!this._defaultNode) {
-            const defaultType = this.types[0];
-            const defaultValueNode = abstract_1.isCompositeType(defaultType) ? defaultType.tree_defaultNode() : persistent_merkle_tree_1.zeroNode(0);
-            // mix_in_selector
-            this._defaultNode = new persistent_merkle_tree_1.BranchNode(defaultValueNode, persistent_merkle_tree_1.zeroNode(0));
-        }
-        return this._defaultNode;
+    return values;
+}
+exports.value_defaultValueArray = value_defaultValueArray;
+/**
+ * @param checkNonDecimalLength Check that length is a multiple of element size.
+ * Optional since it's not necessary in getOffsetsArrayComposite() fn.
+ */
+function assertValidArrayLength(length, arrayProps, checkNonDecimalLength) {
+    if (checkNonDecimalLength && length % 1 !== 0) {
+        throw Error("size not multiple of element fixedSize");
     }
-    struct_clone(wrappedValue) {
-        const { selector, value } = wrappedValue;
-        return {
-            selector,
-            value: this.types[selector].struct_clone(value),
-        };
-    }
-    struct_convertToJson(wrappedValue, options) {
-        const { selector, value } = wrappedValue;
-        return {
-            selector,
-            value: this.types[selector].struct_convertToJson(value, options),
-        };
-    }
-    struct_convertFromJson(json, options) {
-        const { selector, value } = json;
-        if (selector === null || (selector !== null && !(selector >= 0))) {
-            throw new Error("Invalid JSON Union: invalid selector" + selector);
-        }
-        return {
-            selector,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            value: this.types[selector].struct_convertFromJson(value, options),
-        };
-    }
-    struct_convertToTree(wrappedValue) {
-        if (backings_1.isTreeBacked(wrappedValue))
-            return wrappedValue.tree.clone();
-        const { selector, value } = wrappedValue;
-        const type = this.types[selector];
-        const valueNode = abstract_1.isCompositeType(type)
-            ? type.struct_convertToTree(value).rootNode
-            : basic_1.basicTypeToLeafNode(type, value);
-        // mix_in_selector
-        const selectorNode = basic_1.basicTypeToLeafNode(wellKnown_1.number32Type, selector);
-        return new persistent_merkle_tree_1.Tree(new persistent_merkle_tree_1.BranchNode(valueNode, selectorNode));
-    }
-    tree_convertToStruct(target) {
-        const selector = wellKnown_1.number32Type.struct_deserializeFromBytes(target.getRoot(exports.SELECTOR_GINDEX), 0);
-        const type = this.types[selector];
-        let value;
-        if (abstract_1.isCompositeType(type)) {
-            value = type.tree_convertToStruct(target.getSubtree(exports.VALUE_GINDEX));
-        }
-        else {
-            value = type.struct_deserializeFromBytes(target.getRoot(exports.VALUE_GINDEX), 0);
-        }
-        return {
-            selector,
-            value,
-        };
-    }
-    struct_serializeToBytes(wrappedValue, output, offset) {
-        const { selector, value } = wrappedValue;
-        const index = wellKnown_1.byteType.struct_serializeToBytes(selector, output, offset);
-        return this.types[selector].struct_serializeToBytes(value, output, index);
-    }
-    tree_serializeToBytes(target, output, offset) {
-        const selectorRoot = target.getRoot(exports.SELECTOR_GINDEX);
-        // selector takes 1 byte
-        output.set(selectorRoot.slice(0, 1), offset);
-        const selector = wellKnown_1.number32Type.struct_deserializeFromBytes(selectorRoot, 0);
-        const type = this.types[selector];
-        if (abstract_1.isCompositeType(type)) {
-            return type.tree_serializeToBytes(target.getSubtree(exports.VALUE_GINDEX), output, offset + 1);
-        }
-        else {
-            const valueRoot = target.getRoot(exports.VALUE_GINDEX);
-            const s = type.struct_getSerializedLength();
-            output.set(valueRoot.slice(0, s), offset + 1);
-            // 1 byte for selector, s bytes for value
-            return offset + 1 + s;
+    // Vector + List length validation
+    if (arrayProps.isList) {
+        if (length > arrayProps.limit) {
+            throw new Error(`Invalid list length ${length} over limit ${arrayProps.limit}`);
         }
     }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        // 1st byte is for selector
-        const selector = wellKnown_1.byteType.fromBytes(data, start);
-        const type = this.types[selector];
-        // remainning bytes are for value
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const value = type.struct_deserializeFromBytes(data, start + 1, end);
-        return { selector, value };
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        // 1st byte is for selector
-        const selector = wellKnown_1.byteType.fromBytes(data, start);
-        const type = this.types[selector];
-        // remainning bytes are for value
-        let valueNode;
-        if (abstract_1.isCompositeType(type)) {
-            valueNode = type.tree_deserializeFromBytes(data, start + 1, end).rootNode;
-        }
-        else {
-            const chunk = new Uint8Array(32);
-            chunk.set(data.slice(start + 1, end));
-            valueNode = new persistent_merkle_tree_1.LeafNode(chunk);
-        }
-        const selectorNode = basic_1.basicTypeToLeafNode(wellKnown_1.number32Type, selector);
-        return new persistent_merkle_tree_1.Tree(new persistent_merkle_tree_1.BranchNode(valueNode, selectorNode));
-    }
-    getMinSerializedLength() {
-        return 1 + Math.min(...this.types.map((type) => type.getMinSerializedLength()));
-    }
-    getMaxSerializedLength() {
-        return 1 + Math.max(...this.types.map((type) => type.getMaxSerializedLength()));
-    }
-    struct_getSerializedLength(wrappedValue) {
-        const { selector, value } = wrappedValue;
-        return 1 + this.types[selector].struct_getSerializedLength(value);
-    }
-    tree_getSerializedLength(target) {
-        const type = this.getType(target);
-        if (abstract_1.isCompositeType(type)) {
-            return 1 + type.tree_getSerializedLength(target.getSubtree(exports.VALUE_GINDEX));
-        }
-        else {
-            return 1 + type.struct_getSerializedLength();
+    else {
+        if (length !== arrayProps.length) {
+            throw new Error(`Incorrect vector length ${length} expected ${arrayProps.length}`);
         }
     }
-    hasVariableSerializedLength() {
-        // Is always considered a variable-length type, even if all type options have an equal fixed-length.
-        return true;
+}
+exports.assertValidArrayLength = assertValidArrayLength;
+//# sourceMappingURL=arrayBasic.js.map
+
+/***/ }),
+
+/***/ 230:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.value_getRootsArrayComposite = exports.tree_deserializeFromBytesArrayComposite = exports.tree_serializeToBytesArrayComposite = exports.tree_serializedSizeArrayComposite = exports.value_deserializeFromBytesArrayComposite = exports.value_serializeToBytesArrayComposite = exports.value_serializedSizeArrayComposite = exports.maxSizeArrayComposite = exports.minSizeArrayComposite = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const arrayBasic_1 = __webpack_require__(8623);
+function minSizeArrayComposite(elementType, minCount) {
+    // Variable Length
+    if (elementType.fixedSize === null) {
+        return minCount * (4 + elementType.minSize);
     }
-    getFixedSerializedLength() {
+    // Fixed length
+    else {
+        return minCount * elementType.minSize;
+    }
+}
+exports.minSizeArrayComposite = minSizeArrayComposite;
+function maxSizeArrayComposite(elementType, maxCount) {
+    // Variable Length
+    if (elementType.fixedSize === null) {
+        return maxCount * (4 + elementType.maxSize);
+    }
+    // Fixed length
+    else {
+        return maxCount * elementType.maxSize;
+    }
+}
+exports.maxSizeArrayComposite = maxSizeArrayComposite;
+function value_serializedSizeArrayComposite(elementType, length, value) {
+    // Variable Length
+    if (elementType.fixedSize === null) {
+        let size = 0;
+        for (let i = 0; i < length; i++) {
+            size += 4 + elementType.value_serializedSize(value[i]);
+        }
+        return size;
+    }
+    // Fixed length
+    else {
+        return length * elementType.fixedSize;
+    }
+}
+exports.value_serializedSizeArrayComposite = value_serializedSizeArrayComposite;
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+function value_serializeToBytesArrayComposite(elementType, length, output, offset, value) {
+    // Variable length
+    if (elementType.fixedSize === null) {
+        let variableIndex = offset + length * 4;
+        for (let i = 0; i < length; i++) {
+            // write offset
+            output.dataView.setUint32(offset + i * 4, variableIndex - offset, true);
+            // write serialized element to variable section
+            variableIndex = elementType.value_serializeToBytes(output, variableIndex, value[i]);
+        }
+        return variableIndex;
+    }
+    // Fixed length
+    else {
+        for (let i = 0; i < length; i++) {
+            elementType.value_serializeToBytes(output, offset + i * elementType.fixedSize, value[i]);
+        }
+        return offset + length * elementType.fixedSize;
+    }
+}
+exports.value_serializeToBytesArrayComposite = value_serializeToBytesArrayComposite;
+function value_deserializeFromBytesArrayComposite(elementType, data, start, end, arrayProps) {
+    const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
+    const length = offsets.length; // Capture length before pushing end offset
+    const values = new Array(length);
+    // offests include the last element end
+    for (let i = 0; i < length; i++) {
+        // The offsets are relative to the start
+        const startEl = start + offsets[i];
+        const endEl = i === length - 1 ? end : start + offsets[i + 1];
+        values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl);
+    }
+    return values;
+}
+exports.value_deserializeFromBytesArrayComposite = value_deserializeFromBytesArrayComposite;
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+function tree_serializedSizeArrayComposite(elementType, length, depth, node) {
+    // Variable Length
+    if (elementType.fixedSize === null) {
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, depth, 0, length);
+        let size = 0;
+        for (let i = 0; i < nodes.length; i++) {
+            size += 4 + elementType.tree_serializedSize(nodes[i]);
+        }
+        return size;
+    }
+    // Fixed length
+    else {
+        return length * elementType.fixedSize;
+    }
+}
+exports.tree_serializedSizeArrayComposite = tree_serializedSizeArrayComposite;
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+function tree_serializeToBytesArrayComposite(elementType, length, depth, node, output, offset) {
+    const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, depth, 0, length);
+    // Variable Length
+    // Indices contain offsets, which are indices deeper in the byte array
+    if (elementType.fixedSize === null) {
+        let variableIndex = offset + length * 4;
+        const { dataView } = output;
+        for (let i = 0; i < nodes.length; i++) {
+            // write offset
+            dataView.setUint32(offset + i * 4, variableIndex - offset, true);
+            // write serialized element to variable section
+            variableIndex = elementType.tree_serializeToBytes(output, variableIndex, nodes[i]);
+        }
+        return variableIndex;
+    }
+    // Fixed length
+    else {
+        for (let i = 0; i < nodes.length; i++) {
+            offset = elementType.tree_serializeToBytes(output, offset, nodes[i]);
+        }
+        return offset;
+    }
+}
+exports.tree_serializeToBytesArrayComposite = tree_serializeToBytesArrayComposite;
+function tree_deserializeFromBytesArrayComposite(elementType, chunkDepth, data, start, end, arrayProps) {
+    const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
+    const length = offsets.length; // Capture length before pushing end offset
+    const nodes = new Array(length);
+    // offests include the last element end
+    for (let i = 0; i < length; i++) {
+        // The offsets are relative to the start
+        const startEl = start + offsets[i];
+        const endEl = i === length - 1 ? end : start + offsets[i + 1];
+        nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, endEl);
+    }
+    // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
+    const chunksNode = persistent_merkle_tree_1.subtreeFillToContents(nodes, chunkDepth);
+    // TODO: Add LeafNode.fromUint()
+    if (arrayProps.isList) {
+        return arrayBasic_1.addLengthNode(chunksNode, length);
+    }
+    else {
+        return chunksNode;
+    }
+}
+exports.tree_deserializeFromBytesArrayComposite = tree_deserializeFromBytesArrayComposite;
+/**
+ * @param length In List length = value.length, Vector length = fixed value
+ */
+function value_getRootsArrayComposite(elementType, length, value) {
+    const roots = new Array(length);
+    for (let i = 0; i < length; i++) {
+        roots[i] = elementType.hashTreeRoot(value[i]);
+    }
+    return roots;
+}
+exports.value_getRootsArrayComposite = value_getRootsArrayComposite;
+function readOffsetsArrayComposite(elementFixedSize, data, start, end, arrayProps) {
+    const size = end - start;
+    let offsets;
+    // Variable Length
+    // Indices contain offsets, which are indices deeper in the byte array
+    if (elementFixedSize === null) {
+        offsets = readVariableOffsetsArrayComposite(data, start, size);
+    }
+    // Fixed length
+    else {
+        // There's no valid CompositeType with fixed size 0, it's un-rechable code. But prevents diving by zero
+        /* istanbul ignore if */
+        if (elementFixedSize === 0) {
+            throw Error("element fixed length is 0");
+        }
+        if (size % elementFixedSize !== 0) {
+            throw Error(`size ${size} is not multiple of element fixedSize ${elementFixedSize}`);
+        }
+        const length = size / elementFixedSize;
+        offsets = new Uint32Array(length);
+        for (let i = 0; i < length; i++) {
+            offsets[i] = i * elementFixedSize;
+        }
+    }
+    // Vector + List length validation
+    arrayBasic_1.assertValidArrayLength(offsets.length, arrayProps);
+    return offsets;
+}
+/**
+ * Reads the values of contiguous variable offsets. Provided buffer includes offsets that point to position
+ * within `size`. This function also validates that all offsets are in range.
+ */
+function readVariableOffsetsArrayComposite(dataView, start, size) {
+    if (size === 0) {
+        return new Uint32Array(0);
+    }
+    // all elements are variable-sized
+    // indices contain offsets, which are indices deeper in the byte array
+    // The serialized data will start with offsets of all the serialized objects (BYTES_PER_LENGTH_OFFSET bytes each)
+    const firstOffset = dataView.getUint32(start, true);
+    // Using the first offset, we can compute the length of the list (divide by BYTES_PER_LENGTH_OFFSET), as it gives
+    // us the total number of bytes in the offset data
+    const offsetDataLength = firstOffset;
+    if (firstOffset === 0) {
+        throw Error("First offset must be > 0");
+    }
+    if (offsetDataLength % 4 !== 0) {
+        throw Error("Offset data length not multiple of 4");
+    }
+    const offsetCount = offsetDataLength / 4;
+    const offsets = new Uint32Array(offsetCount);
+    offsets[0] = firstOffset;
+    // ArrayComposite has a contiguous section of offsets, then the data
+    //
+    //    [offset 1] [offset 2] [data 1 ..........] [data 2 ..]
+    // 0x 08000000   0e000000   010002000300        01000200
+    //
+    // Ensure that:
+    // - Offsets point to regions of > 0 bytes, i.e. are increasing
+    // - Offsets don't point to bytes outside of the array's size
+    //
+    // In the example above the first offset is 8, so 8 / 4 = 2 offsets.
+    // Then, read the rest of offsets to get offsets = [8, 14]
+    for (let offsetIdx = 1; offsetIdx < offsetCount; offsetIdx++) {
+        const offset = dataView.getUint32(start + offsetIdx * 4, true);
+        offsets[offsetIdx] = offset;
+        // Offsets must point to data within the Array bytes section
+        if (offset > size) {
+            throw new Error(`Offset out of bounds ${offset} > ${size}`);
+        }
+        if (offset < offsets[offsetIdx - 1]) {
+            throw new Error(`Offsets must be increasing ${offset} < ${offsets[offsetIdx - 1]}`);
+        }
+    }
+    return offsets;
+}
+//# sourceMappingURL=arrayComposite.js.map
+
+/***/ }),
+
+/***/ 7262:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isBasicType = exports.BasicType = void 0;
+const abstract_1 = __webpack_require__(6298);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * Represents a basic type as defined in the spec:
+ * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#basic-types
+ */
+class BasicType extends abstract_1.Type {
+    constructor() {
+        super(...arguments);
+        this.isBasic = true;
+        // Basic types merkleize to exactly one chunk, thus depth of 0
+        this.depth = 0;
+        // Basic types merkleize to exactly one chunk
+        this.maxChunkCount = 1;
+    }
+    value_serializedSize() {
+        return this.byteLength;
+    }
+    tree_serializedSize() {
+        return this.byteLength;
+    }
+    assertValidSize(size) {
+        if (size !== this.byteLength) {
+            throw Error(`BasicType invalid size ${size} expected ${this.byteLength}`);
+        }
+    }
+    hashTreeRoot(value) {
+        // TODO: Optimize
+        const uint8Array = new Uint8Array(32);
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        this.value_serializeToBytes({ uint8Array, dataView }, 0, value);
+        return uint8Array;
+    }
+    clone(value) {
+        // All basic types are represented by primitive Javascript types, don't require clone
+        return value;
+    }
+    equals(a, b) {
+        // All basic types are represented by primitive Javascript types, the operator === is sufficient
+        return a === b;
+    }
+}
+exports.BasicType = BasicType;
+function isBasicType(type) {
+    return type.isBasic;
+}
+exports.isBasicType = isBasicType;
+//# sourceMappingURL=basic.js.map
+
+/***/ }),
+
+/***/ 405:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BitArrayType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const byteArray_1 = __webpack_require__(2404);
+const merkleize_1 = __webpack_require__(1290);
+const composite_1 = __webpack_require__(1347);
+const bitArray_1 = __webpack_require__(7201);
+const bitArray_2 = __webpack_require__(7844);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * BitArray: ordered array collection of boolean values
+ * - Value: `BitArray`, @see BitArray for a justification of its memory efficiency and performance
+ * - View: `BitArrayTreeView`
+ * - ViewDU: `BitArrayTreeViewDU`
+ */
+class BitArrayType extends composite_1.CompositeType {
+    constructor() {
+        super(...arguments);
+        this.isViewMutable = true;
+    }
+    getView(tree) {
+        return new bitArray_1.BitArrayTreeView(this, tree);
+    }
+    getViewDU(node) {
+        return new bitArray_2.BitArrayTreeViewDU(this, node);
+    }
+    commitView(view) {
+        return view.node;
+    }
+    commitViewDU(view) {
+        view.commit();
+        return view.node;
+    }
+    cacheOfViewDU(view) {
+        return view.cache;
+    }
+    // Merkleization
+    getRoots(value) {
+        return merkleize_1.splitIntoRootChunks(value.uint8Array);
+    }
+    // Proofs
+    getPropertyGindex() {
+        // Stop navigating below this type. Must only request complete data
         return null;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    bytes_getVariableOffsets(target) {
-        // this method is only needed for Vectors, containers, lists
-        throw new Error("Not applicable for Union");
+    getPropertyType() {
+        /* istanbul ignore next - unreachable code, getPropertyGindex null return prevents this call */
+        throw Error("Must only request BitArray complete data");
     }
-    getMaxChunkCount() {
-        // 1 for value, 1 for selector
-        return 2;
+    getIndexProperty() {
+        /* istanbul ignore next - unreachable code, getPropertyGindex null return prevents this call */
+        throw Error("Must only request BitArray complete data");
     }
-    /** This is just to compliant to the parent, we're not likely to use it. */
-    struct_getRootAtChunkIndex(wrappedValue, index) {
-        if (index !== 0 && index !== 1) {
-            throw new Error(`Invalid index ${index} for Union type`);
+    tree_fromProofNode(node) {
+        return { node, done: true };
+    }
+    tree_getLeafGindices(rootGindex, rootNode) {
+        const byteLen = this.tree_getByteLen(rootNode);
+        const chunkCount = Math.ceil(byteLen / 32);
+        const startIndex = persistent_merkle_tree_1.concatGindices([rootGindex, persistent_merkle_tree_1.toGindex(this.depth, BigInt(0))]);
+        const gindices = new Array(chunkCount);
+        for (let i = 0, gindex = startIndex; i < chunkCount; i++, gindex++) {
+            gindices[i] = gindex;
         }
-        const { selector, value } = wrappedValue;
-        if (index === 1)
-            return basic_1.basicTypeToLeafNode(wellKnown_1.number32Type, selector).root;
-        return this.types[selector].struct_hashTreeRoot(value);
+        // include the length chunk
+        if (this.isList) {
+            gindices.push(persistent_merkle_tree_1.concatGindices([rootGindex, composite_1.LENGTH_GINDEX]));
+        }
+        return gindices;
     }
-    struct_getPropertyNames() {
-        return ["value", "selector"];
+    // JSON
+    fromJson(json) {
+        const uint8Array = byteArray_1.fromHexString(json);
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        // value_deserializeFromBytes MUST validate length (limit, or length)
+        return this.value_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
     }
-    tree_getPropertyNames() {
-        return ["value", "selector"];
+    toJson(value) {
+        return byteArray_1.toHexString(this.serialize(value));
     }
-    getPropertyGindex(property) {
-        switch (property) {
-            case "value":
-                return exports.VALUE_GINDEX;
-            case "selector":
-                return exports.SELECTOR_GINDEX;
+    clone(value) {
+        return value.clone();
+    }
+    equals(a, b) {
+        return a.bitLen === b.bitLen && byteArray_1.byteArrayEquals(a.uint8Array, b.uint8Array);
+    }
+}
+exports.BitArrayType = BitArrayType;
+//# sourceMappingURL=bitArray.js.map
+
+/***/ }),
+
+/***/ 6629:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BitListType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const merkleize_1 = __webpack_require__(1290);
+const arrayBasic_1 = __webpack_require__(8623);
+const bitArray_1 = __webpack_require__(8676);
+const bitArray_2 = __webpack_require__(405);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * BitList: ordered variable-length collection of boolean values, limited to N bits
+ * - Notation `Bitlist[N]`
+ * - Value: `BitArray`, @see BitArray for a justification of its memory efficiency and performance
+ * - View: `BitArrayTreeView`
+ * - ViewDU: `BitArrayTreeViewDU`
+ */
+class BitListType extends bitArray_2.BitArrayType {
+    constructor(limitBits) {
+        super();
+        this.limitBits = limitBits;
+        this.fixedSize = null;
+        this.minSize = 1; // +1 for the extra padding bit
+        this.isList = true;
+        if (limitBits === 0)
+            throw Error("List limit must be > 0");
+        this.typeName = `BitList[${limitBits}]`;
+        // TODO Check that itemsPerChunk is an integer
+        this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        // Depth includes the extra level for the length node
+        this.depth = 1 + this.chunkDepth;
+        this.maxSize = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
+    }
+    defaultValue() {
+        return bitArray_1.BitArray.fromBitLen(0);
+    }
+    // Views: inherited from BitArrayType
+    // Serialization + deserialization
+    value_serializedSize(value) {
+        return bitLenToSerializedLength(value.bitLen);
+    }
+    value_serializeToBytes(output, offset, value) {
+        output.uint8Array.set(value.uint8Array, offset);
+        return applyPaddingBit(output.uint8Array, offset, value.bitLen);
+    }
+    value_deserializeFromBytes(data, start, end) {
+        const { uint8Array, bitLen } = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
+        return new bitArray_1.BitArray(uint8Array, bitLen);
+    }
+    tree_serializedSize(node) {
+        return bitLenToSerializedLength(arrayBasic_1.getLengthFromRootNode(node));
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const chunksNode = arrayBasic_1.getChunksNodeFromRootNode(node);
+        const bitLen = arrayBasic_1.getLengthFromRootNode(node);
+        const byteLen = Math.ceil(bitLen / 8);
+        const chunkLen = Math.ceil(byteLen / 32);
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkLen);
+        persistent_merkle_tree_1.packedNodeRootsToBytes(output.dataView, offset, byteLen, nodes);
+        return applyPaddingBit(output.uint8Array, offset, bitLen);
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        const { uint8Array, bitLen } = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        const chunksNode = persistent_merkle_tree_1.packedRootsBytesToNode(this.chunkDepth, dataView, 0, uint8Array.length);
+        return arrayBasic_1.addLengthNode(chunksNode, bitLen);
+    }
+    tree_getByteLen(node) {
+        if (!node)
+            throw new Error("BitListType requires a node to get leaves");
+        return Math.ceil(arrayBasic_1.getLengthFromRootNode(node) / 8);
+    }
+    // Merkleization: inherited from BitArrayType
+    hashTreeRoot(value) {
+        return merkleize_1.mixInLength(super.hashTreeRoot(value), value.bitLen);
+    }
+    // Proofs: inherited from BitArrayType
+    // JSON: inherited from BitArrayType
+    // Deserializer helpers
+    deserializeUint8ArrayBitListFromBytes(data, start, end) {
+        const { uint8Array, bitLen } = deserializeUint8ArrayBitListFromBytes(data, start, end);
+        if (bitLen > this.limitBits) {
+            throw Error(`bitLen over limit ${bitLen} > ${this.limitBits}`);
+        }
+        return { uint8Array, bitLen };
+    }
+}
+exports.BitListType = BitListType;
+function deserializeUint8ArrayBitListFromBytes(data, start, end) {
+    if (end > data.length) {
+        throw Error(`BitList attempting to read byte ${end} of data length ${data.length}`);
+    }
+    const lastByte = data[end - 1];
+    const size = end - start;
+    if (lastByte === 0) {
+        throw new Error("Invalid deserialized bitlist, padding bit required");
+    }
+    if (lastByte === 1) {
+        const uint8Array = data.slice(start, end - 1);
+        const bitLen = (size - 1) * 8;
+        return { uint8Array, bitLen };
+    }
+    // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
+    const uint8Array = data.slice(start, end);
+    // mask lastChunkByte
+    const lastByteBitLength = lastByte.toString(2).length - 1;
+    const bitLen = (size - 1) * 8 + lastByteBitLength;
+    const mask = 0xff >> (8 - lastByteBitLength);
+    uint8Array[size - 1] &= mask;
+    return { uint8Array, bitLen };
+}
+function bitLenToSerializedLength(bitLen) {
+    const bytes = Math.ceil(bitLen / 8);
+    // +1 for the extra padding bit
+    return bitLen % 8 === 0 ? bytes + 1 : bytes;
+}
+/**
+ * Apply padding bit to a serialized BitList already written to `output` at `offset`
+ * @returns New offset after (maybe) writting a padding bit.
+ */
+function applyPaddingBit(output, offset, bitLen) {
+    const byteLen = Math.ceil(bitLen / 8);
+    const newOffset = offset + byteLen;
+    if (bitLen % 8 === 0) {
+        output[newOffset] = 1;
+        return newOffset + 1;
+    }
+    else {
+        output[newOffset - 1] |= 1 << bitLen % 8;
+        return newOffset;
+    }
+}
+//# sourceMappingURL=bitList.js.map
+
+/***/ }),
+
+/***/ 1736:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BitVectorType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const merkleize_1 = __webpack_require__(1290);
+const bitArray_1 = __webpack_require__(8676);
+const bitArray_2 = __webpack_require__(405);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * BitVector: ordered fixed-length collection of boolean values, with N bits
+ * - Notation: `Bitvector[N]`
+ * - Value: `BitArray`, @see BitArray for a justification of its memory efficiency and performance
+ * - View: `BitArrayTreeView`
+ * - ViewDU: `BitArrayTreeViewDU`
+ */
+class BitVectorType extends bitArray_2.BitArrayType {
+    constructor(lengthBits) {
+        super();
+        this.lengthBits = lengthBits;
+        this.isList = false;
+        if (lengthBits === 0)
+            throw Error("Vector length must be > 0");
+        this.typeName = `BitVector[${lengthBits}]`;
+        this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
+        this.maxChunkCount = this.chunkCount;
+        this.depth = merkleize_1.maxChunksToDepth(this.chunkCount);
+        this.fixedSize = Math.ceil(this.lengthBits / 8);
+        this.minSize = this.fixedSize;
+        this.maxSize = this.fixedSize;
+        // To cache mask for trailing zero bits validation
+        this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
+    }
+    defaultValue() {
+        return bitArray_1.BitArray.fromBitLen(this.lengthBits);
+    }
+    // Views: inherited from BitArrayType
+    // Serialization + deserialization
+    value_serializedSize() {
+        return this.fixedSize;
+    }
+    value_serializeToBytes(output, offset, value) {
+        output.uint8Array.set(value.uint8Array, offset);
+        return offset + this.fixedSize;
+    }
+    value_deserializeFromBytes(data, start, end) {
+        this.assertValidLength(data.uint8Array, start, end);
+        return new bitArray_1.BitArray(data.uint8Array.slice(start, end), this.lengthBits);
+    }
+    tree_serializedSize() {
+        return this.fixedSize;
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, this.depth, 0, this.chunkCount);
+        persistent_merkle_tree_1.packedNodeRootsToBytes(output.dataView, offset, this.fixedSize, nodes);
+        return offset + this.fixedSize;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        this.assertValidLength(data.uint8Array, start, end);
+        return persistent_merkle_tree_1.packedRootsBytesToNode(this.depth, data.dataView, start, end);
+    }
+    tree_getByteLen() {
+        return this.fixedSize;
+    }
+    // Merkleization: inherited from BitArrayType
+    // Proofs: inherited from BitArrayType
+    // JSON: inherited from BitArrayType
+    // Deserializer helpers
+    assertValidLength(data, start, end) {
+        const size = end - start;
+        if (end - start !== this.fixedSize) {
+            throw Error(`Invalid BitVector size ${size} != ${this.fixedSize}`);
+        }
+        // If lengthBits is not aligned to bytes, ensure trailing bits are zeroed
+        if (
+        // If zeroBitsMask == 0, then the BitVector uses full bytes only
+        this.zeroBitsMask > 0 &&
+            // if the last byte is partial, retrieve it and use the cached mask to check if trailing bits are zeroed
+            (data[end - 1] & this.zeroBitsMask) > 0) {
+            throw Error("BitVector: nonzero bits past length");
+        }
+    }
+}
+exports.BitVectorType = BitVectorType;
+//# sourceMappingURL=bitVector.js.map
+
+/***/ }),
+
+/***/ 4213:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BooleanType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const basic_1 = __webpack_require__(7262);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * Boolean: True or False
+ * - Notation: `boolean`
+ */
+class BooleanType extends basic_1.BasicType {
+    constructor() {
+        super(...arguments);
+        this.typeName = "boolean";
+        this.byteLength = 1;
+        this.itemsPerChunk = 32;
+        this.fixedSize = 1;
+        this.minSize = 1;
+        this.maxSize = 1;
+    }
+    defaultValue() {
+        return false;
+    }
+    // Serialization + deserialization
+    value_serializeToBytes(output, offset, value) {
+        output.uint8Array[offset] = value ? 1 : 0;
+        return offset + 1;
+    }
+    value_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        switch (data.uint8Array[start]) {
+            case 1:
+                return true;
+            case 0:
+                return false;
             default:
-                throw new Error(`Invalid property ${String(property)} for Union type`);
+                throw new Error(`Boolean: invalid value: ${data.uint8Array[start]}`);
         }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getPropertyType(property) {
+    tree_serializeToBytes(output, offset, node) {
+        // TODO: Assumes LeafNode has 4 byte uints are primary unit
+        output.uint8Array[offset] = node.getUint(4, 0);
+        return offset + 1;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        const value = data.uint8Array[start];
+        if (value > 1) {
+            throw Error(`Boolean: invalid value ${value}`);
+        }
+        return persistent_merkle_tree_1.LeafNode.fromUint32(value);
+    }
+    // Fast tree opts
+    tree_getFromNode(leafNode) {
+        return leafNode.getUint(4, 0) === 1;
+    }
+    tree_setToNode(leafNode, value) {
+        leafNode.setUint(4, 0, value ? 1 : 0);
+    }
+    tree_getFromPackedNode(leafNode, index) {
+        const offsetBytes = index % this.itemsPerChunk;
+        return leafNode.getUint(1, offsetBytes) !== 0;
+    }
+    tree_setToPackedNode(leafNode, index, value) {
+        const offsetBytes = index % this.itemsPerChunk;
+        leafNode.setUint(1, offsetBytes, value ? 1 : 0);
+    }
+    // JSON
+    fromJson(json) {
+        if (typeof json !== "boolean") {
+            throw Error(`JSON invalid type ${typeof json} expected boolean`);
+        }
+        return json;
+    }
+    toJson(value) {
+        return value;
+    }
+}
+exports.BooleanType = BooleanType;
+//# sourceMappingURL=boolean.js.map
+
+/***/ }),
+
+/***/ 9636:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ByteArrayType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const byteArray_1 = __webpack_require__(2404);
+const merkleize_1 = __webpack_require__(1290);
+const composite_1 = __webpack_require__(1347);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * ByteArray: ordered array collection of byte values
+ * - Value: `Uint8Array`
+ * - View: `Uint8Array`
+ * - ViewDU: `Uint8Array`
+ *
+ * ByteArray is an immutable value which is represented by a Uint8Array for memory efficiency and performance.
+ * Note: Consumers of this type MUST never mutate the `Uint8Array` representation of a ByteArray.
+ */
+class ByteArrayType extends composite_1.CompositeType {
+    constructor() {
+        super(...arguments);
+        this.isViewMutable = false;
+    }
+    defaultValue() {
+        // Since it's a byte array the minSize is bytes is the default size
+        return new Uint8Array(this.minSize);
+    }
+    getView(tree) {
+        return this.getViewDU(tree.rootNode);
+    }
+    getViewDU(node) {
+        return this.tree_toValue(node);
+    }
+    commitView(view) {
+        return this.commitViewDU(view);
+    }
+    commitViewDU(view) {
+        const uint8Array = new Uint8Array(this.value_serializedSize(view));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        this.value_serializeToBytes({ uint8Array, dataView }, 0, view);
+        return this.tree_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
+    }
+    cacheOfViewDU() {
+        return;
+    }
+    // Over-write to prevent serialize + deserialize
+    toView(value) {
+        return value;
+    }
+    toViewDU(value) {
+        return value;
+    }
+    // Merkleization
+    getRoots(value) {
+        return merkleize_1.splitIntoRootChunks(value);
+    }
+    // Proofs
+    getPropertyGindex() {
+        // Stop navigating below this type. Must only request complete data
+        return null;
+    }
+    getPropertyType() {
+        throw Error("Must only request ByteArray complete data");
+    }
+    getIndexProperty() {
+        throw Error("Must only request ByteArray complete data");
+    }
+    tree_fromProofNode(node) {
+        return { node, done: true };
+    }
+    tree_getLeafGindices(rootGindex, rootNode) {
+        const byteLen = this.tree_getByteLen(rootNode);
+        const chunkCount = Math.ceil(byteLen / 32);
+        const startIndex = persistent_merkle_tree_1.concatGindices([rootGindex, persistent_merkle_tree_1.toGindex(this.depth, BigInt(0))]);
+        const gindices = new Array(chunkCount);
+        for (let i = 0, gindex = startIndex; i < chunkCount; i++, gindex++) {
+            gindices[i] = gindex;
+        }
+        // include the length chunk
+        if (this.isList) {
+            gindices.push(persistent_merkle_tree_1.concatGindices([rootGindex, composite_1.LENGTH_GINDEX]));
+        }
+        return gindices;
+    }
+    // JSON
+    fromJson(json) {
+        const value = byteArray_1.fromHexString(json);
+        this.assertValidSize(value.length);
+        return value;
+    }
+    toJson(value) {
+        return byteArray_1.toHexString(value);
+    }
+    // ByteArray is immutable
+    clone(value) {
+        return value;
+    }
+    equals(a, b) {
+        return byteArray_1.byteArrayEquals(a, b);
+    }
+}
+exports.ByteArrayType = ByteArrayType;
+//# sourceMappingURL=byteArray.js.map
+
+/***/ }),
+
+/***/ 4217:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ByteListType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const merkleize_1 = __webpack_require__(1290);
+const arrayBasic_1 = __webpack_require__(8623);
+const byteArray_1 = __webpack_require__(9636);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * ByteList: Immutable alias of List[byte, N]
+ * - Notation: `ByteList[N]`
+ * - Value: `Uint8Array`
+ * - View: `Uint8Array`
+ * - ViewDU: `Uint8Array`
+ *
+ * ByteList is an immutable value which is represented by a Uint8Array for memory efficiency and performance.
+ * Note: Consumers of this type MUST never mutate the `Uint8Array` representation of a ByteList.
+ *
+ * For a `ByteListType` with mutability, use `ListBasicType(byteType)`
+ */
+class ByteListType extends byteArray_1.ByteArrayType {
+    constructor(limitBytes) {
+        super();
+        this.limitBytes = limitBytes;
+        this.fixedSize = null;
+        this.isList = true;
+        if (limitBytes === 0)
+            throw Error("List limit must be > 0");
+        this.typeName = `ByteList[${limitBytes}]`;
+        this.maxChunkCount = Math.ceil(this.limitBytes / 32);
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        this.depth = 1 + this.chunkDepth;
+        this.minSize = 0;
+        this.maxSize = this.limitBytes;
+    }
+    // Views: inherited from ByteArrayType
+    // Serialization + deserialization
+    value_serializedSize(value) {
+        return value.length;
+    }
+    value_serializeToBytes(output, offset, value) {
+        output.uint8Array.set(value, offset);
+        return offset + value.length;
+    }
+    value_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        return data.uint8Array.slice(start, end);
+    }
+    tree_serializedSize(node) {
+        return arrayBasic_1.getLengthFromRootNode(node);
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const chunksNode = arrayBasic_1.getChunksNodeFromRootNode(node);
+        const byteLen = arrayBasic_1.getLengthFromRootNode(node);
+        const chunkLen = Math.ceil(byteLen / 32);
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(chunksNode, this.chunkDepth, 0, chunkLen);
+        persistent_merkle_tree_1.packedNodeRootsToBytes(output.dataView, offset, byteLen, nodes);
+        return offset + byteLen;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        const chunksNode = persistent_merkle_tree_1.packedRootsBytesToNode(this.chunkDepth, data.dataView, start, end);
+        return arrayBasic_1.addLengthNode(chunksNode, end - start);
+    }
+    tree_getByteLen(node) {
+        if (!node)
+            throw new Error("ByteListType requires a node to get leaves");
+        return arrayBasic_1.getLengthFromRootNode(node);
+    }
+    // Merkleization: inherited from ByteArrayType
+    hashTreeRoot(value) {
+        return merkleize_1.mixInLength(super.hashTreeRoot(value), value.length);
+    }
+    // Proofs: inherited from BitArrayType
+    // JSON: inherited from ByteArrayType
+    assertValidSize(size) {
+        if (size > this.limitBytes) {
+            throw Error(`ByteList invalid size ${size} limit ${this.limitBytes}`);
+        }
+    }
+}
+exports.ByteListType = ByteListType;
+//# sourceMappingURL=byteList.js.map
+
+/***/ }),
+
+/***/ 7878:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ByteVectorType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const merkleize_1 = __webpack_require__(1290);
+const byteArray_1 = __webpack_require__(9636);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * ByteVector: Immutable alias of Vector[byte, N]
+ * - Notation: `ByteVector[N]`
+ * - Value: `Uint8Array`
+ * - View: `Uint8Array`
+ * - ViewDU: `Uint8Array`
+ *
+ * ByteVector is an immutable value which is represented by a Uint8Array for memory efficiency and performance.
+ * Note: Consumers of this type MUST never mutate the `Uint8Array` representation of a ByteVector.
+ *
+ * For a `ByteVectorType` with mutability, use `VectorBasicType(byteType)`
+ */
+class ByteVectorType extends byteArray_1.ByteArrayType {
+    constructor(lengthBytes) {
+        super();
+        this.lengthBytes = lengthBytes;
+        this.isList = false;
+        if (lengthBytes === 0)
+            throw Error("Vector length must be > 0");
+        this.typeName = `ByteVector[${lengthBytes}]`;
+        this.maxChunkCount = Math.ceil(this.lengthBytes / 32);
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        this.depth = this.chunkDepth;
+        this.fixedSize = this.lengthBytes;
+        this.minSize = this.fixedSize;
+        this.maxSize = this.fixedSize;
+    }
+    // Views: inherited from ByteArrayType
+    // Serialization + deserialization
+    value_serializedSize() {
+        return this.fixedSize;
+    }
+    value_serializeToBytes(output, offset, value) {
+        output.uint8Array.set(value, offset);
+        return offset + this.fixedSize;
+    }
+    value_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        return data.uint8Array.slice(start, end);
+    }
+    tree_serializedSize() {
+        return this.fixedSize;
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, this.chunkDepth, 0, this.maxChunkCount);
+        persistent_merkle_tree_1.packedNodeRootsToBytes(output.dataView, offset, this.fixedSize, nodes);
+        return offset + this.fixedSize;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        return persistent_merkle_tree_1.packedRootsBytesToNode(this.chunkDepth, data.dataView, start, end);
+    }
+    tree_getByteLen() {
+        return this.lengthBytes;
+    }
+    // Merkleization: inherited from ByteArrayType
+    // Proofs: inherited from BitArrayType
+    // JSON: inherited from ByteArrayType
+    assertValidSize(size) {
+        if (size !== this.lengthBytes) {
+            throw Error(`ByteVector invalid size ${size} expected ${this.lengthBytes}`);
+        }
+    }
+}
+exports.ByteVectorType = ByteVectorType;
+//# sourceMappingURL=byteVector.js.map
+
+/***/ }),
+
+/***/ 1347:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isCompositeType = exports.CompositeType = exports.LENGTH_GINDEX = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const byteArray_1 = __webpack_require__(2404);
+const merkleize_1 = __webpack_require__(1290);
+const treePostProcessFromProofNode_1 = __webpack_require__(5507);
+const abstract_1 = __webpack_require__(6298);
+exports.LENGTH_GINDEX = BigInt(3);
+/** Dedicated property to cache hashTreeRoot of immutable CompositeType values */
+const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
+/* eslint-disable @typescript-eslint/member-ordering  */
+/**
+ * Represents a composite type as defined in the spec:
+ * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#composite-types
+ */
+class CompositeType extends abstract_1.Type {
+    constructor(
+    /**
+     * Caches `hashTreeRoot()` result for struct values.
+     *
+     * WARNING: Must only be used for immutable values. The cached root is never discarded
+     */
+    cachePermanentRootStruct) {
+        super();
+        this.cachePermanentRootStruct = cachePermanentRootStruct;
+        this.isBasic = false;
+    }
+    /** New instance of a recursive zero'ed value converted to Tree View */
+    defaultView() {
+        return this.toView(this.defaultValue());
+    }
+    /** New instance of a recursive zero'ed value converted to Deferred Update Tree View */
+    defaultViewDU() {
+        return this.toViewDU(this.defaultValue());
+    }
+    /**
+     * Deserialize binary data to a Tree View.
+     * @see {@link CompositeType.getView}
+     */
+    deserializeToView(data) {
+        const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+        const node = this.tree_deserializeFromBytes({ uint8Array: data, dataView }, 0, data.length);
+        return this.getView(new persistent_merkle_tree_1.Tree(node));
+    }
+    /**
+     * Deserialize binary data to a Deferred Update Tree View.
+     * @see {@link CompositeType.getViewDU}
+     */
+    deserializeToViewDU(data) {
+        const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
+        const node = this.tree_deserializeFromBytes({ uint8Array: data, dataView }, 0, data.length);
+        return this.getViewDU(node);
+    }
+    /**
+     * Transform value to a View.
+     * @see {@link CompositeType.getView}
+     */
+    toView(value) {
+        const node = this.value_toTree(value);
+        return this.getView(new persistent_merkle_tree_1.Tree(node));
+    }
+    /**
+     * Transform value to a ViewDU.
+     * @see {@link CompositeType.getViewDU}
+     */
+    toViewDU(value) {
+        const node = this.value_toTree(value);
+        return this.getViewDU(node);
+    }
+    /**
+     * Transform value to a View.
+     * @see {@link CompositeType.getView}
+     */
+    toValueFromView(view) {
+        const node = this.commitView(view);
+        return this.tree_toValue(node);
+    }
+    /**
+     * Transform value to a ViewDU.
+     * @see {@link CompositeType.getViewDU}
+     */
+    toValueFromViewDU(view) {
+        const node = this.commitViewDU(view);
+        return this.tree_toValue(node);
+    }
+    /**
+     * Transform a ViewDU to a View.
+     * @see {@link CompositeType.getView} and {@link CompositeType.getViewDU}
+     */
+    toViewFromViewDU(view) {
+        const node = this.commitViewDU(view);
+        return this.getView(new persistent_merkle_tree_1.Tree(node));
+    }
+    /**
+     * Transform a View to a ViewDU.
+     * @see {@link CompositeType.getView} and {@link CompositeType.getViewDU}
+     */
+    toViewDUFromView(view) {
+        const node = this.commitView(view);
+        return this.getViewDU(node);
+    }
+    // Merkleize API
+    hashTreeRoot(value) {
+        // Return cached mutable root if any
+        if (this.cachePermanentRootStruct) {
+            const cachedRoot = value[symbolCachedPermanentRoot];
+            if (cachedRoot) {
+                return cachedRoot;
+            }
+        }
+        const root = merkleize_1.merkleize(this.getRoots(value), this.maxChunkCount);
+        if (this.cachePermanentRootStruct) {
+            value[symbolCachedPermanentRoot] = root;
+        }
+        return root;
+    }
+    // For debugging and testing this feature
+    getCachedPermanentRoot(value) {
+        return value[symbolCachedPermanentRoot];
+    }
+    // Proofs API
+    /**
+     * Create a Tree View from a Proof. Verifies that the Proof is correct against `root`.
+     * @see {@link CompositeType.getView}
+     */
+    createFromProof(proof, root) {
+        const rootNodeFromProof = persistent_merkle_tree_1.Tree.createFromProof(proof).rootNode;
+        const rootNode = treePostProcessFromProofNode_1.treePostProcessFromProofNode(rootNodeFromProof, this);
+        if (root !== undefined && !byteArray_1.byteArrayEquals(rootNode.root, root)) {
+            throw new Error("Proof does not match trusted root");
+        }
+        return this.getView(new persistent_merkle_tree_1.Tree(rootNode));
+    }
+    /** INTERNAL METHOD: For view's API, create proof from a tree */
+    tree_createProof(node, jsonPaths) {
+        const gindexes = this.tree_createProofGindexes(node, jsonPaths);
+        return persistent_merkle_tree_1.createProof(node, {
+            type: persistent_merkle_tree_1.ProofType.treeOffset,
+            gindices: gindexes,
+        });
+    }
+    /** INTERNAL METHOD: For view's API, create proof from a tree */
+    tree_createProofGindexes(node, jsonPaths) {
+        const gindexes = [];
+        for (const jsonPath of jsonPaths) {
+            const { type, gindex } = this.getPathInfo(jsonPath);
+            if (!isCompositeType(type)) {
+                gindexes.push(gindex);
+            }
+            else {
+                // if the path subtype is composite, include the gindices of all the leaves
+                const leafGindexes = type.tree_getLeafGindices(gindex, type.fixedSize === null ? persistent_merkle_tree_1.getNode(node, gindex) : undefined);
+                for (const gindex of leafGindexes) {
+                    gindexes.push(gindex);
+                }
+            }
+        }
+        return gindexes;
+    }
+    /**
+     * Navigate to a subtype & gindex using a path
+     */
+    getPathInfo(path) {
+        const gindices = [];
+        let type = this;
+        for (const prop of path) {
+            if (type.isBasic) {
+                throw new Error("Invalid path: cannot navigate beyond a basic type");
+            }
+            const gindex = type.getPropertyGindex(prop);
+            // else stop navigating
+            if (gindex !== null) {
+                gindices.push(gindex);
+                type = type.getPropertyType(prop);
+            }
+        }
+        return {
+            type,
+            gindex: persistent_merkle_tree_1.concatGindices(gindices),
+        };
+    }
+    /**
+     * INTERNAL METHOD: post process `Ǹode` instance created from a proof and return either the same node,
+     * and a new node representing the same data is a different `Node` instance. Currently used exclusively
+     * by ContainerNodeStruct to convert `BranchNode` into `BranchNodeStruct`.
+     */
+    tree_fromProofNode(node) {
+        return { node, done: false };
+    }
+}
+exports.CompositeType = CompositeType;
+function isCompositeType(type) {
+    return !type.isBasic;
+}
+exports.isCompositeType = isCompositeType;
+//# sourceMappingURL=composite.js.map
+
+/***/ }),
+
+/***/ 5759:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.renderContainerTypeName = exports.precomputeJsonKey = exports.ContainerType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const case_1 = __importDefault(__webpack_require__(8823));
+const merkleize_1 = __webpack_require__(1290);
+const composite_1 = __webpack_require__(1347);
+const container_1 = __webpack_require__(7582);
+const container_2 = __webpack_require__(2854);
+/**
+ * Container: ordered heterogeneous collection of values
+ * - Notation: Custom name per instance
+ */
+class ContainerType extends composite_1.CompositeType {
+    constructor(fields, opts) {
+        super(opts?.cachePermanentRootStruct);
+        this.fields = fields;
+        this.opts = opts;
+        this.isList = false;
+        this.isViewMutable = true;
+        // Render detailed typeName. Consumers should overwrite since it can get long
+        this.typeName = opts?.typeName ?? renderContainerTypeName(fields);
+        this.maxChunkCount = Object.keys(fields).length;
+        this.depth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        // Precalculated data for faster serdes
+        this.fieldsEntries = [];
+        for (const fieldName of Object.keys(fields)) {
+            this.fieldsEntries.push({
+                fieldName,
+                fieldType: this.fields[fieldName],
+                jsonKey: precomputeJsonKey(fieldName, opts?.casingMap, opts?.jsonCase),
+                gindex: persistent_merkle_tree_1.toGindex(this.depth, BigInt(this.fieldsEntries.length)),
+            });
+        }
+        if (this.fieldsEntries.length === 0) {
+            throw Error("Container must have > 0 fields");
+        }
+        // Precalculate for Proofs API
+        this.fieldsGindex = {};
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            this.fieldsGindex[this.fieldsEntries[i].fieldName] = persistent_merkle_tree_1.toGindex(this.depth, BigInt(i));
+        }
+        // To resolve JSON paths in fieldName notation and jsonKey notation
+        this.jsonKeyToFieldName = {};
+        for (const { fieldName, jsonKey } of this.fieldsEntries) {
+            this.jsonKeyToFieldName[jsonKey] = fieldName;
+        }
+        const { minLen, maxLen, fixedSize } = precomputeSizes(fields);
+        this.minSize = minLen;
+        this.maxSize = maxLen;
+        this.fixedSize = fixedSize;
+        const { isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd } = precomputeSerdesData(fields);
+        this.isFixedLen = isFixedLen;
+        this.fieldRangesFixedLen = fieldRangesFixedLen;
+        this.variableOffsetsPosition = variableOffsetsPosition;
+        this.fixedEnd = fixedEnd;
+        // TODO: This options are necessary for ContainerNodeStruct to override this.
+        // Refactor this constructor to allow customization without pollutin the options
+        this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? container_1.getContainerTreeViewClass(this);
+        this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? container_2.getContainerTreeViewDUClass(this);
+    }
+    defaultValue() {
+        const value = {};
+        for (const { fieldName, fieldType } of this.fieldsEntries) {
+            value[fieldName] = fieldType.defaultValue();
+        }
+        return value;
+    }
+    getView(tree) {
+        return new this.TreeView(this, tree);
+    }
+    getViewDU(node, cache) {
+        return new this.TreeViewDU(this, node, cache);
+    }
+    cacheOfViewDU(view) {
+        return view.cache;
+    }
+    commitView(view) {
+        return view.node;
+    }
+    commitViewDU(view) {
+        view.commit();
+        return view.node;
+    }
+    // Serialization + deserialization
+    // -------------------------------
+    // Containers can mix fixed length and variable length data.
+    //
+    // Fixed part                         Variable part
+    // [field1 offset][field2 data       ][field1 data               ]
+    // [0x000000c]    [0xaabbaabbaabbaabb][0xffffffffffffffffffffffff]
+    value_serializedSize(value) {
+        let totalSize = 0;
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            // Offset (4 bytes) + size
+            totalSize +=
+                fieldType.fixedSize === null ? 4 + fieldType.value_serializedSize(value[fieldName]) : fieldType.fixedSize;
+        }
+        return totalSize;
+    }
+    value_serializeToBytes(output, offset, value) {
+        let fixedIndex = offset;
+        let variableIndex = offset + this.fixedEnd;
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            if (fieldType.fixedSize === null) {
+                // write offset
+                output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+                fixedIndex += 4;
+                // write serialized element to variable section
+                variableIndex = fieldType.value_serializeToBytes(output, variableIndex, value[fieldName]);
+            }
+            else {
+                fixedIndex = fieldType.value_serializeToBytes(output, fixedIndex, value[fieldName]);
+            }
+        }
+        return variableIndex;
+    }
+    value_deserializeFromBytes(data, start, end) {
+        const fieldRanges = this.getFieldRanges(data.dataView, start, end);
+        const value = {};
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            const fieldRange = fieldRanges[i];
+            // TODO: Consider adding SszErrorPath back but preserving the original stack-traces
+            value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
+        }
+        return value;
+    }
+    tree_serializedSize(node) {
+        let totalSize = 0;
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length);
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldType } = this.fieldsEntries[i];
+            const node = nodes[i];
+            // Offset (4 bytes) + size
+            totalSize += fieldType.fixedSize === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedSize;
+        }
+        return totalSize;
+    }
+    tree_serializeToBytes(output, offset, node) {
+        let fixedIndex = offset;
+        let variableIndex = offset + this.fixedEnd;
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length);
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldType } = this.fieldsEntries[i];
+            const node = nodes[i];
+            if (fieldType.fixedSize === null) {
+                // write offset
+                output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+                fixedIndex += 4;
+                // write serialized element to variable section
+                variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
+            }
+            else {
+                fixedIndex = fieldType.tree_serializeToBytes(output, fixedIndex, node);
+            }
+        }
+        return variableIndex;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        const fieldRanges = this.getFieldRanges(data.dataView, start, end);
+        const nodes = new Array(this.fieldsEntries.length);
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldType } = this.fieldsEntries[i];
+            const fieldRange = fieldRanges[i];
+            nodes[i] = fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
+        }
+        return persistent_merkle_tree_1.subtreeFillToContents(nodes, this.depth);
+    }
+    // Merkleization
+    getRoots(struct) {
+        const roots = new Array(this.fieldsEntries.length);
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            roots[i] = fieldType.hashTreeRoot(struct[fieldName]);
+        }
+        return roots;
+    }
+    // Proofs
+    // getPropertyGindex
+    // getPropertyType
+    // tree_getLeafGindices
+    getPropertyGindex(prop) {
+        const gindex = this.fieldsGindex[prop] ?? this.fieldsGindex[this.jsonKeyToFieldName[prop]];
+        if (gindex === undefined)
+            throw Error(`Unknown container property ${prop}`);
+        return gindex;
+    }
+    getPropertyType(prop) {
+        const type = this.fields[prop] ?? this.fields[this.jsonKeyToFieldName[prop]];
+        if (type === undefined)
+            throw Error(`Unknown container property ${prop}`);
+        return type;
+    }
+    getIndexProperty(index) {
+        if (index >= this.fieldsEntries.length) {
+            return null;
+        }
+        return this.fieldsEntries[index].fieldName;
+    }
+    tree_getLeafGindices(rootGindex, rootNode) {
+        const gindices = [];
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            const fieldGindex = this.fieldsGindex[fieldName];
+            const fieldGindexFromRoot = persistent_merkle_tree_1.concatGindices([rootGindex, fieldGindex]);
+            if (fieldType.isBasic) {
+                gindices.push(fieldGindexFromRoot);
+            }
+            else {
+                const compositeType = fieldType;
+                if (fieldType.fixedSize === null) {
+                    if (!rootNode) {
+                        throw new Error("variable type requires tree argument to get leaves");
+                    }
+                    gindices.push(...compositeType.tree_getLeafGindices(fieldGindexFromRoot, persistent_merkle_tree_1.getNode(rootNode, fieldGindex)));
+                }
+                else {
+                    gindices.push(...compositeType.tree_getLeafGindices(fieldGindexFromRoot));
+                }
+            }
+        }
+        return gindices;
+    }
+    // JSON
+    fromJson(json) {
+        if (typeof json !== "object") {
+            throw Error("JSON must be of type object");
+        }
+        if (json === null) {
+            throw Error("JSON must not be null");
+        }
+        const value = {};
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType, jsonKey } = this.fieldsEntries[i];
+            const jsonValue = json[jsonKey];
+            if (jsonValue === undefined) {
+                throw Error(`JSON expected key ${jsonKey} is undefined`);
+            }
+            value[fieldName] = fieldType.fromJson(jsonValue);
+        }
+        return value;
+    }
+    toJson(value) {
+        const json = {};
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType, jsonKey } = this.fieldsEntries[i];
+            json[jsonKey] = fieldType.toJson(value[fieldName]);
+        }
+        return json;
+    }
+    clone(value) {
+        const newValue = {};
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            newValue[fieldName] = fieldType.clone(value[fieldName]);
+        }
+        return newValue;
+    }
+    equals(a, b) {
+        for (let i = 0; i < this.fieldsEntries.length; i++) {
+            const { fieldName, fieldType } = this.fieldsEntries[i];
+            if (!fieldType.equals(a[fieldName], b[fieldName])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * Deserializer helper: Returns the bytes ranges of all fields, both variable and fixed size.
+     * Fields may not be contiguous in the serialized bytes, so the returned ranges are [start, end].
+     * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
+     * - For variable size fields does a first pass over the fixed section to read offsets
+     */
+    getFieldRanges(data, start, end) {
+        if (this.variableOffsetsPosition.length === 0) {
+            // Validate fixed length container
+            const size = end - start;
+            if (size !== this.fixedEnd) {
+                throw Error(`${this.typeName} size ${size} not equal fixed size ${this.fixedEnd}`);
+            }
+            return this.fieldRangesFixedLen;
+        }
+        // Read offsets in one pass
+        const offsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
+        offsets.push(end - start); // The offsets are relative to the start
+        // Merge fieldRangesFixedLen + offsets in one array
+        let variableIdx = 0;
+        let fixedIdx = 0;
+        const fieldRanges = new Array(this.isFixedLen.length);
+        for (let i = 0; i < this.isFixedLen.length; i++) {
+            if (this.isFixedLen[i]) {
+                // push from fixLen ranges ++
+                fieldRanges[i] = this.fieldRangesFixedLen[fixedIdx++];
+            }
+            else {
+                // push from varLen ranges ++
+                fieldRanges[i] = { start: offsets[variableIdx], end: offsets[variableIdx + 1] };
+                variableIdx++;
+            }
+        }
+        return fieldRanges;
+    }
+}
+exports.ContainerType = ContainerType;
+/**
+ * Returns the byte ranges of all variable size fields.
+ */
+function readVariableOffsets(data, start, end, fixedEnd, variableOffsetsPosition) {
+    // Since variable-sized values can be interspersed with fixed-sized values, we precalculate
+    // the offset indices so we can more easily deserialize the fields in once pass first we get the fixed sizes
+    // Note: `fixedSizes[i] = null` if that field has variable length
+    const size = end - start;
+    // with the fixed sizes, we can read the offsets, and store for our single pass
+    const offsets = new Array(variableOffsetsPosition.length);
+    for (let i = 0; i < variableOffsetsPosition.length; i++) {
+        const offset = data.getUint32(start + variableOffsetsPosition[i], true);
+        // Validate offsets. If the list is empty the offset points to the end of the buffer, offset == size
+        if (offset > size) {
+            throw new Error(`Offset out of bounds ${offset} > ${size}`);
+        }
+        if (i === 0) {
+            if (offset !== fixedEnd) {
+                throw new Error(`First offset must equal to fixedEnd ${offset} != ${fixedEnd}`);
+            }
+        }
+        else {
+            if (offset < offsets[i - 1]) {
+                throw new Error(`Offsets must be increasing ${offset} < ${offsets[i - 1]}`);
+            }
+        }
+        offsets[i] = offset;
+    }
+    return offsets;
+}
+/**
+ * Precompute fixed and variable offsets position for faster deserialization.
+ * @returns Does a single pass over all fields and returns:
+ * - isFixedLen: If field index [i] is fixed length
+ * - fieldRangesFixedLen: For fields with fixed length, their range of bytes
+ * - variableOffsetsPosition: Position of the 4 bytes offset for variable size fields
+ * - fixedEnd: End of the fixed size range
+ * -
+ */
+function precomputeSerdesData(fields) {
+    const isFixedLen = [];
+    const fieldRangesFixedLen = [];
+    const variableOffsetsPosition = [];
+    let pointerFixed = 0;
+    for (const fieldType of Object.values(fields)) {
+        isFixedLen.push(fieldType.fixedSize !== null);
+        if (fieldType.fixedSize === null) {
+            // Variable length
+            variableOffsetsPosition.push(pointerFixed);
+            pointerFixed += 4;
+        }
+        else {
+            fieldRangesFixedLen.push({ start: pointerFixed, end: pointerFixed + fieldType.fixedSize });
+            pointerFixed += fieldType.fixedSize;
+        }
+    }
+    return {
+        isFixedLen,
+        fieldRangesFixedLen,
+        variableOffsetsPosition,
+        fixedEnd: pointerFixed,
+    };
+}
+/**
+ * Precompute sizes of the Container doing one pass over fields
+ */
+function precomputeSizes(fields) {
+    let minLen = 0;
+    let maxLen = 0;
+    let fixedSize = 0;
+    for (const fieldType of Object.values(fields)) {
+        minLen += fieldType.minSize;
+        maxLen += fieldType.maxSize;
+        if (fieldType.fixedSize === null) {
+            // +4 for the offset
+            minLen += 4;
+            maxLen += 4;
+            fixedSize = null;
+        }
+        else if (fixedSize !== null) {
+            fixedSize += fieldType.fixedSize;
+        }
+    }
+    return { minLen, maxLen, fixedSize };
+}
+/**
+ * Compute the JSON key for each fieldName. There will exist a single JSON representation for each type.
+ * To transform JSON payloads to a casing that is different from the type's defined use external tooling.
+ */
+function precomputeJsonKey(fieldName, casingMap, jsonCase) {
+    if (casingMap) {
+        const keyFromCaseMap = casingMap[fieldName];
+        if (keyFromCaseMap === undefined) {
+            throw Error(`casingMap[${fieldName}] not defined`);
+        }
+        return keyFromCaseMap;
+    }
+    else if (jsonCase) {
+        if (jsonCase === "eth2") {
+            const snake = case_1.default.snake(fieldName);
+            return snake.replace(/(\d)$/, "_$1");
+        }
+        else {
+            return case_1.default[jsonCase](fieldName);
+        }
+    }
+    else {
+        return fieldName;
+    }
+}
+exports.precomputeJsonKey = precomputeJsonKey;
+/**
+ * Render field typeNames for a detailed typeName of this Container
+ */
+function renderContainerTypeName(fields, prefix = "Container") {
+    const fieldNames = Object.keys(fields);
+    const fieldTypeNames = fieldNames.map((fieldName) => `${fieldName}: ${fields[fieldName].typeName}`).join(", ");
+    return `${prefix}({${fieldTypeNames}})`;
+}
+exports.renderContainerTypeName = renderContainerTypeName;
+//# sourceMappingURL=container.js.map
+
+/***/ }),
+
+/***/ 9820:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ContainerNodeStructType = void 0;
+const composite_1 = __webpack_require__(1347);
+const container_1 = __webpack_require__(5759);
+const containerNodeStruct_1 = __webpack_require__(8838);
+const containerNodeStruct_2 = __webpack_require__(1339);
+const branchNodeStruct_1 = __webpack_require__(9157);
+/**
+ * ContainerNodeStruct: ordered heterogeneous collection of values.
+ * - Notation: Custom name per instance
+ *
+ * A ContainerNodeStruct is identical to a Container type except that it represents tree data with a custom
+ * BranchNodeStruct node. This special branch node represents the data of its entire sub tree as a value, instead
+ * of a tree of nodes. This approach is a tradeoff:
+ *
+ * - More memory efficient
+ * - Faster reads, since it doesn't require parsing merkleized data
+ * - Slower hashing, since it has to merkleize the entire value everytime and has not intermediary hashing cache
+ *
+ * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
+ */
+class ContainerNodeStructType extends container_1.ContainerType {
+    constructor(fields, opts) {
+        super(fields, {
+            // Overwrite default "Container" typeName
+            // Render detailed typeName. Consumers should overwrite since it can get long
+            typeName: opts?.typeName ?? container_1.renderContainerTypeName(fields, "ContainerNodeStruct"),
+            ...opts,
+            getContainerTreeViewClass: containerNodeStruct_1.getContainerTreeViewClass,
+            getContainerTreeViewDUClass: containerNodeStruct_2.getContainerTreeViewDUClass,
+        });
+        this.fields = fields;
+        // ContainerNodeStructType TreeViews don't handle recursive mutable TreeViews like ContainerType does.
+        // Using ContainerNodeStructType for fields that have mutable views (like a ListBasic), will result in
+        // unnexpected behaviour if those child views are mutated.
+        //
+        // For example, this example below won't persist the pushed values to the list:
+        // ```ts
+        // const type = ContainerNodeStructType({a: new ListBasicType(byteType, 1)});
+        // const view = type.defaultViewDU();
+        // view.a.push(0)
+        // ```
+        // because the ListBasicViewDU in view.a will never propagate the changes upwards to its ContainerNodeStructType.
+        for (const { fieldName, fieldType } of this.fieldsEntries) {
+            if (composite_1.isCompositeType(fieldType) && fieldType.isViewMutable) {
+                throw Error(`ContainerNodeStructType field '${fieldName}' ${fieldType.typeName} view is mutable`);
+            }
+        }
+    }
+    tree_serializedSize(node) {
+        return this.value_serializedSize(node.value);
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const { value } = node;
+        return this.value_serializeToBytes(output, offset, value);
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        const value = this.value_deserializeFromBytes(data, start, end);
+        return new branchNodeStruct_1.BranchNodeStruct(this.valueToTree.bind(this), value);
+    }
+    // Proofs
+    // ContainerNodeStructType can only parse proofs that contain all the data.
+    // TODO: Support converting a partial tree to a partial value
+    getPropertyGindex() {
+        return null;
+    }
+    // Post process tree to convert regular BranchNode to BranchNodeStruct
+    // TODO: Optimize conversions
+    tree_fromProofNode(node) {
+        // TODO: Figure out from `node` alone if it contains complete data.
+        // Otherwise throw a nice error "ContainerNodeStruct type requires proofs for all its data"
+        const uint8Array = new Uint8Array(super.tree_serializedSize(node));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        super.tree_serializeToBytes({ uint8Array, dataView }, 0, node);
+        const value = this.value_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
+        return {
+            node: new branchNodeStruct_1.BranchNodeStruct(this.valueToTree.bind(this), value),
+            done: true,
+        };
+    }
+    // Overwrites for fast conversion node <-> value
+    tree_toValue(node) {
+        return node.value;
+    }
+    value_toTree(value) {
+        return new branchNodeStruct_1.BranchNodeStruct(this.valueToTree.bind(this), value);
+    }
+    // TODO: Optimize conversion
+    valueToTree(value) {
+        const uint8Array = new Uint8Array(this.value_serializedSize(value));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        this.value_serializeToBytes({ uint8Array, dataView }, 0, value);
+        return super.tree_deserializeFromBytes({ uint8Array, dataView }, 0, uint8Array.length);
+    }
+}
+exports.ContainerNodeStructType = ContainerNodeStructType;
+//# sourceMappingURL=containerNodeStruct.js.map
+
+/***/ }),
+
+/***/ 5963:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListBasicType = void 0;
+const arrayBasic_1 = __webpack_require__(8623);
+const merkleize_1 = __webpack_require__(1290);
+const listBasic_1 = __webpack_require__(3013);
+const listBasic_2 = __webpack_require__(5707);
+const array_1 = __webpack_require__(443);
+/**
+ * List: ordered variable-length homogeneous collection, limited to N values
+ *
+ * Array of Basic type:
+ * - Basic types are max 32 bytes long so multiple values may be packed in the same node.
+ * - Basic types are never returned in a view wrapper, but their value representation
+ */
+class ListBasicType extends array_1.ArrayType {
+    constructor(elementType, limit, opts) {
+        super(elementType);
+        this.elementType = elementType;
+        this.limit = limit;
+        this.fixedSize = null;
+        this.isList = true;
+        this.isViewMutable = true;
+        this.defaultLen = 0;
+        if (!elementType.isBasic)
+            throw Error("elementType must be basic");
+        if (limit === 0)
+            throw Error("List limit must be > 0");
+        this.typeName = opts?.typeName ?? `List[${elementType.typeName}, ${limit}]`;
+        // TODO Check that itemsPerChunk is an integer
+        this.itemsPerChunk = 32 / elementType.byteLength;
+        this.maxChunkCount = Math.ceil((this.limit * elementType.byteLength) / 32);
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        // Depth includes the extra level for the length node
+        this.depth = this.chunkDepth + 1;
+        this.minSize = 0;
+        this.maxSize = this.limit * elementType.maxSize;
+    }
+    getView(tree) {
+        return new listBasic_1.ListBasicTreeView(this, tree);
+    }
+    getViewDU(node, cache) {
+        // cache type should be validated (if applicate) in the view
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return new listBasic_2.ListBasicTreeViewDU(this, node, cache);
+    }
+    commitView(view) {
+        return view.node;
+    }
+    commitViewDU(view) {
+        view.commit();
+        return view.node;
+    }
+    cacheOfViewDU(view) {
+        return view.cache;
+    }
+    // Serialization + deserialization
+    value_serializedSize(value) {
+        return value.length * this.elementType.byteLength;
+    }
+    value_serializeToBytes(output, offset, value) {
+        return arrayBasic_1.value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
+    }
+    value_deserializeFromBytes(data, start, end) {
+        return arrayBasic_1.value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
+    }
+    tree_serializedSize(node) {
+        return this.tree_getLength(node) * this.elementType.byteLength;
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const chunksNode = this.tree_getChunksNode(node);
+        const length = this.tree_getLength(node);
+        return arrayBasic_1.tree_serializeToBytesArrayBasic(this.elementType, length, this.chunkDepth, output, offset, chunksNode);
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        return arrayBasic_1.tree_deserializeFromBytesArrayBasic(this.elementType, this.chunkDepth, data, start, end, this);
+    }
+    // Helpers for TreeView
+    tree_getLength(node) {
+        return node.right.getUint(4, 0);
+    }
+    tree_setLength(tree, length) {
+        tree.rootNode = arrayBasic_1.addLengthNode(tree.rootNode.left, length);
+    }
+    tree_getChunksNode(node) {
+        return node.left;
+    }
+    tree_setChunksNode(rootNode, chunksNode, newLength) {
+        return arrayBasic_1.setChunksNode(rootNode, chunksNode, newLength);
+    }
+    // Merkleization
+    hashTreeRoot(value) {
+        return merkleize_1.mixInLength(super.hashTreeRoot(value), value.length);
+    }
+    getRoots(value) {
+        const uint8Array = new Uint8Array(this.value_serializedSize(value));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        arrayBasic_1.value_serializeToBytesArrayBasic(this.elementType, value.length, { uint8Array, dataView }, 0, value);
+        return merkleize_1.splitIntoRootChunks(uint8Array);
+    }
+}
+exports.ListBasicType = ListBasicType;
+//# sourceMappingURL=listBasic.js.map
+
+/***/ }),
+
+/***/ 534:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListCompositeType = void 0;
+const merkleize_1 = __webpack_require__(1290);
+const arrayBasic_1 = __webpack_require__(8623);
+const arrayComposite_1 = __webpack_require__(230);
+const listComposite_1 = __webpack_require__(3911);
+const listComposite_2 = __webpack_require__(5611);
+const array_1 = __webpack_require__(443);
+/**
+ * List: ordered variable-length homogeneous collection, limited to N values
+ *
+ * Array of Composite type:
+ * - Composite types always take at least one chunk
+ * - Composite types are always returned as views
+ */
+class ListCompositeType extends array_1.ArrayType {
+    constructor(elementType, limit, opts) {
+        super(elementType);
+        this.elementType = elementType;
+        this.limit = limit;
+        this.itemsPerChunk = 1;
+        this.fixedSize = null;
+        this.isList = true;
+        this.isViewMutable = true;
+        this.defaultLen = 0;
+        if (elementType.isBasic)
+            throw Error("elementType must not be basic");
+        if (limit === 0)
+            throw Error("List limit must be > 0");
+        this.typeName = opts?.typeName ?? `List[${elementType.typeName}, ${limit}]`;
+        this.maxChunkCount = this.limit;
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        // Depth includes the extra level for the length node
+        this.depth = this.chunkDepth + 1;
+        this.minSize = 0;
+        this.maxSize = arrayComposite_1.maxSizeArrayComposite(elementType, this.limit);
+    }
+    getView(tree) {
+        return new listComposite_1.ListCompositeTreeView(this, tree);
+    }
+    getViewDU(node, cache) {
+        // cache type should be validated (if applicate) in the view
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return new listComposite_2.ListCompositeTreeViewDU(this, node, cache);
+    }
+    commitView(view) {
+        return view.node;
+    }
+    commitViewDU(view) {
+        view.commit();
+        return view.node;
+    }
+    cacheOfViewDU(view) {
+        return view.cache;
+    }
+    // Serialization + deserialization
+    value_serializedSize(value) {
+        return arrayComposite_1.value_serializedSizeArrayComposite(this.elementType, value.length, value);
+    }
+    value_serializeToBytes(output, offset, value) {
+        return arrayComposite_1.value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
+    }
+    value_deserializeFromBytes(data, start, end) {
+        return arrayComposite_1.value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
+    }
+    tree_serializedSize(node) {
+        const chunksNode = this.tree_getChunksNode(node);
+        const length = this.tree_getLength(node);
+        return arrayComposite_1.tree_serializedSizeArrayComposite(this.elementType, length, this.chunkDepth, chunksNode);
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const chunksNode = this.tree_getChunksNode(node);
+        const length = this.tree_getLength(node);
+        return arrayComposite_1.tree_serializeToBytesArrayComposite(this.elementType, length, this.chunkDepth, chunksNode, output, offset);
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        return arrayComposite_1.tree_deserializeFromBytesArrayComposite(this.elementType, this.chunkDepth, data, start, end, this);
+    }
+    // Helpers for TreeView
+    tree_getLength(node) {
+        return arrayBasic_1.getLengthFromRootNode(node);
+    }
+    tree_setLength(tree, length) {
+        tree.rootNode = arrayBasic_1.addLengthNode(tree.rootNode.left, length);
+    }
+    tree_getChunksNode(node) {
+        return node.left;
+    }
+    tree_setChunksNode(rootNode, chunksNode, newLength) {
+        return arrayBasic_1.setChunksNode(rootNode, chunksNode, newLength);
+    }
+    // Merkleization
+    hashTreeRoot(value) {
+        return merkleize_1.mixInLength(super.hashTreeRoot(value), value.length);
+    }
+    getRoots(value) {
+        return arrayComposite_1.value_getRootsArrayComposite(this.elementType, value.length, value);
+    }
+}
+exports.ListCompositeType = ListCompositeType;
+//# sourceMappingURL=listComposite.js.map
+
+/***/ }),
+
+/***/ 3300:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NoneType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const basic_1 = __webpack_require__(7262);
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+class NoneType extends basic_1.BasicType {
+    constructor() {
+        super(...arguments);
+        this.typeName = "none";
+        this.byteLength = 0;
+        this.itemsPerChunk = 32;
+        this.fixedSize = 0;
+        this.minSize = 0;
+        this.maxSize = 0;
+    }
+    defaultValue() {
+        return null;
+    }
+    // bytes serdes
+    value_serializeToBytes(output, offset, value) {
+        return offset;
+    }
+    value_deserializeFromBytes(data, start) {
+        return null;
+    }
+    tree_serializeToBytes(output, offset, node) {
+        return offset;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        return persistent_merkle_tree_1.zeroNode(0);
+    }
+    // Fast tree opts
+    tree_getFromNode(leafNode) {
+        return null;
+    }
+    tree_setToNode(leafNode, value) {
+        return;
+    }
+    tree_getFromPackedNode(leafNode, index) {
+        return null;
+    }
+    tree_setToPackedNode(leafNode, index, value) {
+        return;
+    }
+    // JSON
+    fromJson(json) {
+        if (json !== null) {
+            throw Error("JSON invalid type none must be null");
+        }
+        return null;
+    }
+    toJson(value) {
+        return null;
+    }
+}
+exports.NoneType = NoneType;
+//# sourceMappingURL=none.js.map
+
+/***/ }),
+
+/***/ 1703:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UintBigintType = exports.UintNumberType = exports.uintBigintByteLens = exports.uintNumberByteLens = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const basic_1 = __webpack_require__(7262);
+/* eslint-disable @typescript-eslint/member-ordering */
+const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
+const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);
+const BIGINT_2_POW_128 = BigInt(2) ** BigInt(128);
+const BIGINT_2_POW_192 = BigInt(2) ** BigInt(192);
+// const BIGINT_64_MAX = BigInt("0xffffffffffffffff");
+const NUMBER_2_POW_32 = 2 ** 32;
+const NUMBER_32_MAX = 0xffffffff;
+exports.uintNumberByteLens = [1, 2, 4, 8];
+exports.uintBigintByteLens = [1, 2, 4, 8, 16, 32];
+/**
+ * Uint: N-bit unsigned integer (where N in [8, 16, 32, 64, 128, 256])
+ * - Notation: uintN
+ *
+ * UintNumber is represented as the Javascript primitive value 'Number'.
+ *
+ * The Number type is a double-precision 64-bit binary format IEEE 754 value (numbers between -(2^53 − 1) and
+ * 2^53 − 1). It also has the symbolic value: +Infinity.
+ *
+ * As of 2021 performance of 'Number' is extremely faster than 'BigInt'. Some values are spec'ed as Uint64 but
+ * practically they will never exceed 53 bits, such as any unit time or simple counters. This type is an optimization
+ * for these cases, as UintNumber64 can represent any value between 0 and 2^53−1 as well as the max value 2^64-1.
+ */
+class UintNumberType extends basic_1.BasicType {
+    constructor(byteLength, opts) {
+        super();
+        this.byteLength = byteLength;
+        if (byteLength > 8) {
+            throw Error("UintNumber byteLength limit is 8");
+        }
+        if (Math.log2(byteLength) % 1 !== 0) {
+            throw Error("byteLength must be a power of 2");
+        }
+        this.typeName = `uint${byteLength * 8}`;
+        if (opts?.clipInfinity)
+            this.typeName += "Inf";
+        if (opts?.setBitwiseOR)
+            this.typeName += "OR";
+        this.itemsPerChunk = 32 / this.byteLength;
+        this.fixedSize = byteLength;
+        this.minSize = byteLength;
+        this.maxSize = byteLength;
+        this.maxDecimalStr = (BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1)).toString(10);
+        this.clipInfinity = opts?.clipInfinity === true;
+        this.setBitwiseOR = opts?.setBitwiseOR === true;
+    }
+    defaultValue() {
+        return 0;
+    }
+    // Serialization + deserialization
+    value_serializeToBytes({ dataView }, offset, value) {
+        switch (this.byteLength) {
+            case 1:
+                dataView.setInt8(offset, value);
+                break;
+            case 2:
+                dataView.setUint16(offset, value, true);
+                break;
+            case 4:
+                dataView.setUint32(offset, value, true);
+                break;
+            case 8:
+                if (value === Infinity) {
+                    // TODO: Benchmark if it's faster to set BIGINT_64_MAX once
+                    dataView.setUint32(offset, 0xffffffff);
+                    dataView.setUint32(offset + 4, 0xffffffff);
+                }
+                else {
+                    dataView.setUint32(offset, value & 0xffffffff, true);
+                    dataView.setUint32(offset + 4, (value / NUMBER_2_POW_32) & 0xffffffff, true);
+                }
+                break;
+        }
+        return offset + this.byteLength;
+    }
+    value_deserializeFromBytes({ dataView }, start, end) {
+        this.assertValidSize(end - start);
+        switch (this.byteLength) {
+            case 1:
+                return dataView.getUint8(start);
+            case 2:
+                return dataView.getUint16(start, true);
+            case 4:
+                return dataView.getUint32(start, true);
+            case 8: {
+                const a = dataView.getUint32(start, true);
+                const b = dataView.getUint32(start + 4, true);
+                if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
+                    return Infinity;
+                }
+                else {
+                    return b * NUMBER_2_POW_32 + a;
+                }
+            }
+        }
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const value = node.getUint(this.byteLength, 0, this.clipInfinity);
+        this.value_serializeToBytes(output, offset, value);
+        return offset + this.byteLength;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        this.assertValidSize(end - start);
+        const value = this.value_deserializeFromBytes(data, start, end);
+        const node = persistent_merkle_tree_1.LeafNode.fromZero();
+        node.setUint(this.byteLength, 0, value, this.clipInfinity);
+        return node;
+    }
+    // Fast Tree access
+    tree_getFromNode(leafNode) {
+        return leafNode.getUint(this.byteLength, 0, this.clipInfinity);
+    }
+    tree_setToNode(leafNode, value) {
+        this.tree_setToPackedNode(leafNode, 0, value);
+    }
+    tree_getFromPackedNode(leafNode, index) {
+        const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
+        return leafNode.getUint(this.byteLength, offsetBytes, this.clipInfinity);
+    }
+    tree_setToPackedNode(leafNode, index, value) {
+        const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
+        // TODO: Benchmark the cost of this if, and consider using a different class
+        if (this.setBitwiseOR) {
+            leafNode.bitwiseOrUint(this.byteLength, offsetBytes, value);
+        }
+        else {
+            leafNode.setUint(this.byteLength, offsetBytes, value, this.clipInfinity);
+        }
+    }
+    // JSON
+    fromJson(json) {
+        if (typeof json === "number") {
+            return json;
+        }
+        else if (typeof json === "string") {
+            if (this.clipInfinity && json === this.maxDecimalStr) {
+                // Allow to handle max possible number
+                return Infinity;
+            }
+            else {
+                const num = parseInt(json, 10);
+                if (isNaN(num)) {
+                    throw Error("JSON invalid number isNaN");
+                }
+                else if (num > Number.MAX_SAFE_INTEGER) {
+                    // Throw to prevent decimal precision errors downstream
+                    throw Error("JSON invalid number > MAX_SAFE_INTEGER");
+                }
+                else {
+                    return num;
+                }
+            }
+        }
+        else if (typeof json === "bigint") {
+            if (json > MAX_SAFE_INTEGER_BN) {
+                // Throw to prevent decimal precision errors downstream
+                throw Error("JSON invalid number > MAX_SAFE_INTEGER_BN");
+            }
+            else {
+                return Number(json);
+            }
+        }
+        else {
+            throw Error(`JSON invalid type ${typeof json} expected number`);
+        }
+    }
+    toJson(value) {
+        if (value === Infinity) {
+            return this.maxDecimalStr;
+        }
+        else {
+            return value.toString(10);
+        }
+    }
+}
+exports.UintNumberType = UintNumberType;
+/**
+ * Uint: N-bit unsigned integer (where N in [8, 16, 32, 64, 128, 256])
+ * - Notation: uintN
+ *
+ * UintBigint is represented as the Javascript primitive value 'BigInt'.
+ *
+ * The BigInt type is a numeric primitive in JavaScript that can represent integers with arbitrary precision.
+ * With BigInts, you can safely store and operate on large integers even beyond the safe integer limit for Numbers.
+ *
+ * As of 2021 performance of 'Number' is extremely faster than 'BigInt'. For Uint values under 53 bits use UintNumber.
+ * For other values that may exceed 53 bits, use UintBigint.
+ */
+class UintBigintType extends basic_1.BasicType {
+    constructor(byteLength) {
+        super();
+        this.byteLength = byteLength;
+        if (byteLength > 32) {
+            throw Error("UintBigint byteLength limit is 32");
+        }
+        if (Math.log2(byteLength) % 1 !== 0) {
+            throw Error("byteLength must be a power of 2");
+        }
+        this.typeName = `uintBigint${byteLength * 8}`;
+        this.byteLength = byteLength;
+        this.itemsPerChunk = 32 / this.byteLength;
+        this.fixedSize = byteLength;
+        this.minSize = byteLength;
+        this.maxSize = byteLength;
+    }
+    defaultValue() {
+        return BigInt(0);
+    }
+    // Serialization + deserialization
+    value_serializeToBytes({ dataView }, offset, value) {
+        switch (this.byteLength) {
+            case 1:
+                dataView.setInt8(offset, Number(value));
+                break;
+            case 2:
+                dataView.setUint16(offset, Number(value), true);
+                break;
+            case 4:
+                dataView.setUint32(offset, Number(value), true);
+                break;
+            case 8:
+                dataView.setBigUint64(offset, value, true);
+                break;
+            default: {
+                for (let i = 0; i < this.byteLength; i += 8) {
+                    if (i > 0)
+                        value = value / BIGINT_2_POW_64;
+                    const lo = BigInt.asUintN(64, value);
+                    dataView.setBigUint64(offset + i, lo, true);
+                }
+            }
+        }
+        return offset + this.byteLength;
+    }
+    value_deserializeFromBytes({ dataView }, start, end) {
+        const size = end - start;
+        if (size !== this.byteLength) {
+            throw Error(`Invalid size ${size} expected ${this.byteLength}`);
+        }
+        // Note: pre-assigning the right function at the constructor to avoid this switch is not faster
+        switch (this.byteLength) {
+            case 1:
+                return BigInt(dataView.getUint8(start));
+            case 2:
+                return BigInt(dataView.getUint16(start, true));
+            case 4:
+                return BigInt(dataView.getUint32(start, true));
+            case 8:
+                return dataView.getBigUint64(start, true);
+            case 16: {
+                const a = dataView.getBigUint64(start, true);
+                const b = dataView.getBigUint64(start + 8, true);
+                return b * BIGINT_2_POW_64 + a;
+            }
+            case 32: {
+                const a = dataView.getBigUint64(start, true);
+                const b = dataView.getBigUint64(start + 8, true);
+                const c = dataView.getBigUint64(start + 16, true);
+                const d = dataView.getBigUint64(start + 24, true);
+                return d * BIGINT_2_POW_192 + c * BIGINT_2_POW_128 + b * BIGINT_2_POW_64 + a;
+            }
+        }
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const value = node.getUintBigint(this.byteLength, 0);
+        this.value_serializeToBytes(output, offset, value);
+        return offset + this.byteLength;
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        const size = end - start;
+        if (size !== this.byteLength) {
+            throw Error(`Invalid size ${size} expected ${this.byteLength}`);
+        }
+        const value = this.value_deserializeFromBytes(data, start, end);
+        const node = persistent_merkle_tree_1.LeafNode.fromZero();
+        node.setUintBigint(this.byteLength, 0, value);
+        return node;
+    }
+    // Fast Tree access
+    tree_getFromNode(leafNode) {
+        return leafNode.getUintBigint(this.byteLength, 0);
+    }
+    /** Mutates node to set value */
+    tree_setToNode(leafNode, value) {
+        this.tree_setToPackedNode(leafNode, 0, value);
+    }
+    /** EXAMPLE of `tree_getFromNode` */
+    tree_getFromPackedNode(leafNode, index) {
+        const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
+        return leafNode.getUintBigint(this.byteLength, offsetBytes);
+    }
+    /** Mutates node to set value */
+    tree_setToPackedNode(leafNode, index, value) {
+        const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
+        // TODO: Not-optimized, copy pasted from UintNumberType
+        leafNode.setUintBigint(this.byteLength, offsetBytes, value);
+    }
+    // JSON
+    fromJson(json) {
+        if (typeof json === "bigint") {
+            return json;
+        }
+        else if (typeof json === "string" || typeof json === "number") {
+            return BigInt(json);
+        }
+        else {
+            throw Error(`JSON invalid type ${typeof json} expected bigint`);
+        }
+    }
+    toJson(value) {
+        return value.toString(10);
+    }
+}
+exports.UintBigintType = UintBigintType;
+//# sourceMappingURL=uint.js.map
+
+/***/ }),
+
+/***/ 12:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UnionType = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const merkleize_1 = __webpack_require__(1290);
+const composite_1 = __webpack_require__(1347);
+const arrayBasic_1 = __webpack_require__(8623);
+const none_1 = __webpack_require__(3300);
+const VALUE_GINDEX = BigInt(2);
+const SELECTOR_GINDEX = BigInt(3);
+/**
+ * Union: union type containing one of the given subtypes
+ * - Notation: Union[type_0, type_1, ...], e.g. union[None, uint64, uint32]
+ */
+class UnionType extends composite_1.CompositeType {
+    constructor(types) {
+        super();
+        this.types = types;
+        this.depth = 1;
+        this.maxChunkCount = 1;
+        this.fixedSize = null;
+        this.isList = true;
+        this.isViewMutable = true;
+        if (types.length >= 128) {
+            throw Error("Must have less than 128 types");
+        }
+        if (types.length === 0) {
+            throw Error("Must have at least 1 type option");
+        }
+        if (types[0] instanceof none_1.NoneType && types.length < 2) {
+            throw Error("Must have at least 2 type options if the first is None");
+        }
+        for (let i = 1; i < types.length; i++) {
+            if (types[i] instanceof none_1.NoneType) {
+                throw Error("None may only be the first option");
+            }
+        }
+        this.typeName = `Union[${types.map((t) => t.typeName).join(",")}]`;
+        const minLens = [];
+        const maxLens = [];
+        for (const _type of types) {
+            minLens.push(_type.minSize);
+            maxLens.push(_type.maxSize);
+        }
+        this.minSize = 1 + Math.min(...minLens);
+        this.maxSize = 1 + Math.max(...maxLens);
+        this.maxSelector = this.types.length - 1;
+    }
+    defaultValue() {
+        return {
+            selector: 0,
+            value: this.types[0].defaultValue(),
+        };
+    }
+    getView(tree) {
+        return this.tree_toValue(tree.rootNode);
+    }
+    getViewDU(node) {
+        return this.tree_toValue(node);
+    }
+    cacheOfViewDU() {
+        return;
+    }
+    commitView(view) {
+        return this.value_toTree(view);
+    }
+    commitViewDU(view) {
+        return this.value_toTree(view);
+    }
+    value_serializedSize(value) {
+        return 1 + this.types[value.selector].value_serializedSize(value.value);
+    }
+    value_serializeToBytes(output, offset, value) {
+        output.uint8Array[offset] = value.selector;
+        return this.types[value.selector].value_serializeToBytes(output, offset + 1, value.value);
+    }
+    value_deserializeFromBytes(data, start, end) {
+        const selector = data.uint8Array[start];
+        if (selector > this.maxSelector) {
+            throw Error(`Invalid selector ${selector}`);
+        }
+        return {
+            selector,
+            value: this.types[selector].value_deserializeFromBytes(data, start + 1, end),
+        };
+    }
+    tree_serializedSize(node) {
+        const selector = arrayBasic_1.getLengthFromRootNode(node);
+        const valueNode = node.left;
+        return 1 + this.types[selector].value_serializedSize(valueNode);
+    }
+    tree_serializeToBytes(output, offset, node) {
+        const selector = arrayBasic_1.getLengthFromRootNode(node);
+        const valueNode = node.left;
+        output.uint8Array[offset] = selector;
+        return this.types[selector].tree_serializeToBytes(output, offset + 1, valueNode);
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        const selector = data.uint8Array[start];
+        if (selector > this.maxSelector) {
+            throw Error(`Invalid selector ${selector}`);
+        }
+        const valueNode = this.types[selector].tree_deserializeFromBytes(data, start + 1, end);
+        return arrayBasic_1.addLengthNode(valueNode, selector);
+    }
+    // Merkleization
+    hashTreeRoot(value) {
+        return merkleize_1.mixInLength(super.hashTreeRoot(value), value.selector);
+    }
+    getRoots(value) {
+        const valueRoot = this.types[value.selector].hashTreeRoot(value.value);
+        return [valueRoot];
+    }
+    // Proofs
+    getPropertyGindex(prop) {
+        switch (prop) {
+            case "value":
+                return VALUE_GINDEX;
+            case "selector":
+                return SELECTOR_GINDEX;
+            default:
+                throw new Error(`Invalid Union type property ${prop}`);
+        }
+    }
+    getPropertyType() {
         // a Union has multiple types
         throw new Error("Not applicable for Union type");
     }
-    /** Union can only extract type from a Tree */
-    getPropertyTypeFromTree(target, property) {
-        switch (property) {
-            case "value":
-                return this.getType(target);
-            case "selector":
-                return wellKnown_1.byteType;
-            default:
-                throw new Error(`Invalid property ${String(property)} for Union type`);
+    getIndexProperty(index) {
+        if (index === 0)
+            return "value";
+        if (index === 1)
+            return "selector";
+        throw Error("Union index of out bounds");
+    }
+    tree_getLeafGindices(rootGindex, rootNode) {
+        if (!rootNode) {
+            throw Error("rootNode required");
         }
-    }
-    tree_getProperty(target, property) {
-        switch (property) {
-            case "value":
-                return target.getSubtree(exports.VALUE_GINDEX);
-            case "selector":
-                return wellKnown_1.number32Type.struct_deserializeFromBytes(target.getRoot(exports.SELECTOR_GINDEX), 0);
-            default:
-                throw new Error(`Invalid property ${String(property)} for Union type`);
-        }
-    }
-    tree_setProperty(target, property, value) {
-        if (property !== "value") {
-            throw new Error(`Invalid property ${String(property)} to set for Union type`);
-        }
-        const type = this.getType(target);
-        if (abstract_1.isCompositeType(type)) {
-            target.setSubtree(exports.VALUE_GINDEX, type.struct_convertToTree(value));
-        }
-        else {
-            const chunk = new Uint8Array(32);
-            type.struct_serializeToBytes(value, chunk, 0);
-            target.setRoot(exports.VALUE_GINDEX, chunk);
-        }
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_deleteProperty(tree, property) {
-        throw new Error("Method not implemented for Union type");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_iterateValues(tree) {
-        throw new Error("Method not implemented for Union type");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_readonlyIterateValues(tree) {
-        throw new Error("Method not implemented for Union type");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_getValues(tree) {
-        throw new Error("Method not implemented for Union type");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_readonlyGetValues(tree) {
-        throw new Error("Method not implemented for Union type");
-    }
-    tree_getLeafGindices(target, root = BigInt(1)) {
-        const gindices = [persistent_merkle_tree_1.concatGindices([root, exports.SELECTOR_GINDEX])];
-        const type = this.getType(target);
-        const extendedFieldGindex = persistent_merkle_tree_1.concatGindices([root, exports.VALUE_GINDEX]);
-        if (abstract_1.isCompositeType(type)) {
-            gindices.push(...type.tree_getLeafGindices(target.getSubtree(exports.VALUE_GINDEX), extendedFieldGindex));
+        const gindices = [persistent_merkle_tree_1.concatGindices([rootGindex, SELECTOR_GINDEX])];
+        const selector = arrayBasic_1.getLengthFromRootNode(rootNode);
+        const type = this.types[selector];
+        const extendedFieldGindex = persistent_merkle_tree_1.concatGindices([rootGindex, VALUE_GINDEX]);
+        if (composite_1.isCompositeType(type)) {
+            gindices.push(...type.tree_getLeafGindices(extendedFieldGindex, persistent_merkle_tree_1.getNode(rootNode, VALUE_GINDEX)));
         }
         else {
             gindices.push(extendedFieldGindex);
         }
         return gindices;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getType(target) {
-        const selectorRoot = target.getRoot(exports.SELECTOR_GINDEX);
-        const selector = wellKnown_1.number32Type.struct_deserializeFromBytes(selectorRoot, 0);
-        return this.types[selector];
+    // JSON
+    fromJson(json) {
+        if (typeof json !== "object") {
+            throw new Error("JSON must be of type object");
+        }
+        const union = json;
+        if (typeof union.selector !== "number") {
+            throw new Error("Invalid JSON Union selector must be number");
+        }
+        const type = this.types[union.selector];
+        if (!type) {
+            throw new Error("Invalid JSON Union selector out of range");
+        }
+        return {
+            selector: union.selector,
+            value: type.toJson(union.value),
+        };
+    }
+    toJson(value) {
+        return {
+            selector: value.selector,
+            value: this.types[value.selector].toJson(value.value),
+        };
+    }
+    clone(value) {
+        return {
+            selector: value.selector,
+            value: this.types[value.selector].clone(value.value),
+        };
+    }
+    equals(a, b) {
+        if (a.selector !== b.selector) {
+            return false;
+        }
+        return this.types[a.selector].equals(a.value, b.value);
     }
 }
 exports.UnionType = UnionType;
@@ -32375,442 +31652,207 @@ exports.UnionType = UnionType;
 
 /***/ }),
 
-/***/ 8937:
+/***/ 3127:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CompositeVectorType = exports.BasicVectorType = exports.VectorType = exports.isVectorType = exports.VECTOR_TYPE = void 0;
-const array_1 = __webpack_require__(7783);
-const basic_1 = __webpack_require__(3599);
-const type_1 = __webpack_require__(8398);
-const persistent_merkle_tree_1 = __webpack_require__(6647);
-exports.VECTOR_TYPE = Symbol.for("ssz/VectorType");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isVectorType(type) {
-    return type_1.isTypeOf(type, exports.VECTOR_TYPE);
-}
-exports.isVectorType = isVectorType;
-// Trick typescript into treating VectorType as a constructor
-exports.VectorType = 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function VectorType(options) {
-    if (basic_1.isBasicType(options.elementType)) {
-        return new BasicVectorType(options);
+exports.VectorBasicType = void 0;
+const merkleize_1 = __webpack_require__(1290);
+const arrayBasic_1 = __webpack_require__(8623);
+const arrayBasic_2 = __webpack_require__(1769);
+const arrayBasic_3 = __webpack_require__(7005);
+const array_1 = __webpack_require__(443);
+/**
+ * Vector: Ordered fixed-length homogeneous collection, with N values
+ *
+ * Array of Basic type:
+ * - Basic types are max 32 bytes long so multiple values may be packed in the same node.
+ * - Basic types are never returned in a view wrapper, but their value representation
+ */
+class VectorBasicType extends array_1.ArrayType {
+    constructor(elementType, length, opts) {
+        super(elementType);
+        this.elementType = elementType;
+        this.length = length;
+        this.isList = false;
+        this.isViewMutable = true;
+        if (!elementType.isBasic)
+            throw Error("elementType must be basic");
+        if (length === 0)
+            throw Error("Vector length must be > 0");
+        this.typeName = opts?.typeName ?? `Vector[${elementType.typeName}, ${length}]`;
+        // TODO Check that itemsPerChunk is an integer
+        this.itemsPerChunk = 32 / elementType.byteLength;
+        this.maxChunkCount = Math.ceil((length * elementType.byteLength) / 32);
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        this.depth = this.chunkDepth;
+        this.fixedSize = length * elementType.byteLength;
+        this.minSize = this.fixedSize;
+        this.maxSize = this.fixedSize;
+        this.defaultLen = length;
     }
-    else {
-        return new CompositeVectorType(options);
+    getView(tree) {
+        return new arrayBasic_2.ArrayBasicTreeView(this, tree);
     }
-};
-class BasicVectorType extends array_1.BasicArrayType {
-    constructor(options) {
-        super(options);
-        this.length = options.length;
-        this._typeSymbols.add(exports.VECTOR_TYPE);
-    }
-    struct_defaultValue() {
-        return Array.from({ length: this.length }, () => {
-            return this.elementType.struct_defaultValue();
-        });
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_getLength(value) {
-        return this.length;
-    }
-    getMaxLength() {
-        return this.length;
-    }
-    getMinLength() {
-        return this.length;
-    }
-    bytes_validate(data, start, end) {
-        super.bytes_validate(data, start, end);
+    getViewDU(node, cache) {
+        // cache type should be validated (if applicate) in the view
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (end - start !== this.size(null)) {
-            throw new Error("Incorrect deserialized vector length");
-        }
+        return new arrayBasic_3.ArrayBasicTreeViewDU(this, node, cache);
     }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        return super.struct_deserializeFromBytes(data, start, end);
+    commitView(view) {
+        return view.node;
     }
-    struct_assertValidValue(value) {
-        const actualLength = value.length;
-        const expectedLength = this.struct_getLength(value);
-        if (actualLength !== expectedLength) {
-            throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
-        }
-        super.struct_assertValidValue(value);
+    commitViewDU(view) {
+        view.commit();
+        return view.node;
     }
-    struct_convertFromJson(data) {
-        if (!Array.isArray(data)) {
-            throw new Error("Invalid JSON vector: expected an Array");
-        }
-        const expectedLength = this.length;
-        if (data.length !== expectedLength) {
-            throw new Error(`Invalid JSON vector length: expected ${expectedLength}, actual ${data.length}`);
-        }
-        return super.struct_convertFromJson(data);
+    cacheOfViewDU(view) {
+        return view.cache;
     }
-    tree_defaultNode() {
-        if (!this._defaultNode) {
-            this._defaultNode = persistent_merkle_tree_1.subtreeFillToLength(persistent_merkle_tree_1.zeroNode(0), this.getChunkDepth(), this.getMaxChunkCount());
-        }
-        return this._defaultNode;
+    // Serialization + deserialization
+    value_serializedSize() {
+        return this.fixedSize;
     }
-    tree_defaultValue() {
-        return new persistent_merkle_tree_1.Tree(this.tree_defaultNode());
+    value_serializeToBytes(output, offset, value) {
+        return arrayBasic_1.value_serializeToBytesArrayBasic(this.elementType, this.length, output, offset, value);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_getLength(target) {
-        return this.length;
+    value_deserializeFromBytes(data, start, end) {
+        return arrayBasic_1.value_deserializeFromBytesArrayBasic(this.elementType, data, start, end, this);
+    }
+    tree_serializedSize() {
+        return this.fixedSize;
+    }
+    tree_serializeToBytes(output, offset, node) {
+        return arrayBasic_1.tree_serializeToBytesArrayBasic(this.elementType, this.length, this.depth, output, offset, node);
     }
     tree_deserializeFromBytes(data, start, end) {
-        const fixedLen = this.getFixedSerializedLength();
-        if (end - start !== fixedLen) {
-            throw new Error("Incorrect deserialized vector length");
-        }
-        return super.tree_deserializeFromBytes(data, start, end);
+        return arrayBasic_1.tree_deserializeFromBytesArrayBasic(this.elementType, this.depth, data, start, end, this);
     }
-    tree_setProperty(target, property, value) {
-        if (property >= this.tree_getLength(target)) {
-            throw new Error("Invalid array index");
-        }
-        return super.tree_setProperty(target, property, value, false);
+    // Helpers for TreeView
+    tree_getLength() {
+        return this.length;
     }
-    hasVariableSerializedLength() {
-        return false;
+    tree_setLength() {
+        // Vector's length is immutable, ignore this call
     }
-    getFixedSerializedLength() {
-        return this.length * this.elementType.size();
+    tree_getChunksNode(node) {
+        return node;
     }
-    getMaxChunkCount() {
-        return Math.ceil((this.length * this.elementType.size()) / 32);
+    tree_setChunksNode(rootNode, chunksNode) {
+        return chunksNode;
+    }
+    // Merkleization
+    getRoots(value) {
+        const uint8Array = new Uint8Array(this.fixedSize);
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        arrayBasic_1.value_serializeToBytesArrayBasic(this.elementType, this.length, { uint8Array, dataView }, 0, value);
+        return merkleize_1.splitIntoRootChunks(uint8Array);
     }
 }
-exports.BasicVectorType = BasicVectorType;
-class CompositeVectorType extends array_1.CompositeArrayType {
-    constructor(options) {
-        super(options);
-        this.length = options.length;
-        this._typeSymbols.add(exports.VECTOR_TYPE);
-    }
-    struct_defaultValue() {
-        return Array.from({ length: this.length }, () => {
-            return this.elementType.struct_defaultValue();
-        });
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    struct_getLength(value) {
-        return this.length;
-    }
-    getMaxLength() {
-        return this.length;
-    }
-    getMinLength() {
-        return this.length;
-    }
-    struct_deserializeFromBytes(data, start, end) {
-        this.bytes_validate(data, start, end);
-        const value = super.struct_deserializeFromBytes(data, start, end);
-        if (value.length !== this.length) {
-            throw new Error("Incorrect deserialized vector length");
-        }
-        return value;
-    }
-    struct_assertValidValue(value) {
-        const actualLength = value.length;
-        const expectedLength = this.struct_getLength(value);
-        if (actualLength !== expectedLength) {
-            throw new Error(`Invalid vector length: expected ${expectedLength}, actual ${actualLength}`);
-        }
-        super.struct_assertValidValue(value);
-    }
-    struct_convertFromJson(data) {
-        if (!Array.isArray(data)) {
-            throw new Error("Invalid JSON vector: expected an Array");
-        }
-        const expectedLength = this.length;
-        if (data.length !== expectedLength) {
-            throw new Error(`Invalid JSON vector length: expected ${expectedLength}, actual ${data.length}`);
-        }
-        return super.struct_convertFromJson(data);
-    }
-    tree_defaultNode() {
-        if (!this._defaultNode) {
-            this._defaultNode = persistent_merkle_tree_1.subtreeFillToLength(this.elementType.tree_defaultNode(), this.getChunkDepth(), this.length);
-        }
-        return this._defaultNode;
-    }
-    tree_defaultValue() {
-        return new persistent_merkle_tree_1.Tree(this.tree_defaultNode());
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tree_getLength(target) {
-        return this.length;
-    }
-    tree_deserializeFromBytes(data, start, end) {
-        const target = this.tree_defaultValue();
-        const fixedLen = this.elementType.getFixedSerializedLength();
-        if (fixedLen === null) {
-            const offsets = this.bytes_getVariableOffsets(new Uint8Array(data.buffer, data.byteOffset + start, end - start));
-            if (offsets.length !== this.length) {
-                throw new Error("Incorrect deserialized vector length");
-            }
-            for (let i = 0; i < offsets.length; i++) {
-                const [currentOffset, nextOffset] = offsets[i];
-                this.tree_setSubtreeAtChunkIndex(target, i, this.elementType.tree_deserializeFromBytes(data, start + currentOffset, start + nextOffset));
-            }
-        }
-        else {
-            const elementSize = fixedLen;
-            const length = (end - start) / elementSize;
-            if (length !== this.length) {
-                throw new Error("Incorrect deserialized vector length");
-            }
-            for (let i = 0; i < length; i++) {
-                this.tree_setSubtreeAtChunkIndex(target, i, this.elementType.tree_deserializeFromBytes(data, start + i * elementSize, start + (i + 1) * elementSize));
-            }
-        }
-        return target;
-    }
-    setProperty(target, property, value) {
-        if (property >= this.tree_getLength(target)) {
-            throw new Error("Invalid array index");
-        }
-        return super.tree_setProperty(target, property, value, false);
-    }
-    hasVariableSerializedLength() {
-        return this.elementType.hasVariableSerializedLength();
-    }
-    getFixedSerializedLength() {
-        const elementFixedLen = this.elementType.getFixedSerializedLength();
-        if (elementFixedLen === null) {
-            return null;
-        }
-        else {
-            return this.length * elementFixedLen;
-        }
-    }
-    getMaxChunkCount() {
-        return this.length;
-    }
-}
-exports.CompositeVectorType = CompositeVectorType;
-//# sourceMappingURL=vector.js.map
+exports.VectorBasicType = VectorBasicType;
+//# sourceMappingURL=vectorBasic.js.map
 
 /***/ }),
 
-/***/ 284:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * SSZ is a type system that defines:
- * - efficient serialization / deserialization
- * - stable merkleization
- * - default constructor
- *
- * Along with these standardized operations, we provide:
- * - equality
- * - valid value assertion
- * - copy / clone
- * - serialized byte length (for serialization)
- * - chunk count (for merkleization)
- *
- * This library operates on values of several kinds of 'backings', or underlying representations of data.
- * Each backing has runtime tradeoffs for the above operations that arise from the nature of the underlying
- * representation. Effort has been made to minimize the differences between backings for the core API, which
- * includes the above operations, property getter/setters, and iteration (value iteration for vectors/lists
- * and enumerable key iteration for containers).
- *
- * We support the following backings, which correspond to the core operations of serialization and merkleization:
- *
- * - Structural - This backing has a native javascript type representation.
- *     Containers are constructed as js Objects, vectors and lists as Arrays (or TypedArrays)
- *     Within operations, property access is performed using js getter notation, with gets
- *     corresponding to the structure of the value's type. Because structural non-constructor operations do not
- *     assume the underlying representation of values, all backings can be operated on in this context.
- *
- * - Tree - This backing has an immutable merkle tree representation.
- *     The data is always represented as a tree, and within operations, the tree
- *     structure is harnessed as much as possible. Property getters return subtrees except for basic types,
- *     when the native value corresponding th that type is returned.
- *     Values backed by a tree are wrapped in an ES6 Proxy object to provide a convenient, 'structural' interface
- *     for property getters/setters.
- *
- * - ByteArray - This backing has a byte array representation.
- *     The data is always represented as a Uint8Array, and within operations,
- *     the serialized structure is harnessed as much as possible.
- *     Property getters return sub-arrays except for basic types, when the native value
- *     corresponding to that type is returned.
- *     Values backed by an array are wrapped in an ES6 Proxy object to provide a convenient, 'structural' interface
- *     for property getters/setters.
- */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__webpack_require__(3599), exports);
-__exportStar(__webpack_require__(7018), exports);
-__exportStar(__webpack_require__(8398), exports);
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 8398:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/* eslint-disable @typescript-eslint/member-ordering */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Type = exports.isTypeOf = void 0;
-/**
- * Check if `type` is an instance of `typeSymbol` type
- *
- * Used by various isFooType functions
- */
-function isTypeOf(type, typeSymbol) {
-    return type._typeSymbols.has(typeSymbol);
-}
-exports.isTypeOf = isTypeOf;
-/**
- * A Type is either a BasicType of a CompositeType
- */
-class Type {
-    constructor() {
-        this._typeSymbols = new Set();
-    }
-    /**
-     * Valid value assertion
-     */
-    assertValidValue(value) {
-        return this.struct_assertValidValue(value);
-    }
-    /**
-     * Default constructor
-     */
-    defaultValue() {
-        return this.struct_defaultValue();
-    }
-    /**
-     * Clone / copy
-     */
-    clone(value) {
-        return this.struct_clone(value);
-    }
-    /**
-     * Equality
-     */
-    equals(value1, value2) {
-        return this.struct_equals(value1, value2);
-    }
-    /**
-     * Serialized byte length
-     */
-    size(value) {
-        return this.struct_getSerializedLength(value);
-    }
-    /**
-     * Low-level deserialization
-     */
-    fromBytes(data, start, end) {
-        return this.struct_deserializeFromBytes(data, start, end);
-    }
-    /**
-     * Deserialization
-     */
-    deserialize(data) {
-        return this.fromBytes(data, 0, data.length);
-    }
-    /**
-     * Low-level serialization
-     *
-     * Serializes to a pre-allocated Uint8Array
-     */
-    toBytes(value, output, offset) {
-        return this.struct_serializeToBytes(value, output, offset);
-    }
-    /**
-     * Serialization
-     */
-    serialize(value) {
-        const output = new Uint8Array(this.size(value));
-        this.toBytes(value, output, 0);
-        return output;
-    }
-    /**
-     * Merkleization
-     */
-    hashTreeRoot(value) {
-        return this.struct_hashTreeRoot(value);
-    }
-    /**
-     * Convert from JSON-serializable object
-     */
-    fromJson(data, options) {
-        return this.struct_convertFromJson(data, options);
-    }
-    /**
-     * Convert to JSON-serializable object
-     */
-    toJson(value, options) {
-        return this.struct_convertToJson(value, options);
-    }
-}
-exports.Type = Type;
-//# sourceMappingURL=type.js.map
-
-/***/ }),
-
-/***/ 1033:
+/***/ 7702:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.basicTypeToLeafNode = void 0;
-const persistent_merkle_tree_1 = __webpack_require__(6647);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function basicTypeToLeafNode(type, value) {
-    const chunk = new Uint8Array(32);
-    type.toBytes(value, chunk, 0);
-    return new persistent_merkle_tree_1.LeafNode(chunk);
-}
-exports.basicTypeToLeafNode = basicTypeToLeafNode;
-//# sourceMappingURL=basic.js.map
-
-/***/ }),
-
-/***/ 6778:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.bigIntPow = void 0;
-function bigIntPow(base, exponent) {
-    if (exponent < 0) {
-        throw new RangeError("Exponent must be positive");
+exports.VectorCompositeType = void 0;
+const merkleize_1 = __webpack_require__(1290);
+const arrayComposite_1 = __webpack_require__(230);
+const arrayComposite_2 = __webpack_require__(4596);
+const arrayComposite_3 = __webpack_require__(1409);
+const array_1 = __webpack_require__(443);
+/**
+ * Vector: Ordered fixed-length homogeneous collection, with N values
+ *
+ * Array of Composite type:
+ * - Composite types always take at least one chunk
+ * - Composite types are always returned as views
+ */
+class VectorCompositeType extends array_1.ArrayType {
+    constructor(elementType, length, opts) {
+        super(elementType);
+        this.elementType = elementType;
+        this.length = length;
+        this.itemsPerChunk = 1;
+        this.isList = false;
+        this.isViewMutable = true;
+        if (elementType.isBasic)
+            throw Error("elementType must not be basic");
+        if (length === 0)
+            throw Error("Vector length must be > 0");
+        this.typeName = opts?.typeName ?? `Vector[${elementType.typeName}, ${length}]`;
+        this.maxChunkCount = length;
+        this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
+        this.depth = this.chunkDepth;
+        this.fixedSize = elementType.fixedSize === null ? null : length * elementType.fixedSize;
+        this.minSize = arrayComposite_1.minSizeArrayComposite(elementType, length);
+        this.maxSize = arrayComposite_1.maxSizeArrayComposite(elementType, length);
+        this.defaultLen = length;
     }
-    let out = BigInt(1);
-    for (; exponent > 0; exponent--) {
-        out *= base;
+    getView(tree) {
+        return new arrayComposite_2.ArrayCompositeTreeView(this, tree);
     }
-    return out;
+    getViewDU(node, cache) {
+        // cache type should be validated (if applicate) in the view
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return new arrayComposite_3.ArrayCompositeTreeViewDU(this, node, cache);
+    }
+    commitView(view) {
+        return view.node;
+    }
+    commitViewDU(view) {
+        view.commit();
+        return view.node;
+    }
+    cacheOfViewDU(view) {
+        return view.cache;
+    }
+    // Serialization + deserialization
+    value_serializedSize(value) {
+        return arrayComposite_1.value_serializedSizeArrayComposite(this.elementType, this.length, value);
+    }
+    value_serializeToBytes(output, offset, value) {
+        return arrayComposite_1.value_serializeToBytesArrayComposite(this.elementType, this.length, output, offset, value);
+    }
+    value_deserializeFromBytes(data, start, end) {
+        return arrayComposite_1.value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
+    }
+    tree_serializedSize(node) {
+        return arrayComposite_1.tree_serializedSizeArrayComposite(this.elementType, this.length, this.depth, node);
+    }
+    tree_serializeToBytes(output, offset, node) {
+        return arrayComposite_1.tree_serializeToBytesArrayComposite(this.elementType, this.length, this.depth, node, output, offset);
+    }
+    tree_deserializeFromBytes(data, start, end) {
+        return arrayComposite_1.tree_deserializeFromBytesArrayComposite(this.elementType, this.depth, data, start, end, this);
+    }
+    // Helpers for TreeView
+    tree_getLength() {
+        return this.length;
+    }
+    tree_setLength() {
+        // Vector's length is immutable, ignore this call
+    }
+    tree_getChunksNode(node) {
+        return node;
+    }
+    tree_setChunksNode(rootNode, chunksNode) {
+        return chunksNode;
+    }
+    // Merkleization
+    getRoots(value) {
+        return arrayComposite_1.value_getRootsArrayComposite(this.elementType, this.length, value);
+    }
 }
-exports.bigIntPow = bigIntPow;
-//# sourceMappingURL=bigInt.js.map
+exports.VectorCompositeType = VectorCompositeType;
+//# sourceMappingURL=vectorComposite.js.map
 
 /***/ }),
 
@@ -32820,9 +31862,9 @@ exports.bigIntPow = bigIntPow;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getByteBits = exports.byteArrayEquals = exports.fromHexString = exports.toHexString = void 0;
+exports.byteArrayEquals = exports.fromHexString = exports.toHexString = void 0;
 // Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
-const hexByByte = [];
+const hexByByte = new Array(256);
 function toHexString(bytes) {
     let hex = "0x";
     for (const byte of bytes) {
@@ -32836,20 +31878,21 @@ function toHexString(bytes) {
 exports.toHexString = toHexString;
 function fromHexString(hex) {
     if (typeof hex !== "string") {
-        throw new Error("Expected hex string to be a string");
+        throw new Error(`hex argument type ${typeof hex} must be of type string`);
     }
     if (hex.startsWith("0x")) {
         hex = hex.slice(2);
     }
     if (hex.length % 2 !== 0) {
-        throw new Error("Expected an even number of characters");
+        throw new Error(`hex string length ${hex.length} must be multiple of 2`);
     }
-    const bytes = [];
-    for (let i = 0, len = hex.length; i < len; i += 2) {
-        const byte = parseInt(hex.slice(i, i + 2), 16);
-        bytes.push(byte);
+    const byteLen = hex.length / 2;
+    const bytes = new Uint8Array(byteLen);
+    for (let i = 0; i < byteLen; i++) {
+        const byte = parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
+        bytes[i] = byte;
     }
-    return new Uint8Array(bytes);
+    return bytes;
 }
 exports.fromHexString = fromHexString;
 function byteArrayEquals(a, b) {
@@ -32863,242 +31906,7 @@ function byteArrayEquals(a, b) {
     return true;
 }
 exports.byteArrayEquals = byteArrayEquals;
-function getByteBits(target, offset) {
-    const byte = target[offset];
-    if (!byte) {
-        return [false, false, false, false, false, false, false, false];
-    }
-    const bits = Array.prototype.map
-        .call(byte.toString(2).padStart(8, "0"), (c) => (c === "1" ? true : false))
-        .reverse();
-    return bits;
-}
-exports.getByteBits = getByteBits;
 //# sourceMappingURL=byteArray.js.map
-
-/***/ }),
-
-/***/ 4929:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var Buffer = __webpack_require__(8834)["Buffer"];
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.mixInLength = exports.merkleize = exports.hash = void 0;
-const hash_1 = __webpack_require__(2738);
-const merkleize_1 = __webpack_require__(1290);
-function hash(...inputs) {
-    return Uint8Array.from(hash_1.hash(...inputs.map(Buffer.from)));
-}
-exports.hash = hash;
-function merkleize(chunks, padTo) {
-    return merkleize_1.merkleize(Array.from(chunks).map(Buffer.from), padTo);
-}
-exports.merkleize = merkleize;
-function mixInLength(root, length) {
-    const lengthBuf = Buffer.alloc(32);
-    lengthBuf.writeUIntLE(length, 0, 6);
-    return hash(root, lengthBuf);
-}
-exports.mixInLength = mixInLength;
-//# sourceMappingURL=compat.js.map
-
-/***/ }),
-
-/***/ 7318:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/** @module ssz */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BYTES_PER_LENGTH_PREFIX = exports.BYTES_PER_CHUNK = void 0;
-// Number of bytes per chunk.
-/** @ignore */
-exports.BYTES_PER_CHUNK = 32;
-// Number of bytes per serialized length prefix.
-/** @ignore */
-exports.BYTES_PER_LENGTH_PREFIX = 4;
-//# sourceMappingURL=constants.js.map
-
-/***/ }),
-
-/***/ 203:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.renderJsonPath = exports.SszErrorPath = void 0;
-/**
- * Tracks the JSON path location of nested errors
- */
-class SszErrorPath extends Error {
-    constructor(e, keyOrIndex) {
-        const prevJsonPath = e instanceof SszErrorPath ? e.jsonPath : [];
-        const jsonPath = [keyOrIndex, ...prevJsonPath];
-        const rawMessage = e instanceof SszErrorPath ? e.rawMessage : e.message;
-        super(`${renderJsonPath(jsonPath)}: ${rawMessage}`);
-        this.jsonPath = jsonPath;
-        this.rawMessage = rawMessage;
-    }
-}
-exports.SszErrorPath = SszErrorPath;
-/**
- * Render an array of JSON path items
- * @param jsonPath ["a", 2, "n", "m"]
- * @returns "a[2].n.m"
- */
-function renderJsonPath(jsonPath) {
-    let path = "";
-    for (const item of jsonPath) {
-        switch (typeof item) {
-            case "number":
-                path += `[${item}]`;
-                break;
-            case "string":
-            default:
-                path += path.length > 0 ? `.${item}` : item;
-                break;
-        }
-    }
-    return path;
-}
-exports.renderJsonPath = renderJsonPath;
-//# sourceMappingURL=errorPath.js.map
-
-/***/ }),
-
-/***/ 2738:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var Buffer = __webpack_require__(8834)["Buffer"];
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.newHashObject = exports.cloneHashObject = exports.hash = void 0;
-/** @module ssz */
-const as_sha256_1 = __webpack_require__(8129);
-/**
- * Hash used for hashTreeRoot
- */
-function hash(...inputs) {
-    return as_sha256_1.digest(Buffer.concat(inputs));
-}
-exports.hash = hash;
-/**
- * A temporary HashObject is needed in a lot of places, this HashObject is then
- * applied to persistent-merkle-tree, it'll make a copy so it's safe to mutate it after that.
- * It means that we could use a shared HashObject instead of having to always allocate
- * a new one to save memory. This temporary HashObject is always allocated by cloneHashObject()
- * or newHashObject() below.
- **/
-const sharedHashObject = {
-    h0: 0,
-    h1: 0,
-    h2: 0,
-    h3: 0,
-    h4: 0,
-    h5: 0,
-    h6: 0,
-    h7: 0,
-};
-/**
- * Clone a hash object using sharedHashObject, after doing this we usually
- * apply HashObject to the Tree which make a copy there so it's safe to mutate
- * this HashObject after that.
- **/
-function cloneHashObject(hashObject) {
-    sharedHashObject.h0 = hashObject.h0;
-    sharedHashObject.h1 = hashObject.h1;
-    sharedHashObject.h2 = hashObject.h2;
-    sharedHashObject.h3 = hashObject.h3;
-    sharedHashObject.h4 = hashObject.h4;
-    sharedHashObject.h5 = hashObject.h5;
-    sharedHashObject.h6 = hashObject.h6;
-    sharedHashObject.h7 = hashObject.h7;
-    return sharedHashObject;
-}
-exports.cloneHashObject = cloneHashObject;
-/**
- * Reset and return sharedHashObject, after doing this we usually
- * apply HashObject to the Tree which make a copy there so it's safe to mutate
- * this HashObject after that.
- **/
-function newHashObject() {
-    sharedHashObject.h0 = 0;
-    sharedHashObject.h1 = 0;
-    sharedHashObject.h2 = 0;
-    sharedHashObject.h3 = 0;
-    sharedHashObject.h4 = 0;
-    sharedHashObject.h5 = 0;
-    sharedHashObject.h6 = 0;
-    sharedHashObject.h7 = 0;
-    return sharedHashObject;
-}
-exports.newHashObject = newHashObject;
-//# sourceMappingURL=hash.js.map
-
-/***/ }),
-
-/***/ 1027:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toExpectedCase = void 0;
-const case_1 = __importDefault(__webpack_require__(8823));
-function toExpectedCase(value, expectedCase = "camel", customCasingMap) {
-    if (expectedCase === "notransform")
-        return value;
-    if (customCasingMap && customCasingMap[value])
-        return customCasingMap[value];
-    switch (expectedCase) {
-        case "param":
-            return case_1.default.kebab(value);
-        case "dot":
-            return case_1.default.lower(value, ".", true);
-        default:
-            return case_1.default[expectedCase](value);
-    }
-}
-exports.toExpectedCase = toExpectedCase;
-//# sourceMappingURL=json.js.map
-
-/***/ }),
-
-/***/ 8456:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.previousPowerOf2 = exports.nextPowerOf2 = exports.bitLength = void 0;
-/** @ignore */
-function bitLength(n) {
-    const bitstring = n.toString(2);
-    if (bitstring === "0") {
-        return 0;
-    }
-    return bitstring.length;
-}
-exports.bitLength = bitLength;
-/** @ignore */
-function nextPowerOf2(n) {
-    return n <= 0 ? 1 : Math.pow(2, bitLength(n - 1));
-}
-exports.nextPowerOf2 = nextPowerOf2;
-/** @ignore */
-function previousPowerOf2(n) {
-    return n === 0 ? 1 : Math.pow(2, bitLength(n) - 1);
-}
-exports.previousPowerOf2 = previousPowerOf2;
-//# sourceMappingURL=math.js.map
 
 /***/ }),
 
@@ -33109,60 +31917,184 @@ exports.previousPowerOf2 = previousPowerOf2;
 /* provided dependency */ var Buffer = __webpack_require__(8834)["Buffer"];
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.mixInLength = exports.merkleize = void 0;
-/** @module ssz */
-const hash_1 = __webpack_require__(2738);
-const math_1 = __webpack_require__(8456);
+exports.nextPowerOf2 = exports.maxChunksToDepth = exports.bitLength = exports.mixInLength = exports.splitIntoRootChunks = exports.merkleize = exports.hash64 = void 0;
+const as_sha256_1 = __webpack_require__(8129);
 const zeros_1 = __webpack_require__(3250);
-/** @ignore */
-function merkleize(chunks, padFor = 0) {
-    const layerCount = math_1.bitLength(math_1.nextPowerOf2(padFor || chunks.length) - 1);
+function hash64(bytes32A, bytes32B) {
+    return as_sha256_1.digest64(Buffer.concat([bytes32A, bytes32B]));
+}
+exports.hash64 = hash64;
+function merkleize(chunks, padFor) {
+    const layerCount = bitLength(nextPowerOf2(padFor) - 1);
     if (chunks.length == 0) {
-        return zeros_1.zeroHashes[layerCount];
+        return zeros_1.zeroHash(layerCount);
     }
+    let chunkCount = chunks.length;
     // Instead of pushing on all padding zero chunks at the leaf level
     // we push on zero hash chunks at the highest possible level to avoid over-hashing
-    let layer = 0;
-    while (layer < layerCount) {
+    for (let l = 0; l < layerCount; l++) {
+        const padCount = chunkCount % 2;
+        const paddedChunkCount = chunkCount + padCount;
         // if the chunks.length is odd
         // we need to push on the zero-hash of that level to merkleize that level
-        if (chunks.length % 2 == 1) {
-            chunks.push(zeros_1.zeroHashes[layer]);
+        for (let i = 0; i < padCount; i++) {
+            chunks[chunkCount + i] = zeros_1.zeroHash(l);
         }
-        for (let i = 0; i < chunks.length; i += 2) {
-            const h = hash_1.hash(chunks[i], chunks[i + 1]);
-            chunks[i / 2] = Buffer.from(h.buffer, h.byteOffset, h.byteLength);
+        for (let i = 0; i < paddedChunkCount; i += 2) {
+            chunks[i / 2] = hash64(chunks[i], chunks[i + 1]);
         }
-        chunks.splice(chunks.length / 2, chunks.length / 2);
-        layer++;
+        chunkCount = paddedChunkCount / 2;
     }
     return chunks[0];
 }
 exports.merkleize = merkleize;
+/**
+ * Split a long Uint8Array into Uint8Array of exactly 32 bytes
+ */
+function splitIntoRootChunks(longChunk) {
+    const chunkCount = Math.ceil(longChunk.length / 32);
+    const chunks = new Array(chunkCount);
+    for (let i = 0; i < chunkCount; i++) {
+        const chunk = new Uint8Array(32);
+        chunk.set(longChunk.slice(i * 32, (i + 1) * 32));
+        chunks[i] = chunk;
+    }
+    return chunks;
+}
+exports.splitIntoRootChunks = splitIntoRootChunks;
 /** @ignore */
 function mixInLength(root, length) {
     const lengthBuf = Buffer.alloc(32);
     lengthBuf.writeUIntLE(length, 0, 6);
-    const h = hash_1.hash(root, lengthBuf);
-    return Buffer.from(h.buffer, h.byteOffset, h.byteLength);
+    return hash64(root, lengthBuf);
 }
 exports.mixInLength = mixInLength;
+// x2 faster than bitLengthStr() which uses Number.toString(2)
+function bitLength(i) {
+    if (i === 0) {
+        return 0;
+    }
+    return Math.floor(Math.log2(i)) + 1;
+}
+exports.bitLength = bitLength;
+/**
+ * Given maxChunkCount return the chunkDepth
+ * ```
+ * n: [0,1,2,3,4,5,6,7,8,9]
+ * d: [0,0,1,2,2,3,3,3,3,4]
+ * ```
+ */
+function maxChunksToDepth(n) {
+    if (n === 0)
+        return 0;
+    return Math.ceil(Math.log2(n));
+}
+exports.maxChunksToDepth = maxChunksToDepth;
+/** @ignore */
+function nextPowerOf2(n) {
+    return n <= 0 ? 1 : Math.pow(2, bitLength(n - 1));
+}
+exports.nextPowerOf2 = nextPowerOf2;
 //# sourceMappingURL=merkleize.js.map
 
 /***/ }),
 
-/***/ 3834:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ 5507:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isTree = void 0;
-function isTree(value) {
-    return Boolean(value.rootNode && value.rootNode.isLeaf);
+exports.treePostProcessFromProofNode = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+/** Duplicated partial declaration to break circular dependency with CompositeType */
+function isCompositeType(type) {
+    return !type.isBasic;
 }
-exports.isTree = isTree;
-//# sourceMappingURL=tree.js.map
+/**
+ * Navigates and mutates nodes to post process a tree created with `Tree.createFromProof`.
+ * Tree returns regular a tree with only BranchNode and LeafNode instances. However, SSZ features
+ * non-standard nodes that make proofs for those types to be un-usable. This include:
+ * - BranchNodeStruct: Must contain complete data `tree_fromProofNode` transforms a BranchNode and
+ *   all of its data into a single BranchNodeStruct instance.
+ *
+ * @param bitstring Bitstring without the leading "1", since it's only used to compute horizontal indexes.
+ */
+function treePostProcessFromProofNode(node, type, bitstring = "", currentDepth = 0) {
+    // Must run tree_fromProofNode on the first received node (i.e. Validator object)
+    if (currentDepth === 0) {
+        const nodePost = type.tree_fromProofNode(node);
+        if (nodePost.done) {
+            return nodePost.node;
+        }
+        else {
+            node = nodePost.node;
+        }
+    }
+    const atTypeDepth = type.depth === currentDepth;
+    if (node.isLeaf()) {
+        if (atTypeDepth) {
+            const jsonPathProp = type.getIndexProperty(bitstringToIndex(bitstring));
+            if (jsonPathProp === null) {
+                // bitstring is out of bounds, witness node
+                return node;
+            }
+            const childType = type.getPropertyType(jsonPathProp);
+            // If this type merkleized fits in a single chunk then this LeafNode includes all data
+            if (childType.maxChunkCount === 1 && isCompositeType(childType)) {
+                return childType.tree_fromProofNode(node).node;
+            }
+            // Witness node
+            else {
+                return node;
+            }
+        }
+        // LeafNode not at type depth is a witness or a length / selector nodes
+        else {
+            return node;
+        }
+    }
+    else {
+        if (atTypeDepth) {
+            const jsonPathProp = type.getIndexProperty(bitstringToIndex(bitstring));
+            if (jsonPathProp === null) {
+                // bitstring is out of bounds, witness node
+                return node;
+            }
+            const childType = type.getPropertyType(jsonPathProp);
+            if (!isCompositeType(childType)) {
+                throw Error("BranchNode does not map to CompositeType");
+            }
+            const nodePost = childType.tree_fromProofNode(node);
+            // If tree_fromProofNode is the identity function, keep going, otherwise stop navigating
+            if (nodePost.done) {
+                return nodePost.node;
+            }
+            else {
+                return treePostProcessFromProofNode(nodePost.node, childType);
+            }
+        }
+        // BranchNode at not type depth, keep navigating
+        else {
+            const leftNode = treePostProcessFromProofNode(node.left, type, bitstring + "0", currentDepth + 1);
+            const rightNode = treePostProcessFromProofNode(node.right, type, bitstring + "1", currentDepth + 1);
+            if (leftNode === node.left && rightNode === node.right) {
+                return node;
+            }
+            else {
+                return new persistent_merkle_tree_1.BranchNode(leftNode, rightNode);
+            }
+        }
+    }
+}
+exports.treePostProcessFromProofNode = treePostProcessFromProofNode;
+/** Return the node horizontal index given a bitstring without the leading "1" */
+function bitstringToIndex(bitstring) {
+    if (bitstring === "")
+        return 0;
+    return parseInt(bitstring, 2);
+}
+//# sourceMappingURL=treePostProcessFromProofNode.js.map
 
 /***/ }),
 
@@ -33173,17 +32105,1714 @@ exports.isTree = isTree;
 /* provided dependency */ var Buffer = __webpack_require__(8834)["Buffer"];
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.zeroHashes = void 0;
-/** @module ssz */
-const constants_1 = __webpack_require__(7318);
-const hash_1 = __webpack_require__(2738);
+exports.zeroHash = void 0;
+const as_sha256_1 = __webpack_require__(8129);
 // create array of "zero hashes", successively hashed zero chunks
-exports.zeroHashes = [Buffer.alloc(constants_1.BYTES_PER_CHUNK)];
-for (let i = 0; i < 52; i++) {
-    const h = hash_1.hash(exports.zeroHashes[i], exports.zeroHashes[i]);
-    exports.zeroHashes.push(Buffer.from(h.buffer, h.byteOffset, h.byteLength));
+const zeroHashes = [new Uint8Array(32)];
+function zeroHash(depth) {
+    if (depth >= zeroHashes.length) {
+        for (let i = zeroHashes.length; i <= depth; i++) {
+            zeroHashes[i] = as_sha256_1.digest64(Buffer.concat([zeroHashes[i - 1], zeroHashes[i - 1]]));
+        }
+    }
+    return zeroHashes[depth];
 }
+exports.zeroHash = zeroHash;
 //# sourceMappingURL=zeros.js.map
+
+/***/ }),
+
+/***/ 8676:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getUint8ByteToBitBooleanArray = exports.BitArray = void 0;
+/** Globally cache this information. @see getUint8ByteToBitBooleanArray */
+const uint8ByteToBitBooleanArrays = new Array(256);
+/**
+ * BitArray may be represented as an array of bits or compressed into an array of bytes.
+ *
+ * **Array of bits**:
+ * Require 8.87 bytes per bit, so for 512 bits = 4500 bytes.
+ * Are 'faster' to iterate with native tooling but are as fast as array of bytes with precomputed caches.
+ *
+ * **Array of bytes**:
+ * Require an average cost of Uint8Array in JS = 220 bytes for 32 bytes, so for 512 bits = 220 bytes.
+ * With precomputed boolean arrays per bytes value are as fast to iterate as an array of bits above.
+ *
+ * This BitArray implementation will represent data as a Uint8Array since it's very cheap to deserialize and can be as
+ * fast to iterate as a native array of booleans, precomputing boolean arrays (total memory cost of 16000 bytes).
+ */
+class BitArray {
+    constructor(
+    /** Underlying BitArray Uint8Array data */
+    uint8Array, 
+    /** Immutable bitLen of this BitArray */
+    bitLen) {
+        this.uint8Array = uint8Array;
+        this.bitLen = bitLen;
+        if (uint8Array.length !== Math.ceil(bitLen / 8)) {
+            throw Error("BitArray uint8Array length does not match bitLen");
+        }
+    }
+    /** Returns a zero'ed BitArray of `bitLen` */
+    static fromBitLen(bitLen) {
+        return new BitArray(new Uint8Array(Math.ceil(bitLen / 8)), bitLen);
+    }
+    /** Returns a BitArray of `bitLen` with a single bit set to true at position `bitIndex` */
+    static fromSingleBit(bitLen, bitIndex) {
+        const bitArray = BitArray.fromBitLen(bitLen);
+        bitArray.set(bitIndex, true);
+        return bitArray;
+    }
+    /** Returns a BitArray from an array of booleans representation */
+    static fromBoolArray(bitBoolArr) {
+        const bitArray = BitArray.fromBitLen(bitBoolArr.length);
+        for (let i = 0; i < bitBoolArr.length; i++) {
+            if (bitBoolArr[i] === true) {
+                bitArray.set(i, true);
+            }
+        }
+        return bitArray;
+    }
+    clone() {
+        // TODO: Benchmark if Uint8Array.slice(0) is the fastest way to copy data here
+        return new BitArray(this.uint8Array.slice(0), this.bitLen);
+    }
+    /**
+     * Get bit value at index `bitIndex`
+     */
+    get(bitIndex) {
+        const byteIdx = Math.floor(bitIndex / 8);
+        const bitInBit = bitIndex % 8;
+        const mask = 1 << bitInBit;
+        return (this.uint8Array[byteIdx] & mask) === mask;
+    }
+    /**
+     * Set bit value at index `bitIndex`
+     */
+    set(bitIndex, bit) {
+        if (bitIndex >= this.bitLen) {
+            throw Error(`BitArray set bitIndex ${bitIndex} beyond bitLen ${this.bitLen}`);
+        }
+        const byteIdx = Math.floor(bitIndex / 8);
+        const bitInBit = bitIndex % 8;
+        const mask = 1 << bitInBit;
+        let byte = this.uint8Array[byteIdx];
+        if (bit) {
+            // For bit in byte, 1,0 OR 1 = 1
+            // byte 100110
+            // mask 010000
+            // res  110110
+            byte |= mask;
+            this.uint8Array[byteIdx] = byte;
+        }
+        else {
+            // For bit in byte, 1,0 OR 1 = 0
+            if ((byte & mask) === mask) {
+                // byte 110110
+                // mask 010000
+                // res  100110
+                byte ^= mask;
+                this.uint8Array[byteIdx] = byte;
+            }
+            else {
+                // Ok, bit is already 0
+            }
+        }
+    }
+    /** Merge two BitArray bitfields with OR. Must have the same bitLen */
+    mergeOrWith(bitArray2) {
+        if (bitArray2.bitLen !== this.bitLen) {
+            throw Error("Must merge BitArrays of same bitLen");
+        }
+        // Merge bitFields
+        for (let i = 0; i < this.uint8Array.length; i++) {
+            this.uint8Array[i] = this.uint8Array[i] | bitArray2.uint8Array[i];
+        }
+    }
+    /**
+     * Returns an array with the indexes which have a bit set to true
+     */
+    intersectValues(values) {
+        const yes = [];
+        if (values.length !== this.bitLen) {
+            throw Error(`Must not intersect values of length ${values.length} != bitLen ${this.bitLen}`);
+        }
+        const fullByteLen = Math.floor(this.bitLen / 8);
+        const remainderBits = this.bitLen % 8;
+        // Iterate over each byte of bits
+        const bytes = this.uint8Array;
+        for (let iByte = 0; iByte < fullByteLen; iByte++) {
+            // Get the precomputed boolean array for this byte
+            const booleansInByte = getUint8ByteToBitBooleanArray(bytes[iByte]);
+            // For each bit in the byte check participation and add to indexesSelected array
+            for (let iBit = 0; iBit < 8; iBit++) {
+                if (booleansInByte[iBit]) {
+                    yes.push(values[iByte * 8 + iBit]);
+                }
+            }
+        }
+        if (remainderBits > 0) {
+            // Get the precomputed boolean array for this byte
+            const booleansInByte = getUint8ByteToBitBooleanArray(bytes[fullByteLen]);
+            // For each bit in the byte check participation and add to indexesSelected array
+            for (let iBit = 0; iBit < remainderBits; iBit++) {
+                if (booleansInByte[iBit]) {
+                    yes.push(values[fullByteLen * 8 + iBit]);
+                }
+            }
+        }
+        return yes;
+    }
+    /**
+     * Returns the positions of all bits that are set to true
+     */
+    getTrueBitIndexes() {
+        const indexes = [];
+        // Iterate over each byte of bits
+        const bytes = this.uint8Array;
+        for (let iByte = 0, byteLen = bytes.length; iByte < byteLen; iByte++) {
+            // Get the precomputed boolean array for this byte
+            const booleansInByte = getUint8ByteToBitBooleanArray(bytes[iByte]);
+            // For each bit in the byte check participation and add to indexesSelected array
+            for (let iBit = 0; iBit < 8; iBit++) {
+                if (booleansInByte[iBit]) {
+                    indexes.push(iByte * 8 + iBit);
+                }
+            }
+        }
+        return indexes;
+    }
+    /**
+     * Return the position of a single bit set. If no bit set or more than 1 bit set, throws.
+     * @returns
+     *  - number: if there's a single bit set, the number it the single bit set position
+     *  - null: if ERROR_MORE_THAN_ONE_BIT_SET or ERROR_NO_BIT_SET
+     * @throws
+     *  - ERROR_MORE_THAN_ONE_BIT_SET
+     *  - ERROR_NO_BIT_SET
+     */
+    getSingleTrueBit() {
+        let index = null;
+        const bytes = this.uint8Array;
+        // Iterate over each byte of bits
+        for (let iByte = 0, byteLen = bytes.length; iByte < byteLen; iByte++) {
+            // If it's exactly zero, there won't be any indexes, continue early
+            if (bytes[iByte] === 0) {
+                continue;
+            }
+            // Get the precomputed boolean array for this byte
+            const booleansInByte = getUint8ByteToBitBooleanArray(bytes[iByte]);
+            // For each bit in the byte check participation and add to indexesSelected array
+            for (let iBit = 0; iBit < 8; iBit++) {
+                if (booleansInByte[iBit] === true) {
+                    if (index !== null) {
+                        // ERROR_MORE_THAN_ONE_BIT_SET
+                        return null;
+                    }
+                    index = iByte * 8 + iBit;
+                }
+            }
+        }
+        if (index === null) {
+            // ERROR_NO_BIT_SET
+            return null;
+        }
+        else {
+            return index;
+        }
+    }
+    toBoolArray() {
+        const bitBoolArr = new Array(this.bitLen);
+        for (let i = 0; i < this.bitLen; i++) {
+            bitBoolArr[i] = this.get(i);
+        }
+        return bitBoolArr;
+    }
+}
+exports.BitArray = BitArray;
+/**
+ * Given a byte (0 -> 255), return a Array of boolean with length = 8, big endian.
+ * Ex: 1 => [true false false false false false false false]
+ *     5 => [true false true false false fase false false]
+ */
+function getUint8ByteToBitBooleanArray(byte) {
+    if (!uint8ByteToBitBooleanArrays[byte]) {
+        uint8ByteToBitBooleanArrays[byte] = computeUint8ByteToBitBooleanArray(byte);
+    }
+    return uint8ByteToBitBooleanArrays[byte];
+}
+exports.getUint8ByteToBitBooleanArray = getUint8ByteToBitBooleanArray;
+/** @see getUint8ByteToBitBooleanArray */
+function computeUint8ByteToBitBooleanArray(byte) {
+    // this returns little endian
+    const binaryStr = byte.toString(2);
+    const binaryLength = binaryStr.length;
+    const bits = new Array(8);
+    for (let i = 0; i < 8; i++) {
+        bits[i] =
+            i < binaryLength
+                ? //
+                    binaryStr[binaryLength - i - 1] === "1"
+                : false;
+    }
+    return bits;
+}
+//# sourceMappingURL=bitArray.js.map
+
+/***/ }),
+
+/***/ 9352:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TreeView = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+/**
+ * A Tree View is a wrapper around a type and an SSZ Tree that contains:
+ * - data merkleized
+ * - a hook to its parent Tree to propagate changes upwards
+ *
+ * **View**
+ * - Best for simple usage where performance is NOT important
+ * - Applies changes immediately
+ * - Has reference to parent tree
+ * - Does NOT have caches for fast get / set ops
+ */
+class TreeView {
+    /** Serialize view to binary data */
+    serialize() {
+        const output = new Uint8Array(this.type.tree_serializedSize(this.node));
+        const dataView = new DataView(output.buffer, output.byteOffset, output.byteLength);
+        this.type.tree_serializeToBytes({ uint8Array: output, dataView }, 0, this.node);
+        return output;
+    }
+    /**
+     * Merkleize view and compute its hashTreeRoot.
+     *
+     * See spec for definition of hashTreeRoot:
+     * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
+     */
+    hashTreeRoot() {
+        return this.node.root;
+    }
+    /**
+     * Create a Merkle multiproof on this view's data.
+     * A `path` is an array of 'JSON' paths into the data
+     * @example
+     * ```ts
+     * state.createProof([
+     *   ["validators", 1234, "slashed"],
+     *   ["genesisTime"]
+     * ])
+     * ```
+     *
+     * See spec for definition of merkle multiproofs:
+     * https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
+     */
+    createProof(paths) {
+        return this.type.tree_createProof(this.node, paths);
+    }
+    /**
+     * Transform the view into a value, from the current node instance.
+     * For ViewDU returns the value of the committed data, so call .commit() before if there are pending changes.
+     */
+    toValue() {
+        return this.type.tree_toValue(this.node);
+    }
+    /** Return a new Tree View instance referencing the same internal `Node`. Drops its existing `Tree` hook if any */
+    clone() {
+        return this.type.getView(new persistent_merkle_tree_1.Tree(this.node));
+    }
+}
+exports.TreeView = TreeView;
+//# sourceMappingURL=abstract.js.map
+
+/***/ }),
+
+/***/ 1769:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ArrayBasicTreeView = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const abstract_1 = __webpack_require__(9352);
+class ArrayBasicTreeView extends abstract_1.TreeView {
+    constructor(type, tree) {
+        super();
+        this.type = type;
+        this.tree = tree;
+    }
+    /**
+     * Number of elements in the array. Equal to the Uint32 value of the Tree's length node
+     */
+    get length() {
+        return this.type.tree_getLength(this.tree.rootNode);
+    }
+    get node() {
+        return this.tree.rootNode;
+    }
+    /**
+     * Get element at `index`. Returns the Basic element type value directly
+     */
+    get(index) {
+        // First walk through the tree to get the root node for that index
+        const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
+        const leafNode = this.tree.getNodeAtDepth(this.type.depth, chunkIndex);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return this.type.elementType.tree_getFromPackedNode(leafNode, index);
+    }
+    /**
+     * Set Basic element type `value` at `index`
+     */
+    set(index, value) {
+        const length = this.length;
+        if (index >= length) {
+            throw Error(`Error setting index over length ${index} > ${length}`);
+        }
+        const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
+        const leafNodePrev = this.tree.getNodeAtDepth(this.type.depth, chunkIndex);
+        // Create a new node to preserve immutability
+        const leafNode = leafNodePrev.clone();
+        this.type.elementType.tree_setToPackedNode(leafNode, index, value);
+        // Commit immediately
+        this.tree.setNodeAtDepth(this.type.depth, chunkIndex, leafNode);
+    }
+    /**
+     * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
+     */
+    getAll() {
+        const length = this.length;
+        const chunksNode = this.type.tree_getChunksNode(this.node);
+        const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
+        const leafNodes = persistent_merkle_tree_1.getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount);
+        const values = new Array(length);
+        const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
+        const lenFullNodes = Math.floor(length / itemsPerChunk);
+        const remainder = length % itemsPerChunk;
+        for (let n = 0; n < lenFullNodes; n++) {
+            const leafNode = leafNodes[n];
+            // TODO: Implement add a fast bulk packed element reader in the elementType
+            // ```
+            // abstract getValuesFromPackedNode(leafNode: LeafNode, output: V[], indexOffset: number): void;
+            // ```
+            // if performance here is a problem
+            for (let i = 0; i < itemsPerChunk; i++) {
+                values[n * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(leafNode, i);
+            }
+        }
+        if (remainder > 0) {
+            const leafNode = leafNodes[lenFullNodes];
+            for (let i = 0; i < remainder; i++) {
+                values[lenFullNodes * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(leafNode, i);
+            }
+        }
+        return values;
+    }
+}
+exports.ArrayBasicTreeView = ArrayBasicTreeView;
+//# sourceMappingURL=arrayBasic.js.map
+
+/***/ }),
+
+/***/ 4596:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ArrayCompositeTreeView = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const abstract_1 = __webpack_require__(9352);
+class ArrayCompositeTreeView extends abstract_1.TreeView {
+    constructor(type, tree) {
+        super();
+        this.type = type;
+        this.tree = tree;
+    }
+    /**
+     * Number of elements in the array. Equal to the Uint32 value of the Tree's length node
+     */
+    get length() {
+        return this.type.tree_getLength(this.tree.rootNode);
+    }
+    /**
+     * Returns the View's Tree rootNode
+     */
+    get node() {
+        return this.tree.rootNode;
+    }
+    /**
+     * Get element at `index`. Returns a view of the Composite element type
+     */
+    get(index) {
+        // TODO: Optimize without bitstring
+        const gindex = persistent_merkle_tree_1.toGindexBitstring(this.type.depth, index);
+        const subtree = this.tree.getSubtree(gindex);
+        return this.type.elementType.getView(subtree);
+    }
+    /**
+     * Get element at `index`. Returns a view of the Composite element type.
+     * DOES NOT PROPAGATE CHANGES: use only for reads and to skip parent references.
+     */
+    getReadonly(index) {
+        // TODO: Optimize without bitstring
+        const gindex = persistent_merkle_tree_1.toGindexBitstring(this.type.depth, index);
+        // tree.getSubtree but without the hook
+        const subtree = new persistent_merkle_tree_1.Tree(this.tree.getNode(gindex));
+        return this.type.elementType.getView(subtree);
+    }
+    /**
+     * Set Composite element type `view` at `index`
+     */
+    set(index, view) {
+        const length = this.length;
+        if (index >= length) {
+            throw Error(`Error setting index over length ${index} > ${length}`);
+        }
+        const node = this.type.elementType.commitView(view);
+        this.tree.setNodeAtDepth(this.type.depth, index, node);
+    }
+    /**
+     * Returns an array of views of all elements in the array, from index zero to `this.length - 1`.
+     * The returned views don't have a parent hook to this View's Tree, so changes in the returned views won't be
+     * propagated upwards. To get linked element Views use `this.get()`
+     */
+    getAllReadonly() {
+        const length = this.length;
+        const chunksNode = this.type.tree_getChunksNode(this.node);
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
+        const views = new Array(length);
+        for (let i = 0; i < length; i++) {
+            // TODO: Optimize
+            views[i] = this.type.elementType.getView(new persistent_merkle_tree_1.Tree(nodes[i]));
+        }
+        return views;
+    }
+    /**
+     * Returns an array of values of all elements in the array, from index zero to `this.length - 1`.
+     * The returned values are not Views so any changes won't be propagated upwards.
+     * To get linked element Views use `this.get()`
+     */
+    getAllReadonlyValues() {
+        const length = this.length;
+        const chunksNode = this.type.tree_getChunksNode(this.node);
+        const nodes = persistent_merkle_tree_1.getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
+        const values = new Array(length);
+        for (let i = 0; i < length; i++) {
+            values[i] = this.type.elementType.tree_toValue(nodes[i]);
+        }
+        return values;
+    }
+}
+exports.ArrayCompositeTreeView = ArrayCompositeTreeView;
+//# sourceMappingURL=arrayComposite.js.map
+
+/***/ }),
+
+/***/ 7201:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BitArrayTreeView = void 0;
+const abstract_1 = __webpack_require__(9352);
+/**
+ * Thin wrapper around BitArray to upstream changes to `tree` on every `this.set()`
+ */
+class BitArrayTreeView extends abstract_1.TreeView {
+    constructor(type, tree) {
+        super();
+        this.type = type;
+        this.tree = tree;
+        this.bitArray = type.tree_toValue(tree.rootNode);
+    }
+    get node() {
+        return this.tree.rootNode;
+    }
+    // Wrapped API from BitArray
+    /** @see BitArray.uint8Array */
+    get uint8Array() {
+        return this.bitArray.uint8Array;
+    }
+    /** @see BitArray.bitLen */
+    get bitLen() {
+        return this.bitArray.bitLen;
+    }
+    /** @see BitArray.get */
+    get(bitIndex) {
+        return this.bitArray.get(bitIndex);
+    }
+    /** @see BitArray.set */
+    set(bitIndex, bit) {
+        this.bitArray.set(bitIndex, bit);
+        // Upstream changes
+        this.tree.rootNode = this.type.value_toTree(this.bitArray);
+    }
+    /** @see BitArray.mergeOrWith */
+    mergeOrWith(bitArray2) {
+        this.bitArray.mergeOrWith(bitArray2);
+    }
+    /** @see BitArray.intersectValues */
+    intersectValues(values) {
+        return this.bitArray.intersectValues(values);
+    }
+    /** @see BitArray.getTrueBitIndexes */
+    getTrueBitIndexes() {
+        return this.bitArray.getTrueBitIndexes();
+    }
+    /** @see BitArray.getSingleTrueBit */
+    getSingleTrueBit() {
+        return this.bitArray.getSingleTrueBit();
+    }
+    /** @see BitArray.toBoolArray */
+    toBoolArray() {
+        return this.bitArray.toBoolArray();
+    }
+}
+exports.BitArrayTreeView = BitArrayTreeView;
+//# sourceMappingURL=bitArray.js.map
+
+/***/ }),
+
+/***/ 7582:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getContainerTreeViewClass = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const basic_1 = __webpack_require__(7262);
+const composite_1 = __webpack_require__(1347);
+const abstract_1 = __webpack_require__(9352);
+/**
+ * Intented usage:
+ *
+ * - Get initial BeaconState from disk.
+ * - Before applying next block, switch to mutable
+ * - Get some field, create a view in mutable mode
+ * - Do modifications of the state in the state transition function
+ * - When done, commit and apply new root node once to og BeaconState
+ * - However, keep all the caches and transfer them to the new BeaconState
+ *
+ * Questions:
+ * - Can the child views created in mutable mode switch to not mutable? If so, it seems that it needs to recursively
+ *   iterate the entire data structure and views
+ *
+ */
+class ContainerTreeView extends abstract_1.TreeView {
+    constructor(type, tree) {
+        super();
+        this.type = type;
+        this.tree = tree;
+    }
+    get node() {
+        return this.tree.rootNode;
+    }
+}
+function getContainerTreeViewClass(type) {
+    class CustomContainerTreeView extends ContainerTreeView {
+    }
+    // Dynamically define prototype methods
+    for (let index = 0; index < type.fieldsEntries.length; index++) {
+        const { fieldName, fieldType } = type.fieldsEntries[index];
+        // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
+        // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
+        // and use the cached views array to store the new node.
+        if (basic_1.isBasicType(fieldType)) {
+            Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // TODO: Review the memory cost of this closures
+                get: function () {
+                    const leafNode = persistent_merkle_tree_1.getNodeAtDepth(this.node, this.type.depth, index);
+                    return fieldType.tree_getFromNode(leafNode);
+                },
+                set: function (value) {
+                    const leafNodePrev = persistent_merkle_tree_1.getNodeAtDepth(this.node, this.type.depth, index);
+                    const leafNode = leafNodePrev.clone();
+                    fieldType.tree_setToNode(leafNode, value);
+                    this.tree.setNodeAtDepth(this.type.depth, index, leafNode);
+                },
+            });
+        }
+        // If the field type is composite, the value to get and set will be another TreeView. The parent TreeView must
+        // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
+        // set it to the parent tree in the field gindex.
+        else if (composite_1.isCompositeType(fieldType)) {
+            Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // Returns TreeView of fieldName
+                get: function () {
+                    const gindex = persistent_merkle_tree_1.toGindexBitstring(this.type.depth, index);
+                    return fieldType.getView(this.tree.getSubtree(gindex));
+                },
+                // Expects TreeView of fieldName
+                set: function (value) {
+                    const node = fieldType.commitView(value);
+                    this.tree.setNodeAtDepth(this.type.depth, index, node);
+                },
+            });
+        }
+        // Should never happen
+        else {
+            /* istanbul ignore next - unreachable code */
+            throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+        }
+    }
+    // Change class name
+    Object.defineProperty(CustomContainerTreeView, "name", { value: type.typeName, writable: false });
+    return CustomContainerTreeView;
+}
+exports.getContainerTreeViewClass = getContainerTreeViewClass;
+//# sourceMappingURL=container.js.map
+
+/***/ }),
+
+/***/ 8838:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getContainerTreeViewClass = void 0;
+const composite_1 = __webpack_require__(1347);
+const branchNodeStruct_1 = __webpack_require__(9157);
+const abstract_1 = __webpack_require__(9352);
+/* eslint-disable @typescript-eslint/member-ordering */
+/**
+ * Intented usage:
+ *
+ * - Get initial BeaconState from disk.
+ * - Before applying next block, switch to mutable
+ * - Get some field, create a view in mutable mode
+ * - Do modifications of the state in the state transition function
+ * - When done, commit and apply new root node once to og BeaconState
+ * - However, keep all the caches and transfer them to the new BeaconState
+ *
+ * Questions:
+ * - Can the child views created in mutable mode switch to not mutable? If so, it seems that it needs to recursively
+ *   iterate the entire data structure and views
+ *
+ */
+class ContainerTreeView extends abstract_1.TreeView {
+    constructor(type, tree) {
+        super();
+        this.type = type;
+        this.tree = tree;
+    }
+    get node() {
+        return this.tree.rootNode;
+    }
+}
+function getContainerTreeViewClass(type) {
+    class CustomContainerTreeView extends ContainerTreeView {
+    }
+    // Dynamically define prototype methods
+    for (let index = 0; index < type.fieldsEntries.length; index++) {
+        const { fieldName, fieldType } = type.fieldsEntries[index];
+        // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
+        // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
+        // and use the cached views array to store the new node.
+        if (fieldType.isBasic) {
+            Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // TODO: Review the memory cost of this closures
+                get: function () {
+                    return this.tree.rootNode.value[fieldName];
+                },
+                set: function (value) {
+                    const node = this.tree.rootNode;
+                    const newNodeValue = this.type.clone(node.value);
+                    // TODO: Should this check for valid field name? Benchmark the cost
+                    newNodeValue[fieldName] = value;
+                    this.tree.rootNode = new branchNodeStruct_1.BranchNodeStruct(node["valueToNode"], newNodeValue);
+                },
+            });
+        }
+        // If the field type is composite, the value to get and set will be another TreeView. The parent TreeView must
+        // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
+        // set it to the parent tree in the field gindex.
+        else if (composite_1.isCompositeType(fieldType)) {
+            Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // Returns TreeView of fieldName
+                get: function () {
+                    const { value } = this.tree.rootNode;
+                    return fieldType.toView(value[fieldName]);
+                },
+                // Expects TreeView of fieldName
+                set: function (view) {
+                    const node = this.tree.rootNode;
+                    const newNodeValue = this.type.clone(node.value);
+                    // TODO: Should this check for valid field name? Benchmark the cost
+                    newNodeValue[fieldName] = fieldType.toValueFromView(view);
+                    this.tree.rootNode = new branchNodeStruct_1.BranchNodeStruct(node["valueToNode"], newNodeValue);
+                },
+            });
+        }
+        // Should never happen
+        else {
+            /* istanbul ignore next - unreachable code */
+            throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+        }
+    }
+    // Change class name
+    Object.defineProperty(CustomContainerTreeView, "name", { value: type.typeName, writable: false });
+    return CustomContainerTreeView;
+}
+exports.getContainerTreeViewClass = getContainerTreeViewClass;
+//# sourceMappingURL=containerNodeStruct.js.map
+
+/***/ }),
+
+/***/ 3013:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListBasicTreeView = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const arrayBasic_1 = __webpack_require__(1769);
+class ListBasicTreeView extends arrayBasic_1.ArrayBasicTreeView {
+    constructor(type, tree) {
+        super(type, tree);
+        this.type = type;
+        this.tree = tree;
+    }
+    /**
+     * Adds one value element at the end of the array and adds 1 to the current Tree length.
+     */
+    push(value) {
+        const length = this.length;
+        if (length >= this.type.limit) {
+            throw Error("Error pushing over limit");
+        }
+        this.type.tree_setLength(this.tree, length + 1);
+        // If in new node..
+        if (length % this.type.itemsPerChunk === 0) {
+            // TODO: Optimize: This `inNewNode` could be ommitted but it would cause a full navigation in .set()
+            // Benchmark the cost of that navigation vs the extra math here
+            // TODO: Optimize: prevent double initialization
+            const leafNode = persistent_merkle_tree_1.LeafNode.fromZero();
+            this.type.elementType.tree_setToPackedNode(leafNode, length, value);
+            // Commit immediately
+            const chunkIndex = Math.floor(length / this.type.itemsPerChunk);
+            this.tree.setNodeAtDepth(this.type.depth, chunkIndex, leafNode);
+        }
+        else {
+            // Re-use .set() since no new node is added
+            this.set(length, value);
+        }
+    }
+}
+exports.ListBasicTreeView = ListBasicTreeView;
+//# sourceMappingURL=listBasic.js.map
+
+/***/ }),
+
+/***/ 3911:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListCompositeTreeView = void 0;
+const arrayComposite_1 = __webpack_require__(4596);
+class ListCompositeTreeView extends arrayComposite_1.ArrayCompositeTreeView {
+    constructor(type, tree) {
+        super(type, tree);
+        this.type = type;
+        this.tree = tree;
+    }
+    /**
+     * Adds one view element at the end of the array and adds 1 to the current Tree length.
+     */
+    push(view) {
+        const length = this.length;
+        if (length >= this.type.limit) {
+            throw Error("Error pushing over limit");
+        }
+        this.type.tree_setLength(this.tree, length + 1);
+        // No need for pre-initialization like in ListBasic.push since ArrayCompositeTreeView.set() doesn't do a get node
+        this.set(length, view);
+    }
+}
+exports.ListCompositeTreeView = ListCompositeTreeView;
+//# sourceMappingURL=listComposite.js.map
+
+/***/ }),
+
+/***/ 640:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TreeViewDU = void 0;
+const abstract_1 = __webpack_require__(9352);
+/* eslint-disable @typescript-eslint/member-ordering  */
+/**
+ * A Deferred Update Tree View (`ViewDU`) is a wrapper around a type and
+ * a SSZ Node that contains:
+ * - data merkleized
+ * - some arbitrary caches to speed up data manipulation required by the type
+ *
+ * **ViewDU**
+ * - Best for complex usage where performance is important
+ * - Defers changes to when commit is called
+ * - Does NOT have a reference to the parent ViewDU
+ * - Has caches for fast get / set ops
+ */
+class TreeViewDU extends abstract_1.TreeView {
+    /**
+     * Merkleize view and compute its hashTreeRoot.
+     * Commits any pending changes before computing the root.
+     *
+     * See spec for definition of hashTreeRoot:
+     * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
+     */
+    hashTreeRoot() {
+        this.commit();
+        return super.hashTreeRoot();
+    }
+    /**
+     * Serialize view to binary data.
+     * Commits any pending changes before computing the root.
+     */
+    serialize() {
+        this.commit();
+        return super.serialize();
+    }
+    /**
+     * Return a new ViewDU instance referencing the same internal `Node`.
+     *
+     * By default it will transfer the cache of this ViewDU to the new cloned instance. Set `dontTransferCache` to true
+     * to NOT transfer the cache to the cloned instance.
+     */
+    clone(dontTransferCache) {
+        if (dontTransferCache) {
+            return this.type.getViewDU(this.node);
+        }
+        else {
+            const cache = this.cache;
+            this.clearCache();
+            return this.type.getViewDU(this.node, cache);
+        }
+    }
+}
+exports.TreeViewDU = TreeViewDU;
+//# sourceMappingURL=abstract.js.map
+
+/***/ }),
+
+/***/ 7005:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ArrayBasicTreeViewDU = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const abstract_1 = __webpack_require__(640);
+class ArrayBasicTreeViewDU extends abstract_1.TreeViewDU {
+    constructor(type, _rootNode, cache) {
+        super();
+        this.type = type;
+        this._rootNode = _rootNode;
+        this.nodesChanged = new Set();
+        this.dirtyLength = false;
+        if (cache) {
+            this.nodes = cache.nodes;
+            this._length = cache.length;
+            this.nodesPopulated = cache.nodesPopulated;
+        }
+        else {
+            this.nodes = [];
+            this._length = this.type.tree_getLength(_rootNode);
+            this.nodesPopulated = false;
+        }
+    }
+    /**
+     * Number of elements in the array. Equal to un-commited length of the array
+     */
+    get length() {
+        return this._length;
+    }
+    get node() {
+        return this._rootNode;
+    }
+    get cache() {
+        return {
+            nodes: this.nodes,
+            length: this._length,
+            nodesPopulated: this.nodesPopulated,
+        };
+    }
+    /**
+     * Get element at `index`. Returns the Basic element type value directly
+     */
+    get(index) {
+        // First walk through the tree to get the root node for that index
+        const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
+        let node = this.nodes[chunkIndex];
+        if (node === undefined) {
+            node = persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex);
+            this.nodes[chunkIndex] = node;
+        }
+        return this.type.elementType.tree_getFromPackedNode(node, index);
+    }
+    /**
+     * Set Basic element type `value` at `index`
+     */
+    set(index, value) {
+        if (index >= this._length) {
+            throw Error(`Error setting index over length ${index} > ${this._length}`);
+        }
+        const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
+        // Create new node if current leafNode is not dirty
+        let nodeChanged;
+        if (this.nodesChanged.has(chunkIndex)) {
+            // TODO: This assumes that node has already been populated
+            nodeChanged = this.nodes[chunkIndex];
+        }
+        else {
+            const nodePrev = (this.nodes[chunkIndex] ??
+                persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex));
+            nodeChanged = nodePrev.clone();
+            // Store the changed node in the nodes cache
+            this.nodes[chunkIndex] = nodeChanged;
+            this.nodesChanged.add(chunkIndex);
+        }
+        this.type.elementType.tree_setToPackedNode(nodeChanged, index, value);
+    }
+    /**
+     * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
+     */
+    getAll() {
+        if (!this.nodesPopulated) {
+            const nodesPrev = this.nodes;
+            const chunksNode = this.type.tree_getChunksNode(this.node);
+            const chunkCount = Math.ceil(this._length / this.type.itemsPerChunk);
+            this.nodes = persistent_merkle_tree_1.getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount);
+            // Re-apply changed nodes
+            for (const index of this.nodesChanged) {
+                this.nodes[index] = nodesPrev[index];
+            }
+            this.nodesPopulated = true;
+        }
+        const values = new Array(this._length);
+        const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
+        const lenFullNodes = Math.floor(this._length / itemsPerChunk);
+        const remainder = this._length % itemsPerChunk;
+        // TODO Optimize: caching the variables used in the loop above it
+        for (let n = 0; n < lenFullNodes; n++) {
+            const leafNode = this.nodes[n];
+            // TODO: Implement add a fast bulk packed element reader in the elementType
+            // ```
+            // abstract getValuesFromPackedNode(leafNode: LeafNode, output: V[], indexOffset: number): void;
+            // ```
+            // if performance here is a problem
+            for (let i = 0; i < itemsPerChunk; i++) {
+                values[n * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(leafNode, i);
+            }
+        }
+        if (remainder > 0) {
+            const leafNode = this.nodes[lenFullNodes];
+            for (let i = 0; i < remainder; i++) {
+                values[lenFullNodes * itemsPerChunk + i] = this.type.elementType.tree_getFromPackedNode(leafNode, i);
+            }
+        }
+        return values;
+    }
+    commit() {
+        if (this.nodesChanged.size === 0) {
+            return;
+        }
+        // Numerical sort ascending
+        const indexes = Array.from(this.nodesChanged.keys()).sort((a, b) => a - b);
+        const nodes = new Array(indexes.length);
+        for (let i = 0; i < indexes.length; i++) {
+            nodes[i] = this.nodes[indexes[i]];
+        }
+        const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+        // TODO: Ensure fast setNodesAtDepth() method is correct
+        const newChunksNode = persistent_merkle_tree_1.setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
+        this._rootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, this.dirtyLength ? this._length : undefined);
+        this.nodesChanged.clear();
+        this.dirtyLength = false;
+    }
+    clearCache() {
+        this.nodes = [];
+        this.nodesPopulated = false;
+        // Must clear nodesChanged, otherwise a subsequent commit call will break, because it assumes a node is there
+        this.nodesChanged.clear();
+        // Reset cached length only if it has been mutated
+        if (this.dirtyLength) {
+            this._length = this.type.tree_getLength(this._rootNode);
+            this.dirtyLength = false;
+        }
+    }
+}
+exports.ArrayBasicTreeViewDU = ArrayBasicTreeViewDU;
+//# sourceMappingURL=arrayBasic.js.map
+
+/***/ }),
+
+/***/ 1409:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ArrayCompositeTreeViewDU = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const abstract_1 = __webpack_require__(640);
+class ArrayCompositeTreeViewDU extends abstract_1.TreeViewDU {
+    constructor(type, _rootNode, cache) {
+        super();
+        this.type = type;
+        this._rootNode = _rootNode;
+        this.viewsChanged = new Map();
+        // TODO: Consider these properties are not accessible in the cache object persisted in the parent's cache.
+        // nodes, caches, _length, and nodesPopulated are mutated. Consider having them in a _cache object such that
+        // mutations affect the cache already found in the parent object
+        this.dirtyLength = false;
+        if (cache) {
+            this.nodes = cache.nodes;
+            this.caches = cache.caches;
+            this._length = cache.length;
+            this.nodesPopulated = cache.nodesPopulated;
+        }
+        else {
+            this.nodes = [];
+            this.caches = [];
+            this._length = this.type.tree_getLength(_rootNode);
+            // If there are exactly 0 nodes, nodesPopulated = true because 0 / 0 are in the nodes array
+            this.nodesPopulated = this._length === 0;
+        }
+    }
+    /**
+     * Number of elements in the array. Equal to un-commited length of the array
+     */
+    get length() {
+        return this._length;
+    }
+    get node() {
+        return this._rootNode;
+    }
+    get cache() {
+        return {
+            nodes: this.nodes,
+            caches: this.caches,
+            length: this._length,
+            nodesPopulated: this.nodesPopulated,
+        };
+    }
+    /**
+     * Get element at `index`. Returns a view of the Composite element type.
+     *
+     * NOTE: Assumes that any view created here will change and will call .commit() on it.
+     * .get() should be used only for cases when something may mutate. To get all items without
+     * triggering a .commit() in all them use .getAllReadOnly().
+     */
+    get(index) {
+        const viewChanged = this.viewsChanged.get(index);
+        if (viewChanged) {
+            return viewChanged;
+        }
+        let node = this.nodes[index];
+        if (node === undefined) {
+            node = persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, index);
+            this.nodes[index] = node;
+        }
+        // Keep a reference to the new view to call .commit on it latter, only if mutable
+        const view = this.type.elementType.getViewDU(node, this.caches[index]);
+        if (this.type.elementType.isViewMutable) {
+            this.viewsChanged.set(index, view);
+        }
+        // No need to persist the child's view cache since a second get returns this view instance.
+        // The cache is only persisted on commit where the viewsChanged map is dropped.
+        return view;
+    }
+    /**
+     * Get element at `index`. Returns a view of the Composite element type.
+     * DOES NOT PROPAGATE CHANGES: use only for reads and to skip parent references.
+     */
+    getReadonly(index) {
+        const viewChanged = this.viewsChanged.get(index);
+        if (viewChanged) {
+            return viewChanged;
+        }
+        let node = this.nodes[index];
+        if (node === undefined) {
+            node = persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, index);
+            this.nodes[index] = node;
+        }
+        return this.type.elementType.getViewDU(node, this.caches[index]);
+    }
+    // Did not implemented
+    // `getReadonlyValue(index: number): ValueOf<ElementType>`
+    // because it can break in unexpected ways if there are pending changes in this.viewsChanged.
+    // This function could first check if `this.viewsChanged` has a view for `index` and commit it,
+    // but that would be pretty slow, and the same result can be achieved with
+    // `this.getReadonly(index).toValue()`
+    /**
+     * Set Composite element type `view` at `index`
+     */
+    set(index, view) {
+        if (index >= this._length) {
+            throw Error(`Error setting index over length ${index} > ${this._length}`);
+        }
+        // When setting a view:
+        // - Not necessary to commit node
+        // - Not necessary to persist cache
+        // Just keeping a reference to the view in this.viewsChanged ensures consistency
+        this.viewsChanged.set(index, view);
+    }
+    /**
+     * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+     */
+    getAllReadonly() {
+        this.populateAllNodes();
+        const views = new Array(this._length);
+        for (let i = 0; i < this._length; i++) {
+            views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
+        }
+        return views;
+    }
+    /**
+     * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+     */
+    getAllReadonlyValues() {
+        this.populateAllNodes();
+        const values = new Array(this._length);
+        for (let i = 0; i < this._length; i++) {
+            values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
+        }
+        return values;
+    }
+    commit() {
+        if (this.viewsChanged.size === 0) {
+            return;
+        }
+        const nodesChanged = [];
+        for (const [index, view] of this.viewsChanged) {
+            const node = this.type.elementType.commitViewDU(view);
+            // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+            this.nodes[index] = node;
+            nodesChanged.push({ index, node });
+            // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
+            const cache = this.type.elementType.cacheOfViewDU(view);
+            if (cache)
+                this.caches[index] = cache;
+        }
+        // TODO: Optimize to loop only once, Numerical sort ascending
+        const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
+        const indexes = nodesChangedSorted.map((entry) => entry.index);
+        const nodes = nodesChangedSorted.map((entry) => entry.node);
+        const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+        // TODO: Ensure fast setNodesAtDepth() method is correct
+        const newChunksNode = persistent_merkle_tree_1.setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
+        this._rootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, this.dirtyLength ? this._length : undefined);
+        this.viewsChanged.clear();
+        this.dirtyLength = false;
+    }
+    clearCache() {
+        this.nodes = [];
+        this.caches = [];
+        this.nodesPopulated = false;
+        // It's not necessary to clear this.viewsChanged since they have no effect on the cache.
+        // However preserving _SOME_ caches results in a very unpredictable experience.
+        this.viewsChanged.clear();
+        // Reset cached length only if it has been mutated
+        if (this.dirtyLength) {
+            this._length = this.type.tree_getLength(this._rootNode);
+            this.dirtyLength = false;
+        }
+    }
+    populateAllNodes() {
+        // If there's uncommited changes it may break.
+        // this.length can be increased but this._rootNode doesn't have that item
+        if (this.viewsChanged.size > 0) {
+            throw Error("Must commit changes before reading all nodes");
+        }
+        if (!this.nodesPopulated) {
+            this.nodes = persistent_merkle_tree_1.getNodesAtDepth(this._rootNode, this.type.depth, 0, this.length);
+            this.nodesPopulated = true;
+        }
+    }
+}
+exports.ArrayCompositeTreeViewDU = ArrayCompositeTreeViewDU;
+//# sourceMappingURL=arrayComposite.js.map
+
+/***/ }),
+
+/***/ 7844:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BitArrayTreeViewDU = void 0;
+const abstract_1 = __webpack_require__(640);
+/**
+ * Thin wrapper around BitArray to upstream changes after `this.commit()`
+ */
+class BitArrayTreeViewDU extends abstract_1.TreeViewDU {
+    constructor(type, _rootNode) {
+        super();
+        this.type = type;
+        this._rootNode = _rootNode;
+        /** Cached BitArray instance computed only on demand */
+        this._bitArray = null;
+    }
+    get node() {
+        return this._rootNode;
+    }
+    get cache() {
+        return;
+    }
+    commit() {
+        if (this._bitArray !== null) {
+            this._rootNode = this.type.value_toTree(this._bitArray);
+        }
+    }
+    // Wrapped API from BitArray
+    /** @see BitArray.uint8Array */
+    get uint8Array() {
+        return this.bitArray.uint8Array;
+    }
+    /** @see BitArray.bitLen */
+    get bitLen() {
+        return this.bitArray.bitLen;
+    }
+    /** @see BitArray.get */
+    get(bitIndex) {
+        return this.bitArray.get(bitIndex);
+    }
+    /** @see BitArray.set */
+    set(bitIndex, bit) {
+        this.bitArray.set(bitIndex, bit);
+    }
+    /** @see BitArray.mergeOrWith */
+    mergeOrWith(bitArray2) {
+        this.bitArray.mergeOrWith(bitArray2);
+    }
+    /** @see BitArray.intersectValues */
+    intersectValues(values) {
+        return this.bitArray.intersectValues(values);
+    }
+    /** @see BitArray.getTrueBitIndexes */
+    getTrueBitIndexes() {
+        return this.bitArray.getTrueBitIndexes();
+    }
+    /** @see BitArray.getSingleTrueBit */
+    getSingleTrueBit() {
+        return this.bitArray.getSingleTrueBit();
+    }
+    /** @see BitArray.toBoolArray */
+    toBoolArray() {
+        return this.bitArray.toBoolArray();
+    }
+    /** Lazily computed bitArray instance */
+    get bitArray() {
+        if (this._bitArray === null) {
+            this._bitArray = this.type.tree_toValue(this._rootNode);
+        }
+        return this._bitArray;
+    }
+    clearCache() {
+        this._bitArray = null;
+    }
+}
+exports.BitArrayTreeViewDU = BitArrayTreeViewDU;
+//# sourceMappingURL=bitArray.js.map
+
+/***/ }),
+
+/***/ 2854:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getContainerTreeViewDUClass = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const basic_1 = __webpack_require__(7262);
+const composite_1 = __webpack_require__(1347);
+const abstract_1 = __webpack_require__(640);
+class ContainerTreeViewDU extends abstract_1.TreeViewDU {
+    constructor(type, _rootNode, cache) {
+        super();
+        this.type = type;
+        this._rootNode = _rootNode;
+        this.nodes = [];
+        this.nodesChanged = new Set();
+        this.viewsChanged = new Map();
+        if (cache) {
+            this.nodes = cache.nodes;
+            this.caches = cache.caches;
+            this.nodesPopulated = cache.nodesPopulated;
+        }
+        else {
+            this.nodes = [];
+            this.caches = [];
+            this.nodesPopulated = false;
+        }
+    }
+    get node() {
+        return this._rootNode;
+    }
+    get cache() {
+        return {
+            nodes: this.nodes,
+            caches: this.caches,
+            nodesPopulated: this.nodesPopulated,
+        };
+    }
+    commit() {
+        if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
+            return;
+        }
+        const nodesChanged = [];
+        for (const [index, view] of this.viewsChanged) {
+            const fieldType = this.type.fieldsEntries[index].fieldType;
+            const node = fieldType.commitViewDU(view);
+            // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+            this.nodes[index] = node;
+            nodesChanged.push({ index, node });
+            // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
+            const cache = fieldType.cacheOfViewDU(view);
+            if (cache)
+                this.caches[index] = cache;
+        }
+        for (const index of this.nodesChanged) {
+            nodesChanged.push({ index, node: this.nodes[index] });
+        }
+        // TODO: Optimize to loop only once, Numerical sort ascending
+        const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
+        const indexes = nodesChangedSorted.map((entry) => entry.index);
+        const nodes = nodesChangedSorted.map((entry) => entry.node);
+        this._rootNode = persistent_merkle_tree_1.setNodesAtDepth(this._rootNode, this.type.depth, indexes, nodes);
+        this.nodesChanged.clear();
+        this.viewsChanged.clear();
+    }
+    clearCache() {
+        this.nodes = [];
+        this.caches = [];
+        this.nodesPopulated = false;
+        // Must clear nodesChanged, otherwise a subsequent commit call will break, because it assumes a node is there
+        this.nodesChanged.clear();
+        // It's not necessary to clear this.viewsChanged since they have no effect on the cache.
+        // However preserving _SOME_ caches results in a very unpredictable experience.
+        this.viewsChanged.clear();
+    }
+}
+function getContainerTreeViewDUClass(type) {
+    class CustomContainerTreeViewDU extends ContainerTreeViewDU {
+    }
+    // Dynamically define prototype methods
+    for (let index = 0; index < type.fieldsEntries.length; index++) {
+        const { fieldName, fieldType } = type.fieldsEntries[index];
+        // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
+        // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
+        // and use the cached views array to store the new node.
+        if (basic_1.isBasicType(fieldType)) {
+            Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // TODO: Review the memory cost of this closures
+                get: function () {
+                    // First walk through the tree to get the root node for that index
+                    let node = this.nodes[index];
+                    if (node === undefined) {
+                        node = persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, index);
+                        this.nodes[index] = node;
+                    }
+                    return fieldType.tree_getFromNode(node);
+                },
+                set: function (value) {
+                    // Create new node if current leafNode is not dirty
+                    let nodeChanged;
+                    if (this.nodesChanged.has(index)) {
+                        // TODO: This assumes that node has already been populated
+                        nodeChanged = this.nodes[index];
+                    }
+                    else {
+                        const nodePrev = (this.nodes[index] ?? persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, index));
+                        nodeChanged = nodePrev.clone();
+                        // Store the changed node in the nodes cache
+                        this.nodes[index] = nodeChanged;
+                        this.nodesChanged.add(index);
+                    }
+                    fieldType.tree_setToNode(nodeChanged, value);
+                },
+            });
+        }
+        // If the field type is composite, the value to get and set will be another TreeView. The parent TreeView must
+        // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
+        // set it to the parent tree in the field gindex.
+        else if (composite_1.isCompositeType(fieldType)) {
+            Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // Returns TreeViewDU of fieldName
+                get: function () {
+                    const viewChanged = this.viewsChanged.get(index);
+                    if (viewChanged) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                        return viewChanged;
+                    }
+                    let node = this.nodes[index];
+                    if (node === undefined) {
+                        node = persistent_merkle_tree_1.getNodeAtDepth(this._rootNode, this.type.depth, index);
+                        this.nodes[index] = node;
+                    }
+                    // Keep a reference to the new view to call .commit on it latter, only if mutable
+                    const view = fieldType.getViewDU(node, this.caches[index]);
+                    if (fieldType.isViewMutable) {
+                        this.viewsChanged.set(index, view);
+                    }
+                    // No need to persist the child's view cache since a second get returns this view instance.
+                    // The cache is only persisted on commit where the viewsChanged map is dropped.
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                    return view;
+                },
+                // Expects TreeViewDU of fieldName
+                set: function (view) {
+                    // When setting a view:
+                    // - Not necessary to commit node
+                    // - Not necessary to persist cache
+                    // Just keeping a reference to the view in this.viewsChanged ensures consistency
+                    this.viewsChanged.set(index, view);
+                },
+            });
+        }
+        // Should never happen
+        else {
+            /* istanbul ignore next - unreachable code */
+            throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+        }
+    }
+    // Change class name
+    Object.defineProperty(CustomContainerTreeViewDU, "name", { value: type.typeName, writable: false });
+    return CustomContainerTreeViewDU;
+}
+exports.getContainerTreeViewDUClass = getContainerTreeViewDUClass;
+//# sourceMappingURL=container.js.map
+
+/***/ }),
+
+/***/ 1339:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getContainerTreeViewDUClass = void 0;
+const composite_1 = __webpack_require__(1347);
+const abstract_1 = __webpack_require__(640);
+/* eslint-disable @typescript-eslint/member-ordering */
+class ContainerTreeViewDU extends abstract_1.TreeViewDU {
+    constructor(type, node) {
+        super();
+        this.type = type;
+        this.valueChanged = null;
+        this._rootNode = node;
+    }
+    get node() {
+        return this._rootNode;
+    }
+    get cache() {
+        return;
+    }
+    commit() {
+        if (this.valueChanged === null) {
+            return;
+        }
+        const value = this.valueChanged;
+        this.valueChanged = null;
+        this._rootNode = this.type.value_toTree(value);
+    }
+    clearCache() {
+        this.valueChanged = null;
+    }
+}
+function getContainerTreeViewDUClass(type) {
+    class CustomContainerTreeViewDU extends ContainerTreeViewDU {
+    }
+    // Dynamically define prototype methods
+    for (let index = 0; index < type.fieldsEntries.length; index++) {
+        const { fieldName, fieldType } = type.fieldsEntries[index];
+        // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
+        // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
+        // and use the cached views array to store the new node.
+        if (fieldType.isBasic) {
+            Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // TODO: Review the memory cost of this closures
+                get: function () {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                    return (this.valueChanged || this._rootNode.value)[fieldName];
+                },
+                set: function (value) {
+                    if (this.valueChanged === null) {
+                        this.valueChanged = this.type.clone(this._rootNode.value);
+                    }
+                    this.valueChanged[fieldName] = value;
+                },
+            });
+        }
+        // If the field type is composite, the value to get and set will be another TreeView. The parent TreeView must
+        // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
+        // set it to the parent tree in the field gindex.
+        else if (composite_1.isCompositeType(fieldType)) {
+            Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+                configurable: false,
+                enumerable: true,
+                // Returns TreeViewDU of fieldName
+                get: function () {
+                    const value = this.valueChanged || this._rootNode.value;
+                    return fieldType.toViewDU(value[fieldName]);
+                },
+                // Expects TreeViewDU of fieldName
+                set: function (view) {
+                    if (this.valueChanged === null) {
+                        this.valueChanged = this.type.clone(this._rootNode.value);
+                    }
+                    const value = fieldType.toValueFromViewDU(view);
+                    this.valueChanged[fieldName] = value;
+                },
+            });
+        }
+        // Should never happen
+        else {
+            /* istanbul ignore next - unreachable code */
+            throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+        }
+    }
+    // Change class name
+    Object.defineProperty(CustomContainerTreeViewDU, "name", { value: type.typeName, writable: false });
+    return CustomContainerTreeViewDU;
+}
+exports.getContainerTreeViewDUClass = getContainerTreeViewDUClass;
+//# sourceMappingURL=containerNodeStruct.js.map
+
+/***/ }),
+
+/***/ 5707:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListBasicTreeViewDU = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const arrayBasic_1 = __webpack_require__(7005);
+class ListBasicTreeViewDU extends arrayBasic_1.ArrayBasicTreeViewDU {
+    constructor(type, _rootNode, cache) {
+        super(type, _rootNode, cache);
+        this.type = type;
+        this._rootNode = _rootNode;
+    }
+    /**
+     * Adds one value element at the end of the array and adds 1 to the un-commited ViewDU length
+     */
+    push(value) {
+        if (this._length >= this.type.limit) {
+            throw Error("Error pushing over limit");
+        }
+        // Mutate length before .set()
+        this.dirtyLength = true;
+        const index = this._length++;
+        // If in new node..
+        if (index % this.type.itemsPerChunk === 0) {
+            // Set a zero node to the nodes array to avoid a navigation downwards in .set()
+            const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
+            this.nodes[chunkIndex] = persistent_merkle_tree_1.zeroNode(0);
+        }
+        this.set(index, value);
+    }
+}
+exports.ListBasicTreeViewDU = ListBasicTreeViewDU;
+//# sourceMappingURL=listBasic.js.map
+
+/***/ }),
+
+/***/ 5611:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListCompositeTreeViewDU = void 0;
+const persistent_merkle_tree_1 = __webpack_require__(6647);
+const arrayComposite_1 = __webpack_require__(1409);
+class ListCompositeTreeViewDU extends arrayComposite_1.ArrayCompositeTreeViewDU {
+    constructor(type, _rootNode, cache) {
+        super(type, _rootNode, cache);
+        this.type = type;
+        this._rootNode = _rootNode;
+    }
+    /**
+     * Adds one value element at the end of the array and adds 1 to the un-commited ViewDU length
+     */
+    push(view) {
+        if (this._length >= this.type.limit) {
+            throw Error("Error pushing over limit");
+        }
+        this.dirtyLength = true;
+        const index = this._length++;
+        // No need for pre-initialization like in ListBasic.push since ArrayCompositeTreeViewDU.set() doesn't do a get node
+        this.set(index, view);
+    }
+    /**
+     * Returns a new ListCompositeTreeViewDU instance with the values from 0 to `index`.
+     * The new list is equivalent to (pseudo-code):
+     *
+     * ```ts
+     * const nodes = getChunkNodes()
+     * return listFromChunkNodes(nodes.slice(0, index + 1))
+     * ```
+     *
+     * To achieve it, rebinds the underlying tree zero-ing all nodes right of `index`.
+     */
+    sliceTo(index) {
+        // Commit before getting rootNode to ensure all pending data is in the rootNode
+        this.commit();
+        const rootNode = this._rootNode;
+        const length = this.type.tree_getLength(rootNode);
+        // All nodes beyond length are already zero
+        // Array of length 2: [X,X,0,0], for index >= 1 no action needed
+        if (index >= length - 1) {
+            return this;
+        }
+        // Since this is a List, do the treeZeroAfterIndex operation on the chunks tree
+        const chunksNode = this.type.tree_getChunksNode(rootNode);
+        const newChunksNode = persistent_merkle_tree_1.treeZeroAfterIndex(chunksNode, this.type.chunkDepth, index);
+        // Must set new length and commit to tree to restore the same tree at that index
+        const newLength = index + 1;
+        const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
+        return this.type.getViewDU(newRootNode);
+    }
+}
+exports.ListCompositeTreeViewDU = ListCompositeTreeViewDU;
+//# sourceMappingURL=listComposite.js.map
 
 /***/ }),
 
