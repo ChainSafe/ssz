@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](http://chainsafe/ssz/compare/@chainsafe/ssz@0.8.19...@chainsafe/ssz@0.9.0) (2022-03-24)
+
+
+* SSZ v2 (#223) ([9d167b7](http://chainsafe/ssz/commits/9d167b703b1e974ee4943be15710aa9783183986)), closes [#223](http://chainsafe/ssz/issues/223) [#227](http://chainsafe/ssz/issues/227)
+* Convert as-sha256 to typescript (#244) ([2d4e3fe](http://chainsafe/ssz/commits/2d4e3febec89ca8ca7c89a19c6949c3213c2c45c)), closes [#244](http://chainsafe/ssz/issues/244)
+
+
+### BREAKING CHANGES
+
+* complete refactor, see packages/ssz/README.md for details
+
 ## 0.8.20 (2021-11-23)
 - Harden ssz implementation [#211](https://github.com/ChainSafe/ssz/pull/211)
 

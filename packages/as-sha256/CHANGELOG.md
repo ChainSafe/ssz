@@ -1,3 +1,18 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [0.3.0](https://github.com/chainsafe/as-sha256/compare/@chainsafe/as-sha256@0.2.4...@chainsafe/as-sha256@0.3.0) (2022-03-24)
+
+
+* Convert as-sha256 to typescript (#244) ([2d4e3fe](https://github.com/chainsafe/as-sha256/commit/2d4e3febec89ca8ca7c89a19c6949c3213c2c45c)), closes [#244](https://github.com/chainsafe/as-sha256/issues/244)
+
+
+### BREAKING CHANGES
+
+* export digest* functions as named exports
+
 ## 0.2.4 (2021-08-18)
 
 - normal digest mem opt for < 512 bytes ([30f7ec](https://github.com/ChainSafe/as-sha256/commit/30f7ec))

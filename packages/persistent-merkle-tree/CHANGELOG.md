@@ -1,3 +1,20 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [0.4.0](https://github.com/ChainSafe/persistent-merkle-tree/compare/@chainsafe/persistent-merkle-tree@0.3.7...@chainsafe/persistent-merkle-tree@0.4.0) (2022-03-24)
+
+
+* SSZ v2 (#223) ([9d167b7](https://github.com/ChainSafe/persistent-merkle-tree/commit/9d167b703b1e974ee4943be15710aa9783183986)), closes [#223](https://github.com/ChainSafe/persistent-merkle-tree/issues/223) [#227](https://github.com/ChainSafe/persistent-merkle-tree/issues/227)
+* Convert as-sha256 to typescript (#244) ([2d4e3fe](https://github.com/ChainSafe/persistent-merkle-tree/commit/2d4e3febec89ca8ca7c89a19c6949c3213c2c45c)), closes [#244](https://github.com/ChainSafe/persistent-merkle-tree/issues/244)
+
+
+### BREAKING CHANGES
+
+* complete refactor, see packages/ssz/README.md for details
+* export digest* functions as named exports
+
 ## 0.3.7 (2021-08-26)
 
 - Support setHashObjectFn ([35bad6](https://github.com/chainsafe/persistent-merkle-tree/commit/35bad6))
