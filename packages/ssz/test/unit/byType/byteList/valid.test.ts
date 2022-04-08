@@ -26,6 +26,12 @@ runTypeTestValid({
 function getValues(hexToJson: (hex: string) => unknown): TypeTestValid[] {
   return [
     {
+      id: "empty",
+      serialized: "0x",
+      json: hexToJson("0x"),
+      root: "0xe8e527e84f666163a90ef900e013f56b0a4d020148b2224057b719f351b003a6",
+    },
+    {
       id: "4 bytes zero",
       serialized: "0x00000000",
       json: hexToJson("0x00000000"),
