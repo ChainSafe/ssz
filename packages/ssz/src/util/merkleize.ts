@@ -2,7 +2,7 @@ import {digest64} from "@chainsafe/as-sha256";
 import {zeroHash} from "./zeros";
 
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
-  return digest64(Buffer.concat([bytes32A, bytes32B]));
+  return digest64(Buffer.concat([Buffer.from(bytes32A), Buffer.from(bytes32B)]));
 }
 
 export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
