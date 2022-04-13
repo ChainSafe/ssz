@@ -39,7 +39,7 @@ export function digest64(data: Uint8Array): Uint8Array {
   throw new Error("InvalidLengthForDigest64");
 }
 
-export function digest64Bytes32(bytes1: Uint8Array,bytes2: Uint8Array): Uint8Array {
+export function digest2Bytes32(bytes1: Uint8Array,bytes2: Uint8Array): Uint8Array {
   if (bytes1.length === 32 && bytes2.length === 32) {
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2,32);

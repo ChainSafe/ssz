@@ -61,7 +61,7 @@ describe("sha256", function () {
       }
       expect(output2).to.be.deep.equal(expectedOutput, "incorrect digestTwoHashObjects result");
 
-      const digestBytes32 = sha256.digest64Bytes32(buffer1, buffer2);
+      const digestBytes32 = sha256.digest2Bytes32(buffer1, buffer2);
       expect(digestBytes32).to.be.deep.equal(expectedOutput, "incorrect digest64Bytes32 result");
     });
 
