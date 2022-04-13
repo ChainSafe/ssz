@@ -52,7 +52,8 @@ export class BitArray {
 
   clone(): BitArray {
     // TODO: Benchmark if Uint8Array.slice(0) is the fastest way to copy data here
-    return new BitArray(this.uint8Array.slice(0), this.bitLen);
+    // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+    return new BitArray(Uint8Array.prototype.slice.call(this.uint8Array, 0), this.bitLen);
   }
 
   /**

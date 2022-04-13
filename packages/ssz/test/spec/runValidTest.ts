@@ -86,6 +86,11 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     // bytes -> value - deserialize()
     const value = wrapErr(() => type.deserialize(copy(testDataSerialized)), "type.deserialize()");
     assertValue(value, "type.deserialize()");
+
+    // Buffer.prototype.slice does not copy memory, test .deserialize() is mutation safe https://github.com/nodejs/node/issues/28087
+    const bytes = Buffer.from(copy(testDataSerialized));
+    type.deserialize(bytes);
+    expect(toHexString(bytes)).to.equal(testDataSerializedHex, "type.deserialize() mutated input");
   }
 
   // To print the chunk roots of a type value
@@ -159,6 +164,11 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
 
     const viewDU = type.deserializeToViewDU(copy(testDataSerialized));
     assertNode(type.commitViewDU(viewDU), "deserializeToViewDU");
+
+    // Buffer.prototype.slice does not copy memory, test .deserialize() is mutation safe https://github.com/nodejs/node/issues/28087
+    const bytes = Buffer.from(copy(testDataSerialized));
+    type.deserializeToViewDU(bytes);
+    expect(toHexString(bytes)).to.equal(testDataSerializedHex, "type.deserializeToViewDU() mutated input");
   }
 
   if (isBasicType(type)) {
