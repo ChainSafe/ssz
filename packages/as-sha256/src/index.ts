@@ -39,6 +39,18 @@ export function digest64(data: Uint8Array): Uint8Array {
   throw new Error("InvalidLengthForDigest64");
 }
 
+export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Array {
+  if (bytes1.length === 32 && bytes2.length === 32) {
+    inputUint8Array.set(bytes1);
+    inputUint8Array.set(bytes2, 32);
+    ctx.digest64(wasmInputValue, wasmOutputValue);
+    const output = new Uint8Array(32);
+    output.set(outputUint8Array);
+    return output;
+  }
+  throw new Error("InvalidLengthForDigest64");
+}
+
 /**
  * Digest 2 objects, each has 8 properties from h0 to h7.
  * The performance is a little bit better than digest64 due to the use of Uint32Array
