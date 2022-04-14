@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/ChainSafe/persistent-merkle-tree/compare/@chainsafe/persistent-merkle-tree@0.4.0...@chainsafe/persistent-merkle-tree@0.4.1) (2022-04-14)
+
+* Remove unused files (#248)
+* Bump minimist from 0.0.8 to 0.0.10 (#192)
+
 # [0.4.0](https://github.com/ChainSafe/persistent-merkle-tree/compare/@chainsafe/persistent-merkle-tree@0.3.7...@chainsafe/persistent-merkle-tree@0.4.0) (2022-03-24)
 
 
