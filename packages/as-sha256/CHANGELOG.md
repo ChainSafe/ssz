@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/chainsafe/as-sha256/compare/@chainsafe/as-sha256@0.3.0...@chainsafe/as-sha256@0.3.1) (2022-04-14)
+
+* Add and use a new helper to digest64 two 32 bytes (#255)
+* Remove unused files (#248)
+* Bump minimist from 0.0.8 to 0.0.10 (#192)
+
 # [0.3.0](https://github.com/chainsafe/as-sha256/compare/@chainsafe/as-sha256@0.2.4...@chainsafe/as-sha256@0.3.0) (2022-03-24)
 
 

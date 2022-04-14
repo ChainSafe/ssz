@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.1](https://github.com/chainsafe/ssz/compare/@chainsafe/ssz@0.9.0...@chainsafe/ssz@0.9.1) (2022-04-14)
+
+* Force usage of Uint8Array.prototype.slice (#258)
+* Add and use a new helper to digest64 two 32 bytes (#255)
+* Remove unused files (#248)
+* Bump spec tests (#251)
+* Bump yargs-parser from 16.1.0 to 20.2.4 in /packages/ssz (#189)
+* Test empty ByteListType (#250)
+
 # [0.9.0](http://chainsafe/ssz/compare/@chainsafe/ssz@0.8.19...@chainsafe/ssz@0.9.0) (2022-03-24)
 
 
