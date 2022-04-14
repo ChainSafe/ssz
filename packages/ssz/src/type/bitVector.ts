@@ -70,7 +70,7 @@ export class BitVectorType extends BitArrayType {
   value_deserializeFromBytes(data: ByteViews, start: number, end: number): BitArray {
     this.assertValidLength(data.uint8Array, start, end);
     // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-    return new BitArray(Uint8Array.prototype.slice.call(data, start, end), this.lengthBits);
+    return new BitArray(Uint8Array.prototype.slice.call(data.uint8Array, start, end), this.lengthBits);
   }
 
   tree_serializedSize(): number {
