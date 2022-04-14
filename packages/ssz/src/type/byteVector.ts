@@ -52,15 +52,7 @@ export class ByteVectorType extends ByteArrayType {
     return this.fixedSize;
   }
 
-  value_serializeToBytes(output: ByteViews, offset: number, value: ByteVector): number {
-    output.uint8Array.set(value, offset);
-    return offset + this.fixedSize;
-  }
-
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteVector {
-    this.assertValidSize(end - start);
-    return data.uint8Array.slice(start, end);
-  }
+  // value_* inherited from ByteArrayType
 
   tree_serializedSize(): number {
     return this.fixedSize;

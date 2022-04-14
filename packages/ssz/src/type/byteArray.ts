@@ -1,6 +1,7 @@
 import {concatGindices, Gindex, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
 import {splitIntoRootChunks} from "../util/merkleize";
+import {ByteViews} from "./abstract";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
 
 export type ByteArray = Uint8Array;
@@ -54,6 +55,18 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
 
   toViewDU(value: ByteArray): ByteArray {
     return value;
+  }
+
+  // Serialization + deserialization (only value is generic)
+
+  value_serializeToBytes(output: ByteViews, offset: number, value: ByteArray): number {
+    output.uint8Array.set(value, offset);
+    return offset + value.length;
+  }
+
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteArray {
+    this.assertValidSize(end - start);
+    return Uint8Array.prototype.slice.call(data.uint8Array, start, end);
   }
 
   // Merkleization

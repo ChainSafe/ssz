@@ -124,13 +124,15 @@ function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, 
   }
 
   if (lastByte === 1) {
-    const uint8Array = data.slice(start, end - 1);
+    // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+    const uint8Array = Uint8Array.prototype.slice.call(data, start, end - 1);
     const bitLen = (size - 1) * 8;
     return {uint8Array, bitLen};
   }
 
   // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
-  const uint8Array = data.slice(start, end);
+  // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+  const uint8Array = Uint8Array.prototype.slice.call(data, start, end);
   // mask lastChunkByte
   const lastByteBitLength = lastByte.toString(2).length - 1;
   const bitLen = (size - 1) * 8 + lastByteBitLength;

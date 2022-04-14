@@ -194,12 +194,14 @@ describe("Uint64 deserialize", () => {
     let uint8Array: Uint8Array;
     let uint32Array: Uint32Array;
     let dataView: DataView;
+    let buffer: Buffer;
 
     before("Create random bytes", () => {
       arrayBuffer = new ArrayBuffer(bytesTotal);
       uint8Array = new Uint8Array(arrayBuffer);
       uint32Array = new Uint32Array(arrayBuffer);
       dataView = new DataView(arrayBuffer);
+      buffer = Buffer.from(arrayBuffer);
       for (let i = 0; i < numElements; i++) {
         dataView.setBigUint64(i * 8, BigInt(30e9 + i), true);
       }
@@ -232,8 +234,27 @@ describe("Uint64 deserialize", () => {
     });
 
     itBench(`Copy Uint8Array ${numElements} slice`, () => {
+      uint8Array.slice(0, uint8Array.length);
+    });
+
+    itBench(`Copy Uint8Array ${numElements} Uint8Array.prototype.slice.call`, () => {
+      Uint8Array.prototype.slice.call(uint8Array, 0, uint8Array.length);
+    });
+
+    itBench(`Copy Buffer ${numElements} Uint8Array.prototype.slice.call`, () => {
+      Uint8Array.prototype.slice.call(buffer, 0, uint8Array.length);
+    });
+
+    itBench(`Copy Uint8Array ${numElements} slice + set`, () => {
       const byteLen = uint8Array.length;
-      uint8Array.slice(0, byteLen);
+      const uint8ArrayNew = new Uint8Array(byteLen);
+      uint8ArrayNew.set(uint8Array.slice(0, byteLen));
+    });
+
+    itBench(`Copy Uint8Array ${numElements} subarray + set`, () => {
+      const byteLen = uint8Array.length;
+      const uint8ArrayNew = new Uint8Array(byteLen);
+      uint8ArrayNew.set(uint8Array.subarray(0, byteLen));
     });
 
     itBench(`Copy Uint8Array ${numElements} slice arrayBuffer`, () => {

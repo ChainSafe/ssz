@@ -50,15 +50,7 @@ export class ByteListType extends ByteArrayType {
     return value.length;
   }
 
-  value_serializeToBytes(output: ByteViews, offset: number, value: ByteArray): number {
-    output.uint8Array.set(value, offset);
-    return offset + value.length;
-  }
-
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteArray {
-    this.assertValidSize(end - start);
-    return data.uint8Array.slice(start, end);
-  }
+  // value_* inherited from ByteArrayType
 
   tree_serializedSize(node: Node): number {
     return getLengthFromRootNode(node);
