@@ -1,15 +1,11 @@
-# Dockerfile
-
 FROM node:lts as build
 
 WORKDIR /usr/src/app
-
 COPY package.json yarn.lock ./
+RUN yarn install --non-interactive --frozen-lockfile --ignore-scripts
 
-RUN yarn install
-
-COPY . .
-RUN yarn add webpack-cli@4.8.0
+COPY packages/simpleserialize.com .
+RUN yarn install --non-interactive --ignore-scripts
 RUN yarn build
 
 FROM nginx:alpine
