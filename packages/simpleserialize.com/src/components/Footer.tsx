@@ -16,7 +16,7 @@ export default function Footer(): JSX.Element {
           className="is-link has-text-danger is-family-code"
           href="https://github.com/ChainSafe/simpleserialize.com/graphs/contributors"
         >
-          ETH 2.0 friends
+          ETH Consensus Friends
         </a>
       </div>
       <div className="content has-text-centered is-small is-family-code">
