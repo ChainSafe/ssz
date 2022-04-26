@@ -1,5 +1,6 @@
 import {Gindex} from "../gindex";
 import {Node} from "../node";
+import {createEFMultiProof, createNodeFromEFMultiProof} from "./efMulti";
 import {createNodeFromSingleProof, createSingleProof} from "./single";
 import {
   computeTreeOffsetProofSerializedLength,
@@ -12,6 +13,7 @@ import {
 export enum ProofType {
   single = "single",
   treeOffset = "treeOffset",
+  EFMulti = "EFMulti",
 }
 
 /**
@@ -20,6 +22,7 @@ export enum ProofType {
 export const ProofTypeSerialized = [
   ProofType.single, // 0
   ProofType.treeOffset, // 1
+  ProofType.EFMulti, // 2
 ];
 
 /**
@@ -43,7 +46,14 @@ export interface TreeOffsetProof {
   leaves: Uint8Array[];
 }
 
-export type Proof = SingleProof | TreeOffsetProof;
+export interface EFMultiProof {
+  type: ProofType.EFMulti;
+  leaves: Uint8Array[];
+  witnesses: Uint8Array[];
+  gindices: Gindex[];
+}
+
+export type Proof = SingleProof | TreeOffsetProof | EFMultiProof;
 
 export interface SingleProofInput {
   type: ProofType.single;
@@ -54,7 +64,12 @@ export interface TreeOffsetProofInput {
   gindices: Gindex[];
 }
 
-export type ProofInput = SingleProofInput | TreeOffsetProofInput;
+export interface EFMultiProofInput {
+  type: ProofType.EFMulti;
+  gindices: Gindex[];
+}
+
+export type ProofInput = SingleProofInput | TreeOffsetProofInput | EFMultiProofInput;
 
 export function createProof(rootNode: Node, input: ProofInput): Proof {
   switch (input.type) {
@@ -75,6 +90,15 @@ export function createProof(rootNode: Node, input: ProofInput): Proof {
         leaves,
       };
     }
+    case ProofType.EFMulti: {
+      const [leaves, witnesses, gindices] = createEFMultiProof(rootNode, input.gindices);
+      return {
+        type: ProofType.EFMulti,
+        leaves,
+        witnesses,
+        gindices,
+      };
+    }
     default:
       throw new Error("Invalid proof type");
   }
@@ -86,6 +110,8 @@ export function createNodeFromProof(proof: Proof): Node {
       return createNodeFromSingleProof(proof.gindex, proof.leaf, proof.witnesses);
     case ProofType.treeOffset:
       return createNodeFromTreeOffsetProof(proof.offsets, proof.leaves);
+    case ProofType.EFMulti:
+      return createNodeFromEFMultiProof(proof.leaves, proof.witnesses, proof.gindices);
     default:
       throw new Error("Invalid proof type");
   }
@@ -94,6 +120,7 @@ export function createNodeFromProof(proof: Proof): Node {
 export function serializeProof(proof: Proof): Uint8Array {
   switch (proof.type) {
     case ProofType.single:
+    case ProofType.EFMulti:
       throw new Error("Not implemented");
     case ProofType.treeOffset: {
       const output = new Uint8Array(1 + computeTreeOffsetProofSerializedLength(proof.offsets, proof.leaves));
@@ -113,6 +140,7 @@ export function deserializeProof(data: Uint8Array): Proof {
   }
   switch (proofType) {
     case ProofType.single:
+    case ProofType.EFMulti:
       throw new Error("Not implemented");
     case ProofType.treeOffset: {
       const [offsets, leaves] = deserializeTreeOffsetProof(data, 1);
