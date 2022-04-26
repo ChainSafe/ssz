@@ -12807,7 +12807,7 @@ var react_dom = __webpack_require__(8316);
 
 function ForkMe() {
   return /*#__PURE__*/react.createElement("a", {
-    href: "https://github.com/chainsafe/simpleserialize.com",
+    href: "https://github.com/ChainSafe/ssz/tree/master/packages/simpleserialize.com",
     style: {
       position: "absolute",
       right: 0,
