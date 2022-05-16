@@ -95,7 +95,7 @@ export function sortDecreasingBitstrings(gindices: GindexBitstring[]): GindexBit
  * Filter out parent generalized indices
  */
 export function filterParentBitstrings(gindices: GindexBitstring[]): GindexBitstring[] {
-  const sortedBitstrings = gindices.sort((a, b) => a.length - b.length);
+  const sortedBitstrings = gindices.slice().sort((a, b) => a.length - b.length);
   const filtered: GindexBitstring[] = [];
   outer: for (let i = 0; i < sortedBitstrings.length; i++) {
     const bsA = sortedBitstrings[i];

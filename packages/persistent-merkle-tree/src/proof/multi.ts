@@ -4,19 +4,21 @@ import {Tree} from "../tree";
 import {computeMultiProofBitstrings, SortOrder} from "./util";
 
 /**
- * Create an EF multiproof
+ * Create an multiproof
+ *
+ * See https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
  *
  * @param rootNode the root node of the tree
  * @param gindices generalized indices of leaves to include in the proof
  */
-export function createEFMultiProof(rootNode: Node, gindices: Gindex[]): [Uint8Array[], Uint8Array[], Gindex[]] {
+export function createMultiProof(rootNode: Node, gindices: Gindex[]): [Uint8Array[], Uint8Array[], Gindex[]] {
   const tree = new Tree(rootNode);
   const witnessGindices = computeMultiProofBitstrings(
     gindices.map((gindex) => gindex.toString(2)),
     false,
     SortOrder.Decreasing
   );
-  const leafGindices = gindices.sort((a, b) => (a < b ? 1 : -1));
+  const leafGindices = gindices.slice().sort((a, b) => (a < b ? 1 : -1));
   const leaves = leafGindices.map((gindex) => tree.getRoot(gindex));
   const witnesses = witnessGindices.map((gindex) => tree.getRoot(gindex));
 
@@ -24,13 +26,15 @@ export function createEFMultiProof(rootNode: Node, gindices: Gindex[]): [Uint8Ar
 }
 
 /**
- * Recreate a `Node` given a EF multiproof
+ * Recreate a `Node` given a multiproof
+ *
+ * See https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
  *
  * @param leaves leaves of a EF multiproof
  * @param witnesses witnesses of a EF multiproof
  * @param gindices generalized indices of the leaves
  */
-export function createNodeFromEFMultiProof(leaves: Uint8Array[], witnesses: Uint8Array[], gindices: Gindex[]): Node {
+export function createNodeFromMultiProof(leaves: Uint8Array[], witnesses: Uint8Array[], gindices: Gindex[]): Node {
   if (leaves.length !== gindices.length) {
     throw new Error("Leaves length should equal gindices length");
   }
@@ -48,10 +52,10 @@ export function createNodeFromEFMultiProof(leaves: Uint8Array[], witnesses: Uint
   // level by level, starting from the bottom,
   // find the sibling, create the parent, store it in the next level up
   // the root is in level 1
-  const maxLevel = Math.max(leafBitstrings[0].length, witnessBitstrings[0].length);
+  const maxLevel = Math.max(leafBitstrings[0]?.length ?? 0, witnessBitstrings[0]?.length ?? 0);
 
   const levels: Record<number, Record<string, Node>> = Object.fromEntries(
-    Array.from({length: maxLevel}, (_, i) => [i, {}])
+    Array.from({length: maxLevel}, (_, i) => [i + 1, {}])
   );
 
   // preload leaves and witnesses
@@ -78,7 +82,7 @@ export function createNodeFromEFMultiProof(leaves: Uint8Array[], witnesses: Uint
 
       const isLeft = bitstring[bitstring.length - 1] === "0";
       const parentBitstring = bitstring.substring(0, bitstring.length - 1);
-      const siblingBitstring = parentBitstring + isLeft ? "1" : "0";
+      const siblingBitstring = parentBitstring + (isLeft ? "1" : "0");
 
       const siblingNode = level[siblingBitstring];
       if (!siblingNode) {
