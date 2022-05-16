@@ -19452,7 +19452,7 @@ function Footer() {
   }, "ChainSafe Systems"), /*#__PURE__*/react.createElement("br", null), "and", " ", /*#__PURE__*/react.createElement("a", {
     className: "is-link has-text-danger is-family-code",
     href: "https://github.com/ChainSafe/simpleserialize.com/graphs/contributors"
-  }, "ETH 2.0 friends")), /*#__PURE__*/react.createElement("div", {
+  }, "ETH Consensus Friends")), /*#__PURE__*/react.createElement("div", {
     className: "content has-text-centered is-small is-family-code"
   }, /*#__PURE__*/react.createElement("div", null, /*#__PURE__*/react.createElement("a", {
     className: "is-link has-text-grey",
