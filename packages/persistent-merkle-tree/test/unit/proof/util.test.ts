@@ -87,7 +87,7 @@ describe("filterParentBitstrings", () => {
 describe("computeMultiProofBitstrings", () => {
   it("should properly compute known testcases", () => {
     const testCases = [
-      // testcase from https://github.com/ethereum/eth2.0-specs/blob/v1.0.0/ssz/merkle-proofs.md#merkle-multiproofs
+      // testcase from https://github.com/ethereum/consensus-specs/blob/v1.1.10/ssz/merkle-proofs.md#merkle-multiproofs
       {
         input: [BigInt(8), BigInt(9), BigInt(14)],
         output: [BigInt(8), BigInt(9), BigInt(5), BigInt(6), BigInt(14), BigInt(15)],

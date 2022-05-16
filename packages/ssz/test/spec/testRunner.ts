@@ -38,7 +38,7 @@ export function parseSszStaticTestcase(dirpath: string): ValidTestCaseData {
  *       | serialized.ssz_snappy
  *       | value.yaml
  *
- * Docs: https://github.com/ethereum/eth2.0-specs/blob/master/tests/formats/ssz_generic/README.md
+ * Docs: https://github.com/ethereum/consensus-specs/blob/master/tests/formats/ssz_generic/README.md
  */
 export function parseSszGenericValidTestcase(dirpath: string): ValidTestCaseData {
   return parseSszValidTestcase(dirpath, "meta.yaml");
