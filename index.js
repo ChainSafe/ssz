@@ -27100,19 +27100,22 @@ exports.packedNodeRootsToBytes = packedNodeRootsToBytes;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.deserializeProof = exports.serializeProof = exports.createNodeFromProof = exports.createProof = exports.ProofTypeSerialized = exports.ProofType = void 0;
+const multi_1 = __webpack_require__(258);
 const single_1 = __webpack_require__(7951);
 const treeOffset_1 = __webpack_require__(1488);
 var ProofType;
 (function (ProofType) {
     ProofType["single"] = "single";
     ProofType["treeOffset"] = "treeOffset";
+    ProofType["multi"] = "multi";
 })(ProofType = exports.ProofType || (exports.ProofType = {}));
 /**
  * Serialized proofs are prepended with a single byte, denoting their type
  */
 exports.ProofTypeSerialized = [
     ProofType.single,
-    ProofType.treeOffset, // 1
+    ProofType.treeOffset,
+    ProofType.multi, // 2
 ];
 function createProof(rootNode, input) {
     switch (input.type) {
@@ -27133,6 +27136,15 @@ function createProof(rootNode, input) {
                 leaves,
             };
         }
+        case ProofType.multi: {
+            const [leaves, witnesses, gindices] = multi_1.createMultiProof(rootNode, input.gindices);
+            return {
+                type: ProofType.multi,
+                leaves,
+                witnesses,
+                gindices,
+            };
+        }
         default:
             throw new Error("Invalid proof type");
     }
@@ -27144,6 +27156,8 @@ function createNodeFromProof(proof) {
             return single_1.createNodeFromSingleProof(proof.gindex, proof.leaf, proof.witnesses);
         case ProofType.treeOffset:
             return treeOffset_1.createNodeFromTreeOffsetProof(proof.offsets, proof.leaves);
+        case ProofType.multi:
+            return multi_1.createNodeFromMultiProof(proof.leaves, proof.witnesses, proof.gindices);
         default:
             throw new Error("Invalid proof type");
     }
@@ -27152,6 +27166,7 @@ exports.createNodeFromProof = createNodeFromProof;
 function serializeProof(proof) {
     switch (proof.type) {
         case ProofType.single:
+        case ProofType.multi:
             throw new Error("Not implemented");
         case ProofType.treeOffset: {
             const output = new Uint8Array(1 + treeOffset_1.computeTreeOffsetProofSerializedLength(proof.offsets, proof.leaves));
@@ -27171,6 +27186,7 @@ function deserializeProof(data) {
     }
     switch (proofType) {
         case ProofType.single:
+        case ProofType.multi:
             throw new Error("Not implemented");
         case ProofType.treeOffset: {
             const [offsets, leaves] = treeOffset_1.deserializeTreeOffsetProof(data, 1);
@@ -27185,6 +27201,105 @@ function deserializeProof(data) {
     }
 }
 exports.deserializeProof = deserializeProof;
+
+
+/***/ }),
+
+/***/ 258:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createNodeFromMultiProof = exports.createMultiProof = void 0;
+const node_1 = __webpack_require__(4508);
+const tree_1 = __webpack_require__(550);
+const util_1 = __webpack_require__(1940);
+/**
+ * Create an multiproof
+ *
+ * See https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
+ *
+ * @param rootNode the root node of the tree
+ * @param gindices generalized indices of leaves to include in the proof
+ */
+function createMultiProof(rootNode, gindices) {
+    const tree = new tree_1.Tree(rootNode);
+    const witnessGindices = util_1.computeMultiProofBitstrings(gindices.map((gindex) => gindex.toString(2)), false, util_1.SortOrder.Decreasing);
+    const leafGindices = gindices.slice().sort((a, b) => (a < b ? 1 : -1));
+    const leaves = leafGindices.map((gindex) => tree.getRoot(gindex));
+    const witnesses = witnessGindices.map((gindex) => tree.getRoot(gindex));
+    return [leaves, witnesses, leafGindices];
+}
+exports.createMultiProof = createMultiProof;
+/**
+ * Recreate a `Node` given a multiproof
+ *
+ * See https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
+ *
+ * @param leaves leaves of a EF multiproof
+ * @param witnesses witnesses of a EF multiproof
+ * @param gindices generalized indices of the leaves
+ */
+function createNodeFromMultiProof(leaves, witnesses, gindices) {
+    if (leaves.length !== gindices.length) {
+        throw new Error("Leaves length should equal gindices length");
+    }
+    const leafBitstrings = gindices.map((gindex) => gindex.toString(2));
+    const witnessBitstrings = util_1.computeMultiProofBitstrings(leafBitstrings, false, util_1.SortOrder.Decreasing);
+    if (witnessBitstrings.length !== witnesses.length) {
+        throw new Error("Witnesses length should equal witnesses gindices length");
+    }
+    // Algorithm:
+    // create an object which tracks key-values for each level
+    // pre-load leaves and witnesses into the level object
+    // level by level, starting from the bottom,
+    // find the sibling, create the parent, store it in the next level up
+    // the root is in level 1
+    const maxLevel = Math.max(leafBitstrings[0]?.length ?? 0, witnessBitstrings[0]?.length ?? 0);
+    const levels = Object.fromEntries(Array.from({ length: maxLevel }, (_, i) => [i + 1, {}]));
+    // preload leaves and witnesses
+    for (let i = 0; i < leafBitstrings.length; i++) {
+        const leafBitstring = leafBitstrings[i];
+        const leaf = leaves[i];
+        levels[leafBitstring.length][leafBitstring] = node_1.LeafNode.fromRoot(leaf);
+    }
+    for (let i = 0; i < witnessBitstrings.length; i++) {
+        const witnessBitstring = witnessBitstrings[i];
+        const witness = witnesses[i];
+        levels[witnessBitstring.length][witnessBitstring] = node_1.LeafNode.fromRoot(witness);
+    }
+    for (let i = maxLevel; i > 1; i--) {
+        const level = levels[i];
+        const parentLevel = levels[i - 1];
+        for (const bitstring of Object.keys(level)) {
+            const node = level[bitstring];
+            // if the node doesn't exist, we've already processed its sibling
+            if (!node) {
+                continue;
+            }
+            const isLeft = bitstring[bitstring.length - 1] === "0";
+            const parentBitstring = bitstring.substring(0, bitstring.length - 1);
+            const siblingBitstring = parentBitstring + (isLeft ? "1" : "0");
+            const siblingNode = level[siblingBitstring];
+            if (!siblingNode) {
+                throw new Error(`Sibling not found: ${siblingBitstring}`);
+            }
+            // store the parent node
+            const parentNode = isLeft ? new node_1.BranchNode(node, siblingNode) : new node_1.BranchNode(siblingNode, node);
+            parentLevel[parentBitstring] = parentNode;
+            // delete the used nodes
+            delete level[bitstring];
+            delete level[siblingBitstring];
+        }
+    }
+    const root = levels[1]["1"];
+    if (!root) {
+        throw new Error("Internal consistency error: no root found");
+    }
+    return root;
+}
+exports.createNodeFromMultiProof = createNodeFromMultiProof;
 
 
 /***/ }),
@@ -27221,7 +27336,7 @@ function createSingleProof(rootNode, index) {
 exports.createSingleProof = createSingleProof;
 function createNodeFromSingleProof(gindex, leaf, witnesses) {
     let node = node_1.LeafNode.fromRoot(leaf);
-    const w = witnesses.reverse();
+    const w = witnesses.slice().reverse();
     while (gindex > 1) {
         const sibling = node_1.LeafNode.fromRoot(w.pop());
         if (gindex % BigInt(2) === BigInt(0)) {
@@ -27371,7 +27486,7 @@ exports.deserializeTreeOffsetProof = deserializeTreeOffsetProof;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.computeMultiProofBitstrings = exports.filterParentBitstrings = exports.sortInOrderBitstrings = exports.computeProofBitstrings = exports.computeProofGindices = void 0;
+exports.computeMultiProofBitstrings = exports.SortOrder = exports.filterParentBitstrings = exports.sortDecreasingBitstrings = exports.sortInOrderBitstrings = exports.computeProofBitstrings = exports.computeProofGindices = void 0;
 const gindex_1 = __webpack_require__(1797);
 // Not currently in use, but simpler implementation useful for testing
 /**
@@ -27427,10 +27542,46 @@ function sortInOrderBitstrings(gindices, bitLength) {
 }
 exports.sortInOrderBitstrings = sortInOrderBitstrings;
 /**
+ * Sort generalized indices in decreasing order
+ */
+function sortDecreasingBitstrings(gindices) {
+    if (!gindices.length) {
+        return [];
+    }
+    return gindices.sort((a, b) => {
+        if (a.length < b.length) {
+            return 1;
+        }
+        else if (b.length < a.length) {
+            return -1;
+        }
+        let aPos0 = a.indexOf("0");
+        let bPos0 = b.indexOf("0");
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            if (aPos0 === -1) {
+                return -1;
+            }
+            else if (bPos0 === -1) {
+                return 1;
+            }
+            if (aPos0 < bPos0) {
+                return 1;
+            }
+            else if (bPos0 < aPos0) {
+                return -1;
+            }
+            aPos0 = a.indexOf("0", aPos0 + 1);
+            bPos0 = b.indexOf("0", bPos0 + 1);
+        }
+    });
+}
+exports.sortDecreasingBitstrings = sortDecreasingBitstrings;
+/**
  * Filter out parent generalized indices
  */
 function filterParentBitstrings(gindices) {
-    const sortedBitstrings = gindices.sort((a, b) => a.length - b.length);
+    const sortedBitstrings = gindices.slice().sort((a, b) => a.length - b.length);
     const filtered = [];
     outer: for (let i = 0; i < sortedBitstrings.length; i++) {
         const bsA = sortedBitstrings[i];
@@ -27445,20 +27596,27 @@ function filterParentBitstrings(gindices) {
     return filtered;
 }
 exports.filterParentBitstrings = filterParentBitstrings;
+var SortOrder;
+(function (SortOrder) {
+    SortOrder[SortOrder["InOrder"] = 0] = "InOrder";
+    SortOrder[SortOrder["Decreasing"] = 1] = "Decreasing";
+    SortOrder[SortOrder["Unsorted"] = 2] = "Unsorted";
+})(SortOrder = exports.SortOrder || (exports.SortOrder = {}));
 /**
  * Return the set of generalized indices required for a multiproof
- * This includes all leaves and any necessary witnesses
+ * This may include all leaves and any necessary witnesses
  * @param gindices leaves to include in proof
- * @returns all generalized indices required for a multiproof (leaves and witnesses), deduplicated and sorted in-order according to the tree
+ * @returns all generalized indices required for a multiproof (leaves and witnesses), deduplicated and sorted
  */
-function computeMultiProofBitstrings(gindices) {
-    // Initialize the proof indices with the leaves
-    const proof = new Set(filterParentBitstrings(gindices));
+function computeMultiProofBitstrings(gindices, includeLeaves = true, sortOrder = SortOrder.InOrder) {
+    const leaves = filterParentBitstrings(gindices);
+    // Maybe initialize the proof indices with the leaves
+    const proof = new Set(includeLeaves ? leaves : []);
     const paths = new Set();
     const branches = new Set();
     // Collect all path indices and all branch indices
     let maxBitLength = 1;
-    for (const gindex of proof) {
+    for (const gindex of leaves) {
         if (gindex.length > maxBitLength)
             maxBitLength = gindex.length;
         const { path, branch } = computeProofBitstrings(gindex);
@@ -27469,7 +27627,14 @@ function computeMultiProofBitstrings(gindices) {
     paths.forEach((g) => branches.delete(g));
     // Add all remaining branches to the leaves
     branches.forEach((g) => proof.add(g));
-    return sortInOrderBitstrings(Array.from(proof), maxBitLength);
+    switch (sortOrder) {
+        case SortOrder.InOrder:
+            return sortInOrderBitstrings(Array.from(proof), maxBitLength);
+        case SortOrder.Decreasing:
+            return sortDecreasingBitstrings(Array.from(proof));
+        case SortOrder.Unsorted:
+            return Array.from(proof);
+    }
 }
 exports.computeMultiProofBitstrings = computeMultiProofBitstrings;
 
