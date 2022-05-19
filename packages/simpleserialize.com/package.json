@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "simpleserialize.com",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "repository": "https://github.com/chainsafe/simpleserialize.com",
   "author": "Chainsafe Systems",
   "license": "MIT",
@@ -16,8 +16,8 @@
   "dependencies": {
     "@babel/runtime": "^7.14.6",
     "@babel/types": "^7.14.5",
-    "@chainsafe/lodestar-types": "0.34.0-dev.63",
-    "@chainsafe/ssz": "^0.8.19",
+    "@chainsafe/lodestar-types": "^0.37.0-dev.267dce705c",
+    "@chainsafe/ssz": "^0.9.1",
     "bn.js": "^5.2.0",
     "bulma": "^0.9.3",
     "core-js": "^3.15.2",
