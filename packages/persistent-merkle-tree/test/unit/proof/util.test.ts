@@ -6,6 +6,7 @@ import {
   sortInOrderBitstrings,
   filterParentBitstrings,
   computeMultiProofBitstrings,
+  sortDecreasingBitstrings,
 } from "../../../src/proof/util";
 
 describe("computeProofGindices", () => {
@@ -101,6 +102,28 @@ describe("computeMultiProofBitstrings", () => {
     for (const {input, output} of testCases) {
       const actual = computeMultiProofBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt("0b" + str));
       expect(actual).to.deep.equal(output);
+    }
+  });
+});
+
+describe("sortDecreasingBitstrings", () => {
+  it("should properly compute known testcases", () => {
+    const length = 40;
+    const testCases = [
+      Array.from({length}, (_, i) => i + 1),
+      Array.from({length}, (_, i) => length - i + 1),
+      Array.from({length}, () => Math.floor(Math.random() * 1000) + 1),
+    ];
+
+    const toBitstring = (i: number): string => i.toString(2);
+
+    for (const testCase of testCases) {
+      const bitstrings = testCase.map(toBitstring);
+
+      const sorted = testCase.sort((a, b) => (a < b ? 1 : -1));
+      const sortedBitstrings = sortDecreasingBitstrings(bitstrings);
+
+      expect(sortedBitstrings).to.be.deep.equal(sorted.map(toBitstring));
     }
   });
 });
