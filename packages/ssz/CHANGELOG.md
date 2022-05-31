@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.2](https://github.com/chainsafe/ssz/compare/@chainsafe/ssz@0.9.1...@chainsafe/ssz@0.9.2) (2022-05-31)
+
+* Fix ListCompositeType.sliceTo(-1) (#268)
+
 ## [0.9.1](https://github.com/chainsafe/ssz/compare/@chainsafe/ssz@0.9.0...@chainsafe/ssz@0.9.1) (2022-04-14)
 
 * Force usage of Uint8Array.prototype.slice (#258)
