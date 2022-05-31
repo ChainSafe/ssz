@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/ChainSafe/persistent-merkle-tree/compare/@chainsafe/persistent-merkle-tree@0.4.1...@chainsafe/persistent-merkle-tree@0.4.2) (2022-05-31)
+
+* Fix treeZeroAfterIndex for negative index (#268)
+
 ## [0.4.1](https://github.com/ChainSafe/persistent-merkle-tree/compare/@chainsafe/persistent-merkle-tree@0.4.0...@chainsafe/persistent-merkle-tree@0.4.1) (2022-04-14)
 
 * Remove unused files (#248)
