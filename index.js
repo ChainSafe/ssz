@@ -28309,11 +28309,6 @@ function treeZeroAfterIndex(rootNode, nodesDepth, index) {
     // mask = 1 << depthi
     // goRight = (N & mask) == mask
     // ```
-    // Degenerate case where tree is zero after a negative index (-1).
-    // All positive indexes are zero, so the entire tree is zero. Return cached zero node as root.
-    if (index < 0) {
-        return zeroNode_1.zeroNode(nodesDepth);
-    }
     /**
      * Contiguous filled stack of parent nodes. It get filled in the first descent
      * Indexed by depthi
@@ -33579,8 +33574,6 @@ class ListCompositeTreeViewDU extends arrayComposite_1.ArrayCompositeTreeViewDU 
      * ```
      *
      * To achieve it, rebinds the underlying tree zero-ing all nodes right of `index`.
-     *
-     * Note: Using index = -1, returns an empty list of length 0.
      */
     sliceTo(index) {
         // Commit before getting rootNode to ensure all pending data is in the rootNode
