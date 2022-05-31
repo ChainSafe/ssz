@@ -643,6 +643,12 @@ export function treeZeroAfterIndex(rootNode: Node, nodesDepth: number, index: nu
   // goRight = (N & mask) == mask
   // ```
 
+  // Degenerate case where tree is zero after a negative index (-1).
+  // All positive indexes are zero, so the entire tree is zero. Return cached zero node as root.
+  if (index < 0) {
+    return zeroNode(nodesDepth);
+  }
+
   /**
    * Contiguous filled stack of parent nodes. It get filled in the first descent
    * Indexed by depthi
