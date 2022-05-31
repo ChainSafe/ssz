@@ -173,16 +173,24 @@ describe("ListCompositeType.sliceTo", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listView = listType.defaultViewDU();
     const listRoots: string[] = [];
+    const listSerialized: string[] = [];
 
-    for (let i = 0; i < 16; i++) {
-      listView.push(Buffer.alloc(32, i + 1));
-      listRoots.push(toHexString(listView.serialize()));
+    for (let i = -1; i < 16; i++) {
+      // Skip first loop to persist empty case
+      if (i >= 0) {
+        listView.push(Buffer.alloc(32, 0xf + i)); // Avoid 0 case
+      }
+      // Javascript arrays can handle negative indexes (ok for tests)
+      listSerialized[i] = toHexString(listView.serialize());
+      listRoots[i] = toHexString(listView.hashTreeRoot());
     }
 
-    for (let i = 0; i < 16; i++) {
+    // Start at -1 to test the empty case.
+    for (let i = -1; i < 16; i++) {
       const listSlice = listView.sliceTo(i);
       expect(listSlice.length).to.equal(i + 1, `Wrong length at .sliceTo(${i})`);
-      expect(toHexString(listSlice.serialize())).equals(listRoots[i], `Wrong bytes at .sliceTo(${i})`);
+      expect(toHexString(listSlice.serialize())).equals(listSerialized[i], `Wrong serialize at .sliceTo(${i})`);
+      expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[i], `Wrong root at .sliceTo(${i})`);
     }
   });
 });

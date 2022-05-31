@@ -39,6 +39,8 @@ export class ListCompositeTreeViewDU<
    * ```
    *
    * To achieve it, rebinds the underlying tree zero-ing all nodes right of `index`.
+   *
+   * Note: Using index = -1, returns an empty list of length 0.
    */
   sliceTo(index: number): this {
     // Commit before getting rootNode to ensure all pending data is in the rootNode
