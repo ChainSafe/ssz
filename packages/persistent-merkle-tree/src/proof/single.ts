@@ -36,7 +36,7 @@ export function createNodeFromSingleProof(gindex: Gindex, leaf: Uint8Array, witn
 }
 
 export function computeSingleProofSerializedLength(witnesses: Uint8Array[]): number {
-  return 1 + 2 + witnesses.length * 32;
+  return 1 + 2 + 32 + 2 + witnesses.length * 32;
 }
 
 export function serializeSingleProof(
