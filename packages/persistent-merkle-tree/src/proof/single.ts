@@ -34,3 +34,40 @@ export function createNodeFromSingleProof(gindex: Gindex, leaf: Uint8Array, witn
   }
   return node;
 }
+
+export function computeSingleProofSerializedLength(witnesses: Uint8Array[]): number {
+  return 1 + 2 + witnesses.length * 32;
+}
+
+export function serializeSingleProof(
+  output: Uint8Array,
+  byteOffset: number,
+  gindex: Gindex,
+  leaf: Uint8Array,
+  witnesses: Uint8Array[]
+): void {
+  const writer = new DataView(output.buffer, output.byteOffset, output.byteLength);
+  writer.setUint16(byteOffset, Number(gindex), true);
+  const leafStartIndex = byteOffset + 2;
+  output.set(leaf, leafStartIndex);
+  const witCountStartIndex = leafStartIndex + 32;
+  writer.setUint16(witCountStartIndex, witnesses.length, true);
+  const witnessesStartIndex = witCountStartIndex + 2;
+  for (let i = 0; i < witnesses.length; i++) {
+    output.set(witnesses[i], i * 32 + witnessesStartIndex);
+  }
+}
+
+export function deserializeSingleProof(data: Uint8Array, byteOffset: number): [Gindex, Uint8Array, Uint8Array[]] {
+  const reader = new DataView(data.buffer, data.byteOffset, data.byteLength);
+  const gindex = reader.getUint16(byteOffset, true);
+  const leafStartIndex = byteOffset + 2;
+  const leaf = data.subarray(leafStartIndex, 32 + leafStartIndex);
+  const witCountStartIndex = leafStartIndex + 32;
+  const witCount = reader.getUint16(witCountStartIndex, true);
+  const witnessesStartIndex = witCountStartIndex + 2;
+  const witnesses = Array.from({length: witCount}, (_, i) =>
+    data.subarray(i * 32 + witnessesStartIndex, (i + 1) * 32 + witnessesStartIndex)
+  );
+  return [BigInt(gindex), leaf, witnesses];
+}
