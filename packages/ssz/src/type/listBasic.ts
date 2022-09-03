@@ -15,6 +15,7 @@ import {ArrayBasicType} from "../view/arrayBasic";
 import {ListBasicTreeView} from "../view/listBasic";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic";
 import {ArrayType} from "./array";
+import {alloc} from "../util/byteArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -138,7 +139,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const uint8Array = alloc(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, value.length, {uint8Array, dataView}, 0, value);
     return splitIntoRootChunks(uint8Array);

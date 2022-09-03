@@ -1,4 +1,5 @@
 import {digest2Bytes32} from "@chainsafe/as-sha256";
+import {alloc} from "./byteArray";
 import {zeroHash} from "./zeros";
 
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
@@ -43,7 +44,7 @@ export function splitIntoRootChunks(longChunk: Uint8Array): Uint8Array[] {
   const chunks = new Array<Uint8Array>(chunkCount);
 
   for (let i = 0; i < chunkCount; i++) {
-    const chunk = new Uint8Array(32);
+    const chunk = alloc(32);
     chunk.set(longChunk.slice(i * 32, (i + 1) * 32));
     chunks[i] = chunk;
   }

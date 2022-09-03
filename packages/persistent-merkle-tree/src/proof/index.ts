@@ -9,6 +9,7 @@ import {
   deserializeTreeOffsetProof,
   serializeTreeOffsetProof,
 } from "./treeOffset";
+import {allocUnsafe} from "./util";
 
 export enum ProofType {
   single = "single",
@@ -128,7 +129,7 @@ export function serializeProof(proof: Proof): Uint8Array {
     case ProofType.multi:
       throw new Error("Not implemented");
     case ProofType.treeOffset: {
-      const output = new Uint8Array(1 + computeTreeOffsetProofSerializedLength(proof.offsets, proof.leaves));
+      const output = allocUnsafe(1 + computeTreeOffsetProofSerializedLength(proof.offsets, proof.leaves));
       output[0] = ProofTypeSerialized.indexOf(ProofType.treeOffset);
       serializeTreeOffsetProof(output, 1, proof.offsets, proof.leaves);
       return output;

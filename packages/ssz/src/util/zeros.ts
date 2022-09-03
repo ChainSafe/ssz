@@ -1,7 +1,8 @@
 import {digest2Bytes32} from "@chainsafe/as-sha256";
+import {alloc} from "./byteArray";
 
 // create array of "zero hashes", successively hashed zero chunks
-const zeroHashes = [new Uint8Array(32)];
+const zeroHashes = [alloc(32)];
 
 export function zeroHash(depth: number): Uint8Array {
   if (depth >= zeroHashes.length) {

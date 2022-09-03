@@ -1,6 +1,7 @@
 import {Node, Tree, Proof} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf, JsonPath} from "../type/abstract";
 import {CompositeType} from "../type/composite";
+import {alloc} from "../util/byteArray";
 
 /**
  * A Tree View is a wrapper around a type and an SSZ Tree that contains:
@@ -21,7 +22,7 @@ export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown
 
   /** Serialize view to binary data */
   serialize(): Uint8Array {
-    const output = new Uint8Array(this.type.tree_serializedSize(this.node));
+    const output = alloc(this.type.tree_serializedSize(this.node));
     const dataView = new DataView(output.buffer, output.byteOffset, output.byteLength);
     this.type.tree_serializeToBytes({uint8Array: output, dataView}, 0, this.node);
     return output;

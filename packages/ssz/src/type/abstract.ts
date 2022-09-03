@@ -1,4 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
+import {alloc} from "../util/byteArray";
 
 /* eslint-disable @typescript-eslint/member-ordering  */
 
@@ -94,7 +95,7 @@ export abstract class Type<V> {
   /** INTERNAL METHOD: Merkleize value to tree */
   value_toTree(value: V): Node {
     // TODO: Un-performant path but useful for prototyping. Overwrite in Type if performance is important
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const uint8Array = alloc(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
@@ -103,7 +104,7 @@ export abstract class Type<V> {
   /** INTERNAL METHOD: Un-merkleize tree to value */
   tree_toValue(node: Node): V {
     // TODO: Un-performant path but useful for prototyping. Overwrite in Type if performance is important
-    const uint8Array = new Uint8Array(this.tree_serializedSize(node));
+    const uint8Array = alloc(this.tree_serializedSize(node));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.tree_serializeToBytes({uint8Array, dataView}, 0, node);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
@@ -116,7 +117,7 @@ export abstract class Type<V> {
 
   /** Serialize a value to binary data */
   serialize(value: V): Uint8Array {
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const uint8Array = alloc(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return uint8Array;

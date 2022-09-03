@@ -6,6 +6,7 @@ import {getContainerTreeViewClass} from "../view/containerNodeStruct";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ValueOfFields} from "../view/container";
+import {alloc} from "../util/byteArray";
 
 /**
  * ContainerNodeStruct: ordered heterogeneous collection of values.
@@ -77,7 +78,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
   tree_fromProofNode(node: Node): {node: Node; done: boolean} {
     // TODO: Figure out from `node` alone if it contains complete data.
     // Otherwise throw a nice error "ContainerNodeStruct type requires proofs for all its data"
-    const uint8Array = new Uint8Array(super.tree_serializedSize(node));
+    const uint8Array = alloc(super.tree_serializedSize(node));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     super.tree_serializeToBytes({uint8Array, dataView}, 0, node);
     const value = this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
@@ -99,7 +100,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
 
   // TODO: Optimize conversion
   private valueToTree(value: ValueOfFields<Fields>): Node {
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const uint8Array = alloc(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return super.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);

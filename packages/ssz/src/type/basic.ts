@@ -1,4 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
+import {alloc} from "../util/byteArray";
 import {Type} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
@@ -31,7 +32,7 @@ export abstract class BasicType<V> extends Type<V> {
 
   hashTreeRoot(value: V): Uint8Array {
     // TODO: Optimize
-    const uint8Array = new Uint8Array(32);
+    const uint8Array = alloc(32);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return uint8Array;

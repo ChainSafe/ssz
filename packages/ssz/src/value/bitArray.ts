@@ -1,3 +1,5 @@
+import {alloc} from "../util/byteArray";
+
 /** Globally cache this information. @see getUint8ByteToBitBooleanArray */
 const uint8ByteToBitBooleanArrays = new Array<boolean[]>(256);
 
@@ -29,7 +31,7 @@ export class BitArray {
 
   /** Returns a zero'ed BitArray of `bitLen` */
   static fromBitLen(bitLen: number): BitArray {
-    return new BitArray(new Uint8Array(Math.ceil(bitLen / 8)), bitLen);
+    return new BitArray(alloc(Math.ceil(bitLen / 8)), bitLen);
   }
 
   /** Returns a BitArray of `bitLen` with a single bit set to true at position `bitIndex` */
