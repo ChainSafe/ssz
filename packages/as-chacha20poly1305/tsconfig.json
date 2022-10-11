@@ -1,0 +1,7 @@
+{
+  "include": ["src", "test"],
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "incremental": true
+  }
+}
