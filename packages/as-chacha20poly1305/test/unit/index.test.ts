@@ -6,8 +6,7 @@ import {streamXOR as streamXORStableLib} from "@stablelib/chacha";
 describe("chacha streamXOR", function () {
   for (let i = 0; i < 100; i++) {
     const inputLength = i * 100 + Math.floor(Math.random() * 100);
-    // const inputLength = 64;
-    it.only(`Test round ${i}`, function () {
+    it(`Test round ${i} with length ${inputLength}`, function () {
       const key = crypto.randomBytes(32);
       const nonce = crypto.randomBytes(16);
       const input = crypto.randomBytes(inputLength);
