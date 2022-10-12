@@ -40,6 +40,7 @@
     "@as-pect/assembly": "2.8.1",
     "@as-pect/cli": "2.8.1",
     "@as-pect/core": "2.8.1",
+    "@stablelib/chacha": "^1.0.1",
     "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
     "assemblyscript": "0.9.2",
     "benchmark": "^2.1.4"
