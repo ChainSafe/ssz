@@ -6,23 +6,23 @@ export const KEY_LENGTH = 32;
 export const COUNTER_LENGTH = 16;
 
 // input buffer
-const inputArr = new Uint8Array(INPUT_LENGTH);
-export const input = inputArr.buffer;
+export const input = new ArrayBuffer(INPUT_LENGTH);
+const inputPtr = changetype<usize>(input);
 
-const keyArr = new Uint8Array(KEY_LENGTH);
-export const key = keyArr.buffer;
+export const key = new ArrayBuffer(KEY_LENGTH);
+const keyPtr = changetype<usize>(key);
 
 // the nonce in chacha
-const counterArr = new Uint8Array(COUNTER_LENGTH);
-export const counter = counterArr.buffer;
+export const counter = new ArrayBuffer(COUNTER_LENGTH);
+const counterPtr = changetype<usize>(counter);
 
 // output buffer
-const outputArr = new Uint8Array(INPUT_LENGTH);
-export const output = outputArr.buffer;
+export const output = new ArrayBuffer(INPUT_LENGTH);
+const outputPtr = changetype<usize>(output);
 
-const debugArr = new Int32Array(64);
-export const debug = debugArr.buffer;
+export const debug = new ArrayBuffer(64);
+const debugPtr = changetype<usize>(debug);
 
 export function streamXORUpdate(dataLength: u32): u32 {
-  return doStreamXORUpdate(inputArr, dataLength, keyArr, counterArr, outputArr);
+  return doStreamXORUpdate(inputPtr, dataLength, keyPtr, counterPtr, outputPtr);
 }
