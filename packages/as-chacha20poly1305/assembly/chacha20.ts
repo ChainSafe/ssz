@@ -4,13 +4,6 @@ import {wipe, writeUint32LE} from "./util";
 const ROUNDS: i32 = 20;
 const block = new Uint8Array(64);
 
-// export declare function doStreamXORUpdate(
-//   inputArr: Uint8Array,
-//   dataLength: u32,
-//   keyArr: Uint8Array,
-//   counterArr: Uint8Array,
-//   outputArr: Uint8Array): u32;
-
 /**
  * The logical streamXOR function should include multiple streamXORUpdate calls
  * passed from javascript side.
