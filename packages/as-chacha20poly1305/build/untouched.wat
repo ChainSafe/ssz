@@ -1,7 +1,7 @@
 (module
- (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_=>_none (func (param i32)))
  (type $none_=>_none (func))
+ (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
  (type $i32_i32_=>_none (func (param i32 i32)))
@@ -19,12 +19,18 @@
  (data (i32.const 384) "*\00\00\00\01\00\00\00\01\00\00\00*\00\00\00P\00o\00l\00y\001\003\000\005\00 \00w\00a\00s\00 \00f\00i\00n\00i\00s\00h\00e\00d\00")
  (data (i32.const 448) "(\00\00\00\01\00\00\00\01\00\00\00(\00\00\00a\00s\00s\00e\00m\00b\00l\00y\00/\00p\00o\00l\00y\001\003\000\005\00.\00t\00s\00")
  (table $0 1 funcref)
- (global $assembly/chacha20/ROUNDS i32 (i32.const 20))
  (global $~lib/rt/stub/startOffset (mut i32) (i32.const 0))
  (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
  (global $~lib/ASC_SHRINK_LEVEL i32 (i32.const 0))
- (global $assembly/chacha20/block (mut i32) (i32.const 0))
- (global $assembly/chacha20/blockPtr (mut i32) (i32.const 0))
+ (global $assembly/poly1305/polyArr (mut i32) (i32.const 0))
+ (global $assembly/poly1305/POLY1305_KEY_LENGTH i32 (i32.const 32))
+ (global $assembly/poly1305/POLY1305_OUTPUT_LENGTH i32 (i32.const 16))
+ (global $assembly/poly1305/POLY1305_INPUT_LENGTH i32 (i32.const 512))
+ (global $assembly/poly1305/keyArr (mut i32) (i32.const 0))
+ (global $assembly/poly1305/inputArr (mut i32) (i32.const 0))
+ (global $assembly/poly1305/outputArr (mut i32) (i32.const 0))
+ (global $assembly/poly1305/debugArr (mut i32) (i32.const 0))
+ (global $assembly/poly1305/debug (mut i32) (i32.const 0))
  (global $assembly/poly1305/_buffer (mut i32) (i32.const 0))
  (global $assembly/poly1305/_r (mut i32) (i32.const 0))
  (global $assembly/poly1305/_h (mut i32) (i32.const 0))
@@ -32,49 +38,39 @@
  (global $assembly/poly1305/_leftover (mut i32) (i32.const 0))
  (global $assembly/poly1305/_fin (mut i32) (i32.const 0))
  (global $assembly/poly1305/_finished (mut i32) (i32.const 0))
- (global $assembly/poly1305/polyArr (mut i32) (i32.const 0))
- (global $assembly/index/CHACHA20_INPUT_LENGTH i32 (i32.const 512))
- (global $assembly/index/CHACHA20_KEY_LENGTH i32 (i32.const 32))
- (global $assembly/index/CHACHA20_COUNTER_LENGTH i32 (i32.const 16))
- (global $assembly/index/POLY1305_KEY_LENGTH i32 (i32.const 32))
- (global $assembly/index/POLY1305_OUTPUT_LENGTH i32 (i32.const 16))
- (global $assembly/index/POLY1305_INPUT_LENGTH i32 (i32.const 512))
- (global $assembly/index/chacha20Input (mut i32) (i32.const 0))
- (global $assembly/index/chacha20InputPtr (mut i32) (i32.const 0))
- (global $assembly/index/chacha20Key (mut i32) (i32.const 0))
- (global $assembly/index/chacha20KeyPtr (mut i32) (i32.const 0))
- (global $assembly/index/chacha20Counter (mut i32) (i32.const 0))
- (global $assembly/index/chacha20CounterPtr (mut i32) (i32.const 0))
- (global $assembly/index/chacha20Output (mut i32) (i32.const 0))
- (global $assembly/index/chacha20OutputPtr (mut i32) (i32.const 0))
- (global $assembly/index/debugArr (mut i32) (i32.const 0))
- (global $assembly/index/debug (mut i32) (i32.const 0))
- (global $assembly/index/poly1305InputArr (mut i32) (i32.const 0))
+ (global $assembly/chacha20/CHACHA20_INPUT_LENGTH i32 (i32.const 512))
+ (global $assembly/chacha20/CHACHA20_KEY_LENGTH i32 (i32.const 32))
+ (global $assembly/chacha20/CHACHA20_COUNTER_LENGTH i32 (i32.const 16))
+ (global $assembly/chacha20/chacha20Input (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20InputPtr (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20Key (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20KeyPtr (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20Counter (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20CounterPtr (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20Output (mut i32) (i32.const 0))
+ (global $assembly/chacha20/chacha20OutputPtr (mut i32) (i32.const 0))
+ (global $assembly/chacha20/ROUNDS i32 (i32.const 20))
+ (global $assembly/chacha20/block (mut i32) (i32.const 0))
+ (global $assembly/chacha20/blockPtr (mut i32) (i32.const 0))
  (global $assembly/index/poly1305Input (mut i32) (i32.const 0))
- (global $assembly/index/poly1305KeyArr (mut i32) (i32.const 0))
  (global $assembly/index/poly1305Key (mut i32) (i32.const 0))
- (global $assembly/index/poly1305OutputArr (mut i32) (i32.const 0))
  (global $assembly/index/poly1305Output (mut i32) (i32.const 0))
  (global $~lib/heap/__heap_base i32 (i32.const 504))
  (export "memory" (memory $0))
- (export "CHACHA20_INPUT_LENGTH" (global $assembly/index/CHACHA20_INPUT_LENGTH))
- (export "CHACHA20_KEY_LENGTH" (global $assembly/index/CHACHA20_KEY_LENGTH))
- (export "CHACHA20_COUNTER_LENGTH" (global $assembly/index/CHACHA20_COUNTER_LENGTH))
- (export "POLY1305_KEY_LENGTH" (global $assembly/index/POLY1305_KEY_LENGTH))
- (export "POLY1305_OUTPUT_LENGTH" (global $assembly/index/POLY1305_OUTPUT_LENGTH))
- (export "POLY1305_INPUT_LENGTH" (global $assembly/index/POLY1305_INPUT_LENGTH))
- (export "chacha20Input" (global $assembly/index/chacha20Input))
- (export "chacha20Key" (global $assembly/index/chacha20Key))
- (export "chacha20Counter" (global $assembly/index/chacha20Counter))
- (export "chacha20Output" (global $assembly/index/chacha20Output))
- (export "debug" (global $assembly/index/debug))
  (export "poly1305Input" (global $assembly/index/poly1305Input))
  (export "poly1305Key" (global $assembly/index/poly1305Key))
  (export "poly1305Output" (global $assembly/index/poly1305Output))
- (export "chacha20StreamXORUpdate" (func $assembly/index/chacha20StreamXORUpdate))
- (export "poly1305Init" (func $assembly/index/poly1305Init))
- (export "poly1305Update" (func $assembly/index/poly1305Update))
- (export "poly1305Digest" (func $assembly/index/poly1305Digest))
+ (export "CHACHA20_INPUT_LENGTH" (global $assembly/chacha20/CHACHA20_INPUT_LENGTH))
+ (export "CHACHA20_KEY_LENGTH" (global $assembly/chacha20/CHACHA20_KEY_LENGTH))
+ (export "CHACHA20_COUNTER_LENGTH" (global $assembly/chacha20/CHACHA20_COUNTER_LENGTH))
+ (export "chacha20Input" (global $assembly/chacha20/chacha20Input))
+ (export "chacha20Key" (global $assembly/chacha20/chacha20Key))
+ (export "chacha20Counter" (global $assembly/chacha20/chacha20Counter))
+ (export "chacha20Output" (global $assembly/chacha20/chacha20Output))
+ (export "chacha20StreamXORUpdate" (func $assembly/chacha20/chacha20StreamXORUpdate))
+ (export "poly1305Init" (func $assembly/poly1305/poly1305Init))
+ (export "poly1305Update" (func $assembly/poly1305/poly1305Update))
+ (export "poly1305Digest" (func $assembly/poly1305/poly1305Digest))
  (start $~start)
  (func $~lib/rt/stub/maybeGrowMemory (; 1 ;) (param $0 i32)
   (local $1 i32)
@@ -450,52 +446,10 @@
  (func $~lib/rt/stub/__retain (; 4 ;) (param $0 i32) (result i32)
   local.get $0
  )
- (func $~lib/arraybuffer/ArrayBuffer#constructor (; 5 ;) (param $0 i32) (param $1 i32) (result i32)
-  (local $2 i32)
-  local.get $1
-  i32.const 1073741808
-  i32.gt_u
-  if
-   i32.const 32
-   i32.const 80
-   i32.const 54
-   i32.const 42
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $1
-  i32.const 0
-  call $~lib/rt/stub/__alloc
-  local.set $2
-  local.get $2
-  i32.const 0
-  local.get $1
-  call $~lib/memory/memory.fill
-  local.get $2
-  call $~lib/rt/stub/__retain
- )
- (func $start:assembly/chacha20 (; 6 ;)
-  global.get $~lib/heap/__heap_base
-  i32.const 15
-  i32.add
-  i32.const 15
-  i32.const -1
-  i32.xor
-  i32.and
-  global.set $~lib/rt/stub/startOffset
-  global.get $~lib/rt/stub/startOffset
-  global.set $~lib/rt/stub/offset
-  i32.const 0
-  i32.const 64
-  call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/chacha20/block
-  global.get $assembly/chacha20/block
-  global.set $assembly/chacha20/blockPtr
- )
- (func $~lib/rt/stub/__release (; 7 ;) (param $0 i32)
+ (func $~lib/rt/stub/__release (; 5 ;) (param $0 i32)
   nop
  )
- (func $~lib/arraybuffer/ArrayBufferView#constructor (; 8 ;) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+ (func $~lib/arraybuffer/ArrayBufferView#constructor (; 6 ;) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -567,7 +521,7 @@
   i32.store offset=8
   local.get $0
  )
- (func $~lib/typedarray/Uint8Array#constructor (; 9 ;) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/typedarray/Uint32Array#constructor (; 7 ;) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   if (result i32)
    local.get $0
@@ -578,12 +532,12 @@
    call $~lib/rt/stub/__retain
   end
   local.get $1
-  i32.const 0
+  i32.const 2
   call $~lib/arraybuffer/ArrayBufferView#constructor
   local.set $0
   local.get $0
  )
- (func $~lib/typedarray/Uint16Array#constructor (; 10 ;) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/typedarray/Uint8Array#constructor (; 8 ;) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   if (result i32)
    local.get $0
@@ -594,12 +548,12 @@
    call $~lib/rt/stub/__retain
   end
   local.get $1
-  i32.const 1
+  i32.const 0
   call $~lib/arraybuffer/ArrayBufferView#constructor
   local.set $0
   local.get $0
  )
- (func $~lib/typedarray/Uint32Array#constructor (; 11 ;) (param $0 i32) (param $1 i32) (result i32)
+ (func $~lib/typedarray/Uint16Array#constructor (; 9 ;) (param $0 i32) (param $1 i32) (result i32)
   local.get $0
   if (result i32)
    local.get $0
@@ -610,12 +564,46 @@
    call $~lib/rt/stub/__retain
   end
   local.get $1
-  i32.const 2
+  i32.const 1
   call $~lib/arraybuffer/ArrayBufferView#constructor
   local.set $0
   local.get $0
  )
- (func $start:assembly/poly1305 (; 12 ;)
+ (func $start:assembly/poly1305 (; 10 ;)
+  global.get $~lib/heap/__heap_base
+  i32.const 15
+  i32.add
+  i32.const 15
+  i32.const -1
+  i32.xor
+  i32.and
+  global.set $~lib/rt/stub/startOffset
+  global.get $~lib/rt/stub/startOffset
+  global.set $~lib/rt/stub/offset
+  i32.const 0
+  i32.const 64
+  call $~lib/typedarray/Uint32Array#constructor
+  global.set $assembly/poly1305/polyArr
+  i32.const 0
+  i32.const 32
+  call $~lib/typedarray/Uint8Array#constructor
+  global.set $assembly/poly1305/keyArr
+  i32.const 0
+  i32.const 512
+  call $~lib/typedarray/Uint8Array#constructor
+  global.set $assembly/poly1305/inputArr
+  i32.const 0
+  i32.const 16
+  call $~lib/typedarray/Uint8Array#constructor
+  global.set $assembly/poly1305/outputArr
+  i32.const 0
+  i32.const 64
+  call $~lib/typedarray/Uint32Array#constructor
+  global.set $assembly/poly1305/debugArr
+  global.get $assembly/poly1305/debugArr
+  i32.load
+  call $~lib/rt/stub/__retain
+  global.set $assembly/poly1305/debug
   i32.const 0
   i32.const 16
   call $~lib/typedarray/Uint8Array#constructor
@@ -632,67 +620,75 @@
   i32.const 8
   call $~lib/typedarray/Uint16Array#constructor
   global.set $assembly/poly1305/_pad
-  i32.const 0
-  i32.const 64
-  call $~lib/typedarray/Uint32Array#constructor
-  global.set $assembly/poly1305/polyArr
  )
- (func $start:assembly/index (; 13 ;)
-  call $start:assembly/chacha20
-  call $start:assembly/poly1305
+ (func $~lib/arraybuffer/ArrayBuffer#constructor (; 11 ;) (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  local.get $1
+  i32.const 1073741808
+  i32.gt_u
+  if
+   i32.const 32
+   i32.const 80
+   i32.const 54
+   i32.const 42
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $1
+  i32.const 0
+  call $~lib/rt/stub/__alloc
+  local.set $2
+  local.get $2
+  i32.const 0
+  local.get $1
+  call $~lib/memory/memory.fill
+  local.get $2
+  call $~lib/rt/stub/__retain
+ )
+ (func $start:assembly/chacha20 (; 12 ;)
   i32.const 0
   i32.const 512
   call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/index/chacha20Input
-  global.get $assembly/index/chacha20Input
-  global.set $assembly/index/chacha20InputPtr
+  global.set $assembly/chacha20/chacha20Input
+  global.get $assembly/chacha20/chacha20Input
+  global.set $assembly/chacha20/chacha20InputPtr
   i32.const 0
   i32.const 32
   call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/index/chacha20Key
-  global.get $assembly/index/chacha20Key
-  global.set $assembly/index/chacha20KeyPtr
+  global.set $assembly/chacha20/chacha20Key
+  global.get $assembly/chacha20/chacha20Key
+  global.set $assembly/chacha20/chacha20KeyPtr
   i32.const 0
   i32.const 16
   call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/index/chacha20Counter
-  global.get $assembly/index/chacha20Counter
-  global.set $assembly/index/chacha20CounterPtr
+  global.set $assembly/chacha20/chacha20Counter
+  global.get $assembly/chacha20/chacha20Counter
+  global.set $assembly/chacha20/chacha20CounterPtr
   i32.const 0
   i32.const 512
   call $~lib/arraybuffer/ArrayBuffer#constructor
-  global.set $assembly/index/chacha20Output
-  global.get $assembly/index/chacha20Output
-  global.set $assembly/index/chacha20OutputPtr
+  global.set $assembly/chacha20/chacha20Output
+  global.get $assembly/chacha20/chacha20Output
+  global.set $assembly/chacha20/chacha20OutputPtr
   i32.const 0
   i32.const 64
-  call $~lib/typedarray/Uint32Array#constructor
-  global.set $assembly/index/debugArr
-  global.get $assembly/index/debugArr
-  i32.load
-  call $~lib/rt/stub/__retain
-  global.set $assembly/index/debug
-  i32.const 0
-  i32.const 512
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/index/poly1305InputArr
-  global.get $assembly/index/poly1305InputArr
+  call $~lib/arraybuffer/ArrayBuffer#constructor
+  global.set $assembly/chacha20/block
+  global.get $assembly/chacha20/block
+  global.set $assembly/chacha20/blockPtr
+ )
+ (func $start:assembly/index (; 13 ;)
+  call $start:assembly/poly1305
+  call $start:assembly/chacha20
+  global.get $assembly/poly1305/inputArr
   i32.load
   call $~lib/rt/stub/__retain
   global.set $assembly/index/poly1305Input
-  i32.const 0
-  i32.const 32
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/index/poly1305KeyArr
-  global.get $assembly/index/poly1305KeyArr
+  global.get $assembly/poly1305/keyArr
   i32.load
   call $~lib/rt/stub/__retain
   global.set $assembly/index/poly1305Key
-  i32.const 0
-  i32.const 16
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/index/poly1305OutputArr
-  global.get $assembly/index/poly1305OutputArr
+  global.get $assembly/poly1305/outputArr
   i32.load
   call $~lib/rt/stub/__retain
   global.set $assembly/index/poly1305Output
@@ -2287,7 +2283,7 @@
   if
    i32.const 144
    i32.const 208
-   i32.const 216
+   i32.const 240
    i32.const 4
    call $~lib/builtins/abort
    unreachable
@@ -2419,12 +2415,12 @@
   call $assembly/util/wipe
   local.get $1
  )
- (func $assembly/index/chacha20StreamXORUpdate (; 19 ;) (param $0 i32) (result i32)
-  global.get $assembly/index/chacha20InputPtr
+ (func $assembly/chacha20/chacha20StreamXORUpdate (; 19 ;) (param $0 i32) (result i32)
+  global.get $assembly/chacha20/chacha20InputPtr
   local.get $0
-  global.get $assembly/index/chacha20KeyPtr
-  global.get $assembly/index/chacha20CounterPtr
-  global.get $assembly/index/chacha20OutputPtr
+  global.get $assembly/chacha20/chacha20KeyPtr
+  global.get $assembly/chacha20/chacha20CounterPtr
+  global.get $assembly/chacha20/chacha20OutputPtr
   call $assembly/chacha20/doStreamXORUpdate
  )
  (func $~lib/typedarray/Uint8Array#__get (; 20 ;) (param $0 i32) (param $1 i32) (result i32)
@@ -2801,8 +2797,8 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/index/poly1305Init (; 23 ;)
-  global.get $assembly/index/poly1305KeyArr
+ (func $assembly/poly1305/poly1305Init (; 23 ;)
+  global.get $assembly/poly1305/keyArr
   call $assembly/poly1305/init
  )
  (func $~lib/typedarray/Uint8Array#get:length (; 24 ;) (param $0 i32) (result i32)
@@ -2886,7 +2882,7 @@
   select
   local.set $3
   i32.const 12
-  i32.const 3
+  i32.const 4
   call $~lib/rt/stub/__alloc
   local.set $7
   local.get $7
@@ -4487,9 +4483,9 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/index/poly1305Update (; 30 ;) (param $0 i32)
+ (func $assembly/poly1305/poly1305Update (; 30 ;) (param $0 i32)
   (local $1 i32)
-  global.get $assembly/index/poly1305InputArr
+  global.get $assembly/poly1305/inputArr
   i32.const 0
   local.get $0
   call $~lib/typedarray/Uint8Array#subarray
@@ -5155,7 +5151,7 @@
    call $~lib/rt/stub/__release
    i32.const 400
    i32.const 464
-   i32.const 413
+   i32.const 438
    i32.const 4
    call $~lib/builtins/abort
    unreachable
@@ -5166,1324 +5162,7 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $~lib/typedarray/Uint32Array#get:length (; 33 ;) (param $0 i32) (result i32)
-  local.get $0
-  i32.load offset=8
-  i32.const 2
-  i32.shr_u
- )
- (func $~lib/util/memory/memcpy (; 34 ;) (param $0 i32) (param $1 i32) (param $2 i32)
-  (local $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  (local $6 i32)
-  loop $while-continue|0
-   local.get $2
-   if (result i32)
-    local.get $1
-    i32.const 3
-    i32.and
-   else
-    i32.const 0
-   end
-   local.set $5
-   local.get $5
-   if
-    local.get $0
-    local.tee $6
-    i32.const 1
-    i32.add
-    local.set $0
-    local.get $6
-    local.get $1
-    local.tee $6
-    i32.const 1
-    i32.add
-    local.set $1
-    local.get $6
-    i32.load8_u
-    i32.store8
-    local.get $2
-    i32.const 1
-    i32.sub
-    local.set $2
-    br $while-continue|0
-   end
-  end
-  local.get $0
-  i32.const 3
-  i32.and
-  i32.const 0
-  i32.eq
-  if
-   loop $while-continue|1
-    local.get $2
-    i32.const 16
-    i32.ge_u
-    local.set $5
-    local.get $5
-    if
-     local.get $0
-     local.get $1
-     i32.load
-     i32.store
-     local.get $0
-     i32.const 4
-     i32.add
-     local.get $1
-     i32.const 4
-     i32.add
-     i32.load
-     i32.store
-     local.get $0
-     i32.const 8
-     i32.add
-     local.get $1
-     i32.const 8
-     i32.add
-     i32.load
-     i32.store
-     local.get $0
-     i32.const 12
-     i32.add
-     local.get $1
-     i32.const 12
-     i32.add
-     i32.load
-     i32.store
-     local.get $1
-     i32.const 16
-     i32.add
-     local.set $1
-     local.get $0
-     i32.const 16
-     i32.add
-     local.set $0
-     local.get $2
-     i32.const 16
-     i32.sub
-     local.set $2
-     br $while-continue|1
-    end
-   end
-   local.get $2
-   i32.const 8
-   i32.and
-   if
-    local.get $0
-    local.get $1
-    i32.load
-    i32.store
-    local.get $0
-    i32.const 4
-    i32.add
-    local.get $1
-    i32.const 4
-    i32.add
-    i32.load
-    i32.store
-    local.get $0
-    i32.const 8
-    i32.add
-    local.set $0
-    local.get $1
-    i32.const 8
-    i32.add
-    local.set $1
-   end
-   local.get $2
-   i32.const 4
-   i32.and
-   if
-    local.get $0
-    local.get $1
-    i32.load
-    i32.store
-    local.get $0
-    i32.const 4
-    i32.add
-    local.set $0
-    local.get $1
-    i32.const 4
-    i32.add
-    local.set $1
-   end
-   local.get $2
-   i32.const 2
-   i32.and
-   if
-    local.get $0
-    local.get $1
-    i32.load16_u
-    i32.store16
-    local.get $0
-    i32.const 2
-    i32.add
-    local.set $0
-    local.get $1
-    i32.const 2
-    i32.add
-    local.set $1
-   end
-   local.get $2
-   i32.const 1
-   i32.and
-   if
-    local.get $0
-    local.tee $5
-    i32.const 1
-    i32.add
-    local.set $0
-    local.get $5
-    local.get $1
-    local.tee $5
-    i32.const 1
-    i32.add
-    local.set $1
-    local.get $5
-    i32.load8_u
-    i32.store8
-   end
-   return
-  end
-  local.get $2
-  i32.const 32
-  i32.ge_u
-  if
-   block $break|2
-    block $case2|2
-     block $case1|2
-      block $case0|2
-       local.get $0
-       i32.const 3
-       i32.and
-       local.set $5
-       local.get $5
-       i32.const 1
-       i32.eq
-       br_if $case0|2
-       local.get $5
-       i32.const 2
-       i32.eq
-       br_if $case1|2
-       local.get $5
-       i32.const 3
-       i32.eq
-       br_if $case2|2
-       br $break|2
-      end
-      local.get $1
-      i32.load
-      local.set $3
-      local.get $0
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $0
-      local.get $5
-      local.get $1
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $1
-      local.get $5
-      i32.load8_u
-      i32.store8
-      local.get $0
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $0
-      local.get $5
-      local.get $1
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $1
-      local.get $5
-      i32.load8_u
-      i32.store8
-      local.get $0
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $0
-      local.get $5
-      local.get $1
-      local.tee $5
-      i32.const 1
-      i32.add
-      local.set $1
-      local.get $5
-      i32.load8_u
-      i32.store8
-      local.get $2
-      i32.const 3
-      i32.sub
-      local.set $2
-      loop $while-continue|3
-       local.get $2
-       i32.const 17
-       i32.ge_u
-       local.set $5
-       local.get $5
-       if
-        local.get $1
-        i32.const 1
-        i32.add
-        i32.load
-        local.set $4
-        local.get $0
-        local.get $3
-        i32.const 24
-        i32.shr_u
-        local.get $4
-        i32.const 8
-        i32.shl
-        i32.or
-        i32.store
-        local.get $1
-        i32.const 5
-        i32.add
-        i32.load
-        local.set $3
-        local.get $0
-        i32.const 4
-        i32.add
-        local.get $4
-        i32.const 24
-        i32.shr_u
-        local.get $3
-        i32.const 8
-        i32.shl
-        i32.or
-        i32.store
-        local.get $1
-        i32.const 9
-        i32.add
-        i32.load
-        local.set $4
-        local.get $0
-        i32.const 8
-        i32.add
-        local.get $3
-        i32.const 24
-        i32.shr_u
-        local.get $4
-        i32.const 8
-        i32.shl
-        i32.or
-        i32.store
-        local.get $1
-        i32.const 13
-        i32.add
-        i32.load
-        local.set $3
-        local.get $0
-        i32.const 12
-        i32.add
-        local.get $4
-        i32.const 24
-        i32.shr_u
-        local.get $3
-        i32.const 8
-        i32.shl
-        i32.or
-        i32.store
-        local.get $1
-        i32.const 16
-        i32.add
-        local.set $1
-        local.get $0
-        i32.const 16
-        i32.add
-        local.set $0
-        local.get $2
-        i32.const 16
-        i32.sub
-        local.set $2
-        br $while-continue|3
-       end
-      end
-      br $break|2
-     end
-     local.get $1
-     i32.load
-     local.set $3
-     local.get $0
-     local.tee $5
-     i32.const 1
-     i32.add
-     local.set $0
-     local.get $5
-     local.get $1
-     local.tee $5
-     i32.const 1
-     i32.add
-     local.set $1
-     local.get $5
-     i32.load8_u
-     i32.store8
-     local.get $0
-     local.tee $5
-     i32.const 1
-     i32.add
-     local.set $0
-     local.get $5
-     local.get $1
-     local.tee $5
-     i32.const 1
-     i32.add
-     local.set $1
-     local.get $5
-     i32.load8_u
-     i32.store8
-     local.get $2
-     i32.const 2
-     i32.sub
-     local.set $2
-     loop $while-continue|4
-      local.get $2
-      i32.const 18
-      i32.ge_u
-      local.set $5
-      local.get $5
-      if
-       local.get $1
-       i32.const 2
-       i32.add
-       i32.load
-       local.set $4
-       local.get $0
-       local.get $3
-       i32.const 16
-       i32.shr_u
-       local.get $4
-       i32.const 16
-       i32.shl
-       i32.or
-       i32.store
-       local.get $1
-       i32.const 6
-       i32.add
-       i32.load
-       local.set $3
-       local.get $0
-       i32.const 4
-       i32.add
-       local.get $4
-       i32.const 16
-       i32.shr_u
-       local.get $3
-       i32.const 16
-       i32.shl
-       i32.or
-       i32.store
-       local.get $1
-       i32.const 10
-       i32.add
-       i32.load
-       local.set $4
-       local.get $0
-       i32.const 8
-       i32.add
-       local.get $3
-       i32.const 16
-       i32.shr_u
-       local.get $4
-       i32.const 16
-       i32.shl
-       i32.or
-       i32.store
-       local.get $1
-       i32.const 14
-       i32.add
-       i32.load
-       local.set $3
-       local.get $0
-       i32.const 12
-       i32.add
-       local.get $4
-       i32.const 16
-       i32.shr_u
-       local.get $3
-       i32.const 16
-       i32.shl
-       i32.or
-       i32.store
-       local.get $1
-       i32.const 16
-       i32.add
-       local.set $1
-       local.get $0
-       i32.const 16
-       i32.add
-       local.set $0
-       local.get $2
-       i32.const 16
-       i32.sub
-       local.set $2
-       br $while-continue|4
-      end
-     end
-     br $break|2
-    end
-    local.get $1
-    i32.load
-    local.set $3
-    local.get $0
-    local.tee $5
-    i32.const 1
-    i32.add
-    local.set $0
-    local.get $5
-    local.get $1
-    local.tee $5
-    i32.const 1
-    i32.add
-    local.set $1
-    local.get $5
-    i32.load8_u
-    i32.store8
-    local.get $2
-    i32.const 1
-    i32.sub
-    local.set $2
-    loop $while-continue|5
-     local.get $2
-     i32.const 19
-     i32.ge_u
-     local.set $5
-     local.get $5
-     if
-      local.get $1
-      i32.const 3
-      i32.add
-      i32.load
-      local.set $4
-      local.get $0
-      local.get $3
-      i32.const 8
-      i32.shr_u
-      local.get $4
-      i32.const 24
-      i32.shl
-      i32.or
-      i32.store
-      local.get $1
-      i32.const 7
-      i32.add
-      i32.load
-      local.set $3
-      local.get $0
-      i32.const 4
-      i32.add
-      local.get $4
-      i32.const 8
-      i32.shr_u
-      local.get $3
-      i32.const 24
-      i32.shl
-      i32.or
-      i32.store
-      local.get $1
-      i32.const 11
-      i32.add
-      i32.load
-      local.set $4
-      local.get $0
-      i32.const 8
-      i32.add
-      local.get $3
-      i32.const 8
-      i32.shr_u
-      local.get $4
-      i32.const 24
-      i32.shl
-      i32.or
-      i32.store
-      local.get $1
-      i32.const 15
-      i32.add
-      i32.load
-      local.set $3
-      local.get $0
-      i32.const 12
-      i32.add
-      local.get $4
-      i32.const 8
-      i32.shr_u
-      local.get $3
-      i32.const 24
-      i32.shl
-      i32.or
-      i32.store
-      local.get $1
-      i32.const 16
-      i32.add
-      local.set $1
-      local.get $0
-      i32.const 16
-      i32.add
-      local.set $0
-      local.get $2
-      i32.const 16
-      i32.sub
-      local.set $2
-      br $while-continue|5
-     end
-    end
-    br $break|2
-   end
-  end
-  local.get $2
-  i32.const 16
-  i32.and
-  if
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-  end
-  local.get $2
-  i32.const 8
-  i32.and
-  if
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-  end
-  local.get $2
-  i32.const 4
-  i32.and
-  if
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-  end
-  local.get $2
-  i32.const 2
-  i32.and
-  if
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-  end
-  local.get $2
-  i32.const 1
-  i32.and
-  if
-   local.get $0
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $0
-   local.get $5
-   local.get $1
-   local.tee $5
-   i32.const 1
-   i32.add
-   local.set $1
-   local.get $5
-   i32.load8_u
-   i32.store8
-  end
- )
- (func $~lib/memory/memory.copy (; 35 ;) (param $0 i32) (param $1 i32) (param $2 i32)
-  (local $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  (local $6 i32)
-  (local $7 i32)
-  block $~lib/util/memory/memmove|inlined.0
-   local.get $0
-   local.set $5
-   local.get $1
-   local.set $4
-   local.get $2
-   local.set $3
-   local.get $5
-   local.get $4
-   i32.eq
-   if
-    br $~lib/util/memory/memmove|inlined.0
-   end
-   local.get $4
-   local.get $3
-   i32.add
-   local.get $5
-   i32.le_u
-   if (result i32)
-    i32.const 1
-   else
-    local.get $5
-    local.get $3
-    i32.add
-    local.get $4
-    i32.le_u
-   end
-   if
-    local.get $5
-    local.get $4
-    local.get $3
-    call $~lib/util/memory/memcpy
-    br $~lib/util/memory/memmove|inlined.0
-   end
-   local.get $5
-   local.get $4
-   i32.lt_u
-   if
-    local.get $4
-    i32.const 7
-    i32.and
-    local.get $5
-    i32.const 7
-    i32.and
-    i32.eq
-    if
-     loop $while-continue|0
-      local.get $5
-      i32.const 7
-      i32.and
-      local.set $6
-      local.get $6
-      if
-       local.get $3
-       i32.eqz
-       if
-        br $~lib/util/memory/memmove|inlined.0
-       end
-       local.get $3
-       i32.const 1
-       i32.sub
-       local.set $3
-       local.get $5
-       local.tee $7
-       i32.const 1
-       i32.add
-       local.set $5
-       local.get $7
-       local.get $4
-       local.tee $7
-       i32.const 1
-       i32.add
-       local.set $4
-       local.get $7
-       i32.load8_u
-       i32.store8
-       br $while-continue|0
-      end
-     end
-     loop $while-continue|1
-      local.get $3
-      i32.const 8
-      i32.ge_u
-      local.set $6
-      local.get $6
-      if
-       local.get $5
-       local.get $4
-       i64.load
-       i64.store
-       local.get $3
-       i32.const 8
-       i32.sub
-       local.set $3
-       local.get $5
-       i32.const 8
-       i32.add
-       local.set $5
-       local.get $4
-       i32.const 8
-       i32.add
-       local.set $4
-       br $while-continue|1
-      end
-     end
-    end
-    loop $while-continue|2
-     local.get $3
-     local.set $6
-     local.get $6
-     if
-      local.get $5
-      local.tee $7
-      i32.const 1
-      i32.add
-      local.set $5
-      local.get $7
-      local.get $4
-      local.tee $7
-      i32.const 1
-      i32.add
-      local.set $4
-      local.get $7
-      i32.load8_u
-      i32.store8
-      local.get $3
-      i32.const 1
-      i32.sub
-      local.set $3
-      br $while-continue|2
-     end
-    end
-   else
-    local.get $4
-    i32.const 7
-    i32.and
-    local.get $5
-    i32.const 7
-    i32.and
-    i32.eq
-    if
-     loop $while-continue|3
-      local.get $5
-      local.get $3
-      i32.add
-      i32.const 7
-      i32.and
-      local.set $6
-      local.get $6
-      if
-       local.get $3
-       i32.eqz
-       if
-        br $~lib/util/memory/memmove|inlined.0
-       end
-       local.get $5
-       local.get $3
-       i32.const 1
-       i32.sub
-       local.tee $3
-       i32.add
-       local.get $4
-       local.get $3
-       i32.add
-       i32.load8_u
-       i32.store8
-       br $while-continue|3
-      end
-     end
-     loop $while-continue|4
-      local.get $3
-      i32.const 8
-      i32.ge_u
-      local.set $6
-      local.get $6
-      if
-       local.get $3
-       i32.const 8
-       i32.sub
-       local.set $3
-       local.get $5
-       local.get $3
-       i32.add
-       local.get $4
-       local.get $3
-       i32.add
-       i64.load
-       i64.store
-       br $while-continue|4
-      end
-     end
-    end
-    loop $while-continue|5
-     local.get $3
-     local.set $6
-     local.get $6
-     if
-      local.get $5
-      local.get $3
-      i32.const 1
-      i32.sub
-      local.tee $3
-      i32.add
-      local.get $4
-      local.get $3
-      i32.add
-      i32.load8_u
-      i32.store8
-      br $while-continue|5
-     end
-    end
-   end
-  end
- )
- (func $~lib/typedarray/Uint32Array#set<~lib/typedarray/Uint32Array> (; 36 ;) (param $0 i32) (param $1 i32) (param $2 i32)
-  (local $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $1
-  local.get $0
-  call $~lib/rt/stub/__retain
-  local.set $5
-  local.get $1
-  call $~lib/rt/stub/__retain
-  local.set $4
-  local.get $2
-  local.set $3
-  local.get $3
-  i32.const 0
-  i32.lt_s
-  if
-   local.get $4
-   call $~lib/rt/stub/__release
-   local.get $5
-   call $~lib/rt/stub/__release
-   i32.const 272
-   i32.const 336
-   i32.const 1774
-   i32.const 18
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $4
-  call $~lib/typedarray/Uint32Array#get:length
-  local.get $3
-  i32.add
-  local.get $5
-  call $~lib/typedarray/Uint32Array#get:length
-  i32.gt_s
-  if
-   local.get $4
-   call $~lib/rt/stub/__release
-   local.get $5
-   call $~lib/rt/stub/__release
-   i32.const 272
-   i32.const 336
-   i32.const 1775
-   i32.const 46
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $5
-  i32.load offset=4
-  local.get $3
-  i32.const 2
-  i32.shl
-  i32.add
-  local.get $4
-  i32.load offset=4
-  local.get $4
-  i32.load offset=8
-  call $~lib/memory/memory.copy
-  local.get $4
-  call $~lib/rt/stub/__release
-  local.get $5
-  call $~lib/rt/stub/__release
-  local.get $1
-  call $~lib/rt/stub/__release
- )
- (func $assembly/poly1305/wipeUint8Arr (; 37 ;) (param $0 i32)
+ (func $assembly/poly1305/wipeUint8Arr (; 33 ;) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   local.get $0
@@ -6513,13 +5192,13 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $~lib/typedarray/Uint16Array#get:length (; 38 ;) (param $0 i32) (result i32)
+ (func $~lib/typedarray/Uint16Array#get:length (; 34 ;) (param $0 i32) (result i32)
   local.get $0
   i32.load offset=8
   i32.const 1
   i32.shr_u
  )
- (func $assembly/poly1305/wipeUint16Arr (; 39 ;) (param $0 i32)
+ (func $assembly/poly1305/wipeUint16Arr (; 35 ;) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   local.get $0
@@ -6549,7 +5228,7 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/poly1305/clean (; 40 ;)
+ (func $assembly/poly1305/clean (; 36 ;)
   global.get $assembly/poly1305/_buffer
   call $assembly/poly1305/wipeUint8Arr
   global.get $assembly/poly1305/_r
@@ -6565,16 +5244,12 @@
   i32.const 0
   global.set $assembly/poly1305/_finished
  )
- (func $assembly/index/poly1305Digest (; 41 ;)
-  global.get $assembly/index/poly1305OutputArr
+ (func $assembly/poly1305/poly1305Digest (; 37 ;)
+  global.get $assembly/poly1305/outputArr
   call $assembly/poly1305/digest
-  global.get $assembly/index/debugArr
-  global.get $assembly/poly1305/polyArr
-  i32.const 0
-  call $~lib/typedarray/Uint32Array#set<~lib/typedarray/Uint32Array>
   call $assembly/poly1305/clean
  )
- (func $~start (; 42 ;)
+ (func $~start (; 38 ;)
   call $start:assembly/index
  )
 )

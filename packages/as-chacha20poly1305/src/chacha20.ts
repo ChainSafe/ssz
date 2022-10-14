@@ -1,17 +1,17 @@
 import {newInstance} from "./wasm";
 
 const ctx = newInstance();
-const wasmChacha20InputValue = ctx.chacha20Input.value;
-const wasmChacha20OutputValue = ctx.chacha20Output.value;
-const wasmChacha20KeyValue = ctx.chacha20Key.value;
-const wasmChacha20CounterValue = ctx.chacha20Counter.value;
+const wasmInputValue = ctx.chacha20Input.value;
+const wasmOutputValue = ctx.chacha20Output.value;
+const wasmKeyValue = ctx.chacha20Key.value;
+const wasmCounterValue = ctx.chacha20Counter.value;
 const {CHACHA20_INPUT_LENGTH, CHACHA20_KEY_LENGTH, CHACHA20_COUNTER_LENGTH} = ctx;
 
-const chacha20InputUint8Array = new Uint8Array(ctx.memory.buffer, wasmChacha20InputValue, CHACHA20_INPUT_LENGTH);
-const chacha20OutputUint8Array = new Uint8Array(ctx.memory.buffer, wasmChacha20OutputValue, CHACHA20_INPUT_LENGTH);
-const chacha20KeyUint8Array = new Uint8Array(ctx.memory.buffer, wasmChacha20KeyValue, CHACHA20_KEY_LENGTH);
-const chacha20CounterUint8Array = new Uint8Array(ctx.memory.buffer, wasmChacha20CounterValue, CHACHA20_COUNTER_LENGTH);
-const debugArray = new Uint32Array(ctx.memory.buffer, ctx.debug.value, 64);
+const inputArr = new Uint8Array(ctx.memory.buffer, wasmInputValue, CHACHA20_INPUT_LENGTH);
+const outputArr = new Uint8Array(ctx.memory.buffer, wasmOutputValue, CHACHA20_INPUT_LENGTH);
+const keyArr = new Uint8Array(ctx.memory.buffer, wasmKeyValue, CHACHA20_KEY_LENGTH);
+const counterArr = new Uint8Array(ctx.memory.buffer, wasmCounterValue, CHACHA20_COUNTER_LENGTH);
+// const debugArray = new Uint32Array(ctx.memory.buffer, ctx.debug.value, 64);
 
 export function chacha20StreamXOR(key: Uint8Array, nonce: Uint8Array, src: Uint8Array): Uint8Array {
   // We only support 256-bit keys.
@@ -24,8 +24,8 @@ export function chacha20StreamXOR(key: Uint8Array, nonce: Uint8Array, src: Uint8
   }
 
   // init
-  chacha20KeyUint8Array.set(key);
-  chacha20CounterUint8Array.set(nonce);
+  keyArr.set(key);
+  counterArr.set(nonce);
   const output = new Uint8Array(src.length);
 
   // chunkify the work
@@ -33,10 +33,10 @@ export function chacha20StreamXOR(key: Uint8Array, nonce: Uint8Array, src: Uint8
   for (let i = 0; i <= loop; i++) {
     const start = i * CHACHA20_INPUT_LENGTH;
     const end = Math.min((i + 1) * CHACHA20_INPUT_LENGTH, src.length);
-    chacha20InputUint8Array.set(loop === 0 ? src : src.subarray(start, end));
+    inputArr.set(loop === 0 ? src : src.subarray(start, end));
     const length = end - start;
     const dataLength = ctx.chacha20StreamXORUpdate(length);
-    output.set(dataLength === CHACHA20_INPUT_LENGTH ? chacha20OutputUint8Array : chacha20OutputUint8Array.subarray(0, dataLength), start);
+    output.set(dataLength === CHACHA20_INPUT_LENGTH ? outputArr : outputArr.subarray(0, dataLength), start);
   }
 
   return output;

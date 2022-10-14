@@ -1,3 +1,31 @@
+// to debug
+export const polyArr = new Uint32Array(64);
+export const POLY1305_KEY_LENGTH = 32;
+export const POLY1305_OUTPUT_LENGTH = 16;
+// TODO: review input length
+export const POLY1305_INPUT_LENGTH = 512;
+export const keyArr = new Uint8Array(POLY1305_KEY_LENGTH);
+export const inputArr = new Uint8Array(POLY1305_INPUT_LENGTH);
+export const outputArr = new Uint8Array(POLY1305_OUTPUT_LENGTH);
+const debugArr = new Uint32Array(64);
+export const debug = debugArr.buffer;
+// const debugPtr = changetype<usize>(debug);
+
+export function poly1305Init(): void {
+  init(keyArr);
+}
+
+export function poly1305Update(dataLength: u32): void {
+  // TODO: be careful when converting to pointer
+  update(inputArr.subarray(0, dataLength));
+}
+
+export function poly1305Digest(): void {
+  digest(outputArr);
+  // debugArr.set(polyArr);
+  clean();
+}
+
 const _buffer = new Uint8Array(16);
 const _r = new Uint16Array(10);
 const _h = new Uint16Array(10);
@@ -6,13 +34,10 @@ let _leftover: u32 = 0;
 let _fin: u8 = 0;
 let _finished = false;
 
-// to debug
-export const polyArr = new Uint32Array(64);
-
 /**
  * KeyArr is set externally, we initialize other params from keyArr.
  */
-export function init(key: Uint8Array): void {
+function init(key: Uint8Array): void {
   const t0 = u16(key[0]) | (u16(key[1]) << 8);
   _r[0] = t0 & 0x1fff;
   const t1 = u16(key[2]) | (u16(key[3]) << 8);
@@ -368,7 +393,7 @@ function finish(mac: Uint8Array, macpos: u32 = 0): void {
   _finished = true;
 }
 
-export function update(m: Uint8Array): void {
+function update(m: Uint8Array): void {
   let mpos = 0;
   let bytes: u32 = m.length;
   let want: u32;

@@ -1,5 +1,29 @@
 import {load8, store8, wipe, writeUint32LE} from "./util";
 
+export const CHACHA20_INPUT_LENGTH = 512;
+// See stablelib
+export const CHACHA20_KEY_LENGTH = 32;
+export const CHACHA20_COUNTER_LENGTH = 16;
+
+// input buffer
+export const chacha20Input = new ArrayBuffer(CHACHA20_INPUT_LENGTH);
+const chacha20InputPtr = changetype<usize>(chacha20Input);
+
+export const chacha20Key = new ArrayBuffer(CHACHA20_KEY_LENGTH);
+const chacha20KeyPtr = changetype<usize>(chacha20Key);
+
+// the nonce in chacha
+export const chacha20Counter = new ArrayBuffer(CHACHA20_COUNTER_LENGTH);
+const chacha20CounterPtr = changetype<usize>(chacha20Counter);
+
+// output buffer
+export const chacha20Output = new ArrayBuffer(CHACHA20_INPUT_LENGTH);
+const chacha20OutputPtr = changetype<usize>(chacha20Output);
+
+export function chacha20StreamXORUpdate(dataLength: u32): u32 {
+  return doStreamXORUpdate(chacha20InputPtr, dataLength, chacha20KeyPtr, chacha20CounterPtr, chacha20OutputPtr);
+}
+
 // Number of ChaCha rounds (ChaCha20).
 const ROUNDS: i32 = 20;
 const block = new ArrayBuffer(64);
@@ -15,7 +39,7 @@ const blockPtr = changetype<usize>(block);
  * @param nonceInplaceCounterLength 4
  * @returns number of bytes
  */
-export function doStreamXORUpdate(
+function doStreamXORUpdate(
   inputPtr: usize,
   dataLength: u32,
   keyPtr: usize,
