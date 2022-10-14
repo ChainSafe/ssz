@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
 import crypto from "crypto";
 import {streamXOR as streamXORStableLib} from "@stablelib/chacha";
-import {streamXOR} from "../../src";
+import {chacha20StreamXOR} from "../../src/chacha20";
 
 describe("streamXOR assemblyscript vs javascript", function () {
   this.timeout(0);
@@ -29,7 +29,7 @@ describe("streamXOR assemblyscript vs javascript", function () {
       before: () => ({key: new Uint8Array(key), nonce: new Uint8Array(nonce), input: new Uint8Array(input)}),
       beforeEach: (v) => v,
       fn: ({key: k, nonce: n, input: i}) => {
-        streamXOR(k, n, i);
+        chacha20StreamXOR(k, n, i);
       },
       runsFactor: 1000,
     });
