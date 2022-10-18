@@ -1,4 +1,4 @@
-import {load8, store8, wipe, writeUint32LE} from "./util";
+import {load8, store8, wipe8, writeUint32LE} from "./util";
 
 export const CHACHA20_INPUT_LENGTH = 512;
 // See stablelib
@@ -62,7 +62,7 @@ function doStreamXORUpdate(
   }
 
   // Cleanup temporary space.
-  wipe(blockPtr, 64);
+  wipe8(blockPtr, 64);
 
   return dataLength;
 }

@@ -11,6 +11,7 @@ export class Poly1305 {
   private wasmKeyArr: Uint8Array;
   private wasmInputArr: Uint8Array;
   private wasmOutputArr: Uint8Array;
+  private wasmDebugArr: Uint32Array;
 
   constructor(private readonly ctx: WasmContext) {
     const wasmPoly1305KeyValue = ctx.poly1305Key.value;
@@ -19,6 +20,8 @@ export class Poly1305 {
     this.wasmInputArr = new Uint8Array(ctx.memory.buffer, wasmPoly1305InputValue, POLY1305_INPUT_LENGTH);
     const wasmPoly1305OutputValue = ctx.poly1305Output.value;
     this.wasmOutputArr = new Uint8Array(ctx.memory.buffer, wasmPoly1305OutputValue, POLY1305_OUTPUT_LENGTH);
+    const wasmPoly1305DebugValue = ctx.debug.value;
+    this.wasmDebugArr = new Uint32Array(ctx.memory.buffer, wasmPoly1305DebugValue, 64);
   }
 
   init(key: Uint8Array): void {

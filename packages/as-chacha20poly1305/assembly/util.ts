@@ -1,4 +1,3 @@
-
 @inline
 export function load32(ptr: usize, offset: usize): u32 {
   return load<u32>(ptr + (offset << alignof<u32>()));
@@ -7,6 +6,16 @@ export function load32(ptr: usize, offset: usize): u32 {
 @inline
 export function store32(ptr: usize, offset: usize, u: u32): void {
   store<u32>(ptr + (offset << alignof<u32>()), u);
+}
+
+@inline
+export function load16(ptr: usize, offset: usize): u16 {
+  return load<u16>(ptr + (offset << alignof<u16>()));
+}
+
+@inline
+export function store16(ptr: usize, offset: usize, u: u16): void {
+  store<u16>(ptr + (offset << alignof<u16>()), u);
 }
 
 @inline
@@ -27,11 +36,20 @@ export function writeUint32LE(value: i32, out: usize, offset: u8 = 0): void {
   store8(out, offset + 3, u8(value >>> 24));
 }
 
-export function wipe(array: usize, length: u32): void {
+export function wipe8(array: usize, length: u32): void {
   // Right now it's similar to array.fill(0). If it turns
   // out that runtimes optimize this call away, maybe
   // we can try something else.
   for (let i: u32 = 0; i < length; i++) {
     store8(array, i, 0);
+  }
+}
+
+export function wipe16(array: usize, length: u32): void {
+  // Right now it's similar to array.fill(0). If it turns
+  // out that runtimes optimize this call away, maybe
+  // we can try something else.
+  for (let i: u32 = 0; i < length; i++) {
+    store16(array, i, 0);
   }
 }

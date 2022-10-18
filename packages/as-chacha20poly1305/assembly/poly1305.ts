@@ -1,114 +1,128 @@
+import {load8, store8, load16, store16, wipe8, wipe16} from "./util";
+
 // to debug
-export const polyArr = new Uint32Array(64);
+const debugArr = new Uint32Array(64);
+export const debug = debugArr.buffer;
+
 export const POLY1305_KEY_LENGTH = 32;
 export const POLY1305_OUTPUT_LENGTH = 16;
 // TODO: review input length
 export const POLY1305_INPUT_LENGTH = 512;
-export const keyArr = new Uint8Array(POLY1305_KEY_LENGTH);
-export const inputArr = new Uint8Array(POLY1305_INPUT_LENGTH);
-export const outputArr = new Uint8Array(POLY1305_OUTPUT_LENGTH);
-const debugArr = new Uint32Array(64);
-export const debug = debugArr.buffer;
-// const debugPtr = changetype<usize>(debug);
+export const poly1305Key = new ArrayBuffer(POLY1305_KEY_LENGTH);
+export const poly1305Input = new ArrayBuffer(POLY1305_INPUT_LENGTH);
+export const poly1305Output = new ArrayBuffer(POLY1305_OUTPUT_LENGTH);
+const keyPtr = changetype<usize>(poly1305Key);
+const inputPtr = changetype<usize>(poly1305Input);
+const outputPtr = changetype<usize>(poly1305Output);
 
 export function poly1305Init(): void {
-  init(keyArr);
+  init(keyPtr);
 }
 
 export function poly1305Update(dataLength: u32): void {
-  // TODO: be careful when converting to pointer
-  update(inputArr.subarray(0, dataLength));
+  update(inputPtr, dataLength);
 }
 
 export function poly1305Digest(): void {
-  digest(outputArr);
-  // debugArr.set(polyArr);
+  digest(outputPtr);
   clean();
 }
 
-const _buffer = new Uint8Array(16);
-const _r = new Uint16Array(10);
-const _h = new Uint16Array(10);
-const _pad = new Uint16Array(8);
+const _bufferBuffer = new ArrayBuffer(16);
+const _buffer = changetype<usize>(_bufferBuffer);
+// equivalent to new Uint16Array(10);
+const _rBuffer = new ArrayBuffer(20);
+const _r = changetype<usize>(_rBuffer);
+// equivalent to new Uint16Array(10);
+const _hBuffer = new ArrayBuffer(20);
+const _h = changetype<usize>(_hBuffer);
+// equivalent to new Uint16Array(8);
+const _padBuffer = new ArrayBuffer(16);
+const _pad = changetype<usize>(_padBuffer);
 let _leftover: u32 = 0;
 let _fin: u8 = 0;
 let _finished = false;
+// temporary variable in finish function, init here to avoid the memory growing
+// equivalent to new Uint16Array(10);
+const tempGBuffer = new ArrayBuffer(20);
+const tempG = changetype<usize>(tempGBuffer);
 
 /**
  * KeyArr is set externally, we initialize other params from keyArr.
  */
-function init(key: Uint8Array): void {
-  const t0 = u16(key[0]) | (u16(key[1]) << 8);
-  _r[0] = t0 & 0x1fff;
-  const t1 = u16(key[2]) | (u16(key[3]) << 8);
-  _r[1] = ((t0 >>> 13) | (t1 << 3)) & 0x1fff;
-  const t2 = u16(key[4]) | (u16(key[5]) << 8);
-  _r[2] = ((t1 >>> 10) | (t2 << 6)) & 0x1f03;
-  const t3 = u16(key[6]) | (u16(key[7]) << 8);
-  _r[3] = ((t2 >>> 7) | (t3 << 9)) & 0x1fff;
-  const t4 = u16(key[8]) | (u16(key[9]) << 8);
-  _r[4] = ((t3 >>> 4) | (t4 << 12)) & 0x00ff;
-  _r[5] = (t4 >>> 1) & 0x1ffe;
-  const t5 = u16(key[10]) | (u16(key[11]) << 8);
-  _r[6] = ((t4 >>> 14) | (t5 << 2)) & 0x1fff;
-  const t6 = u16(key[12]) | (u16(key[13]) << 8);
-  _r[7] = ((t5 >>> 11) | (t6 << 5)) & 0x1f81;
-  const t7 = u16(key[14]) | (u16(key[15]) << 8);
-  _r[8] = ((t6 >>> 8) | (t7 << 8)) & 0x1fff;
-  _r[9] = (t7 >>> 5) & 0x007f;
+function init(key: usize): void {
+  const t0 = u16(load8(key, 0)) | (u16(load8(key, 1)) << 8);
+  store16(_r, 0, t0 & 0x1fff);
+  const t1 = u16(load8(key, 2)) | (u16(load8(key, 3)) << 8);
+  store16(_r, 1, ((t0 >>> 13) | (t1 << 3)) & 0x1fff);
+  const t2 = u16(load8(key, 4)) | (u16(load8(key, 5)) << 8);
+  store16(_r, 2, ((t1 >>> 10) | (t2 << 6)) & 0x1f03);
+  const t3 = u16(load8(key, 6)) | (u16(load8(key, 7)) << 8);
+  store16(_r, 3, ((t2 >>> 7) | (t3 << 9)) & 0x1fff);
+  const t4 = u16(load8(key, 8)) | (u16(load8(key, 9)) << 8);
+  store16(_r, 4, ((t3 >>> 4) | (t4 << 12)) & 0x00ff);
+  store16(_r, 5, (t4 >>> 1) & 0x1ffe);
+  const t5 = u16(load8(key, 10)) | (u16(load8(key, 11)) << 8);
+  store16(_r, 6, ((t4 >>> 14) | (t5 << 2)) & 0x1fff);
+  const t6 = u16(load8(key, 12)) | (u16(load8(key, 13)) << 8);
+  store16(_r,7,  ((t5 >>> 11) | (t6 << 5)) & 0x1f81);
+  const t7 = u16(load8(key, 14)) | (u16(load8(key, 15)) << 8);
+  store16(_r, 8, ((t6 >>> 8) | (t7 << 8)) & 0x1fff);
+  store16(_r, 9, (t7 >>> 5) & 0x007f);
 
-  _pad[0] = u16(key[16]) | (u16(key[17]) << 8);
-  _pad[1] = u16(key[18]) | (u16(key[19]) << 8);
-  _pad[2] = u16(key[20]) | (u16(key[21]) << 8);
-  _pad[3] = u16(key[22]) | (u16(key[23]) << 8);
-  _pad[4] = u16(key[24]) | (u16(key[25]) << 8);
-  _pad[5] = u16(key[26]) | (u16(key[27]) << 8);
-  _pad[6] = u16(key[28]) | (u16(key[29]) << 8);
-  _pad[7] = u16(key[30]) | (u16(key[31]) << 8);
+  store16(_pad, 0, u16(load8(key, 16)) | (u16(load8(key, 17)) << 8));
+  store16(_pad, 1, u16(load8(key, 18)) | (u16(load8(key, 19)) << 8));
+  store16(_pad, 2, u16(load8(key, 20)) | (u16(load8(key, 21)) << 8));
+  store16(_pad, 3, u16(load8(key, 22)) | (u16(load8(key, 23)) << 8));
+  store16(_pad, 4, u16(load8(key, 24)) | (u16(load8(key, 25)) << 8));
+  store16(_pad, 5, u16(load8(key, 26)) | (u16(load8(key, 27)) << 8));
+  store16(_pad, 6, u16(load8(key, 28)) | (u16(load8(key, 29)) << 8));
+  store16(_pad, 7, u16(load8(key, 30)) | (u16(load8(key, 31)) << 8));
 }
 
-function _blocks(m: Uint8Array, mpos: u32, bytes: u32): void {
+/** m: a pointer to Uint8Array */
+function _blocks(m: usize, mpos: u32, bytes: u32): void {
   const hibit: u16 = _fin ? 0 : 1 << 11;
 
-  let h0: u32 = _h[0],
-    h1: u32 = _h[1],
-    h2: u32 = _h[2],
-    h3: u32 = _h[3],
-    h4: u32 = _h[4],
-    h5: u32 = _h[5],
-    h6: u32 = _h[6],
-    h7: u32 = _h[7],
-    h8: u32 = _h[8],
-    h9: u32 = _h[9];
+  let h0: u32 = load16(_h, 0),
+    h1: u32 = load16(_h, 1),
+    h2: u32 = load16(_h, 2),
+    h3: u32 = load16(_h, 3),
+    h4: u32 = load16(_h, 4),
+    h5: u32 = load16(_h, 5),
+    h6: u32 = load16(_h, 6),
+    h7: u32 = load16(_h, 7),
+    h8: u32 = load16(_h, 8),
+    h9: u32 = load16(_h, 9);
 
-  const r0: u32 = _r[0],
-    r1: u32 = _r[1],
-    r2: u32 = _r[2],
-    r3: u32 = _r[3],
-    r4: u32 = _r[4],
-    r5: u32 = _r[5],
-    r6: u32 = _r[6],
-    r7: u32 = _r[7],
-    r8: u32 = _r[8],
-    r9: u32 = _r[9];
+  const r0: u32 = load16(_r, 0),
+    r1: u32 = load16(_r, 1),
+    r2: u32 = load16(_r, 2),
+    r3: u32 = load16(_r, 3),
+    r4: u32 = load16(_r, 4),
+    r5: u32 = load16(_r, 5),
+    r6: u32 = load16(_r, 6),
+    r7: u32 = load16(_r, 7),
+    r8: u32 = load16(_r, 8),
+    r9: u32 = load16(_r, 9);
 
   while (bytes >= 16) {
-    const t0: u16 = u16(m[mpos + 0]) | (u16(m[mpos + 1]) << 8);
+    const t0: u16 = u16(load8(m, mpos + 0)) | (u16(load8(m, mpos + 1)) << 8);
     h0 += t0 & 0x1fff;
-    const t1: u16 = u16(m[mpos + 2]) | (u16(m[mpos + 3]) << 8);
+    const t1: u16 = u16(load8(m, mpos + 2)) | (u16(load8(m, mpos + 3)) << 8);
     h1 += ((t0 >>> 13) | (t1 << 3)) & 0x1fff;
-    const t2: u16 = u16(m[mpos + 4]) | (u16(m[mpos + 5]) << 8);
+    const t2: u16 = u16(load8(m, mpos + 4)) | (u16(load8(m, mpos + 5)) << 8);
     h2 += ((t1 >>> 10) | (t2 << 6)) & 0x1fff;
-    const t3: u16 = u16(m[mpos + 6]) | (u16(m[mpos + 7]) << 8);
+    const t3: u16 = u16(load8(m, mpos + 6)) | (u16(load8(m, mpos + 7)) << 8);
     h3 += ((t2 >>> 7) | (t3 << 9)) & 0x1fff;
-    const t4: u16 = u16(m[mpos + 8]) | (u16(m[mpos + 9]) << 8);
+    const t4: u16 = u16(load8(m, mpos + 8)) | (u16(load8(m, mpos + 9)) << 8);
     h4 += ((t3 >>> 4) | (t4 << 12)) & 0x1fff;
     h5 += (t4 >>> 1) & 0x1fff;
-    const t5: u16 = u16(m[mpos + 10]) | (u16(m[mpos + 11]) << 8);
+    const t5: u16 = u16(load8(m, mpos + 10)) | (u16(load8(m, mpos + 11)) << 8);
     h6 += ((t4 >>> 14) | (t5 << 2)) & 0x1fff;
-    const t6: u16 = u16(m[mpos + 12]) | (u16(m[mpos + 13]) << 8);
+    const t6: u16 = u16(load8(m, mpos + 12)) | (u16(load8(m, mpos + 13)) << 8);
     h7 += ((t5 >>> 11) | (t6 << 5)) & 0x1fff;
-    const t7: u16 = u16(m[mpos + 14]) | (u16(m[mpos + 15]) << 8);
+    const t7: u16 = u16(load8(m, mpos + 14)) | (u16(load8(m, mpos + 15)) << 8);
     h8 += ((t6 >>> 8) | (t7 << 8)) & 0x1fff;
     h9 += (t7 >>> 5) | hibit;
 
@@ -295,20 +309,20 @@ function _blocks(m: Uint8Array, mpos: u32, bytes: u32): void {
     bytes -= 16;
   }
 
-  _h[0] = u16(h0);
-  _h[1] = u16(h1);
-  _h[2] = u16(h2);
-  _h[3] = u16(h3);
-  _h[4] = u16(h4);
-  _h[5] = u16(h5);
-  _h[6] = u16(h6);
-  _h[7] = u16(h7);
-  _h[8] = u16(h8);
-  _h[9] = u16(h9);
+  store16(_h, 0, u16(h0));
+  store16(_h, 1, u16(h1));
+  store16(_h, 2, u16(h2));
+  store16(_h, 3, u16(h3));
+  store16(_h, 4, u16(h4));
+  store16(_h, 5, u16(h5));
+  store16(_h, 6, u16(h6));
+  store16(_h, 7, u16(h7));
+  store16(_h, 8, u16(h8));
+  store16(_h, 9, u16(h9));
 }
 
-function finish(mac: Uint8Array, macpos: u32 = 0): void {
-  const g = new Uint16Array(10);
+function finish(mac: usize, macpos: u32 = 0): void {
+  // const g = new Uint16Array(10);
   let c: u16;
   let mask: u16;
   let f: u32;
@@ -316,86 +330,114 @@ function finish(mac: Uint8Array, macpos: u32 = 0): void {
 
   if (_leftover) {
     i = _leftover;
-    _buffer[i++] = 1;
+    store8(_buffer, i, 1);
+    i++;
     for (; i < 16; i++) {
-      _buffer[i] = 0;
+      store8(_buffer, i, 0);
     }
     _fin = 1;
     _blocks(_buffer, 0, 16);
   }
 
-  c = _h[1] >>> 13;
-  _h[1] &= 0x1fff;
+  c = load16(_h, 1) >>> 13;
+  store16(_h, 1, load16(_h, 1) & 0x1fff);
   for (i = 2; i < 10; i++) {
-    _h[i] += c;
-    c = _h[i] >>> 13;
-    _h[i] &= 0x1fff;
+    store16(_h, i, load16(_h, i) + c);
+    c = load16(_h, i) >>> 13;
+    store16(_h, i, load16(_h, i) & 0x1fff);
   }
-  _h[0] += c * 5;
-  c = _h[0] >>> 13;
-  _h[0] &= 0x1fff;
-  _h[1] += c;
-  c = _h[1] >>> 13;
-  _h[1] &= 0x1fff;
-  _h[2] += c;
+  store16(_h, 0, load16(_h, 0) + c * 5);
+  c = load16(_h, 0) >>> 13;
+  store16(_h, 0, load16(_h, 0) & 0x1fff);
+  store16(_h, 1, load16(_h, 1) + c);
+  c = load16(_h, 1) >>> 13;
+  store16(_h, 1, load16(_h, 1) & 0x1fff);
+  store16(_h, 2, load16(_h, 2) + c);
 
-  g[0] = _h[0] + 5;
-  c = g[0] >>> 13;
-  g[0] &= 0x1fff;
+  store16(tempG, 0, load16(_h, 0) + 5);
+  c = load16(tempG, 0) >>> 13;
+  store16(tempG, 0, load16(tempG, 0) & 0x1fff);
   for (i = 1; i < 10; i++) {
-    g[i] = _h[i] + c;
-    c = g[i] >>> 13;
-    g[i] &= 0x1fff;
+    store16(tempG, i, load16(_h, i) + c);
+    c = load16(tempG, i) >>> 13;
+    store16(tempG, i, load16(tempG, i) & 0x1fff);
   }
-  g[9] -= 1 << 13;
+  store16(tempG, 9, load16(tempG, 9) - (1 << 13));
 
   mask = (c ^ 1) - 1;
   for (i = 0; i < 10; i++) {
-    g[i] &= mask;
+    store16(tempG, i, load16(tempG, i) & mask);
   }
   mask = ~mask;
   for (i = 0; i < 10; i++) {
-    _h[i] = (_h[i] & mask) | g[i];
+    store16(_h, i, (load16(_h, i) & mask) | load16(tempG, i));
   }
 
-  _h[0] = (_h[0] | (_h[1] << 13)) & 0xffff;
-  _h[1] = ((_h[1] >>> 3) | (_h[2] << 10)) & 0xffff;
-  _h[2] = ((_h[2] >>> 6) | (_h[3] << 7)) & 0xffff;
-  _h[3] = ((_h[3] >>> 9) | (_h[4] << 4)) & 0xffff;
-  _h[4] = ((_h[4] >>> 12) | (_h[5] << 1) | (_h[6] << 14)) & 0xffff;
-  _h[5] = ((_h[6] >>> 2) | (_h[7] << 11)) & 0xffff;
-  _h[6] = ((_h[7] >>> 5) | (_h[8] << 8)) & 0xffff;
-  _h[7] = ((_h[8] >>> 8) | (_h[9] << 5)) & 0xffff;
-  f = u32(_h[0]) + u32(_pad[0]);
-
-  _h[0] = f & 0xffff;
+  // _h[0] = (_h[0] | (_h[1] << 13)) & 0xffff;
+  store16(_h, 0, (load16(_h, 0) | (load16(_h, 1) << 13)) & 0xffff);
+  // _h[1] = ((_h[1] >>> 3) | (_h[2] << 10)) & 0xffff;
+  store16(_h, 1, ((load16(_h, 1) >>> 3) | (load16(_h, 2) << 10)) & 0xffff);
+  // _h[2] = ((_h[2] >>> 6) | (_h[3] << 7)) & 0xffff;
+  store16(_h, 2, ((load16(_h, 2) >>> 6) | (load16(_h, 3) << 7)) & 0xffff);
+  // _h[3] = ((_h[3] >>> 9) | (_h[4] << 4)) & 0xffff;
+  store16(_h, 3, ((load16(_h, 3) >>> 9) | (load16(_h, 4) << 4)) & 0xffff);
+  // _h[4] = ((_h[4] >>> 12) | (_h[5] << 1) | (_h[6] << 14)) & 0xffff;
+  store16(_h, 4, ((load16(_h, 4) >>> 12) | (load16(_h, 5) << 1) | (load16(_h, 6) << 14)) & 0xffff);
+  // _h[5] = ((_h[6] >>> 2) | (_h[7] << 11)) & 0xffff;
+  store16(_h, 5, ((load16(_h, 6) >>> 2) | (load16(_h, 7) << 11)) & 0xffff);
+  // _h[6] = ((_h[7] >>> 5) | (_h[8] << 8)) & 0xffff;
+  store16(_h, 6, ((load16(_h, 7) >>> 5) | (load16(_h, 8) << 8)) & 0xffff);
+  // _h[7] = ((_h[8] >>> 8) | (_h[9] << 5)) & 0xffff;
+  store16(_h, 7, ((load16(_h, 8) >>> 8) | (load16(_h, 9) << 5)) & 0xffff);
+  // f = u32(_h[0]) + u32(_pad[0]);
+  f = u32(load16(_h, 0)) + u32(load16(_pad, 0));
+  store16(_h, 0, u16(f & 0xffff));
   for (i = 1; i < 8; i++) {
-    f = (((u32(_h[i]) + u32(_pad[i])) | 0) + (f >>> 16)) | 0;
-    _h[i] = f & 0xffff;
+    // f = (((u32(_h[i]) + u32(_pad[i])) | 0) + (f >>> 16)) | 0;
+    f = (((u32(load16(_h, i)) + u32(load16(_pad, i))) | 0) + (f >>> 16)) | 0;
+    // _h[i] = f & 0xffff;
+    store16(_h, i, u16(f & 0xffff));
   }
-  mac[macpos + 0] = _h[0] >>> 0;
-  mac[macpos + 1] = _h[0] >>> 8;
-  mac[macpos + 2] = _h[1] >>> 0;
-  mac[macpos + 3] = _h[1] >>> 8;
-  mac[macpos + 4] = _h[2] >>> 0;
-  mac[macpos + 5] = _h[2] >>> 8;
-  mac[macpos + 6] = _h[3] >>> 0;
-  mac[macpos + 7] = _h[3] >>> 8;
-  mac[macpos + 8] = _h[4] >>> 0;
-  mac[macpos + 9] = _h[4] >>> 8;
-  mac[macpos + 10] = _h[5] >>> 0;
-  mac[macpos + 11] = _h[5] >>> 8;
-  mac[macpos + 12] = _h[6] >>> 0;
-  mac[macpos + 13] = _h[6] >>> 8;
-  mac[macpos + 14] = _h[7] >>> 0;
-  mac[macpos + 15] = _h[7] >>> 8;
+
+  // mac[macpos + 0] = _h[0] >>> 0;
+  store8(mac, macpos + 0, u8(load16(_h, 0) >>> 0));
+  // mac[macpos + 1] = _h[0] >>> 8;
+  store8(mac, macpos + 1, u8(load16(_h, 0) >>> 8));
+  // mac[macpos + 2] = _h[1] >>> 0;
+  store8(mac, macpos + 2, u8(load16(_h, 1) >>> 0));
+  // mac[macpos + 3] = _h[1] >>> 8;
+  store8(mac, macpos + 3, u8(load16(_h, 1) >>> 8));
+  // mac[macpos + 4] = _h[2] >>> 0;
+  store8(mac, macpos + 4, u8(load16(_h, 2) >>> 0));
+  // mac[macpos + 5] = _h[2] >>> 8;
+  store8(mac, macpos + 5, u8(load16(_h, 2) >>> 8));
+  // mac[macpos + 6] = _h[3] >>> 0;
+  store8(mac, macpos + 6, u8(load16(_h, 3) >>> 0));
+  // mac[macpos + 7] = _h[3] >>> 8;
+  store8(mac, macpos + 7, u8(load16(_h, 3) >>> 8));
+  // mac[macpos + 8] = _h[4] >>> 0;
+  store8(mac, macpos + 8, u8(load16(_h, 4) >>> 0));
+  // mac[macpos + 9] = _h[4] >>> 8;
+  store8(mac, macpos + 9, u8(load16(_h, 4) >>> 8));
+  // mac[macpos + 10] = _h[5] >>> 0;
+  store8(mac, macpos + 10, u8(load16(_h, 5) >>> 0));
+  // mac[macpos + 11] = _h[5] >>> 8;
+  store8(mac, macpos + 11, u8(load16(_h, 5) >>> 8));
+  // mac[macpos + 12] = _h[6] >>> 0;
+  store8(mac, macpos + 12, u8(load16(_h, 6) >>> 0));
+  // mac[macpos + 13] = _h[6] >>> 8;
+  store8(mac, macpos + 13, u8(load16(_h, 6) >>> 8));
+  // mac[macpos + 14] = _h[7] >>> 0;
+  store8(mac, macpos + 14, u8(load16(_h, 7) >>> 0));
+  // mac[macpos + 15] = _h[7] >>> 8;
+  store8(mac, macpos + 15, u8(load16(_h, 7) >>> 8));
 
   _finished = true;
 }
 
-function update(m: Uint8Array): void {
+function update(m: usize, dataLength: u32): void {
   let mpos = 0;
-  let bytes: u32 = m.length;
+  let bytes: u32 = dataLength;
   let want: u32;
 
   if (_leftover) {
@@ -404,7 +446,8 @@ function update(m: Uint8Array): void {
       want = bytes;
     }
     for (let i: u32 = 0; i < want; i++) {
-      _buffer[_leftover + i] = m[mpos + i];
+      // _buffer[_leftover + i] = m[mpos + i];
+      store8(_buffer, _leftover + i, load8(m, mpos + i));
     }
     bytes -= want;
     mpos += want;
@@ -422,16 +465,16 @@ function update(m: Uint8Array): void {
     mpos += want;
     bytes -= want;
   }
-
   if (bytes) {
     for (let i: u32 = 0; i < bytes; i++) {
-      _buffer[_leftover + i] = m[mpos + i];
+      // _buffer[_leftover + i] = m[mpos + i];
+      store8(_buffer, _leftover + i, load8(m, mpos + i));
     }
     _leftover += bytes;
   }
 }
 
-export function digest(out: Uint8Array): void {
+export function digest(out: usize): void {
   // TODO(dchest): it behaves differently than other hashes/HMAC,
   // because it throws when finished — others just return saved result.
   if (_finished) {
@@ -442,25 +485,11 @@ export function digest(out: Uint8Array): void {
 }
 
 export function clean(): void {
-  wipeUint8Arr(_buffer);
-  wipeUint16Arr(_r);
-  wipeUint16Arr(_h);
-  wipeUint16Arr(_pad);
+  wipe8(_buffer, 16);
+  wipe16(_r, 10);
+  wipe16(_h, 10);
+  wipe16(_pad, 8);
   _leftover = 0;
   _fin = 0;
   _finished = false;
-}
-
-// TODO: use wipe with pointer instead
-function wipeUint8Arr(arr: Uint8Array): void {
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = 0;
-  }
-}
-
-// TODO: use wipe with pointer instead
-function wipeUint16Arr(arr: Uint16Array): void {
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = 0;
-  }
 }
