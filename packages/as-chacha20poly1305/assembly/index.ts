@@ -1,6 +1,5 @@
 export {
   CHACHA20_INPUT_LENGTH,
-  CHACHA20_KEY_LENGTH,
   CHACHA20_COUNTER_LENGTH,
   chacha20Input,
   chacha20Key,
@@ -9,4 +8,15 @@ export {
   chacha20StreamXORUpdate,
 } from "./chacha20";
 
-export {poly1305Init, poly1305Update, poly1305Digest, poly1305Input, poly1305Key, poly1305Output, debug} from "./poly1305";
+export {KEY_LENGTH, TAG_LENGTH} from "./const";
+
+export {
+  poly1305Init,
+  poly1305Update,
+  poly1305Digest,
+  poly1305Input,
+  poly1305Key,
+  poly1305Output,
+} from "./poly1305";
+
+export {openInit, openUpdate, openDigest, cpKey, cpNonce, cpSealed, cpTag, cpAssociatedData, debug} from "./chacha20poly1305";

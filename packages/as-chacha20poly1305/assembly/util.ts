@@ -28,6 +28,12 @@ export function load8(ptr: usize, offset: usize): u8 {
   return load<u8>(ptr + offset);
 }
 
+// TODO: more unit tests in assembly
+export function writeUint64LE(value: u32, out: usize, offset: u8 = 0): void {
+  writeUint32LE(value, out, offset);
+  writeUint32LE(i32(value / 0x100000000), out, offset + 4);
+}
+
 // TODO: store i32 directly after unit test passed
 export function writeUint32LE(value: i32, out: usize, offset: u8 = 0): void {
   store8(out, offset + 0, u8(value >>> 0));

@@ -1,0 +1,34 @@
+import {ChaCha20Poly1305} from "../../src/chacha20poly1305";
+import crypto from "crypto";
+import {newInstance} from "../../src/wasm";
+import {ChaCha20Poly1305 as ChaCha20Poly1305Stablelib} from "@stablelib/chacha20poly1305";
+import {KEY_LENGTH, NONCE_LENGTH} from "../../src/const";
+import {expect} from "chai";
+
+describe("chacha20poly1305", function () {
+  let asImpl: ChaCha20Poly1305;
+
+  before(() => {
+    const ctx = newInstance();
+    asImpl = new ChaCha20Poly1305(ctx);
+  });
+
+  for (let i = 0; i < 100; i++) {
+    const dataLength = i * 512 + Math.floor(Math.random() * 512);
+    for (const adLength of [0, 32]) {
+      it(`decode (open) with ad ${adLength}, round ${i} data length ${dataLength}`, () => {
+        const key = new Uint8Array(crypto.randomBytes(KEY_LENGTH));
+        const nonce = new Uint8Array(crypto.randomBytes(NONCE_LENGTH));
+        const plainText = new Uint8Array(crypto.randomBytes(dataLength));
+        const jsImpl = new ChaCha20Poly1305Stablelib(key);
+        const ad = adLength > 0 ? new Uint8Array(crypto.randomBytes(adLength)) : undefined;
+        const sealed = jsImpl.seal(nonce, plainText, ad);
+        // to debug
+        const plainText1 = jsImpl.open(nonce, sealed, ad);
+        expect(plainText1).to.be.deep.equal(plainText);
+        const plainText2 = asImpl.open(key, nonce, sealed, ad);
+        expect(plainText2).to.be.deep.equal(plainText, "decoded data from assemblyscript is not correct");
+      });
+    }
+  }
+});

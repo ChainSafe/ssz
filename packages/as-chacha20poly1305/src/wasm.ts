@@ -3,8 +3,8 @@ import {wasmCode} from "./wasmCode";
 const _module = new WebAssembly.Module(wasmCode);
 
 export interface WasmContext {
+  readonly KEY_LENGTH: number;
   readonly CHACHA20_INPUT_LENGTH: number;
-  readonly CHACHA20_KEY_LENGTH: number;
   readonly CHACHA20_COUNTER_LENGTH: number;
   readonly POLY1305_KEY_LENGTH: number;
   readonly POLY1305_INPUT_LENGTH: number;
@@ -34,14 +34,32 @@ export interface WasmContext {
   poly1305Output: {
     value: number;
   };
+  // cp stands for chacha20poly1305
+  cpKey: {
+    value: number;
+  };
+  cpAssociatedData: {
+    value: number;
+  };
+  cpNonce: {
+    value: number;
+  };
+  cpSealed: {
+    value: number;
+  };
+  cpTag: {
+    value: number;
+  };
   debug: {
     value: number;
   };
-
   chacha20StreamXORUpdate(dataLength: number): number;
   poly1305Init(): void;
   poly1305Update(dataLength: number): void;
   poly1305Digest(): void;
+  openInit(asDataLength: number): void;
+  openUpdate(dataLength: number): void;
+  openDigest(ciphertextLength: number, asDataLength: number): boolean;
 }
 
 const importObj = {

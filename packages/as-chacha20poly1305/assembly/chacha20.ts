@@ -1,27 +1,48 @@
+import { DATA_CHUNK_LENGTH, KEY_LENGTH } from "./const";
 import {load8, store8, wipe8, writeUint32LE} from "./util";
 
-export const CHACHA20_INPUT_LENGTH = 512;
+export const CHACHA20_INPUT_LENGTH = DATA_CHUNK_LENGTH;
 // See stablelib
-export const CHACHA20_KEY_LENGTH = 32;
 export const CHACHA20_COUNTER_LENGTH = 16;
 
 // input buffer
 export const chacha20Input = new ArrayBuffer(CHACHA20_INPUT_LENGTH);
-const chacha20InputPtr = changetype<usize>(chacha20Input);
+export const chacha20InputPtr = changetype<usize>(chacha20Input);
 
-export const chacha20Key = new ArrayBuffer(CHACHA20_KEY_LENGTH);
-const chacha20KeyPtr = changetype<usize>(chacha20Key);
+export const chacha20Key = new ArrayBuffer(KEY_LENGTH);
+export const chacha20KeyPtr = changetype<usize>(chacha20Key);
 
 // the nonce in chacha
 export const chacha20Counter = new ArrayBuffer(CHACHA20_COUNTER_LENGTH);
-const chacha20CounterPtr = changetype<usize>(chacha20Counter);
+export const chacha20CounterPtr = changetype<usize>(chacha20Counter);
 
 // output buffer
 export const chacha20Output = new ArrayBuffer(CHACHA20_INPUT_LENGTH);
-const chacha20OutputPtr = changetype<usize>(chacha20Output);
+export const chacha20OutputPtr = changetype<usize>(chacha20Output);
 
+//
+/**
+ * chacha20Input and chacha20Key and chacha20Counter are set separately before this call
+ * This would set the result to chacha20Output
+ * nonceInplaceCounterLength is always 4
+ * @param dataLength length of chacha20Input
+ * @returns dataLength
+ */
 export function chacha20StreamXORUpdate(dataLength: u32): u32 {
   return doStreamXORUpdate(chacha20InputPtr, dataLength, chacha20KeyPtr, chacha20CounterPtr, chacha20OutputPtr);
+}
+
+/**
+ * Wipe the chacha20Input and call streamXOR.
+ * chacha20Key and chacha20Counter should be set before this call.
+ * nonceInplaceCounterLength is always 4.
+ */
+export function chacha20Stream(dataLength: u32): u32 {
+  for (let i: u32 = 0; i < dataLength; i++) {
+    store8(chacha20InputPtr, i, 0);
+  }
+  return chacha20StreamXORUpdate(dataLength);
+  // output is set in the first ${dataLength} bytes of chacha20Output
 }
 
 // Number of ChaCha rounds (ChaCha20).

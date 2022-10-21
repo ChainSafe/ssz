@@ -1,30 +1,31 @@
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "./const";
 import {load8, store8, load16, store16, wipe8, wipe16} from "./util";
 
 // to debug
 const debugArr = new Uint32Array(64);
 export const debug = debugArr.buffer;
 
-export const POLY1305_KEY_LENGTH = 32;
-export const POLY1305_OUTPUT_LENGTH = 16;
-// TODO: review input length
-export const POLY1305_INPUT_LENGTH = 512;
-export const poly1305Key = new ArrayBuffer(POLY1305_KEY_LENGTH);
+export const POLY1305_INPUT_LENGTH = DATA_CHUNK_LENGTH;
+export const poly1305Key = new ArrayBuffer(KEY_LENGTH);
 export const poly1305Input = new ArrayBuffer(POLY1305_INPUT_LENGTH);
-export const poly1305Output = new ArrayBuffer(POLY1305_OUTPUT_LENGTH);
-const keyPtr = changetype<usize>(poly1305Key);
-const inputPtr = changetype<usize>(poly1305Input);
-const outputPtr = changetype<usize>(poly1305Output);
+export const poly1305Output = new ArrayBuffer(TAG_LENGTH);
+export const poly1305KeyPtr = changetype<usize>(poly1305Key);
+export const poly1305InputPtr = changetype<usize>(poly1305Input);
+export const poly1305OutputPtr = changetype<usize>(poly1305Output);
 
 export function poly1305Init(): void {
-  init(keyPtr);
+  init(poly1305KeyPtr);
 }
 
 export function poly1305Update(dataLength: u32): void {
-  update(inputPtr, dataLength);
+  update(poly1305InputPtr, dataLength);
 }
 
+/**
+ * The 16 byte output is set to poly1305OutputPtr
+ */
 export function poly1305Digest(): void {
-  digest(outputPtr);
+  digest(poly1305OutputPtr);
   clean();
 }
 
@@ -65,7 +66,7 @@ function init(key: usize): void {
   const t5 = u16(load8(key, 10)) | (u16(load8(key, 11)) << 8);
   store16(_r, 6, ((t4 >>> 14) | (t5 << 2)) & 0x1fff);
   const t6 = u16(load8(key, 12)) | (u16(load8(key, 13)) << 8);
-  store16(_r,7,  ((t5 >>> 11) | (t6 << 5)) & 0x1f81);
+  store16(_r, 7, ((t5 >>> 11) | (t6 << 5)) & 0x1f81);
   const t7 = u16(load8(key, 14)) | (u16(load8(key, 15)) << 8);
   store16(_r, 8, ((t6 >>> 8) | (t7 << 8)) & 0x1fff);
   store16(_r, 9, (t7 >>> 5) & 0x007f);
