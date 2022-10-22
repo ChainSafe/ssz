@@ -44,7 +44,7 @@ export interface WasmContext {
   cpNonce: {
     value: number;
   };
-  cpSealed: {
+  cpInput: {
     value: number;
   };
   cpTag: {
@@ -57,9 +57,10 @@ export interface WasmContext {
   poly1305Init(): void;
   poly1305Update(dataLength: number): void;
   poly1305Digest(): void;
-  openInit(asDataLength: number): void;
+  init(asDataLength: number): void;
   openUpdate(dataLength: number): void;
-  openDigest(ciphertextLength: number, asDataLength: number): boolean;
+  sealUpdate(dataLength: number): void;
+  digest(ciphertextLength: number, asDataLength: number): void;
 }
 
 const importObj = {

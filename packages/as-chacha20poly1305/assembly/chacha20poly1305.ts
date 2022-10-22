@@ -13,7 +13,6 @@ import {
   poly1305Init,
   poly1305InputPtr,
   poly1305KeyPtr,
-  poly1305OutputPtr,
   poly1305Update,
 } from "./poly1305";
 import {load8, store8, writeUint64LE} from "./util";
@@ -29,8 +28,8 @@ export const cpNonce = cpNonceArr.buffer;
 const cpAssociatedDataArr = new Uint8Array(32);
 export const cpAssociatedData = cpAssociatedDataArr.buffer;
 // cpSealed + cpTag = sealed in stablelib open() method
-const cpSealedArr = new Uint8Array(DATA_CHUNK_LENGTH);
-export const cpSealed = cpSealedArr.buffer;
+const cpInputArr = new Uint8Array(DATA_CHUNK_LENGTH);
+export const cpInput = cpInputArr.buffer;
 // TODO: remove this hard coded value
 const cpTagArr = new Uint8Array(TAG_LENGTH);
 export const cpTag = cpTagArr.buffer;
@@ -40,22 +39,31 @@ const debugArr = new Uint32Array(64);
 export const debug = debugArr.buffer;
 
 /**
+ * Initialize chacha20 and poly1305.
  * key and nonce and associatedData (if needed) should be set before this call
  * validation is done at javascript side.
  * @param asDataLength length of associatedData
  */
-export function openInit(asDataLength: u32): void {
-  doOpenInit(cpKeyArr, cpNonceArr, asDataLength);
+export function init(asDataLength: u32): void {
+  doInit(cpKeyArr, cpNonceArr, asDataLength);
 }
 
 /**
- * Call openInit before this openUpdate.
+ * Call init before this openUpdate.
  * Instead of calling _authenticate() then streamXOR() we do both at the same time chunk by chunk.
- * Note that tag data is part of openDigest() call so should not put it here.
- * @param dataLength length of cpSealedArr
+ * Note that tag data is not part of cpInputArr
+ * @param dataLength length of cpInputArr
  */
 export function openUpdate(dataLength: u32): void {
-  doOpenUpdate(cpSealedArr, dataLength);
+  doOpenUpdate(cpInputArr, dataLength);
+}
+
+/**
+ * Similar to openUpdate but we do it reversely.
+ * @param dataLength length of cpInputArr
+ */
+export function sealUpdate(dataLength: u32): void {
+  doSealUpdate(cpInputArr, dataLength);
 }
 
 /**
@@ -63,11 +71,11 @@ export function openUpdate(dataLength: u32): void {
  * @param ciphertextLength = sealed - tag length
  * @return true if authenticate successfully, false otherwise
  */
-export function openDigest(ciphertextLength: u32, asDataLength: u32): boolean {
-  return doOpenDigest(cpTagArr, ciphertextLength, asDataLength);
+export function digest(ciphertextLength: u32, asDataLength: u32): void {
+  doDigest(ciphertextLength, asDataLength);
 }
 
-function doOpenInit(key: Uint8Array, nonce: Uint8Array, asDataLength: u32): void {
+function doInit(key: Uint8Array, nonce: Uint8Array, asDataLength: u32): void {
   for (let i = 0; i < KEY_LENGTH; i++) {
     store8(chacha20KeyPtr, i, key[i]);
   }
@@ -83,6 +91,7 @@ function doOpenInit(key: Uint8Array, nonce: Uint8Array, asDataLength: u32): void
   }
 
   // Generate authentication key by taking first 32-bytes of stream.
+  // output is set to chacha20OutputPtr
   chacha20Stream(KEY_LENGTH);
 
   // part of _authenticate
@@ -112,7 +121,7 @@ function doOpenInit(key: Uint8Array, nonce: Uint8Array, asDataLength: u32): void
 
 function doOpenUpdate(ciphertext: Uint8Array, length: u32): void {
   // part of _authenticate
-  // no need to initialize Poly1305 anymore as we did it in doOpenInit()
+  // no need to initialize Poly1305 anymore as we did it in doInit()
   for (let i: u32 = 0; i < length; i++) {
     store8(poly1305InputPtr, i, ciphertext[i]);
   }
@@ -121,7 +130,7 @@ function doOpenUpdate(ciphertext: Uint8Array, length: u32): void {
   // part of open()
   // Decrypt even through we haven't done _authenticate
   // we may waste some streamXOR() call but should be ok for most of the times
-  // key and counter are set in doOpenInit
+  // key and counter are set in doInit
   // TODO: chain with the above for loop?
   for (let i: u32 = 0; i < length; i++) {
     store8(chacha20InputPtr, i, ciphertext[i]);
@@ -130,7 +139,22 @@ function doOpenUpdate(ciphertext: Uint8Array, length: u32): void {
   // output is set to chacha20Output
 }
 
-function doOpenDigest(tag: Uint8Array, ciphertextLength: u32, asDataLength: u32): boolean {
+function doSealUpdate(plaintext: Uint8Array, length: u32): void {
+  for (let i: u32 = 0; i < length; i++) {
+    store8(chacha20InputPtr, i, plaintext[i]);
+  }
+  // output is set to chacha20Output
+  chacha20StreamXORUpdate(length);
+
+  // part of _authenticate
+  // no need to initialize Poly1305 anymore as we did it in doInit()
+  for (let i: u32 = 0; i < length; i++) {
+    store8(poly1305InputPtr, i, load8(chacha20OutputPtr, i));
+  }
+  poly1305Update(length);
+}
+
+function doDigest(ciphertextLength: u32, asDataLength: u32): void {
   // h.update(ZEROS.subarray(ciphertext.length % 16));
   if (ciphertextLength % 16 > 0) {
     const paddedLength = 16 - (ciphertextLength % 16);
@@ -149,13 +173,4 @@ function doOpenDigest(tag: Uint8Array, ciphertextLength: u32, asDataLength: u32)
   poly1305Update(8);
 
   poly1305Digest();
-  let isSameTag = true;
-  for (let i = 0; i < TAG_LENGTH; i++) {
-    if (load8(poly1305OutputPtr, i) !== tag[i]) {
-      isSameTag = false;
-      break;
-    }
-  }
-
-  return isSameTag;
 }

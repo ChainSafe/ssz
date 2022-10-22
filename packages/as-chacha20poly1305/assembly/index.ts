@@ -10,13 +10,17 @@ export {
 
 export {KEY_LENGTH, TAG_LENGTH} from "./const";
 
-export {
-  poly1305Init,
-  poly1305Update,
-  poly1305Digest,
-  poly1305Input,
-  poly1305Key,
-  poly1305Output,
-} from "./poly1305";
+export {poly1305Init, poly1305Update, poly1305Digest, poly1305Input, poly1305Key, poly1305Output} from "./poly1305";
 
-export {openInit, openUpdate, openDigest, cpKey, cpNonce, cpSealed, cpTag, cpAssociatedData, debug} from "./chacha20poly1305";
+export {
+  init,
+  openUpdate,
+  sealUpdate,
+  digest,
+  cpKey,
+  cpNonce,
+  cpInput,
+  cpTag,
+  cpAssociatedData,
+  debug,
+} from "./chacha20poly1305";

@@ -16,16 +16,35 @@ describe("chacha20poly1305", function () {
   for (let i = 0; i < 100; i++) {
     const dataLength = i * 512 + Math.floor(Math.random() * 512);
     for (const adLength of [0, 32]) {
+      it(`encode (seal) with ad ${adLength}, round ${i} data length ${dataLength}`, () => {
+        const key = new Uint8Array(crypto.randomBytes(KEY_LENGTH));
+        const nonce = new Uint8Array(crypto.randomBytes(NONCE_LENGTH));
+        const plainText = new Uint8Array(crypto.randomBytes(dataLength));
+        const jsImpl = new ChaCha20Poly1305Stablelib(key);
+        const ad = adLength > 0 ? new Uint8Array(crypto.randomBytes(adLength)) : undefined;
+
+        const jsSealed = jsImpl.seal(nonce, plainText, ad);
+        const asSealed = asImpl.seal(key, nonce, plainText, ad);
+
+        expect(asSealed).to.be.deep.equal(jsSealed, "encoded data from as should be the same to js");
+      });
+    }
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const dataLength = i * 512 + Math.floor(Math.random() * 512);
+    for (const adLength of [0, 32]) {
       it(`decode (open) with ad ${adLength}, round ${i} data length ${dataLength}`, () => {
         const key = new Uint8Array(crypto.randomBytes(KEY_LENGTH));
         const nonce = new Uint8Array(crypto.randomBytes(NONCE_LENGTH));
         const plainText = new Uint8Array(crypto.randomBytes(dataLength));
         const jsImpl = new ChaCha20Poly1305Stablelib(key);
         const ad = adLength > 0 ? new Uint8Array(crypto.randomBytes(adLength)) : undefined;
+        // encode by js impl
         const sealed = jsImpl.seal(nonce, plainText, ad);
-        // to debug
         const plainText1 = jsImpl.open(nonce, sealed, ad);
         expect(plainText1).to.be.deep.equal(plainText);
+        // decode by as impl
         const plainText2 = asImpl.open(key, nonce, sealed, ad);
         expect(plainText2).to.be.deep.equal(plainText, "decoded data from assemblyscript is not correct");
       });
