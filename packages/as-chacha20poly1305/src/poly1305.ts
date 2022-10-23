@@ -1,11 +1,5 @@
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "./const";
 import {WasmContext} from "./wasm";
-
-// TODO: not able to get these value from wasm
-const KEY_LENGTH = 32;
-const POLY1305_INPUT_LENGTH = 512;
-const TAG_LENGTH = 16;
-
-// const debugArray = new Uint32Array(ctx.memory.buffer, ctx.debug.value, 64);
 
 export class Poly1305 {
   private wasmKeyArr: Uint8Array;
@@ -17,7 +11,7 @@ export class Poly1305 {
     const wasmPoly1305KeyValue = ctx.poly1305Key.value;
     this.wasmKeyArr = new Uint8Array(ctx.memory.buffer, wasmPoly1305KeyValue, KEY_LENGTH);
     const wasmPoly1305InputValue = ctx.poly1305Input.value;
-    this.wasmInputArr = new Uint8Array(ctx.memory.buffer, wasmPoly1305InputValue, POLY1305_INPUT_LENGTH);
+    this.wasmInputArr = new Uint8Array(ctx.memory.buffer, wasmPoly1305InputValue, DATA_CHUNK_LENGTH);
     const wasmPoly1305OutputValue = ctx.poly1305Output.value;
     this.wasmOutputArr = new Uint8Array(ctx.memory.buffer, wasmPoly1305OutputValue, TAG_LENGTH);
     const wasmPoly1305DebugValue = ctx.debug.value;
@@ -33,14 +27,14 @@ export class Poly1305 {
   }
 
   update(data: Uint8Array): void {
-    if (data.length <= POLY1305_INPUT_LENGTH) {
+    if (data.length <= DATA_CHUNK_LENGTH) {
       this.wasmInputArr.set(data);
       this.ctx.poly1305Update(data.length);
       return;
     }
 
-    for (let offset = 0; offset < data.length; offset += POLY1305_INPUT_LENGTH) {
-      const end = Math.min(data.length, offset + POLY1305_INPUT_LENGTH);
+    for (let offset = 0; offset < data.length; offset += DATA_CHUNK_LENGTH) {
+      const end = Math.min(data.length, offset + DATA_CHUNK_LENGTH);
       this.wasmInputArr.set(data.subarray(offset, end));
       this.ctx.poly1305Update(end - offset);
     }

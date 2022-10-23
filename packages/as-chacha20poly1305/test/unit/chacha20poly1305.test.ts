@@ -2,7 +2,7 @@ import {ChaCha20Poly1305} from "../../src/chacha20poly1305";
 import crypto from "crypto";
 import {newInstance} from "../../src/wasm";
 import {ChaCha20Poly1305 as ChaCha20Poly1305Stablelib} from "@stablelib/chacha20poly1305";
-import {KEY_LENGTH, NONCE_LENGTH} from "../../src/const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH} from "../../src/const";
 import {expect} from "chai";
 
 describe("chacha20poly1305", function () {
@@ -14,7 +14,7 @@ describe("chacha20poly1305", function () {
   });
 
   for (let i = 0; i < 100; i++) {
-    const dataLength = i * 512 + Math.floor(Math.random() * 512);
+    const dataLength = i * DATA_CHUNK_LENGTH + Math.floor(Math.random() * DATA_CHUNK_LENGTH);
     for (const adLength of [0, 32]) {
       it(`encode (seal) with ad ${adLength}, round ${i} data length ${dataLength}`, () => {
         const key = new Uint8Array(crypto.randomBytes(KEY_LENGTH));

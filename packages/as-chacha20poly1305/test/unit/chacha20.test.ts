@@ -2,10 +2,11 @@ import {expect} from "chai";
 import crypto from "crypto";
 import {chacha20StreamXOR} from "../../src/chacha20";
 import {streamXOR as streamXORStableLib} from "@stablelib/chacha";
+import {DATA_CHUNK_LENGTH} from "../../src/const";
 
 describe("chacha20 as vs js", function () {
   for (let i = 0; i < 100; i++) {
-    const inputLength = i * 100 + Math.floor(Math.random() * 100);
+    const inputLength = i * DATA_CHUNK_LENGTH + Math.floor(Math.random() * DATA_CHUNK_LENGTH);
     it(`chacha20 round ${i} with length ${inputLength}`, function () {
       const key = crypto.randomBytes(32);
       const nonce = crypto.randomBytes(16);
