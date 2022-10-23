@@ -20,7 +20,6 @@ export {
   cpKey,
   cpNonce,
   cpInput,
-  cpTag,
   cpAssociatedData,
   debug,
 } from "./chacha20poly1305";

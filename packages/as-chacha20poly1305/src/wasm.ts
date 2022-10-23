@@ -47,9 +47,6 @@ export interface WasmContext {
   cpInput: {
     value: number;
   };
-  cpTag: {
-    value: number;
-  };
   debug: {
     value: number;
   };

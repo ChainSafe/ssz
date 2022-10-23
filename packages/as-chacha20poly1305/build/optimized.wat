@@ -4,10 +4,9 @@
  (type $i32_=>_none (func (param i32)))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
- (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $none_=>_i32 (func (result i32)))
- (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+ (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (memory $0 1)
@@ -17,8 +16,6 @@
  (data (i32.const 192) "(\00\00\00\01\00\00\00\01\00\00\00(\00\00\00a\00s\00s\00e\00m\00b\00l\00y\00/\00c\00h\00a\00c\00h\00a\002\000\00.\00t\00s")
  (data (i32.const 256) "*\00\00\00\01\00\00\00\01\00\00\00*\00\00\00P\00o\00l\00y\001\003\000\005\00 \00w\00a\00s\00 \00f\00i\00n\00i\00s\00h\00e\00d")
  (data (i32.const 320) "(\00\00\00\01\00\00\00\01\00\00\00(\00\00\00a\00s\00s\00e\00m\00b\00l\00y\00/\00p\00o\00l\00y\001\003\000\005\00.\00t\00s")
- (data (i32.const 384) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e")
- (data (i32.const 448) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00~\00l\00i\00b\00/\00t\00y\00p\00e\00d\00a\00r\00r\00a\00y\00.\00t\00s")
  (global $assembly/const/KEY_LENGTH i32 (i32.const 32))
  (global $assembly/const/TAG_LENGTH i32 (i32.const 16))
  (global $assembly/chacha20/CHACHA20_INPUT_LENGTH i32 (i32.const 512))
@@ -56,16 +53,14 @@
  (global $assembly/poly1305/_finished (mut i32) (i32.const 0))
  (global $assembly/poly1305/tempGBuffer (mut i32) (i32.const 0))
  (global $assembly/poly1305/tempG (mut i32) (i32.const 0))
- (global $assembly/chacha20poly1305/cpKeyArr (mut i32) (i32.const 0))
  (global $assembly/chacha20poly1305/cpKey (mut i32) (i32.const 0))
- (global $assembly/chacha20poly1305/cpNonceArr (mut i32) (i32.const 0))
+ (global $assembly/chacha20poly1305/cpKeyPtr (mut i32) (i32.const 0))
  (global $assembly/chacha20poly1305/cpNonce (mut i32) (i32.const 0))
- (global $assembly/chacha20poly1305/cpAssociatedDataArr (mut i32) (i32.const 0))
+ (global $assembly/chacha20poly1305/cpNoncePtr (mut i32) (i32.const 0))
  (global $assembly/chacha20poly1305/cpAssociatedData (mut i32) (i32.const 0))
- (global $assembly/chacha20poly1305/cpInputArr (mut i32) (i32.const 0))
+ (global $assembly/chacha20poly1305/cpAssociatedDataPtr (mut i32) (i32.const 0))
  (global $assembly/chacha20poly1305/cpInput (mut i32) (i32.const 0))
- (global $assembly/chacha20poly1305/cpTagArr (mut i32) (i32.const 0))
- (global $assembly/chacha20poly1305/cpTag (mut i32) (i32.const 0))
+ (global $assembly/chacha20poly1305/cpInputPtr (mut i32) (i32.const 0))
  (global $assembly/chacha20poly1305/debugArr (mut i32) (i32.const 0))
  (global $assembly/chacha20poly1305/debug (mut i32) (i32.const 0))
  (export "memory" (memory $0))
@@ -91,7 +86,6 @@
  (export "cpKey" (global $assembly/chacha20poly1305/cpKey))
  (export "cpNonce" (global $assembly/chacha20poly1305/cpNonce))
  (export "cpInput" (global $assembly/chacha20poly1305/cpInput))
- (export "cpTag" (global $assembly/chacha20poly1305/cpTag))
  (export "cpAssociatedData" (global $assembly/chacha20poly1305/cpAssociatedData))
  (export "debug" (global $assembly/chacha20poly1305/debug))
  (start $~start)
@@ -225,9 +219,9 @@
   local.get $1
  )
  (func $start:assembly/chacha20 (; 5 ;)
-  i32.const 512
+  i32.const 384
   global.set $~lib/rt/stub/startOffset
-  i32.const 512
+  i32.const 384
   global.set $~lib/rt/stub/offset
   i32.const 512
   call $~lib/arraybuffer/ArrayBuffer#constructor
@@ -255,28 +249,13 @@
   global.get $assembly/chacha20/block
   global.set $assembly/chacha20/blockPtr
  )
- (func $~lib/arraybuffer/ArrayBufferView#constructor (; 6 ;) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
-  local.get $1
-  i32.const 1073741808
-  local.get $2
-  i32.shr_u
-  i32.gt_u
-  if
-   i32.const 32
-   i32.const 80
-   i32.const 23
-   i32.const 56
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $1
-  local.get $2
-  i32.shl
-  local.tee $2
+ (func $~lib/arraybuffer/ArrayBufferView#constructor (; 6 ;) (param $0 i32) (result i32)
+  (local $1 i32)
+  i32.const 256
   i32.const 0
   call $~lib/rt/stub/__alloc
   local.tee $1
-  local.get $2
+  i32.const 256
   call $~lib/memory/memory.fill
   local.get $0
   i32.eqz
@@ -305,7 +284,7 @@
   local.get $1
   i32.store offset=4
   local.get $0
-  local.get $2
+  i32.const 256
   i32.store offset=8
   local.get $0
  )
@@ -313,8 +292,6 @@
   i32.const 12
   i32.const 3
   call $~lib/rt/stub/__alloc
-  i32.const 64
-  i32.const 2
   call $~lib/arraybuffer/ArrayBufferView#constructor
  )
  (func $start:assembly/poly1305 (; 8 ;)
@@ -364,52 +341,34 @@
   global.get $assembly/poly1305/tempGBuffer
   global.set $assembly/poly1305/tempG
  )
- (func $~lib/typedarray/Uint8Array#constructor (; 9 ;) (param $0 i32) (result i32)
-  i32.const 12
-  i32.const 4
-  call $~lib/rt/stub/__alloc
-  local.get $0
-  i32.const 0
-  call $~lib/arraybuffer/ArrayBufferView#constructor
- )
- (func $start:assembly/chacha20poly1305 (; 10 ;)
+ (func $start:assembly/chacha20poly1305 (; 9 ;)
   i32.const 32
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/chacha20poly1305/cpKeyArr
-  global.get $assembly/chacha20poly1305/cpKeyArr
-  i32.load
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20poly1305/cpKey
+  global.get $assembly/chacha20poly1305/cpKey
+  global.set $assembly/chacha20poly1305/cpKeyPtr
   i32.const 12
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/chacha20poly1305/cpNonceArr
-  global.get $assembly/chacha20poly1305/cpNonceArr
-  i32.load
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20poly1305/cpNonce
+  global.get $assembly/chacha20poly1305/cpNonce
+  global.set $assembly/chacha20poly1305/cpNoncePtr
   i32.const 32
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/chacha20poly1305/cpAssociatedDataArr
-  global.get $assembly/chacha20poly1305/cpAssociatedDataArr
-  i32.load
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20poly1305/cpAssociatedData
+  global.get $assembly/chacha20poly1305/cpAssociatedData
+  global.set $assembly/chacha20poly1305/cpAssociatedDataPtr
   i32.const 512
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/chacha20poly1305/cpInputArr
-  global.get $assembly/chacha20poly1305/cpInputArr
-  i32.load
+  call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20poly1305/cpInput
-  i32.const 16
-  call $~lib/typedarray/Uint8Array#constructor
-  global.set $assembly/chacha20poly1305/cpTagArr
-  global.get $assembly/chacha20poly1305/cpTagArr
-  i32.load
-  global.set $assembly/chacha20poly1305/cpTag
+  global.get $assembly/chacha20poly1305/cpInput
+  global.set $assembly/chacha20poly1305/cpInputPtr
   call $~lib/typedarray/Uint32Array#constructor
   global.set $assembly/chacha20poly1305/debugArr
   global.get $assembly/chacha20poly1305/debugArr
   i32.load
   global.set $assembly/chacha20poly1305/debug
  )
- (func $assembly/util/writeUint32LE (; 11 ;) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $assembly/util/writeUint32LE (; 10 ;) (param $0 i32) (param $1 i32) (param $2 i32)
   local.get $1
   local.get $2
   i32.const 255
@@ -451,7 +410,7 @@
   i32.shr_u
   i32.store8
  )
- (func $assembly/chacha20/core (; 12 ;) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $assembly/chacha20/core (; 11 ;) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -1346,7 +1305,7 @@
   i32.const 60
   call $assembly/util/writeUint32LE
  )
- (func $assembly/chacha20/incrementCounter (; 13 ;) (param $0 i32)
+ (func $assembly/chacha20/incrementCounter (; 12 ;) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -1401,7 +1360,7 @@
    unreachable
   end
  )
- (func $assembly/util/wipe8 (; 14 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/util/wipe8 (; 13 ;) (param $0 i32) (param $1 i32)
   (local $2 i32)
   loop $for-loop|0
    local.get $2
@@ -1421,7 +1380,7 @@
    end
   end
  )
- (func $assembly/chacha20/doStreamXORUpdate (; 15 ;) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
+ (func $assembly/chacha20/doStreamXORUpdate (; 14 ;) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (result i32)
   (local $5 i32)
   (local $6 i32)
   loop $for-loop|0
@@ -1483,7 +1442,7 @@
   call $assembly/util/wipe8
   local.get $1
  )
- (func $assembly/chacha20/chacha20StreamXORUpdate (; 16 ;) (param $0 i32) (result i32)
+ (func $assembly/chacha20/chacha20StreamXORUpdate (; 15 ;) (param $0 i32) (result i32)
   global.get $assembly/chacha20/chacha20InputPtr
   local.get $0
   global.get $assembly/chacha20/chacha20KeyPtr
@@ -1491,7 +1450,7 @@
   global.get $assembly/chacha20/chacha20OutputPtr
   call $assembly/chacha20/doStreamXORUpdate
  )
- (func $assembly/poly1305/init (; 17 ;) (param $0 i32)
+ (func $assembly/poly1305/init (; 16 ;) (param $0 i32)
   (local $1 i32)
   global.get $assembly/poly1305/_r
   local.get $0
@@ -1812,11 +1771,11 @@
   i32.or
   i32.store16
  )
- (func $assembly/poly1305/poly1305Init (; 18 ;)
+ (func $assembly/poly1305/poly1305Init (; 17 ;)
   global.get $assembly/poly1305/poly1305KeyPtr
   call $assembly/poly1305/init
  )
- (func $assembly/poly1305/_blocks (; 19 ;) (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $assembly/poly1305/_blocks (; 18 ;) (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -2849,7 +2808,7 @@
   local.get $6
   i32.store16
  )
- (func $assembly/poly1305/update (; 20 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/poly1305/update (; 19 ;) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   (local $4 i32)
@@ -2966,12 +2925,12 @@
    global.set $assembly/poly1305/_leftover
   end
  )
- (func $assembly/poly1305/poly1305Update (; 21 ;) (param $0 i32)
+ (func $assembly/poly1305/poly1305Update (; 20 ;) (param $0 i32)
   global.get $assembly/poly1305/poly1305InputPtr
   local.get $0
   call $assembly/poly1305/update
  )
- (func $assembly/poly1305/finish (; 22 ;) (param $0 i32)
+ (func $assembly/poly1305/finish (; 21 ;) (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -3594,7 +3553,7 @@
   i32.const 1
   global.set $assembly/poly1305/_finished
  )
- (func $assembly/util/wipe16 (; 23 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/util/wipe16 (; 22 ;) (param $0 i32) (param $1 i32)
   (local $2 i32)
   loop $for-loop|0
    local.get $2
@@ -3616,7 +3575,7 @@
    end
   end
  )
- (func $assembly/poly1305/clean (; 24 ;)
+ (func $assembly/poly1305/clean (; 23 ;)
   global.get $assembly/poly1305/_buffer
   i32.const 16
   call $assembly/util/wipe8
@@ -3636,7 +3595,7 @@
   i32.const 0
   global.set $assembly/poly1305/_finished
  )
- (func $assembly/poly1305/poly1305Digest (; 25 ;)
+ (func $assembly/poly1305/poly1305Digest (; 24 ;)
   (local $0 i32)
   global.get $assembly/poly1305/poly1305OutputPtr
   global.get $assembly/poly1305/_finished
@@ -3651,26 +3610,7 @@
   call $assembly/poly1305/finish
   call $assembly/poly1305/clean
  )
- (func $~lib/typedarray/Uint8Array#__get (; 26 ;) (param $0 i32) (param $1 i32) (result i32)
-  local.get $1
-  local.get $0
-  i32.load offset=8
-  i32.ge_u
-  if
-   i32.const 400
-   i32.const 464
-   i32.const 152
-   i32.const 44
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $1
-  local.get $0
-  i32.load offset=4
-  i32.add
-  i32.load8_u
- )
- (func $assembly/chacha20/chacha20Stream (; 27 ;)
+ (func $assembly/chacha20/chacha20Stream (; 25 ;)
   (local $0 i32)
   loop $for-loop|0
    local.get $0
@@ -3693,133 +3633,132 @@
   call $assembly/chacha20/chacha20StreamXORUpdate
   drop
  )
- (func $assembly/chacha20poly1305/doInit (; 28 ;) (param $0 i32) (param $1 i32) (param $2 i32)
-  (local $3 i32)
-  local.get $0
-  local.set $3
-  i32.const 0
-  local.set $0
+ (func $assembly/chacha20poly1305/doInit (; 26 ;) (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+  (local $4 i32)
   loop $for-loop|0
-   local.get $0
+   local.get $4
    i32.const 32
    i32.lt_s
    if
-    local.get $0
+    local.get $4
     global.get $assembly/chacha20/chacha20KeyPtr
     i32.add
-    local.get $3
     local.get $0
-    call $~lib/typedarray/Uint8Array#__get
+    local.get $4
+    i32.add
+    i32.load8_u
     i32.store8
-    local.get $0
+    local.get $4
     i32.const 1
     i32.add
-    local.set $0
+    local.set $4
     br $for-loop|0
    end
   end
   i32.const 0
-  local.set $0
+  local.set $4
   loop $for-loop|1
-   local.get $0
+   local.get $4
    i32.const 4
    i32.lt_s
    if
-    local.get $0
+    local.get $4
     global.get $assembly/chacha20/chacha20CounterPtr
     i32.add
     i32.const 0
     i32.store8
-    local.get $0
+    local.get $4
     i32.const 1
     i32.add
-    local.set $0
+    local.set $4
     br $for-loop|1
    end
   end
   i32.const 4
-  local.set $0
+  local.set $4
   loop $for-loop|2
-   local.get $0
+   local.get $4
    i32.const 16
    i32.lt_s
    if
-    local.get $0
+    local.get $4
     global.get $assembly/chacha20/chacha20CounterPtr
     i32.add
     local.get $1
-    local.get $0
+    local.get $4
     i32.const 4
     i32.sub
-    call $~lib/typedarray/Uint8Array#__get
+    i32.add
+    i32.load8_u
     i32.store8
-    local.get $0
+    local.get $4
     i32.const 1
     i32.add
-    local.set $0
+    local.set $4
     br $for-loop|2
    end
   end
   call $assembly/chacha20/chacha20Stream
   i32.const 0
-  local.set $0
+  local.set $4
   loop $for-loop|3
-   local.get $0
+   local.get $4
    i32.const 32
    i32.lt_s
    if
-    local.get $0
+    local.get $4
     global.get $assembly/poly1305/poly1305KeyPtr
     i32.add
-    local.get $0
+    local.get $4
     global.get $assembly/chacha20/chacha20OutputPtr
     i32.add
     i32.load8_u
     i32.store8
-    local.get $0
+    local.get $4
     i32.const 1
     i32.add
-    local.set $0
+    local.set $4
     br $for-loop|3
    end
   end
   global.get $assembly/poly1305/poly1305KeyPtr
   call $assembly/poly1305/init
-  local.get $2
+  local.get $3
   i32.const 0
   i32.gt_u
   if
    i32.const 0
-   local.set $0
+   local.set $4
    loop $for-loop|4
-    local.get $0
-    local.get $2
+    local.get $4
+    local.get $3
     i32.lt_u
     if
-     local.get $0
+     local.get $4
      global.get $assembly/poly1305/poly1305InputPtr
      i32.add
-     global.get $assembly/chacha20poly1305/cpAssociatedDataArr
-     local.get $0
-     call $~lib/typedarray/Uint8Array#__get
+     local.get $2
+     local.get $4
+     i32.add
+     i32.load8_u
      i32.store8
-     local.get $0
+     local.get $4
      i32.const 1
      i32.add
-     local.set $0
+     local.set $4
      br $for-loop|4
     end
    end
-   local.get $2
+   local.get $3
    call $assembly/poly1305/poly1305Update
-   local.get $2
+   local.get $3
    i32.const 15
    i32.and
    i32.const 0
    i32.gt_u
    if
     i32.const 16
-    local.get $2
+    local.get $3
     i32.const 15
     i32.and
     i32.sub
@@ -3852,57 +3791,56 @@
    end
   end
  )
- (func $assembly/chacha20poly1305/init (; 29 ;) (param $0 i32)
-  global.get $assembly/chacha20poly1305/cpKeyArr
-  global.get $assembly/chacha20poly1305/cpNonceArr
+ (func $assembly/chacha20poly1305/init (; 27 ;) (param $0 i32)
+  global.get $assembly/chacha20poly1305/cpKeyPtr
+  global.get $assembly/chacha20poly1305/cpNoncePtr
+  global.get $assembly/chacha20poly1305/cpAssociatedDataPtr
   local.get $0
   call $assembly/chacha20poly1305/doInit
  )
- (func $assembly/chacha20poly1305/doOpenUpdate (; 30 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/chacha20poly1305/doOpenUpdate (; 28 ;) (param $0 i32) (param $1 i32)
   (local $2 i32)
-  local.get $0
-  local.set $2
-  i32.const 0
-  local.set $0
   loop $for-loop|0
-   local.get $0
+   local.get $2
    local.get $1
    i32.lt_u
    if
-    local.get $0
     global.get $assembly/poly1305/poly1305InputPtr
-    i32.add
     local.get $2
+    i32.add
     local.get $0
-    call $~lib/typedarray/Uint8Array#__get
+    local.get $2
+    i32.add
+    i32.load8_u
     i32.store8
-    local.get $0
+    local.get $2
     i32.const 1
     i32.add
-    local.set $0
+    local.set $2
     br $for-loop|0
    end
   end
   local.get $1
   call $assembly/poly1305/poly1305Update
   i32.const 0
-  local.set $0
+  local.set $2
   loop $for-loop|1
-   local.get $0
+   local.get $2
    local.get $1
    i32.lt_u
    if
-    local.get $0
     global.get $assembly/chacha20/chacha20InputPtr
-    i32.add
     local.get $2
+    i32.add
     local.get $0
-    call $~lib/typedarray/Uint8Array#__get
+    local.get $2
+    i32.add
+    i32.load8_u
     i32.store8
-    local.get $0
+    local.get $2
     i32.const 1
     i32.add
-    local.set $0
+    local.set $2
     br $for-loop|1
    end
   end
@@ -3910,33 +3848,30 @@
   call $assembly/chacha20/chacha20StreamXORUpdate
   drop
  )
- (func $assembly/chacha20poly1305/openUpdate (; 31 ;) (param $0 i32)
-  global.get $assembly/chacha20poly1305/cpInputArr
+ (func $assembly/chacha20poly1305/openUpdate (; 29 ;) (param $0 i32)
+  global.get $assembly/chacha20poly1305/cpInputPtr
   local.get $0
   call $assembly/chacha20poly1305/doOpenUpdate
  )
- (func $assembly/chacha20poly1305/doSealUpdate (; 32 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/chacha20poly1305/doSealUpdate (; 30 ;) (param $0 i32) (param $1 i32)
   (local $2 i32)
-  local.get $0
-  local.set $2
-  i32.const 0
-  local.set $0
   loop $for-loop|0
-   local.get $0
+   local.get $2
    local.get $1
    i32.lt_u
    if
-    local.get $0
     global.get $assembly/chacha20/chacha20InputPtr
-    i32.add
     local.get $2
+    i32.add
     local.get $0
-    call $~lib/typedarray/Uint8Array#__get
+    local.get $2
+    i32.add
+    i32.load8_u
     i32.store8
-    local.get $0
+    local.get $2
     i32.const 1
     i32.add
-    local.set $0
+    local.set $2
     br $for-loop|0
    end
   end
@@ -3944,36 +3879,36 @@
   call $assembly/chacha20/chacha20StreamXORUpdate
   drop
   i32.const 0
-  local.set $0
+  local.set $2
   loop $for-loop|1
-   local.get $0
+   local.get $2
    local.get $1
    i32.lt_u
    if
-    local.get $0
     global.get $assembly/poly1305/poly1305InputPtr
+    local.get $2
     i32.add
-    local.get $0
+    local.get $2
     global.get $assembly/chacha20/chacha20OutputPtr
     i32.add
     i32.load8_u
     i32.store8
-    local.get $0
+    local.get $2
     i32.const 1
     i32.add
-    local.set $0
+    local.set $2
     br $for-loop|1
    end
   end
   local.get $1
   call $assembly/poly1305/poly1305Update
  )
- (func $assembly/chacha20poly1305/sealUpdate (; 33 ;) (param $0 i32)
-  global.get $assembly/chacha20poly1305/cpInputArr
+ (func $assembly/chacha20poly1305/sealUpdate (; 31 ;) (param $0 i32)
+  global.get $assembly/chacha20poly1305/cpInputPtr
   local.get $0
   call $assembly/chacha20poly1305/doSealUpdate
  )
- (func $assembly/util/writeUint64LE (; 34 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/util/writeUint64LE (; 32 ;) (param $0 i32) (param $1 i32)
   local.get $0
   local.get $1
   i32.const 0
@@ -3987,7 +3922,7 @@
   i32.const 4
   call $assembly/util/writeUint32LE
  )
- (func $assembly/chacha20poly1305/doDigest (; 35 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/chacha20poly1305/doDigest (; 33 ;) (param $0 i32) (param $1 i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
@@ -4038,12 +3973,12 @@
   call $assembly/poly1305/poly1305Update
   call $assembly/poly1305/poly1305Digest
  )
- (func $assembly/chacha20poly1305/digest (; 36 ;) (param $0 i32) (param $1 i32)
+ (func $assembly/chacha20poly1305/digest (; 34 ;) (param $0 i32) (param $1 i32)
   local.get $0
   local.get $1
   call $assembly/chacha20poly1305/doDigest
  )
- (func $~start (; 37 ;)
+ (func $~start (; 35 ;)
   call $start:assembly/chacha20
   call $start:assembly/poly1305
   call $start:assembly/chacha20poly1305
