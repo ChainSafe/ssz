@@ -30,40 +30,61 @@ const debugArr = new Uint32Array(64);
 export const debug = debugArr.buffer;
 
 /**
- * Initialize chacha20 and poly1305.
- * key and nonce and associatedData (if needed) should be set before this call
- * validation is done at javascript side.
- * @param asDataLength length of associatedData
- */
-export function init(asDataLength: u32): void {
-  doInit(cpKeyPtr, cpNoncePtr, cpAssociatedDataPtr, asDataLength);
-}
-
-/**
  * Call init before this openUpdate.
  * Instead of calling _authenticate() then streamXOR() we do both at the same time chunk by chunk.
  * Note that tag data is not part of cpInput
- * @param dataLength length of cpInput
+ * @param isFirst true if it's the first chunk, initialize chacha20 and poly1305
+ * @param isLast true if it's the last chunk, digest that call
+ * @param chunkLength length of cpInput
+ * @param ciphertextLength = sealed - tag length
+ * @param asDataLength length of associatedData
  */
-export function openUpdate(dataLength: u32): void {
-  doOpenUpdate(cpInputPtr, dataLength);
+export function openUpdate(
+  isFirst: boolean,
+  isLast: boolean,
+  chunkLength: u32,
+  ciphertextLength: u32,
+  asDataLength: u32
+): void {
+  // instead of doing a separate init() call, do it within update() to save 1 call to wasm.
+  if (isFirst) {
+    doInit(cpKeyPtr, cpNoncePtr, cpAssociatedDataPtr, asDataLength);
+  }
+
+  doOpenUpdate(cpInputPtr, chunkLength);
+
+  // instead of doing a separate digest() call, do it within update() to save 1 call to wasm.
+  if (isLast) {
+    doDigest(ciphertextLength, asDataLength);
+  }
 }
 
 /**
  * Similar to openUpdate but we do it reversely.
- * @param dataLength length of cpInputArr
- */
-export function sealUpdate(dataLength: u32): void {
-  doSealUpdate(cpInputPtr, dataLength);
-}
-
-/**
- * Authenticate the sealed data, result could be known even before this call.
+ * @param isFirst true if it's the first chunk, initialize chacha20 and poly1305
+ * @param isLast true if it's the last chunk, digest that call
+ * @param chunkLength length of cpInputArr
  * @param ciphertextLength = sealed - tag length
- * @return true if authenticate successfully, false otherwise
+ * @param asDataLength length of associatedData
  */
-export function digest(ciphertextLength: u32, asDataLength: u32): void {
-  doDigest(ciphertextLength, asDataLength);
+export function sealUpdate(
+  isFirst: boolean,
+  isLast: boolean,
+  chunkLength: u32,
+  ciphertextLength: u32,
+  asDataLength: u32
+): void {
+  // instead of doing a separate init() call, do it within update() to save 1 call to wasm.
+  if (isFirst) {
+    doInit(cpKeyPtr, cpNoncePtr, cpAssociatedDataPtr, asDataLength);
+  }
+
+  doSealUpdate(cpInputPtr, chunkLength);
+
+  // instead of doing a separate digest() call, do it within update() to save 1 call to wasm.
+  if (isLast) {
+    doDigest(ciphertextLength, asDataLength);
+  }
 }
 
 function doInit(key: usize, nonce: usize, associatedData: usize, asDataLength: u32): void {

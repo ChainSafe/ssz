@@ -2,6 +2,14 @@ import {wasmCode} from "./wasmCode";
 
 const _module = new WebAssembly.Module(wasmCode);
 
+export type UpdateFn = (
+  isFirst: boolean,
+  isLast: boolean,
+  chunkLength: number,
+  ciphertextLength: number,
+  asDataLength: number
+) => void;
+
 export interface WasmContext {
   readonly KEY_LENGTH: number;
   readonly CHACHA20_INPUT_LENGTH: number;
@@ -54,9 +62,8 @@ export interface WasmContext {
   poly1305Init(): void;
   poly1305Update(dataLength: number): void;
   poly1305Digest(): void;
-  init(asDataLength: number): void;
-  openUpdate(dataLength: number): void;
-  sealUpdate(dataLength: number): void;
+  openUpdate: UpdateFn;
+  sealUpdate: UpdateFn;
   digest(ciphertextLength: number, asDataLength: number): void;
 }
 

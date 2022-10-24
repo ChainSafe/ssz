@@ -1,5 +1,5 @@
 import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH, TAG_LENGTH} from "./const";
-import {WasmContext} from "./wasm";
+import {UpdateFn, WasmContext} from "./wasm";
 
 export class ChaCha20Poly1305 {
   private wasmKeyArr: Uint8Array;
@@ -32,21 +32,23 @@ export class ChaCha20Poly1305 {
     this.init(key, nonce, associatedData);
     const resultLength = plaintext.length + TAG_LENGTH;
     const result = new Uint8Array(resultLength);
-    this.sealUpdate(plaintext, result);
-    this.digest(plaintext.length, associatedData?.length ?? 0);
+    const asDataLength = associatedData?.length ?? 0;
+    this.sealUpdate(plaintext, asDataLength, result);
+    // wasmPoly1305OutputArr was updated after the last update() call
     result.set(this.wasmPoly1305OutputArr, plaintext.length);
     return result;
   }
 
-  // TODO: avoid 1 digest call to wasm for specific data
   open(key: Uint8Array, nonce: Uint8Array, sealed: Uint8Array, associatedData?: Uint8Array): Uint8Array | null {
     this.init(key, nonce, associatedData);
     const sealedNoTag = sealed.subarray(0, sealed.length - TAG_LENGTH);
     // TODO: use the same input data to avoid a memory allocation here??
     const result = new Uint8Array(sealedNoTag.length);
-    this.openUpdate(sealedNoTag, result);
+    const asDataLength = associatedData?.length ?? 0;
+    this.openUpdate(sealedNoTag, asDataLength, result);
     const tag = sealed.subarray(sealed.length - TAG_LENGTH, sealed.length);
-    const isTagValid = this.openDigest(tag, sealedNoTag.length, associatedData?.length ?? 0);
+    // wasmPoly1305OutputArr was updated after the last update() call
+    const isTagValid = this.isSameTag(tag);
     return isTagValid ? result : null;
   }
 
@@ -64,22 +66,22 @@ export class ChaCha20Poly1305 {
     this.wasmKeyArr.set(key);
     this.wasmNonceArr.set(nonce);
     this.wasmAdArr.set(ad);
-    this.ctx.init(ad.length);
+    // don't do the wasm init here, do it in the first openUpdate() or sealUpdate() to save one call
   }
 
-  private openUpdate(data: Uint8Array, dst: Uint8Array): void {
-    this.commonUpdate(data, this.ctx.openUpdate, dst);
+  private openUpdate(data: Uint8Array, asDataLength: number, dst: Uint8Array): void {
+    this.commonUpdate(data, this.ctx.openUpdate, asDataLength, dst);
   }
 
-  private sealUpdate(data: Uint8Array, dst: Uint8Array): void {
-    this.commonUpdate(data, this.ctx.sealUpdate, dst);
+  private sealUpdate(data: Uint8Array, asDataLength: number, dst: Uint8Array): void {
+    this.commonUpdate(data, this.ctx.sealUpdate, asDataLength, dst);
   }
 
-  private commonUpdate(data: Uint8Array, updateFn: (length: number) => void, dst: Uint8Array): void {
+  private commonUpdate(data: Uint8Array, updateFn: UpdateFn, asDataLength: number, dst: Uint8Array): void {
     const length = data.length;
     if (data.length <= DATA_CHUNK_LENGTH) {
       this.wasmInputArr.set(data);
-      updateFn(length);
+      updateFn(true, true, length, length, asDataLength);
       dst.set(
         length === DATA_CHUNK_LENGTH ? this.wasmChacha20OutputArr : this.wasmChacha20OutputArr.subarray(0, length)
       );
@@ -89,7 +91,9 @@ export class ChaCha20Poly1305 {
     for (let offset = 0; offset < length; offset += DATA_CHUNK_LENGTH) {
       const end = Math.min(length, offset + DATA_CHUNK_LENGTH);
       this.wasmInputArr.set(data.subarray(offset, end));
-      updateFn(end - offset);
+      const isFirst = offset === 0;
+      const isLast = offset + DATA_CHUNK_LENGTH >= length;
+      updateFn(isFirst, isLast, end - offset, length, asDataLength);
       dst.set(
         end - offset === DATA_CHUNK_LENGTH
           ? this.wasmChacha20OutputArr
@@ -100,8 +104,8 @@ export class ChaCha20Poly1305 {
     return;
   }
 
-  private openDigest(tag: Uint8Array, ciphertextLength: number, asDataLength: number): boolean {
-    this.digest(ciphertextLength, asDataLength);
+  private isSameTag(tag: Uint8Array): boolean {
+    // wasmPoly1305OutputArr is updated after the last digest() call
     let isSameTag = true;
     for (let i = 0; i < TAG_LENGTH; i++) {
       if (this.wasmPoly1305OutputArr[i] !== tag[i]) {
@@ -111,14 +115,5 @@ export class ChaCha20Poly1305 {
     }
 
     return isSameTag;
-  }
-
-  /**
-   * output is set to wasmPoly1305OutputArr
-   * @param ciphertextLength
-   * @param asDataLength
-   */
-  private digest(ciphertextLength: number, asDataLength: number): void {
-    this.ctx.digest(ciphertextLength, asDataLength);
   }
 }
