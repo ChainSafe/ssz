@@ -1,4 +1,4 @@
-import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "./const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "../common/const";
 import {load8, store8, load16, store16, wipe8, wipe16} from "./util";
 
 // to debug

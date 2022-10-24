@@ -1,4 +1,4 @@
-import { DATA_CHUNK_LENGTH, KEY_LENGTH } from "./const";
+import { DATA_CHUNK_LENGTH, KEY_LENGTH } from "../common/const";
 import {load8, store8, wipe8, writeUint32LE} from "./util";
 
 export const CHACHA20_INPUT_LENGTH = DATA_CHUNK_LENGTH;

@@ -1,5 +1,5 @@
 {
-  "include": ["src", "test"],
+  "include": ["src", "test", "common/const.ts"],
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "incremental": true

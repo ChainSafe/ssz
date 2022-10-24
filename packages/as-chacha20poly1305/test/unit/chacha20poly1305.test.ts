@@ -2,7 +2,7 @@ import {ChaCha20Poly1305} from "../../src/chacha20poly1305";
 import crypto from "crypto";
 import {newInstance} from "../../src/wasm";
 import {ChaCha20Poly1305 as ChaCha20Poly1305Stablelib} from "@stablelib/chacha20poly1305";
-import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH} from "../../src/const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH} from "../../common/const";
 import {expect} from "chai";
 
 describe("chacha20poly1305", function () {

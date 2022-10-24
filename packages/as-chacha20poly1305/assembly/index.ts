@@ -8,7 +8,7 @@ export {
   chacha20StreamXORUpdate,
 } from "./chacha20";
 
-export {KEY_LENGTH, TAG_LENGTH} from "./const";
+export {KEY_LENGTH, TAG_LENGTH} from "../common/const";
 
 export {poly1305Init, poly1305Update, poly1305Digest, poly1305Input, poly1305Key, poly1305Output} from "./poly1305";
 

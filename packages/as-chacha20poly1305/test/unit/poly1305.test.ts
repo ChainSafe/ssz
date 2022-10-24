@@ -3,7 +3,7 @@ import crypto from "crypto";
 import {Poly1305} from "../../src/poly1305";
 import {Poly1305 as Poly1305StableLib} from "@stablelib/poly1305";
 import {newInstance} from "../../src/wasm";
-import { DATA_CHUNK_LENGTH } from "../../src/const";
+import { DATA_CHUNK_LENGTH } from "../../common/const";
 
 describe("poly1305", function () {
   let poly1305: Poly1305;

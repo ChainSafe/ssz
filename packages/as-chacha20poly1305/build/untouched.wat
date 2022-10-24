@@ -18,10 +18,11 @@
  (data (i32.const 256) "*\00\00\00\01\00\00\00\01\00\00\00*\00\00\00P\00o\00l\00y\001\003\000\005\00 \00w\00a\00s\00 \00f\00i\00n\00i\00s\00h\00e\00d\00")
  (data (i32.const 320) "(\00\00\00\01\00\00\00\01\00\00\00(\00\00\00a\00s\00s\00e\00m\00b\00l\00y\00/\00p\00o\00l\00y\001\003\000\005\00.\00t\00s\00")
  (table $0 1 funcref)
- (global $assembly/const/DATA_CHUNK_LENGTH i32 (i32.const 16384))
- (global $assembly/const/KEY_LENGTH i32 (i32.const 32))
- (global $assembly/const/TAG_LENGTH i32 (i32.const 16))
- (global $assembly/chacha20/CHACHA20_INPUT_LENGTH i32 (i32.const 16384))
+ (global $common/const/KEY_LENGTH i32 (i32.const 32))
+ (global $common/const/NONCE_LENGTH i32 (i32.const 12))
+ (global $common/const/DATA_CHUNK_LENGTH i32 (i32.const 65536))
+ (global $common/const/TAG_LENGTH i32 (i32.const 16))
+ (global $assembly/chacha20/CHACHA20_INPUT_LENGTH i32 (i32.const 65536))
  (global $assembly/chacha20/CHACHA20_COUNTER_LENGTH i32 (i32.const 16))
  (global $~lib/rt/stub/startOffset (mut i32) (i32.const 0))
  (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
@@ -39,7 +40,7 @@
  (global $assembly/chacha20/blockPtr (mut i32) (i32.const 0))
  (global $assembly/poly1305/debugArr (mut i32) (i32.const 0))
  (global $assembly/poly1305/debug (mut i32) (i32.const 0))
- (global $assembly/poly1305/POLY1305_INPUT_LENGTH i32 (i32.const 16384))
+ (global $assembly/poly1305/POLY1305_INPUT_LENGTH i32 (i32.const 65536))
  (global $assembly/poly1305/poly1305Key (mut i32) (i32.const 0))
  (global $assembly/poly1305/poly1305Input (mut i32) (i32.const 0))
  (global $assembly/poly1305/poly1305Output (mut i32) (i32.const 0))
@@ -78,8 +79,8 @@
  (export "chacha20Counter" (global $assembly/chacha20/chacha20Counter))
  (export "chacha20Output" (global $assembly/chacha20/chacha20Output))
  (export "chacha20StreamXORUpdate" (func $assembly/chacha20/chacha20StreamXORUpdate))
- (export "KEY_LENGTH" (global $assembly/const/KEY_LENGTH))
- (export "TAG_LENGTH" (global $assembly/const/TAG_LENGTH))
+ (export "KEY_LENGTH" (global $common/const/KEY_LENGTH))
+ (export "TAG_LENGTH" (global $common/const/TAG_LENGTH))
  (export "poly1305Init" (func $assembly/poly1305/poly1305Init))
  (export "poly1305Update" (func $assembly/poly1305/poly1305Update))
  (export "poly1305Digest" (func $assembly/poly1305/poly1305Digest))
@@ -504,7 +505,7 @@
   global.get $~lib/rt/stub/startOffset
   global.set $~lib/rt/stub/offset
   i32.const 0
-  i32.const 16384
+  i32.const 65536
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20/chacha20Input
   global.get $assembly/chacha20/chacha20Input
@@ -522,7 +523,7 @@
   global.get $assembly/chacha20/chacha20Counter
   global.set $assembly/chacha20/chacha20CounterPtr
   i32.const 0
-  i32.const 16384
+  i32.const 65536
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20/chacha20Output
   global.get $assembly/chacha20/chacha20Output
@@ -639,7 +640,7 @@
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/poly1305/poly1305Key
   i32.const 0
-  i32.const 16384
+  i32.const 65536
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/poly1305/poly1305Input
   i32.const 0
@@ -703,7 +704,7 @@
   global.get $assembly/chacha20poly1305/cpAssociatedData
   global.set $assembly/chacha20poly1305/cpAssociatedDataPtr
   i32.const 0
-  i32.const 16384
+  i32.const 65536
   call $~lib/arraybuffer/ArrayBuffer#constructor
   global.set $assembly/chacha20poly1305/cpInput
   global.get $assembly/chacha20poly1305/cpInput
@@ -6754,7 +6755,7 @@
     br $for-loop|2
    end
   end
-  global.get $assembly/const/KEY_LENGTH
+  global.get $common/const/KEY_LENGTH
   call $assembly/chacha20/chacha20Stream
   drop
   i32.const 0

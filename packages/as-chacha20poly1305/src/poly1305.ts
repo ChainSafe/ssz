@@ -1,4 +1,4 @@
-import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "./const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "../common/const";
 import {WasmContext} from "./wasm";
 
 export class Poly1305 {

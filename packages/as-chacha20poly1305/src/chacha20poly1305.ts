@@ -1,4 +1,4 @@
-import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH, TAG_LENGTH} from "./const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH, TAG_LENGTH} from "../common/const";
 import {UpdateFn, WasmContext} from "./wasm";
 
 export class ChaCha20Poly1305 {

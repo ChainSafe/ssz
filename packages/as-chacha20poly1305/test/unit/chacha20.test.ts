@@ -2,7 +2,7 @@ import {expect} from "chai";
 import crypto from "crypto";
 import {chacha20StreamXOR} from "../../src/chacha20";
 import {streamXOR as streamXORStableLib} from "@stablelib/chacha";
-import {DATA_CHUNK_LENGTH} from "../../src/const";
+import {DATA_CHUNK_LENGTH} from "../../common/const";
 
 describe("chacha20 as vs js", function () {
   for (let i = 0; i < 100; i++) {

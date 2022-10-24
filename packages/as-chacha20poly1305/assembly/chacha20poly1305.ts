@@ -7,7 +7,7 @@ import {
   chacha20StreamXORUpdate,
   chacha20OutputPtr,
 } from "./chacha20";
-import {DATA_CHUNK_LENGTH, KEY_LENGTH, TAG_LENGTH} from "./const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH} from "../common/const";
 import {poly1305Digest, poly1305Init, poly1305InputPtr, poly1305KeyPtr, poly1305Update} from "./poly1305";
 import {load8, store8, writeUint64LE} from "./util";
 
