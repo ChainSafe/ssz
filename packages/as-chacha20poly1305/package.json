@@ -1,6 +1,6 @@
 {
   "name": "@chainsafe/as-chacha20poly1305",
-  "version": "0.3.1",
+  "version": "0.1.0",
   "description": "An AssemblyScript implementation of chacha20poly1305",
   "author": "ChainSafe Systems",
   "license": "Apache-2.0",
