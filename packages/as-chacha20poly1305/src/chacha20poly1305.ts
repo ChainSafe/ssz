@@ -33,19 +33,28 @@ export class ChaCha20Poly1305 {
     const resultLength = plaintext.length + TAG_LENGTH;
     const result = new Uint8Array(resultLength);
     const asDataLength = associatedData?.length ?? 0;
+
     this.sealUpdate(plaintext, asDataLength, result);
     // wasmPoly1305OutputArr was updated after the last update() call
     result.set(this.wasmPoly1305OutputArr, plaintext.length);
     return result;
   }
 
-  open(key: Uint8Array, nonce: Uint8Array, sealed: Uint8Array, associatedData?: Uint8Array): Uint8Array | null {
+  open(
+    key: Uint8Array,
+    nonce: Uint8Array,
+    sealed: Uint8Array,
+    overwriteSealed = false,
+    associatedData?: Uint8Array
+  ): Uint8Array | null {
     this.init(key, nonce, associatedData);
     const sealedNoTag = sealed.subarray(0, sealed.length - TAG_LENGTH);
-    // TODO: use the same input data to avoid a memory allocation here??
-    const result = new Uint8Array(sealedNoTag.length);
+
+    // use overwriteSealed as true to avoid memory allocation
+    const result = overwriteSealed ? sealed.subarray(0, sealedNoTag.length) : new Uint8Array(sealedNoTag.length);
     const asDataLength = associatedData?.length ?? 0;
     this.openUpdate(sealedNoTag, asDataLength, result);
+
     const tag = sealed.subarray(sealed.length - TAG_LENGTH, sealed.length);
     // wasmPoly1305OutputArr was updated after the last update() call
     const isTagValid = this.isSameTag(tag);
@@ -101,7 +110,6 @@ export class ChaCha20Poly1305 {
         offset
       );
     }
-    return;
   }
 
   private isSameTag(tag: Uint8Array): boolean {

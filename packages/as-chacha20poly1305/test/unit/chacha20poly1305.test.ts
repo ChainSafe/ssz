@@ -45,7 +45,7 @@ describe("chacha20poly1305", function () {
         const plainText1 = jsImpl.open(nonce, sealed, ad);
         expect(plainText1).to.be.deep.equal(plainText);
         // decode by as impl
-        const plainText2 = asImpl.open(key, nonce, sealed, ad);
+        const plainText2 = asImpl.open(key, nonce, sealed, true, ad);
         expect(plainText2).to.be.deep.equal(plainText, "decoded data from assemblyscript is not correct");
       });
     }

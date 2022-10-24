@@ -41,16 +41,19 @@ describe("chacha20poly1305", function () {
 
     itBench({
       id: `as open with data length ${dataLength}`,
-      fn: () => {
-        asImpl.open(key, nonce, sealed, ad);
+      beforeEach: () => new Uint8Array(sealed),
+      fn: (clonedSealed) => {
+        // overwriteSealed as true to avoid memory allocation
+        asImpl.open(key, nonce, clonedSealed, true, ad);
       },
       runsFactor: 1000,
     });
 
     itBench({
       id: `js open with data length ${dataLength}`,
-      fn: () => {
-        jsImpl.open(nonce, sealed, ad);
+      beforeEach: () => new Uint8Array(sealed),
+      fn: (clonedSealed) => {
+        jsImpl.open(nonce, clonedSealed, ad);
       },
       runsFactor: 1000,
     });
