@@ -2,7 +2,7 @@ import {ChaCha20Poly1305} from "../../src/chacha20poly1305";
 import crypto from "crypto";
 import {newInstance} from "../../src/wasm";
 import {ChaCha20Poly1305 as ChaCha20Poly1305Stablelib} from "@stablelib/chacha20poly1305";
-import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH} from "../../common/const";
+import {DATA_CHUNK_LENGTH, KEY_LENGTH, NONCE_LENGTH, TAG_LENGTH} from "../../common/const";
 import {expect} from "chai";
 
 describe("chacha20poly1305", function () {
@@ -45,7 +45,7 @@ describe("chacha20poly1305", function () {
         const plainText1 = jsImpl.open(nonce, sealed, ad);
         expect(plainText1).to.be.deep.equal(plainText);
         // decode by as impl
-        const plainText2 = asImpl.open(key, nonce, sealed, true, ad);
+        const plainText2 = asImpl.open(key, nonce, sealed, ad, sealed.subarray(0, sealed.length - TAG_LENGTH));
         expect(plainText2).to.be.deep.equal(plainText, "decoded data from assemblyscript is not correct");
       });
     }

@@ -2,7 +2,7 @@ import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import crypto from "crypto";
 import {ChaCha20Poly1305 as ChaCha20Poly1305Stablelib} from "@stablelib/chacha20poly1305";
 import {ChaCha20Poly1305} from "../../src/chacha20poly1305";
-import {KEY_LENGTH, NONCE_LENGTH} from "../../common/const";
+import {KEY_LENGTH, NONCE_LENGTH, TAG_LENGTH} from "../../common/const";
 import {newInstance} from "../../src/wasm";
 
 describe("chacha20poly1305", function () {
@@ -44,7 +44,7 @@ describe("chacha20poly1305", function () {
       beforeEach: () => new Uint8Array(sealed),
       fn: (clonedSealed) => {
         // overwriteSealed as true to avoid memory allocation
-        asImpl.open(key, nonce, clonedSealed, true, ad);
+        asImpl.open(key, nonce, clonedSealed, ad, clonedSealed.subarray(0, clonedSealed.length - TAG_LENGTH));
       },
       runsFactor: 1000,
     });
@@ -53,7 +53,7 @@ describe("chacha20poly1305", function () {
       id: `js open with data length ${dataLength}`,
       beforeEach: () => new Uint8Array(sealed),
       fn: (clonedSealed) => {
-        jsImpl.open(nonce, clonedSealed, ad);
+        jsImpl.open(nonce, clonedSealed, ad, clonedSealed.subarray(0, clonedSealed.length - TAG_LENGTH));
       },
       runsFactor: 1000,
     });

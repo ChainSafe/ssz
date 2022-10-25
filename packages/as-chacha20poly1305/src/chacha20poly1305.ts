@@ -28,10 +28,24 @@ export class ChaCha20Poly1305 {
     this.wasmDebugArr = new Uint32Array(ctx.memory.buffer, wasmDebugValue, 64);
   }
 
-  seal(key: Uint8Array, nonce: Uint8Array, plaintext: Uint8Array, associatedData?: Uint8Array): Uint8Array {
+  seal(
+    key: Uint8Array,
+    nonce: Uint8Array,
+    plaintext: Uint8Array,
+    associatedData?: Uint8Array,
+    dst?: Uint8Array
+  ): Uint8Array {
     this.init(key, nonce, associatedData);
     const resultLength = plaintext.length + TAG_LENGTH;
-    const result = new Uint8Array(resultLength);
+    let result;
+    if (dst) {
+      if (dst.length !== resultLength) {
+        throw new Error("ChaCha20Poly1305: incorrect destination length");
+      }
+      result = dst;
+    } else {
+      result = new Uint8Array(resultLength);
+    }
     const asDataLength = associatedData?.length ?? 0;
 
     this.sealUpdate(plaintext, asDataLength, result);
@@ -44,14 +58,21 @@ export class ChaCha20Poly1305 {
     key: Uint8Array,
     nonce: Uint8Array,
     sealed: Uint8Array,
-    overwriteSealed = false,
-    associatedData?: Uint8Array
+    associatedData?: Uint8Array,
+    dst?: Uint8Array
   ): Uint8Array | null {
     this.init(key, nonce, associatedData);
     const sealedNoTag = sealed.subarray(0, sealed.length - TAG_LENGTH);
 
-    // use overwriteSealed as true to avoid memory allocation
-    const result = overwriteSealed ? sealed.subarray(0, sealedNoTag.length) : new Uint8Array(sealedNoTag.length);
+    let result;
+    if (dst) {
+      if (dst.length !== sealedNoTag.length) {
+        throw new Error("ChaCha20Poly1305: incorrect destination length");
+      }
+      result = dst;
+    } else {
+      result = new Uint8Array(sealedNoTag.length);
+    }
     const asDataLength = associatedData?.length ?? 0;
     this.openUpdate(sealedNoTag, asDataLength, result);
 
