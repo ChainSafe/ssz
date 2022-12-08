@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.4](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.3...@chainsafe/ssz@0.9.4) (2022-12-08)
+
+**Note:** Version bump only for package @chainsafe/ssz
+
+
+
+
+
 ## [0.9.3](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.2...@chainsafe/ssz@0.9.3) (2022-12-08)
 
 **Note:** Version bump only for package @chainsafe/ssz
