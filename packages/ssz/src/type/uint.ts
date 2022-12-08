@@ -257,7 +257,7 @@ export class UintBigintType extends BasicType<bigint> {
     this.maxSize = byteLength;
   }
 
-  static named(byteLength: UintNumberByteLen, opts: Require<UintBigintOpts, "typeName">): UintBigintType {
+  static named(byteLength: UintBigintByteLen, opts: Require<UintBigintOpts, "typeName">): UintBigintType {
     return new (namedClass(UintBigintType, opts.typeName))(byteLength, opts);
   }
 
