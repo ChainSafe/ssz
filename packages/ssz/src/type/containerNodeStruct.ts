@@ -3,6 +3,7 @@ import {Type, ByteViews} from "./abstract";
 import {isCompositeType} from "./composite";
 import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
 import {BranchNodeStruct} from "../branchNodeStruct";
@@ -55,9 +56,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     fields: Fields,
     opts: Require<ContainerOptions<Fields>, "typeName">
   ): ContainerType<Fields> {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      ContainerNodeStructType
-    ) as typeof ContainerNodeStructType)(fields, opts);
+    return new (namedClass(ContainerType, opts.typeName))(fields, opts);
   }
 
   tree_serializedSize(node: Node): number {

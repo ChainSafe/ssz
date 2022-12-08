@@ -1,6 +1,7 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
 import {ByteViews} from "./composite";
 import {ByteArrayType, ByteArray} from "./byteArray";
@@ -48,9 +49,7 @@ export class ByteListType extends ByteArrayType {
   }
 
   static named(limitBits: number, opts: Require<ByteListOptions, "typeName">): ByteListType {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      ByteListType
-    ) as typeof ByteListType)(limitBits, opts);
+    return new (namedClass(ByteListType, opts.typeName))(limitBits, opts);
   }
 
   // Views: inherited from ByteArrayType

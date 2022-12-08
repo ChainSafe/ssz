@@ -1,6 +1,7 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ByteViews} from "./composite";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
@@ -44,9 +45,7 @@ export class BitListType extends BitArrayType {
   }
 
   static named(limitBits: number, opts: Require<BitListOptions, "typeName">): BitListType {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      BitListType
-    ) as typeof BitListType)(limitBits, opts);
+    return new (namedClass(BitListType, opts.typeName))(limitBits, opts);
   }
 
   defaultValue(): BitArray {

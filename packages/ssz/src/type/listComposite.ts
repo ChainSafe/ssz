@@ -1,6 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ValueOf, ByteViews} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic";
@@ -72,9 +73,7 @@ export class ListCompositeType<
     limit: number,
     opts: Require<ListCompositeOpts, "typeName">
   ): ListCompositeType<ElementType> {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      ListCompositeType
-    ) as typeof ListCompositeType)(elementType, limit, opts);
+    return new (namedClass(ListCompositeType, opts.typeName))(elementType, limit, opts);
   }
 
   getView(tree: Tree): ListCompositeTreeView<ElementType> {

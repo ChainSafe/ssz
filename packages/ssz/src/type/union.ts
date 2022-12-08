@@ -1,6 +1,7 @@
 import {concatGindices, getNode, Gindex, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {Type, ByteViews} from "./abstract";
 import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
@@ -79,9 +80,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   }
 
   static named<Types extends Type<unknown>[]>(types: Types, opts: Require<UnionOpts, "typeName">): UnionType<Types> {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      UnionType
-    ) as typeof UnionType)(types, opts);
+    return new (namedClass(UnionType, opts.typeName))(types, opts);
   }
 
   defaultValue(): ValueOfTypes<Types> {

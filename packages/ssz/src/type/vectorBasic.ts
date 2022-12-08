@@ -1,6 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ValueOf, ByteViews} from "./abstract";
 import {BasicType} from "./basic";
 import {
@@ -65,9 +66,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     limit: number,
     opts: Require<VectorBasicOpts, "typeName">
   ): VectorBasicType<ElementType> {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      VectorBasicType
-    ) as typeof VectorBasicType)(elementType, limit, opts);
+    return new (namedClass(VectorBasicType, opts.typeName))(elementType, limit, opts);
   }
 
   getView(tree: Tree): ArrayBasicTreeView<ElementType> {

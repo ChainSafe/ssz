@@ -1,20 +1,35 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ByteViews} from "./abstract";
 import {BasicType} from "./basic";
 
 /* eslint-disable @typescript-eslint/member-ordering */
+
+export interface BooleanOpts {
+  typeName?: string;
+}
 
 /**
  * Boolean: True or False
  * - Notation: `boolean`
  */
 export class BooleanType extends BasicType<boolean> {
-  readonly typeName = "boolean";
+  readonly typeName: string;
   readonly byteLength = 1;
   readonly itemsPerChunk = 32;
   readonly fixedSize = 1;
   readonly minSize = 1;
   readonly maxSize = 1;
+
+  constructor(opts?: BooleanOpts) {
+    super();
+    this.typeName = opts?.typeName ?? "boolean";
+  }
+
+  static named(opts: Require<BooleanOpts, "typeName">): BooleanType {
+    return new (namedClass(BooleanType, opts.typeName))(opts);
+  }
 
   defaultValue(): boolean {
     return false;

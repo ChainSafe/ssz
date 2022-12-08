@@ -1,4 +1,5 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {namedClass} from "../util/named";
 import {Require} from "../util/types";
 import {ByteViews} from "./abstract";
 import {BasicType} from "./basic";
@@ -75,9 +76,7 @@ export class UintNumberType extends BasicType<number> {
   }
 
   static named(byteLength: UintNumberByteLen, opts: Require<UintNumberOpts, "typeName">): UintNumberType {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      UintNumberType
-    ) as typeof UintNumberType)(byteLength, opts);
+    return new (namedClass(UintNumberType, opts.typeName))(byteLength, opts);
   }
 
   defaultValue(): number {
@@ -259,9 +258,7 @@ export class UintBigintType extends BasicType<bigint> {
   }
 
   static named(byteLength: UintNumberByteLen, opts: Require<UintBigintOpts, "typeName">): UintBigintType {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      UintBigintType
-    ) as typeof UintBigintType)(byteLength, opts);
+    return new (namedClass(UintBigintType, opts.typeName))(byteLength, opts);
   }
 
   defaultValue(): bigint {

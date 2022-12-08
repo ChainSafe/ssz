@@ -11,6 +11,7 @@ import {
 import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {Type, ValueOf} from "./abstract";
 import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
@@ -135,9 +136,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     fields: Fields,
     opts: Require<ContainerOptions<Fields>, "typeName">
   ): ContainerType<Fields> {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      ContainerType
-    ) as typeof ContainerType)(fields, opts);
+    return new (namedClass(ContainerType, opts.typeName))(fields, opts);
   }
 
   defaultValue(): ValueOfFields<Fields> {

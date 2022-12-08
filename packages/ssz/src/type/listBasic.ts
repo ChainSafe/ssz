@@ -12,6 +12,7 @@ import {
 } from "./arrayBasic";
 import {mixInLength, maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ArrayBasicType} from "../view/arrayBasic";
 import {ListBasicTreeView} from "../view/listBasic";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic";
@@ -68,9 +69,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     limit: number,
     opts: Require<ListBasicOpts, "typeName">
   ): ListBasicType<ElementType> {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      ListBasicType
-    ) as typeof ListBasicType)(elementType, limit, opts);
+    return new (namedClass(ListBasicType, opts.typeName))(elementType, limit, opts);
   }
 
   getView(tree: Tree): ListBasicTreeView<ElementType> {

@@ -1,6 +1,7 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ByteViews} from "./composite";
 import {BitArray} from "../value/bitArray";
 import {BitArrayType} from "./bitArray";
@@ -56,9 +57,7 @@ export class BitVectorType extends BitArrayType {
   }
 
   static named(limitBits: number, opts: Require<BitVectorOptions, "typeName">): BitVectorType {
-    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
-      BitVectorType
-    ) as typeof BitVectorType)(limitBits, opts);
+    return new (namedClass(BitVectorType, opts.typeName))(limitBits, opts);
   }
 
   defaultValue(): BitArray {
