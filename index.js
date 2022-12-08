@@ -10068,7 +10068,7 @@ var Tabs = /*#__PURE__*/function (_React$Component) {
 
 
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = JSON.parse('{"HO":{"JV":"^0.37.0-dev.267dce705c","lR":"^0.9.3"}}');
+const package_namespaceObject = JSON.parse('{"HO":{"JV":"^0.37.0-dev.267dce705c","lR":"^0.9.4"}}');
 ;// CONCATENATED MODULE: ./src/components/Footer.tsx
 
 
