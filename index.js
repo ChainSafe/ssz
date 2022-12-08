@@ -10068,7 +10068,7 @@ var Tabs = /*#__PURE__*/function (_React$Component) {
 
 
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = JSON.parse('{"HO":{"JV":"^0.37.0-dev.267dce705c","lR":"^0.9.1"}}');
+const package_namespaceObject = JSON.parse('{"HO":{"JV":"^0.37.0-dev.267dce705c","lR":"^0.9.3"}}');
 ;// CONCATENATED MODULE: ./src/components/Footer.tsx
 
 
@@ -29298,10 +29298,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BitListType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const arrayBasic_1 = __webpack_require__(8623);
 const bitArray_1 = __webpack_require__(8676);
 const bitArray_2 = __webpack_require__(405);
-/* eslint-disable @typescript-eslint/member-ordering */
 /**
  * BitList: ordered variable-length collection of boolean values, limited to N bits
  * - Notation `Bitlist[N]`
@@ -29310,7 +29310,7 @@ const bitArray_2 = __webpack_require__(405);
  * - ViewDU: `BitArrayTreeViewDU`
  */
 class BitListType extends bitArray_2.BitArrayType {
-    constructor(limitBits) {
+    constructor(limitBits, opts) {
         super();
         this.limitBits = limitBits;
         this.fixedSize = null;
@@ -29318,13 +29318,16 @@ class BitListType extends bitArray_2.BitArrayType {
         this.isList = true;
         if (limitBits === 0)
             throw Error("List limit must be > 0");
-        this.typeName = `BitList[${limitBits}]`;
+        this.typeName = opts?.typeName ?? `BitList[${limitBits}]`;
         // TODO Check that itemsPerChunk is an integer
         this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
         this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
         // Depth includes the extra level for the length node
         this.depth = 1 + this.chunkDepth;
         this.maxSize = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
+    }
+    static named(limitBits, opts) {
+        return new (named_1.namedClass(BitListType, opts.typeName))(limitBits, opts);
     }
     defaultValue() {
         return bitArray_1.BitArray.fromBitLen(0);
@@ -29440,9 +29443,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BitVectorType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const bitArray_1 = __webpack_require__(8676);
 const bitArray_2 = __webpack_require__(405);
-/* eslint-disable @typescript-eslint/member-ordering */
 /**
  * BitVector: ordered fixed-length collection of boolean values, with N bits
  * - Notation: `Bitvector[N]`
@@ -29451,13 +29454,13 @@ const bitArray_2 = __webpack_require__(405);
  * - ViewDU: `BitArrayTreeViewDU`
  */
 class BitVectorType extends bitArray_2.BitArrayType {
-    constructor(lengthBits) {
+    constructor(lengthBits, opts) {
         super();
         this.lengthBits = lengthBits;
         this.isList = false;
         if (lengthBits === 0)
             throw Error("Vector length must be > 0");
-        this.typeName = `BitVector[${lengthBits}]`;
+        this.typeName = opts?.typeName ?? `BitVector[${lengthBits}]`;
         this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
         this.maxChunkCount = this.chunkCount;
         this.depth = merkleize_1.maxChunksToDepth(this.chunkCount);
@@ -29466,6 +29469,9 @@ class BitVectorType extends bitArray_2.BitArrayType {
         this.maxSize = this.fixedSize;
         // To cache mask for trailing zero bits validation
         this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
+    }
+    static named(limitBits, opts) {
+        return new (named_1.namedClass(BitVectorType, opts.typeName))(limitBits, opts);
     }
     defaultValue() {
         return bitArray_1.BitArray.fromBitLen(this.lengthBits);
@@ -29531,21 +29537,24 @@ exports.BitVectorType = BitVectorType;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BooleanType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
+const named_1 = __webpack_require__(6577);
 const basic_1 = __webpack_require__(7262);
-/* eslint-disable @typescript-eslint/member-ordering */
 /**
  * Boolean: True or False
  * - Notation: `boolean`
  */
 class BooleanType extends basic_1.BasicType {
-    constructor() {
-        super(...arguments);
-        this.typeName = "boolean";
+    constructor(opts) {
+        super();
         this.byteLength = 1;
         this.itemsPerChunk = 32;
         this.fixedSize = 1;
         this.minSize = 1;
         this.maxSize = 1;
+        this.typeName = opts?.typeName ?? "boolean";
+    }
+    static named(opts) {
+        return new (named_1.namedClass(BooleanType, opts.typeName))(opts);
     }
     defaultValue() {
         return false;
@@ -29737,9 +29746,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ByteListType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const arrayBasic_1 = __webpack_require__(8623);
 const byteArray_1 = __webpack_require__(9636);
-/* eslint-disable @typescript-eslint/member-ordering */
 /**
  * ByteList: Immutable alias of List[byte, N]
  * - Notation: `ByteList[N]`
@@ -29753,19 +29762,22 @@ const byteArray_1 = __webpack_require__(9636);
  * For a `ByteListType` with mutability, use `ListBasicType(byteType)`
  */
 class ByteListType extends byteArray_1.ByteArrayType {
-    constructor(limitBytes) {
+    constructor(limitBytes, opts) {
         super();
         this.limitBytes = limitBytes;
         this.fixedSize = null;
         this.isList = true;
         if (limitBytes === 0)
             throw Error("List limit must be > 0");
-        this.typeName = `ByteList[${limitBytes}]`;
+        this.typeName = opts?.typeName ?? `ByteList[${limitBytes}]`;
         this.maxChunkCount = Math.ceil(this.limitBytes / 32);
         this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
         this.depth = 1 + this.chunkDepth;
         this.minSize = 0;
         this.maxSize = this.limitBytes;
+    }
+    static named(limitBits, opts) {
+        return new (named_1.namedClass(ByteListType, opts.typeName))(limitBits, opts);
     }
     // Views: inherited from ByteArrayType
     // Serialization + deserialization
@@ -29820,6 +29832,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ByteVectorType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const byteArray_1 = __webpack_require__(9636);
 /* eslint-disable @typescript-eslint/member-ordering */
 /**
@@ -29835,19 +29848,22 @@ const byteArray_1 = __webpack_require__(9636);
  * For a `ByteVectorType` with mutability, use `VectorBasicType(byteType)`
  */
 class ByteVectorType extends byteArray_1.ByteArrayType {
-    constructor(lengthBytes) {
+    constructor(lengthBytes, opts) {
         super();
         this.lengthBytes = lengthBytes;
         this.isList = false;
         if (lengthBytes === 0)
             throw Error("Vector length must be > 0");
-        this.typeName = `ByteVector[${lengthBytes}]`;
+        this.typeName = opts?.typeName ?? `ByteVector[${lengthBytes}]`;
         this.maxChunkCount = Math.ceil(this.lengthBytes / 32);
         this.chunkDepth = merkleize_1.maxChunksToDepth(this.maxChunkCount);
         this.depth = this.chunkDepth;
         this.fixedSize = this.lengthBytes;
         this.minSize = this.fixedSize;
         this.maxSize = this.fixedSize;
+    }
+    static named(limitBits, opts) {
+        return new (named_1.namedClass(ByteVectorType, opts.typeName))(limitBits, opts);
     }
     // Views: inherited from ByteArrayType
     // Serialization + deserialization
@@ -30101,6 +30117,7 @@ exports.renderContainerTypeName = exports.precomputeJsonKey = exports.ContainerT
 const persistent_merkle_tree_1 = __webpack_require__(6647);
 const case_1 = __importDefault(__webpack_require__(8823));
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const composite_1 = __webpack_require__(1347);
 const container_1 = __webpack_require__(7582);
 const container_2 = __webpack_require__(2854);
@@ -30155,6 +30172,9 @@ class ContainerType extends composite_1.CompositeType {
         // Refactor this constructor to allow customization without pollutin the options
         this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? container_1.getContainerTreeViewClass(this);
         this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? container_2.getContainerTreeViewDUClass(this);
+    }
+    static named(fields, opts) {
+        return new (named_1.namedClass(ContainerType, opts.typeName))(fields, opts);
     }
     defaultValue() {
         const value = {};
@@ -30220,7 +30240,6 @@ class ContainerType extends composite_1.CompositeType {
         for (let i = 0; i < this.fieldsEntries.length; i++) {
             const { fieldName, fieldType } = this.fieldsEntries[i];
             const fieldRange = fieldRanges[i];
-            // TODO: Consider adding SszErrorPath back but preserving the original stack-traces
             value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
         }
         return value;
@@ -30535,6 +30554,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ContainerNodeStructType = void 0;
 const composite_1 = __webpack_require__(1347);
 const container_1 = __webpack_require__(5759);
+const named_1 = __webpack_require__(6577);
 const containerNodeStruct_1 = __webpack_require__(8838);
 const containerNodeStruct_2 = __webpack_require__(1339);
 const branchNodeStruct_1 = __webpack_require__(9157);
@@ -30579,6 +30599,9 @@ class ContainerNodeStructType extends container_1.ContainerType {
                 throw Error(`ContainerNodeStructType field '${fieldName}' ${fieldType.typeName} view is mutable`);
             }
         }
+    }
+    static named(fields, opts) {
+        return new (named_1.namedClass(container_1.ContainerType, opts.typeName))(fields, opts);
     }
     tree_serializedSize(node) {
         return this.value_serializedSize(node.value);
@@ -30640,6 +30663,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ListBasicType = void 0;
 const arrayBasic_1 = __webpack_require__(8623);
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const listBasic_1 = __webpack_require__(3013);
 const listBasic_2 = __webpack_require__(5707);
 const array_1 = __webpack_require__(443);
@@ -30672,6 +30696,9 @@ class ListBasicType extends array_1.ArrayType {
         this.depth = this.chunkDepth + 1;
         this.minSize = 0;
         this.maxSize = this.limit * elementType.maxSize;
+    }
+    static named(elementType, limit, opts) {
+        return new (named_1.namedClass(ListBasicType, opts.typeName))(elementType, limit, opts);
     }
     getView(tree) {
         return new listBasic_1.ListBasicTreeView(this, tree);
@@ -30749,6 +30776,7 @@ exports.ListBasicType = ListBasicType;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ListCompositeType = void 0;
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const arrayBasic_1 = __webpack_require__(8623);
 const arrayComposite_1 = __webpack_require__(230);
 const listComposite_1 = __webpack_require__(3911);
@@ -30782,6 +30810,10 @@ class ListCompositeType extends array_1.ArrayType {
         this.depth = this.chunkDepth + 1;
         this.minSize = 0;
         this.maxSize = arrayComposite_1.maxSizeArrayComposite(elementType, this.limit);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static named(elementType, limit, opts) {
+        return new (named_1.namedClass(ListCompositeType, opts.typeName))(elementType, limit, opts);
     }
     getView(tree) {
         return new listComposite_1.ListCompositeTreeView(this, tree);
@@ -30924,6 +30956,7 @@ exports.NoneType = NoneType;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UintBigintType = exports.UintNumberType = exports.uintBigintByteLens = exports.uintNumberByteLens = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
+const named_1 = __webpack_require__(6577);
 const basic_1 = __webpack_require__(7262);
 /* eslint-disable @typescript-eslint/member-ordering */
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
@@ -30958,7 +30991,7 @@ class UintNumberType extends basic_1.BasicType {
         if (Math.log2(byteLength) % 1 !== 0) {
             throw Error("byteLength must be a power of 2");
         }
-        this.typeName = `uint${byteLength * 8}`;
+        this.typeName = opts?.typeName ?? `uint${byteLength * 8}`;
         if (opts?.clipInfinity)
             this.typeName += "Inf";
         if (opts?.setBitwiseOR)
@@ -30970,6 +31003,9 @@ class UintNumberType extends basic_1.BasicType {
         this.maxDecimalStr = (BigInt(2) ** BigInt(this.byteLength * 8) - BigInt(1)).toString(10);
         this.clipInfinity = opts?.clipInfinity === true;
         this.setBitwiseOR = opts?.setBitwiseOR === true;
+    }
+    static named(byteLength, opts) {
+        return new (named_1.namedClass(UintNumberType, opts.typeName))(byteLength, opts);
     }
     defaultValue() {
         return 0;
@@ -31114,7 +31150,7 @@ exports.UintNumberType = UintNumberType;
  * For other values that may exceed 53 bits, use UintBigint.
  */
 class UintBigintType extends basic_1.BasicType {
-    constructor(byteLength) {
+    constructor(byteLength, opts) {
         super();
         this.byteLength = byteLength;
         if (byteLength > 32) {
@@ -31123,12 +31159,15 @@ class UintBigintType extends basic_1.BasicType {
         if (Math.log2(byteLength) % 1 !== 0) {
             throw Error("byteLength must be a power of 2");
         }
-        this.typeName = `uintBigint${byteLength * 8}`;
+        this.typeName = opts?.typeName ?? `uintBigint${byteLength * 8}`;
         this.byteLength = byteLength;
         this.itemsPerChunk = 32 / this.byteLength;
         this.fixedSize = byteLength;
         this.minSize = byteLength;
         this.maxSize = byteLength;
+    }
+    static named(byteLength, opts) {
+        return new (named_1.namedClass(UintBigintType, opts.typeName))(byteLength, opts);
     }
     defaultValue() {
         return BigInt(0);
@@ -31252,6 +31291,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UnionType = void 0;
 const persistent_merkle_tree_1 = __webpack_require__(6647);
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const composite_1 = __webpack_require__(1347);
 const arrayBasic_1 = __webpack_require__(8623);
 const none_1 = __webpack_require__(3300);
@@ -31262,7 +31302,7 @@ const SELECTOR_GINDEX = BigInt(3);
  * - Notation: Union[type_0, type_1, ...], e.g. union[None, uint64, uint32]
  */
 class UnionType extends composite_1.CompositeType {
-    constructor(types) {
+    constructor(types, opts) {
         super();
         this.types = types;
         this.depth = 1;
@@ -31284,7 +31324,7 @@ class UnionType extends composite_1.CompositeType {
                 throw Error("None may only be the first option");
             }
         }
-        this.typeName = `Union[${types.map((t) => t.typeName).join(",")}]`;
+        this.typeName = opts?.typeName ?? `Union[${types.map((t) => t.typeName).join(",")}]`;
         const minLens = [];
         const maxLens = [];
         for (const _type of types) {
@@ -31294,6 +31334,9 @@ class UnionType extends composite_1.CompositeType {
         this.minSize = 1 + Math.min(...minLens);
         this.maxSize = 1 + Math.max(...maxLens);
         this.maxSelector = this.types.length - 1;
+    }
+    static named(types, opts) {
+        return new (named_1.namedClass(UnionType, opts.typeName))(types, opts);
     }
     defaultValue() {
         return {
@@ -31448,6 +31491,7 @@ exports.UnionType = UnionType;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.VectorBasicType = void 0;
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const arrayBasic_1 = __webpack_require__(8623);
 const arrayBasic_2 = __webpack_require__(1769);
 const arrayBasic_3 = __webpack_require__(7005);
@@ -31480,6 +31524,9 @@ class VectorBasicType extends array_1.ArrayType {
         this.minSize = this.fixedSize;
         this.maxSize = this.fixedSize;
         this.defaultLen = length;
+    }
+    static named(elementType, limit, opts) {
+        return new (named_1.namedClass(VectorBasicType, opts.typeName))(elementType, limit, opts);
     }
     getView(tree) {
         return new arrayBasic_2.ArrayBasicTreeView(this, tree);
@@ -31552,6 +31599,7 @@ exports.VectorBasicType = VectorBasicType;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.VectorCompositeType = void 0;
 const merkleize_1 = __webpack_require__(1290);
+const named_1 = __webpack_require__(6577);
 const arrayComposite_1 = __webpack_require__(230);
 const arrayComposite_2 = __webpack_require__(4596);
 const arrayComposite_3 = __webpack_require__(1409);
@@ -31583,6 +31631,10 @@ class VectorCompositeType extends array_1.ArrayType {
         this.minSize = arrayComposite_1.minSizeArrayComposite(elementType, length);
         this.maxSize = arrayComposite_1.maxSizeArrayComposite(elementType, length);
         this.defaultLen = length;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static named(elementType, limit, opts) {
+        return new (named_1.namedClass(VectorCompositeType, opts.typeName))(elementType, limit, opts);
     }
     getView(tree) {
         return new arrayComposite_2.ArrayCompositeTreeView(this, tree);
@@ -31784,6 +31836,21 @@ function nextPowerOf2(n) {
 }
 exports.nextPowerOf2 = nextPowerOf2;
 //# sourceMappingURL=merkleize.js.map
+
+/***/ }),
+
+/***/ 6577:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.namedClass = void 0;
+function namedClass(superClass, className) {
+    return new Function("superClass", `return class ${className} extends superClass {}`)(superClass);
+}
+exports.namedClass = namedClass;
+//# sourceMappingURL=named.js.map
 
 /***/ }),
 
