@@ -1,10 +1,15 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
 import {ByteViews} from "./composite";
 import {ByteArrayType, ByteArray} from "./byteArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
+
+export interface ByteListOptions {
+  typeName?: string;
+}
 
 /**
  * ByteList: Immutable alias of List[byte, N]
@@ -29,17 +34,23 @@ export class ByteListType extends ByteArrayType {
   readonly maxChunkCount: number;
   readonly isList = true;
 
-  constructor(readonly limitBytes: number) {
+  constructor(readonly limitBytes: number, opts?: ByteListOptions) {
     super();
 
     if (limitBytes === 0) throw Error("List limit must be > 0");
 
-    this.typeName = `ByteList[${limitBytes}]`;
+    this.typeName = opts?.typeName ?? `ByteList[${limitBytes}]`;
     this.maxChunkCount = Math.ceil(this.limitBytes / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = 1 + this.chunkDepth;
     this.minSize = 0;
     this.maxSize = this.limitBytes;
+  }
+
+  static named(limitBits: number, opts: Require<ByteListOptions, "typeName">): ByteListType {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      ByteListType
+    ) as typeof ByteListType)(limitBits, opts);
   }
 
   // Views: inherited from ByteArrayType

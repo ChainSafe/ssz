@@ -1,11 +1,16 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
 import {ByteViews} from "./composite";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
 import {BitArrayType} from "./bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
+
+export interface BitListOptions {
+  typeName?: string;
+}
 
 /**
  * BitList: ordered variable-length collection of boolean values, limited to N bits
@@ -24,18 +29,24 @@ export class BitListType extends BitArrayType {
   readonly maxChunkCount: number;
   readonly isList = true;
 
-  constructor(readonly limitBits: number) {
+  constructor(readonly limitBits: number, opts?: BitListOptions) {
     super();
 
     if (limitBits === 0) throw Error("List limit must be > 0");
 
-    this.typeName = `BitList[${limitBits}]`;
+    this.typeName = opts?.typeName ?? `BitList[${limitBits}]`;
     // TODO Check that itemsPerChunk is an integer
     this.maxChunkCount = Math.ceil(this.limitBits / 8 / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     // Depth includes the extra level for the length node
     this.depth = 1 + this.chunkDepth;
     this.maxSize = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
+  }
+
+  static named(limitBits: number, opts: Require<BitListOptions, "typeName">): BitListType {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      BitListType
+    ) as typeof BitListType)(limitBits, opts);
   }
 
   defaultValue(): BitArray {

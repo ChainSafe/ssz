@@ -10,6 +10,7 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
 import {Type, ValueOf} from "./abstract";
 import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
@@ -128,6 +129,15 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
+  }
+
+  static named<Fields extends Record<string, Type<unknown>>>(
+    fields: Fields,
+    opts: Require<ContainerOptions<Fields>, "typeName">
+  ): ContainerType<Fields> {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      ContainerType
+    ) as typeof ContainerType)(fields, opts);
   }
 
   defaultValue(): ValueOfFields<Fields> {

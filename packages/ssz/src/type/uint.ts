@@ -1,4 +1,5 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {Require} from "../util/types";
 import {ByteViews} from "./abstract";
 import {BasicType} from "./basic";
 
@@ -12,12 +13,13 @@ const BIGINT_2_POW_192 = BigInt(2) ** BigInt(192);
 const NUMBER_2_POW_32 = 2 ** 32;
 const NUMBER_32_MAX = 0xffffffff;
 
-export type UintNumberTypeOpts = {
+export interface UintNumberOpts {
   /** Represent the value 2^64-1 as the symbolic value `+Infinity`. @see UintNumberType for a justification. */
   clipInfinity?: boolean;
   /** For `tree_setToPackedNode` set values with bitwise OR instead of a regular set */
   setBitwiseOR?: boolean;
-};
+  typeName?: string;
+}
 
 export type UintNumberByteLen = 1 | 2 | 4 | 8;
 export type UintBigintByteLen = 1 | 2 | 4 | 8 | 16 | 32;
@@ -48,7 +50,7 @@ export class UintNumberType extends BasicType<number> {
   private readonly clipInfinity: boolean;
   private readonly setBitwiseOR: boolean;
 
-  constructor(readonly byteLength: UintNumberByteLen, opts?: UintNumberTypeOpts) {
+  constructor(readonly byteLength: UintNumberByteLen, opts?: UintNumberOpts) {
     super();
 
     if (byteLength > 8) {
@@ -58,7 +60,7 @@ export class UintNumberType extends BasicType<number> {
       throw Error("byteLength must be a power of 2");
     }
 
-    this.typeName = `uint${byteLength * 8}`;
+    this.typeName = opts?.typeName ?? `uint${byteLength * 8}`;
     if (opts?.clipInfinity) this.typeName += "Inf";
     if (opts?.setBitwiseOR) this.typeName += "OR";
 
@@ -70,6 +72,12 @@ export class UintNumberType extends BasicType<number> {
 
     this.clipInfinity = opts?.clipInfinity === true;
     this.setBitwiseOR = opts?.setBitwiseOR === true;
+  }
+
+  static named(byteLength: UintNumberByteLen, opts: Require<UintNumberOpts, "typeName">): UintNumberType {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      UintNumberType
+    ) as typeof UintNumberType)(byteLength, opts);
   }
 
   defaultValue(): number {
@@ -208,6 +216,10 @@ export class UintNumberType extends BasicType<number> {
   }
 }
 
+export interface UintBigintOpts {
+  typeName?: string;
+}
+
 /**
  * Uint: N-bit unsigned integer (where N in [8, 16, 32, 64, 128, 256])
  * - Notation: uintN
@@ -228,7 +240,7 @@ export class UintBigintType extends BasicType<bigint> {
   readonly minSize: number;
   readonly maxSize: number;
 
-  constructor(readonly byteLength: UintBigintByteLen) {
+  constructor(readonly byteLength: UintBigintByteLen, opts?: UintBigintOpts) {
     super();
 
     if (byteLength > 32) {
@@ -238,12 +250,18 @@ export class UintBigintType extends BasicType<bigint> {
       throw Error("byteLength must be a power of 2");
     }
 
-    this.typeName = `uintBigint${byteLength * 8}`;
+    this.typeName = opts?.typeName ?? `uintBigint${byteLength * 8}`;
     this.byteLength = byteLength;
     this.itemsPerChunk = 32 / this.byteLength;
     this.fixedSize = byteLength;
     this.minSize = byteLength;
     this.maxSize = byteLength;
+  }
+
+  static named(byteLength: UintNumberByteLen, opts: Require<UintBigintOpts, "typeName">): UintBigintType {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      UintBigintType
+    ) as typeof UintBigintType)(byteLength, opts);
   }
 
   defaultValue(): bigint {

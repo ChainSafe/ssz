@@ -2,6 +2,7 @@ import {Node} from "@chainsafe/persistent-merkle-tree";
 import {Type, ByteViews} from "./abstract";
 import {isCompositeType} from "./composite";
 import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container";
+import {Require} from "../util/types";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
 import {BranchNodeStruct} from "../branchNodeStruct";
@@ -48,6 +49,15 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
         throw Error(`ContainerNodeStructType field '${fieldName}' ${fieldType.typeName} view is mutable`);
       }
     }
+  }
+
+  static named<Fields extends Record<string, Type<unknown>>>(
+    fields: Fields,
+    opts: Require<ContainerOptions<Fields>, "typeName">
+  ): ContainerType<Fields> {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      ContainerNodeStructType
+    ) as typeof ContainerNodeStructType)(fields, opts);
   }
 
   tree_serializedSize(node: Node): number {

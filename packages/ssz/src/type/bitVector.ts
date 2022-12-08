@@ -1,10 +1,15 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
 import {ByteViews} from "./composite";
 import {BitArray} from "../value/bitArray";
 import {BitArrayType} from "./bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
+
+export interface BitVectorOptions {
+  typeName?: string;
+}
 
 /**
  * BitVector: ordered fixed-length collection of boolean values, with N bits
@@ -34,12 +39,12 @@ export class BitVectorType extends BitArrayType {
    */
   private readonly zeroBitsMask: number;
 
-  constructor(readonly lengthBits: number) {
+  constructor(readonly lengthBits: number, opts?: BitVectorOptions) {
     super();
 
     if (lengthBits === 0) throw Error("Vector length must be > 0");
 
-    this.typeName = `BitVector[${lengthBits}]`;
+    this.typeName = opts?.typeName ?? `BitVector[${lengthBits}]`;
     this.chunkCount = Math.ceil(this.lengthBits / 8 / 32);
     this.maxChunkCount = this.chunkCount;
     this.depth = maxChunksToDepth(this.chunkCount);
@@ -48,6 +53,12 @@ export class BitVectorType extends BitArrayType {
     this.maxSize = this.fixedSize;
     // To cache mask for trailing zero bits validation
     this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
+  }
+
+  static named(limitBits: number, opts: Require<BitVectorOptions, "typeName">): BitVectorType {
+    return new (new Function("superClass", `return class ${opts.typeName}Type extends superClass {}`)(
+      BitVectorType
+    ) as typeof BitVectorType)(limitBits, opts);
   }
 
   defaultValue(): BitArray {
