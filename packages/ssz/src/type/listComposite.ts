@@ -1,5 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength, maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ValueOf, ByteViews} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic";
@@ -20,9 +22,9 @@ import {ArrayType} from "./array";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
-export type ListCompositeOpts = {
+export interface ListCompositeOpts {
   typeName?: string;
-};
+}
 
 /**
  * List: ordered variable-length homogeneous collection, limited to N values
@@ -63,6 +65,15 @@ export class ListCompositeType<
     this.depth = this.chunkDepth + 1;
     this.minSize = 0;
     this.maxSize = maxSizeArrayComposite(elementType, this.limit);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
+    elementType: ElementType,
+    limit: number,
+    opts: Require<ListCompositeOpts, "typeName">
+  ): ListCompositeType<ElementType> {
+    return new (namedClass(ListCompositeType, opts.typeName))(elementType, limit, opts);
   }
 
   getView(tree: Tree): ListCompositeTreeView<ElementType> {

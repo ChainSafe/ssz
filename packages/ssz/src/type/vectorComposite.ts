@@ -1,5 +1,7 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ValueOf, ByteViews} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {
@@ -63,6 +65,15 @@ export class VectorCompositeType<
     this.minSize = minSizeArrayComposite(elementType, length);
     this.maxSize = maxSizeArrayComposite(elementType, length);
     this.defaultLen = length;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
+    elementType: ElementType,
+    limit: number,
+    opts: Require<VectorCompositeOpts, "typeName">
+  ): VectorCompositeType<ElementType> {
+    return new (namedClass(VectorCompositeType, opts.typeName))(elementType, limit, opts);
   }
 
   getView(tree: Tree): ArrayCompositeTreeView<ElementType> {

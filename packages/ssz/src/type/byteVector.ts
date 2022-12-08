@@ -1,9 +1,15 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ByteViews} from "./composite";
 import {ByteArrayType} from "./byteArray";
 
 export type ByteVector = Uint8Array;
+
+export interface ByteVectorOptions {
+  typeName?: string;
+}
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -30,18 +36,22 @@ export class ByteVectorType extends ByteArrayType {
   readonly maxChunkCount: number;
   readonly isList = false;
 
-  constructor(readonly lengthBytes: number) {
+  constructor(readonly lengthBytes: number, opts?: ByteVectorOptions) {
     super();
 
     if (lengthBytes === 0) throw Error("Vector length must be > 0");
 
-    this.typeName = `ByteVector[${lengthBytes}]`;
+    this.typeName = opts?.typeName ?? `ByteVector[${lengthBytes}]`;
     this.maxChunkCount = Math.ceil(this.lengthBytes / 32);
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     this.depth = this.chunkDepth;
     this.fixedSize = this.lengthBytes;
     this.minSize = this.fixedSize;
     this.maxSize = this.fixedSize;
+  }
+
+  static named(limitBits: number, opts: Require<ByteVectorOptions, "typeName">): ByteVectorType {
+    return new (namedClass(ByteVectorType, opts.typeName))(limitBits, opts);
   }
 
   // Views: inherited from ByteArrayType

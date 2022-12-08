@@ -11,6 +11,8 @@ import {
   setChunksNode,
 } from "./arrayBasic";
 import {mixInLength, maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {ArrayBasicType} from "../view/arrayBasic";
 import {ListBasicTreeView} from "../view/listBasic";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic";
@@ -18,9 +20,9 @@ import {ArrayType} from "./array";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
-export type ListBasicOpts = {
+export interface ListBasicOpts {
   typeName?: string;
-};
+}
 
 /**
  * List: ordered variable-length homogeneous collection, limited to N values
@@ -60,6 +62,14 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     this.depth = this.chunkDepth + 1;
     this.minSize = 0;
     this.maxSize = this.limit * elementType.maxSize;
+  }
+
+  static named<ElementType extends BasicType<unknown>>(
+    elementType: ElementType,
+    limit: number,
+    opts: Require<ListBasicOpts, "typeName">
+  ): ListBasicType<ElementType> {
+    return new (namedClass(ListBasicType, opts.typeName))(elementType, limit, opts);
   }
 
   getView(tree: Tree): ListBasicTreeView<ElementType> {

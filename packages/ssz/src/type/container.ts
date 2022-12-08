@@ -10,6 +10,8 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {Type, ValueOf} from "./abstract";
 import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
@@ -130,6 +132,13 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
   }
 
+  static named<Fields extends Record<string, Type<unknown>>>(
+    fields: Fields,
+    opts: Require<ContainerOptions<Fields>, "typeName">
+  ): ContainerType<Fields> {
+    return new (namedClass(ContainerType, opts.typeName))(fields, opts);
+  }
+
   defaultValue(): ValueOfFields<Fields> {
     const value = {} as ValueOfFields<Fields>;
     for (const {fieldName, fieldType} of this.fieldsEntries) {
@@ -204,7 +213,6 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
-      // TODO: Consider adding SszErrorPath back but preserving the original stack-traces
       value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
     }
 

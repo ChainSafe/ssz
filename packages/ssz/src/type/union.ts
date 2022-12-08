@@ -1,5 +1,7 @@
 import {concatGindices, getNode, Gindex, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength} from "../util/merkleize";
+import {Require} from "../util/types";
+import {namedClass} from "../util/named";
 import {Type, ByteViews} from "./abstract";
 import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
@@ -16,6 +18,10 @@ type ValueOfTypes<Types extends Type<unknown>[]> = Types extends Type<infer T>[]
 
 const VALUE_GINDEX = BigInt(2);
 const SELECTOR_GINDEX = BigInt(3);
+
+export type UnionOpts = {
+  typeName?: string;
+};
 
 /**
  * Union: union type containing one of the given subtypes
@@ -37,7 +43,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
 
   protected readonly maxSelector: number;
 
-  constructor(readonly types: Types) {
+  constructor(readonly types: Types, opts?: UnionOpts) {
     super();
 
     if (types.length >= 128) {
@@ -58,7 +64,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
       }
     }
 
-    this.typeName = `Union[${types.map((t) => t.typeName).join(",")}]`;
+    this.typeName = opts?.typeName ?? `Union[${types.map((t) => t.typeName).join(",")}]`;
 
     const minLens: number[] = [];
     const maxLens: number[] = [];
@@ -71,6 +77,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     this.minSize = 1 + Math.min(...minLens);
     this.maxSize = 1 + Math.max(...maxLens);
     this.maxSelector = this.types.length - 1;
+  }
+
+  static named<Types extends Type<unknown>[]>(types: Types, opts: Require<UnionOpts, "typeName">): UnionType<Types> {
+    return new (namedClass(UnionType, opts.typeName))(types, opts);
   }
 
   defaultValue(): ValueOfTypes<Types> {
