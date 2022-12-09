@@ -20,11 +20,13 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
+          cache: yarn
           node-version: "14.16.0"
-      - run: yarn && yarn build
+      - run: corepack enable
+      - run: yarn --immutable && yarn build
 
       - name: Run benchmarks
         run: yarn benchmark

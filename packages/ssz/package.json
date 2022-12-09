@@ -35,8 +35,8 @@
   },
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@chainsafe/as-sha256": "^0.3.1",
-    "@chainsafe/persistent-merkle-tree": "^0.4.2",
+    "@chainsafe/as-sha256": "workspace:^",
+    "@chainsafe/persistent-merkle-tree": "workspace:^",
     "case": "^1.6.3"
   },
   "devDependencies": {

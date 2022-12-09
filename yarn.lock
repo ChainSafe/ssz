@@ -1624,7 +1624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/as-sha256@^0.3.1, @chainsafe/as-sha256@workspace:packages/as-sha256":
+"@chainsafe/as-sha256@workspace:^, @chainsafe/as-sha256@workspace:packages/as-sha256":
   version: 0.0.0-use.local
   resolution: "@chainsafe/as-sha256@workspace:packages/as-sha256"
   dependencies:
@@ -1664,11 +1664,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/persistent-merkle-tree@^0.4.2, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
+"@chainsafe/persistent-merkle-tree@workspace:^, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
   version: 0.0.0-use.local
   resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
   dependencies:
-    "@chainsafe/as-sha256": ^0.3.1
+    "@chainsafe/as-sha256": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -1680,12 +1680,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@chainsafe/ssz@^0.9.1, @chainsafe/ssz@^0.9.4, @chainsafe/ssz@workspace:packages/ssz":
+"@chainsafe/ssz@^0.9.1, @chainsafe/ssz@workspace:^, @chainsafe/ssz@workspace:packages/ssz":
   version: 0.0.0-use.local
   resolution: "@chainsafe/ssz@workspace:packages/ssz"
   dependencies:
-    "@chainsafe/as-sha256": ^0.3.1
-    "@chainsafe/persistent-merkle-tree": ^0.4.2
+    "@chainsafe/as-sha256": "workspace:^"
+    "@chainsafe/persistent-merkle-tree": "workspace:^"
     "@types/js-yaml": ^4.0.5
     case: ^1.6.3
     js-yaml: ^3.13.1
@@ -11831,7 +11831,7 @@ __metadata:
     "@babel/runtime": ^7.14.6
     "@babel/types": ^7.14.5
     "@chainsafe/lodestar-types": ^0.37.0-dev.267dce705c
-    "@chainsafe/ssz": ^0.9.4
+    "@chainsafe/ssz": "workspace:^"
     "@types/bn.js": ^5.1.0
     "@types/deep-equal": ^1.0.1
     "@types/file-saver": ^2.0.2
