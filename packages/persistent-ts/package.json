@@ -9,12 +9,11 @@
     "lib/**/*.js.map"
   ],
   "scripts": {
-    "clean": "rm -rf lib && rm -f *.tsbuildinfo",
-    "build": "tsc",
-    "lint": "eslint --color --ext .ts src/",
-    "prepublishOnly": "yarn build",
-    "test:unit": "mocha 'test/unit/**/*.test.ts'",
-    "test:perf": "mocha 'test/perf/**/*.test.ts'"
+    "clean": "rm -rf lib",
+    "build": "run -T tsc",
+    "lint": "run -T eslint --color --ext .ts src/",
+    "test:unit": "run -T mocha 'test/unit/**/*.test.ts'",
+    "test:perf": "run -T mocha 'test/perf/**/*.test.ts'"
   },
   "repository": {
     "type": "git",
