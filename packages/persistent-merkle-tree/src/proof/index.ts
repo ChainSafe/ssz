@@ -1,7 +1,13 @@
 import {Gindex} from "../gindex";
 import {Node} from "../node";
 import {createMultiProof, createNodeFromMultiProof} from "./multi";
-import {createNodeFromSingleProof, createSingleProof} from "./single";
+import {
+  computeSingleProofSerializedLength,
+  createNodeFromSingleProof,
+  createSingleProof,
+  deserializeSingleProof,
+  serializeSingleProof,
+} from "./single";
 import {
   computeTreeOffsetProofSerializedLength,
   createNodeFromTreeOffsetProof,
@@ -124,7 +130,12 @@ export function createNodeFromProof(proof: Proof): Node {
 
 export function serializeProof(proof: Proof): Uint8Array {
   switch (proof.type) {
-    case ProofType.single:
+    case ProofType.single: {
+      const output = new Uint8Array(1 + computeSingleProofSerializedLength(proof.witnesses));
+      output[0] = ProofTypeSerialized.indexOf(ProofType.single);
+      serializeSingleProof(output, 1, proof.gindex, proof.leaf, proof.witnesses);
+      return output;
+    }
     case ProofType.multi:
       throw new Error("Not implemented");
     case ProofType.treeOffset: {
@@ -144,7 +155,15 @@ export function deserializeProof(data: Uint8Array): Proof {
     throw new Error("Invalid proof type");
   }
   switch (proofType) {
-    case ProofType.single:
+    case ProofType.single: {
+      const [gindex, leaf, witnesses] = deserializeSingleProof(data, 1);
+      return {
+        type: ProofType.single,
+        gindex,
+        leaf,
+        witnesses,
+      };
+    }
     case ProofType.multi:
       throw new Error("Not implemented");
     case ProofType.treeOffset: {
