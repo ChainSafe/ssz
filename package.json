@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "rm -rf ./packages/*/lib ./packages/*/*.tsbuildinfo",
+    "clean": "rm -rf ./packages/*/lib ./packages/*/*.ts ldinfo",
     "build": "yarn clean && lerna run build",
     "lint": "lerna run lint --no-bail",
     "check-types": "lerna run check-types --no-bail",
@@ -52,8 +52,8 @@
     "ts-loader": "^9.2.8",
     "ts-node": "^9.1.1",
     "typescript": "~4.2.3",
-    "webpack": "^5.43.0",
-    "webpack-cli": "^4.7.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^3.11.2"
   }
 }
