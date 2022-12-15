@@ -22,7 +22,7 @@
     "lint:fix": "yarn run lint --fix",
     "prepublishOnly": "yarn build",
     "test": "yarn test:unit",
-    "benchmark": "node --max-old-space-size=4096 ../../node_modules/.bin/benchmark 'test/perf/*.test.ts'",
+    "benchmark": "node --max-old-space-size=4096 --expose-gc ../../node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:perf": "mocha  \"test/perf/**/*.test.ts\"",
     "test:unit": "nyc mocha  \"test/unit/**/*.test.ts\"",
