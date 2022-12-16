@@ -1,11 +1,11 @@
 import {expect} from "chai";
 import {BranchNode, LeafNode, Node} from "../../../src/node";
 import {
-  createNodeFromDynamicMultiProof,
-  createDynamicMultiProof,
+  createNodeFromCompactMultiProof,
+  createCompactMultiProof,
   descriptorToBitlist,
   computeDescriptor,
-} from "../../../src/proof/dynamicMulti";
+} from "../../../src/proof/compactMulti";
 
 // Create a tree with leaves of different values
 function createTree(depth: number, index = 0): Node {
@@ -15,7 +15,7 @@ function createTree(depth: number, index = 0): Node {
   return new BranchNode(createTree(depth - 1, 2 ** depth + index), createTree(depth - 1, 2 ** depth + index + 1));
 }
 
-describe("DynamicMultiProof", () => {
+describe("CompactMultiProof", () => {
   const descriptorTestCases = [
     {
       input: Uint8Array.from([0b1000_0000]),
@@ -63,8 +63,8 @@ describe("DynamicMultiProof", () => {
   const tree = createTree(5);
   it("should roundtrip node -> proof -> node", () => {
     for (const {input} of descriptorTestCases) {
-      const proof = createDynamicMultiProof(tree, input);
-      const newNode = createNodeFromDynamicMultiProof(proof, input);
+      const proof = createCompactMultiProof(tree, input);
+      const newNode = createNodeFromCompactMultiProof(proof, input);
       expect(newNode.root).to.deep.equal(tree.root);
     }
   });

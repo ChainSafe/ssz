@@ -1,7 +1,7 @@
 import {Gindex} from "../gindex";
 import {Node} from "../node";
 import {createMultiProof, createNodeFromMultiProof} from "./multi";
-import {createNodeFromDynamicMultiProof, createDynamicMultiProof} from "./dynamicMulti";
+import {createNodeFromCompactMultiProof, createCompactMultiProof} from "./compactMulti";
 import {createNodeFromSingleProof, createSingleProof} from "./single";
 import {
   computeTreeOffsetProofSerializedLength,
@@ -11,13 +11,13 @@ import {
   serializeTreeOffsetProof,
 } from "./treeOffset";
 
-export {computeDescriptor, descriptorToBitlist} from "./dynamicMulti";
+export {computeDescriptor, descriptorToBitlist} from "./compactMulti";
 
 export enum ProofType {
   single = "single",
   treeOffset = "treeOffset",
   multi = "multi",
-  dynamicMulti = "dynamicMulti",
+  compactMulti = "compactMulti",
 }
 
 /**
@@ -27,7 +27,7 @@ export const ProofTypeSerialized = [
   ProofType.single, // 0
   ProofType.treeOffset, // 1
   ProofType.multi, // 2
-  ProofType.dynamicMulti, // 3
+  ProofType.compactMulti, // 3
 ];
 
 /**
@@ -63,13 +63,13 @@ export interface MultiProof {
   gindices: Gindex[];
 }
 
-export interface DynamicMultiProof {
-  type: ProofType.dynamicMulti;
+export interface CompactMultiProof {
+  type: ProofType.compactMulti;
   leaves: Uint8Array[];
   descriptor: Uint8Array;
 }
 
-export type Proof = SingleProof | TreeOffsetProof | MultiProof | DynamicMultiProof;
+export type Proof = SingleProof | TreeOffsetProof | MultiProof | CompactMultiProof;
 
 export interface SingleProofInput {
   type: ProofType.single;
@@ -85,12 +85,12 @@ export interface MultiProofInput {
   gindices: Gindex[];
 }
 
-export interface DynamicMultiProofInput {
-  type: ProofType.dynamicMulti;
+export interface CompactMultiProofInput {
+  type: ProofType.compactMulti;
   descriptor: Uint8Array;
 }
 
-export type ProofInput = SingleProofInput | TreeOffsetProofInput | MultiProofInput | DynamicMultiProofInput;
+export type ProofInput = SingleProofInput | TreeOffsetProofInput | MultiProofInput | CompactMultiProofInput;
 
 export function createProof(rootNode: Node, input: ProofInput): Proof {
   switch (input.type) {
@@ -120,10 +120,10 @@ export function createProof(rootNode: Node, input: ProofInput): Proof {
         gindices,
       };
     }
-    case ProofType.dynamicMulti: {
-      const leaves = createDynamicMultiProof(rootNode, input.descriptor);
+    case ProofType.compactMulti: {
+      const leaves = createCompactMultiProof(rootNode, input.descriptor);
       return {
-        type: ProofType.dynamicMulti,
+        type: ProofType.compactMulti,
         leaves,
         descriptor: input.descriptor,
       };
@@ -141,8 +141,8 @@ export function createNodeFromProof(proof: Proof): Node {
       return createNodeFromTreeOffsetProof(proof.offsets, proof.leaves);
     case ProofType.multi:
       return createNodeFromMultiProof(proof.leaves, proof.witnesses, proof.gindices);
-    case ProofType.dynamicMulti:
-      return createNodeFromDynamicMultiProof(proof.leaves, proof.descriptor);
+    case ProofType.compactMulti:
+      return createNodeFromCompactMultiProof(proof.leaves, proof.descriptor);
     default:
       throw new Error("Invalid proof type");
   }

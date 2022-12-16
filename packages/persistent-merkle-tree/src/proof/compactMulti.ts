@@ -4,25 +4,36 @@ import {computeProofBitstrings} from "./util";
 
 export function computeDescriptor(indices: Gindex[]): Uint8Array {
   // include all helper indices
-  const allBitstrings = new Set<GindexBitstring>();
+  const proofBitstrings = new Set<GindexBitstring>();
+  const pathBitstrings = new Set<GindexBitstring>();
   for (const leafIndex of indices) {
     const leafBitstring = convertGindexToBitstring(leafIndex);
-    allBitstrings.add(leafBitstring);
-    const {branch} = computeProofBitstrings(leafBitstring);
-    for (const branchIndex of branch) {
-      allBitstrings.add(branchIndex);
+    proofBitstrings.add(leafBitstring);
+    const {branch, path} = computeProofBitstrings(leafBitstring);
+    path.delete(leafBitstring);
+    for (const pathIndex of path) {
+      pathBitstrings.add(pathIndex);
     }
+    for (const branchIndex of branch) {
+      proofBitstrings.add(branchIndex);
+    }
+  }
+  for (const pathIndex of pathBitstrings) {
+    proofBitstrings.delete(pathIndex);
   }
 
   // sort gindex bitstrings in-order
-  const allBitstringsSorted = Array.from(allBitstrings).sort((a, b) => a.localeCompare(b));
+  const allBitstringsSorted = Array.from(proofBitstrings).sort((a, b) => a.localeCompare(b));
 
   // convert gindex bitstrings into descriptor bitstring
-  let prevGindexBitstring = "1";
   let descriptorBitstring = "";
   for (const gindexBitstring of allBitstringsSorted) {
-    descriptorBitstring += "1".padStart(Math.max(gindexBitstring.length - prevGindexBitstring.length, 0) + 1, "0");
-    prevGindexBitstring = gindexBitstring;
+    for (let i = 0; i < gindexBitstring.length; i++) {
+      if (gindexBitstring[gindexBitstring.length - 1 - i] === "1") {
+        descriptorBitstring += "1".padStart(i + 1, "0");
+        break;
+      }
+    }
   }
 
   // append zero bits to byte-alignt
@@ -97,12 +108,12 @@ export function descriptorToBitlist(descriptor: Uint8Array): boolean[] {
   throw new Error("Invalid descriptor: not enough 1 bits");
 }
 
-export function nodeToDynamicMultiProof(node: Node, bitlist: boolean[], bitIndex: number): Uint8Array[] {
+export function nodeToCompactMultiProof(node: Node, bitlist: boolean[], bitIndex: number): Uint8Array[] {
   if (bitlist[bitIndex]) {
     return [node.root];
   } else {
-    const left = nodeToDynamicMultiProof(node.left, bitlist, bitIndex + 1);
-    const right = nodeToDynamicMultiProof(node.right, bitlist, bitIndex + left.length * 2);
+    const left = nodeToCompactMultiProof(node.left, bitlist, bitIndex + 1);
+    const right = nodeToCompactMultiProof(node.right, bitlist, bitIndex + left.length * 2);
     return [...left, ...right];
   }
 }
@@ -112,7 +123,7 @@ export function nodeToDynamicMultiProof(node: Node, bitlist: boolean[], bitIndex
  *
  * Recursive definition
  */
-export function dynamicMultiProofToNode(
+export function compactMultiProofToNode(
   bitlist: boolean[],
   leaves: Uint8Array[],
   pointer: {bitIndex: number; leafIndex: number}
@@ -121,20 +132,20 @@ export function dynamicMultiProofToNode(
     return LeafNode.fromRoot(leaves[pointer.leafIndex++]);
   } else {
     return new BranchNode(
-      dynamicMultiProofToNode(bitlist, leaves, pointer),
-      dynamicMultiProofToNode(bitlist, leaves, pointer)
+      compactMultiProofToNode(bitlist, leaves, pointer),
+      compactMultiProofToNode(bitlist, leaves, pointer)
     );
   }
 }
 
-export function createDynamicMultiProof(rootNode: Node, descriptor: Uint8Array): Uint8Array[] {
-  return nodeToDynamicMultiProof(rootNode, descriptorToBitlist(descriptor), 0);
+export function createCompactMultiProof(rootNode: Node, descriptor: Uint8Array): Uint8Array[] {
+  return nodeToCompactMultiProof(rootNode, descriptorToBitlist(descriptor), 0);
 }
 
-export function createNodeFromDynamicMultiProof(leaves: Uint8Array[], descriptor: Uint8Array): Node {
+export function createNodeFromCompactMultiProof(leaves: Uint8Array[], descriptor: Uint8Array): Node {
   const bools = descriptorToBitlist(descriptor);
   if (bools.length !== leaves.length * 2 - 1) {
     throw new Error("Invalid multiproof: invalid number of leaves");
   }
-  return dynamicMultiProofToNode(bools, leaves, {bitIndex: 0, leafIndex: 0});
+  return compactMultiProofToNode(bools, leaves, {bitIndex: 0, leafIndex: 0});
 }
