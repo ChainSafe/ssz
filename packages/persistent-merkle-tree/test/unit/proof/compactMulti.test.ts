@@ -1,19 +1,11 @@
 import {expect} from "chai";
-import {BranchNode, LeafNode, Node} from "../../../src/node";
 import {
   createNodeFromCompactMultiProof,
   createCompactMultiProof,
   descriptorToBitlist,
   computeDescriptor,
 } from "../../../src/proof/compactMulti";
-
-// Create a tree with leaves of different values
-function createTree(depth: number, index = 0): Node {
-  if (!depth) {
-    return LeafNode.fromRoot(Buffer.alloc(32, index));
-  }
-  return new BranchNode(createTree(depth - 1, 2 ** depth + index), createTree(depth - 1, 2 ** depth + index + 1));
-}
+import {createTree} from "../../utils/tree";
 
 describe("CompactMultiProof", () => {
   const descriptorTestCases = [

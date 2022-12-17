@@ -8,15 +8,7 @@ import {
   ProofType,
   serializeProof,
 } from "../../../src/proof";
-import {Node, LeafNode, BranchNode} from "../../../src/node";
-
-// Create a tree with leaves of different values
-function createTree(depth: number, index = 0): Node {
-  if (!depth) {
-    return LeafNode.fromRoot(Buffer.alloc(32, index));
-  }
-  return new BranchNode(createTree(depth - 1, 2 ** depth + index), createTree(depth - 1, 2 ** depth + index + 1));
-}
+import {createTree} from "../../utils/tree";
 
 describe("proof equivalence", () => {
   it("should compute the same root from different proof types - single leaf", () => {
