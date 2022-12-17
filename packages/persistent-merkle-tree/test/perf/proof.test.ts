@@ -6,7 +6,10 @@ describe("Proofs", () => {
   const depth = 15;
   const tree = createTree(depth);
   const maxNumLeaves = 10;
-  const allLeafIndices = Array.from({length: maxNumLeaves}, (_, i) => 2n ** 15n + BigInt(i) ** 2n);
+  const allLeafIndices = Array.from(
+    {length: maxNumLeaves},
+    (_, i) => BigInt(2) ** BigInt(depth) + BigInt(i) ** BigInt(2)
+  );
   for (let numLeaves = 1; numLeaves < 5; numLeaves++) {
     const leafIndices = allLeafIndices.slice(0, numLeaves);
 
