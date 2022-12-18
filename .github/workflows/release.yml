@@ -16,7 +16,7 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v2
         with:
-          node-version: "lts/fermium"
+          node-version: 18
           registry-url: "https://registry.npmjs.org"
 
       - run: yarn install --frozen-lockfile --ignore-optional && yarn build

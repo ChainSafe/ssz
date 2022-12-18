@@ -6,8 +6,15 @@ jobs:
   test:
     name: Tests
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [16, 18]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{matrix.node}}
       - name: Bootstrap
         run: yarn
       - name: Build
