@@ -58,7 +58,7 @@ function getBit(bitlist: Uint8Array, bitIndex: number): boolean {
   const byte = bitlist[byteIdx];
   switch (bit) {
     case 0:
-      return byte & 0b1000_0000 !== 0
+      return (byte & 0b1000_0000) !== 0;
     case 1:
       return Boolean(byte & 0b0100_0000);
     case 2:
