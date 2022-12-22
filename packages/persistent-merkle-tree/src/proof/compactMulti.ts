@@ -60,19 +60,19 @@ function getBit(bitlist: Uint8Array, bitIndex: number): boolean {
     case 0:
       return (byte & 0b1000_0000) !== 0;
     case 1:
-      return Boolean(byte & 0b0100_0000);
+      return (byte & 0b0100_0000) !== 0;
     case 2:
-      return Boolean(byte & 0b0010_0000);
+      return (byte & 0b0010_0000) !== 0;
     case 3:
-      return Boolean(byte & 0b0001_0000);
+      return (byte & 0b0001_0000) !== 0;
     case 4:
-      return Boolean(byte & 0b0000_1000);
+      return (byte & 0b0000_1000) !== 0;
     case 5:
-      return Boolean(byte & 0b0000_0100);
+      return (byte & 0b0000_0100) !== 0;
     case 6:
-      return Boolean(byte & 0b0000_0010);
+      return (byte & 0b0000_0010) !== 0;
     case 7:
-      return Boolean(byte & 0b0000_0001);
+      return (byte & 0b0000_0001) !== 0;
     default:
       throw new Error("unreachable");
   }
