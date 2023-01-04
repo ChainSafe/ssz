@@ -8,7 +8,6 @@ import {
   concatGindices,
   getNode,
 } from "@chainsafe/persistent-merkle-tree";
-import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -21,7 +20,7 @@ import {
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
 } from "../viewDU/container";
-
+import {Case} from "../util/strings";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
