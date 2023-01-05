@@ -1,6 +1,6 @@
 import {newInstance} from "./wasm";
 import {HashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
-import SHA256 from "./sha256";
+import SHA256, {allocUnsafe} from "./sha256";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, SHA256};
 
 const ctx = newInstance();
@@ -18,7 +18,7 @@ export function digest(data: Uint8Array): Uint8Array {
   if (data.length <= ctx.INPUT_LENGTH) {
     inputUint8Array.set(data);
     ctx.digest(data.length);
-    const output = new Uint8Array(32);
+    const output = allocUnsafe(32);
     output.set(outputUint8Array);
     return output;
   }
@@ -32,7 +32,7 @@ export function digest64(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
     inputUint8Array.set(data);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    const output = new Uint8Array(32);
+    const output = allocUnsafe(32);
     output.set(outputUint8Array);
     return output;
   }
@@ -44,7 +44,7 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2, 32);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    const output = new Uint8Array(32);
+    const output = allocUnsafe(32);
     output.set(outputUint8Array);
     return output;
   }
@@ -98,7 +98,7 @@ function update(data: Uint8Array): void {
 
 function final(): Uint8Array {
   ctx.final(wasmOutputValue);
-  const output = new Uint8Array(32);
+  const output = allocUnsafe(32);
   output.set(outputUint8Array);
   return output;
 }

@@ -28,7 +28,7 @@ export function fromHexString(hex: string): Uint8Array {
   }
 
   const byteLen = hex.length / 2;
-  const bytes = new Uint8Array(byteLen);
+  const bytes = allocUnsafe(byteLen);
   for (let i = 0; i < byteLen; i++) {
     const byte = parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
     bytes[i] = byte;
@@ -44,4 +44,35 @@ export function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
     if (a[i] !== b[i]) return false;
   }
   return true;
+}
+
+/**
+ * Returns a `Uint8Array` of the requested size. Referenced memory will
+ * be initialized to 0.
+ *
+ * @param {number} [size]
+ * @returns {Uint8Array}
+ */
+export function alloc(size = 0): Uint8Array {
+  if (globalThis.Buffer != null && globalThis.Buffer.alloc != null) {
+    return globalThis.Buffer.alloc(size);
+  }
+
+  return new Uint8Array(size);
+}
+
+/**
+ * Where possible returns a Uint8Array of the requested size that references
+ * uninitialized memory. Only use if you are certain you will immediately
+ * overwrite every value in the returned `Uint8Array`.
+ *
+ * @param {number} [size]
+ * @returns {Uint8Array}
+ */
+export function allocUnsafe(size = 0): Uint8Array {
+  if (globalThis.Buffer != null && globalThis.Buffer.allocUnsafe != null) {
+    return globalThis.Buffer.allocUnsafe(size);
+  }
+
+  return new Uint8Array(size);
 }

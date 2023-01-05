@@ -1,5 +1,5 @@
 import {concatGindices, Gindex, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
-import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
+import {fromHexString, toHexString, byteArrayEquals, alloc} from "../util/byteArray";
 import {splitIntoRootChunks} from "../util/merkleize";
 import {ByteViews} from "./abstract";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
@@ -22,7 +22,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
 
   defaultValue(): ByteArray {
     // Since it's a byte array the minSize is bytes is the default size
-    return new Uint8Array(this.minSize);
+    return alloc(this.minSize);
   }
 
   getView(tree: Tree): ByteArray {
@@ -38,7 +38,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   }
 
   commitViewDU(view: ByteArray): Node {
-    const uint8Array = new Uint8Array(this.value_serializedSize(view));
+    const uint8Array = alloc(this.value_serializedSize(view));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, view);
     return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);

@@ -40,8 +40,24 @@ export default class SHA256 {
 
   final(): Uint8Array {
     this.ctx.final(this.wasmOutputValue);
-    const output = new Uint8Array(32);
+    const output = allocUnsafe(32);
     output.set(this.uint8OutputArray);
     return output;
   }
+}
+
+/**
+ * Where possible returns a Uint8Array of the requested size that references
+ * uninitialized memory. Only use if you are certain you will immediately
+ * overwrite every value in the returned `Uint8Array`.
+ *
+ * @param {number} [size]
+ * @returns {Uint8Array}
+ */
+export function allocUnsafe(size = 0): Uint8Array {
+  if (globalThis.Buffer != null && globalThis.Buffer.allocUnsafe != null) {
+    return globalThis.Buffer.allocUnsafe(size);
+  }
+
+  return new Uint8Array(size);
 }

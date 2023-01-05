@@ -5,8 +5,9 @@ import {
   HashObject,
   hashObjectToByteArray,
 } from "@chainsafe/as-sha256";
+import {allocUnsafe} from "./proof/util";
 
-const input = new Uint8Array(64);
+const input = allocUnsafe(64);
 
 /**
  * Hash two 32 byte arrays
@@ -25,7 +26,7 @@ export function hashTwoObjects(a: HashObject, b: HashObject): HashObject {
 }
 
 export function hashObjectToUint8Array(obj: HashObject): Uint8Array {
-  const byteArr = new Uint8Array(32);
+  const byteArr = allocUnsafe(32);
   hashObjectToByteArray(obj, byteArr, 0);
   return byteArr;
 }
