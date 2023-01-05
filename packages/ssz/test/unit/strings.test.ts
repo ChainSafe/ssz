@@ -22,4 +22,4 @@ for (const key of keys) {
       });
     }
   });
-};
+}
