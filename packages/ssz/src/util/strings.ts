@@ -27,5 +27,5 @@ export const Case = {
         .replaceAll(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => substr[0] + "-" + substr[1])
     );
   },
-  eth2: (field: string): string => Case.snake(field),
+  eth2: (field: string): string => Case.snake(field).replace(/(\d)$/, "_$1"),
 };

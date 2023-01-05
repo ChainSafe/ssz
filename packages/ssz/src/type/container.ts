@@ -550,12 +550,7 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
     }
     return keyFromCaseMap as string;
   } else if (jsonCase) {
-    if (jsonCase === "eth2") {
-      const snake = Case.snake(fieldName as string);
-      return snake.replace(/(\d)$/, "_$1");
-    } else {
-      return Case[jsonCase](fieldName as string);
-    }
+    return Case[jsonCase](fieldName as string);
   } else {
     return fieldName as string;
   }
