@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.4...@chainsafe/ssz@0.10.0) (2023-01-05)
+
+
+### Features
+
+* Switch case dependency to internal helper ([#296](http://chainsafe/ssz/issues/296)) ([900811c](http://chainsafe/ssz/commits/900811c70eabf7613d6ba28f473a9a394f1ca544))
+
+
+
+
+
 ## [0.9.4](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.3...@chainsafe/ssz@0.9.4) (2022-12-08)
 
 **Note:** Version bump only for package @chainsafe/ssz
