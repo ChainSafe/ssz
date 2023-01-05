@@ -34,7 +34,7 @@ export type ContainerOptions<Fields extends Record<string, unknown>> = {
   getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
 };
 
-type KeyCase =
+export type KeyCase =
   | "eth2"
   | "snake"
   | "constant"

@@ -1,4 +1,5 @@
 // Convert camelCase strings to various other formats  -- assumes input field is camelCase or camel1Case
+
 export const Case = {
   snake: (field: string): string =>
     field
@@ -26,4 +27,5 @@ export const Case = {
         .replaceAll(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => substr[0] + "-" + substr[1])
     );
   },
+  eth2: (field: string): string => Case.snake(field),
 };
