@@ -8,7 +8,6 @@ import {
   concatGindices,
   getNode,
 } from "@chainsafe/persistent-merkle-tree";
-import Case from "case";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -21,7 +20,7 @@ import {
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
 } from "../viewDU/container";
-
+import {Case} from "../util/strings";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
@@ -35,7 +34,7 @@ export type ContainerOptions<Fields extends Record<string, unknown>> = {
   getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
 };
 
-type KeyCase =
+export type KeyCase =
   | "eth2"
   | "snake"
   | "constant"
@@ -551,12 +550,7 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
     }
     return keyFromCaseMap as string;
   } else if (jsonCase) {
-    if (jsonCase === "eth2") {
-      const snake = Case.snake(fieldName as string);
-      return snake.replace(/(\d)$/, "_$1");
-    } else {
-      return Case[jsonCase](fieldName as string);
-    }
+    return Case[jsonCase](fieldName as string);
   } else {
     return fieldName as string;
   }

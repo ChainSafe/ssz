@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: "14.16.0"
+          node-version: 18
       - run: corepack enable
       - run: yarn --immutable && yarn build
 

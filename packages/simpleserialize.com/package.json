@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "simpleserialize.com",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "repository": "https://github.com/chainsafe/simpleserialize.com",
   "author": "Chainsafe Systems",
   "license": "MIT",
