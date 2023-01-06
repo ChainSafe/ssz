@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "yarn"
+    schedule:
+      interval: daily
+    requiredLabels:
+      - dependencies
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope

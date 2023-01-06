@@ -4,19 +4,18 @@
   "workspaces": [
     "packages/*"
   ],
+  "packageManager": "yarn@3.2.3",
   "scripts": {
-    "clean": "rm -rf ./packages/*/lib ./packages/*/*.ts ldinfo",
-    "build": "yarn clean && lerna run build",
-    "lint": "lerna run lint --no-bail",
-    "check-types": "lerna run check-types --no-bail",
-    "coverage": "lerna run coverage --no-bail",
-    "test": "lerna run test --no-bail",
+    "clean": "yarn workspaces foreach -vp run clean",
+    "build": "yarn clean && yarn workspaces foreach -vp --topological run build",
+    "lint": "yarn workspaces foreach -vp run lint",
+    "check-types": "yarn workspaces foreach -vp run check-types",
+    "coverage": "yarn workspaces foreach -vp run coverage",
+    "test": "yarn workspaces foreach -vp run test",
     "benchmark:files": "NODE_OPTIONS=--max_old_space_size=4096 benchmark --config .benchrc.yaml",
     "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
-    "publish:release": "lerna publish from-package --yes --no-verify-access",
-    "release": "lerna version --no-push --sign-git-commit",
-    "check-readme": "lerna run check-readme"
+    "check-readme": "yarn workspaces foreach -vp run check-readme"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.6",
@@ -45,7 +44,6 @@
     "karma-firefox-launcher": "^1.2.0",
     "karma-mocha": "^1.3.0",
     "karma-webpack": "^5.0.0",
-    "lerna": "^3.20.2",
     "mocha": "^8.3.2",
     "nyc": "^15.0.0",
     "prettier": "^2.2.1",

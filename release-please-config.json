@@ -1,0 +1,42 @@
+{
+    "bootstrap-sha": "3e81068b1cdb284fc207126257fb588e2eb269fd",
+    "plugins": [],
+    "packages": {
+      "packages/as-sha256": {
+        "releaseType": "node",
+        "draft": false,
+        "prerelease": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
+        "changelogPath": "CHANGELOG.md",
+        "versioning": "default"
+      },
+      "packages/persistent-merkle-tree": {
+        "releaseType": "node",
+        "draft": false,
+        "prerelease": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
+        "changelogPath": "CHANGELOG.md",
+        "versioning": "default"
+      },
+      "packages/persistent-ts": {
+        "releaseType": "node",
+        "draft": false,
+        "prerelease": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
+        "changelogPath": "CHANGELOG.md",
+        "versioning": "default"
+      },
+      "packages/ssz": {
+        "releaseType": "node",
+        "draft": false,
+        "prerelease": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
+        "changelogPath": "CHANGELOG.md",
+        "versioning": "default"
+      }
+    }
+  }

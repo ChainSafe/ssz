@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [ Tests ]
+    branches: [master]
+    types:
+      - completed
+
+jobs:
+  maybe-release:
+    name: release
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          command: manifest
+          token: ${{secrets.GITHUB_TOKEN}}
+          default-branch: master
+          release-type: node
+          monorepo-tags: true
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":true}]'
+      
+      - uses: actions/checkout@v3
+        if: ${{ steps.release.outputs.releases_created }}
+        
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - run: corepack enable
+      
+      - run: yarn install --immutable
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - run: git config user.email $(git --no-pager show -s --format='%ae' HEAD)
+        if: ${{ steps.release.outputs.releases_created }}
+      - run: git config user.name $(git --no-pager show -s --format='%an' HEAD)
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - run: yarn build
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ steps.release.outputs.releases_created }}
+        run: |
+          echo npmAuthToken: "$NODE_AUTH_TOKEN" >> ./.yarnrc.yml
+          
+      - run: yarn workspaces foreach -v --exclude root --exclude simpleserialize.com --no-private npm publish --tolerate-republish --access public
+        if: ${{ steps.release.outputs.releases_created }}
+
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: simpleserialize
+          directory: ./packages/simpleserialize.com/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
