@@ -56,9 +56,12 @@ jobs:
       - run: yarn workspaces foreach -v --exclude root --exclude simpleserialize.com --no-private npm publish --tolerate-republish --access public
         if: ${{ steps.release.outputs.releases_created }}
 
-      - name: Deploy Website
-        uses: peaceiris/actions-gh-pages@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: packages/simpleserialize.com/dist
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: simpleserialize
+          directory: ./packages/simpleserialize.com/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
