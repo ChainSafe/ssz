@@ -1,15 +1,14 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {createNodeFromProof, createProof, deserializeProof, ProofType, serializeProof} from "../../../src/proof";
-import {Node, LeafNode, BranchNode} from "../../../src/node";
-
-// Create a tree with leaves of different values
-function createTree(depth: number, index = 0): Node {
-  if (!depth) {
-    return LeafNode.fromRoot(Buffer.alloc(32, index));
-  }
-  return new BranchNode(createTree(depth - 1, 2 ** depth + index), createTree(depth - 1, 2 ** depth + index + 1));
-}
+import {
+  computeDescriptor,
+  createNodeFromProof,
+  createProof,
+  deserializeProof,
+  ProofType,
+  serializeProof,
+} from "../../../src/proof";
+import {createTree} from "../../utils/tree";
 
 describe("proof equivalence", () => {
   it("should compute the same root from different proof types - single leaf", () => {
@@ -19,9 +18,14 @@ describe("proof equivalence", () => {
       const singleProof = createProof(node, {type: ProofType.single, gindex});
       const treeOffsetProof = createProof(node, {type: ProofType.treeOffset, gindices: [gindex]});
       const multiProof = createProof(node, {type: ProofType.multi, gindices: [gindex]});
+      const compactMultiProof = createProof(node, {
+        type: ProofType.compactMulti,
+        descriptor: computeDescriptor([gindex]),
+      });
       expect(node.root).to.deep.equal(createNodeFromProof(singleProof).root);
       expect(node.root).to.deep.equal(createNodeFromProof(treeOffsetProof).root);
       expect(node.root).to.deep.equal(createNodeFromProof(multiProof).root);
+      expect(node.root).to.deep.equal(createNodeFromProof(compactMultiProof).root);
     }
   });
   it("should compute the same root from different proof types - multiple leaves", function () {
@@ -43,9 +47,14 @@ describe("proof equivalence", () => {
 
               const treeOffsetProof = createProof(node, {type: ProofType.treeOffset, gindices});
               const multiProof = createProof(node, {type: ProofType.multi, gindices});
+              const compactMultiProof = createProof(node, {
+                type: ProofType.compactMulti,
+                descriptor: computeDescriptor(gindices),
+              });
 
               expect(node.root).to.deep.equal(createNodeFromProof(treeOffsetProof).root);
               expect(node.root).to.deep.equal(createNodeFromProof(multiProof).root);
+              expect(node.root).to.deep.equal(createNodeFromProof(compactMultiProof).root);
             }
           }
         }
