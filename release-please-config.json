@@ -1,13 +1,13 @@
 {
-    "bootstrap-sha": "a612641bb333bc984b5805398eac3559a4904712",
+    "bootstrap-sha": "3e81068b1cdb284fc207126257fb588e2eb269fd",
     "plugins": [],
     "packages": {
       "packages/as-sha256": {
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
-        "bumpMinorPreMajor": false,
-        "bumpPatchForMinorPreMajor": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
         "versioning": "default"
       },
@@ -15,8 +15,8 @@
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
-        "bumpMinorPreMajor": false,
-        "bumpPatchForMinorPreMajor": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
         "versioning": "default"
       },
@@ -24,8 +24,8 @@
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
-        "bumpMinorPreMajor": false,
-        "bumpPatchForMinorPreMajor": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
         "versioning": "default"
       },
@@ -33,8 +33,8 @@
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
-        "bumpMinorPreMajor": false,
-        "bumpPatchForMinorPreMajor": false,
+        "bumpMinorPreMajor": true,
+        "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
         "versioning": "default"
       }
