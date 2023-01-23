@@ -1,6 +1,6 @@
 {
     "bootstrap-sha": "3e81068b1cdb284fc207126257fb588e2eb269fd",
-    "plugins": [],
+    "plugins": ["node-workspace"],
     "packages": {
       "packages/as-sha256": {
         "releaseType": "node",
