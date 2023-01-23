@@ -60,6 +60,7 @@ jobs:
 
 
       - name: Publish to Cloudflare Pages
+        if: ${{ steps.release.outputs.releases_created }}
         uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -86,6 +87,7 @@ jobs:
           cache: 'yarn'
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
+      - run: corepack enable
       - name: Updating yarn.lock file
         run: yarn install --mode=update-lockfile
       - uses: stefanzweifel/git-auto-commit-action@v4
