@@ -12,6 +12,8 @@ jobs:
     name: release
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
     steps:
 
       - uses: google-github-actions/release-please-action@v3
@@ -65,3 +67,27 @@ jobs:
           projectName: simpleserialize
           directory: ./packages/simpleserialize.com/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  update-pull-request:
+    name: Update pull request
+    runs-on: ubuntu-latest
+    needs: maybe-release
+    if: ${{ !needs.maybe-release.outputs.releases_created }}
+    steps:
+      - name: Fetching the repository
+        uses: actions/checkout@v3
+        with:
+          ref: release-please--branches--master
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+      - name: Updating yarn.lock file
+        run: yarn install --mode=update-lockfile
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: update lockfile post release-please
+          file_pattern: 'yarn.lock'
