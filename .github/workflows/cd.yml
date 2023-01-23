@@ -60,6 +60,7 @@ jobs:
 
 
       - name: Publish to Cloudflare Pages
+        if: ${{ steps.release.outputs.releases_created }}
         uses: cloudflare/pages-action@1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
