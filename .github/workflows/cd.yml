@@ -18,7 +18,7 @@ jobs:
         id: release
         with:
           command: manifest
-          token: ${{secrets.GITHUB_TOKEN}}
+          token: ${{secrets.GH_TOKEN}}
           default-branch: master
           release-type: node
           monorepo-tags: true
