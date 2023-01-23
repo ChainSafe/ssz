@@ -86,6 +86,7 @@ jobs:
           cache: 'yarn'
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
+      - run: corepack enable
       - name: Updating yarn.lock file
         run: yarn install --mode=update-lockfile
       - uses: stefanzweifel/git-auto-commit-action@v4
