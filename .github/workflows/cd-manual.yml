@@ -1,6 +1,5 @@
 name: CloudFlare Pages Deploy
 on: 
-  push:
   workflow_dispatch:
 
 jobs:
