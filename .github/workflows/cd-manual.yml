@@ -1,4 +1,4 @@
-name: CloudFlare Deploy
+name: CloudFlare Pages Deploy
 on: 
   workflow_dispatch:
 
