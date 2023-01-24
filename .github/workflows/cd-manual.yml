@@ -14,8 +14,11 @@ jobs:
             with:
               cache: yarn
               node-version: '16'
-          - run: yarn install --frozen-lockfile
-          - run: yarn build
+          - run: corepack enable
+          - name: Bootstrap
+            run: yarn --immutable
+          - name: Build
+            run: yarn build
           - name: Publish to Cloudflare Pages
             uses: cloudflare/pages-action@1
             with:
