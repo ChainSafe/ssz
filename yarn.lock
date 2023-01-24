@@ -1664,13 +1664,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/persistent-merkle-tree@^0.4.2, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
+"@chainsafe/persistent-merkle-tree@^0.5.0, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
   version: 0.0.0-use.local
   resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
   dependencies:
     "@chainsafe/as-sha256": ^0.3.1
   languageName: unknown
   linkType: soft
+
+"@chainsafe/persistent-merkle-tree@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "@chainsafe/persistent-merkle-tree@npm:0.4.2"
+  dependencies:
+    "@chainsafe/as-sha256": ^0.3.1
+  checksum: 9533e478a1a990e8cf8710a2eeb84c6f08c7b61726a43dbe2165316256839c29a2ff17923bce5e5effec446d832de8b0a5bc896ef5db80bce059af5d1bd20d8d
+  languageName: node
+  linkType: hard
 
 "@chainsafe/persistent-ts@workspace:packages/persistent-ts":
   version: 0.0.0-use.local
@@ -1685,7 +1694,7 @@ __metadata:
   resolution: "@chainsafe/ssz@workspace:packages/ssz"
   dependencies:
     "@chainsafe/as-sha256": ^0.3.1
-    "@chainsafe/persistent-merkle-tree": ^0.4.2
+    "@chainsafe/persistent-merkle-tree": ^0.5.0
     "@types/js-yaml": ^4.0.5
     js-yaml: ^3.13.1
     snappyjs: ^0.6.1

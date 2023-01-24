@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.4.2...persistent-merkle-tree-v0.5.0) (2023-01-24)
+
+
+### Features
+
+* compact multiproof ([#292](https://github.com/ChainSafe/ssz/issues/292)) ([5f1ea99](https://github.com/ChainSafe/ssz/commit/5f1ea9914d0796cf0c9a8c2f9622fc5e459a12f2))
+
 ## [0.4.2](https://github.com/ChainSafe/persistent-merkle-tree/compare/@chainsafe/persistent-merkle-tree@0.4.1...@chainsafe/persistent-merkle-tree@0.4.2) (2022-05-31)
 
 * Fix treeZeroAfterIndex for negative index (#268)
