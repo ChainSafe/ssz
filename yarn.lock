@@ -1624,7 +1624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/as-sha256@^0.3.1, @chainsafe/as-sha256@workspace:packages/as-sha256":
+"@chainsafe/as-sha256@^0.3.1, @chainsafe/as-sha256@workspace:^, @chainsafe/as-sha256@workspace:packages/as-sha256":
   version: 0.0.0-use.local
   resolution: "@chainsafe/as-sha256@workspace:packages/as-sha256"
   dependencies:
@@ -1664,14 +1664,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/persistent-merkle-tree@^0.5.0, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
-  version: 0.0.0-use.local
-  resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
-  dependencies:
-    "@chainsafe/as-sha256": ^0.3.1
-  languageName: unknown
-  linkType: soft
-
 "@chainsafe/persistent-merkle-tree@npm:^0.4.2":
   version: 0.4.2
   resolution: "@chainsafe/persistent-merkle-tree@npm:0.4.2"
@@ -1681,23 +1673,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chainsafe/persistent-merkle-tree@workspace:^, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
+  version: 0.0.0-use.local
+  resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
+  dependencies:
+    "@chainsafe/as-sha256": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@chainsafe/persistent-ts@workspace:packages/persistent-ts":
   version: 0.0.0-use.local
   resolution: "@chainsafe/persistent-ts@workspace:packages/persistent-ts"
   dependencies:
     fast-check: ^1.15.1
-  languageName: unknown
-  linkType: soft
-
-"@chainsafe/ssz@^0.10.0, @chainsafe/ssz@workspace:packages/ssz":
-  version: 0.0.0-use.local
-  resolution: "@chainsafe/ssz@workspace:packages/ssz"
-  dependencies:
-    "@chainsafe/as-sha256": ^0.3.1
-    "@chainsafe/persistent-merkle-tree": ^0.5.0
-    "@types/js-yaml": ^4.0.5
-    js-yaml: ^3.13.1
-    snappyjs: ^0.6.1
   languageName: unknown
   linkType: soft
 
@@ -1711,6 +1699,18 @@ __metadata:
   checksum: 4ce4b867c60dbee98772fe075037c7ef9a7894f97a4fb04f3cfd57e11fa683b8c23a4d80b53592d10fbd4e2abac43c9099181cfaee587619366f49091b9e5fcb
   languageName: node
   linkType: hard
+
+"@chainsafe/ssz@workspace:^, @chainsafe/ssz@workspace:packages/ssz":
+  version: 0.0.0-use.local
+  resolution: "@chainsafe/ssz@workspace:packages/ssz"
+  dependencies:
+    "@chainsafe/as-sha256": "workspace:^"
+    "@chainsafe/persistent-merkle-tree": "workspace:^"
+    "@types/js-yaml": ^4.0.5
+    js-yaml: ^3.13.1
+    snappyjs: ^0.6.1
+  languageName: unknown
+  linkType: soft
 
 "@dapplion/benchmark@npm:^0.2.2":
   version: 0.2.2
@@ -11806,7 +11806,7 @@ __metadata:
     "@babel/runtime": ^7.14.6
     "@babel/types": ^7.14.5
     "@chainsafe/lodestar-types": ^0.37.0-dev.267dce705c
-    "@chainsafe/ssz": ^0.10.0
+    "@chainsafe/ssz": "workspace:^"
     "@types/bn.js": ^5.1.0
     "@types/deep-equal": ^1.0.1
     "@types/file-saver": ^2.0.2
