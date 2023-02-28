@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "author": "ChainSafe Systems",
   "homepage": "https://github.com/chainsafe/ssz",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "main": "lib/index.js",
   "files": [
     "lib/**/*.d.ts",
