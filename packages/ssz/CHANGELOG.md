@@ -20,6 +20,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
 
+## [0.10.2](https://github.com/ChainSafe/ssz/compare/ssz-v0.10.1...ssz-v0.10.2) (2023-02-28)
+
+
+### Bug Fixes
+
+* Remove replaceAll with replace(/.../g,... for ES2019 compatibility ([#309](https://github.com/ChainSafe/ssz/issues/309)) ([3c0a2c5](https://github.com/ChainSafe/ssz/commit/3c0a2c5dfe678925cd1b35b486b66738cdb12e99))
+
 ## [0.9.4](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.3...@chainsafe/ssz@0.9.4) (2022-12-08)
 
 **Note:** Version bump only for package @chainsafe/ssz
