@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {hashTwoObjects, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
+import {hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
 import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes";
 import * as sszAltair from "../../lodestarTypes/altair/sszTypes";
 import {
@@ -130,7 +130,7 @@ describe("HashTreeRoot individual components", () => {
     });
 
     itBench(`hashTwoObjects x${count}`, () => {
-      for (let i = 0; i < count; i++) hashTwoObjects(ho, ho);
+      for (let i = 0; i < count; i++) hasher.digest64HashObjects(ho, ho);
     });
   }
 

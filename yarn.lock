@@ -1669,6 +1669,7 @@ __metadata:
   resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
   dependencies:
     "@chainsafe/as-sha256": ^0.3.1
+    "@noble/hashes": ^1.3.0
   languageName: unknown
   linkType: soft
 
@@ -1917,6 +1918,13 @@ __metadata:
     readdirp: ^2.2.1
     upath: ^1.1.1
   checksum: 843ace6eb89aca519706c1c6ad2e31f84c744bfc0ef8ba8ad90eccbe7c976b07f8be00f38e0cc74093f70b20ad5f7e63ea21074ba9fd8c08dce0b874f682cfe0
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@noble/hashes@npm:1.3.0"
+  checksum: 06d27f9e7dfbe379dbfb02073358aa2c25a6363acc3a2b09e074f0f47f630da1d5a81c731696faa9407594371b61a27c496076fdecc2f60fb1c6a24247a5dbef
   languageName: node
   linkType: hard
 

@@ -13,6 +13,19 @@
     "url": "git+https://github.com/chainsafe/as-sha256.git"
   },
   "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./hashObject": "./lib/hashObject.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "*",
+        "lib/*",
+        "lib/*/index"
+      ]
+    }
+  },
   "types": "lib/index.d.ts",
   "files": [
     "lib",
