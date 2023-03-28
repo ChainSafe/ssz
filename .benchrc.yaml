@@ -2,6 +2,7 @@
 colors: true
 require:
   - ts-node/register
+  - setHasher.mjs
 
 # benchmark opts
 threshold: 3
