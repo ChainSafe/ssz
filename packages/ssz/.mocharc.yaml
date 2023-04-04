@@ -1,5 +1,7 @@
 colors: true
-require: ts-node/register
+require:
+- ts-node/register
+- ../../setHasher.mjs
 # benchmark
 maxMs: 30_000
 threshold: 3
