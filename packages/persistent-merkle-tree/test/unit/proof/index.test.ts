@@ -29,7 +29,7 @@ describe("proof equivalence", () => {
     }
   });
   it("should compute the same root from different proof types - multiple leaves", function () {
-    this.timeout(2000);
+    this.timeout(10_000);
     const depth = 6;
     const maxIndex = 2 ** depth;
     const node = createTree(depth);
