@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.3.1...as-sha256-v0.4.0) (2023-04-05)
+
+
+### Features
+
+* add swappable hasher, default to noble-hashes ([#314](https://github.com/ChainSafe/ssz/issues/314)) ([4b44614](https://github.com/ChainSafe/ssz/commit/4b44614003619b2c5477363a3c85287e2f2987bd))
+
 ## [0.3.1](https://github.com/chainsafe/as-sha256/compare/@chainsafe/as-sha256@0.3.0...@chainsafe/as-sha256@0.3.1) (2022-04-14)
 
 * Add and use a new helper to digest64 two 32 bytes (#255)

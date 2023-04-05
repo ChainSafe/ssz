@@ -20,6 +20,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
 
+## [0.11.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.10.2...ssz-v0.11.0) (2023-04-05)
+
+
+### Features
+
+* add swappable hasher, default to noble-hashes ([#314](https://github.com/ChainSafe/ssz/issues/314)) ([4b44614](https://github.com/ChainSafe/ssz/commit/4b44614003619b2c5477363a3c85287e2f2987bd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 0.4.0
+    * @chainsafe/persistent-merkle-tree bumped to 0.6.0
+
 ## [0.10.2](https://github.com/ChainSafe/ssz/compare/ssz-v0.10.1...ssz-v0.10.2) (2023-02-28)
 
 
