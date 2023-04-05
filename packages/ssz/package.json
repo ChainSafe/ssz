@@ -35,8 +35,8 @@
   },
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@chainsafe/as-sha256": "^0.3.1",
-    "@chainsafe/persistent-merkle-tree": "^0.5.0"
+    "@chainsafe/as-sha256": "workspace:^",
+    "@chainsafe/persistent-merkle-tree": "workspace:^"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",
