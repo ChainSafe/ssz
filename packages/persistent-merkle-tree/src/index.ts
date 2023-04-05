@@ -1,5 +1,5 @@
 export * from "./gindex";
-export * from "./hash";
+export * from "./hasher";
 export * from "./node";
 export * from "./packedNode";
 export * from "./proof";
