@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.5.0...persistent-merkle-tree-v0.6.0) (2023-04-05)
+
+
+### Features
+
+* add swappable hasher, default to noble-hashes ([#314](https://github.com/ChainSafe/ssz/issues/314)) ([4b44614](https://github.com/ChainSafe/ssz/commit/4b44614003619b2c5477363a3c85287e2f2987bd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 0.4.0
+
 ## [0.5.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.4.2...persistent-merkle-tree-v0.5.0) (2023-01-24)
 
 

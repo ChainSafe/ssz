@@ -1624,7 +1624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/as-sha256@^0.3.1, @chainsafe/as-sha256@workspace:^, @chainsafe/as-sha256@workspace:packages/as-sha256":
+"@chainsafe/as-sha256@workspace:^, @chainsafe/as-sha256@workspace:packages/as-sha256":
   version: 0.0.0-use.local
   resolution: "@chainsafe/as-sha256@workspace:packages/as-sha256"
   dependencies:
@@ -1664,15 +1664,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/persistent-merkle-tree@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "@chainsafe/persistent-merkle-tree@npm:0.4.2"
-  dependencies:
-    "@chainsafe/as-sha256": ^0.3.1
-  checksum: 9533e478a1a990e8cf8710a2eeb84c6f08c7b61726a43dbe2165316256839c29a2ff17923bce5e5effec446d832de8b0a5bc896ef5db80bce059af5d1bd20d8d
-  languageName: node
-  linkType: hard
-
 "@chainsafe/persistent-merkle-tree@workspace:^, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
   version: 0.0.0-use.local
   resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
@@ -1689,17 +1680,6 @@ __metadata:
     fast-check: ^1.15.1
   languageName: unknown
   linkType: soft
-
-"@chainsafe/ssz@npm:^0.9.1":
-  version: 0.9.4
-  resolution: "@chainsafe/ssz@npm:0.9.4"
-  dependencies:
-    "@chainsafe/as-sha256": ^0.3.1
-    "@chainsafe/persistent-merkle-tree": ^0.4.2
-    case: ^1.6.3
-  checksum: 4ce4b867c60dbee98772fe075037c7ef9a7894f97a4fb04f3cfd57e11fa683b8c23a4d80b53592d10fbd4e2abac43c9099181cfaee587619366f49091b9e5fcb
-  languageName: node
-  linkType: hard
 
 "@chainsafe/ssz@workspace:^, @chainsafe/ssz@workspace:packages/ssz":
   version: 0.0.0-use.local
@@ -4120,13 +4100,6 @@ __metadata:
   version: 1.0.30001252
   resolution: "caniuse-lite@npm:1.0.30001252"
   checksum: 3606080032694083b07d716b39a020127b366d206de797d5a10739f1bfd9a96b7f2d979ab6c6aed7657493dee9c23f9e293c1dc3c0ff433ab83a3690aecd7d61
-  languageName: node
-  linkType: hard
-
-"case@npm:^1.6.3":
-  version: 1.6.3
-  resolution: "case@npm:1.6.3"
-  checksum: 43fcbb1dff1c4add94dd2bc98bd923d6616f10bff6959adf686d192c3db7d7ced35410761e1ac94cc4a1f5c41c86406ad79d390805539e421e8a77e553f67223
   languageName: node
   linkType: hard
 
