@@ -1,4 +1,4 @@
-import type {HashObject} from "@chainsafe/as-sha256/hashObject";
+import type {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
 
 export type Hasher = {
   /**

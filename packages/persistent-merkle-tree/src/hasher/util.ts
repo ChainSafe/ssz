@@ -1,4 +1,4 @@
-import {byteArrayToHashObject, HashObject, hashObjectToByteArray} from "@chainsafe/as-sha256/hashObject";
+import {byteArrayToHashObject, HashObject, hashObjectToByteArray} from "@chainsafe/as-sha256/lib/hashObject";
 
 export function hashObjectToUint8Array(obj: HashObject): Uint8Array {
   const byteArr = new Uint8Array(32);
