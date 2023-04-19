@@ -1,4 +1,4 @@
-import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher";
+import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
 import {zeroHash} from "./zeros";
 
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {

@@ -1,4 +1,4 @@
-import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher";
+import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
 
 // create array of "zero hashes", successively hashed zero chunks
 const zeroHashes = [new Uint8Array(32)];
