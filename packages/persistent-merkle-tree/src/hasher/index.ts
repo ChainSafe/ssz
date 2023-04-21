@@ -1,7 +1,7 @@
 import {Hasher} from "./types";
 import {hasher as nobleHasher} from "./noble";
 
-export {HashObject} from "@chainsafe/as-sha256/hashObject";
+export {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
 export * from "./types";
 export * from "./util";
 

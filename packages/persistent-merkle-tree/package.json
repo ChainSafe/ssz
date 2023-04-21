@@ -3,12 +3,6 @@
   "version": "0.6.0",
   "description": "Merkle tree implemented as a persistent datastructure",
   "main": "lib/index.js",
-  "exports": {
-    ".": "./lib/index.js",
-    "./hasher": "./lib/hasher/index.js",
-    "./hasher/as-sha256": "./lib/hasher/as-sha256.js",
-    "./hasher/noble": "./lib/hasher/noble.js"
-  },
   "typesVersions": {
     "*": {
       "*": [
