@@ -20,6 +20,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
 
+## [0.11.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.11.0...ssz-v0.11.1) (2023-04-21)
+
+
+### Bug Fixes
+
+* Use file path imports ([#318](https://github.com/ChainSafe/ssz/issues/318)) ([f459e92](https://github.com/ChainSafe/ssz/commit/f459e92fbafc5d9388bfa630291855ec32a09566))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 0.4.1
+    * @chainsafe/persistent-merkle-tree bumped to 0.6.1
+
 ## [0.11.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.10.2...ssz-v0.11.0) (2023-04-05)
 
 
