@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.6.0...persistent-merkle-tree-v0.6.1) (2023-04-21)
+
+
+### Bug Fixes
+
+* Use file path imports ([#318](https://github.com/ChainSafe/ssz/issues/318)) ([f459e92](https://github.com/ChainSafe/ssz/commit/f459e92fbafc5d9388bfa630291855ec32a09566))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 0.4.1
+
 ## [0.6.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.5.0...persistent-merkle-tree-v0.6.0) (2023-04-05)
 
 
