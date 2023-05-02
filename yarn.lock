@@ -1647,23 +1647,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainsafe/lodestar-params@npm:^0.37.0-dev.d7acdcf4a5":
-  version: 0.37.0-dev.d7acdcf4a5
-  resolution: "@chainsafe/lodestar-params@npm:0.37.0-dev.d7acdcf4a5"
-  checksum: 36021375396414d72b4ba95c587d09528f10b822e51f6332131520c581ae61a57fbf98b9700bdbf64f2d9c6f59b6ee69ac716e4130037c15d96dac143bc0912f
-  languageName: node
-  linkType: hard
-
-"@chainsafe/lodestar-types@npm:^0.37.0-dev.267dce705c":
-  version: 0.37.0-dev.d7acdcf4a5
-  resolution: "@chainsafe/lodestar-types@npm:0.37.0-dev.d7acdcf4a5"
-  dependencies:
-    "@chainsafe/lodestar-params": ^0.37.0-dev.d7acdcf4a5
-    "@chainsafe/ssz": ^0.9.1
-  checksum: 20e8610fe4175b0c27f5adc3bc043666a755d1c6c64a5adfbc7656222de45ef3b345ee4a1cce10d3e36a905e15bd2bd14efad2b2fffce79a127dbd65b6d83482
-  languageName: node
-  linkType: hard
-
 "@chainsafe/persistent-merkle-tree@workspace:^, @chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree":
   version: 0.0.0-use.local
   resolution: "@chainsafe/persistent-merkle-tree@workspace:packages/persistent-merkle-tree"
@@ -1879,6 +1862,23 @@ __metadata:
   version: 0.1.3
   resolution: "@istanbuljs/schema@npm:0.1.3"
   checksum: 61c5286771676c9ca3eb2bd8a7310a9c063fb6e0e9712225c8471c582d157392c88f5353581c8c9adbe0dff98892317d2fdfc56c3499aa42e0194405206a963a
+  languageName: node
+  linkType: hard
+
+"@lodestar/params@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@lodestar/params@npm:1.7.2"
+  checksum: 4770e4a5a48c95a7d9314e2838dc612403c04af6fe229d350fc7effe3da1176dd23bf4a50de336264d04d03ef8a7ddd76d032201aebad4e0625d39bf2202c64c
+  languageName: node
+  linkType: hard
+
+"@lodestar/types@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@lodestar/types@npm:1.7.2"
+  dependencies:
+    "@chainsafe/ssz": ^0.10.1
+    "@lodestar/params": ^1.7.2
+  checksum: 53b4748d82728677f9afd8e4f08d22de230d180f2e1f7aec64ad28769971838a5876f251f149f4a6719d334fa1ad8362cfb2adbd7bc68ce8690106b5c6f93341
   languageName: node
   linkType: hard
 
@@ -11786,8 +11786,8 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.14.6
     "@babel/types": ^7.14.5
-    "@chainsafe/lodestar-types": ^0.37.0-dev.267dce705c
     "@chainsafe/ssz": "workspace:^"
+    "@lodestar/types": ^1.7.2
     "@types/bn.js": ^5.1.0
     "@types/deep-equal": ^1.0.1
     "@types/file-saver": ^2.0.2

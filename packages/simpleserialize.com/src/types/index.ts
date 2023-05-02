@@ -1,5 +1,5 @@
 /**
- * @module types 
+ * @module types
  */
 
-export * from "@chainsafe/lodestar-types"
+export * from "@lodestar/types";
