@@ -21,6 +21,12 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
       test: /\.scss$/,
       use: [
           MiniCssExtractPlugin.loader,
@@ -86,6 +92,12 @@ const workerConfig = {
   },
   module: {
     rules: [
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
       {
         test: /worker?$/,
         loader: 'threads-webpack-plugin',
