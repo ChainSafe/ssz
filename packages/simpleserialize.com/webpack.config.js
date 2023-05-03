@@ -17,6 +17,10 @@ const config = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      '@chainsafe/persistent-merkle-tree/lib/hasher/index':
+        '../../node_modules/@chainsafe/persistent-merkle-tree/lib/hasher/noble',
+    },
   },
   module: {
     rules: [
@@ -76,6 +80,10 @@ const workerConfig = {
   name: "worker",
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      '@chainsafe/persistent-merkle-tree/lib/hasher/index':
+        '../../node_modules/@chainsafe/persistent-merkle-tree/lib/hasher/noble',
+    },
   },
   entry: {
     index: './src/components/worker/index.ts',
