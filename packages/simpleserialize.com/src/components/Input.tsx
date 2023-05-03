@@ -114,9 +114,14 @@ class Input extends React.Component<Props, State> {
     const inputTypeStr = this.getInputType();
     const type = this.types()[this.state.sszTypeName];
     const inputType = inputTypes[inputTypeStr];
-    const parsed = inputType.parse(this.state.input, type);
-    this.props.setOverlay(false);
-    return parsed;
+    try {
+      const parsed = inputType.parse(this.state.input, type);
+      this.props.setOverlay(false);
+      return parsed;
+    } catch (error) {
+      this.handleError(error as Error);
+      throw error;
+    }
   }
 
   async resetWith(inputType: string, sszTypeName: string): Promise<void> {
@@ -170,11 +175,16 @@ class Input extends React.Component<Props, State> {
   setInputType(inputType: string): void {
     const {sszTypeName, value} = this.state;
     const sszType = this.types()[sszTypeName];
-    const input = inputTypes[inputType].dump(value, sszType);
-    if (this.props.serializeModeOn) {
-      this.setState({serializeInputType: inputType, sszTypeName, input});
-    } else {
-      this.setState({deserializeInputType: inputType, sszTypeName, input});
+    try {
+      const input = inputTypes[inputType].dump(value, sszType);
+      if (this.props.serializeModeOn) {
+        this.setState({serializeInputType: inputType, sszTypeName, input});
+      } else {
+        this.setState({deserializeInputType: inputType, sszTypeName, input});
+      }
+    } catch (error) {
+      this.handleError(error as Error);
+      throw error;
     }
   }
 
