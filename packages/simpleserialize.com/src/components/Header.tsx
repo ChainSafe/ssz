@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-const SPEC_VERSION = "1.1.9";
+const SPEC_VERSION = "1.3.0";
 
 export default function Header(): JSX.Element {
   return (

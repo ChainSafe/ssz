@@ -26,8 +26,8 @@ export default function Footer(): JSX.Element {
           </a>
         </div>
         <div>
-          <a className="is-link has-text-grey" href="https://www.npmjs.com/package/@chainsafe/lodestar-types">
-            @chainsafe/lodestar-types {pkg.dependencies["@chainsafe/lodestar-types"]}
+          <a className="is-link has-text-grey" href="https://www.npmjs.com/package/@lodestar/types">
+            @lodestar/types {pkg.dependencies["@lodestar/types"]}
           </a>
         </div>
       </div>
