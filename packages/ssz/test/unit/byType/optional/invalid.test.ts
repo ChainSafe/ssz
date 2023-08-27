@@ -1,4 +1,3 @@
-import {expect} from "chai";
 import {UintNumberType, OptionalType} from "../../../../src";
 import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
