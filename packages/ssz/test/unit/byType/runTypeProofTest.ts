@@ -1,6 +1,6 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
-import {BitArray, ContainerType, fromHexString, JsonPath, Type} from "../../../src";
+import {BitArray, ContainerType, fromHexString, JsonPath, Type, OptionalType} from "../../../src";
 import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite";
 import {ArrayBasicTreeView} from "../../../src/view/arrayBasic";
 import {RootHex} from "../../lodestarTypes";
@@ -88,6 +88,9 @@ function getJsonPathsFromValue(value: unknown, parentPath: JsonPath = [], jsonPa
  * Returns the end type of a JSON path
  */
 function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unknown> {
+  if (type instanceof OptionalType) {
+    type = type.getPropertyType() as CompositeTypeAny;
+  }
   for (const jsonProp of jsonPath) {
     type = type.getPropertyType(jsonProp) as CompositeTypeAny;
   }
@@ -104,6 +107,9 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
     if (typeof jsonProp === "number") {
       view = (view as ArrayBasicTreeView<any>).get(jsonProp);
     } else if (typeof jsonProp === "string") {
+      if (type instanceof OptionalType) {
+        type = type.getPropertyType();
+      }
       if (type instanceof ContainerType) {
         // Coerce jsonProp to a fieldName. JSON paths may be in JSON notation or fieldName notation
         const fieldName = type["jsonKeyToFieldName"][jsonProp] ?? jsonProp;
@@ -131,6 +137,10 @@ function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath
     if (typeof jsonProp === "number") {
       json = (json as unknown[])[jsonProp];
     } else if (typeof jsonProp === "string") {
+      if (type instanceof OptionalType) {
+        type = type.getPropertyType();
+      }
+
       if (type instanceof ContainerType) {
         if (type["jsonKeyToFieldName"][jsonProp] === undefined) {
           throw Error(`Unknown jsonProp ${jsonProp} for type ${type.typeName}`);
