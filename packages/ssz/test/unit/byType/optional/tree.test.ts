@@ -23,7 +23,7 @@ describe("Optional view tests", () => {
 
   it("optional composite type", () => {
     const type = new OptionalType(SimpleObject);
-    const value: ValueOf<typeof type> = {a:9,b:11};
+    const value: ValueOf<typeof type> = {a: 9, b: 11};
     const root = type.hashTreeRoot(value);
 
     const view = type.toView(value);
