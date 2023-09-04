@@ -166,6 +166,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
 
   getIndexProperty(index: number): string | number | null {
     if (isCompositeType(this.elementType)) {
+      // TODO: need to unconcat the VALUE_GINDEX from the index
       return this.elementType.getIndexProperty(index);
     } else {
       throw Error("not applicable for Optional basic type");
