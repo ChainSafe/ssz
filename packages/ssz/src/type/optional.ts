@@ -1,9 +1,9 @@
-import {concatGindices, getNode, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {Type, ByteViews, JsonPath} from "./abstract";
-import {CompositeType, isCompositeType} from "./composite";
+import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
+import {CompositeType, CompositeTypeAny, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -27,8 +27,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   ValueOfType<ElementType>
 > {
   readonly typeName: string;
-  readonly depth = 1;
-  readonly maxChunkCount = 1;
+  readonly depth: number;
+  readonly maxChunkCount: number;
   readonly fixedSize = null;
   readonly minSize: number;
   readonly maxSize: number;
@@ -39,9 +39,13 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     super();
 
     this.typeName = opts?.typeName ?? `Optional[${elementType.typeName}]`;
+    this.maxChunkCount = elementType.maxChunkCount;
+    // Depth includes the extra level for the true/false node
+    this.depth = elementType.depth + 1;
 
     this.minSize = 0;
-    this.maxSize = elementType.maxSize;
+    // Max size includes prepended 0x01 byte
+    this.maxSize = elementType.maxSize + 1;
   }
 
   static named<ElementType extends Type<unknown>>(
@@ -55,24 +59,34 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     return null as ValueOfType<ElementType>;
   }
 
-  getView(tree: Tree): ValueOfType<ElementType> {
-    return this.tree_toValue(tree.rootNode);
+  // TODO fix
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getView(_tree: Tree): ValueOfType<ElementType> {
+    throw new Error("not implemented");
   }
 
+  // TODO fix
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getViewDU(node: Node): ValueOfType<ElementType> {
-    return this.tree_toValue(node);
+    throw new Error("not implemented");
   }
 
-  cacheOfViewDU(): unknown {
-    return;
-  }
-
+  // TODO fix
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   commitView(view: ValueOfType<ElementType>): Node {
-    return this.value_toTree(view);
+    throw new Error("not implemented");
   }
 
+  // TODO fix
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   commitViewDU(view: ValueOfType<ElementType>): Node {
-    return this.value_toTree(view);
+    throw new Error("not implemented");
+  }
+
+  // TODO fix
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  cacheOfViewDU(): unknown {
+    throw new Error("not implemented");
   }
 
   value_serializedSize(value: ValueOfType<ElementType>): number {
@@ -94,27 +108,35 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     } else {
       const selector = data.uint8Array[start];
       if (selector !== 1) {
-        throw Error(`Invalid selector=${selector} for Optional type`);
+        throw new Error(`Invalid selector for Optional type: ${selector}`);
       }
       return this.elementType.value_deserializeFromBytes(data, start + 1, end) as ValueOfType<ElementType>;
     }
   }
 
   tree_serializedSize(node: Node): number {
-    const length = getLengthFromRootNode(node);
-    return length === 1 ? 1 + this.elementType.value_serializedSize(node.left) : 0;
+    const selector = getLengthFromRootNode(node);
+
+    if (selector === 0) {
+      return 0;
+    } else if (selector === 1) {
+      return 1 + this.elementType.value_serializedSize(node.left);
+    } else {
+      throw new Error(`Invalid selector for Optional type: ${selector}`);
+    }
   }
 
   tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const selector = getLengthFromRootNode(node);
 
-    const valueNode = node.left;
     if (selector === 0) {
       return offset;
-    } else {
+    } else if (selector === 1) {
       output.uint8Array[offset] = 1;
+      return this.elementType.tree_serializeToBytes(output, offset + 1, node.left);
+    } else {
+      throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
-    return this.elementType.tree_serializeToBytes(output, offset + 1, valueNode);
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
@@ -126,7 +148,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     } else {
       selector = data.uint8Array[start];
       if (selector !== 1) {
-        throw Error(`Invalid selector=${selector} for Optional type`);
+        throw new Error(`Invalid selector for Optional type: ${selector}`);
       }
       valueNode = this.elementType.tree_deserializeFromBytes(data, start + 1, end);
     }
@@ -142,61 +164,71 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   protected getRoots(value: ValueOfType<ElementType>): Uint8Array[] {
-    const valueRoot = value ? this.elementType.hashTreeRoot(value) : new Uint8Array(32);
+    const valueRoot = value === null ? new Uint8Array(32) : this.elementType.hashTreeRoot(value);
     return [valueRoot];
   }
 
   // Proofs
 
-  getPropertyGindex(prop: string): bigint {
+  getPropertyGindex(prop: string): Gindex | null {
     if (isCompositeType(this.elementType)) {
       const propIndex = this.elementType.getPropertyGindex(prop);
-      if (propIndex === null) {
-        throw Error(`index not found for property=${prop}`);
-      }
-      return concatGindices([VALUE_GINDEX, propIndex]);
+      return propIndex === null ? propIndex : concatGindices([VALUE_GINDEX, propIndex]);
     } else {
       throw new Error("not applicable for Optional basic type");
     }
   }
 
-  getPropertyType(): Type<unknown> {
-    return this.elementType;
+  getPropertyType(prop: JsonPathProp): Type<unknown> {
+    if (isCompositeType(this.elementType)) {
+      return this.elementType.getPropertyType(prop);
+    } else {
+      throw new Error("not applicable for Optional basic type");
+    }
   }
 
-  getIndexProperty(index: number): string | number | null {
+  getIndexProperty(index: number): JsonPathProp | null {
     if (isCompositeType(this.elementType)) {
-      // TODO: need to unconcat the VALUE_GINDEX from the index
       return this.elementType.getIndexProperty(index);
     } else {
-      throw Error("not applicable for Optional basic type");
+      throw new Error("not applicable for Optional basic type");
     }
   }
 
   tree_createProofGindexes(node: Node, jsonPaths: JsonPath[]): Gindex[] {
     if (isCompositeType(this.elementType)) {
-      const valueNode = node.left;
-      const gindices = this.elementType.tree_createProofGindexes(valueNode, jsonPaths);
-      return gindices.map((gindex) => concatGindices([VALUE_GINDEX, gindex]));
+      return super.tree_createProofGindexes(node, jsonPaths);
     } else {
-      throw Error("not applicable for Optional basic type");
+      throw new Error("not applicable for Optional basic type");
     }
   }
 
-  tree_getLeafGindices(rootGindex: bigint, rootNode?: Node): bigint[] {
+  tree_getLeafGindices(rootGindex: bigint, rootNode?: Node): Gindex[] {
     if (!rootNode) {
-      throw Error("rootNode required");
+      throw new Error("Optional type requires rootNode argument to get leaves");
     }
 
-    const gindices: Gindex[] = [concatGindices([rootGindex, SELECTOR_GINDEX])];
     const selector = getLengthFromRootNode(rootNode);
-    const extendedFieldGindex = concatGindices([rootGindex, VALUE_GINDEX]);
-    if (selector !== 0 && isCompositeType(this.elementType)) {
-      gindices.push(...this.elementType.tree_getLeafGindices(extendedFieldGindex, getNode(rootNode, VALUE_GINDEX)));
+    const isComposite = isCompositeType(this.elementType);
+
+    if (isComposite && selector === 1) {
+      return [
+        //
+        ...(this.elementType as CompositeTypeAny).tree_getLeafGindices(
+          concatGindices([rootGindex, VALUE_GINDEX]),
+          rootNode.left
+        ),
+        concatGindices([rootGindex, SELECTOR_GINDEX]),
+      ];
+    } else if (selector === 0 || selector === 1) {
+      return [
+        //
+        concatGindices([rootGindex, VALUE_GINDEX]),
+        concatGindices([rootGindex, SELECTOR_GINDEX]),
+      ];
     } else {
-      gindices.push(extendedFieldGindex);
+      throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
-    return gindices;
   }
 
   // JSON
