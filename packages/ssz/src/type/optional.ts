@@ -3,7 +3,7 @@ import {mixInLength} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
-import {CompositeType, CompositeTypeAny, isCompositeType} from "./composite";
+import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -39,7 +39,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     super();
 
     this.typeName = opts?.typeName ?? `Optional[${elementType.typeName}]`;
-    this.maxChunkCount = elementType.maxChunkCount;
+    this.maxChunkCount = 1;
     // Depth includes the extra level for the true/false node
     this.depth = elementType.depth + 1;
 
@@ -59,34 +59,29 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     return null as ValueOfType<ElementType>;
   }
 
-  // TODO fix
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getView(_tree: Tree): ValueOfType<ElementType> {
-    throw new Error("not implemented");
+  // TODO add an OptionalView
+  getView(tree: Tree): ValueOfType<ElementType> {
+    return this.tree_toValue(tree.rootNode);
   }
 
-  // TODO fix
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // TODO add an OptionalViewDU
   getViewDU(node: Node): ValueOfType<ElementType> {
-    throw new Error("not implemented");
+    return this.tree_toValue(node);
   }
 
-  // TODO fix
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // TODO add an OptionalView
   commitView(view: ValueOfType<ElementType>): Node {
-    throw new Error("not implemented");
+    return this.value_toTree(view);
   }
 
-  // TODO fix
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // TODO add an OptionalViewDU
   commitViewDU(view: ValueOfType<ElementType>): Node {
-    throw new Error("not implemented");
+    return this.value_toTree(view);
   }
 
-  // TODO fix
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // TODO add an OptionalViewDU
   cacheOfViewDU(): unknown {
-    throw new Error("not implemented");
+    return;
   }
 
   value_serializedSize(value: ValueOfType<ElementType>): number {
@@ -170,7 +165,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
 
   // Proofs
 
-  getPropertyGindex(prop: string): Gindex | null {
+  getPropertyGindex(prop: JsonPathProp): Gindex | null {
     if (isCompositeType(this.elementType)) {
       const propIndex = this.elementType.getPropertyGindex(prop);
       return propIndex === null ? propIndex : concatGindices([VALUE_GINDEX, propIndex]);
@@ -209,15 +204,11 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     }
 
     const selector = getLengthFromRootNode(rootNode);
-    const isComposite = isCompositeType(this.elementType);
 
-    if (isComposite && selector === 1) {
+    if (isCompositeType(this.elementType) && selector === 1) {
       return [
         //
-        ...(this.elementType as CompositeTypeAny).tree_getLeafGindices(
-          concatGindices([rootGindex, VALUE_GINDEX]),
-          rootNode.left
-        ),
+        ...this.elementType.tree_getLeafGindices(concatGindices([rootGindex, VALUE_GINDEX]), rootNode.left),
         concatGindices([rootGindex, SELECTOR_GINDEX]),
       ];
     } else if (selector === 0 || selector === 1) {
