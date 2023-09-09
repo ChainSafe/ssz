@@ -11,6 +11,7 @@ export {ListCompositeType} from "./type/listComposite";
 export {NoneType} from "./type/none";
 export {UintBigintType, UintNumberType} from "./type/uint";
 export {UnionType} from "./type/union";
+export {OptionalType} from "./type/optional";
 export {VectorBasicType} from "./type/vectorBasic";
 export {VectorCompositeType} from "./type/vectorComposite";
 

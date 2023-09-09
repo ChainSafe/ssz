@@ -1,6 +1,6 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
-import {BitArray, ContainerType, fromHexString, JsonPath, Type} from "../../../src";
+import {BitArray, ContainerType, fromHexString, JsonPath, OptionalType, Type} from "../../../src";
 import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite";
 import {ArrayBasicTreeView} from "../../../src/view/arrayBasic";
 import {RootHex} from "../../lodestarTypes";
@@ -101,6 +101,10 @@ function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unkno
  */
 function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
+    if (type instanceof OptionalType) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      type = type.elementType;
+    }
     if (typeof jsonProp === "number") {
       view = (view as ArrayBasicTreeView<any>).get(jsonProp);
     } else if (typeof jsonProp === "string") {
@@ -128,6 +132,10 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
  */
 function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
+    if (type instanceof OptionalType) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      type = type.elementType;
+    }
     if (typeof jsonProp === "number") {
       json = (json as unknown[])[jsonProp];
     } else if (typeof jsonProp === "string") {
