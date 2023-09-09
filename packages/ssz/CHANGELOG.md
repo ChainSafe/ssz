@@ -20,6 +20,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
 
+## [0.12.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.11.1...ssz-v0.12.0) (2023-09-09)
+
+
+### Features
+
+* add optional ssz type ([#329](https://github.com/ChainSafe/ssz/issues/329)) ([3b714a2](https://github.com/ChainSafe/ssz/commit/3b714a29f8e69524ee5133ef3a28029d1d9f6669))
+
 ## [0.11.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.11.0...ssz-v0.11.1) (2023-04-21)
 
 
