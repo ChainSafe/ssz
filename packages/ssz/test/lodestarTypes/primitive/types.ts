@@ -28,7 +28,10 @@ export type SyncPeriod = UintNum64;
 export type CommitteeIndex = UintNum64;
 export type SubcommitteeIndex = UintNum64;
 export type ValidatorIndex = UintNum64;
+export type WithdrawalIndex = UintNum64;
+export type BlobIndex = UintNum64;
 export type Gwei = UintBn64;
+export type Wei = UintBn256;
 export type Root = Bytes32;
 export type Version = Bytes4;
 export type DomainType = Bytes4;
@@ -42,3 +45,5 @@ export type ExecutionAddress = Bytes20;
 
 /** Common non-spec type to represent roots as strings */
 export type RootHex = string;
+/** Non-spec type to signal time is represented in seconds */
+export type TimeSeconds = number;

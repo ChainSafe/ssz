@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import {ssz as phase0} from "../phase0";
 import {ssz as altair} from "../altair";
 import {ssz as bellatrix} from "../bellatrix";
+import {ssz as capella} from "../capella";
+import {ssz as deneb} from "../deneb";
 
 /**
  * Index the ssz types that differ by fork
@@ -29,5 +29,132 @@ export const allForks = {
     SignedBeaconBlock: bellatrix.SignedBeaconBlock,
     BeaconState: bellatrix.BeaconState,
     Metadata: altair.Metadata,
+  },
+  capella: {
+    BeaconBlockBody: capella.BeaconBlockBody,
+    BeaconBlock: capella.BeaconBlock,
+    SignedBeaconBlock: capella.SignedBeaconBlock,
+    BeaconState: capella.BeaconState,
+    Metadata: altair.Metadata,
+  },
+  deneb: {
+    BeaconBlockBody: deneb.BeaconBlockBody,
+    BeaconBlock: deneb.BeaconBlock,
+    SignedBeaconBlock: deneb.SignedBeaconBlock,
+    BeaconState: deneb.BeaconState,
+    Metadata: altair.Metadata,
+  },
+};
+
+/**
+ * Index the execution ssz types that differ by fork
+ * A record of AllForksExecutionSSZTypes indexed by fork
+ */
+export const allForksExecution = {
+  bellatrix: {
+    BeaconBlockBody: bellatrix.BeaconBlockBody,
+    BeaconBlock: bellatrix.BeaconBlock,
+    SignedBeaconBlock: bellatrix.SignedBeaconBlock,
+    BeaconState: bellatrix.BeaconState,
+    ExecutionPayload: bellatrix.ExecutionPayload,
+    ExecutionPayloadHeader: bellatrix.ExecutionPayloadHeader,
+    BuilderBid: bellatrix.BuilderBid,
+    SignedBuilderBid: bellatrix.SignedBuilderBid,
+    SSEPayloadAttributes: bellatrix.SSEPayloadAttributes,
+  },
+  capella: {
+    BeaconBlockBody: capella.BeaconBlockBody,
+    BeaconBlock: capella.BeaconBlock,
+    SignedBeaconBlock: capella.SignedBeaconBlock,
+    BeaconState: capella.BeaconState,
+    // Not used in phase0 but added for type consitency
+    ExecutionPayload: capella.ExecutionPayload,
+    ExecutionPayloadHeader: capella.ExecutionPayloadHeader,
+    BuilderBid: capella.BuilderBid,
+    SignedBuilderBid: capella.SignedBuilderBid,
+    SSEPayloadAttributes: capella.SSEPayloadAttributes,
+  },
+  deneb: {
+    BeaconBlockBody: deneb.BeaconBlockBody,
+    BeaconBlock: deneb.BeaconBlock,
+    SignedBeaconBlock: deneb.SignedBeaconBlock,
+    BeaconState: deneb.BeaconState,
+    ExecutionPayload: deneb.ExecutionPayload,
+    ExecutionPayloadHeader: deneb.ExecutionPayloadHeader,
+    BuilderBid: deneb.BuilderBid,
+    SignedBuilderBid: deneb.SignedBuilderBid,
+    SSEPayloadAttributes: deneb.SSEPayloadAttributes,
+  },
+};
+
+/**
+ * Index the blinded ssz types that differ by fork
+ * A record of AllForksBlindedSSZTypes indexed by fork
+ */
+export const allForksBlinded = {
+  bellatrix: {
+    BeaconBlockBody: bellatrix.BlindedBeaconBlockBody,
+    BeaconBlock: bellatrix.BlindedBeaconBlock,
+    SignedBeaconBlock: bellatrix.SignedBlindedBeaconBlock,
+  },
+  capella: {
+    BeaconBlockBody: capella.BlindedBeaconBlockBody,
+    BeaconBlock: capella.BlindedBeaconBlock,
+    SignedBeaconBlock: capella.SignedBlindedBeaconBlock,
+  },
+  deneb: {
+    BeaconBlockBody: deneb.BlindedBeaconBlockBody,
+    BeaconBlock: deneb.BlindedBeaconBlock,
+    SignedBeaconBlock: deneb.SignedBlindedBeaconBlock,
+  },
+};
+
+export const allForksLightClient = {
+  altair: {
+    BeaconBlock: altair.BeaconBlock,
+    BeaconBlockBody: altair.BeaconBlockBody,
+    LightClientHeader: altair.LightClientHeader,
+    LightClientBootstrap: altair.LightClientBootstrap,
+    LightClientUpdate: altair.LightClientUpdate,
+    LightClientFinalityUpdate: altair.LightClientFinalityUpdate,
+    LightClientOptimisticUpdate: altair.LightClientOptimisticUpdate,
+    LightClientStore: altair.LightClientStore,
+  },
+  bellatrix: {
+    BeaconBlock: bellatrix.BeaconBlock,
+    BeaconBlockBody: bellatrix.BeaconBlockBody,
+    LightClientHeader: altair.LightClientHeader,
+    LightClientBootstrap: altair.LightClientBootstrap,
+    LightClientUpdate: altair.LightClientUpdate,
+    LightClientFinalityUpdate: altair.LightClientFinalityUpdate,
+    LightClientOptimisticUpdate: altair.LightClientOptimisticUpdate,
+    LightClientStore: altair.LightClientStore,
+  },
+  capella: {
+    BeaconBlock: capella.BeaconBlock,
+    BeaconBlockBody: capella.BeaconBlockBody,
+    LightClientHeader: capella.LightClientHeader,
+    LightClientBootstrap: capella.LightClientBootstrap,
+    LightClientUpdate: capella.LightClientUpdate,
+    LightClientFinalityUpdate: capella.LightClientFinalityUpdate,
+    LightClientOptimisticUpdate: capella.LightClientOptimisticUpdate,
+    LightClientStore: capella.LightClientStore,
+  },
+  deneb: {
+    BeaconBlock: deneb.BeaconBlock,
+    BeaconBlockBody: deneb.BeaconBlockBody,
+    LightClientHeader: deneb.LightClientHeader,
+    LightClientBootstrap: deneb.LightClientBootstrap,
+    LightClientUpdate: deneb.LightClientUpdate,
+    LightClientFinalityUpdate: deneb.LightClientFinalityUpdate,
+    LightClientOptimisticUpdate: deneb.LightClientOptimisticUpdate,
+    LightClientStore: deneb.LightClientStore,
+  },
+};
+
+export const allForksBlobs = {
+  deneb: {
+    BlobSidecar: deneb.BlobSidecar,
+    BlindedBlobSidecar: deneb.BlindedBlobSidecar,
   },
 };

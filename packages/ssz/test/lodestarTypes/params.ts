@@ -5,6 +5,9 @@ export const FINALIZED_ROOT_DEPTH = 6;
 export const SYNC_COMMITTEE_SUBNET_COUNT = 4;
 export const MAX_REQUEST_BLOCKS = 2 ** 10; // 1024
 export const JUSTIFICATION_BITS_LENGTH = 4;
+export const BLOCK_BODY_EXECUTION_PAYLOAD_DEPTH = 4;
+export const MAX_REQUEST_BLOCKS_DENEB = 2 ** 7; // 128
+export const BYTES_PER_FIELD_ELEMENT = 32;
 
 export const ACTIVE_PRESET = process.env.LODESTAR_PRESET === "mainnet" ? "mainnet" : "minimal";
 
@@ -26,15 +29,10 @@ const presetMainnet = {
   // 5 (plus 1.25)
   HYSTERESIS_UPWARD_MULTIPLIER: 5,
 
-  // Fork Choice
-  // ---------------------------------------------------------------
-  // 2**3 (= 8)
-  SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 8,
-
   // Gwei values
   // ---------------------------------------------------------------
   // 2**0 * 10**9 (= 1,000,000,000) Gwei
-  MIN_DEPOSIT_AMOUNT: BigInt(1000000000),
+  MIN_DEPOSIT_AMOUNT: 1000000000,
   // 2**5 * 10**9 (= 32,000,000,000) Gwei
   MAX_EFFECTIVE_BALANCE: 32000000000,
   // 2**0 * 10**9 (= 1,000,000,000) Gwei
@@ -95,20 +93,38 @@ const presetMainnet = {
   // 2**4 (= 16)
   MAX_VOLUNTARY_EXITS: 16,
 
+  // ALTAIR
+  /////////
   SYNC_COMMITTEE_SIZE: 512,
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 256,
   INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
   MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
   PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
+  MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
+  UPDATE_TIMEOUT: 8192,
 
-  INACTIVITY_PENALTY_QUOTIENT_MERGE: 16777216,
-  MIN_SLASHING_PENALTY_QUOTIENT_MERGE: 32,
-  PROPORTIONAL_SLASHING_MULTIPLIER_MERGE: 3,
-
+  // BELLATRIX
+  ////////////
+  INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
+  MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
+  PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
   MAX_BYTES_PER_TRANSACTION: 1073741824,
   MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
   BYTES_PER_LOGS_BLOOM: 256,
   MAX_EXTRA_DATA_BYTES: 32,
+
+  // CAPELLA
+  //////////
+  MAX_BLS_TO_EXECUTION_CHANGES: 16,
+  MAX_WITHDRAWALS_PER_PAYLOAD: 16,
+  MAX_VALIDATORS_PER_WITHDRAWALS_SWEEP: 16384,
+
+  // DENEB
+  ///////////
+  // https://github.com/ethereum/consensus-specs/blob/dev/presets/mainnet/eip4844.yaml
+  FIELD_ELEMENTS_PER_BLOB: 4096,
+  MAX_BLOB_COMMITMENTS_PER_BLOCK: 4096,
+  MAX_BLOBS_PER_BLOCK: 6,
 };
 
 const presetMinimal = {
@@ -129,15 +145,10 @@ const presetMinimal = {
   // 5 (plus 1.25)
   HYSTERESIS_UPWARD_MULTIPLIER: 5,
 
-  // Fork Choice
-  // ---------------------------------------------------------------
-  // 2**1 (= 1)
-  SAFE_SLOTS_TO_UPDATE_JUSTIFIED: 2,
-
   // Gwei values
   // ---------------------------------------------------------------
   // 2**0 * 10**9 (= 1,000,000,000) Gwei
-  MIN_DEPOSIT_AMOUNT: BigInt(1000000000),
+  MIN_DEPOSIT_AMOUNT: 1000000000,
   // 2**5 * 10**9 (= 32,000,000,000) Gwei
   MAX_EFFECTIVE_BALANCE: 32000000000,
   // 2**0 * 10**9 (= 1,000,000,000) Gwei
@@ -158,11 +169,11 @@ const presetMinimal = {
   // [customized] smaller state
   SLOTS_PER_HISTORICAL_ROOT: 64,
   /*
-// 2**8 (= 256) epochs
-MIN_VALIDATOR_WITHDRAWABILITY_DELAY: 256,
-// [customized] higher frequency of committee turnover and faster time to acceptable voluntary exit
-SHARD_COMMITTEE_PERIOD: 64,
-*/
+  // 2**8 (= 256) epochs
+  MIN_VALIDATOR_WITHDRAWABILITY_DELAY: 256,
+  // [customized] higher frequency of committee turnover and faster time to acceptable voluntary exit
+  SHARD_COMMITTEE_PERIOD: 64,
+  */
   // 2**2 (= 4) epochs
   MIN_EPOCHS_TO_INACTIVITY_PENALTY: 4,
 
@@ -205,20 +216,38 @@ SHARD_COMMITTEE_PERIOD: 64,
   // 2**4 (= 16)
   MAX_VOLUNTARY_EXITS: 16,
 
+  // ALTAIR
+  /////////
   SYNC_COMMITTEE_SIZE: 32,
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD: 8,
   INACTIVITY_PENALTY_QUOTIENT_ALTAIR: 50331648,
   MIN_SLASHING_PENALTY_QUOTIENT_ALTAIR: 64,
   PROPORTIONAL_SLASHING_MULTIPLIER_ALTAIR: 2,
+  MIN_SYNC_COMMITTEE_PARTICIPANTS: 1,
+  UPDATE_TIMEOUT: 64,
 
-  INACTIVITY_PENALTY_QUOTIENT_MERGE: 16777216,
-  MIN_SLASHING_PENALTY_QUOTIENT_MERGE: 32,
-  PROPORTIONAL_SLASHING_MULTIPLIER_MERGE: 3,
-
+  // BELLATRIX
+  ////////////
+  INACTIVITY_PENALTY_QUOTIENT_BELLATRIX: 16777216,
+  MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX: 32,
+  PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX: 3,
   MAX_BYTES_PER_TRANSACTION: 1073741824,
   MAX_TRANSACTIONS_PER_PAYLOAD: 1048576,
   BYTES_PER_LOGS_BLOOM: 256,
   MAX_EXTRA_DATA_BYTES: 32,
+
+  // CAPELLA
+  //////////
+  MAX_BLS_TO_EXECUTION_CHANGES: 16,
+  MAX_WITHDRAWALS_PER_PAYLOAD: 4,
+  MAX_VALIDATORS_PER_WITHDRAWALS_SWEEP: 16,
+
+  // DENEB
+  ///////////
+  // https://github.com/ethereum/consensus-specs/blob/dev/presets/minimal/eip4844.yaml
+  FIELD_ELEMENTS_PER_BLOB: 4,
+  MAX_BLOB_COMMITMENTS_PER_BLOCK: 16,
+  MAX_BLOBS_PER_BLOCK: 6,
 };
 
 export const preset = ACTIVE_PRESET === "mainnet" ? presetMainnet : presetMinimal;
