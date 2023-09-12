@@ -25,10 +25,10 @@ jobs:
           release-type: node
           monorepo-tags: true
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":true}]'
-      
+
       - uses: actions/checkout@v3
         if: ${{ steps.release.outputs.releases_created }}
-        
+
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
@@ -37,8 +37,8 @@ jobs:
         if: ${{ steps.release.outputs.releases_created }}
 
       - run: corepack enable
-      
-      - run: yarn install --immutable
+
+      - run: yarn install
         if: ${{ steps.release.outputs.releases_created }}
 
       - run: git config user.email $(git --no-pager show -s --format='%ae' HEAD)
@@ -54,7 +54,7 @@ jobs:
         if: ${{ steps.release.outputs.releases_created }}
         run: |
           echo npmAuthToken: "$NODE_AUTH_TOKEN" >> ./.yarnrc.yml
-          
+
       - run: yarn workspaces foreach -v --exclude root --exclude simpleserialize.com --no-private npm publish --tolerate-republish --access public
         if: ${{ steps.release.outputs.releases_created }}
 

@@ -1,5 +1,5 @@
 name: CloudFlare Pages Deploy
-on: 
+on:
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
               node-version: '16'
           - run: corepack enable
           - name: Bootstrap
-            run: yarn --immutable
+            run: yarn
           - name: Build
             run: yarn build
           - name: Publish to Cloudflare Pages

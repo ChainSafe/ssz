@@ -6,7 +6,7 @@ COPY packages/simpleserialize.com/package.json packages/simpleserialize.com/yarn
 
 
 RUN corepack enable
-RUN yarn install --immutable
+RUN yarn install
 
 COPY . .
 RUN npm rebuild node-sass
