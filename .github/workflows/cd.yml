@@ -36,7 +36,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: corepack enable
 
       - run: yarn install
         if: ${{ steps.release.outputs.releases_created }}

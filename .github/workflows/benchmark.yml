@@ -25,7 +25,6 @@ jobs:
         with:
           cache: yarn
           node-version: 18
-      - run: corepack enable
       - run: yarn && yarn build
 
       - name: Run benchmarks
