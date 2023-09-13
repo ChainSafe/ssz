@@ -1,16 +1,14 @@
 import {BitVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src";
-import * as phase0Ssz from "../phase0/sszTypes";
-import * as primitiveSsz from "../primitive/sszTypes";
 import {preset, FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT} from "../params";
-
 const {
   SYNC_COMMITTEE_SIZE,
-  SLOTS_PER_HISTORICAL_ROOT,
   HISTORICAL_ROOTS_LIMIT,
-  SLOTS_PER_EPOCH,
   VALIDATOR_REGISTRY_LIMIT,
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
+  SLOTS_PER_EPOCH,
 } = preset;
+import * as phase0Ssz from "../phase0/sszTypes";
+import * as primitiveSsz from "../primitive/sszTypes";
 
 const {
   Bytes32,
@@ -20,7 +18,6 @@ const {
   SubcommitteeIndex,
   ValidatorIndex,
   Root,
-  Version,
   BLSPubkey,
   BLSSignature,
   ParticipationFlags,
@@ -72,7 +69,7 @@ export const ContributionAndProof = new ContainerType(
     contribution: SyncCommitteeContribution,
     selectionProof: BLSSignature,
   },
-  {typeName: "ContributionAndProof", jsonCase: "eth2"}
+  {typeName: "ContributionAndProof", jsonCase: "eth2", cachePermanentRootStruct: true}
 );
 
 export const SignedContributionAndProof = new ContainerType(
@@ -101,23 +98,12 @@ export const SyncAggregate = new ContainerType(
   {typeName: "SyncCommitteeBits", jsonCase: "eth2"}
 );
 
-export const HistoricalBlockRoots = new VectorCompositeType(Root, SLOTS_PER_HISTORICAL_ROOT);
-export const HistoricalStateRoots = new VectorCompositeType(Root, SLOTS_PER_HISTORICAL_ROOT);
-
-export const HistoricalBatch = new ContainerType(
-  {
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots,
-  },
-  {typeName: "HistoricalBatch", jsonCase: "eth2"}
-);
-
 export const BeaconBlockBody = new ContainerType(
   {
     ...phase0Ssz.BeaconBlockBody.fields,
     syncAggregate: SyncAggregate,
   },
-  {typeName: "BeaconBlockBody", jsonCase: "eth2"}
+  {typeName: "BeaconBlockBody", jsonCase: "eth2", cachePermanentRootStruct: true}
 );
 
 export const BeaconBlock = new ContainerType(
@@ -128,7 +114,7 @@ export const BeaconBlock = new ContainerType(
     stateRoot: Root,
     body: BeaconBlockBody,
   },
-  {typeName: "BeaconBlock", jsonCase: "eth2"}
+  {typeName: "BeaconBlock", jsonCase: "eth2", cachePermanentRootStruct: true}
 );
 
 export const SignedBeaconBlock = new ContainerType(
@@ -152,8 +138,8 @@ export const BeaconState = new ContainerType(
     fork: phase0Ssz.Fork,
     // History
     latestBlockHeader: phase0Ssz.BeaconBlockHeader,
-    blockRoots: HistoricalBlockRoots,
-    stateRoots: HistoricalStateRoots,
+    blockRoots: phase0Ssz.HistoricalBlockRoots,
+    stateRoots: phase0Ssz.HistoricalStateRoots,
     historicalRoots: new ListCompositeType(Root, HISTORICAL_ROOTS_LIMIT),
     // Eth1
     eth1Data: phase0Ssz.Eth1Data,
@@ -182,31 +168,66 @@ export const BeaconState = new ContainerType(
   {typeName: "BeaconState", jsonCase: "eth2"}
 );
 
-export const LightClientSnapshot = new ContainerType(
+export const LightClientHeader = new ContainerType(
   {
-    header: phase0Ssz.BeaconBlockHeader,
-    currentSyncCommittee: SyncCommittee,
-    nextSyncCommittee: SyncCommittee,
+    beacon: phase0Ssz.BeaconBlockHeader,
   },
-  {typeName: "LightClientSnapshot", jsonCase: "eth2"}
+  {typeName: "LightClientHeader", jsonCase: "eth2"}
+);
+
+export const LightClientBootstrap = new ContainerType(
+  {
+    header: LightClientHeader,
+    currentSyncCommittee: SyncCommittee,
+    currentSyncCommitteeBranch: new VectorCompositeType(Bytes32, NEXT_SYNC_COMMITTEE_DEPTH),
+  },
+  {typeName: "LightClientBootstrap", jsonCase: "eth2"}
 );
 
 export const LightClientUpdate = new ContainerType(
   {
-    attestedHeader: phase0Ssz.BeaconBlockHeader,
+    attestedHeader: LightClientHeader,
     nextSyncCommittee: SyncCommittee,
     nextSyncCommitteeBranch: new VectorCompositeType(Bytes32, NEXT_SYNC_COMMITTEE_DEPTH),
-    finalizedHeader: phase0Ssz.BeaconBlockHeader,
+    finalizedHeader: LightClientHeader,
     finalityBranch: new VectorCompositeType(Bytes32, FINALIZED_ROOT_DEPTH),
     syncAggregate: SyncAggregate,
-    forkVersion: Version,
+    signatureSlot: Slot,
   },
   {typeName: "LightClientUpdate", jsonCase: "eth2"}
 );
 
+export const LightClientFinalityUpdate = new ContainerType(
+  {
+    attestedHeader: LightClientHeader,
+    finalizedHeader: LightClientHeader,
+    finalityBranch: new VectorCompositeType(Bytes32, FINALIZED_ROOT_DEPTH),
+    syncAggregate: SyncAggregate,
+    signatureSlot: Slot,
+  },
+  {typeName: "LightClientFinalityUpdate", jsonCase: "eth2"}
+);
+
+export const LightClientOptimisticUpdate = new ContainerType(
+  {
+    attestedHeader: LightClientHeader,
+    syncAggregate: SyncAggregate,
+    signatureSlot: Slot,
+  },
+  {typeName: "LightClientOptimisticUpdate", jsonCase: "eth2"}
+);
+
+export const LightClientUpdatesByRange = new ContainerType(
+  {
+    startPeriod: UintNum64,
+    count: UintNum64,
+  },
+  {typeName: "LightClientUpdatesByRange", jsonCase: "eth2"}
+);
+
 export const LightClientStore = new ContainerType(
   {
-    snapshot: LightClientSnapshot,
+    snapshot: LightClientBootstrap,
     validUpdates: new ListCompositeType(LightClientUpdate, EPOCHS_PER_SYNC_COMMITTEE_PERIOD * SLOTS_PER_EPOCH),
   },
   {typeName: "LightClientStore", jsonCase: "eth2"}

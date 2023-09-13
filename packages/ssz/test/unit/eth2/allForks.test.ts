@@ -15,10 +15,17 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
   type BeaconStatePhase0 = CompositeViewDU<typeof ssz.phase0.BeaconState>;
   type BeaconStateAltair = CompositeViewDU<typeof ssz.altair.BeaconState>;
   type BeaconStateBellatrix = CompositeViewDU<typeof ssz.bellatrix.BeaconState>;
+  type BeaconStateCapella = CompositeViewDU<typeof ssz.capella.BeaconState>;
+  type BeaconStateDeneb = CompositeViewDU<typeof ssz.deneb.BeaconState>;
 
   // Union at the TreeViewDU level
   // Equivalent to CompositeViewDU<allForks.AllForksSSZTypes["BeaconState"]>
-  type BeaconStateAllForks = BeaconStatePhase0 | BeaconStateAltair | BeaconStateBellatrix;
+  type BeaconStateAllForks =
+    | BeaconStatePhase0
+    | BeaconStateAltair
+    | BeaconStateBellatrix
+    | BeaconStateCapella
+    | BeaconStateDeneb;
 
   // Union at the fields level
   // NOTE: using this type for CachedBeaconStateAllForks makes single fork BeaconState types incompatible to it
@@ -378,6 +385,8 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
         | CompositeView<typeof ssz.phase0.BeaconState>
         | CompositeView<typeof ssz.altair.BeaconState>
         | CompositeView<typeof ssz.bellatrix.BeaconState>
+        | CompositeView<typeof ssz.capella.BeaconState>
+        | CompositeView<typeof ssz.deneb.BeaconState>
     ): void {
       state;
     }
@@ -386,6 +395,8 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
         | CompositeViewDU<typeof ssz.phase0.BeaconState>
         | CompositeViewDU<typeof ssz.altair.BeaconState>
         | CompositeViewDU<typeof ssz.bellatrix.BeaconState>
+        | CompositeViewDU<typeof ssz.capella.BeaconState>
+        | CompositeViewDU<typeof ssz.deneb.BeaconState>
     ): void {
       state;
     }
