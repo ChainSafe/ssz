@@ -1,5 +1,5 @@
 // Types
-export {BitListType} from "./type/bitList";
+export {BitListType, deserializeUint8ArrayBitListFromBytes} from "./type/bitList";
 export {BitVectorType} from "./type/bitVector";
 export {BooleanType} from "./type/boolean";
 export {ByteListType} from "./type/byteList";

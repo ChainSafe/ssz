@@ -121,7 +121,11 @@ export class BitListType extends BitArrayType {
 
 type BitArrayDeserialized = {uint8Array: Uint8Array; bitLen: number};
 
-function deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number): BitArrayDeserialized {
+export function deserializeUint8ArrayBitListFromBytes(
+  data: Uint8Array,
+  start: number,
+  end: number
+): BitArrayDeserialized {
   if (end > data.length) {
     throw Error(`BitList attempting to read byte ${end} of data length ${data.length}`);
   }
