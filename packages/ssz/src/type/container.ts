@@ -391,7 +391,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
    * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
    * - For variable size fields does a first pass over the fixed section to read offsets
    */
-  private getFieldRanges(data: DataView, start: number, end: number): BytesRange[] {
+  getFieldRanges(data: DataView, start: number, end: number): BytesRange[] {
     if (this.variableOffsetsPosition.length === 0) {
       // Validate fixed length container
       const size = end - start;
