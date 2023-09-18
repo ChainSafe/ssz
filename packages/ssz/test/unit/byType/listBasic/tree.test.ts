@@ -219,13 +219,17 @@ describe("ListBasicType.sliceTo", () => {
     const listRoots: string[] = [];
     const listSerialized: string[] = [];
 
-    for (let i = 0; i < 16; i++) {
-      listView.push(i);
+    for (let i = -1; i < 16; i++) {
+      if (i >= 0) {
+        listView.push(i);
+      }
+      // Javascript arrays can handle negative indexes (ok for tests)
       listSerialized[i] = toHexString(listView.serialize());
       listRoots[i] = toHexString(listView.hashTreeRoot());
     }
 
-    for (let i = 0; i < 16; i++) {
+    // Start at -1 to test the empty case.
+    for (let i = -1; i < 16; i++) {
       const listSlice = listView.sliceTo(i);
       expect(listSlice.length).to.equal(i + 1, `Wrong length at .sliceTo(${i})`);
       expect(toHexString(listSlice.serialize())).equals(listSerialized[i], `Wrong serialize at .sliceTo(${i})`);
