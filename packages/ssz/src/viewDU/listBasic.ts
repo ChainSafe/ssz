@@ -42,16 +42,10 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends
    * Returns a new ListBasicTreeViewDU instance with the values from 0 to `index`.
    * To achieve it, rebinds the underlying tree zero-ing all nodes right of `chunkIindex`.
    * Also set all value right of `index` in the same chunk to 0.
-   *
-   * Note: Using index = -1, returns an empty list of length 0.
    */
   sliceTo(index: number): this {
-    if (index < -1) {
-      throw new Error("Does not support sliceTo() with index less than -1");
-    }
-
-    if (index === -1) {
-      return this.type.defaultViewDU() as this;
+    if (index < 0) {
+      throw new Error(`Does not support sliceTo() with negative index ${index}`);
     }
 
     // Commit before getting rootNode to ensure all pending data is in the rootNode
