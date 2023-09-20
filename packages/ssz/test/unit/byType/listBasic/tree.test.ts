@@ -210,3 +210,26 @@ describe("ListBasicType drop caches", () => {
     expect(bytesAfter).to.equal(bytesBefore, "view retained changes");
   });
 });
+
+describe("ListBasicType.sliceTo", () => {
+  // same to BeaconState InactivityScores
+  it("Slice List at multiple length", () => {
+    const listType = new ListBasicType(new UintNumberType(8), 100);
+    const listView = listType.defaultViewDU();
+    const listRoots: string[] = [];
+    const listSerialized: string[] = [];
+
+    for (let i = 0; i < 16; i++) {
+      listView.push(i);
+      listSerialized[i] = toHexString(listView.serialize());
+      listRoots[i] = toHexString(listView.hashTreeRoot());
+    }
+
+    for (let i = 0; i < 16; i++) {
+      const listSlice = listView.sliceTo(i);
+      expect(listSlice.length).to.equal(i + 1, `Wrong length at .sliceTo(${i})`);
+      expect(toHexString(listSlice.serialize())).equals(listSerialized[i], `Wrong serialize at .sliceTo(${i})`);
+      expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[i], `Wrong root at .sliceTo(${i})`);
+    }
+  });
+});
