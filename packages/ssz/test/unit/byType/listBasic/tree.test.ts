@@ -212,24 +212,26 @@ describe("ListBasicType drop caches", () => {
 });
 
 describe("ListBasicType.sliceTo", () => {
-  // same to BeaconState InactivityScores
-  it("Slice List at multiple length", () => {
-    const listType = new ListBasicType(new UintNumberType(8), 100);
-    const listView = listType.defaultViewDU();
-    const listRoots: string[] = [];
-    const listSerialized: string[] = [];
+  // same to BeaconState inactivityScores and previousEpochParticipation
+  for (const elementType of [new UintNumberType(8), new UintNumberType(1, {setBitwiseOR: true})]) {
+    it(`Slice list of ${elementType.typeName} at multiple length`, () => {
+      const listType = new ListBasicType(elementType, 100);
+      const listView = listType.defaultViewDU();
+      const listRoots: string[] = [];
+      const listSerialized: string[] = [];
 
-    for (let i = 0; i < 16; i++) {
-      listView.push(i);
-      listSerialized[i] = toHexString(listView.serialize());
-      listRoots[i] = toHexString(listView.hashTreeRoot());
-    }
+      for (let i = 0; i < 16; i++) {
+        listView.push(i);
+        listSerialized[i] = toHexString(listView.serialize());
+        listRoots[i] = toHexString(listView.hashTreeRoot());
+      }
 
-    for (let i = 0; i < 16; i++) {
-      const listSlice = listView.sliceTo(i);
-      expect(listSlice.length).to.equal(i + 1, `Wrong length at .sliceTo(${i})`);
-      expect(toHexString(listSlice.serialize())).equals(listSerialized[i], `Wrong serialize at .sliceTo(${i})`);
-      expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[i], `Wrong root at .sliceTo(${i})`);
-    }
-  });
+      for (let i = 0; i < 16; i++) {
+        const listSlice = listView.sliceTo(i);
+        expect(listSlice.length).to.equal(i + 1, `Wrong length at .sliceTo(${i})`);
+        expect(toHexString(listSlice.serialize())).equals(listSerialized[i], `Wrong serialize at .sliceTo(${i})`);
+        expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[i], `Wrong root at .sliceTo(${i})`);
+      }
+    });
+  }
 });
