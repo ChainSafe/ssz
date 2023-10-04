@@ -60,11 +60,14 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     const nodePrev = (this.nodes[chunkIndex] ?? getNodeAtDepth(rootNode, this.type.depth, chunkIndex)) as LeafNode;
 
-    const nodeChanged = nodePrev.clone();
-    // set remaining items in the same chunk to 0
-    for (let i = index + 1; i < (chunkIndex + 1) * this.type.itemsPerChunk; i++) {
-      this.type.elementType.tree_setToPackedNode(nodeChanged, i, 0);
+    // we can't set remaining items in the same chunk to 0 with tree_setToPackedNode api due to setBitwiseOR in UintNumberType
+    // instead, we set the same value in nodePrev up until index
+    const nodeChanged = LeafNode.fromZero();
+    for (let i = chunkIndex * this.type.itemsPerChunk; i <= index; i++) {
+      const prevValue = this.type.elementType.tree_getFromPackedNode(nodePrev, i);
+      this.type.elementType.tree_setToPackedNode(nodeChanged, i, prevValue);
     }
+
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     let newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, [chunkIndex], [nodeChanged]);
     // also do the treeZeroAfterIndex operation on the chunks tree
