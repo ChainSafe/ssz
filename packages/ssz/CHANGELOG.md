@@ -20,6 +20,18 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
 
+## [0.14.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.13.0...ssz-v0.14.0) (2023-10-04)
+
+
+### Features
+
+* implement sliceTo() for ListBasicTreeViewDU ([#336](https://github.com/ChainSafe/ssz/issues/336)) ([e84686b](https://github.com/ChainSafe/ssz/commit/e84686b2192fee9e5d9413d55a57cf40af6fd3ef))
+
+
+### Bug Fixes
+
+* handle setBitOr in ListBasicTreeViewDU.sliceTo() ([#338](https://github.com/ChainSafe/ssz/issues/338)) ([5c5242a](https://github.com/ChainSafe/ssz/commit/5c5242a3bb5d89f8c51d5cb14112dd36edc91868))
+
 ## [0.13.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.12.0...ssz-v0.13.0) (2023-09-14)
 
 
