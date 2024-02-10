@@ -114,7 +114,7 @@ export class BitArray {
   /**
    * Returns an array with the indexes which have a bit set to true
    */
-  intersectValues<T>(values: T[]): T[] {
+  intersectValues<T>(values: ArrayLike<T>): T[] {
     const yes: T[] = [];
 
     if (values.length !== this.bitLen) {
