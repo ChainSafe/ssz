@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.2](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.1...ssz-v0.14.2) (2024-02-10)
+
+
+### Bug Fixes
+
+* update changelog ordering ([#342](https://github.com/ChainSafe/ssz/issues/342)) ([698ad13](https://github.com/ChainSafe/ssz/commit/698ad13f8828a237650136ff90f3793b09357ddc))
+
 ## [0.14.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.0...ssz-v0.14.1) (2024-02-10)
 
 
