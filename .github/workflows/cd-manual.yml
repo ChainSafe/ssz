@@ -10,11 +10,11 @@ jobs:
         deployments: write
       steps:
           - uses: actions/checkout@v3
+          - run: corepack enable
           - uses: actions/setup-node@v3
             with:
               cache: yarn
               node-version: '16'
-          - run: corepack enable
           - name: Bootstrap
             run: yarn --immutable
           - name: Build
