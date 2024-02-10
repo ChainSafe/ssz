@@ -56,7 +56,7 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   }
 
   /** @see BitArray.intersectValues */
-  intersectValues<T>(values: T[]): T[] {
+  intersectValues<T>(values: ArrayLike<T>): T[] {
     return this.bitArray.intersectValues(values);
   }
 
