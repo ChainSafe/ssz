@@ -20,6 +20,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
 
+## [0.14.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.0...ssz-v0.14.1) (2024-02-10)
+
+
+### Bug Fixes
+
+* relax BitArray#intersectValues types ([#339](https://github.com/ChainSafe/ssz/issues/339)) ([9ba2456](https://github.com/ChainSafe/ssz/commit/9ba2456eff8b224248826be482a776f7c721aece))
+
 ## [0.14.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.13.0...ssz-v0.14.0) (2023-10-04)
 
 
