@@ -3,23 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [0.10.0](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.4...@chainsafe/ssz@0.10.0) (2023-01-05)
-
-
-### Features
-
-* Switch case dependency to internal helper ([#296](http://chainsafe/ssz/issues/296)) ([900811c](http://chainsafe/ssz/commits/900811c70eabf7613d6ba28f473a9a394f1ca544))
-
-
-
-
-
-### Dependencies
-
-* The following workspace dependencies were updated
-  * dependencies
-    * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
-
 ## [0.14.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.0...ssz-v0.14.1) (2024-02-10)
 
 
@@ -89,6 +72,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * Remove replaceAll with replace(/.../g,... for ES2019 compatibility ([#309](https://github.com/ChainSafe/ssz/issues/309)) ([3c0a2c5](https://github.com/ChainSafe/ssz/commit/3c0a2c5dfe678925cd1b35b486b66738cdb12e99))
+
+## [0.10.0](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.4...@chainsafe/ssz@0.10.0) (2023-01-05)
+
+
+### Features
+
+* Switch case dependency to internal helper ([#296](http://chainsafe/ssz/issues/296)) ([900811c](http://chainsafe/ssz/commits/900811c70eabf7613d6ba28f473a9a394f1ca544))
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/persistent-merkle-tree bumped from ^0.4.2 to ^0.5.0
+
 
 ## [0.9.4](http://chainsafe/ssz/compare/@chainsafe/ssz@0.9.3...@chainsafe/ssz@0.9.4) (2022-12-08)
 
