@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.3](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.2...ssz-v0.14.3) (2024-02-10)
+
+
+### Bug Fixes
+
+* relax other instances of intersectValues ([#344](https://github.com/ChainSafe/ssz/issues/344)) ([e000351](https://github.com/ChainSafe/ssz/commit/e0003516dd4e50005182b55ab954baab81d9cc12))
+
 ## [0.14.2](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.1...ssz-v0.14.2) (2024-02-10)
 
 
