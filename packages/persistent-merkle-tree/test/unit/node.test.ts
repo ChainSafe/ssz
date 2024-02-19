@@ -1,6 +1,6 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
-import {LeafNode} from "../../src";
+import {BranchNode, LeafNode, hasher} from "../../src";
 
 describe("LeafNode uint", () => {
   const testCasesNode: {
@@ -192,5 +192,18 @@ describe("getUint with correct sign", () => {
 
     expect(leafNodeUint.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeUint.getUintBigint");
     expect(leafNodeInt.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeInt.getUintBigint");
+  });
+});
+
+describe("BranchNode basics", () => {
+  it("should properly hash two leaves", () => {
+    const leftRoot = Buffer.alloc(32, 1);
+    const rightRoot = Buffer.alloc(32, 2);
+    const root = hasher.digest64(leftRoot, rightRoot);
+
+    const left = LeafNode.fromRoot(leftRoot);
+    const right = LeafNode.fromRoot(rightRoot);
+    const branch = new BranchNode(left, right);
+    expect(branch.root).to.be.deep.equal(root);
   });
 });

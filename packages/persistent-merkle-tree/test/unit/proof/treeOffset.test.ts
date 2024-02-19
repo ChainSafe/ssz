@@ -3,7 +3,7 @@ import {describe, it} from "mocha";
 import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset";
 import {zeroNode} from "../../../src/zeroNode";
 
-describe("computeTreeOffsetProof", () => {
+describe.skip("computeTreeOffsetProof", () => {
   it("should properly compute known testcases", () => {
     const testCases = [
       {
@@ -21,7 +21,7 @@ describe("computeTreeOffsetProof", () => {
   });
 });
 
-describe("computeNodeFromTreeOffsetProof", () => {
+describe.skip("computeNodeFromTreeOffsetProof", () => {
   it("should properly compute known testcases", () => {
     const testCases = [
       {

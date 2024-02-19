@@ -1,4 +1,4 @@
-import type {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
+import {HashId, HashObject} from "@chainsafe/as-sha256";
 
 export type Hasher = {
   /**
@@ -9,4 +9,8 @@ export type Hasher = {
    * Hash two 32-byte HashObjects
    */
   digest64HashObjects(a: HashObject, b: HashObject): HashObject;
+  /**
+   * Hash two HashIds
+   */
+  digest64HashIds(a: HashId, b: HashId, out: HashId): void;
 };

@@ -1,5 +1,5 @@
-import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
+import {HashObject, cloneHashId, getHash, getHashObject} from "@chainsafe/as-sha256";
+import {Node} from "@chainsafe/persistent-merkle-tree";
 
 /**
  * BranchNode whose children's data is represented as a struct, not a tree.
@@ -9,21 +9,29 @@ import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
  * expensive because the tree has to be recreated every time.
  */
 export class BranchNodeStruct<T> extends Node {
+  private hashed = false;
   constructor(private readonly valueToNode: (value: T) => Node, readonly value: T) {
     // First null value is to save an extra variable to check if a node has a root or not
-    super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
+    super();
   }
 
   get rootHashObject(): HashObject {
-    if (this.h0 === null) {
-      const node = this.valueToNode(this.value);
-      super.applyHash(node.rootHashObject);
-    }
-    return this;
+    this.maybeHash();
+    return getHashObject(this.id);
   }
 
   get root(): Uint8Array {
-    return hashObjectToUint8Array(this.rootHashObject);
+    this.maybeHash();
+    return getHash(this.id);
+  }
+
+  maybeHash(): void {
+    if (!this.hashed) {
+      const node = this.valueToNode(this.value);
+      node.maybeHash();
+      cloneHashId(node.id, this.id);
+      this.hashed = true;
+    }
   }
 
   isLeaf(): boolean {

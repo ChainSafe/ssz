@@ -1,5 +1,6 @@
 import {subtreeFillToContents} from "./subtree";
-import {Node, LeafNode, getNodeH, setNodeH} from "./node";
+import {Node, LeafNode} from "./node";
+import {getCache, getCacheOffset} from "@chainsafe/as-sha256";
 
 export function packedRootsBytesToNode(depth: number, dataView: DataView, start: number, end: number): Node {
   const leafNodes = packedRootsBytesToLeafNodes(dataView, start, end);
@@ -19,21 +20,49 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   const fullNodeCount = Math.floor(size / 32);
   const leafNodes = new Array<LeafNode>(Math.ceil(size / 32));
 
-  // Efficiently construct the tree writing to hashObjects directly
+  // Efficiently construct the tree writing to the hash cache directly
 
   // TODO: Optimize, with this approach each h property is written twice
   for (let i = 0; i < fullNodeCount; i++) {
-    const offset = start + i * 32;
-    leafNodes[i] = new LeafNode(
-      dataView.getInt32(offset + 0, true),
-      dataView.getInt32(offset + 4, true),
-      dataView.getInt32(offset + 8, true),
-      dataView.getInt32(offset + 12, true),
-      dataView.getInt32(offset + 16, true),
-      dataView.getInt32(offset + 20, true),
-      dataView.getInt32(offset + 24, true),
-      dataView.getInt32(offset + 28, true)
-    );
+    let offset = start + i * 32;
+    const node = new LeafNode();
+    leafNodes[i] = node;
+
+    const {cache} = getCache(node.id);
+    let cacheOffset = getCacheOffset(node.id);
+
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
+    cache[cacheOffset++] = dataView.getUint8(offset++);
   }
 
   // Consider that the last node may only include partial data
@@ -41,22 +70,16 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
 
   // Last node
   if (remainderBytes > 0) {
-    const node = new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+    let dataOffset = start + size - remainderBytes;
+
+    const node = new LeafNode();
     leafNodes[fullNodeCount] = node;
 
-    // Loop to dynamically copy the full h values
-    const fullHCount = Math.floor(remainderBytes / 4);
-    for (let h = 0; h < fullHCount; h++) {
-      setNodeH(node, h, dataView.getInt32(start + fullNodeCount * 32 + h * 4, true));
-    }
+    const {cache} = getCache(node.id);
+    let cacheOffset = getCacheOffset(node.id);
 
-    const remainderUint32 = size % 4;
-    if (remainderUint32 > 0) {
-      let h = 0;
-      for (let i = 0; i < remainderUint32; i++) {
-        h |= dataView.getUint8(start + size - remainderUint32 + i) << (i * 8);
-      }
-      setNodeH(node, fullHCount, h);
+    for (let i = 0; i < remainderBytes; i++) {
+      cache[cacheOffset++] = dataView.getUint8(dataOffset++);
     }
   }
 
@@ -79,33 +102,56 @@ export function packedNodeRootsToBytes(dataView: DataView, start: number, size: 
   const fullNodeCount = Math.floor(size / 32);
   for (let i = 0; i < fullNodeCount; i++) {
     const node = nodes[i];
-    const offset = start + i * 32;
-    dataView.setInt32(offset + 0, node.h0, true);
-    dataView.setInt32(offset + 4, node.h1, true);
-    dataView.setInt32(offset + 8, node.h2, true);
-    dataView.setInt32(offset + 12, node.h3, true);
-    dataView.setInt32(offset + 16, node.h4, true);
-    dataView.setInt32(offset + 20, node.h5, true);
-    dataView.setInt32(offset + 24, node.h6, true);
-    dataView.setInt32(offset + 28, node.h7, true);
+    let offset = start + i * 32;
+
+    const {cache} = getCache(node.id);
+    let cacheOffset = getCacheOffset(node.id);
+
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
+    dataView.setUint8(offset++, cache[cacheOffset++]);
   }
 
   // Last node
   if (remainderBytes > 0) {
+    let dataOffset = start + size - remainderBytes;
+
     const node = nodes[fullNodeCount];
 
-    // Loop to dynamically copy the full h values
-    const fullHCount = Math.floor(remainderBytes / 4);
-    for (let h = 0; h < fullHCount; h++) {
-      dataView.setInt32(start + fullNodeCount * 32 + h * 4, getNodeH(node, h), true);
-    }
+    const {cache} = getCache(node.id);
+    let cacheOffset = getCacheOffset(node.id);
 
-    const remainderUint32 = size % 4;
-    if (remainderUint32 > 0) {
-      const h = getNodeH(node, fullHCount);
-      for (let i = 0; i < remainderUint32; i++) {
-        dataView.setUint8(start + size - remainderUint32 + i, (h >> (i * 8)) & 0xff);
-      }
+    for (let i = 0; i < remainderBytes; i++) {
+      dataView.setUint8(dataOffset++, cache[cacheOffset++]);
     }
   }
 }
