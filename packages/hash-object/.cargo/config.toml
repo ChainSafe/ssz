@@ -1,0 +1,7 @@
+[build]
+rustc-link-search = ["/home/cayman/Code/hashtree/src/"]
+rustc-link-lib = ["static=hashtree"]
+
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
+
