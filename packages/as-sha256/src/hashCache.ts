@@ -19,19 +19,19 @@ export type HashCache = {
  */
 export type HashId = number;
 
-function toHashId(cacheIndex: number, hashIndex: number): HashId {
+export function toHashId(cacheIndex: number, hashIndex: number): HashId {
   return (cacheIndex << 16) | hashIndex;
 }
 
-function fromHashId(id: HashId): [number, number] {
+export function fromHashId(id: HashId): [number, number] {
   return [id >> 16, id & 0xffff];
 }
 
-function getCacheIndex(id: HashId): number {
+export function getCacheIndex(id: HashId): number {
   return id >> 16;
 }
 
-function getHashIndex(id: HashId): number {
+export function getHashIndex(id: HashId): number {
   return id & 0xffff;
 }
 
@@ -46,13 +46,6 @@ export function allocHashCache(): HashCache {
   return out;
 }
 
-export function getHash(id: HashId): Uint8Array {
-  const [cacheIndex, hashIndex] = fromHashId(id);
-  const cache = hashCaches[cacheIndex];
-  const offset = hashIndex * HASH_SIZE;
-  return cache.cache.subarray(offset, offset + HASH_SIZE);
-}
-
 export function getCache(id: HashId): HashCache {
   return hashCaches[getCacheIndex(id)];
 }
@@ -65,7 +58,7 @@ export function incrementNext(cache: HashCache): number {
   const out = cache.next;
   cache.used.add(out);
   // eslint-disable-next-line no-empty
-  while (cache.used.has(cache.next++)) {}
+  while (cache.used.has(++cache.next)) {}
   return out;
 }
 
@@ -132,6 +125,13 @@ export function cloneHashId(source: HashId, target: HashId): void {
   cacheTarget[offsetTarget++] = cacheSource[offsetSource++];
   cacheTarget[offsetTarget++] = cacheSource[offsetSource++];
   cacheTarget[offsetTarget++] = cacheSource[offsetSource++];
+}
+
+export function getHash(id: HashId): Uint8Array {
+  const [cacheIndex, hashIndex] = fromHashId(id);
+  const cache = hashCaches[cacheIndex];
+  const offset = hashIndex * HASH_SIZE;
+  return cache.cache.subarray(offset, offset + HASH_SIZE);
 }
 
 export function getHashObject(id: HashId): HashObject {
