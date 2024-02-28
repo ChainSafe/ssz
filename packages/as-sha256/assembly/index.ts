@@ -43,11 +43,11 @@ const W64: u32[] = [
 const w64Ptr = W64.dataStart;
 
 // intermediate hash values stored in H0-H7
-var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
+let H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
 // hash registers
 
-var a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: u32, t2: u32;
+let a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: u32, t2: u32;
 
 // 16 32bit message blocks
 const M = new ArrayBuffer(64);
@@ -66,10 +66,10 @@ export const output = new ArrayBuffer(DIGEST_LENGTH);
 const outputPtr = changetype<usize>(output);
 
 // number of bytes in M buffer
-var mLength = 0;
+let mLength = 0;
 
 // number of total bytes hashed
-var bytesHashed = 0;
+let bytesHashed = 0;
 
 @inline
 function load32(ptr: usize, offset: usize): u32 {
@@ -141,7 +141,7 @@ function SIG1(x: u32): u32 {
   return rotr(x, 17) ^ rotr(x, 19) ^ (x >>> 10);
 }
 
-var tmpW: u32;
+let tmpW: u32;
 /**
  * Expand message blocks (16 32bit blocks), into extended message blocks (64 32bit blocks),
  * Apply SHA256 compression function on extended message blocks
