@@ -3,13 +3,12 @@ import * as sha256 from "../../src";
 
 // Feb 2024 Mac M1
 // digestTwoHashObjects vs digest64 vs digest
-//     ✓ digestTwoHashObjects 50023 times                                    29.85028 ops/s    33.50052 ms/op   x0.968        284 runs   10.1 s
-//     ✓ digest64 50023 times                                                27.80544 ops/s    35.96419 ms/op   x0.985        265 runs   10.0 s
-//     ✓ digest 50023 times                                                  28.02601 ops/s    35.68114 ms/op   x0.974        268 runs   10.1 s
-
+// ✓ digestTwoHashObjects 50023 times                                    29.99585 ops/s    33.33795 ms/op   x0.963       1785 runs   60.0 s
+// ✓ digest64 50023 times                                                27.84952 ops/s    35.90727 ms/op   x0.984       1657 runs   60.0 s
+// ✓ digest 50023 times                                                  28.20897 ops/s    35.44972 ms/op   x0.967       1678 runs   60.0 s
 describe("digestTwoHashObjects vs digest64 vs digest", () => {
   setBenchOpts({
-    minMs: 10000,
+    minMs: 60000,
   });
 
   const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
