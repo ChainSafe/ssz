@@ -30,8 +30,8 @@
   "scripts": {
     "clean": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
     "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
-    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime none --validate --debug",
-    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime none --validate -O3z --noAssert",
+    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",
+    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --runtime minimal --target release --noAssert",
     "build:lib": "run -T tsc -p tsconfig.build.json",
     "build:web": "run -T webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "yarn run test:as-ci && yarn run test:unit",
@@ -45,11 +45,8 @@
     "test:as-ci": "asp --nortrace 2> /dev/null"
   },
   "devDependencies": {
-    "@as-pect/assembly": "2.8.1",
-    "@as-pect/cli": "2.8.1",
-    "@as-pect/core": "2.8.1",
     "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
-    "assemblyscript": "0.9.2",
+    "assemblyscript": "^0.27.24",
     "benchmark": "^2.1.4"
   }
 }
