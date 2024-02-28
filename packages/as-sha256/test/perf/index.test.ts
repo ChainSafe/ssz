@@ -1,12 +1,17 @@
-import {itBench} from "@dapplion/benchmark";
+import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import * as sha256 from "../../src";
 
-// Aug 10 2021
+// Feb 2024 Mac M1
 // digestTwoHashObjects vs digest64 vs digest
-//     ✓ digestTwoHashObjects 50023 times                                    19.17366 ops/s    52.15488 ms/op        -       1151 runs   60.0 s
-//     ✓ digest64 50023 times                                                18.21352 ops/s    54.90425 ms/op        -       1093 runs   60.0 s
-//     ✓ digest 50023 times                                                  10.60461 ops/s    94.29865 ms/op        -        637 runs   60.1 s
+//     ✓ digestTwoHashObjects 50023 times                                    29.85028 ops/s    33.50052 ms/op   x0.968        284 runs   10.1 s
+//     ✓ digest64 50023 times                                                27.80544 ops/s    35.96419 ms/op   x0.985        265 runs   10.0 s
+//     ✓ digest 50023 times                                                  28.02601 ops/s    35.68114 ms/op   x0.974        268 runs   10.1 s
+
 describe("digestTwoHashObjects vs digest64 vs digest", () => {
+  setBenchOpts({
+    minMs: 10000,
+  });
+
   const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
   const input1 = "gajindergajindergajindergajinder";
   const input2 = "gajindergajindergajindergajinder";
