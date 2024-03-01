@@ -31,7 +31,7 @@
     "clean": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
     "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",
-    "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release --noAssert",
+    "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert",
     "build:lib": "run -T tsc -p tsconfig.build.json",
     "build:web": "run -T webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "yarn run test:unit",
