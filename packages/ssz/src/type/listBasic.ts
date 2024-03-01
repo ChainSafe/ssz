@@ -10,7 +10,13 @@ import {
   addLengthNode,
   setChunksNode,
 } from "./arrayBasic";
-import {mixInLength, maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
+import {
+  mixInLength,
+  maxChunksToDepth,
+  splitIntoRootChunks,
+  symbolCachedPermanentRoot,
+  ValueWithCachedPermanentRoot,
+} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {ArrayBasicType} from "../view/arrayBasic";
@@ -22,6 +28,7 @@ import {ArrayType} from "./array";
 
 export interface ListBasicOpts {
   typeName?: string;
+  cachePermanentRootStruct?: boolean;
 }
 
 /**
@@ -48,7 +55,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   protected readonly defaultLen = 0;
 
   constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListBasicOpts) {
-    super(elementType);
+    super(elementType, opts?.cachePermanentRootStruct);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
     if (limit === 0) throw Error("List limit must be > 0");
@@ -144,7 +151,21 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   // Merkleization
 
   hashTreeRoot(value: ValueOf<ElementType>[]): Uint8Array {
-    return mixInLength(super.hashTreeRoot(value), value.length);
+    // Return cached mutable root if any
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        return cachedRoot;
+      }
+    }
+
+    const root = mixInLength(super.hashTreeRoot(value), value.length);
+
+    if (this.cachePermanentRootStruct) {
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+    }
+
+    return root;
   }
 
   protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {

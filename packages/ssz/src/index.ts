@@ -33,4 +33,4 @@ export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
 // Utils
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
 
-export {hash64} from "./util/merkleize";
+export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";

@@ -9,7 +9,7 @@ import {
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
-import {merkleize} from "../util/merkleize";
+import {merkleize, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode";
 import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
 export {ByteViews};
@@ -36,14 +36,6 @@ export type CompositeViewDU<T extends CompositeType<unknown, unknown, unknown>> 
 
 /** Any CompositeType without any generic arguments */
 export type CompositeTypeAny = CompositeType<unknown, unknown, unknown>;
-
-/** Dedicated property to cache hashTreeRoot of immutable CompositeType values */
-const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
-
-/** Helper type to cast CompositeType values that may have @see symbolCachedPermanentRoot */
-type ValueWithCachedPermanentRoot = {
-  [symbolCachedPermanentRoot]?: Uint8Array;
-};
 
 /* eslint-disable @typescript-eslint/member-ordering  */
 
@@ -73,7 +65,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
      *
      * WARNING: Must only be used for immutable values. The cached root is never discarded
      */
-    private readonly cachePermanentRootStruct?: boolean
+    protected readonly cachePermanentRootStruct?: boolean
   ) {
     super();
   }
