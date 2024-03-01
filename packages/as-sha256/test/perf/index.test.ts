@@ -8,7 +8,7 @@ import * as sha256 from "../../src";
 // ✓ digest 50023 times                                                  28.20897 ops/s    35.44972 ms/op   x0.967       1678 runs   60.0 s
 describe("digestTwoHashObjects vs digest64 vs digest", () => {
   setBenchOpts({
-    minMs: 60000,
+    minMs: 160000,
   });
 
   const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
