@@ -76,42 +76,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@as-pect/assembly@npm:2.8.1, @as-pect/assembly@npm:^2.8.1":
-  version: 2.8.1
-  resolution: "@as-pect/assembly@npm:2.8.1"
-  checksum: af0b6ce001f868d57f26ae587b2957d415553d7e7dbc2fadb9f88897c8a7839e3c595fca07918d4d49ab76d4762d121514869ed7f3b096a064fbfcdd24aa33fc
-  languageName: node
-  linkType: hard
-
-"@as-pect/cli@npm:2.8.1":
-  version: 2.8.1
-  resolution: "@as-pect/cli@npm:2.8.1"
-  dependencies:
-    "@as-pect/assembly": ^2.8.1
-    "@as-pect/core": ^2.8.1
-    chalk: ^3.0.0
-    glob: ^7.1.6
-  bin:
-    asp: bin/asp
-  checksum: f7f3ac8ca36e7c2f3ef9704130c0d8cfaaf80afc12b6c6b9754cc6ac33a31f0bcac9fddb2a9720bb5814e80121f3201c83ccaed1342f722a19cc12df7b721741
-  languageName: node
-  linkType: hard
-
-"@as-pect/core@npm:2.8.1, @as-pect/core@npm:^2.8.1":
-  version: 2.8.1
-  resolution: "@as-pect/core@npm:2.8.1"
-  dependencies:
-    "@as-pect/assembly": ^2.8.1
-    chalk: ^3.0.0
-    csv-stringify: ^5.3.6
-    long: ^4.0.0
-  dependenciesMeta:
-    csv-stringify:
-      optional: true
-  checksum: be01e02c7578c768faf53c8566a88aeceba280be78beaa08645e523396cf4a8efb03bdb09800686a104f970216371e98b6d68a8c7e740034a93b64011842f6d1
-  languageName: node
-  linkType: hard
-
 "@azure/abort-controller@npm:^1.0.0":
   version: 1.0.4
   resolution: "@azure/abort-controller@npm:1.0.4"
@@ -1628,11 +1592,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@chainsafe/as-sha256@workspace:packages/as-sha256"
   dependencies:
-    "@as-pect/assembly": 2.8.1
-    "@as-pect/cli": 2.8.1
-    "@as-pect/core": 2.8.1
     "@chainsafe/babel-plugin-inline-binary-import": ^1.0.3
-    assemblyscript: 0.9.2
+    assemblyscript: ^0.27.24
     benchmark: ^2.1.4
   languageName: unknown
   linkType: soft
@@ -3309,16 +3270,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assemblyscript@npm:0.9.2":
-  version: 0.9.2
-  resolution: "assemblyscript@npm:0.9.2"
+"assemblyscript@npm:^0.27.24":
+  version: 0.27.24
+  resolution: "assemblyscript@npm:0.27.24"
   dependencies:
-    binaryen: 90.0.0-nightly.20200214
-    long: ^4.0.0
+    binaryen: 116.0.0-nightly.20240114
+    long: ^5.2.1
   bin:
-    asc: bin/asc
-    asinit: bin/asinit
-  checksum: 192edb9604596def901fcfd4ef89880a5d3f3920b617028fb0216510165ef3b545ac74f01b2573f68a4d0bd4c5bb6eb98ca16a0c1a8ecee6fa73898ff8c77b76
+    asc: bin/asc.js
+    asinit: bin/asinit.js
+  checksum: ce63dbf855f8811cfb67d2fa2d142baab36191e64d798c0069ab61f25fa09b9d06fb21f7a41c8d31d1b62d9b2d2398d9486a3107d9993b48f79fc38e29f58c10
   languageName: node
   linkType: hard
 
@@ -3623,12 +3584,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binaryen@npm:90.0.0-nightly.20200214":
-  version: 90.0.0-nightly.20200214
-  resolution: "binaryen@npm:90.0.0-nightly.20200214"
+"binaryen@npm:116.0.0-nightly.20240114":
+  version: 116.0.0-nightly.20240114
+  resolution: "binaryen@npm:116.0.0-nightly.20240114"
   bin:
     wasm-opt: bin/wasm-opt
-  checksum: f1f9848610ac775137e67a9c8feeff5ed5376a97b3e1b759c471b31b026f4de1639404a3acc166289306d2003fe873fa0d3fa7c8878d207b8e801dc106249dfe
+    wasm2js: bin/wasm2js
+  checksum: 95e14b87c27fef94fb4008dcd63fa61ea66f69bcb179f7f73f56dfb39aed58afec6957ef18acacfce15e4874a0da402b0fc3d47ee392a9b906a97e7634bbbad3
   languageName: node
   linkType: hard
 
@@ -4143,16 +4105,6 @@ __metadata:
     escape-string-regexp: ^1.0.5
     supports-color: ^5.3.0
   checksum: e6543f02ec877732e3a2d1c3c3323ddb4d39fbab687c23f526e25bd4c6a9bf3b83a696e8c769d078e04e5754921648f7821b2a2acfd16c550435fd630026e073
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "chalk@npm:3.0.0"
-  dependencies:
-    ansi-styles: ^4.1.0
-    supports-color: ^7.1.0
-  checksum: ee650b0a065b3d7a6fda258e75d3a86fc8e4effa55871da730a9e42ccb035bf5fd203525e5a1ef45ec2582ecc4f65b47eb11357c526b84dd29a14fb162c414d2
   languageName: node
   linkType: hard
 
@@ -4903,7 +4855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csv-stringify@npm:^5.3.6, csv-stringify@npm:^5.6.2":
+"csv-stringify@npm:^5.6.2":
   version: 5.6.5
   resolution: "csv-stringify@npm:5.6.5"
   checksum: 125194dcf24a94e9c03eb53b3bc4b79cc6611747e73fe3c0e8a342a9f385caeb4e88c0827e89a4c508b45ea99bdc64a339b487f80048a50fabcbb3a7d87ea1a9
@@ -8585,10 +8537,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "long@npm:4.0.0"
-  checksum: 50a6417d15b06104dbe4e3d4a667c39b137f130a9108ea8752b352a4cfae047531a3ac351c181792f3f8768fe17cca6b0f406674a541a86fb638aaac560d83ed
+"long@npm:^5.2.1":
+  version: 5.2.3
+  resolution: "long@npm:5.2.3"
+  checksum: 6a0da658f5ef683b90330b1af76f06790c623e148222da9d75b60e266bbf88f803232dd21464575681638894a84091616e7f89557aa087fd14116c0f4e0e43d9
   languageName: node
   linkType: hard
 
