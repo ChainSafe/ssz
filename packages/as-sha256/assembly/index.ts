@@ -1,45 +1,14 @@
+import {digest64V128} from "./simd";
+import {K, W64} from "./utils/const";
 
+// As of Mar 2024, simd support v128, and each block is 32 bits, so we can hash 4 inputs at once
+export const PARALLEL_FACTOR = 4;
+export const INPUT_LENGTH = 512;
 //https://github.com/dchest/fast-sha256-js/blob/master/src/sha256.ts
 const DIGEST_LENGTH = 32;
-export const INPUT_LENGTH = 512;
 
-// constants used in the SHA256 compression function
-const K: u32[] = [
-  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b,
-  0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
-  0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7,
-  0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
-  0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152,
-  0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
-  0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
-  0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819,
-  0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08,
-  0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f,
-  0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
-  0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
-];
 const kPtr = K.dataStart;
 
-//precomputed W + K for message block representing length 64 bytes for fixed input of 64 bytes for digest64
-const W64: u32[] = [
-  0xc28a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
-  0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
-  0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf374,
-  0x649b69c1, 0xf0fe4786, 0x0fe1edc6, 0x240cf254,
-  0x4fe9346f, 0x6cc984be, 0x61b9411e, 0x16f988fa,
-  0xf2c65152, 0xa88e5a6d, 0xb019fc65, 0xb9d99ec7,
-  0x9a1231c3, 0xe70eeaa0, 0xfdb1232b, 0xc7353eb0,
-  0x3069bad5, 0xcb976d5f, 0x5a0f118f, 0xdc1eeefd,
-  0x0a35b689, 0xde0b7a04, 0x58f4ca9d, 0xe15d5b16,
-  0x007f3e86, 0x37088980, 0xa507ea32, 0x6fab9537,
-  0x17406110, 0x0d8cd6f1, 0xcdaa3b6d, 0xc0bbbe37,
-  0x83613bda, 0xdb48a363, 0x0b02e931, 0x6fd15ca7,
-  0x521afaca, 0x31338431, 0x6ed41a95, 0x6d437890,
-  0xc39c91f2, 0x9eccabbd, 0xb5c9a0e6, 0x532fb63c,
-  0xd2c741c6, 0x07237ea3, 0xa4954b68, 0x4c191d76,
-];
 const w64Ptr = W64.dataStart;
 
 // intermediate hash values stored in H0-H7
@@ -53,8 +22,8 @@ var a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: 
 const M = new ArrayBuffer(64);
 const mPtr = changetype<usize>(M);
 
-// 64 32bit extended message blocks
-const W = new ArrayBuffer(256);
+// 64 32bit extended message blocks = 64 * 4 = 256
+const W = new ArrayBuffer(256 * PARALLEL_FACTOR);
 const wPtr = changetype<usize>(W);
 
 // input buffer
@@ -316,7 +285,7 @@ export function final(outPtr: usize): void {
 export function digest(length: i32): void {
   init();
   update(inputPtr, length);
-  final(outputPtr)
+  final(outputPtr);
 }
 
 export function digest64(inPtr: usize, outPtr: usize): void {
@@ -331,4 +300,62 @@ export function digest64(inPtr: usize, outPtr: usize): void {
   store32(outPtr, 5, bswap(H5));
   store32(outPtr, 6, bswap(H6));
   store32(outPtr, 7, bswap(H7));
+}
+
+/**
+ * Hash 4 inputs of exactly 64 bytes each
+ * Input pointer is 256 bytes as below:
+ *              byte                       u32
+ * input 0      0 1 2 ... 63      <===>    0   1 ... 15
+ * input 1      64 65 ... 127     <===>    16 17 ... 31
+ * input 2      128   ... 191     <===>    32 33 ... 47
+ * input 3      192   ... 255     <===>    48 49 ... 63
+ *
+ * we need to transfer it to expanded message blocks, with 16 first items like:
+ *
+ * w_v128_0     0 16 32 48
+ * w_v128_1     1 17 33 49
+ * ...
+ * w_v128_15    15 31 47 63
+ *
+ * remaining 48 items are computed inside hashBlocksV128 loop.
+ * @param outPtr
+ */
+export function hash4Inputs(outPtr: usize): void {
+  for (i = 0; i < 16; i++) {
+    store32(wPtr, PARALLEL_FACTOR * i, load32be(inputPtr, i));
+    store32(wPtr, PARALLEL_FACTOR * i + 1, load32be(inputPtr, i + 16));
+    store32(wPtr, PARALLEL_FACTOR * i + 2, load32be(inputPtr, i + 32));
+    store32(wPtr, PARALLEL_FACTOR * i + 3, load32be(inputPtr, i + 48));
+  }
+
+  digest64V128(wPtr, outPtr);
+}
+
+/*
+ * Hash 8 hash objects which are 4 inputs of 64 bytes each similar to hash4Inputs
+ *
+ * Input pointer is 64 u32 (256 bytes) as below:
+ * input 0   input 1   input 2   input 3
+ * h0        h0        h0        h0
+ * h1        h1        h1        h1
+ * ...
+ * h7        h7        h7        h7
+ * h0        h0        h0        h0
+ * h1        h1        h1        h1
+ * ...
+ * h7        h7        h7        h7
+ *
+ * that's already the setup for wInputPtr, we only need to load be value of them to make
+ * it the first 16 items of expanded message blocks
+ *
+ * remaining 48 items are computed inside hashBlocksV128 loop.
+ *
+ */
+export function hash8HashObjects(outPtr: usize): void {
+  for (i = 0; i < 16 * PARALLEL_FACTOR; i++) {
+    store32(wPtr, i, load32be(inputPtr, i));
+  }
+
+  digest64V128(wPtr, outPtr);
 }
