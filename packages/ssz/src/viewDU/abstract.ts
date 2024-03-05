@@ -1,4 +1,4 @@
-import {CompositeType} from "../type/composite";
+import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering  */
@@ -33,6 +33,13 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    */
   protected abstract clearCache(): void;
 
+  /*
+   * By default use type to serialize ViewDU.
+   */
+  serializeToBytes(output: ByteViews, offset: number): number {
+    return this.type.tree_serializeToBytes(output, offset, this.node);
+  }
+
   /**
    * Merkleize view and compute its hashTreeRoot.
    * Commits any pending changes before computing the root.
@@ -51,7 +58,10 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    */
   serialize(): Uint8Array {
     this.commit();
-    return super.serialize();
+    const output = new Uint8Array(this.type.tree_serializedSize(this.node));
+    const dataView = new DataView(output.buffer, output.byteOffset, output.byteLength);
+    this.serializeToBytes({uint8Array: output, dataView}, 0);
+    return output;
   }
 
   /**

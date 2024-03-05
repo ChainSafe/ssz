@@ -5,6 +5,7 @@ import {fromHexString, toHexString} from "../../src/util/byteArray";
 import {CompositeType, isCompositeType} from "../../src/type/composite";
 import {isBasicType} from "../../src/type/basic";
 import {wrapErr} from "../utils/error";
+import {TreeViewDU} from "../../src";
 
 type ValidTestCaseData = {
   root: string;
@@ -169,6 +170,9 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     const bytes = Buffer.from(copy(testDataSerialized));
     type.deserializeToViewDU(bytes);
     expect(toHexString(bytes)).to.equal(testDataSerializedHex, "type.deserializeToViewDU() mutated input");
+    if (viewDU instanceof TreeViewDU) {
+      assertBytes(viewDU.serialize(), "viewDU.serialize");
+    }
   }
 
   if (isBasicType(type)) {
