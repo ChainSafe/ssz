@@ -65,14 +65,14 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // Precomputed data for faster serdes
   readonly fieldsEntries: FieldEntry<Fields>[];
+  /** End of fixed section of serialized Container */
+  readonly fixedEnd: number;
   protected readonly fieldsGindex: Record<keyof Fields, Gindex>;
   protected readonly jsonKeyToFieldName: Record<string, keyof Fields>;
   protected readonly isFixedLen: boolean[];
   protected readonly fieldRangesFixedLen: BytesRange[];
   /** Offsets position relative to start of serialized Container. Length may not equal field count. */
   protected readonly variableOffsetsPosition: number[];
-  /** End of fixed section of serialized Container */
-  protected readonly fixedEnd: number;
 
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;

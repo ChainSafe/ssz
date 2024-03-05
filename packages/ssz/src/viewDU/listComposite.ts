@@ -1,8 +1,9 @@
 import {Node, treeZeroAfterIndex} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
+import {ByteViews, ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ListCompositeType} from "../view/listComposite";
 import {ArrayCompositeTreeViewDU, ArrayCompositeTreeViewDUCache} from "./arrayComposite";
+import {tree_serializeToBytesArrayComposite} from "../type/arrayComposite";
 
 export class ListCompositeTreeViewDU<
   ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
@@ -46,7 +47,7 @@ export class ListCompositeTreeViewDU<
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
     const rootNode = this._rootNode;
-    const length = this.type.tree_getLength(rootNode);
+    const length = this._length;
 
     // All nodes beyond length are already zero
     // Array of length 2: [X,X,0,0], for index >= 1 no action needed
@@ -63,5 +64,23 @@ export class ListCompositeTreeViewDU<
     const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
 
     return this.type.getViewDU(newRootNode) as this;
+  }
+
+  /**
+   * Same method to `type/listComposite.ts` leveraging cached nodes.
+   */
+  serializeToBytes(output: ByteViews, offset: number): number {
+    this.commit();
+    this.populateAllNodes();
+    const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+    return tree_serializeToBytesArrayComposite(
+      this.type.elementType,
+      this._length,
+      this.type.chunkDepth,
+      chunksNode,
+      output,
+      offset,
+      this.nodes
+    );
   }
 }

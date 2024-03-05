@@ -104,12 +104,13 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<un
   depth: number,
   output: ByteViews,
   offset: number,
-  node: Node
+  node: Node,
+  cachedNodes: Node[] | null = null
 ): number {
   const size = elementType.byteLength * length;
   const chunkCount = Math.ceil(size / 32);
 
-  const nodes = getNodesAtDepth(node, depth, 0, chunkCount);
+  const nodes = cachedNodes ?? getNodesAtDepth(node, depth, 0, chunkCount);
   packedNodeRootsToBytes(output.dataView, offset, size, nodes);
 
   return offset + size;

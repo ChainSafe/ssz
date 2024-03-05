@@ -1,5 +1,5 @@
 import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "../type/abstract";
+import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
 import {ContainerTypeGeneric} from "../view/container";
@@ -113,6 +113,44 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     // It's not necessary to clear this.viewsChanged since they have no effect on the cache.
     // However preserving _SOME_ caches results in a very unpredictable experience.
     this.viewsChanged.clear();
+  }
+
+  /**
+   * Same method to `type/container.ts` that call ViewDU.serializeToBytes() of internal fields.
+   */
+  serializeToBytes(output: ByteViews, offset: number): number {
+    this.commit();
+
+    let fixedIndex = offset;
+    let variableIndex = offset + this.type.fixedEnd;
+    for (let index = 0; index < this.type.fieldsEntries.length; index++) {
+      const {fieldType} = this.type.fieldsEntries[index];
+      let node = this.nodes[index];
+      if (node === undefined) {
+        node = getNodeAtDepth(this._rootNode, this.type.depth, index);
+        this.nodes[index] = node;
+      }
+      if (fieldType.fixedSize === null) {
+        // write offset
+        output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+        fixedIndex += 4;
+        // write serialized element to variable section
+        // basic types always have fixedSize
+        if (isCompositeType(fieldType)) {
+          const view = fieldType.getViewDU(node, this.caches[index]) as TreeViewDU<typeof fieldType>;
+          if (view.serializeToBytes !== undefined) {
+            variableIndex = view.serializeToBytes(output, variableIndex);
+          } else {
+            // some types don't define ViewDU as TreeViewDU, like the UnionType, in that case view.serializeToBytes = undefined
+            variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
+          }
+        }
+      } else {
+        fixedIndex = fieldType.tree_serializeToBytes(output, fixedIndex, node);
+      }
+    }
+
+    return variableIndex;
   }
 }
 

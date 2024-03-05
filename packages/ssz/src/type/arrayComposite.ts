@@ -151,9 +151,10 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   depth: number,
   node: Node,
   output: ByteViews,
-  offset: number
+  offset: number,
+  cachedNodes: Node[] | null = null
 ): number {
-  const nodes = getNodesAtDepth(node, depth, 0, length);
+  const nodes = cachedNodes ?? getNodesAtDepth(node, depth, 0, length);
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array

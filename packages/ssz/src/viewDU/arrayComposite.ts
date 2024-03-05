@@ -216,7 +216,7 @@ export class ArrayCompositeTreeViewDU<
     }
   }
 
-  private populateAllNodes(): void {
+  protected populateAllNodes(): void {
     // If there's uncommited changes it may break.
     // this.length can be increased but this._rootNode doesn't have that item
     if (this.viewsChanged.size > 0) {
