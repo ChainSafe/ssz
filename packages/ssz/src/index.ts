@@ -21,10 +21,11 @@ export {BitArrayType} from "./type/bitArray";
 export {ByteArrayType} from "./type/byteArray";
 
 // Base type clases
-export {Type, ValueOf, JsonPath} from "./type/abstract";
+export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract";
 export {BasicType, isBasicType} from "./type/basic";
 export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite";
 export {TreeView} from "./view/abstract";
+export {ValueOfFields} from "./view/container";
 export {TreeViewDU} from "./viewDU/abstract";
 
 // Values
