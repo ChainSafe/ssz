@@ -23,8 +23,8 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
   abstract readonly itemsPerChunk: number;
   protected abstract readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType) {
-    super();
+  constructor(readonly elementType: ElementType, cachePermanentRootStruct?: boolean) {
+    super(cachePermanentRootStruct);
   }
 
   defaultValue(): ValueOf<ElementType>[] {

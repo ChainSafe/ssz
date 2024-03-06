@@ -1,6 +1,14 @@
 import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
 import {zeroHash} from "./zeros";
 
+/** Dedicated property to cache hashTreeRoot of immutable CompositeType values */
+export const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
+
+/** Helper type to cast CompositeType values that may have @see symbolCachedPermanentRoot */
+export type ValueWithCachedPermanentRoot = {
+  [symbolCachedPermanentRoot]?: Uint8Array;
+};
+
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
   return hasher.digest64(bytes32A, bytes32B);
 }
