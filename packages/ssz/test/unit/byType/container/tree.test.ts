@@ -5,7 +5,9 @@ import {
   ContainerType,
   ListBasicType,
   ListCompositeType,
+  NoneType,
   toHexString,
+  UnionType,
   ValueOf,
 } from "../../../../src";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes";
@@ -170,6 +172,48 @@ runViewTestMutation({
       fn: (tv) => {
         tv.list.push(containerUint64.toViewDU({a: 1}));
         tv.list.push(containerUint64.toViewDU({a: 2}));
+      },
+    },
+  ],
+});
+
+// to test new the VietDU.serialize() implementation for different types
+const mixedContainer = new ContainerType({
+  // a basic type
+  a: uint64NumType,
+  // a list basic type
+  b: new ListBasicType(uint64NumType, 10),
+  // a list composite type
+  c: new ListCompositeType(new ContainerType({a: uint64NumInfType, b: uint64NumInfType}), 10),
+  // embedded container type
+  d: new ContainerType({a: uint64NumInfType}),
+  // a union type, cannot mutate through this test
+  e: new UnionType([new NoneType(), uint64NumInfType]),
+});
+
+runViewTestMutation({
+  type: mixedContainer,
+  mutations: [
+    {
+      id: "increase by 1",
+      valueBefore: {a: 10, b: [0, 1], c: [{a: 100, b: 101}], d: {a: 1000}, e: {selector: 1, value: 2000}},
+      //  View/ViewDU of Union is a value so we cannot mutate
+      valueAfter: {a: 11, b: [1, 2], c: [{a: 101, b: 102}], d: {a: 1001}, e: {selector: 1, value: 2000}},
+      fn: (tv) => {
+        tv.a += 1;
+        const b = tv.b;
+        for (let i = 0; i < b.length; i++) {
+          b.set(i, b.get(i) + 1);
+        }
+        const c = tv.c;
+        for (let i = 0; i < c.length; i++) {
+          const item = c.get(i);
+          item.a += 1;
+          item.b += 1;
+        }
+        tv.d.a += 1;
+        // does not affect anyway, leaving here to make it explicit
+        tv.e = {selector: 1, value: tv.e.value ?? 0 + 1};
       },
     },
   ],
