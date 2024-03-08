@@ -1,9 +1,43 @@
 import {subtreeFillToContents} from "./subtree";
 import {Node, LeafNode, getNodeH, setNodeH} from "./node";
 
+const NUMBER_2_POW_32 = 2 ** 32;
+
 export function packedRootsBytesToNode(depth: number, dataView: DataView, start: number, end: number): Node {
   const leafNodes = packedRootsBytesToLeafNodes(dataView, start, end);
   return subtreeFillToContents(leafNodes, depth);
+}
+
+/**
+ * Pack a list of uint64 numbers into a list of LeafNodes.
+ * Each value is UintNum64, which is 8 bytes long, which is 2 h values.
+ * Each 4 of them forms a LeafNode.
+ *
+ *      v0            v1           v2          v3
+ * |-------------|-------------|-------------|-------------|
+ *
+ *    h0     h1     h2     h3     h4     h5     h6     h7
+ * |------|------|------|------|------|------|------|------|
+ */
+export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
+  const leafNodes = new Array<LeafNode>(Math.ceil(values.length / 4));
+  for (let i = 0; i < values.length; i++) {
+    const nodeIndex = Math.floor(i / 4);
+    const leafNode = leafNodes[nodeIndex] ?? new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+    const vIndex = i % 4;
+    const hIndex = 2 * vIndex;
+    const value = values[i];
+    // same logic to UintNumberType.value_serializeToBytes() for 8 bytes
+    if (value === Infinity) {
+      setNodeH(leafNode, hIndex, 0xffffffff);
+      setNodeH(leafNode, hIndex + 1, 0xffffffff);
+    } else {
+      setNodeH(leafNode, hIndex, value & 0xffffffff);
+      setNodeH(leafNode, hIndex + 1, (value / NUMBER_2_POW_32) & 0xffffffff);
+    }
+    leafNodes[nodeIndex] = leafNode;
+  }
+  return leafNodes;
 }
 
 /**

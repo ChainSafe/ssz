@@ -1,7 +1,7 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
 import {LeafNode, Node} from "../../src";
-import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes} from "../../src/packedNode";
+import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes, packedUintNum64sToLeafNodes} from "../../src/packedNode";
 
 describe("subtree / packedNode single node", () => {
   const testCases: {
@@ -9,6 +9,7 @@ describe("subtree / packedNode single node", () => {
     size: number;
     nodes: Node[];
     outStr: string;
+    testPackedNumbers?: boolean;
   }[] = [
     {
       id: "One byte",
@@ -49,10 +50,36 @@ describe("subtree / packedNode single node", () => {
       outStr: "0x0a09080704030201",
     },
     {
+      id: "2 h values fits uint64 number",
+      size: 8,
+      nodes: [LeafNode.fromHashObject({h0: 0x0708090a, h1: 0x0102030, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
+      outStr: "0x0a09080730201000",
+      testPackedNumbers: true,
+    },
+    {
       id: "32 bytes zero",
       size: 32,
       nodes: [LeafNode.fromHashObject({h0: 0, h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0, h7: 0})],
       outStr: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      testPackedNumbers: true,
+    },
+    {
+      id: "32 bytes max",
+      size: 32,
+      nodes: [
+        LeafNode.fromHashObject({
+          h0: 0xffffffff,
+          h1: 0xffffffff,
+          h2: 0xffffffff,
+          h3: 0xffffffff,
+          h4: 0xffffffff,
+          h5: 0xffffffff,
+          h6: 0xffffffff,
+          h7: 0xffffffff,
+        }),
+      ],
+      outStr: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      testPackedNumbers: true,
     },
     {
       id: "32 bytes same",
@@ -77,9 +104,82 @@ describe("subtree / packedNode single node", () => {
       ],
       outStr: "0x18735c375d8e7b2922ef64f165d10b9ace103f326627f0a21d0fe8a0a573f83f",
     },
+    // same to random tests but trim h1, h3, h5, h7 to make h{2*i} + h{2*i + 1} fits uint64
+    {
+      id: "8 bytes random fits unit64 number",
+      size: 32,
+      nodes: [
+        LeafNode.fromHashObject({
+          h0: 928805656,
+          h1: 6959632,
+          h2: 0,
+          h3: 0,
+          h4: 0,
+          h5: 0,
+          h6: 0,
+          h7: 0,
+        }),
+      ],
+      outStr: "0x18735c3710326a00000000000000000000000000000000000000000000000000",
+      testPackedNumbers: true,
+    },
+    {
+      id: "16 bytes random fits unit64 number",
+      size: 32,
+      nodes: [
+        LeafNode.fromHashObject({
+          h0: 928805656,
+          h1: 6959632,
+          h2: 4049923874,
+          h3: 258446,
+          h4: 0,
+          h5: 0,
+          h6: 0,
+          h7: 0,
+        }),
+      ],
+      outStr: "0x18735c3710326a0022ef64f18ef1030000000000000000000000000000000000",
+      testPackedNumbers: true,
+    },
+    {
+      id: "24 bytes random fits unit64 number",
+      size: 32,
+      nodes: [
+        LeafNode.fromHashObject({
+          h0: 928805656,
+          h1: 6959632,
+          h2: 4049923874,
+          h3: 258446,
+          h4: 842993870,
+          h5: 273364,
+          h6: 0,
+          h7: 0,
+        }),
+      ],
+      outStr: "0x18735c3710326a0022ef64f18ef10300ce103f32d42b04000000000000000000",
+      testPackedNumbers: true,
+    },
+    {
+      id: "32 bytes random fits unit64 number",
+      size: 32,
+      nodes: [
+        LeafNode.fromHashObject({
+          h0: 928805656,
+          h1: 6959632,
+          h2: 4049923874,
+          h3: 258446,
+          h4: 842993870,
+          h5: 273364,
+          h6: 2699562781,
+          h7: 107324,
+        }),
+      ],
+      outStr: "0x18735c3710326a0022ef64f18ef10300ce103f32d42b04001d0fe8a03ca30100",
+      testPackedNumbers: true,
+    },
   ];
 
-  for (const {id, size, nodes, outStr} of testCases) {
+  for (const {id, size, nodes, outStr, testPackedNumbers} of testCases) {
     it(`${id} - packedNodeRootsToBytes`, () => {
       const uint8Array = new Uint8Array(size);
       const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
@@ -93,6 +193,28 @@ describe("subtree / packedNode single node", () => {
       const nodesRes = packedRootsBytesToLeafNodes(dataView, 0, size);
       expect(onlyHashObject(nodesRes[0].rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
     });
+
+    // 1 UintNum64 = 8 bytes
+    if (testPackedNumbers) {
+      const NUMBER_2_POW_32 = 2 ** 32;
+      it(`${id} - packedUintNum64sToLeafNodes, value size=${Math.floor(size / 8)}`, () => {
+        const values: number[] = [];
+        const uint8Array = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));
+        const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+        for (let i = 0; i < size; i += 8) {
+          const a = dataView.getUint32(i, true);
+          const b = dataView.getUint32(i + 4, true);
+          if (a === 0xffffffff && b === 0xffffffff) {
+            values.push(Infinity);
+          } else {
+            values.push(b * NUMBER_2_POW_32 + a);
+          }
+        }
+
+        const nodesRes = packedUintNum64sToLeafNodes(values);
+        expect(onlyHashObject(nodesRes[0].rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
+      });
+    }
   }
 });
 
