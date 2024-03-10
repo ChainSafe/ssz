@@ -6,10 +6,11 @@ import {
   treeZeroAfterIndex,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
+import {ByteViews, ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {ListBasicType} from "../view/listBasic";
 import {ArrayBasicTreeViewDU, ArrayBasicTreeViewDUCache} from "./arrayBasic";
+import {tree_serializeToBytesArrayBasic} from "../type/arrayBasic";
 
 export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends ArrayBasicTreeViewDU<ElementType> {
   constructor(readonly type: ListBasicType<ElementType>, protected _rootNode: Node, cache?: ArrayBasicTreeViewDUCache) {
@@ -77,5 +78,23 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends
     const newLength = index + 1;
     const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
     return this.type.getViewDU(newRootNode) as this;
+  }
+
+  /**
+   * Same method to `type/listBasic.ts` leveraging cached nodes.
+   */
+  serializeToBytes(output: ByteViews, offset: number): number {
+    this.commit();
+    const {nodes, nodesPopulated} = this.cache;
+    const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+    return tree_serializeToBytesArrayBasic(
+      this.type.elementType,
+      this._length,
+      this.type.chunkDepth,
+      output,
+      offset,
+      chunksNode,
+      nodesPopulated ? nodes : null
+    );
   }
 }

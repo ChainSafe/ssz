@@ -19,6 +19,7 @@ export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> =
 > & {
   readonly fields: Fields;
   readonly fieldsEntries: FieldEntry<Fields>[];
+  readonly fixedEnd: number;
 };
 
 export type ValueOfFields<Fields extends Record<string, Type<unknown>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
