@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.15.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.3...ssz-v0.15.0) (2024-03-12)
+
+
+### Features
+
+* add capability to cache merkle roots for lists ([#349](https://github.com/ChainSafe/ssz/issues/349)) ([14c4457](https://github.com/ChainSafe/ssz/commit/14c4457026a9fbea5bfe5c66580f7c8a8bee790a))
+* improve ViewDU.serialize() ([#350](https://github.com/ChainSafe/ssz/issues/350)) ([4ba45d3](https://github.com/ChainSafe/ssz/commit/4ba45d3afec08a8aaf853237c3cd8439ca62bca5))
+* new type for list of uint64 ([#352](https://github.com/ChainSafe/ssz/issues/352)) ([e131b5a](https://github.com/ChainSafe/ssz/commit/e131b5a9080f8719d624df97d8a4462081a65807))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/persistent-merkle-tree bumped to 0.7.0
+
 ## [0.14.3](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.2...ssz-v0.14.3) (2024-02-10)
 
 

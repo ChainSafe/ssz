@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.6.1...persistent-merkle-tree-v0.7.0) (2024-03-12)
+
+
+### Features
+
+* new type for list of uint64 ([#352](https://github.com/ChainSafe/ssz/issues/352)) ([e131b5a](https://github.com/ChainSafe/ssz/commit/e131b5a9080f8719d624df97d8a4462081a65807))
+
 ## [0.6.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.6.0...persistent-merkle-tree-v0.6.1) (2023-04-21)
 
 
