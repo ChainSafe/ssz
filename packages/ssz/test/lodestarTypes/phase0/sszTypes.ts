@@ -8,6 +8,7 @@ import {
   VectorBasicType,
   VectorCompositeType,
 } from "../../../src";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64";
 import {
   preset,
   MAX_REQUEST_BLOCKS,
@@ -250,7 +251,7 @@ export const Validator = ValidatorNodeStruct;
 
 // Export as stand-alone for direct tree optimizations
 export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
-export const Balances = new ListBasicType(UintNum64, VALIDATOR_REGISTRY_LIMIT);
+export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 export const RandaoMixes = new VectorCompositeType(Bytes32, EPOCHS_PER_HISTORICAL_VECTOR);
 export const Slashings = new VectorBasicType(Gwei, EPOCHS_PER_SLASHINGS_VECTOR);
 export const JustificationBits = new BitVectorType(JUSTIFICATION_BITS_LENGTH);
