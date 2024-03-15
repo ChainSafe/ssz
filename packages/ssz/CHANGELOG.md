@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.15.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.15.0...ssz-v0.15.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* export ListUintNum64Type ([#353](https://github.com/ChainSafe/ssz/issues/353)) ([30e3deb](https://github.com/ChainSafe/ssz/commit/30e3debbaf7346711eb201740c072aab645d3b14))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/persistent-merkle-tree bumped to 0.7.1
+
 ## [0.15.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.14.3...ssz-v0.15.0) (2024-03-12)
 
 

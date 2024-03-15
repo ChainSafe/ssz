@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.7.0...persistent-merkle-tree-v0.7.1) (2024-03-15)
+
+
+### Bug Fixes
+
+* export ListUintNum64Type ([#353](https://github.com/ChainSafe/ssz/issues/353)) ([30e3deb](https://github.com/ChainSafe/ssz/commit/30e3debbaf7346711eb201740c072aab645d3b14))
+
 ## [0.7.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.6.1...persistent-merkle-tree-v0.7.0) (2024-03-12)
 
 
