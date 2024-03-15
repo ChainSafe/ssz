@@ -21,7 +21,8 @@ const branch = new BranchNode(leaf, otherLeaf);
 
 // The `root` property returns the merkle root of a Node
 
-const r: Uint8Array = branch.root; // == hash(leaf.root, otherLeaf.root));
+// this is equal to `hash(leaf.root, otherLeaf.root));`
+const r: Uint8Array = branch.root;
 
 // The `isLeaf` method returns true if the Node is a LeafNode
 
