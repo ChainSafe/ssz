@@ -1,4 +1,4 @@
-import {BranchNode, LeafNode, Node} from "../node";
+import {Node} from "../node";
 import {Gindex, gindexIterator} from "../gindex";
 
 export const ERR_INVALID_NAV = "Invalid tree navigation";
@@ -21,14 +21,14 @@ export function createSingleProof(rootNode: Node, index: Gindex): [Uint8Array, U
 }
 
 export function createNodeFromSingleProof(gindex: Gindex, leaf: Uint8Array, witnesses: Uint8Array[]): Node {
-  let node: Node = LeafNode.fromRoot(leaf);
+  let node = Node.fromRoot(leaf);
   const w = witnesses.slice().reverse();
   while (gindex > 1) {
-    const sibling = LeafNode.fromRoot(w.pop() as Uint8Array);
+    const sibling = Node.fromRoot(w.pop() as Uint8Array);
     if (gindex % BigInt(2) === BigInt(0)) {
-      node = new BranchNode(node, sibling);
+      node = Node.newBranchNode(node, sibling);
     } else {
-      node = new BranchNode(sibling, node);
+      node = Node.newBranchNode(sibling, node);
     }
     gindex = gindex / BigInt(2);
   }

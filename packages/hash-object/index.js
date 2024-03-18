@@ -295,12 +295,16 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { HashObject, hash, hash64, hashtreeOne, hashtree, hashtreeUint8Array, initHashObjectCache } = nativeBinding
+const { Node, getNode, setNode, setNodeWithFn, getNodeAtDepth, getNodesAtDepth, setNodesAtDepth, zeroNode, subtreeFillToDepth, subtreeFillToLength, subtreeFillToContents } = nativeBinding
 
-module.exports.HashObject = HashObject
-module.exports.hash = hash
-module.exports.hash64 = hash64
-module.exports.hashtreeOne = hashtreeOne
-module.exports.hashtree = hashtree
-module.exports.hashtreeUint8Array = hashtreeUint8Array
-module.exports.initHashObjectCache = initHashObjectCache
+module.exports.Node = Node
+module.exports.getNode = getNode
+module.exports.setNode = setNode
+module.exports.setNodeWithFn = setNodeWithFn
+module.exports.getNodeAtDepth = getNodeAtDepth
+module.exports.getNodesAtDepth = getNodesAtDepth
+module.exports.setNodesAtDepth = setNodesAtDepth
+module.exports.zeroNode = zeroNode
+module.exports.subtreeFillToDepth = subtreeFillToDepth
+module.exports.subtreeFillToLength = subtreeFillToLength
+module.exports.subtreeFillToContents = subtreeFillToContents

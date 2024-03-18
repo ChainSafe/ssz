@@ -1,5 +1,5 @@
 import {Gindex, GindexBitstring} from "../gindex";
-import {BranchNode, LeafNode, Node} from "../node";
+import {Node} from "../node";
 import {computeMultiProofBitstrings} from "./util";
 
 /**
@@ -45,11 +45,11 @@ export function treeOffsetProofToNode(offsets: number[], leaves: Uint8Array[]): 
   if (!leaves.length) {
     throw new Error("Proof must contain gt 0 leaves");
   } else if (leaves.length === 1) {
-    return LeafNode.fromRoot(leaves[0]);
+    return Node.fromRoot(leaves[0]);
   } else {
     // the offset popped from the list is the # of leaves in the left subtree
     const pivot = offsets[0];
-    return new BranchNode(
+    return Node.newBranchNode(
       treeOffsetProofToNode(offsets.slice(1, pivot), leaves.slice(0, pivot)),
       treeOffsetProofToNode(offsets.slice(pivot), leaves.slice(pivot))
     );

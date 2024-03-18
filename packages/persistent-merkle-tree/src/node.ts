@@ -1,322 +1,206 @@
-import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
+import {Node} from "hash-object";
+import {HashObject} from "./hasher";
 
 const TWO_POWER_32 = 2 ** 32;
 
-/**
- * An immutable binary merkle tree node
- */
-export abstract class Node implements HashObject {
-  /**
-   * May be null. This is to save an extra variable to check if a node has a root or not
-   */
-  h0: number;
-  h1: number;
-  h2: number;
-  h3: number;
-  h4: number;
-  h5: number;
-  h6: number;
-  h7: number;
+export {Node};
 
-  /** The root hash of the node */
-  abstract root: Uint8Array;
-  /** The root hash of the node as a `HashObject` */
-  abstract rootHashObject: HashObject;
-  /** The left child node */
-  abstract left: Node;
-  /** The right child node */
-  abstract right: Node;
-
-  constructor(h0: number, h1: number, h2: number, h3: number, h4: number, h5: number, h6: number, h7: number) {
-    this.h0 = h0;
-    this.h1 = h1;
-    this.h2 = h2;
-    this.h3 = h3;
-    this.h4 = h4;
-    this.h5 = h5;
-    this.h6 = h6;
-    this.h7 = h7;
-  }
-
-  applyHash(root: HashObject): void {
-    this.h0 = root.h0;
-    this.h1 = root.h1;
-    this.h2 = root.h2;
-    this.h3 = root.h3;
-    this.h4 = root.h4;
-    this.h5 = root.h5;
-    this.h6 = root.h6;
-    this.h7 = root.h7;
-  }
-
-  /** Returns true if the node is a `LeafNode` */
-  abstract isLeaf(): boolean;
-}
-
-/**
- * An immutable binary merkle tree node that has a `left` and `right` child
- */
 export class BranchNode extends Node {
-  constructor(private _left: Node, private _right: Node) {
-    // First null value is to save an extra variable to check if a node has a root or not
-    super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
-
-    if (!_left) {
-      throw new Error("Left node is undefined");
-    }
-    if (!_right) {
-      throw new Error("Right node is undefined");
-    }
-  }
-
-  get rootHashObject(): HashObject {
-    if (this.h0 === null) {
-      super.applyHash(hasher.digest64HashObjects(this.left.rootHashObject, this.right.rootHashObject));
-    }
-    return this;
-  }
-
-  get root(): Uint8Array {
-    return hashObjectToUint8Array(this.rootHashObject);
-  }
-
-  isLeaf(): boolean {
-    return false;
-  }
-
-  get left(): Node {
-    return this._left;
-  }
-
-  get right(): Node {
-    return this._right;
+  constructor(left: Node, right: Node) {
+    super();
+    return Node.newBranchNode(left, right);
   }
 }
 
-/**
- * An immutable binary merkle tree node that has no children
- */
 export class LeafNode extends Node {
-  static fromRoot(root: Uint8Array): LeafNode {
-    return this.fromHashObject(uint8ArrayToHashObject(root));
+  constructor(h0: number, h1: number, h2: number, h3: number, h4: number, h5: number, h6: number, h7: number) {
+    super();
+    return Node.newLeafNode(h0, h1, h2, h3, h4, h5, h6, h7);
   }
 
-  /**
-   * New LeafNode from existing HashObject.
-   */
-  static fromHashObject(ho: HashObject): LeafNode {
-    return new LeafNode(ho.h0, ho.h1, ho.h2, ho.h3, ho.h4, ho.h5, ho.h6, ho.h7);
+  static fromHashObject(o: HashObject): Node {
+    return Node.newLeafNode(o.h0, o.h1, o.h2, o.h3, o.h4, o.h5, o.h6, o.h7);
   }
 
-  /**
-   * New LeafNode with its internal value set to zero. Consider using `zeroNode(0)` if you don't need to mutate.
-   */
-  static fromZero(): LeafNode {
-    return new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+  static fromRoot(root: Uint8Array): Node {
+    return Node.fromRoot(root);
   }
 
-  /**
-   * LeafNode with HashObject `(uint32, 0, 0, 0, 0, 0, 0, 0)`.
-   */
-  static fromUint32(uint32: number): LeafNode {
-    return new LeafNode(uint32, 0, 0, 0, 0, 0, 0, 0);
+  static fromZero(): Node {
+    return Node.fromZero();
   }
 
-  /**
-   * Create a new LeafNode with the same internal values. The returned instance is safe to mutate
-   */
-  clone(): LeafNode {
-    return LeafNode.fromHashObject(this);
+  static fromUint32(value: number): Node {
+    return Node.fromUint32(value);
   }
+}
 
-  get rootHashObject(): HashObject {
-    return this;
-  }
+export function writeToBytes(n: Node, data: Uint8Array, start: number, size: number): void {
+  // TODO: Optimize
+  data.set(n.root.slice(0, size), start);
+}
 
-  get root(): Uint8Array {
-    return hashObjectToUint8Array(this);
-  }
+export function getUint(n: Node, uintBytes: number, offsetBytes: number, clipInfinity?: boolean): number {
+  const hIndex = Math.floor(offsetBytes / 4);
 
-  isLeaf(): boolean {
-    return true;
-  }
-
-  get left(): Node {
-    throw Error("LeafNode has no left node");
-  }
-
-  get right(): Node {
-    throw Error("LeafNode has no right node");
-  }
-
-  writeToBytes(data: Uint8Array, start: number, size: number): void {
-    // TODO: Optimize
-    data.set(this.root.slice(0, size), start);
-  }
-
-  getUint(uintBytes: number, offsetBytes: number, clipInfinity?: boolean): number {
-    const hIndex = Math.floor(offsetBytes / 4);
-
-    // number has to be masked from an h value
-    if (uintBytes < 4) {
-      const bitIndex = (offsetBytes % 4) * 8;
-      const h = getNodeH(this, hIndex);
-      if (uintBytes === 1) {
-        return 0xff & (h >> bitIndex);
-      } else {
-        return 0xffff & (h >> bitIndex);
-      }
-    }
-
-    // number equals the h value
-    else if (uintBytes === 4) {
-      return getNodeH(this, hIndex) >>> 0;
-    }
-
-    // number spans 2 h values
-    else if (uintBytes === 8) {
-      const low = getNodeH(this, hIndex);
-      const high = getNodeH(this, hIndex + 1);
-      if (high === 0) {
-        return low >>> 0;
-      } else if (high === -1 && low === -1 && clipInfinity) {
-        // Limit uint returns
-        return Infinity;
-      } else {
-        return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
-      }
-    }
-
-    // Bigger uint can't be represented
-    else {
-      throw Error("uintBytes > 8");
+  // number has to be masked from an h value
+  if (uintBytes < 4) {
+    const bitIndex = (offsetBytes % 4) * 8;
+    const h = getNodeH(n, hIndex);
+    if (uintBytes === 1) {
+      return 0xff & (h >> bitIndex);
+    } else {
+      return 0xffff & (h >> bitIndex);
     }
   }
 
-  getUintBigint(uintBytes: number, offsetBytes: number): bigint {
-    const hIndex = Math.floor(offsetBytes / 4);
+  // number equals the h value
+  else if (uintBytes === 4) {
+    return getNodeH(n, hIndex) >>> 0;
+  }
 
-    // number has to be masked from an h value
-    if (uintBytes < 4) {
-      const bitIndex = (offsetBytes % 4) * 8;
-      const h = getNodeH(this, hIndex);
-      if (uintBytes === 1) {
-        return BigInt(0xff & (h >> bitIndex));
-      } else {
-        return BigInt(0xffff & (h >> bitIndex));
-      }
-    }
-
-    // number equals the h value
-    else if (uintBytes === 4) {
-      return BigInt(getNodeH(this, hIndex) >>> 0);
-    }
-
-    // number spans multiple h values
-    else {
-      const hRange = Math.ceil(uintBytes / 4);
-      let v = BigInt(0);
-      for (let i = 0; i < hRange; i++) {
-        v += BigInt(getNodeH(this, hIndex + i) >>> 0) << BigInt(32 * i);
-      }
-      return v;
+  // number spans 2 h values
+  else if (uintBytes === 8) {
+    const low = getNodeH(n, hIndex);
+    const high = getNodeH(n, hIndex + 1);
+    if (high === 0) {
+      return low >>> 0;
+    } else if (high === -1 && low === -1 && clipInfinity) {
+      // Limit uint returns
+      return Infinity;
+    } else {
+      return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
     }
   }
 
-  setUint(uintBytes: number, offsetBytes: number, value: number, clipInfinity?: boolean): void {
-    const hIndex = Math.floor(offsetBytes / 4);
+  // Bigger uint can't be represented
+  else {
+    throw Error("uintBytes > 8");
+  }
+}
 
-    // number has to be masked from an h value
-    if (uintBytes < 4) {
-      const bitIndex = (offsetBytes % 4) * 8;
-      let h = getNodeH(this, hIndex);
-      if (uintBytes === 1) {
-        h &= ~(0xff << bitIndex);
-        h |= (0xff && value) << bitIndex;
-      } else {
-        h &= ~(0xffff << bitIndex);
-        h |= (0xffff && value) << bitIndex;
-      }
-      setNodeH(this, hIndex, h);
-    }
+export function getUintBigint(n: Node, uintBytes: number, offsetBytes: number): bigint {
+  const hIndex = Math.floor(offsetBytes / 4);
 
-    // number equals the h value
-    else if (uintBytes === 4) {
-      setNodeH(this, hIndex, value);
-    }
-
-    // number spans 2 h values
-    else if (uintBytes === 8) {
-      if (value === Infinity && clipInfinity) {
-        setNodeH(this, hIndex, -1);
-        setNodeH(this, hIndex + 1, -1);
-      } else {
-        setNodeH(this, hIndex, value & 0xffffffff);
-        setNodeH(this, hIndex + 1, (value / TWO_POWER_32) & 0xffffffff);
-      }
-    }
-
-    // Bigger uint can't be represented
-    else {
-      throw Error("uintBytes > 8");
+  // number has to be masked from an h value
+  if (uintBytes < 4) {
+    const bitIndex = (offsetBytes % 4) * 8;
+    const h = getNodeH(n, hIndex);
+    if (uintBytes === 1) {
+      return BigInt(0xff & (h >> bitIndex));
+    } else {
+      return BigInt(0xffff & (h >> bitIndex));
     }
   }
 
-  setUintBigint(uintBytes: number, offsetBytes: number, valueBN: bigint): void {
-    const hIndex = Math.floor(offsetBytes / 4);
+  // number equals the h value
+  else if (uintBytes === 4) {
+    return BigInt(getNodeH(n, hIndex) >>> 0);
+  }
 
-    // number has to be masked from an h value
-    if (uintBytes < 4) {
-      const value = Number(valueBN);
-      const bitIndex = (offsetBytes % 4) * 8;
-      let h = getNodeH(this, hIndex);
-      if (uintBytes === 1) {
-        h &= ~(0xff << bitIndex);
-        h |= (0xff && value) << bitIndex;
-      } else {
-        h &= ~(0xffff << bitIndex);
-        h |= (0xffff && value) << bitIndex;
-      }
-      setNodeH(this, hIndex, h);
+  // number spans multiple h values
+  else {
+    const hRange = Math.ceil(uintBytes / 4);
+    let v = BigInt(0);
+    for (let i = 0; i < hRange; i++) {
+      v += BigInt(getNodeH(n, hIndex + i) >>> 0) << BigInt(32 * i);
     }
+    return v;
+  }
+}
 
-    // number equals the h value
-    else if (uintBytes === 4) {
-      setNodeH(this, hIndex, Number(valueBN));
+export function setUint(n: Node, uintBytes: number, offsetBytes: number, value: number, clipInfinity?: boolean): void {
+  const hIndex = Math.floor(offsetBytes / 4);
+
+  // number has to be masked from an h value
+  if (uintBytes < 4) {
+    const bitIndex = (offsetBytes % 4) * 8;
+    let h = getNodeH(n, hIndex);
+    if (uintBytes === 1) {
+      h &= ~(0xff << bitIndex);
+      h |= (0xff && value) << bitIndex;
+    } else {
+      h &= ~(0xffff << bitIndex);
+      h |= (0xffff && value) << bitIndex;
     }
+    setNodeH(n, hIndex, h);
+  }
 
-    // number spans multiple h values
-    else {
-      const hEnd = hIndex + Math.ceil(uintBytes / 4);
-      for (let i = hIndex; i < hEnd; i++) {
-        setNodeH(this, i, Number(valueBN & BigInt(0xffffffff)));
-        valueBN = valueBN >> BigInt(32);
-      }
+  // number equals the h value
+  else if (uintBytes === 4) {
+    setNodeH(n, hIndex, value);
+  }
+
+  // number spans 2 h values
+  else if (uintBytes === 8) {
+    if (value === Infinity && clipInfinity) {
+      setNodeH(n, hIndex, -1);
+      setNodeH(n, hIndex + 1, -1);
+    } else {
+      setNodeH(n, hIndex, value & 0xffffffff);
+      setNodeH(n, hIndex + 1, (value / TWO_POWER_32) & 0xffffffff);
     }
   }
 
-  bitwiseOrUint(uintBytes: number, offsetBytes: number, value: number): void {
-    const hIndex = Math.floor(offsetBytes / 4);
+  // Bigger uint can't be represented
+  else {
+    throw Error("uintBytes > 8");
+  }
+}
 
-    // number has to be masked from an h value
-    if (uintBytes < 4) {
-      const bitIndex = (offsetBytes % 4) * 8;
-      bitwiseOrNodeH(this, hIndex, value << bitIndex);
+export function setUintBigint(n: Node, uintBytes: number, offsetBytes: number, valueBN: bigint): void {
+  const hIndex = Math.floor(offsetBytes / 4);
+
+  // number has to be masked from an h value
+  if (uintBytes < 4) {
+    const value = Number(valueBN);
+    const bitIndex = (offsetBytes % 4) * 8;
+    let h = getNodeH(n, hIndex);
+    if (uintBytes === 1) {
+      h &= ~(0xff << bitIndex);
+      h |= (0xff && value) << bitIndex;
+    } else {
+      h &= ~(0xffff << bitIndex);
+      h |= (0xffff && value) << bitIndex;
     }
+    setNodeH(n, hIndex, h);
+  }
 
-    // number equals the h value
-    else if (uintBytes === 4) {
-      bitwiseOrNodeH(this, hIndex, value);
+  // number equals the h value
+  else if (uintBytes === 4) {
+    setNodeH(n, hIndex, Number(valueBN));
+  }
+
+  // number spans multiple h values
+  else {
+    const hEnd = hIndex + Math.ceil(uintBytes / 4);
+    for (let i = hIndex; i < hEnd; i++) {
+      setNodeH(n, i, Number(valueBN & BigInt(0xffffffff)));
+      valueBN = valueBN >> BigInt(32);
     }
+  }
+}
 
-    // number spans multiple h values
-    else {
-      const hEnd = hIndex + Math.ceil(uintBytes / 4);
-      for (let i = hIndex; i < hEnd; i++) {
-        bitwiseOrNodeH(this, i, value & 0xffffffff);
-        value >>= 32;
-      }
+export function bitwiseOrUint(n: Node, uintBytes: number, offsetBytes: number, value: number): void {
+  const hIndex = Math.floor(offsetBytes / 4);
+
+  // number has to be masked from an h value
+  if (uintBytes < 4) {
+    const bitIndex = (offsetBytes % 4) * 8;
+    bitwiseOrNodeH(n, hIndex, value << bitIndex);
+  }
+
+  // number equals the h value
+  else if (uintBytes === 4) {
+    bitwiseOrNodeH(n, hIndex, value);
+  }
+
+  // number spans multiple h values
+  else {
+    const hEnd = hIndex + Math.ceil(uintBytes / 4);
+    for (let i = hIndex; i < hEnd; i++) {
+      bitwiseOrNodeH(n, i, value & 0xffffffff);
+      value >>= 32;
     }
   }
 }

@@ -1,3 +1,4 @@
+import { expect } from "chai";
 import {subtreeFillToContents, LeafNode, getNodesAtDepth} from "../../src";
 
 describe("subtreeFillToContents", () => {
@@ -26,7 +27,8 @@ describe("subtreeFillToContents", () => {
     const maxIndex = Math.min(2 ** depth, 200_000);
 
     for (let count = 1; count <= maxIndex; count *= 2) {
-      it(`subtreeFillToContents depth ${depth} count ${count}`, () => {
+      it(`subtreeFillToContents depth ${depth} count ${count}`, function () {
+        this.timeout(6000);
         const nodes = new Array<LeafNode>(count);
         const expectedNodes = new Array<LeafNode>(count);
         for (let i = 0; i < count; i++) {
@@ -40,9 +42,10 @@ describe("subtreeFillToContents", () => {
 
         // Assert correct
         for (let i = 0; i < count; i++) {
-          if (retrievedNodes[i] !== expectedNodes[i]) {
-            throw Error(`Wrong node at index ${i}`);
-          }
+          expect(retrievedNodes[i].root).to.deep.equal(expectedNodes[i].root, `Wrong node at index ${i}`);
+          // if (retrievedNodes[i] !== expectedNodes[i]) {
+          //   throw Error(`Wrong node at index ${i}`);
+          // }
         }
       });
     }

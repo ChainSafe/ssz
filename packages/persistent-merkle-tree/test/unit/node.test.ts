@@ -1,6 +1,6 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
-import {LeafNode} from "../../src";
+import {LeafNode, getUint, getUintBigint, setUint, setUintBigint} from "../../src";
 
 describe("LeafNode uint", () => {
   const testCasesNode: {
@@ -43,7 +43,7 @@ describe("LeafNode uint", () => {
         // Use the unsigned right shift operator. By default bitwise ops convert to signed 32 bit numbers.
         // Signed 32 bit numbers conver funky to hex.
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unsigned_right_shift
-        const res = leafNode.getUint(bytes, offset) >>> 0;
+        const res = getUint(leafNode, bytes, offset) >>> 0;
         if (asHex) {
           expect(res.toString(16)).to.equal(value.toString(16), `Wrong getUint(${bytes}, ${offset})`);
         } else {
@@ -64,7 +64,7 @@ describe("LeafNode single bytes", () => {
   it("Write full root with setUint", () => {
     const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
     for (let i = 0; i < 32; i++) {
-      leafNode.setUint(1, i, i + 1);
+      setUint(leafNode, 1, i, i + 1);
     }
     expect(Buffer.from(leafNode.root).toString("hex")).to.equal(buf.toString("hex"), "Wrong leafNode.root value");
   });
@@ -72,7 +72,7 @@ describe("LeafNode single bytes", () => {
   it("Write full root with setUintBigint", () => {
     const leafNode = LeafNode.fromRoot(Buffer.alloc(32, 0));
     for (let i = 0; i < 32; i++) {
-      leafNode.setUintBigint(1, i, BigInt(i + 1));
+      setUintBigint(leafNode, 1, i, BigInt(i + 1));
     }
     expect(Buffer.from(leafNode.root).toString("hex")).to.equal(buf.toString("hex"), "Wrong leafNode.root value");
   });
@@ -81,7 +81,7 @@ describe("LeafNode single bytes", () => {
     const out = Buffer.alloc(32, 0);
     const leafNode = LeafNode.fromRoot(buf);
     for (let i = 0; i < 32; i++) {
-      out[i] = leafNode.getUint(1, i);
+      out[i] = getUint(leafNode, 1, i);
     }
     expect(out.toString("hex")).to.equal(buf.toString("hex"), "Wrong out value");
   });
@@ -90,7 +90,7 @@ describe("LeafNode single bytes", () => {
     const out = Buffer.alloc(32, 0);
     const leafNode = LeafNode.fromRoot(buf);
     for (let i = 0; i < 32; i++) {
-      out[i] = Number(leafNode.getUintBigint(1, i));
+      out[i] = Number(getUintBigint(leafNode, 1, i));
     }
     expect(out.toString("hex")).to.equal(buf.toString("hex"), "Wrong out value");
   });
@@ -103,8 +103,8 @@ describe("setUint getUint - all small values", () => {
     for (let offset = 0; offset < 32; offset += bytes) {
       it(`setUint getUint bytes ${bytes} offset ${offset}`, () => {
         const value = 0x0f + offset;
-        leafNode.setUint(bytes, offset, value);
-        expect(leafNode.getUint(bytes, offset)).to.equal(value);
+        setUint(leafNode, bytes, offset, value);
+        expect(getUint(leafNode, bytes, offset)).to.equal(value);
       });
     }
   }
@@ -117,8 +117,8 @@ describe("setUintBigint getUintBigint - all small values", () => {
     for (let offset = 0; offset < 32; offset += bytes) {
       it(`setUint getUint bytes ${bytes} offset ${offset}`, () => {
         const value = BigInt(0x0f + offset);
-        leafNode.setUintBigint(bytes, offset, value);
-        expect(leafNode.getUintBigint(bytes, offset)).to.equal(value);
+        setUintBigint(leafNode, bytes, offset, value);
+        expect(getUintBigint(leafNode, bytes, offset)).to.equal(value);
       });
     }
   }
@@ -132,8 +132,8 @@ describe("setUint getUint - some big values", () => {
 
     for (let offset = 0; offset < 1; offset += bytes) {
       it(`setUint getUint value ${value} offset ${offset}`, () => {
-        leafNode.setUint(bytes, offset, value);
-        expect(leafNode.getUint(bytes, offset)).to.equal(value);
+        setUint(leafNode, bytes, offset, value);
+        expect(getUint(leafNode, bytes, offset)).to.equal(value);
       });
     }
   }
@@ -158,8 +158,8 @@ describe("setUintBigint getUintBigint - some big values", () => {
 
       for (let offset = 0; offset < 1; offset += bytes) {
         it(`setUint getUint value ${value} bytes ${bytes} offset ${offset}`, () => {
-          leafNode.setUintBigint(bytes, offset, value);
-          expect(leafNode.getUintBigint(bytes, offset)).to.equal(value);
+          setUintBigint(leafNode, bytes, offset, value);
+          expect(getUintBigint(leafNode, bytes, offset)).to.equal(value);
         });
       }
     }
@@ -190,7 +190,10 @@ describe("getUint with correct sign", () => {
       h7: 0,
     });
 
-    expect(leafNodeUint.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeUint.getUintBigint");
-    expect(leafNodeInt.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeInt.getUintBigint");
+    expect(getUintBigint(leafNodeUint, 8, 0)).to.equal(
+      BigInt("288782042218268212"),
+      "Wrong leafNodeUint.getUintBigint"
+    );
+    expect(getUintBigint(leafNodeInt, 8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeInt.getUintBigint");
   });
 });
