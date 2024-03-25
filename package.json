@@ -7,6 +7,7 @@
   "packageManager": "yarn@3.2.3",
   "scripts": {
     "clean": "yarn workspaces foreach -vp run clean",
+    "generate": "yarn workspaces foreach -vp run generate",
     "build": "yarn clean && yarn workspaces foreach -vp --topological run build",
     "lint": "yarn workspaces foreach -vp run lint",
     "check-types": "yarn workspaces foreach -vp run check-types",

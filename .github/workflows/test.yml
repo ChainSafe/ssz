@@ -21,6 +21,8 @@ jobs:
         run: yarn --immutable
       - name: Build
         run: yarn build
+      - name: Generate
+        run: yarn generate
       - name: Check types
         run: yarn check-types
       - name: Lint
