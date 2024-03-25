@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 0.4.2
+    * @chainsafe/persistent-merkle-tree bumped to 0.7.2
+
 ## [0.15.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.15.0...ssz-v0.15.1) (2024-03-15)
 
 
