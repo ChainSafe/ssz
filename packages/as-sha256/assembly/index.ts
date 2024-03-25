@@ -43,11 +43,11 @@ const W64: u32[] = [
 const w64Ptr = W64.dataStart;
 
 // intermediate hash values stored in H0-H7
-var H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
+let H0: u32, H1: u32, H2: u32, H3: u32, H4: u32, H5: u32, H6: u32, H7: u32;
 
 // hash registers
 
-var a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: u32, t2: u32;
+let a: u32, b: u32, c: u32, d: u32, e: u32, f: u32, g: u32, h: u32, i: u32, t1: u32, t2: u32;
 
 // 16 32bit message blocks
 const M = new ArrayBuffer(64);
@@ -66,10 +66,10 @@ export const output = new ArrayBuffer(DIGEST_LENGTH);
 const outputPtr = changetype<usize>(output);
 
 // number of bytes in M buffer
-var mLength = 0;
+let mLength = 0;
 
 // number of total bytes hashed
-var bytesHashed = 0;
+let bytesHashed = 0;
 
 @inline
 function load32(ptr: usize, offset: usize): u32 {
@@ -141,6 +141,7 @@ function SIG1(x: u32): u32 {
   return rotr(x, 17) ^ rotr(x, 19) ^ (x >>> 10);
 }
 
+let tmpW: u32;
 /**
  * Expand message blocks (16 32bit blocks), into extended message blocks (64 32bit blocks),
  * Apply SHA256 compression function on extended message blocks
@@ -158,25 +159,17 @@ function hashBlocks(wPtr: usize, mPtr: usize): void {
   g = H6;
   h = H7;
 
-  // Load message blocks into first 16 expanded message blocks
-  for (i = 0; i < 16; i++) {
-    store32(wPtr, i,
-      load32be(mPtr, i)
-    );
-  }
-  // Expand message blocks 17-64
-  for (i = 16; i < 64; i++) {
-    store32(wPtr, i,
-      SIG1(load32(wPtr, i - 2)) +
-      load32(wPtr, i - 7) +
-      SIG0(load32(wPtr, i - 15)) +
-      load32(wPtr, i - 16)
-    );
-  }
+  // 16 first u32 of expanded message block are same as message block
+  // rest of the 48 u32 are computed from the first 16 u32
+  // instead of computing expanded messsage blocks in a separate for loop,
+  // chain it to the below for loop to improve performance
 
   // Apply SHA256 compression function on expanded message blocks
   for (i = 0; i < 64; i++) {
-    t1 = h + EP1(e) + CH(e, f, g) + load32(kPtr, i) + load32(wPtr, i);
+    tmpW = i < 16 ? load32be(mPtr, i) : SIG1(load32(wPtr, i - 2)) + load32(wPtr, i - 7) +
+      SIG0(load32(wPtr, i - 15)) + load32(wPtr, i - 16);
+    store32(wPtr, i, tmpW);
+    t1 = h + EP1(e) + CH(e, f, g) + load32(kPtr, i) + tmpW;
     t2 = EP0(a) + MAJ(a, b, c);
     h = g;
     g = f;
