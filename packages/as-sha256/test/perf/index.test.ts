@@ -1,11 +1,11 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import * as sha256 from "../../src";
 
-// Feb 2024 Mac M1
+// Mar 2024 Mac M1
 // digestTwoHashObjects vs digest64 vs digest
-//     ✓ digestTwoHashObjects 50023 times                                    28.82303 ops/s    34.69448 ms/op   x1.002       1715 runs   60.0 s
-//     ✓ digest64 50023 times                                                27.30382 ops/s    36.62491 ms/op   x1.003       1625 runs   60.0 s
-//     ✓ digest 50023 times                                                  27.31207 ops/s    36.61385 ms/op   x0.999       1624 runs   60.0 s
+// ✓ digestTwoHashObjects 50023 times                                    29.88107 ops/s    33.46601 ms/op        -       1777 runs   60.0 s
+// ✓ digest64 50023 times                                                28.76283 ops/s    34.76710 ms/op        -       1711 runs   60.0 s
+// ✓ digest 50023 times                                                  28.27148 ops/s    35.37133 ms/op        -       1682 runs   60.0 s
 describe("digestTwoHashObjects vs digest64 vs digest", () => {
   setBenchOpts({
     minMs: 60000,

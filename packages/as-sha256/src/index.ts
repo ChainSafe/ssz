@@ -18,9 +18,7 @@ export function digest(data: Uint8Array): Uint8Array {
   if (data.length <= ctx.INPUT_LENGTH) {
     inputUint8Array.set(data);
     ctx.digest(data.length);
-    const output = new Uint8Array(32);
-    output.set(outputUint8Array);
-    return output;
+    return outputUint8Array.slice(0, 32);
   }
 
   ctx.init();
@@ -32,9 +30,7 @@ export function digest64(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
     inputUint8Array.set(data);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    const output = new Uint8Array(32);
-    output.set(outputUint8Array);
-    return output;
+    return outputUint8Array.slice(0, 32);
   }
   throw new Error("InvalidLengthForDigest64");
 }
@@ -44,9 +40,7 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2, 32);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    const output = new Uint8Array(32);
-    output.set(outputUint8Array);
-    return output;
+    return outputUint8Array.slice(0, 32);
   }
   throw new Error("InvalidLengthForDigest64");
 }
@@ -98,7 +92,5 @@ function update(data: Uint8Array): void {
 
 function final(): Uint8Array {
   ctx.final(wasmOutputValue);
-  const output = new Uint8Array(32);
-  output.set(outputUint8Array);
-  return output;
+  return outputUint8Array.slice(0, 32);
 }
