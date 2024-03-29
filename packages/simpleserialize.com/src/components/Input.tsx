@@ -33,7 +33,7 @@ type State = {
   userHasEditedInput: boolean;
 };
 
-const DEFAULT_FORK = "capella";
+const DEFAULT_FORK = "deneb";
 
 class Input extends React.Component<Props, State> {
   worker: Worker;

@@ -17,7 +17,7 @@
     "@babel/runtime": "^7.14.6",
     "@babel/types": "^7.14.5",
     "@chainsafe/ssz": "workspace:^",
-    "@lodestar/types": "^1.7.2",
+    "@lodestar/types": "^1.14.0",
     "bn.js": "^5.2.0",
     "bulma": "^0.9.3",
     "core-js": "^3.15.2",
