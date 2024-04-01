@@ -28,6 +28,7 @@ phase0 = patchSszTypes(phase0);
 altair = patchSszTypes(altair);
 bellatrix = patchSszTypes(bellatrix);
 capella = patchSszTypes(capella);
+deneb = patchSszTypes(deneb);
 primitive = patchSszTypes(primitive);
 
 export const forks = {
@@ -35,6 +36,7 @@ export const forks = {
   altair: {...phase0, ...altair, ...primitive},
   bellatrix: {...phase0, ...altair, ...bellatrix, ...primitive},
   capella: {...phase0, ...altair, ...bellatrix, ...capella, ...primitive},
+  deneb: {...phase0, ...altair, ...bellatrix, ...capella, ...deneb, ...primitive},
 } as Record<string, Record<string, Type<unknown>>>;
 
 export type ForkName = keyof typeof forks;
