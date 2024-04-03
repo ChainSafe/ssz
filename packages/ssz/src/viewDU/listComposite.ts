@@ -1,4 +1,4 @@
-import {Node, treeZeroAfterIndex} from "@chainsafe/persistent-merkle-tree";
+import {Node, subtreeFillToContents, treeZeroAfterIndex, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ListCompositeType} from "../view/listComposite";
@@ -62,6 +62,44 @@ export class ListCompositeTreeViewDU<
     // Must set new length and commit to tree to restore the same tree at that index
     const newLength = index + 1;
     const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
+
+    return this.type.getViewDU(newRootNode) as this;
+  }
+
+  /**
+   * Returns a new ListCompositeTreeViewDU instance with the values from `index` to `n`
+   * where n is the length of the list.
+   * 
+   * ```ts
+   * const nodes = getChunkNodes()
+   * return listFromChunkNodes(node.clice(index))
+   * ```
+   * 
+   * Note: If index === n, returns an empty list of length 0
+   *
+   */
+  sliceFrom(index: number): this {
+    // Commit before getting rootNode to ensure all pending data is in the rootNode
+    this.commit();
+
+    // If slicing from 0, no slicing is necesary
+    if (index <= 0) {
+      return this;
+    } 
+
+    let newChunksNode;
+    let newLength;
+
+    if (index >= this.nodes.length) {
+      newChunksNode = zeroNode(this.type.chunkDepth);
+      newLength = 0;
+    } else {
+      const nodes = this.nodes.slice(index);
+      newChunksNode = subtreeFillToContents(nodes, this.type.chunkDepth);
+      newLength = nodes.length;
+    }
+
+    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength);
 
     return this.type.getViewDU(newRootNode) as this;
   }
