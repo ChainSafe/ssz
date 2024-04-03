@@ -67,8 +67,7 @@ export class ListCompositeTreeViewDU<
   }
 
   /**
-   * Returns a new ListCompositeTreeViewDU instance with the values from `index` to `n`
-   * where n is the length of the list.
+   * Returns a new ListCompositeTreeViewDU instance with the values from `index` to the end of list
    * 
    * ```ts
    * const nodes = getChunkNodes()
