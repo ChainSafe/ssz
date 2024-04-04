@@ -194,3 +194,35 @@ describe("ListCompositeType.sliceTo", () => {
     }
   });
 });
+
+describe("ListCompositeType.sliceFrom", () => {
+  it("Slice List at multiple length", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+    const listView = listType.defaultViewDU();
+    const listRoots: string[] = [];
+    const listSerialized: string[] = [];
+
+    for (let i = 0; i < 16; i++) {
+      listView.push(Buffer.alloc(32, 0xf + i));
+    }
+
+    for (let i = 0; i < 16; i++) {
+      const currentListView = listType.defaultViewDU();
+
+      for (let j = i; j < 16; j++) {
+        currentListView.push(Buffer.alloc(32, 0xf + j));
+        listSerialized[i] = toHexString(currentListView.serialize());
+        listRoots[i] = toHexString(currentListView.hashTreeRoot());
+      }
+    }
+
+    for (let i = -1; i < 16; i++) {
+      const index = i !== -1 ? i : 0;
+      const listSlice = listView.sliceFrom(index);
+      expect(listSlice.length).to.equal(16 - index, `Wrong length at .sliceFrom(${i})`);
+      expect(toHexString(listSlice.serialize())).equals(listSerialized[index], `Wrong serialize at .sliceFrom(${i})`);
+      expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[index], `Wrong root at .sliceFrom(${i})`);
+    }
+
+  });
+});
