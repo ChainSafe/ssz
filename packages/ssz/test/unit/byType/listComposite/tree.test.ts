@@ -223,6 +223,5 @@ describe("ListCompositeType.sliceFrom", () => {
       expect(toHexString(listSlice.serialize())).equals(listSerialized[index], `Wrong serialize at .sliceFrom(${i})`);
       expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[index], `Wrong root at .sliceFrom(${i})`);
     }
-
   });
 });

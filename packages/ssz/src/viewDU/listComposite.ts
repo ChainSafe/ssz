@@ -68,12 +68,12 @@ export class ListCompositeTreeViewDU<
 
   /**
    * Returns a new ListCompositeTreeViewDU instance with the values from `index` to the end of list
-   * 
+   *
    * ```ts
    * const nodes = getChunkNodes()
    * return listFromChunkNodes(node.clice(index))
    * ```
-   * 
+   *
    * Note: If index === n, returns an empty list of length 0
    *
    */
@@ -84,7 +84,7 @@ export class ListCompositeTreeViewDU<
     // If slicing from 0, no slicing is necesary
     if (index <= 0) {
       return this;
-    } 
+    }
 
     let newChunksNode;
     let newLength;
