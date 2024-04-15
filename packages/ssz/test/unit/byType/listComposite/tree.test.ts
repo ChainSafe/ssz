@@ -196,7 +196,7 @@ describe("ListCompositeType.sliceTo", () => {
 });
 
 describe("ListCompositeType.sliceFrom", () => {
-  it("Slice List at -1", () => {
+  it("Slice List from -1", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listView = listType.defaultViewDU();
 
@@ -212,7 +212,7 @@ describe("ListCompositeType.sliceFrom", () => {
     expect(toHexString(listSlice.serialize())).equals(listSerialized, "Wrong serialize at .sliceFrom(-1)");
     expect(toHexString(listSlice.hashTreeRoot())).equals(listRoot, "Wrong root at .sliceFrom(-1)");
   });
-  it("Slice List at n", () => {
+  it("Slice List from n", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listView = listType.defaultViewDU();
     const listSerialized = toHexString(listView.serialize()); // Zeros serialized
@@ -227,7 +227,7 @@ describe("ListCompositeType.sliceFrom", () => {
     expect(toHexString(listSlice.serialize())).equals(listSerialized, "Wrong serialize at .sliceFrom(n)");
     expect(toHexString(listSlice.hashTreeRoot())).equals(listRoot, "Wrong root at .sliceFrom(n)");
   });
-  it("Slice List at multiple length", () => {
+  it("Slice List from multiple length", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listView = listType.defaultViewDU();
     const listRoots: string[] = [];
