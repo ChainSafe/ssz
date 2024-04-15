@@ -89,7 +89,11 @@ export class ListCompositeTreeViewDU<
     let newChunksNode;
     let newLength;
 
-    if (index >= this.nodes.length) {
+    if (index > this.nodes.length) {
+      throw new Error(`Does not support sliceFrom() with index out of bound ${index}`);
+    }
+
+    if (index === this.nodes.length) {
       newChunksNode = zeroNode(this.type.chunkDepth);
       newLength = 0;
     } else {
