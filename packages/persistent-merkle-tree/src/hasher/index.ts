@@ -1,5 +1,6 @@
 import {Hasher} from "./types";
-import {hasher as nobleHasher} from "./noble";
+// import {hasher as nobleHasher} from "./noble";
+import {hasher as csHasher} from "./as-sha256";
 
 export {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
 export * from "./types";
@@ -8,7 +9,8 @@ export * from "./util";
 /**
  * Hasher used across the SSZ codebase
  */
-export let hasher: Hasher = nobleHasher;
+// export let hasher: Hasher = nobleHasher;
+export let hasher: Hasher = csHasher;
 
 /**
  * Set the hasher to be used across the SSZ codebase
