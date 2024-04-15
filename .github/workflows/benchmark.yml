@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - master
-      - benchmark # For debugging
+      - tuyen/digest_64_simd_2_benchmark # For debugging
   pull_request:
     branches:
       - master
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version: 20
       - run: yarn --immutable && yarn build && yarn generate
 
       - name: Run benchmarks
