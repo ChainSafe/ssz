@@ -18,9 +18,7 @@ export function digest(data: Uint8Array): Uint8Array {
   if (data.length <= ctx.INPUT_LENGTH) {
     inputUint8Array.set(data);
     ctx.digest(data.length);
-    const output = new Uint8Array(32);
-    output.set(outputUint8Array);
-    return output;
+    return outputUint8Array.slice(0, 32);
   }
 
   ctx.init();
@@ -32,9 +30,7 @@ export function digest64(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
     inputUint8Array.set(data);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    const output = new Uint8Array(32);
-    output.set(outputUint8Array);
-    return output;
+    return outputUint8Array.slice(0, 32);
   }
   throw new Error("InvalidLengthForDigest64");
 }
@@ -44,9 +40,7 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2, 32);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    const output = new Uint8Array(32);
-    output.set(outputUint8Array);
-    return output;
+    return outputUint8Array.slice(0, 32);
   }
   throw new Error("InvalidLengthForDigest64");
 }
@@ -83,22 +77,30 @@ export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObj
 }
 
 /**
- * Hash 4 inputs, each 64 bytes
- * @param i0 64 byte Uint8Array
- * @param i1
- * @param i2
- * @param i3
+ * Hash 4 Uint8Array objects in parallel, each 64 length as below
+ * Inputs: 0    1    2    3    4    5    6    7
+ *          \  /      \  /      \  /      \  /
+ * Outputs:  0          1         2         3
  */
-export function hash4Inputs(i0: Uint8Array, i1: Uint8Array, i2: Uint8Array, i3: Uint8Array): Uint8Array[] {
-  if (i0.length !== 64 || i1.length !== 64 || i2.length !== 64 || i3.length !== 64) {
-    throw new Error("Input length must be 64");
+export function hash4Input64s(inputs: Uint8Array[]): Uint8Array[] {
+  if (inputs.length !== 4) {
+    throw new Error("Input length must be 4");
+  }
+  for (let i = 0; i < 4; i++) {
+    const input = inputs[i];
+    if (input == null) {
+      throw new Error(`Input ${i} is null or undefined`);
+    }
+    if (input.length !== 64) {
+      throw new Error(`Invalid length ${input.length} at input ${i}`);
+    }
   }
 
   // set up input buffer for v128
-  inputUint8Array.set(i0, 0);
-  inputUint8Array.set(i1, 64);
-  inputUint8Array.set(i2, 128);
-  inputUint8Array.set(i3, 192);
+  inputUint8Array.set(inputs[0], 0);
+  inputUint8Array.set(inputs[1], 64);
+  inputUint8Array.set(inputs[2], 128);
+  inputUint8Array.set(inputs[3], 192);
 
   ctx.hash4Inputs(wasmOutputValue);
 
@@ -111,8 +113,12 @@ export function hash4Inputs(i0: Uint8Array, i1: Uint8Array, i2: Uint8Array, i3: 
 }
 
 /**
- * Hash 8 HashObjects:
- * input${i} has h0 to h7, each 4 bytes which make it 32 bytes
+ * Hash 8 HashObjects in parallel:
+ *   - input${i} has h0 to h7, each 4 bytes which make it 32 bytes
+ *
+ * Inputs      h0    h1    h2    h3    h4    h5    h6   h7
+ *               \   /      \    /       \   /      \   /
+ * Outputs         o0          o1          o2         o3
  */
 export function hash8HashObjects(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
@@ -243,7 +249,5 @@ function update(data: Uint8Array): void {
 
 function final(): Uint8Array {
   ctx.final(wasmOutputValue);
-  const output = new Uint8Array(32);
-  output.set(outputUint8Array);
-  return output;
+  return outputUint8Array.slice(0, 32);
 }
