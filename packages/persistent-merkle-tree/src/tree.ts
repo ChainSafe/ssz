@@ -73,6 +73,13 @@ export class Tree {
     return this.rootNode.root;
   }
 
+  batchHash(): Uint8Array {
+    if (!this.rootNode.isLeaf()) {
+      return (this.rootNode as BranchNode).batchHash();
+    }
+    return this.root;
+  }
+
   /**
    * Return a copy of the tree
    */

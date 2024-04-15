@@ -10,6 +10,7 @@ import {
   uint8ArrayToHashObject,
   setNodesAtDepth,
   findDiffDepthi,
+  BranchNode,
 } from "../../src";
 
 describe("fixed-depth tree iteration", () => {
@@ -108,7 +109,7 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
     tree2.setNodeWithFn(BigInt(18), getNewNodeFn);
     tree2.setNodeWithFn(BigInt(46), getNewNodeFn);
     tree2.setNodeWithFn(BigInt(60), getNewNodeFn);
-    expect(toHex(tree2.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
+    expect(toHex((tree2.rootNode as BranchNode).batchHash())).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
   });
 
   it("Should throw for gindex 0", () => {

@@ -9,4 +9,5 @@ export type Hasher = {
    * Hash two 32-byte HashObjects
    */
   digest64HashObjects(a: HashObject, b: HashObject): HashObject;
+  hash8HashObjects(inputs: HashObject[]): HashObject[];
 };
