@@ -194,3 +194,22 @@ describe("ListCompositeType.sliceTo", () => {
     }
   });
 });
+
+describe("ListCompositeType.sliceFrom", () => {
+  it("Slice List from multiple length", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+    const listLength = 16;
+    const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+    const listView = listType.toViewDU(list);
+
+    for (let i = -(listLength + 1); i < listLength + 1; i++) {
+      // compare list.slice(i) to listView.sliceFrom(i), they should be equivalent
+      const slicedList = list.slice(i);
+      const slicedListView = listView.sliceFrom(i);
+
+      expect(slicedListView.length).to.equal(slicedList.length);
+      expect(toHexString(slicedListView.serialize())).to.equal(toHexString(listType.serialize(slicedList)));
+      expect(toHexString(slicedListView.hashTreeRoot())).to.equal(toHexString(listType.hashTreeRoot(slicedList)));
+    }
+  });
+});
