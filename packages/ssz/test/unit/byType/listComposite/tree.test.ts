@@ -196,63 +196,22 @@ describe("ListCompositeType.sliceTo", () => {
 });
 
 describe("ListCompositeType.sliceFrom", () => {
-  it("Slice List from -1", () => {
-    const listType = new ListCompositeType(ssz.Root, 1024);
-    const listView = listType.defaultViewDU();
-
-    for (let i = 0; i < 16; i++) {
-      listView.push(Buffer.alloc(32, 0xf + 1));
-    }
-
-    const listSerialized = toHexString(listView.serialize());
-    const listRoot = toHexString(listView.hashTreeRoot());
-
-    const listSlice = listView.sliceFrom(-1);
-    expect(listSlice.length).to.equal(listView.length, "Wrong length at .sliceFrom(-1)");
-    expect(toHexString(listSlice.serialize())).equals(listSerialized, "Wrong serialize at .sliceFrom(-1)");
-    expect(toHexString(listSlice.hashTreeRoot())).equals(listRoot, "Wrong root at .sliceFrom(-1)");
-  });
-  it("Slice List from n", () => {
-    const listType = new ListCompositeType(ssz.Root, 1024);
-    const listView = listType.defaultViewDU();
-    const listSerialized = toHexString(listView.serialize()); // Zeros serialized
-    const listRoot = toHexString(listView.hashTreeRoot()); // Zeros root
-
-    for (let i = 0; i < 16; i++) {
-      listView.push(Buffer.alloc(32, 0xf + 1));
-    }
-
-    const listSlice = listView.sliceFrom(16);
-    expect(listSlice.length).to.equal(0, "Wrong length at .sliceFrom(n)");
-    expect(toHexString(listSlice.serialize())).equals(listSerialized, "Wrong serialize at .sliceFrom(n)");
-    expect(toHexString(listSlice.hashTreeRoot())).equals(listRoot, "Wrong root at .sliceFrom(n)");
-  });
   it("Slice List from multiple length", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
-    const listView = listType.defaultViewDU();
-    const listRoots: string[] = [];
-    const listSerialized: string[] = [];
+    const listLength = 16;
+    const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+    const listView = listType.toViewDU(list);
 
-    for (let i = 0; i < 16; i++) {
-      listView.push(Buffer.alloc(32, 0xf + i));
-    }
+    for (let i = -(listLength + 1); i < listLength + 1; i++) {
+      // compare list.slice(i) to listView.sliceFrom(i), they should be equivalent  
+      const slicedList = list.slice(i);
+      const slicedListView = listView.sliceFrom(i);
 
-    for (let i = 0; i < 16; i++) {
-      const currentListView = listType.defaultViewDU();
-
-      for (let j = i; j < 16; j++) {
-        currentListView.push(Buffer.alloc(32, 0xf + j));
-        listSerialized[i] = toHexString(currentListView.serialize());
-        listRoots[i] = toHexString(currentListView.hashTreeRoot());
-      }
-    }
-
-    for (let i = -1; i < 16; i++) {
-      const index = i !== -1 ? i : 0;
-      const listSlice = listView.sliceFrom(index);
-      expect(listSlice.length).to.equal(16 - index, `Wrong length at .sliceFrom(${i})`);
-      expect(toHexString(listSlice.serialize())).equals(listSerialized[index], `Wrong serialize at .sliceFrom(${i})`);
-      expect(toHexString(listSlice.hashTreeRoot())).equals(listRoots[index], `Wrong root at .sliceFrom(${i})`);
+      expect(slicedListView.length).to.equal(slicedList.length);
+      expect(toHexString(slicedListView.serialize()))
+        .to.equal(toHexString(listType.serialize(slicedList)));
+      expect(toHexString(slicedListView.hashTreeRoot()))
+        .to.equal(toHexString(listType.hashTreeRoot(slicedList)));
     }
   });
 });

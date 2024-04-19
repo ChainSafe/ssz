@@ -81,7 +81,11 @@ export class ListCompositeTreeViewDU<
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
 
-    // If slicing from 0, no slicing is necesary
+    // If negative index, try to make it positive long as |index| < length
+    if (index < 0) {
+      index += this.nodes.length;
+    }
+    // If slicing from 0 or neg index, no slicing is necesary
     if (index <= 0) {
       return this;
     }
@@ -89,11 +93,7 @@ export class ListCompositeTreeViewDU<
     let newChunksNode;
     let newLength;
 
-    if (index > this.nodes.length) {
-      throw new Error(`Does not support sliceFrom() with index out of bound ${index}`);
-    }
-
-    if (index === this.nodes.length) {
+    if (index >= this.nodes.length) {
       newChunksNode = zeroNode(this.type.chunkDepth);
       newLength = 0;
     } else {
