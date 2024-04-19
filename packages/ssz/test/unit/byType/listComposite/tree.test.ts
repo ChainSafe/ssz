@@ -203,15 +203,13 @@ describe("ListCompositeType.sliceFrom", () => {
     const listView = listType.toViewDU(list);
 
     for (let i = -(listLength + 1); i < listLength + 1; i++) {
-      // compare list.slice(i) to listView.sliceFrom(i), they should be equivalent  
+      // compare list.slice(i) to listView.sliceFrom(i), they should be equivalent
       const slicedList = list.slice(i);
       const slicedListView = listView.sliceFrom(i);
 
       expect(slicedListView.length).to.equal(slicedList.length);
-      expect(toHexString(slicedListView.serialize()))
-        .to.equal(toHexString(listType.serialize(slicedList)));
-      expect(toHexString(slicedListView.hashTreeRoot()))
-        .to.equal(toHexString(listType.hashTreeRoot(slicedList)));
+      expect(toHexString(slicedListView.serialize())).to.equal(toHexString(listType.serialize(slicedList)));
+      expect(toHexString(slicedListView.hashTreeRoot())).to.equal(toHexString(listType.hashTreeRoot(slicedList)));
     }
   });
 });
