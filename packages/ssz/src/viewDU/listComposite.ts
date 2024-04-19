@@ -71,7 +71,7 @@ export class ListCompositeTreeViewDU<
    *
    * ```ts
    * const nodes = getChunkNodes()
-   * return listFromChunkNodes(node.clice(index))
+   * return listFromChunkNodes(node.slice(index))
    * ```
    *
    * Note: If index === n, returns an empty list of length 0
