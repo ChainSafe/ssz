@@ -99,7 +99,7 @@
  (export "final" (func $assembly/index/final))
  (export "digest" (func $assembly/index/digest))
  (export "digest64" (func $assembly/index/digest64))
- (export "hash4Inputs" (func $assembly/index/hash4Inputs))
+ (export "hash4Input64s" (func $assembly/index/hash4Input64s))
  (export "hash8HashObjects" (func $assembly/index/hash8HashObjects))
  (export "memory" (memory $0))
  (start $~start)
@@ -5751,7 +5751,7 @@
   call $~lib/polyfills/bswap<i32>
   i32.store offset=124
  )
- (func $assembly/index/hash4Inputs (param $0 i32)
+ (func $assembly/index/hash4Input64s (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)

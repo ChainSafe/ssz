@@ -102,7 +102,7 @@ export function hash4Input64s(inputs: Uint8Array[]): Uint8Array[] {
   inputUint8Array.set(inputs[2], 128);
   inputUint8Array.set(inputs[3], 192);
 
-  ctx.hash4Inputs(wasmOutputValue);
+  ctx.hash4Input64s(wasmOutputValue);
 
   const output0 = outputUint8Array.slice(0, 32);
   const output1 = outputUint8Array.slice(32, 64);

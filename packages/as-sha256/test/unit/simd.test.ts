@@ -4,7 +4,7 @@ import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject
 import * as sha256 from "../../src";
 
 describe("Test SIMD implementation of as-sha256", () => {
-  it("testHash4Inputs", () => {
+  it("testHash4Input64s", () => {
     const input1 = "gajindergajindergajindergajinder";
     const input2 = "gajindergajindergajindergajinder";
     const input = Buffer.from(input1 + input2, "utf8");
@@ -14,11 +14,11 @@ describe("Test SIMD implementation of as-sha256", () => {
       131, 72, 178, 215, 235, 20, 207, 110,
     ]);
     for (let i = 0; i < 4; i++) {
-      expect(outputs[i]).to.be.deep.equal(expectedOutput, "incorrect hash4Inputs result " + i);
+      expect(outputs[i]).to.be.deep.equal(expectedOutput, "incorrect hash4Input64s result " + i);
     }
   });
 
-  it("testHash4Inputs 1000 times", () => {
+  it("testHash4Input64s 1000 times", () => {
     for (let i = 0; i < 1000; i++) {
       const input = crypto.randomBytes(64);
       const outputs = sha256.hash4Input64s([input, input, input, input]);
@@ -41,7 +41,7 @@ describe("Test SIMD implementation of as-sha256", () => {
     for (let i = 0; i < 4; i++) {
       const output = new Uint8Array(32);
       hashObjectToByteArray(outputs[i], output, 0);
-      expect(output).to.be.deep.equal(expectedOutput, "incorrect hash4Inputs result " + i);
+      expect(output).to.be.deep.equal(expectedOutput, "incorrect hash4Input64s result " + i);
     }
   });
 });
