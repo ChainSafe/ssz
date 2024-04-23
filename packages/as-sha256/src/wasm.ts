@@ -21,8 +21,8 @@ export interface WasmContext {
 
   digest(length: number): void;
   digest64(inPtr: number, outPtr: number): void;
-  hash4Input64s(outPtr: number): void;
-  hash8HashObjects(outPtr: number): void;
+  hash4UintArray64s(outPtr: number): void;
+  hash4HashObjectInputs(outPtr: number): void;
 }
 
 const importObj = {

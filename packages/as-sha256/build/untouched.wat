@@ -111,8 +111,8 @@
  (export "final" (func $assembly/index/final))
  (export "digest" (func $assembly/index/digest))
  (export "digest64" (func $assembly/index/digest64))
- (export "hash4Input64s" (func $assembly/index/hash4Input64s))
- (export "hash8HashObjects" (func $assembly/index/hash8HashObjects))
+ (export "hash4UintArray64s" (func $assembly/index/hash4UintArray64s))
+ (export "hash4HashObjectInputs" (func $assembly/index/hash4HashObjectInputs))
  (export "memory" (memory $0))
  (start $~start)
  (func $~lib/rt/tlsf/Root#set:flMap (param $0 i32) (param $1 i32)
@@ -10635,7 +10635,7 @@
   local.get $180
   i32.store
  )
- (func $assembly/index/hash4Input64s (param $0 i32)
+ (func $assembly/index/hash4UintArray64s (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -11106,7 +11106,7 @@
   local.get $0
   call $assembly/simd/digest64V128
  )
- (func $assembly/index/hash8HashObjects (param $0 i32)
+ (func $assembly/index/hash4HashObjectInputs (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)

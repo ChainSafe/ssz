@@ -78,11 +78,12 @@ export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObj
 
 /**
  * Hash 4 Uint8Array objects in parallel, each 64 length as below
- * Inputs: 0    1    2    3    4    5    6    7
- *          \  /      \  /      \  /      \  /
- * Outputs:  0          1         2         3
+ *
+ * Inputs: i0    i1    i2    i3    i4    i5    i6    i7
+ *          \    /      \    /      \   /       \   /
+ * Outputs:   o0          o1          o2          o3
  */
-export function hash4Input64s(inputs: Uint8Array[]): Uint8Array[] {
+export function hash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
   if (inputs.length !== 4) {
     throw new Error("Input length must be 4");
   }
@@ -102,7 +103,7 @@ export function hash4Input64s(inputs: Uint8Array[]): Uint8Array[] {
   inputUint8Array.set(inputs[2], 128);
   inputUint8Array.set(inputs[3], 192);
 
-  ctx.hash4Input64s(wasmOutputValue);
+  ctx.hash4UintArray64s(wasmOutputValue);
 
   const output0 = outputUint8Array.slice(0, 32);
   const output1 = outputUint8Array.slice(32, 64);
@@ -113,14 +114,15 @@ export function hash4Input64s(inputs: Uint8Array[]): Uint8Array[] {
 }
 
 /**
- * Hash 8 HashObjects in parallel:
- *   - input${i} has h0 to h7, each 4 bytes which make it 32 bytes
+ * Hash 4 HashObject inputs in parallel
+ *   - Each input (inputs{i}) is 4 bytes which make it 32 bytes
+ *   - Each HashObject input contains 2 HashObjects which is 64 bytes similar to hash4UintArray64s
  *
- * Inputs      h0    h1    h2    h3    h4    h5    h6   h7
+ * Inputs      i0    i1    i2    i3    i4    i5    i6   i7
  *               \   /      \    /       \   /      \   /
  * Outputs         o0          o1          o2         o3
  */
-export function hash8HashObjects(inputs: HashObject[]): HashObject[] {
+export function hash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
     throw new Error("Input length must be 8");
   }
@@ -223,7 +225,7 @@ export function hash8HashObjects(inputs: HashObject[]): HashObject[] {
   inputUint32Array[62] = inputs[5].h7;
   inputUint32Array[63] = inputs[7].h7;
 
-  ctx.hash8HashObjects(wasmOutputValue);
+  ctx.hash4HashObjectInputs(wasmOutputValue);
 
   const output0 = byteArrayToHashObject(outputUint8Array.subarray(0, 32));
   const output1 = byteArrayToHashObject(outputUint8Array.subarray(32, 64));
