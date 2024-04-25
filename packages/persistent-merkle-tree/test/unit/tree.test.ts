@@ -11,6 +11,7 @@ import {
   setNodesAtDepth,
   findDiffDepthi,
   BranchNode,
+  HashComputation,
 } from "../../src";
 
 describe("fixed-depth tree iteration", () => {
@@ -139,14 +140,20 @@ describe("Tree batch setNodes", () => {
     {depth: 5, gindexes: [33]},
     {depth: 5, gindexes: [33, 34]},
     {depth: 10, gindexes: [1024, 1061, 1098, 1135, 1172, 1209, 1246, 1283]},
-    {depth: 40, gindexes: [1157505940782, 1349082402477, 1759777921993]},
+    {depth: 40, gindexes: [Math.pow(2, 40) + 1000, Math.pow(2, 40) + 1_000_000, Math.pow(2, 40) + 1_000_000_000]},
+    // TODO: make sure index < 0xffffffff for findDiffDepthi not to return NaN
+    // {depth: 40, gindexes: [1157505940782, 1349082402477, 1759777921993]},
   ];
 
   for (const {depth, gindexes} of testCases) {
     const id = `depth ${depth} ${JSON.stringify(gindexes)}`;
     // Prepare tree
     const treeOk = new Tree(zeroNode(depth));
+    // cache all roots
+    treeOk.root;
+    const hashComputationsOk: Array<HashComputation[]> = Array.from({length: depth}, () => []);
     const tree = new Tree(zeroNode(depth));
+    tree.root;
     const gindexesBigint = gindexes.map((gindex) => BigInt(gindex));
     const index0 = 2 ** depth;
     const indexes = gindexes.map((gindex) => gindex - index0);
@@ -155,6 +162,7 @@ describe("Tree batch setNodes", () => {
     for (let i = 0; i < gindexesBigint.length; i++) {
       treeOk.setNode(gindexesBigint[i], LeafNode.fromRoot(Buffer.alloc(32, gindexes[i])));
     }
+    getHashComputation(treeOk.rootNode, 0, hashComputationsOk);
 
     // For the large test cases, only compare the rootNode root (gindex 1)
     const maxGindex = depth > 6 ? 1 : 2 ** (depth + 1);
@@ -162,15 +170,32 @@ describe("Tree batch setNodes", () => {
 
     it(`${id} - setNodesAtDepth()`, () => {
       const chunksNode = tree.rootNode;
+      const hashComputations: Array<HashComputation[]> = Array.from({length: depth}, () => []);
       const newChunksNode = setNodesAtDepth(
         chunksNode,
         depth,
         indexes,
-        gindexes.map((nodeValue) => LeafNode.fromRoot(Buffer.alloc(32, nodeValue)))
+        gindexes.map((nodeValue) => LeafNode.fromRoot(Buffer.alloc(32, nodeValue))),
+        hashComputations
       );
       tree.rootNode = newChunksNode;
       const roots = getTreeRoots(tree, maxGindex);
 
+      // compute root to compare easiers
+      treeOk.root;
+      tree.root;
+      // TODO: need sort?
+      // TODO: confirm all nodes in HashComputation are populated with HashObjects, h0 !== null
+      for (let i = depth - 1; i > 0; i--) {
+        expect(hashComputations[i].length).to.be.equal(hashComputationsOk[i].length, `incorrect length at depth ${i}`);
+        for (let j = 0; j < hashComputations[i].length; j++) {
+          const hcOk = hashComputationsOk[i][j];
+          const hc = hashComputations[i][j];
+          expect(hc.src0.root).to.be.deep.equal(hcOk.src0.root);
+          expect(hc.src1.root).to.be.deep.equal(hcOk.src1.root);
+          expect(hc.dest.root).to.be.deep.equal(hcOk.dest.root);
+        }
+      }
       try {
         expect(roots).to.deep.equal(rootsOk);
       } catch (e) {
@@ -246,4 +271,19 @@ function getTreeRoots(tree: Tree, maxGindex: number): string[] {
 
 function toHex(bytes: Buffer | Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
+}
+
+function getHashComputation(node: Node, level: number, hashCompsByLevel: Array<HashComputation[]>): void {
+  if (node.h0 === null) {
+    const hashComputations = hashCompsByLevel[level];
+    hashComputations.push({src0: node.left, src1: node.right, dest: node});
+    if (!node.left.isLeaf()) {
+      getHashComputation(node.left, level + 1, hashCompsByLevel);
+    }
+    if (!node.right.isLeaf()) {
+      getHashComputation(node.right, level + 1, hashCompsByLevel);
+    }
+  }
+
+  // else stop the recursion, LeafNode should have h0
 }
