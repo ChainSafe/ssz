@@ -3,7 +3,7 @@ import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
 
 const TWO_POWER_32 = 2 ** 32;
 
-type HashComputation = {
+export type HashComputation = {
   src0: Node;
   src1: Node;
   dest: Node;
@@ -76,7 +76,7 @@ export class BranchNode extends Node {
     }
   }
 
-  // TODO: private, unit tests
+  // TODO: private, unit tests, use Array[HashComputation[]] for better performance
   getHashComputation(level: number, hashCompsByLevel: Map<number, HashComputation[]>): void {
     if (this.h0 === null) {
       let hashComputations = hashCompsByLevel.get(level);
