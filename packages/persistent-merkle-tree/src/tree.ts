@@ -692,6 +692,9 @@ export function treeZeroAfterIndex(rootNode: Node, nodesDepth: number, index: nu
   return node;
 }
 
+const NUMBER_32_MAX = 0xffffffff;
+const NUMBER_2_POW_32 = 2 ** 32;
+
 /**
  * depth depthi   gindexes   indexes
  * 0     1           1          0
@@ -704,7 +707,6 @@ export function treeZeroAfterIndex(rootNode: Node, nodesDepth: number, index: nu
  * @param from Index
  * @param to Index
  */
-const NUMBER_32_MAX = 0xffffffff;
 export function findDiffDepthi(from: number, to: number): number {
   if (from === to || from < 0 || to < 0) {
     throw Error(`Expect different positive inputs, from=${from} to=${to}`);
@@ -721,12 +723,14 @@ export function findDiffDepthi(from: number, to: number): number {
 
   // same number of bits and > 32
   if (numBits0 > 32) {
-    const highBits0 = Math.floor(from / NUMBER_32_MAX);
-    const highBits1 = Math.floor(to / NUMBER_32_MAX);
+    const highBits0 = Math.floor(from / NUMBER_2_POW_32) & NUMBER_32_MAX;
+    const highBits1 = Math.floor(to / NUMBER_2_POW_32) & NUMBER_32_MAX;
     if (highBits0 === highBits1) {
       // different part is just low bits
       return findDiffDepthi32Bits(from & NUMBER_32_MAX, to & NUMBER_32_MAX);
     }
+
+    // highBits are different, no need to compare low bits
     return 32 + findDiffDepthi32Bits(highBits0, highBits1);
   }
 
