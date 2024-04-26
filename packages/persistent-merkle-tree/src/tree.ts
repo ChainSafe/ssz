@@ -715,11 +715,11 @@ export function findDiffDepthi(from: number, to: number): number {
 
   // these indexes stay in 2 sides of a merkle tree
   if (numBits0 !== numBits1) {
-    // Must offset by one to match the depthi scale
+    // must offset by one to match the depthi scale
     return Math.max(numBits0, numBits1) - 1;
   }
 
-  // same number of bits
+  // same number of bits and > 32
   if (numBits0 > 32) {
     const highBits0 = Math.floor(from / NUMBER_32_MAX);
     const highBits1 = Math.floor(to / NUMBER_32_MAX);
@@ -730,6 +730,7 @@ export function findDiffDepthi(from: number, to: number): number {
     return 32 + findDiffDepthi32Bits(highBits0, highBits1);
   }
 
+  // same number of bits and <= 32
   return findDiffDepthi32Bits(from, to);
 }
 
@@ -758,8 +759,15 @@ function isLeftNode(depthi: number, index: number): boolean {
  */
 function findDiffDepthi32Bits(from: number, to: number): number {
   const xor = from ^ to;
+  if (xor === 0) {
+    // this should not happen as checked in `findDiffDepthi`
+    // otherwise this function return -1 which is weird for diffi
+    throw Error(`Do not support equal value from=${from} to=${to}`);
+  }
+
   // (0,0) -> 0 | (0,1) -> 1 | (0,2) -> 2
-  const numBitsDiff = xor <= 0 ? 32 : Math.ceil(Math.log2(xor + 1));
-  // Must offset by one to match the depthi scale
+  // xor < 0 means the 1st bit of `from` and `to` is diffent, which mean num bits diff 32
+  const numBitsDiff = xor < 0 ? 32 : Math.ceil(Math.log2(xor + 1));
+  // must offset by one to match the depthi scale
   return numBitsDiff - 1;
 }
