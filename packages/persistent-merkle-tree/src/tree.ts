@@ -710,8 +710,8 @@ export function findDiffDepthi(from: number, to: number): number {
     throw Error(`Expect different positive inputs, from=${from} to=${to}`);
   }
   // 0 -> 0, 1 -> 1, 2 -> 2, 3 -> 2, 4 -> 3
-  const numBits0 = from > 0 ? Math.ceil(Math.log2(from + 1)) : 0;
-  const numBits1 = to > 0 ? Math.ceil(Math.log2(to + 1)) : 0;
+  const numBits0 = Math.ceil(Math.log2(from + 1));
+  const numBits1 = Math.ceil(Math.log2(to + 1));
 
   // these indexes stay in 2 sides of a merkle tree
   if (numBits0 !== numBits1) {
