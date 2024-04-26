@@ -174,13 +174,10 @@ export class BitArray {
   }
 
   /**
-   * Return the position of a single bit set. If no bit set or more than 1 bit set, throws.
+   * Return the position of a single bit set.
    * @returns
    *  - number: if there's a single bit set, the number it the single bit set position
    *  - null: if ERROR_MORE_THAN_ONE_BIT_SET or ERROR_NO_BIT_SET
-   * @throws
-   *  - ERROR_MORE_THAN_ONE_BIT_SET
-   *  - ERROR_NO_BIT_SET
    */
   getSingleTrueBit(): number | null {
     let index: number | null = null;
