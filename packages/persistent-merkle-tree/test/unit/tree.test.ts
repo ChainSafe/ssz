@@ -12,6 +12,7 @@ import {
   findDiffDepthi,
   BranchNode,
   HashComputation,
+  findDiffDepthi,
 } from "../../src";
 
 describe("fixed-depth tree iteration", () => {
