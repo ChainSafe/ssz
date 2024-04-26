@@ -142,8 +142,7 @@ describe("Tree batch setNodes", () => {
     {depth: 5, gindexes: [33, 34]},
     {depth: 10, gindexes: [1024, 1061, 1098, 1135, 1172, 1209, 1246, 1283]},
     {depth: 40, gindexes: [Math.pow(2, 40) + 1000, Math.pow(2, 40) + 1_000_000, Math.pow(2, 40) + 1_000_000_000]},
-    // TODO: make sure index < 0xffffffff for findDiffDepthi not to return NaN
-    // {depth: 40, gindexes: [1157505940782, 1349082402477, 1759777921993]},
+    {depth: 40, gindexes: [1157505940782, 1349082402477, 1759777921993]},
   ];
 
   for (const {depth, gindexes} of testCases) {
