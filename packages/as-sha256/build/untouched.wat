@@ -1,12 +1,15 @@
 (module
- (type $0 (func (param i32 i32)))
- (type $1 (func (param i32) (result i32)))
- (type $2 (func))
- (type $3 (func (param i32 i32) (result i32)))
+ (type $0 (func (param i32) (result i32)))
+ (type $1 (func (param i32 i32)))
+ (type $2 (func (param i32 i32) (result i32)))
+ (type $3 (func))
  (type $4 (func (param i32)))
  (type $5 (func (param i32 i32 i32)))
  (type $6 (func (param i32 i32 i32 i32)))
  (type $7 (func (param i32 i32 i64) (result i32)))
+ (type $8 (func (param i32 i64 i32)))
+ (type $9 (func (param i64 i32) (result i32)))
+ (type $10 (func (param i32 i64 i32 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (global $assembly/utils/const/K i32 (i32.const 320))
  (global $assembly/utils/const/W64 i32 (i32.const 656))
@@ -42,6 +45,7 @@
  (global $~lib/native/ASC_RUNTIME i32 (i32.const 1))
  (global $assembly/simd/kV128ArrayBuffer (mut i32) (i32.const 0))
  (global $assembly/simd/kV128Ptr (mut i32) (i32.const 0))
+ (global $~lib/native/ASC_SHRINK_LEVEL i32 (i32.const 0))
  (global $assembly/simd/w64V12ArrayBuffer (mut i32) (i32.const 0))
  (global $assembly/simd/w64V128Ptr (mut i32) (i32.const 0))
  (global $assembly/simd/DEFAULT_H0V128 v128 (v128.const i32x4 0x6a09e667 0x6a09e667 0x6a09e667 0x6a09e667))
@@ -86,7 +90,7 @@
  (global $assembly/index/outputPtr (mut i32) (i32.const 0))
  (global $assembly/index/mLength (mut i32) (i32.const 0))
  (global $assembly/index/bytesHashed (mut i32) (i32.const 0))
- (global $~lib/memory/__heap_base i32 (i32.const 1132))
+ (global $~lib/memory/__heap_base i32 (i32.const 3196))
  (memory $0 1)
  (data $0 (i32.const 12) "\1c\01\00\00\00\00\00\00\00\00\00\00\01\00\00\00\00\01\00\00\98/\8aB\91D7q\cf\fb\c0\b5\a5\db\b5\e9[\c2V9\f1\11\f1Y\a4\82?\92\d5^\1c\ab\98\aa\07\d8\01[\83\12\be\851$\c3}\0cUt]\ber\fe\b1\de\80\a7\06\dc\9bt\f1\9b\c1\c1i\9b\e4\86G\be\ef\c6\9d\c1\0f\cc\a1\0c$o,\e9-\aa\84tJ\dc\a9\b0\\\da\88\f9vRQ>\98m\c61\a8\c8\'\03\b0\c7\7fY\bf\f3\0b\e0\c6G\91\a7\d5Qc\ca\06g))\14\85\n\b7\'8!\1b.\fcm,M\13\r8STs\ne\bb\njv.\c9\c2\81\85,r\92\a1\e8\bf\a2Kf\1a\a8p\8bK\c2\a3Ql\c7\19\e8\92\d1$\06\99\d6\855\0e\f4p\a0j\10\16\c1\a4\19\08l7\1eLwH\'\b5\bc\b04\b3\0c\1c9J\aa\d8NO\ca\9c[\f3o.h\ee\82\8ftoc\a5x\14x\c8\84\08\02\c7\8c\fa\ff\be\90\eblP\a4\f7\a3\f9\be\f2xq\c6\00\00\00\00\00\00\00\00\00\00\00\00")
  (data $1 (i32.const 300) ",\00\00\00\00\00\00\00\00\00\00\00\04\00\00\00\10\00\00\00 \00\00\00 \00\00\00\00\01\00\00@\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
@@ -100,6 +104,16 @@
  (data $9 (i32.const 992) "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
  (data $10 (i32.const 1020) "<\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e\00\00\00\00\00\00\00\00\00")
  (data $11 (i32.const 1084) ",\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00\1a\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00.\00t\00s\00\00\00")
+ (data $12 (i32.const 1132) "|\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00d\00\00\00t\00o\00S\00t\00r\00i\00n\00g\00(\00)\00 \00r\00a\00d\00i\00x\00 \00a\00r\00g\00u\00m\00e\00n\00t\00 \00m\00u\00s\00t\00 \00b\00e\00 \00b\00e\00t\00w\00e\00e\00n\00 \002\00 \00a\00n\00d\00 \003\006\00\00\00\00\00\00\00\00\00")
+ (data $13 (i32.const 1260) "<\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00&\00\00\00~\00l\00i\00b\00/\00u\00t\00i\00l\00/\00n\00u\00m\00b\00e\00r\00.\00t\00s\00\00\00\00\00\00\00")
+ (data $14 (i32.const 1324) "\1c\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00\02\00\00\000\00\00\00\00\00\00\00\00\00\00\00")
+ (data $15 (i32.const 1356) "0\000\000\001\000\002\000\003\000\004\000\005\000\006\000\007\000\008\000\009\001\000\001\001\001\002\001\003\001\004\001\005\001\006\001\007\001\008\001\009\002\000\002\001\002\002\002\003\002\004\002\005\002\006\002\007\002\008\002\009\003\000\003\001\003\002\003\003\003\004\003\005\003\006\003\007\003\008\003\009\004\000\004\001\004\002\004\003\004\004\004\005\004\006\004\007\004\008\004\009\005\000\005\001\005\002\005\003\005\004\005\005\005\006\005\007\005\008\005\009\006\000\006\001\006\002\006\003\006\004\006\005\006\006\006\007\006\008\006\009\007\000\007\001\007\002\007\003\007\004\007\005\007\006\007\007\007\008\007\009\008\000\008\001\008\002\008\003\008\004\008\005\008\006\008\007\008\008\008\009\009\000\009\001\009\002\009\003\009\004\009\005\009\006\009\007\009\008\009\009\00")
+ (data $16 (i32.const 1756) "\1c\04\00\00\00\00\00\00\00\00\00\00\02\00\00\00\00\04\00\000\000\000\001\000\002\000\003\000\004\000\005\000\006\000\007\000\008\000\009\000\00a\000\00b\000\00c\000\00d\000\00e\000\00f\001\000\001\001\001\002\001\003\001\004\001\005\001\006\001\007\001\008\001\009\001\00a\001\00b\001\00c\001\00d\001\00e\001\00f\002\000\002\001\002\002\002\003\002\004\002\005\002\006\002\007\002\008\002\009\002\00a\002\00b\002\00c\002\00d\002\00e\002\00f\003\000\003\001\003\002\003\003\003\004\003\005\003\006\003\007\003\008\003\009\003\00a\003\00b\003\00c\003\00d\003\00e\003\00f\004\000\004\001\004\002\004\003\004\004\004\005\004\006\004\007\004\008\004\009\004\00a\004\00b\004\00c\004\00d\004\00e\004\00f\005\000\005\001\005\002\005\003\005\004\005\005\005\006\005\007\005\008\005\009\005\00a\005\00b\005\00c\005\00d\005\00e\005\00f\006\000\006\001\006\002\006\003\006\004\006\005\006\006\006\007\006\008\006\009\006\00a\006\00b\006\00c\006\00d\006\00e\006\00f\007\000\007\001\007\002\007\003\007\004\007\005\007\006\007\007\007\008\007\009\007\00a\007\00b\007\00c\007\00d\007\00e\007\00f\008\000\008\001\008\002\008\003\008\004\008\005\008\006\008\007\008\008\008\009\008\00a\008\00b\008\00c\008\00d\008\00e\008\00f\009\000\009\001\009\002\009\003\009\004\009\005\009\006\009\007\009\008\009\009\009\00a\009\00b\009\00c\009\00d\009\00e\009\00f\00a\000\00a\001\00a\002\00a\003\00a\004\00a\005\00a\006\00a\007\00a\008\00a\009\00a\00a\00a\00b\00a\00c\00a\00d\00a\00e\00a\00f\00b\000\00b\001\00b\002\00b\003\00b\004\00b\005\00b\006\00b\007\00b\008\00b\009\00b\00a\00b\00b\00b\00c\00b\00d\00b\00e\00b\00f\00c\000\00c\001\00c\002\00c\003\00c\004\00c\005\00c\006\00c\007\00c\008\00c\009\00c\00a\00c\00b\00c\00c\00c\00d\00c\00e\00c\00f\00d\000\00d\001\00d\002\00d\003\00d\004\00d\005\00d\006\00d\007\00d\008\00d\009\00d\00a\00d\00b\00d\00c\00d\00d\00d\00e\00d\00f\00e\000\00e\001\00e\002\00e\003\00e\004\00e\005\00e\006\00e\007\00e\008\00e\009\00e\00a\00e\00b\00e\00c\00e\00d\00e\00e\00e\00f\00f\000\00f\001\00f\002\00f\003\00f\004\00f\005\00f\006\00f\007\00f\008\00f\009\00f\00a\00f\00b\00f\00c\00f\00d\00f\00e\00f\00f\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data $17 (i32.const 2812) "\\\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00H\00\00\000\001\002\003\004\005\006\007\008\009\00a\00b\00c\00d\00e\00f\00g\00h\00i\00j\00k\00l\00m\00n\00o\00p\00q\00r\00s\00t\00u\00v\00w\00x\00y\00z\00\00\00\00\00")
+ (data $18 (i32.const 2908) "\\\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00H\00\00\00s\00e\00t\00V\001\002\008\00:\00 \00e\00x\00p\00e\00c\00t\00 \00i\00 \00f\00r\00o\00m\00 \000\00 \00t\00o\00 \006\003\00,\00 \00g\00o\00t\00 \00\00\00\00\00")
+ (data $19 (i32.const 3004) "\1c\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data $20 (i32.const 3036) "<\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00,\00\00\00a\00s\00s\00e\00m\00b\00l\00y\00/\00u\00t\00i\00l\00s\00/\00v\001\002\008\00.\00t\00s\00")
+ (data $21 (i32.const 3100) "\\\00\00\00\00\00\00\00\00\00\00\00\02\00\00\00H\00\00\00g\00e\00t\00V\001\002\008\00:\00 \00e\00x\00p\00e\00c\00t\00 \00i\00 \00f\00r\00o\00m\00 \000\00 \00t\00o\00 \006\003\00,\00 \00g\00o\00t\00 \00\00\00\00\00")
  (table $0 1 1 funcref)
  (elem $0 (i32.const 1))
  (export "PARALLEL_FACTOR" (global $assembly/index/PARALLEL_FACTOR))
@@ -1771,6 +1785,633 @@
   local.get $2
   return
  )
+ (func $~lib/util/number/decimalCount32 (param $0 i32) (result i32)
+  local.get $0
+  i32.const 100000
+  i32.lt_u
+  if
+   local.get $0
+   i32.const 100
+   i32.lt_u
+   if
+    i32.const 1
+    local.get $0
+    i32.const 10
+    i32.ge_u
+    i32.add
+    return
+   else
+    i32.const 3
+    local.get $0
+    i32.const 10000
+    i32.ge_u
+    i32.add
+    local.get $0
+    i32.const 1000
+    i32.ge_u
+    i32.add
+    return
+   end
+   unreachable
+  else
+   local.get $0
+   i32.const 10000000
+   i32.lt_u
+   if
+    i32.const 6
+    local.get $0
+    i32.const 1000000
+    i32.ge_u
+    i32.add
+    return
+   else
+    i32.const 8
+    local.get $0
+    i32.const 1000000000
+    i32.ge_u
+    i32.add
+    local.get $0
+    i32.const 100000000
+    i32.ge_u
+    i32.add
+    return
+   end
+   unreachable
+  end
+  unreachable
+ )
+ (func $~lib/util/number/utoa32_dec_lut (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i64)
+  (local $8 i64)
+  (local $9 i32)
+  (local $10 i32)
+  (local $11 i32)
+  (local $12 i32)
+  (local $13 i32)
+  loop $while-continue|0
+   local.get $1
+   i32.const 10000
+   i32.ge_u
+   if
+    local.get $1
+    i32.const 10000
+    i32.div_u
+    local.set $3
+    local.get $1
+    i32.const 10000
+    i32.rem_u
+    local.set $4
+    local.get $3
+    local.set $1
+    local.get $4
+    i32.const 100
+    i32.div_u
+    local.set $5
+    local.get $4
+    i32.const 100
+    i32.rem_u
+    local.set $6
+    i32.const 1356
+    local.get $5
+    i32.const 2
+    i32.shl
+    i32.add
+    i64.load32_u
+    local.set $7
+    i32.const 1356
+    local.get $6
+    i32.const 2
+    i32.shl
+    i32.add
+    i64.load32_u
+    local.set $8
+    local.get $2
+    i32.const 4
+    i32.sub
+    local.set $2
+    local.get $0
+    local.get $2
+    i32.const 1
+    i32.shl
+    i32.add
+    local.get $7
+    local.get $8
+    i64.const 32
+    i64.shl
+    i64.or
+    i64.store
+    br $while-continue|0
+   end
+  end
+  local.get $1
+  i32.const 100
+  i32.ge_u
+  if
+   local.get $1
+   i32.const 100
+   i32.div_u
+   local.set $9
+   local.get $1
+   i32.const 100
+   i32.rem_u
+   local.set $10
+   local.get $9
+   local.set $1
+   local.get $2
+   i32.const 2
+   i32.sub
+   local.set $2
+   i32.const 1356
+   local.get $10
+   i32.const 2
+   i32.shl
+   i32.add
+   i32.load
+   local.set $11
+   local.get $0
+   local.get $2
+   i32.const 1
+   i32.shl
+   i32.add
+   local.get $11
+   i32.store
+  end
+  local.get $1
+  i32.const 10
+  i32.ge_u
+  if
+   local.get $2
+   i32.const 2
+   i32.sub
+   local.set $2
+   i32.const 1356
+   local.get $1
+   i32.const 2
+   i32.shl
+   i32.add
+   i32.load
+   local.set $12
+   local.get $0
+   local.get $2
+   i32.const 1
+   i32.shl
+   i32.add
+   local.get $12
+   i32.store
+  else
+   local.get $2
+   i32.const 1
+   i32.sub
+   local.set $2
+   i32.const 48
+   local.get $1
+   i32.add
+   local.set $13
+   local.get $0
+   local.get $2
+   i32.const 1
+   i32.shl
+   i32.add
+   local.get $13
+   i32.store16
+  end
+ )
+ (func $~lib/util/number/utoa_hex_lut (param $0 i32) (param $1 i64) (param $2 i32)
+  loop $while-continue|0
+   local.get $2
+   i32.const 2
+   i32.ge_u
+   if
+    local.get $2
+    i32.const 2
+    i32.sub
+    local.set $2
+    local.get $0
+    local.get $2
+    i32.const 1
+    i32.shl
+    i32.add
+    i32.const 1776
+    local.get $1
+    i32.wrap_i64
+    i32.const 255
+    i32.and
+    i32.const 2
+    i32.shl
+    i32.add
+    i32.load
+    i32.store
+    local.get $1
+    i64.const 8
+    i64.shr_u
+    local.set $1
+    br $while-continue|0
+   end
+  end
+  local.get $2
+  i32.const 1
+  i32.and
+  if
+   local.get $0
+   i32.const 1776
+   local.get $1
+   i32.wrap_i64
+   i32.const 6
+   i32.shl
+   i32.add
+   i32.load16_u
+   i32.store16
+  end
+ )
+ (func $~lib/util/number/ulog_base (param $0 i64) (param $1 i32) (result i32)
+  (local $2 i32)
+  (local $3 i64)
+  (local $4 i64)
+  (local $5 i32)
+  block $~lib/util/number/isPowerOf2<i32>|inlined.0 (result i32)
+   local.get $1
+   local.set $2
+   local.get $2
+   i32.popcnt
+   i32.const 1
+   i32.eq
+   br $~lib/util/number/isPowerOf2<i32>|inlined.0
+  end
+  if
+   i32.const 63
+   local.get $0
+   i64.clz
+   i32.wrap_i64
+   i32.sub
+   i32.const 31
+   local.get $1
+   i32.clz
+   i32.sub
+   i32.div_u
+   i32.const 1
+   i32.add
+   return
+  end
+  local.get $1
+  i64.extend_i32_s
+  local.set $3
+  local.get $3
+  local.set $4
+  i32.const 1
+  local.set $5
+  loop $while-continue|0
+   local.get $0
+   local.get $4
+   i64.ge_u
+   if
+    local.get $0
+    local.get $4
+    i64.div_u
+    local.set $0
+    local.get $4
+    local.get $4
+    i64.mul
+    local.set $4
+    local.get $5
+    i32.const 1
+    i32.shl
+    local.set $5
+    br $while-continue|0
+   end
+  end
+  loop $while-continue|1
+   local.get $0
+   i64.const 1
+   i64.ge_u
+   if
+    local.get $0
+    local.get $3
+    i64.div_u
+    local.set $0
+    local.get $5
+    i32.const 1
+    i32.add
+    local.set $5
+    br $while-continue|1
+   end
+  end
+  local.get $5
+  i32.const 1
+  i32.sub
+  return
+ )
+ (func $~lib/util/number/utoa64_any_core (param $0 i32) (param $1 i64) (param $2 i32) (param $3 i32)
+  (local $4 i64)
+  (local $5 i64)
+  (local $6 i64)
+  (local $7 i64)
+  local.get $3
+  i64.extend_i32_s
+  local.set $4
+  local.get $3
+  local.get $3
+  i32.const 1
+  i32.sub
+  i32.and
+  i32.const 0
+  i32.eq
+  if
+   local.get $3
+   i32.ctz
+   i32.const 7
+   i32.and
+   i64.extend_i32_s
+   local.set $5
+   local.get $4
+   i64.const 1
+   i64.sub
+   local.set $6
+   loop $do-loop|0
+    local.get $2
+    i32.const 1
+    i32.sub
+    local.set $2
+    local.get $0
+    local.get $2
+    i32.const 1
+    i32.shl
+    i32.add
+    i32.const 2832
+    local.get $1
+    local.get $6
+    i64.and
+    i32.wrap_i64
+    i32.const 1
+    i32.shl
+    i32.add
+    i32.load16_u
+    i32.store16
+    local.get $1
+    local.get $5
+    i64.shr_u
+    local.set $1
+    local.get $1
+    i64.const 0
+    i64.ne
+    br_if $do-loop|0
+   end
+  else
+   loop $do-loop|1
+    local.get $2
+    i32.const 1
+    i32.sub
+    local.set $2
+    local.get $1
+    local.get $4
+    i64.div_u
+    local.set $7
+    local.get $0
+    local.get $2
+    i32.const 1
+    i32.shl
+    i32.add
+    i32.const 2832
+    local.get $1
+    local.get $7
+    local.get $4
+    i64.mul
+    i64.sub
+    i32.wrap_i64
+    i32.const 1
+    i32.shl
+    i32.add
+    i32.load16_u
+    i32.store16
+    local.get $7
+    local.set $1
+    local.get $1
+    i64.const 0
+    i64.ne
+    br_if $do-loop|1
+   end
+  end
+ )
+ (func $~lib/util/number/itoa32 (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  (local $9 i32)
+  (local $10 i32)
+  (local $11 i32)
+  (local $12 i32)
+  (local $13 i32)
+  local.get $1
+  i32.const 2
+  i32.lt_s
+  if (result i32)
+   i32.const 1
+  else
+   local.get $1
+   i32.const 36
+   i32.gt_s
+  end
+  if
+   i32.const 1152
+   i32.const 1280
+   i32.const 373
+   i32.const 5
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $0
+  i32.eqz
+  if
+   i32.const 1344
+   return
+  end
+  local.get $0
+  i32.const 31
+  i32.shr_u
+  i32.const 1
+  i32.shl
+  local.set $2
+  local.get $2
+  if
+   i32.const 0
+   local.get $0
+   i32.sub
+   local.set $0
+  end
+  local.get $1
+  i32.const 10
+  i32.eq
+  if
+   local.get $0
+   call $~lib/util/number/decimalCount32
+   local.set $4
+   local.get $4
+   i32.const 1
+   i32.shl
+   local.get $2
+   i32.add
+   i32.const 2
+   call $~lib/rt/tcms/__new
+   local.set $3
+   local.get $3
+   local.get $2
+   i32.add
+   local.set $5
+   local.get $0
+   local.set $6
+   local.get $4
+   local.set $7
+   i32.const 0
+   i32.const 1
+   i32.ge_s
+   drop
+   local.get $5
+   local.get $6
+   local.get $7
+   call $~lib/util/number/utoa32_dec_lut
+  else
+   local.get $1
+   i32.const 16
+   i32.eq
+   if
+    i32.const 31
+    local.get $0
+    i32.clz
+    i32.sub
+    i32.const 2
+    i32.shr_s
+    i32.const 1
+    i32.add
+    local.set $8
+    local.get $8
+    i32.const 1
+    i32.shl
+    local.get $2
+    i32.add
+    i32.const 2
+    call $~lib/rt/tcms/__new
+    local.set $3
+    local.get $3
+    local.get $2
+    i32.add
+    local.set $9
+    local.get $0
+    local.set $10
+    local.get $8
+    local.set $11
+    i32.const 0
+    i32.const 1
+    i32.ge_s
+    drop
+    local.get $9
+    local.get $10
+    i64.extend_i32_u
+    local.get $11
+    call $~lib/util/number/utoa_hex_lut
+   else
+    local.get $0
+    local.set $12
+    local.get $12
+    i64.extend_i32_u
+    local.get $1
+    call $~lib/util/number/ulog_base
+    local.set $13
+    local.get $13
+    i32.const 1
+    i32.shl
+    local.get $2
+    i32.add
+    i32.const 2
+    call $~lib/rt/tcms/__new
+    local.set $3
+    local.get $3
+    local.get $2
+    i32.add
+    local.get $12
+    i64.extend_i32_u
+    local.get $13
+    local.get $1
+    call $~lib/util/number/utoa64_any_core
+   end
+  end
+  local.get $2
+  if
+   local.get $3
+   i32.const 45
+   i32.store16
+  end
+  local.get $3
+  return
+ )
+ (func $~lib/number/I32#toString (param $0 i32) (param $1 i32) (result i32)
+  local.get $0
+  local.get $1
+  call $~lib/util/number/itoa32
+  return
+ )
+ (func $~lib/rt/common/OBJECT#get:rtSize (param $0 i32) (result i32)
+  local.get $0
+  i32.load offset=16
+ )
+ (func $~lib/string/String#get:length (param $0 i32) (result i32)
+  local.get $0
+  i32.const 20
+  i32.sub
+  call $~lib/rt/common/OBJECT#get:rtSize
+  i32.const 1
+  i32.shr_u
+  return
+ )
+ (func $~lib/string/String#concat (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  local.get $0
+  call $~lib/string/String#get:length
+  i32.const 1
+  i32.shl
+  local.set $2
+  local.get $1
+  call $~lib/string/String#get:length
+  i32.const 1
+  i32.shl
+  local.set $3
+  local.get $2
+  local.get $3
+  i32.add
+  local.set $4
+  local.get $4
+  i32.const 0
+  i32.eq
+  if
+   i32.const 3024
+   return
+  end
+  local.get $4
+  i32.const 2
+  call $~lib/rt/tcms/__new
+  local.set $5
+  local.get $5
+  local.get $0
+  local.get $2
+  memory.copy
+  local.get $5
+  local.get $2
+  i32.add
+  local.get $1
+  local.get $3
+  memory.copy
+  local.get $5
+  return
+ )
  (func $start:assembly/simd
   (local $0 i32)
   (local $1 i32)
@@ -1812,649 +2453,661 @@
     i32x4.splat
     local.set $3
     block $break|1
-     block $case63|1
-      block $case62|1
-       block $case61|1
-        block $case60|1
-         block $case59|1
-          block $case58|1
-           block $case57|1
-            block $case56|1
-             block $case55|1
-              block $case54|1
-               block $case53|1
-                block $case52|1
-                 block $case51|1
-                  block $case50|1
-                   block $case49|1
-                    block $case48|1
-                     block $case47|1
-                      block $case46|1
-                       block $case45|1
-                        block $case44|1
-                         block $case43|1
-                          block $case42|1
-                           block $case41|1
-                            block $case40|1
-                             block $case39|1
-                              block $case38|1
-                               block $case37|1
-                                block $case36|1
-                                 block $case35|1
-                                  block $case34|1
-                                   block $case33|1
-                                    block $case32|1
-                                     block $case31|1
-                                      block $case30|1
-                                       block $case29|1
-                                        block $case28|1
-                                         block $case27|1
-                                          block $case26|1
-                                           block $case25|1
-                                            block $case24|1
-                                             block $case23|1
-                                              block $case22|1
-                                               block $case21|1
-                                                block $case20|1
-                                                 block $case19|1
-                                                  block $case18|1
-                                                   block $case17|1
-                                                    block $case16|1
-                                                     block $case15|1
-                                                      block $case14|1
-                                                       block $case13|1
-                                                        block $case12|1
-                                                         block $case11|1
-                                                          block $case10|1
-                                                           block $case9|1
-                                                            block $case8|1
-                                                             block $case7|1
-                                                              block $case6|1
-                                                               block $case5|1
-                                                                block $case4|1
-                                                                 block $case3|1
-                                                                  block $case2|1
-                                                                   block $case1|1
-                                                                    block $case0|1
-                                                                     local.get $2
-                                                                     local.set $4
-                                                                     local.get $4
-                                                                     i32.const 0
-                                                                     i32.eq
-                                                                     br_if $case0|1
-                                                                     local.get $4
-                                                                     i32.const 1
-                                                                     i32.eq
-                                                                     br_if $case1|1
-                                                                     local.get $4
-                                                                     i32.const 2
-                                                                     i32.eq
-                                                                     br_if $case2|1
-                                                                     local.get $4
-                                                                     i32.const 3
-                                                                     i32.eq
-                                                                     br_if $case3|1
-                                                                     local.get $4
-                                                                     i32.const 4
-                                                                     i32.eq
-                                                                     br_if $case4|1
-                                                                     local.get $4
-                                                                     i32.const 5
-                                                                     i32.eq
-                                                                     br_if $case5|1
-                                                                     local.get $4
-                                                                     i32.const 6
-                                                                     i32.eq
-                                                                     br_if $case6|1
-                                                                     local.get $4
-                                                                     i32.const 7
-                                                                     i32.eq
-                                                                     br_if $case7|1
-                                                                     local.get $4
-                                                                     i32.const 8
-                                                                     i32.eq
-                                                                     br_if $case8|1
-                                                                     local.get $4
-                                                                     i32.const 9
-                                                                     i32.eq
-                                                                     br_if $case9|1
-                                                                     local.get $4
-                                                                     i32.const 10
-                                                                     i32.eq
-                                                                     br_if $case10|1
-                                                                     local.get $4
-                                                                     i32.const 11
-                                                                     i32.eq
-                                                                     br_if $case11|1
-                                                                     local.get $4
-                                                                     i32.const 12
-                                                                     i32.eq
-                                                                     br_if $case12|1
-                                                                     local.get $4
-                                                                     i32.const 13
-                                                                     i32.eq
-                                                                     br_if $case13|1
-                                                                     local.get $4
-                                                                     i32.const 14
-                                                                     i32.eq
-                                                                     br_if $case14|1
-                                                                     local.get $4
-                                                                     i32.const 15
-                                                                     i32.eq
-                                                                     br_if $case15|1
-                                                                     local.get $4
-                                                                     i32.const 16
-                                                                     i32.eq
-                                                                     br_if $case16|1
-                                                                     local.get $4
-                                                                     i32.const 17
-                                                                     i32.eq
-                                                                     br_if $case17|1
-                                                                     local.get $4
-                                                                     i32.const 18
-                                                                     i32.eq
-                                                                     br_if $case18|1
-                                                                     local.get $4
-                                                                     i32.const 19
-                                                                     i32.eq
-                                                                     br_if $case19|1
-                                                                     local.get $4
-                                                                     i32.const 20
-                                                                     i32.eq
-                                                                     br_if $case20|1
-                                                                     local.get $4
-                                                                     i32.const 21
-                                                                     i32.eq
-                                                                     br_if $case21|1
-                                                                     local.get $4
-                                                                     i32.const 22
-                                                                     i32.eq
-                                                                     br_if $case22|1
-                                                                     local.get $4
-                                                                     i32.const 23
-                                                                     i32.eq
-                                                                     br_if $case23|1
-                                                                     local.get $4
-                                                                     i32.const 24
-                                                                     i32.eq
-                                                                     br_if $case24|1
-                                                                     local.get $4
-                                                                     i32.const 25
-                                                                     i32.eq
-                                                                     br_if $case25|1
-                                                                     local.get $4
-                                                                     i32.const 26
-                                                                     i32.eq
-                                                                     br_if $case26|1
-                                                                     local.get $4
-                                                                     i32.const 27
-                                                                     i32.eq
-                                                                     br_if $case27|1
-                                                                     local.get $4
-                                                                     i32.const 28
-                                                                     i32.eq
-                                                                     br_if $case28|1
-                                                                     local.get $4
-                                                                     i32.const 29
-                                                                     i32.eq
-                                                                     br_if $case29|1
-                                                                     local.get $4
-                                                                     i32.const 30
-                                                                     i32.eq
-                                                                     br_if $case30|1
-                                                                     local.get $4
-                                                                     i32.const 31
-                                                                     i32.eq
-                                                                     br_if $case31|1
-                                                                     local.get $4
-                                                                     i32.const 32
-                                                                     i32.eq
-                                                                     br_if $case32|1
-                                                                     local.get $4
-                                                                     i32.const 33
-                                                                     i32.eq
-                                                                     br_if $case33|1
-                                                                     local.get $4
-                                                                     i32.const 34
-                                                                     i32.eq
-                                                                     br_if $case34|1
-                                                                     local.get $4
-                                                                     i32.const 35
-                                                                     i32.eq
-                                                                     br_if $case35|1
-                                                                     local.get $4
-                                                                     i32.const 36
-                                                                     i32.eq
-                                                                     br_if $case36|1
-                                                                     local.get $4
-                                                                     i32.const 37
-                                                                     i32.eq
-                                                                     br_if $case37|1
-                                                                     local.get $4
-                                                                     i32.const 38
-                                                                     i32.eq
-                                                                     br_if $case38|1
-                                                                     local.get $4
-                                                                     i32.const 39
-                                                                     i32.eq
-                                                                     br_if $case39|1
-                                                                     local.get $4
-                                                                     i32.const 40
-                                                                     i32.eq
-                                                                     br_if $case40|1
-                                                                     local.get $4
-                                                                     i32.const 41
-                                                                     i32.eq
-                                                                     br_if $case41|1
-                                                                     local.get $4
-                                                                     i32.const 42
-                                                                     i32.eq
-                                                                     br_if $case42|1
-                                                                     local.get $4
-                                                                     i32.const 43
-                                                                     i32.eq
-                                                                     br_if $case43|1
-                                                                     local.get $4
-                                                                     i32.const 44
-                                                                     i32.eq
-                                                                     br_if $case44|1
-                                                                     local.get $4
-                                                                     i32.const 45
-                                                                     i32.eq
-                                                                     br_if $case45|1
-                                                                     local.get $4
-                                                                     i32.const 46
-                                                                     i32.eq
-                                                                     br_if $case46|1
-                                                                     local.get $4
-                                                                     i32.const 47
-                                                                     i32.eq
-                                                                     br_if $case47|1
-                                                                     local.get $4
-                                                                     i32.const 48
-                                                                     i32.eq
-                                                                     br_if $case48|1
-                                                                     local.get $4
-                                                                     i32.const 49
-                                                                     i32.eq
-                                                                     br_if $case49|1
-                                                                     local.get $4
-                                                                     i32.const 50
-                                                                     i32.eq
-                                                                     br_if $case50|1
-                                                                     local.get $4
-                                                                     i32.const 51
-                                                                     i32.eq
-                                                                     br_if $case51|1
-                                                                     local.get $4
-                                                                     i32.const 52
-                                                                     i32.eq
-                                                                     br_if $case52|1
-                                                                     local.get $4
-                                                                     i32.const 53
-                                                                     i32.eq
-                                                                     br_if $case53|1
-                                                                     local.get $4
-                                                                     i32.const 54
-                                                                     i32.eq
-                                                                     br_if $case54|1
-                                                                     local.get $4
-                                                                     i32.const 55
-                                                                     i32.eq
-                                                                     br_if $case55|1
-                                                                     local.get $4
-                                                                     i32.const 56
-                                                                     i32.eq
-                                                                     br_if $case56|1
-                                                                     local.get $4
-                                                                     i32.const 57
-                                                                     i32.eq
-                                                                     br_if $case57|1
-                                                                     local.get $4
-                                                                     i32.const 58
-                                                                     i32.eq
-                                                                     br_if $case58|1
-                                                                     local.get $4
-                                                                     i32.const 59
-                                                                     i32.eq
-                                                                     br_if $case59|1
-                                                                     local.get $4
-                                                                     i32.const 60
-                                                                     i32.eq
-                                                                     br_if $case60|1
-                                                                     local.get $4
-                                                                     i32.const 61
-                                                                     i32.eq
-                                                                     br_if $case61|1
-                                                                     local.get $4
-                                                                     i32.const 62
-                                                                     i32.eq
-                                                                     br_if $case62|1
-                                                                     local.get $4
-                                                                     i32.const 63
-                                                                     i32.eq
-                                                                     br_if $case63|1
+     block $case64|1
+      block $case63|1
+       block $case62|1
+        block $case61|1
+         block $case60|1
+          block $case59|1
+           block $case58|1
+            block $case57|1
+             block $case56|1
+              block $case55|1
+               block $case54|1
+                block $case53|1
+                 block $case52|1
+                  block $case51|1
+                   block $case50|1
+                    block $case49|1
+                     block $case48|1
+                      block $case47|1
+                       block $case46|1
+                        block $case45|1
+                         block $case44|1
+                          block $case43|1
+                           block $case42|1
+                            block $case41|1
+                             block $case40|1
+                              block $case39|1
+                               block $case38|1
+                                block $case37|1
+                                 block $case36|1
+                                  block $case35|1
+                                   block $case34|1
+                                    block $case33|1
+                                     block $case32|1
+                                      block $case31|1
+                                       block $case30|1
+                                        block $case29|1
+                                         block $case28|1
+                                          block $case27|1
+                                           block $case26|1
+                                            block $case25|1
+                                             block $case24|1
+                                              block $case23|1
+                                               block $case22|1
+                                                block $case21|1
+                                                 block $case20|1
+                                                  block $case19|1
+                                                   block $case18|1
+                                                    block $case17|1
+                                                     block $case16|1
+                                                      block $case15|1
+                                                       block $case14|1
+                                                        block $case13|1
+                                                         block $case12|1
+                                                          block $case11|1
+                                                           block $case10|1
+                                                            block $case9|1
+                                                             block $case8|1
+                                                              block $case7|1
+                                                               block $case6|1
+                                                                block $case5|1
+                                                                 block $case4|1
+                                                                  block $case3|1
+                                                                   block $case2|1
+                                                                    block $case1|1
+                                                                     block $case0|1
+                                                                      local.get $2
+                                                                      local.set $4
+                                                                      local.get $4
+                                                                      i32.const 0
+                                                                      i32.eq
+                                                                      br_if $case0|1
+                                                                      local.get $4
+                                                                      i32.const 1
+                                                                      i32.eq
+                                                                      br_if $case1|1
+                                                                      local.get $4
+                                                                      i32.const 2
+                                                                      i32.eq
+                                                                      br_if $case2|1
+                                                                      local.get $4
+                                                                      i32.const 3
+                                                                      i32.eq
+                                                                      br_if $case3|1
+                                                                      local.get $4
+                                                                      i32.const 4
+                                                                      i32.eq
+                                                                      br_if $case4|1
+                                                                      local.get $4
+                                                                      i32.const 5
+                                                                      i32.eq
+                                                                      br_if $case5|1
+                                                                      local.get $4
+                                                                      i32.const 6
+                                                                      i32.eq
+                                                                      br_if $case6|1
+                                                                      local.get $4
+                                                                      i32.const 7
+                                                                      i32.eq
+                                                                      br_if $case7|1
+                                                                      local.get $4
+                                                                      i32.const 8
+                                                                      i32.eq
+                                                                      br_if $case8|1
+                                                                      local.get $4
+                                                                      i32.const 9
+                                                                      i32.eq
+                                                                      br_if $case9|1
+                                                                      local.get $4
+                                                                      i32.const 10
+                                                                      i32.eq
+                                                                      br_if $case10|1
+                                                                      local.get $4
+                                                                      i32.const 11
+                                                                      i32.eq
+                                                                      br_if $case11|1
+                                                                      local.get $4
+                                                                      i32.const 12
+                                                                      i32.eq
+                                                                      br_if $case12|1
+                                                                      local.get $4
+                                                                      i32.const 13
+                                                                      i32.eq
+                                                                      br_if $case13|1
+                                                                      local.get $4
+                                                                      i32.const 14
+                                                                      i32.eq
+                                                                      br_if $case14|1
+                                                                      local.get $4
+                                                                      i32.const 15
+                                                                      i32.eq
+                                                                      br_if $case15|1
+                                                                      local.get $4
+                                                                      i32.const 16
+                                                                      i32.eq
+                                                                      br_if $case16|1
+                                                                      local.get $4
+                                                                      i32.const 17
+                                                                      i32.eq
+                                                                      br_if $case17|1
+                                                                      local.get $4
+                                                                      i32.const 18
+                                                                      i32.eq
+                                                                      br_if $case18|1
+                                                                      local.get $4
+                                                                      i32.const 19
+                                                                      i32.eq
+                                                                      br_if $case19|1
+                                                                      local.get $4
+                                                                      i32.const 20
+                                                                      i32.eq
+                                                                      br_if $case20|1
+                                                                      local.get $4
+                                                                      i32.const 21
+                                                                      i32.eq
+                                                                      br_if $case21|1
+                                                                      local.get $4
+                                                                      i32.const 22
+                                                                      i32.eq
+                                                                      br_if $case22|1
+                                                                      local.get $4
+                                                                      i32.const 23
+                                                                      i32.eq
+                                                                      br_if $case23|1
+                                                                      local.get $4
+                                                                      i32.const 24
+                                                                      i32.eq
+                                                                      br_if $case24|1
+                                                                      local.get $4
+                                                                      i32.const 25
+                                                                      i32.eq
+                                                                      br_if $case25|1
+                                                                      local.get $4
+                                                                      i32.const 26
+                                                                      i32.eq
+                                                                      br_if $case26|1
+                                                                      local.get $4
+                                                                      i32.const 27
+                                                                      i32.eq
+                                                                      br_if $case27|1
+                                                                      local.get $4
+                                                                      i32.const 28
+                                                                      i32.eq
+                                                                      br_if $case28|1
+                                                                      local.get $4
+                                                                      i32.const 29
+                                                                      i32.eq
+                                                                      br_if $case29|1
+                                                                      local.get $4
+                                                                      i32.const 30
+                                                                      i32.eq
+                                                                      br_if $case30|1
+                                                                      local.get $4
+                                                                      i32.const 31
+                                                                      i32.eq
+                                                                      br_if $case31|1
+                                                                      local.get $4
+                                                                      i32.const 32
+                                                                      i32.eq
+                                                                      br_if $case32|1
+                                                                      local.get $4
+                                                                      i32.const 33
+                                                                      i32.eq
+                                                                      br_if $case33|1
+                                                                      local.get $4
+                                                                      i32.const 34
+                                                                      i32.eq
+                                                                      br_if $case34|1
+                                                                      local.get $4
+                                                                      i32.const 35
+                                                                      i32.eq
+                                                                      br_if $case35|1
+                                                                      local.get $4
+                                                                      i32.const 36
+                                                                      i32.eq
+                                                                      br_if $case36|1
+                                                                      local.get $4
+                                                                      i32.const 37
+                                                                      i32.eq
+                                                                      br_if $case37|1
+                                                                      local.get $4
+                                                                      i32.const 38
+                                                                      i32.eq
+                                                                      br_if $case38|1
+                                                                      local.get $4
+                                                                      i32.const 39
+                                                                      i32.eq
+                                                                      br_if $case39|1
+                                                                      local.get $4
+                                                                      i32.const 40
+                                                                      i32.eq
+                                                                      br_if $case40|1
+                                                                      local.get $4
+                                                                      i32.const 41
+                                                                      i32.eq
+                                                                      br_if $case41|1
+                                                                      local.get $4
+                                                                      i32.const 42
+                                                                      i32.eq
+                                                                      br_if $case42|1
+                                                                      local.get $4
+                                                                      i32.const 43
+                                                                      i32.eq
+                                                                      br_if $case43|1
+                                                                      local.get $4
+                                                                      i32.const 44
+                                                                      i32.eq
+                                                                      br_if $case44|1
+                                                                      local.get $4
+                                                                      i32.const 45
+                                                                      i32.eq
+                                                                      br_if $case45|1
+                                                                      local.get $4
+                                                                      i32.const 46
+                                                                      i32.eq
+                                                                      br_if $case46|1
+                                                                      local.get $4
+                                                                      i32.const 47
+                                                                      i32.eq
+                                                                      br_if $case47|1
+                                                                      local.get $4
+                                                                      i32.const 48
+                                                                      i32.eq
+                                                                      br_if $case48|1
+                                                                      local.get $4
+                                                                      i32.const 49
+                                                                      i32.eq
+                                                                      br_if $case49|1
+                                                                      local.get $4
+                                                                      i32.const 50
+                                                                      i32.eq
+                                                                      br_if $case50|1
+                                                                      local.get $4
+                                                                      i32.const 51
+                                                                      i32.eq
+                                                                      br_if $case51|1
+                                                                      local.get $4
+                                                                      i32.const 52
+                                                                      i32.eq
+                                                                      br_if $case52|1
+                                                                      local.get $4
+                                                                      i32.const 53
+                                                                      i32.eq
+                                                                      br_if $case53|1
+                                                                      local.get $4
+                                                                      i32.const 54
+                                                                      i32.eq
+                                                                      br_if $case54|1
+                                                                      local.get $4
+                                                                      i32.const 55
+                                                                      i32.eq
+                                                                      br_if $case55|1
+                                                                      local.get $4
+                                                                      i32.const 56
+                                                                      i32.eq
+                                                                      br_if $case56|1
+                                                                      local.get $4
+                                                                      i32.const 57
+                                                                      i32.eq
+                                                                      br_if $case57|1
+                                                                      local.get $4
+                                                                      i32.const 58
+                                                                      i32.eq
+                                                                      br_if $case58|1
+                                                                      local.get $4
+                                                                      i32.const 59
+                                                                      i32.eq
+                                                                      br_if $case59|1
+                                                                      local.get $4
+                                                                      i32.const 60
+                                                                      i32.eq
+                                                                      br_if $case60|1
+                                                                      local.get $4
+                                                                      i32.const 61
+                                                                      i32.eq
+                                                                      br_if $case61|1
+                                                                      local.get $4
+                                                                      i32.const 62
+                                                                      i32.eq
+                                                                      br_if $case62|1
+                                                                      local.get $4
+                                                                      i32.const 63
+                                                                      i32.eq
+                                                                      br_if $case63|1
+                                                                      br $case64|1
+                                                                     end
+                                                                     local.get $1
+                                                                     local.get $3
+                                                                     v128.store
                                                                      br $break|1
                                                                     end
                                                                     local.get $1
                                                                     local.get $3
-                                                                    v128.store
+                                                                    v128.store offset=16
                                                                     br $break|1
                                                                    end
                                                                    local.get $1
                                                                    local.get $3
-                                                                   v128.store offset=16
+                                                                   v128.store offset=32
                                                                    br $break|1
                                                                   end
                                                                   local.get $1
                                                                   local.get $3
-                                                                  v128.store offset=32
+                                                                  v128.store offset=48
                                                                   br $break|1
                                                                  end
                                                                  local.get $1
                                                                  local.get $3
-                                                                 v128.store offset=48
+                                                                 v128.store offset=64
                                                                  br $break|1
                                                                 end
                                                                 local.get $1
                                                                 local.get $3
-                                                                v128.store offset=64
+                                                                v128.store offset=80
                                                                 br $break|1
                                                                end
                                                                local.get $1
                                                                local.get $3
-                                                               v128.store offset=80
+                                                               v128.store offset=96
                                                                br $break|1
                                                               end
                                                               local.get $1
                                                               local.get $3
-                                                              v128.store offset=96
+                                                              v128.store offset=112
                                                               br $break|1
                                                              end
                                                              local.get $1
                                                              local.get $3
-                                                             v128.store offset=112
+                                                             v128.store offset=128
                                                              br $break|1
                                                             end
                                                             local.get $1
                                                             local.get $3
-                                                            v128.store offset=128
+                                                            v128.store offset=144
                                                             br $break|1
                                                            end
                                                            local.get $1
                                                            local.get $3
-                                                           v128.store offset=144
+                                                           v128.store offset=160
                                                            br $break|1
                                                           end
                                                           local.get $1
                                                           local.get $3
-                                                          v128.store offset=160
+                                                          v128.store offset=176
                                                           br $break|1
                                                          end
                                                          local.get $1
                                                          local.get $3
-                                                         v128.store offset=176
+                                                         v128.store offset=192
                                                          br $break|1
                                                         end
                                                         local.get $1
                                                         local.get $3
-                                                        v128.store offset=192
+                                                        v128.store offset=208
                                                         br $break|1
                                                        end
                                                        local.get $1
                                                        local.get $3
-                                                       v128.store offset=208
+                                                       v128.store offset=224
                                                        br $break|1
                                                       end
                                                       local.get $1
                                                       local.get $3
-                                                      v128.store offset=224
+                                                      v128.store offset=240
                                                       br $break|1
                                                      end
                                                      local.get $1
                                                      local.get $3
-                                                     v128.store offset=240
+                                                     v128.store offset=256
                                                      br $break|1
                                                     end
                                                     local.get $1
                                                     local.get $3
-                                                    v128.store offset=256
+                                                    v128.store offset=272
                                                     br $break|1
                                                    end
                                                    local.get $1
                                                    local.get $3
-                                                   v128.store offset=272
+                                                   v128.store offset=288
                                                    br $break|1
                                                   end
                                                   local.get $1
                                                   local.get $3
-                                                  v128.store offset=288
+                                                  v128.store offset=304
                                                   br $break|1
                                                  end
                                                  local.get $1
                                                  local.get $3
-                                                 v128.store offset=304
+                                                 v128.store offset=320
                                                  br $break|1
                                                 end
                                                 local.get $1
                                                 local.get $3
-                                                v128.store offset=320
+                                                v128.store offset=336
                                                 br $break|1
                                                end
                                                local.get $1
                                                local.get $3
-                                               v128.store offset=336
+                                               v128.store offset=352
                                                br $break|1
                                               end
                                               local.get $1
                                               local.get $3
-                                              v128.store offset=352
+                                              v128.store offset=368
                                               br $break|1
                                              end
                                              local.get $1
                                              local.get $3
-                                             v128.store offset=368
+                                             v128.store offset=384
                                              br $break|1
                                             end
                                             local.get $1
                                             local.get $3
-                                            v128.store offset=384
+                                            v128.store offset=400
                                             br $break|1
                                            end
                                            local.get $1
                                            local.get $3
-                                           v128.store offset=400
+                                           v128.store offset=416
                                            br $break|1
                                           end
                                           local.get $1
                                           local.get $3
-                                          v128.store offset=416
+                                          v128.store offset=432
                                           br $break|1
                                          end
                                          local.get $1
                                          local.get $3
-                                         v128.store offset=432
+                                         v128.store offset=448
                                          br $break|1
                                         end
                                         local.get $1
                                         local.get $3
-                                        v128.store offset=448
+                                        v128.store offset=464
                                         br $break|1
                                        end
                                        local.get $1
                                        local.get $3
-                                       v128.store offset=464
+                                       v128.store offset=480
                                        br $break|1
                                       end
                                       local.get $1
                                       local.get $3
-                                      v128.store offset=480
+                                      v128.store offset=496
                                       br $break|1
                                      end
                                      local.get $1
                                      local.get $3
-                                     v128.store offset=496
+                                     v128.store offset=512
                                      br $break|1
                                     end
                                     local.get $1
                                     local.get $3
-                                    v128.store offset=512
+                                    v128.store offset=528
                                     br $break|1
                                    end
                                    local.get $1
                                    local.get $3
-                                   v128.store offset=528
+                                   v128.store offset=544
                                    br $break|1
                                   end
                                   local.get $1
                                   local.get $3
-                                  v128.store offset=544
+                                  v128.store offset=560
                                   br $break|1
                                  end
                                  local.get $1
                                  local.get $3
-                                 v128.store offset=560
+                                 v128.store offset=576
                                  br $break|1
                                 end
                                 local.get $1
                                 local.get $3
-                                v128.store offset=576
+                                v128.store offset=592
                                 br $break|1
                                end
                                local.get $1
                                local.get $3
-                               v128.store offset=592
+                               v128.store offset=608
                                br $break|1
                               end
                               local.get $1
                               local.get $3
-                              v128.store offset=608
+                              v128.store offset=624
                               br $break|1
                              end
                              local.get $1
                              local.get $3
-                             v128.store offset=624
+                             v128.store offset=640
                              br $break|1
                             end
                             local.get $1
                             local.get $3
-                            v128.store offset=640
+                            v128.store offset=656
                             br $break|1
                            end
                            local.get $1
                            local.get $3
-                           v128.store offset=656
+                           v128.store offset=672
                            br $break|1
                           end
                           local.get $1
                           local.get $3
-                          v128.store offset=672
+                          v128.store offset=688
                           br $break|1
                          end
                          local.get $1
                          local.get $3
-                         v128.store offset=688
+                         v128.store offset=704
                          br $break|1
                         end
                         local.get $1
                         local.get $3
-                        v128.store offset=704
+                        v128.store offset=720
                         br $break|1
                        end
                        local.get $1
                        local.get $3
-                       v128.store offset=720
+                       v128.store offset=736
                        br $break|1
                       end
                       local.get $1
                       local.get $3
-                      v128.store offset=736
+                      v128.store offset=752
                       br $break|1
                      end
                      local.get $1
                      local.get $3
-                     v128.store offset=752
+                     v128.store offset=768
                      br $break|1
                     end
                     local.get $1
                     local.get $3
-                    v128.store offset=768
+                    v128.store offset=784
                     br $break|1
                    end
                    local.get $1
                    local.get $3
-                   v128.store offset=784
+                   v128.store offset=800
                    br $break|1
                   end
                   local.get $1
                   local.get $3
-                  v128.store offset=800
+                  v128.store offset=816
                   br $break|1
                  end
                  local.get $1
                  local.get $3
-                 v128.store offset=816
+                 v128.store offset=832
                  br $break|1
                 end
                 local.get $1
                 local.get $3
-                v128.store offset=832
+                v128.store offset=848
                 br $break|1
                end
                local.get $1
                local.get $3
-               v128.store offset=848
+               v128.store offset=864
                br $break|1
               end
               local.get $1
               local.get $3
-              v128.store offset=864
+              v128.store offset=880
               br $break|1
              end
              local.get $1
              local.get $3
-             v128.store offset=880
+             v128.store offset=896
              br $break|1
             end
             local.get $1
             local.get $3
-            v128.store offset=896
+            v128.store offset=912
             br $break|1
            end
            local.get $1
            local.get $3
-           v128.store offset=912
+           v128.store offset=928
            br $break|1
           end
           local.get $1
           local.get $3
-          v128.store offset=928
+          v128.store offset=944
           br $break|1
          end
          local.get $1
          local.get $3
-         v128.store offset=944
+         v128.store offset=960
          br $break|1
         end
         local.get $1
         local.get $3
-        v128.store offset=960
+        v128.store offset=976
         br $break|1
        end
        local.get $1
        local.get $3
-       v128.store offset=976
+       v128.store offset=992
        br $break|1
       end
       local.get $1
       local.get $3
-      v128.store offset=992
+      v128.store offset=1008
       br $break|1
      end
-     local.get $1
-     local.get $3
-     v128.store offset=1008
-     br $break|1
+     i32.const 2928
+     local.get $2
+     i32.const 10
+     call $~lib/number/I32#toString
+     call $~lib/string/String#concat
+     i32.const 3056
+     i32.const 201
+     i32.const 7
+     call $~lib/builtins/abort
+     unreachable
     end
     local.get $0
     i32.const 1
@@ -2490,649 +3143,661 @@
     i32x4.splat
     local.set $8
     block $break|3
-     block $case63|3
-      block $case62|3
-       block $case61|3
-        block $case60|3
-         block $case59|3
-          block $case58|3
-           block $case57|3
-            block $case56|3
-             block $case55|3
-              block $case54|3
-               block $case53|3
-                block $case52|3
-                 block $case51|3
-                  block $case50|3
-                   block $case49|3
-                    block $case48|3
-                     block $case47|3
-                      block $case46|3
-                       block $case45|3
-                        block $case44|3
-                         block $case43|3
-                          block $case42|3
-                           block $case41|3
-                            block $case40|3
-                             block $case39|3
-                              block $case38|3
-                               block $case37|3
-                                block $case36|3
-                                 block $case35|3
-                                  block $case34|3
-                                   block $case33|3
-                                    block $case32|3
-                                     block $case31|3
-                                      block $case30|3
-                                       block $case29|3
-                                        block $case28|3
-                                         block $case27|3
-                                          block $case26|3
-                                           block $case25|3
-                                            block $case24|3
-                                             block $case23|3
-                                              block $case22|3
-                                               block $case21|3
-                                                block $case20|3
-                                                 block $case19|3
-                                                  block $case18|3
-                                                   block $case17|3
-                                                    block $case16|3
-                                                     block $case15|3
-                                                      block $case14|3
-                                                       block $case13|3
-                                                        block $case12|3
-                                                         block $case11|3
-                                                          block $case10|3
-                                                           block $case9|3
-                                                            block $case8|3
-                                                             block $case7|3
-                                                              block $case6|3
-                                                               block $case5|3
-                                                                block $case4|3
-                                                                 block $case3|3
-                                                                  block $case2|3
-                                                                   block $case1|3
-                                                                    block $case0|3
-                                                                     local.get $7
-                                                                     local.set $9
-                                                                     local.get $9
-                                                                     i32.const 0
-                                                                     i32.eq
-                                                                     br_if $case0|3
-                                                                     local.get $9
-                                                                     i32.const 1
-                                                                     i32.eq
-                                                                     br_if $case1|3
-                                                                     local.get $9
-                                                                     i32.const 2
-                                                                     i32.eq
-                                                                     br_if $case2|3
-                                                                     local.get $9
-                                                                     i32.const 3
-                                                                     i32.eq
-                                                                     br_if $case3|3
-                                                                     local.get $9
-                                                                     i32.const 4
-                                                                     i32.eq
-                                                                     br_if $case4|3
-                                                                     local.get $9
-                                                                     i32.const 5
-                                                                     i32.eq
-                                                                     br_if $case5|3
-                                                                     local.get $9
-                                                                     i32.const 6
-                                                                     i32.eq
-                                                                     br_if $case6|3
-                                                                     local.get $9
-                                                                     i32.const 7
-                                                                     i32.eq
-                                                                     br_if $case7|3
-                                                                     local.get $9
-                                                                     i32.const 8
-                                                                     i32.eq
-                                                                     br_if $case8|3
-                                                                     local.get $9
-                                                                     i32.const 9
-                                                                     i32.eq
-                                                                     br_if $case9|3
-                                                                     local.get $9
-                                                                     i32.const 10
-                                                                     i32.eq
-                                                                     br_if $case10|3
-                                                                     local.get $9
-                                                                     i32.const 11
-                                                                     i32.eq
-                                                                     br_if $case11|3
-                                                                     local.get $9
-                                                                     i32.const 12
-                                                                     i32.eq
-                                                                     br_if $case12|3
-                                                                     local.get $9
-                                                                     i32.const 13
-                                                                     i32.eq
-                                                                     br_if $case13|3
-                                                                     local.get $9
-                                                                     i32.const 14
-                                                                     i32.eq
-                                                                     br_if $case14|3
-                                                                     local.get $9
-                                                                     i32.const 15
-                                                                     i32.eq
-                                                                     br_if $case15|3
-                                                                     local.get $9
-                                                                     i32.const 16
-                                                                     i32.eq
-                                                                     br_if $case16|3
-                                                                     local.get $9
-                                                                     i32.const 17
-                                                                     i32.eq
-                                                                     br_if $case17|3
-                                                                     local.get $9
-                                                                     i32.const 18
-                                                                     i32.eq
-                                                                     br_if $case18|3
-                                                                     local.get $9
-                                                                     i32.const 19
-                                                                     i32.eq
-                                                                     br_if $case19|3
-                                                                     local.get $9
-                                                                     i32.const 20
-                                                                     i32.eq
-                                                                     br_if $case20|3
-                                                                     local.get $9
-                                                                     i32.const 21
-                                                                     i32.eq
-                                                                     br_if $case21|3
-                                                                     local.get $9
-                                                                     i32.const 22
-                                                                     i32.eq
-                                                                     br_if $case22|3
-                                                                     local.get $9
-                                                                     i32.const 23
-                                                                     i32.eq
-                                                                     br_if $case23|3
-                                                                     local.get $9
-                                                                     i32.const 24
-                                                                     i32.eq
-                                                                     br_if $case24|3
-                                                                     local.get $9
-                                                                     i32.const 25
-                                                                     i32.eq
-                                                                     br_if $case25|3
-                                                                     local.get $9
-                                                                     i32.const 26
-                                                                     i32.eq
-                                                                     br_if $case26|3
-                                                                     local.get $9
-                                                                     i32.const 27
-                                                                     i32.eq
-                                                                     br_if $case27|3
-                                                                     local.get $9
-                                                                     i32.const 28
-                                                                     i32.eq
-                                                                     br_if $case28|3
-                                                                     local.get $9
-                                                                     i32.const 29
-                                                                     i32.eq
-                                                                     br_if $case29|3
-                                                                     local.get $9
-                                                                     i32.const 30
-                                                                     i32.eq
-                                                                     br_if $case30|3
-                                                                     local.get $9
-                                                                     i32.const 31
-                                                                     i32.eq
-                                                                     br_if $case31|3
-                                                                     local.get $9
-                                                                     i32.const 32
-                                                                     i32.eq
-                                                                     br_if $case32|3
-                                                                     local.get $9
-                                                                     i32.const 33
-                                                                     i32.eq
-                                                                     br_if $case33|3
-                                                                     local.get $9
-                                                                     i32.const 34
-                                                                     i32.eq
-                                                                     br_if $case34|3
-                                                                     local.get $9
-                                                                     i32.const 35
-                                                                     i32.eq
-                                                                     br_if $case35|3
-                                                                     local.get $9
-                                                                     i32.const 36
-                                                                     i32.eq
-                                                                     br_if $case36|3
-                                                                     local.get $9
-                                                                     i32.const 37
-                                                                     i32.eq
-                                                                     br_if $case37|3
-                                                                     local.get $9
-                                                                     i32.const 38
-                                                                     i32.eq
-                                                                     br_if $case38|3
-                                                                     local.get $9
-                                                                     i32.const 39
-                                                                     i32.eq
-                                                                     br_if $case39|3
-                                                                     local.get $9
-                                                                     i32.const 40
-                                                                     i32.eq
-                                                                     br_if $case40|3
-                                                                     local.get $9
-                                                                     i32.const 41
-                                                                     i32.eq
-                                                                     br_if $case41|3
-                                                                     local.get $9
-                                                                     i32.const 42
-                                                                     i32.eq
-                                                                     br_if $case42|3
-                                                                     local.get $9
-                                                                     i32.const 43
-                                                                     i32.eq
-                                                                     br_if $case43|3
-                                                                     local.get $9
-                                                                     i32.const 44
-                                                                     i32.eq
-                                                                     br_if $case44|3
-                                                                     local.get $9
-                                                                     i32.const 45
-                                                                     i32.eq
-                                                                     br_if $case45|3
-                                                                     local.get $9
-                                                                     i32.const 46
-                                                                     i32.eq
-                                                                     br_if $case46|3
-                                                                     local.get $9
-                                                                     i32.const 47
-                                                                     i32.eq
-                                                                     br_if $case47|3
-                                                                     local.get $9
-                                                                     i32.const 48
-                                                                     i32.eq
-                                                                     br_if $case48|3
-                                                                     local.get $9
-                                                                     i32.const 49
-                                                                     i32.eq
-                                                                     br_if $case49|3
-                                                                     local.get $9
-                                                                     i32.const 50
-                                                                     i32.eq
-                                                                     br_if $case50|3
-                                                                     local.get $9
-                                                                     i32.const 51
-                                                                     i32.eq
-                                                                     br_if $case51|3
-                                                                     local.get $9
-                                                                     i32.const 52
-                                                                     i32.eq
-                                                                     br_if $case52|3
-                                                                     local.get $9
-                                                                     i32.const 53
-                                                                     i32.eq
-                                                                     br_if $case53|3
-                                                                     local.get $9
-                                                                     i32.const 54
-                                                                     i32.eq
-                                                                     br_if $case54|3
-                                                                     local.get $9
-                                                                     i32.const 55
-                                                                     i32.eq
-                                                                     br_if $case55|3
-                                                                     local.get $9
-                                                                     i32.const 56
-                                                                     i32.eq
-                                                                     br_if $case56|3
-                                                                     local.get $9
-                                                                     i32.const 57
-                                                                     i32.eq
-                                                                     br_if $case57|3
-                                                                     local.get $9
-                                                                     i32.const 58
-                                                                     i32.eq
-                                                                     br_if $case58|3
-                                                                     local.get $9
-                                                                     i32.const 59
-                                                                     i32.eq
-                                                                     br_if $case59|3
-                                                                     local.get $9
-                                                                     i32.const 60
-                                                                     i32.eq
-                                                                     br_if $case60|3
-                                                                     local.get $9
-                                                                     i32.const 61
-                                                                     i32.eq
-                                                                     br_if $case61|3
-                                                                     local.get $9
-                                                                     i32.const 62
-                                                                     i32.eq
-                                                                     br_if $case62|3
-                                                                     local.get $9
-                                                                     i32.const 63
-                                                                     i32.eq
-                                                                     br_if $case63|3
+     block $case64|3
+      block $case63|3
+       block $case62|3
+        block $case61|3
+         block $case60|3
+          block $case59|3
+           block $case58|3
+            block $case57|3
+             block $case56|3
+              block $case55|3
+               block $case54|3
+                block $case53|3
+                 block $case52|3
+                  block $case51|3
+                   block $case50|3
+                    block $case49|3
+                     block $case48|3
+                      block $case47|3
+                       block $case46|3
+                        block $case45|3
+                         block $case44|3
+                          block $case43|3
+                           block $case42|3
+                            block $case41|3
+                             block $case40|3
+                              block $case39|3
+                               block $case38|3
+                                block $case37|3
+                                 block $case36|3
+                                  block $case35|3
+                                   block $case34|3
+                                    block $case33|3
+                                     block $case32|3
+                                      block $case31|3
+                                       block $case30|3
+                                        block $case29|3
+                                         block $case28|3
+                                          block $case27|3
+                                           block $case26|3
+                                            block $case25|3
+                                             block $case24|3
+                                              block $case23|3
+                                               block $case22|3
+                                                block $case21|3
+                                                 block $case20|3
+                                                  block $case19|3
+                                                   block $case18|3
+                                                    block $case17|3
+                                                     block $case16|3
+                                                      block $case15|3
+                                                       block $case14|3
+                                                        block $case13|3
+                                                         block $case12|3
+                                                          block $case11|3
+                                                           block $case10|3
+                                                            block $case9|3
+                                                             block $case8|3
+                                                              block $case7|3
+                                                               block $case6|3
+                                                                block $case5|3
+                                                                 block $case4|3
+                                                                  block $case3|3
+                                                                   block $case2|3
+                                                                    block $case1|3
+                                                                     block $case0|3
+                                                                      local.get $7
+                                                                      local.set $9
+                                                                      local.get $9
+                                                                      i32.const 0
+                                                                      i32.eq
+                                                                      br_if $case0|3
+                                                                      local.get $9
+                                                                      i32.const 1
+                                                                      i32.eq
+                                                                      br_if $case1|3
+                                                                      local.get $9
+                                                                      i32.const 2
+                                                                      i32.eq
+                                                                      br_if $case2|3
+                                                                      local.get $9
+                                                                      i32.const 3
+                                                                      i32.eq
+                                                                      br_if $case3|3
+                                                                      local.get $9
+                                                                      i32.const 4
+                                                                      i32.eq
+                                                                      br_if $case4|3
+                                                                      local.get $9
+                                                                      i32.const 5
+                                                                      i32.eq
+                                                                      br_if $case5|3
+                                                                      local.get $9
+                                                                      i32.const 6
+                                                                      i32.eq
+                                                                      br_if $case6|3
+                                                                      local.get $9
+                                                                      i32.const 7
+                                                                      i32.eq
+                                                                      br_if $case7|3
+                                                                      local.get $9
+                                                                      i32.const 8
+                                                                      i32.eq
+                                                                      br_if $case8|3
+                                                                      local.get $9
+                                                                      i32.const 9
+                                                                      i32.eq
+                                                                      br_if $case9|3
+                                                                      local.get $9
+                                                                      i32.const 10
+                                                                      i32.eq
+                                                                      br_if $case10|3
+                                                                      local.get $9
+                                                                      i32.const 11
+                                                                      i32.eq
+                                                                      br_if $case11|3
+                                                                      local.get $9
+                                                                      i32.const 12
+                                                                      i32.eq
+                                                                      br_if $case12|3
+                                                                      local.get $9
+                                                                      i32.const 13
+                                                                      i32.eq
+                                                                      br_if $case13|3
+                                                                      local.get $9
+                                                                      i32.const 14
+                                                                      i32.eq
+                                                                      br_if $case14|3
+                                                                      local.get $9
+                                                                      i32.const 15
+                                                                      i32.eq
+                                                                      br_if $case15|3
+                                                                      local.get $9
+                                                                      i32.const 16
+                                                                      i32.eq
+                                                                      br_if $case16|3
+                                                                      local.get $9
+                                                                      i32.const 17
+                                                                      i32.eq
+                                                                      br_if $case17|3
+                                                                      local.get $9
+                                                                      i32.const 18
+                                                                      i32.eq
+                                                                      br_if $case18|3
+                                                                      local.get $9
+                                                                      i32.const 19
+                                                                      i32.eq
+                                                                      br_if $case19|3
+                                                                      local.get $9
+                                                                      i32.const 20
+                                                                      i32.eq
+                                                                      br_if $case20|3
+                                                                      local.get $9
+                                                                      i32.const 21
+                                                                      i32.eq
+                                                                      br_if $case21|3
+                                                                      local.get $9
+                                                                      i32.const 22
+                                                                      i32.eq
+                                                                      br_if $case22|3
+                                                                      local.get $9
+                                                                      i32.const 23
+                                                                      i32.eq
+                                                                      br_if $case23|3
+                                                                      local.get $9
+                                                                      i32.const 24
+                                                                      i32.eq
+                                                                      br_if $case24|3
+                                                                      local.get $9
+                                                                      i32.const 25
+                                                                      i32.eq
+                                                                      br_if $case25|3
+                                                                      local.get $9
+                                                                      i32.const 26
+                                                                      i32.eq
+                                                                      br_if $case26|3
+                                                                      local.get $9
+                                                                      i32.const 27
+                                                                      i32.eq
+                                                                      br_if $case27|3
+                                                                      local.get $9
+                                                                      i32.const 28
+                                                                      i32.eq
+                                                                      br_if $case28|3
+                                                                      local.get $9
+                                                                      i32.const 29
+                                                                      i32.eq
+                                                                      br_if $case29|3
+                                                                      local.get $9
+                                                                      i32.const 30
+                                                                      i32.eq
+                                                                      br_if $case30|3
+                                                                      local.get $9
+                                                                      i32.const 31
+                                                                      i32.eq
+                                                                      br_if $case31|3
+                                                                      local.get $9
+                                                                      i32.const 32
+                                                                      i32.eq
+                                                                      br_if $case32|3
+                                                                      local.get $9
+                                                                      i32.const 33
+                                                                      i32.eq
+                                                                      br_if $case33|3
+                                                                      local.get $9
+                                                                      i32.const 34
+                                                                      i32.eq
+                                                                      br_if $case34|3
+                                                                      local.get $9
+                                                                      i32.const 35
+                                                                      i32.eq
+                                                                      br_if $case35|3
+                                                                      local.get $9
+                                                                      i32.const 36
+                                                                      i32.eq
+                                                                      br_if $case36|3
+                                                                      local.get $9
+                                                                      i32.const 37
+                                                                      i32.eq
+                                                                      br_if $case37|3
+                                                                      local.get $9
+                                                                      i32.const 38
+                                                                      i32.eq
+                                                                      br_if $case38|3
+                                                                      local.get $9
+                                                                      i32.const 39
+                                                                      i32.eq
+                                                                      br_if $case39|3
+                                                                      local.get $9
+                                                                      i32.const 40
+                                                                      i32.eq
+                                                                      br_if $case40|3
+                                                                      local.get $9
+                                                                      i32.const 41
+                                                                      i32.eq
+                                                                      br_if $case41|3
+                                                                      local.get $9
+                                                                      i32.const 42
+                                                                      i32.eq
+                                                                      br_if $case42|3
+                                                                      local.get $9
+                                                                      i32.const 43
+                                                                      i32.eq
+                                                                      br_if $case43|3
+                                                                      local.get $9
+                                                                      i32.const 44
+                                                                      i32.eq
+                                                                      br_if $case44|3
+                                                                      local.get $9
+                                                                      i32.const 45
+                                                                      i32.eq
+                                                                      br_if $case45|3
+                                                                      local.get $9
+                                                                      i32.const 46
+                                                                      i32.eq
+                                                                      br_if $case46|3
+                                                                      local.get $9
+                                                                      i32.const 47
+                                                                      i32.eq
+                                                                      br_if $case47|3
+                                                                      local.get $9
+                                                                      i32.const 48
+                                                                      i32.eq
+                                                                      br_if $case48|3
+                                                                      local.get $9
+                                                                      i32.const 49
+                                                                      i32.eq
+                                                                      br_if $case49|3
+                                                                      local.get $9
+                                                                      i32.const 50
+                                                                      i32.eq
+                                                                      br_if $case50|3
+                                                                      local.get $9
+                                                                      i32.const 51
+                                                                      i32.eq
+                                                                      br_if $case51|3
+                                                                      local.get $9
+                                                                      i32.const 52
+                                                                      i32.eq
+                                                                      br_if $case52|3
+                                                                      local.get $9
+                                                                      i32.const 53
+                                                                      i32.eq
+                                                                      br_if $case53|3
+                                                                      local.get $9
+                                                                      i32.const 54
+                                                                      i32.eq
+                                                                      br_if $case54|3
+                                                                      local.get $9
+                                                                      i32.const 55
+                                                                      i32.eq
+                                                                      br_if $case55|3
+                                                                      local.get $9
+                                                                      i32.const 56
+                                                                      i32.eq
+                                                                      br_if $case56|3
+                                                                      local.get $9
+                                                                      i32.const 57
+                                                                      i32.eq
+                                                                      br_if $case57|3
+                                                                      local.get $9
+                                                                      i32.const 58
+                                                                      i32.eq
+                                                                      br_if $case58|3
+                                                                      local.get $9
+                                                                      i32.const 59
+                                                                      i32.eq
+                                                                      br_if $case59|3
+                                                                      local.get $9
+                                                                      i32.const 60
+                                                                      i32.eq
+                                                                      br_if $case60|3
+                                                                      local.get $9
+                                                                      i32.const 61
+                                                                      i32.eq
+                                                                      br_if $case61|3
+                                                                      local.get $9
+                                                                      i32.const 62
+                                                                      i32.eq
+                                                                      br_if $case62|3
+                                                                      local.get $9
+                                                                      i32.const 63
+                                                                      i32.eq
+                                                                      br_if $case63|3
+                                                                      br $case64|3
+                                                                     end
+                                                                     local.get $6
+                                                                     local.get $8
+                                                                     v128.store
                                                                      br $break|3
                                                                     end
                                                                     local.get $6
                                                                     local.get $8
-                                                                    v128.store
+                                                                    v128.store offset=16
                                                                     br $break|3
                                                                    end
                                                                    local.get $6
                                                                    local.get $8
-                                                                   v128.store offset=16
+                                                                   v128.store offset=32
                                                                    br $break|3
                                                                   end
                                                                   local.get $6
                                                                   local.get $8
-                                                                  v128.store offset=32
+                                                                  v128.store offset=48
                                                                   br $break|3
                                                                  end
                                                                  local.get $6
                                                                  local.get $8
-                                                                 v128.store offset=48
+                                                                 v128.store offset=64
                                                                  br $break|3
                                                                 end
                                                                 local.get $6
                                                                 local.get $8
-                                                                v128.store offset=64
+                                                                v128.store offset=80
                                                                 br $break|3
                                                                end
                                                                local.get $6
                                                                local.get $8
-                                                               v128.store offset=80
+                                                               v128.store offset=96
                                                                br $break|3
                                                               end
                                                               local.get $6
                                                               local.get $8
-                                                              v128.store offset=96
+                                                              v128.store offset=112
                                                               br $break|3
                                                              end
                                                              local.get $6
                                                              local.get $8
-                                                             v128.store offset=112
+                                                             v128.store offset=128
                                                              br $break|3
                                                             end
                                                             local.get $6
                                                             local.get $8
-                                                            v128.store offset=128
+                                                            v128.store offset=144
                                                             br $break|3
                                                            end
                                                            local.get $6
                                                            local.get $8
-                                                           v128.store offset=144
+                                                           v128.store offset=160
                                                            br $break|3
                                                           end
                                                           local.get $6
                                                           local.get $8
-                                                          v128.store offset=160
+                                                          v128.store offset=176
                                                           br $break|3
                                                          end
                                                          local.get $6
                                                          local.get $8
-                                                         v128.store offset=176
+                                                         v128.store offset=192
                                                          br $break|3
                                                         end
                                                         local.get $6
                                                         local.get $8
-                                                        v128.store offset=192
+                                                        v128.store offset=208
                                                         br $break|3
                                                        end
                                                        local.get $6
                                                        local.get $8
-                                                       v128.store offset=208
+                                                       v128.store offset=224
                                                        br $break|3
                                                       end
                                                       local.get $6
                                                       local.get $8
-                                                      v128.store offset=224
+                                                      v128.store offset=240
                                                       br $break|3
                                                      end
                                                      local.get $6
                                                      local.get $8
-                                                     v128.store offset=240
+                                                     v128.store offset=256
                                                      br $break|3
                                                     end
                                                     local.get $6
                                                     local.get $8
-                                                    v128.store offset=256
+                                                    v128.store offset=272
                                                     br $break|3
                                                    end
                                                    local.get $6
                                                    local.get $8
-                                                   v128.store offset=272
+                                                   v128.store offset=288
                                                    br $break|3
                                                   end
                                                   local.get $6
                                                   local.get $8
-                                                  v128.store offset=288
+                                                  v128.store offset=304
                                                   br $break|3
                                                  end
                                                  local.get $6
                                                  local.get $8
-                                                 v128.store offset=304
+                                                 v128.store offset=320
                                                  br $break|3
                                                 end
                                                 local.get $6
                                                 local.get $8
-                                                v128.store offset=320
+                                                v128.store offset=336
                                                 br $break|3
                                                end
                                                local.get $6
                                                local.get $8
-                                               v128.store offset=336
+                                               v128.store offset=352
                                                br $break|3
                                               end
                                               local.get $6
                                               local.get $8
-                                              v128.store offset=352
+                                              v128.store offset=368
                                               br $break|3
                                              end
                                              local.get $6
                                              local.get $8
-                                             v128.store offset=368
+                                             v128.store offset=384
                                              br $break|3
                                             end
                                             local.get $6
                                             local.get $8
-                                            v128.store offset=384
+                                            v128.store offset=400
                                             br $break|3
                                            end
                                            local.get $6
                                            local.get $8
-                                           v128.store offset=400
+                                           v128.store offset=416
                                            br $break|3
                                           end
                                           local.get $6
                                           local.get $8
-                                          v128.store offset=416
+                                          v128.store offset=432
                                           br $break|3
                                          end
                                          local.get $6
                                          local.get $8
-                                         v128.store offset=432
+                                         v128.store offset=448
                                          br $break|3
                                         end
                                         local.get $6
                                         local.get $8
-                                        v128.store offset=448
+                                        v128.store offset=464
                                         br $break|3
                                        end
                                        local.get $6
                                        local.get $8
-                                       v128.store offset=464
+                                       v128.store offset=480
                                        br $break|3
                                       end
                                       local.get $6
                                       local.get $8
-                                      v128.store offset=480
+                                      v128.store offset=496
                                       br $break|3
                                      end
                                      local.get $6
                                      local.get $8
-                                     v128.store offset=496
+                                     v128.store offset=512
                                      br $break|3
                                     end
                                     local.get $6
                                     local.get $8
-                                    v128.store offset=512
+                                    v128.store offset=528
                                     br $break|3
                                    end
                                    local.get $6
                                    local.get $8
-                                   v128.store offset=528
+                                   v128.store offset=544
                                    br $break|3
                                   end
                                   local.get $6
                                   local.get $8
-                                  v128.store offset=544
+                                  v128.store offset=560
                                   br $break|3
                                  end
                                  local.get $6
                                  local.get $8
-                                 v128.store offset=560
+                                 v128.store offset=576
                                  br $break|3
                                 end
                                 local.get $6
                                 local.get $8
-                                v128.store offset=576
+                                v128.store offset=592
                                 br $break|3
                                end
                                local.get $6
                                local.get $8
-                               v128.store offset=592
+                               v128.store offset=608
                                br $break|3
                               end
                               local.get $6
                               local.get $8
-                              v128.store offset=608
+                              v128.store offset=624
                               br $break|3
                              end
                              local.get $6
                              local.get $8
-                             v128.store offset=624
+                             v128.store offset=640
                              br $break|3
                             end
                             local.get $6
                             local.get $8
-                            v128.store offset=640
+                            v128.store offset=656
                             br $break|3
                            end
                            local.get $6
                            local.get $8
-                           v128.store offset=656
+                           v128.store offset=672
                            br $break|3
                           end
                           local.get $6
                           local.get $8
-                          v128.store offset=672
+                          v128.store offset=688
                           br $break|3
                          end
                          local.get $6
                          local.get $8
-                         v128.store offset=688
+                         v128.store offset=704
                          br $break|3
                         end
                         local.get $6
                         local.get $8
-                        v128.store offset=704
+                        v128.store offset=720
                         br $break|3
                        end
                        local.get $6
                        local.get $8
-                       v128.store offset=720
+                       v128.store offset=736
                        br $break|3
                       end
                       local.get $6
                       local.get $8
-                      v128.store offset=736
+                      v128.store offset=752
                       br $break|3
                      end
                      local.get $6
                      local.get $8
-                     v128.store offset=752
+                     v128.store offset=768
                      br $break|3
                     end
                     local.get $6
                     local.get $8
-                    v128.store offset=768
+                    v128.store offset=784
                     br $break|3
                    end
                    local.get $6
                    local.get $8
-                   v128.store offset=784
+                   v128.store offset=800
                    br $break|3
                   end
                   local.get $6
                   local.get $8
-                  v128.store offset=800
+                  v128.store offset=816
                   br $break|3
                  end
                  local.get $6
                  local.get $8
-                 v128.store offset=816
+                 v128.store offset=832
                  br $break|3
                 end
                 local.get $6
                 local.get $8
-                v128.store offset=832
+                v128.store offset=848
                 br $break|3
                end
                local.get $6
                local.get $8
-               v128.store offset=848
+               v128.store offset=864
                br $break|3
               end
               local.get $6
               local.get $8
-              v128.store offset=864
+              v128.store offset=880
               br $break|3
              end
              local.get $6
              local.get $8
-             v128.store offset=880
+             v128.store offset=896
              br $break|3
             end
             local.get $6
             local.get $8
-            v128.store offset=896
+            v128.store offset=912
             br $break|3
            end
            local.get $6
            local.get $8
-           v128.store offset=912
+           v128.store offset=928
            br $break|3
           end
           local.get $6
           local.get $8
-          v128.store offset=928
+          v128.store offset=944
           br $break|3
          end
          local.get $6
          local.get $8
-         v128.store offset=944
+         v128.store offset=960
          br $break|3
         end
         local.get $6
         local.get $8
-        v128.store offset=960
+        v128.store offset=976
         br $break|3
        end
        local.get $6
        local.get $8
-       v128.store offset=976
+       v128.store offset=992
        br $break|3
       end
       local.get $6
       local.get $8
-      v128.store offset=992
+      v128.store offset=1008
       br $break|3
      end
-     local.get $6
-     local.get $8
-     v128.store offset=1008
-     br $break|3
+     i32.const 2928
+     local.get $7
+     i32.const 10
+     call $~lib/number/I32#toString
+     call $~lib/string/String#concat
+     i32.const 3056
+     i32.const 201
+     i32.const 7
+     call $~lib/builtins/abort
+     unreachable
     end
     local.get $5
     i32.const 1
@@ -5215,9 +5880,16 @@
       v128.load offset=1008
       br $assembly/utils/v128/getV128|inlined.6
      end
-     i32.const 0
-     i32x4.splat
-     br $assembly/utils/v128/getV128|inlined.6
+     i32.const 3120
+     local.get $20
+     i32.const 10
+     call $~lib/number/I32#toString
+     call $~lib/string/String#concat
+     i32.const 3056
+     i32.const 341
+     i32.const 7
+     call $~lib/builtins/abort
+     unreachable
     end
     i32x4.add
     global.set $assembly/simd/t1V128
@@ -6172,9 +6844,16 @@
        v128.load offset=1008
        br $assembly/utils/v128/getV128|inlined.0
       end
-      i32.const 0
-      i32x4.splat
-      br $assembly/utils/v128/getV128|inlined.0
+      i32.const 3120
+      local.get $4
+      i32.const 10
+      call $~lib/number/I32#toString
+      call $~lib/string/String#concat
+      i32.const 3056
+      i32.const 341
+      i32.const 7
+      call $~lib/builtins/abort
+      unreachable
      end
     else
      block $assembly/simd/SIG1V128|inlined.0 (result v128)
@@ -6766,9 +7445,16 @@
         v128.load offset=1008
         br $assembly/utils/v128/getV128|inlined.1
        end
-       i32.const 0
-       i32x4.splat
-       br $assembly/utils/v128/getV128|inlined.1
+       i32.const 3120
+       local.get $7
+       i32.const 10
+       call $~lib/number/I32#toString
+       call $~lib/string/String#concat
+       i32.const 3056
+       i32.const 341
+       i32.const 7
+       call $~lib/builtins/abort
+       unreachable
       end
       local.set $9
       block $assembly/simd/rotrV128|inlined.0 (result v128)
@@ -7410,9 +8096,16 @@
        v128.load offset=1008
        br $assembly/utils/v128/getV128|inlined.2
       end
-      i32.const 0
-      i32x4.splat
-      br $assembly/utils/v128/getV128|inlined.2
+      i32.const 3120
+      local.get $21
+      i32.const 10
+      call $~lib/number/I32#toString
+      call $~lib/string/String#concat
+      i32.const 3056
+      i32.const 341
+      i32.const 7
+      call $~lib/builtins/abort
+      unreachable
      end
      i32x4.add
      block $assembly/simd/SIG0V128|inlined.0 (result v128)
@@ -8004,9 +8697,16 @@
         v128.load offset=1008
         br $assembly/utils/v128/getV128|inlined.3
        end
-       i32.const 0
-       i32x4.splat
-       br $assembly/utils/v128/getV128|inlined.3
+       i32.const 3120
+       local.get $24
+       i32.const 10
+       call $~lib/number/I32#toString
+       call $~lib/string/String#concat
+       i32.const 3056
+       i32.const 341
+       i32.const 7
+       call $~lib/builtins/abort
+       unreachable
       end
       local.set $26
       block $assembly/simd/rotrV128|inlined.2 (result v128)
@@ -8649,9 +9349,16 @@
        v128.load offset=1008
        br $assembly/utils/v128/getV128|inlined.4
       end
-      i32.const 0
-      i32x4.splat
-      br $assembly/utils/v128/getV128|inlined.4
+      i32.const 3120
+      local.get $38
+      i32.const 10
+      call $~lib/number/I32#toString
+      call $~lib/string/String#concat
+      i32.const 3056
+      i32.const 341
+      i32.const 7
+      call $~lib/builtins/abort
+      unreachable
      end
      i32x4.add
     end
@@ -8667,649 +9374,661 @@
      global.get $assembly/simd/tmpW
      local.set $42
      block $break|6
-      block $case63|6
-       block $case62|6
-        block $case61|6
-         block $case60|6
-          block $case59|6
-           block $case58|6
-            block $case57|6
-             block $case56|6
-              block $case55|6
-               block $case54|6
-                block $case53|6
-                 block $case52|6
-                  block $case51|6
-                   block $case50|6
-                    block $case49|6
-                     block $case48|6
-                      block $case47|6
-                       block $case46|6
-                        block $case45|6
-                         block $case44|6
-                          block $case43|6
-                           block $case42|6
-                            block $case41|6
-                             block $case40|6
-                              block $case39|6
-                               block $case38|6
-                                block $case37|6
-                                 block $case36|6
-                                  block $case35|6
-                                   block $case34|6
-                                    block $case33|6
-                                     block $case32|6
-                                      block $case31|6
-                                       block $case30|6
-                                        block $case29|6
-                                         block $case28|6
-                                          block $case27|6
-                                           block $case26|6
-                                            block $case25|6
-                                             block $case24|6
-                                              block $case23|6
-                                               block $case22|6
-                                                block $case21|6
-                                                 block $case20|6
-                                                  block $case19|6
-                                                   block $case18|6
-                                                    block $case17|6
-                                                     block $case16|6
-                                                      block $case15|6
-                                                       block $case14|6
-                                                        block $case13|6
-                                                         block $case12|6
-                                                          block $case11|6
-                                                           block $case10|6
-                                                            block $case9|6
-                                                             block $case8|6
-                                                              block $case7|6
-                                                               block $case6|6
-                                                                block $case5|6
-                                                                 block $case4|6
-                                                                  block $case3|6
-                                                                   block $case2|6
-                                                                    block $case1|6
-                                                                     block $case0|6
-                                                                      local.get $41
-                                                                      local.set $43
-                                                                      local.get $43
-                                                                      i32.const 0
-                                                                      i32.eq
-                                                                      br_if $case0|6
-                                                                      local.get $43
-                                                                      i32.const 1
-                                                                      i32.eq
-                                                                      br_if $case1|6
-                                                                      local.get $43
-                                                                      i32.const 2
-                                                                      i32.eq
-                                                                      br_if $case2|6
-                                                                      local.get $43
-                                                                      i32.const 3
-                                                                      i32.eq
-                                                                      br_if $case3|6
-                                                                      local.get $43
-                                                                      i32.const 4
-                                                                      i32.eq
-                                                                      br_if $case4|6
-                                                                      local.get $43
-                                                                      i32.const 5
-                                                                      i32.eq
-                                                                      br_if $case5|6
-                                                                      local.get $43
-                                                                      i32.const 6
-                                                                      i32.eq
-                                                                      br_if $case6|6
-                                                                      local.get $43
-                                                                      i32.const 7
-                                                                      i32.eq
-                                                                      br_if $case7|6
-                                                                      local.get $43
-                                                                      i32.const 8
-                                                                      i32.eq
-                                                                      br_if $case8|6
-                                                                      local.get $43
-                                                                      i32.const 9
-                                                                      i32.eq
-                                                                      br_if $case9|6
-                                                                      local.get $43
-                                                                      i32.const 10
-                                                                      i32.eq
-                                                                      br_if $case10|6
-                                                                      local.get $43
-                                                                      i32.const 11
-                                                                      i32.eq
-                                                                      br_if $case11|6
-                                                                      local.get $43
-                                                                      i32.const 12
-                                                                      i32.eq
-                                                                      br_if $case12|6
-                                                                      local.get $43
-                                                                      i32.const 13
-                                                                      i32.eq
-                                                                      br_if $case13|6
-                                                                      local.get $43
-                                                                      i32.const 14
-                                                                      i32.eq
-                                                                      br_if $case14|6
-                                                                      local.get $43
-                                                                      i32.const 15
-                                                                      i32.eq
-                                                                      br_if $case15|6
-                                                                      local.get $43
-                                                                      i32.const 16
-                                                                      i32.eq
-                                                                      br_if $case16|6
-                                                                      local.get $43
-                                                                      i32.const 17
-                                                                      i32.eq
-                                                                      br_if $case17|6
-                                                                      local.get $43
-                                                                      i32.const 18
-                                                                      i32.eq
-                                                                      br_if $case18|6
-                                                                      local.get $43
-                                                                      i32.const 19
-                                                                      i32.eq
-                                                                      br_if $case19|6
-                                                                      local.get $43
-                                                                      i32.const 20
-                                                                      i32.eq
-                                                                      br_if $case20|6
-                                                                      local.get $43
-                                                                      i32.const 21
-                                                                      i32.eq
-                                                                      br_if $case21|6
-                                                                      local.get $43
-                                                                      i32.const 22
-                                                                      i32.eq
-                                                                      br_if $case22|6
-                                                                      local.get $43
-                                                                      i32.const 23
-                                                                      i32.eq
-                                                                      br_if $case23|6
-                                                                      local.get $43
-                                                                      i32.const 24
-                                                                      i32.eq
-                                                                      br_if $case24|6
-                                                                      local.get $43
-                                                                      i32.const 25
-                                                                      i32.eq
-                                                                      br_if $case25|6
-                                                                      local.get $43
-                                                                      i32.const 26
-                                                                      i32.eq
-                                                                      br_if $case26|6
-                                                                      local.get $43
-                                                                      i32.const 27
-                                                                      i32.eq
-                                                                      br_if $case27|6
-                                                                      local.get $43
-                                                                      i32.const 28
-                                                                      i32.eq
-                                                                      br_if $case28|6
-                                                                      local.get $43
-                                                                      i32.const 29
-                                                                      i32.eq
-                                                                      br_if $case29|6
-                                                                      local.get $43
-                                                                      i32.const 30
-                                                                      i32.eq
-                                                                      br_if $case30|6
-                                                                      local.get $43
-                                                                      i32.const 31
-                                                                      i32.eq
-                                                                      br_if $case31|6
-                                                                      local.get $43
-                                                                      i32.const 32
-                                                                      i32.eq
-                                                                      br_if $case32|6
-                                                                      local.get $43
-                                                                      i32.const 33
-                                                                      i32.eq
-                                                                      br_if $case33|6
-                                                                      local.get $43
-                                                                      i32.const 34
-                                                                      i32.eq
-                                                                      br_if $case34|6
-                                                                      local.get $43
-                                                                      i32.const 35
-                                                                      i32.eq
-                                                                      br_if $case35|6
-                                                                      local.get $43
-                                                                      i32.const 36
-                                                                      i32.eq
-                                                                      br_if $case36|6
-                                                                      local.get $43
-                                                                      i32.const 37
-                                                                      i32.eq
-                                                                      br_if $case37|6
-                                                                      local.get $43
-                                                                      i32.const 38
-                                                                      i32.eq
-                                                                      br_if $case38|6
-                                                                      local.get $43
-                                                                      i32.const 39
-                                                                      i32.eq
-                                                                      br_if $case39|6
-                                                                      local.get $43
-                                                                      i32.const 40
-                                                                      i32.eq
-                                                                      br_if $case40|6
-                                                                      local.get $43
-                                                                      i32.const 41
-                                                                      i32.eq
-                                                                      br_if $case41|6
-                                                                      local.get $43
-                                                                      i32.const 42
-                                                                      i32.eq
-                                                                      br_if $case42|6
-                                                                      local.get $43
-                                                                      i32.const 43
-                                                                      i32.eq
-                                                                      br_if $case43|6
-                                                                      local.get $43
-                                                                      i32.const 44
-                                                                      i32.eq
-                                                                      br_if $case44|6
-                                                                      local.get $43
-                                                                      i32.const 45
-                                                                      i32.eq
-                                                                      br_if $case45|6
-                                                                      local.get $43
-                                                                      i32.const 46
-                                                                      i32.eq
-                                                                      br_if $case46|6
-                                                                      local.get $43
-                                                                      i32.const 47
-                                                                      i32.eq
-                                                                      br_if $case47|6
-                                                                      local.get $43
-                                                                      i32.const 48
-                                                                      i32.eq
-                                                                      br_if $case48|6
-                                                                      local.get $43
-                                                                      i32.const 49
-                                                                      i32.eq
-                                                                      br_if $case49|6
-                                                                      local.get $43
-                                                                      i32.const 50
-                                                                      i32.eq
-                                                                      br_if $case50|6
-                                                                      local.get $43
-                                                                      i32.const 51
-                                                                      i32.eq
-                                                                      br_if $case51|6
-                                                                      local.get $43
-                                                                      i32.const 52
-                                                                      i32.eq
-                                                                      br_if $case52|6
-                                                                      local.get $43
-                                                                      i32.const 53
-                                                                      i32.eq
-                                                                      br_if $case53|6
-                                                                      local.get $43
-                                                                      i32.const 54
-                                                                      i32.eq
-                                                                      br_if $case54|6
-                                                                      local.get $43
-                                                                      i32.const 55
-                                                                      i32.eq
-                                                                      br_if $case55|6
-                                                                      local.get $43
-                                                                      i32.const 56
-                                                                      i32.eq
-                                                                      br_if $case56|6
-                                                                      local.get $43
-                                                                      i32.const 57
-                                                                      i32.eq
-                                                                      br_if $case57|6
-                                                                      local.get $43
-                                                                      i32.const 58
-                                                                      i32.eq
-                                                                      br_if $case58|6
-                                                                      local.get $43
-                                                                      i32.const 59
-                                                                      i32.eq
-                                                                      br_if $case59|6
-                                                                      local.get $43
-                                                                      i32.const 60
-                                                                      i32.eq
-                                                                      br_if $case60|6
-                                                                      local.get $43
-                                                                      i32.const 61
-                                                                      i32.eq
-                                                                      br_if $case61|6
-                                                                      local.get $43
-                                                                      i32.const 62
-                                                                      i32.eq
-                                                                      br_if $case62|6
-                                                                      local.get $43
-                                                                      i32.const 63
-                                                                      i32.eq
-                                                                      br_if $case63|6
+      block $case64|6
+       block $case63|6
+        block $case62|6
+         block $case61|6
+          block $case60|6
+           block $case59|6
+            block $case58|6
+             block $case57|6
+              block $case56|6
+               block $case55|6
+                block $case54|6
+                 block $case53|6
+                  block $case52|6
+                   block $case51|6
+                    block $case50|6
+                     block $case49|6
+                      block $case48|6
+                       block $case47|6
+                        block $case46|6
+                         block $case45|6
+                          block $case44|6
+                           block $case43|6
+                            block $case42|6
+                             block $case41|6
+                              block $case40|6
+                               block $case39|6
+                                block $case38|6
+                                 block $case37|6
+                                  block $case36|6
+                                   block $case35|6
+                                    block $case34|6
+                                     block $case33|6
+                                      block $case32|6
+                                       block $case31|6
+                                        block $case30|6
+                                         block $case29|6
+                                          block $case28|6
+                                           block $case27|6
+                                            block $case26|6
+                                             block $case25|6
+                                              block $case24|6
+                                               block $case23|6
+                                                block $case22|6
+                                                 block $case21|6
+                                                  block $case20|6
+                                                   block $case19|6
+                                                    block $case18|6
+                                                     block $case17|6
+                                                      block $case16|6
+                                                       block $case15|6
+                                                        block $case14|6
+                                                         block $case13|6
+                                                          block $case12|6
+                                                           block $case11|6
+                                                            block $case10|6
+                                                             block $case9|6
+                                                              block $case8|6
+                                                               block $case7|6
+                                                                block $case6|6
+                                                                 block $case5|6
+                                                                  block $case4|6
+                                                                   block $case3|6
+                                                                    block $case2|6
+                                                                     block $case1|6
+                                                                      block $case0|6
+                                                                       local.get $41
+                                                                       local.set $43
+                                                                       local.get $43
+                                                                       i32.const 0
+                                                                       i32.eq
+                                                                       br_if $case0|6
+                                                                       local.get $43
+                                                                       i32.const 1
+                                                                       i32.eq
+                                                                       br_if $case1|6
+                                                                       local.get $43
+                                                                       i32.const 2
+                                                                       i32.eq
+                                                                       br_if $case2|6
+                                                                       local.get $43
+                                                                       i32.const 3
+                                                                       i32.eq
+                                                                       br_if $case3|6
+                                                                       local.get $43
+                                                                       i32.const 4
+                                                                       i32.eq
+                                                                       br_if $case4|6
+                                                                       local.get $43
+                                                                       i32.const 5
+                                                                       i32.eq
+                                                                       br_if $case5|6
+                                                                       local.get $43
+                                                                       i32.const 6
+                                                                       i32.eq
+                                                                       br_if $case6|6
+                                                                       local.get $43
+                                                                       i32.const 7
+                                                                       i32.eq
+                                                                       br_if $case7|6
+                                                                       local.get $43
+                                                                       i32.const 8
+                                                                       i32.eq
+                                                                       br_if $case8|6
+                                                                       local.get $43
+                                                                       i32.const 9
+                                                                       i32.eq
+                                                                       br_if $case9|6
+                                                                       local.get $43
+                                                                       i32.const 10
+                                                                       i32.eq
+                                                                       br_if $case10|6
+                                                                       local.get $43
+                                                                       i32.const 11
+                                                                       i32.eq
+                                                                       br_if $case11|6
+                                                                       local.get $43
+                                                                       i32.const 12
+                                                                       i32.eq
+                                                                       br_if $case12|6
+                                                                       local.get $43
+                                                                       i32.const 13
+                                                                       i32.eq
+                                                                       br_if $case13|6
+                                                                       local.get $43
+                                                                       i32.const 14
+                                                                       i32.eq
+                                                                       br_if $case14|6
+                                                                       local.get $43
+                                                                       i32.const 15
+                                                                       i32.eq
+                                                                       br_if $case15|6
+                                                                       local.get $43
+                                                                       i32.const 16
+                                                                       i32.eq
+                                                                       br_if $case16|6
+                                                                       local.get $43
+                                                                       i32.const 17
+                                                                       i32.eq
+                                                                       br_if $case17|6
+                                                                       local.get $43
+                                                                       i32.const 18
+                                                                       i32.eq
+                                                                       br_if $case18|6
+                                                                       local.get $43
+                                                                       i32.const 19
+                                                                       i32.eq
+                                                                       br_if $case19|6
+                                                                       local.get $43
+                                                                       i32.const 20
+                                                                       i32.eq
+                                                                       br_if $case20|6
+                                                                       local.get $43
+                                                                       i32.const 21
+                                                                       i32.eq
+                                                                       br_if $case21|6
+                                                                       local.get $43
+                                                                       i32.const 22
+                                                                       i32.eq
+                                                                       br_if $case22|6
+                                                                       local.get $43
+                                                                       i32.const 23
+                                                                       i32.eq
+                                                                       br_if $case23|6
+                                                                       local.get $43
+                                                                       i32.const 24
+                                                                       i32.eq
+                                                                       br_if $case24|6
+                                                                       local.get $43
+                                                                       i32.const 25
+                                                                       i32.eq
+                                                                       br_if $case25|6
+                                                                       local.get $43
+                                                                       i32.const 26
+                                                                       i32.eq
+                                                                       br_if $case26|6
+                                                                       local.get $43
+                                                                       i32.const 27
+                                                                       i32.eq
+                                                                       br_if $case27|6
+                                                                       local.get $43
+                                                                       i32.const 28
+                                                                       i32.eq
+                                                                       br_if $case28|6
+                                                                       local.get $43
+                                                                       i32.const 29
+                                                                       i32.eq
+                                                                       br_if $case29|6
+                                                                       local.get $43
+                                                                       i32.const 30
+                                                                       i32.eq
+                                                                       br_if $case30|6
+                                                                       local.get $43
+                                                                       i32.const 31
+                                                                       i32.eq
+                                                                       br_if $case31|6
+                                                                       local.get $43
+                                                                       i32.const 32
+                                                                       i32.eq
+                                                                       br_if $case32|6
+                                                                       local.get $43
+                                                                       i32.const 33
+                                                                       i32.eq
+                                                                       br_if $case33|6
+                                                                       local.get $43
+                                                                       i32.const 34
+                                                                       i32.eq
+                                                                       br_if $case34|6
+                                                                       local.get $43
+                                                                       i32.const 35
+                                                                       i32.eq
+                                                                       br_if $case35|6
+                                                                       local.get $43
+                                                                       i32.const 36
+                                                                       i32.eq
+                                                                       br_if $case36|6
+                                                                       local.get $43
+                                                                       i32.const 37
+                                                                       i32.eq
+                                                                       br_if $case37|6
+                                                                       local.get $43
+                                                                       i32.const 38
+                                                                       i32.eq
+                                                                       br_if $case38|6
+                                                                       local.get $43
+                                                                       i32.const 39
+                                                                       i32.eq
+                                                                       br_if $case39|6
+                                                                       local.get $43
+                                                                       i32.const 40
+                                                                       i32.eq
+                                                                       br_if $case40|6
+                                                                       local.get $43
+                                                                       i32.const 41
+                                                                       i32.eq
+                                                                       br_if $case41|6
+                                                                       local.get $43
+                                                                       i32.const 42
+                                                                       i32.eq
+                                                                       br_if $case42|6
+                                                                       local.get $43
+                                                                       i32.const 43
+                                                                       i32.eq
+                                                                       br_if $case43|6
+                                                                       local.get $43
+                                                                       i32.const 44
+                                                                       i32.eq
+                                                                       br_if $case44|6
+                                                                       local.get $43
+                                                                       i32.const 45
+                                                                       i32.eq
+                                                                       br_if $case45|6
+                                                                       local.get $43
+                                                                       i32.const 46
+                                                                       i32.eq
+                                                                       br_if $case46|6
+                                                                       local.get $43
+                                                                       i32.const 47
+                                                                       i32.eq
+                                                                       br_if $case47|6
+                                                                       local.get $43
+                                                                       i32.const 48
+                                                                       i32.eq
+                                                                       br_if $case48|6
+                                                                       local.get $43
+                                                                       i32.const 49
+                                                                       i32.eq
+                                                                       br_if $case49|6
+                                                                       local.get $43
+                                                                       i32.const 50
+                                                                       i32.eq
+                                                                       br_if $case50|6
+                                                                       local.get $43
+                                                                       i32.const 51
+                                                                       i32.eq
+                                                                       br_if $case51|6
+                                                                       local.get $43
+                                                                       i32.const 52
+                                                                       i32.eq
+                                                                       br_if $case52|6
+                                                                       local.get $43
+                                                                       i32.const 53
+                                                                       i32.eq
+                                                                       br_if $case53|6
+                                                                       local.get $43
+                                                                       i32.const 54
+                                                                       i32.eq
+                                                                       br_if $case54|6
+                                                                       local.get $43
+                                                                       i32.const 55
+                                                                       i32.eq
+                                                                       br_if $case55|6
+                                                                       local.get $43
+                                                                       i32.const 56
+                                                                       i32.eq
+                                                                       br_if $case56|6
+                                                                       local.get $43
+                                                                       i32.const 57
+                                                                       i32.eq
+                                                                       br_if $case57|6
+                                                                       local.get $43
+                                                                       i32.const 58
+                                                                       i32.eq
+                                                                       br_if $case58|6
+                                                                       local.get $43
+                                                                       i32.const 59
+                                                                       i32.eq
+                                                                       br_if $case59|6
+                                                                       local.get $43
+                                                                       i32.const 60
+                                                                       i32.eq
+                                                                       br_if $case60|6
+                                                                       local.get $43
+                                                                       i32.const 61
+                                                                       i32.eq
+                                                                       br_if $case61|6
+                                                                       local.get $43
+                                                                       i32.const 62
+                                                                       i32.eq
+                                                                       br_if $case62|6
+                                                                       local.get $43
+                                                                       i32.const 63
+                                                                       i32.eq
+                                                                       br_if $case63|6
+                                                                       br $case64|6
+                                                                      end
+                                                                      local.get $40
+                                                                      local.get $42
+                                                                      v128.store
                                                                       br $break|6
                                                                      end
                                                                      local.get $40
                                                                      local.get $42
-                                                                     v128.store
+                                                                     v128.store offset=16
                                                                      br $break|6
                                                                     end
                                                                     local.get $40
                                                                     local.get $42
-                                                                    v128.store offset=16
+                                                                    v128.store offset=32
                                                                     br $break|6
                                                                    end
                                                                    local.get $40
                                                                    local.get $42
-                                                                   v128.store offset=32
+                                                                   v128.store offset=48
                                                                    br $break|6
                                                                   end
                                                                   local.get $40
                                                                   local.get $42
-                                                                  v128.store offset=48
+                                                                  v128.store offset=64
                                                                   br $break|6
                                                                  end
                                                                  local.get $40
                                                                  local.get $42
-                                                                 v128.store offset=64
+                                                                 v128.store offset=80
                                                                  br $break|6
                                                                 end
                                                                 local.get $40
                                                                 local.get $42
-                                                                v128.store offset=80
+                                                                v128.store offset=96
                                                                 br $break|6
                                                                end
                                                                local.get $40
                                                                local.get $42
-                                                               v128.store offset=96
+                                                               v128.store offset=112
                                                                br $break|6
                                                               end
                                                               local.get $40
                                                               local.get $42
-                                                              v128.store offset=112
+                                                              v128.store offset=128
                                                               br $break|6
                                                              end
                                                              local.get $40
                                                              local.get $42
-                                                             v128.store offset=128
+                                                             v128.store offset=144
                                                              br $break|6
                                                             end
                                                             local.get $40
                                                             local.get $42
-                                                            v128.store offset=144
+                                                            v128.store offset=160
                                                             br $break|6
                                                            end
                                                            local.get $40
                                                            local.get $42
-                                                           v128.store offset=160
+                                                           v128.store offset=176
                                                            br $break|6
                                                           end
                                                           local.get $40
                                                           local.get $42
-                                                          v128.store offset=176
+                                                          v128.store offset=192
                                                           br $break|6
                                                          end
                                                          local.get $40
                                                          local.get $42
-                                                         v128.store offset=192
+                                                         v128.store offset=208
                                                          br $break|6
                                                         end
                                                         local.get $40
                                                         local.get $42
-                                                        v128.store offset=208
+                                                        v128.store offset=224
                                                         br $break|6
                                                        end
                                                        local.get $40
                                                        local.get $42
-                                                       v128.store offset=224
+                                                       v128.store offset=240
                                                        br $break|6
                                                       end
                                                       local.get $40
                                                       local.get $42
-                                                      v128.store offset=240
+                                                      v128.store offset=256
                                                       br $break|6
                                                      end
                                                      local.get $40
                                                      local.get $42
-                                                     v128.store offset=256
+                                                     v128.store offset=272
                                                      br $break|6
                                                     end
                                                     local.get $40
                                                     local.get $42
-                                                    v128.store offset=272
+                                                    v128.store offset=288
                                                     br $break|6
                                                    end
                                                    local.get $40
                                                    local.get $42
-                                                   v128.store offset=288
+                                                   v128.store offset=304
                                                    br $break|6
                                                   end
                                                   local.get $40
                                                   local.get $42
-                                                  v128.store offset=304
+                                                  v128.store offset=320
                                                   br $break|6
                                                  end
                                                  local.get $40
                                                  local.get $42
-                                                 v128.store offset=320
+                                                 v128.store offset=336
                                                  br $break|6
                                                 end
                                                 local.get $40
                                                 local.get $42
-                                                v128.store offset=336
+                                                v128.store offset=352
                                                 br $break|6
                                                end
                                                local.get $40
                                                local.get $42
-                                               v128.store offset=352
+                                               v128.store offset=368
                                                br $break|6
                                               end
                                               local.get $40
                                               local.get $42
-                                              v128.store offset=368
+                                              v128.store offset=384
                                               br $break|6
                                              end
                                              local.get $40
                                              local.get $42
-                                             v128.store offset=384
+                                             v128.store offset=400
                                              br $break|6
                                             end
                                             local.get $40
                                             local.get $42
-                                            v128.store offset=400
+                                            v128.store offset=416
                                             br $break|6
                                            end
                                            local.get $40
                                            local.get $42
-                                           v128.store offset=416
+                                           v128.store offset=432
                                            br $break|6
                                           end
                                           local.get $40
                                           local.get $42
-                                          v128.store offset=432
+                                          v128.store offset=448
                                           br $break|6
                                          end
                                          local.get $40
                                          local.get $42
-                                         v128.store offset=448
+                                         v128.store offset=464
                                          br $break|6
                                         end
                                         local.get $40
                                         local.get $42
-                                        v128.store offset=464
+                                        v128.store offset=480
                                         br $break|6
                                        end
                                        local.get $40
                                        local.get $42
-                                       v128.store offset=480
+                                       v128.store offset=496
                                        br $break|6
                                       end
                                       local.get $40
                                       local.get $42
-                                      v128.store offset=496
+                                      v128.store offset=512
                                       br $break|6
                                      end
                                      local.get $40
                                      local.get $42
-                                     v128.store offset=512
+                                     v128.store offset=528
                                      br $break|6
                                     end
                                     local.get $40
                                     local.get $42
-                                    v128.store offset=528
+                                    v128.store offset=544
                                     br $break|6
                                    end
                                    local.get $40
                                    local.get $42
-                                   v128.store offset=544
+                                   v128.store offset=560
                                    br $break|6
                                   end
                                   local.get $40
                                   local.get $42
-                                  v128.store offset=560
+                                  v128.store offset=576
                                   br $break|6
                                  end
                                  local.get $40
                                  local.get $42
-                                 v128.store offset=576
+                                 v128.store offset=592
                                  br $break|6
                                 end
                                 local.get $40
                                 local.get $42
-                                v128.store offset=592
+                                v128.store offset=608
                                 br $break|6
                                end
                                local.get $40
                                local.get $42
-                               v128.store offset=608
+                               v128.store offset=624
                                br $break|6
                               end
                               local.get $40
                               local.get $42
-                              v128.store offset=624
+                              v128.store offset=640
                               br $break|6
                              end
                              local.get $40
                              local.get $42
-                             v128.store offset=640
+                             v128.store offset=656
                              br $break|6
                             end
                             local.get $40
                             local.get $42
-                            v128.store offset=656
+                            v128.store offset=672
                             br $break|6
                            end
                            local.get $40
                            local.get $42
-                           v128.store offset=672
+                           v128.store offset=688
                            br $break|6
                           end
                           local.get $40
                           local.get $42
-                          v128.store offset=688
+                          v128.store offset=704
                           br $break|6
                          end
                          local.get $40
                          local.get $42
-                         v128.store offset=704
+                         v128.store offset=720
                          br $break|6
                         end
                         local.get $40
                         local.get $42
-                        v128.store offset=720
+                        v128.store offset=736
                         br $break|6
                        end
                        local.get $40
                        local.get $42
-                       v128.store offset=736
+                       v128.store offset=752
                        br $break|6
                       end
                       local.get $40
                       local.get $42
-                      v128.store offset=752
+                      v128.store offset=768
                       br $break|6
                      end
                      local.get $40
                      local.get $42
-                     v128.store offset=768
+                     v128.store offset=784
                      br $break|6
                     end
                     local.get $40
                     local.get $42
-                    v128.store offset=784
+                    v128.store offset=800
                     br $break|6
                    end
                    local.get $40
                    local.get $42
-                   v128.store offset=800
+                   v128.store offset=816
                    br $break|6
                   end
                   local.get $40
                   local.get $42
-                  v128.store offset=816
+                  v128.store offset=832
                   br $break|6
                  end
                  local.get $40
                  local.get $42
-                 v128.store offset=832
+                 v128.store offset=848
                  br $break|6
                 end
                 local.get $40
                 local.get $42
-                v128.store offset=848
+                v128.store offset=864
                 br $break|6
                end
                local.get $40
                local.get $42
-               v128.store offset=864
+               v128.store offset=880
                br $break|6
               end
               local.get $40
               local.get $42
-              v128.store offset=880
+              v128.store offset=896
               br $break|6
              end
              local.get $40
              local.get $42
-             v128.store offset=896
+             v128.store offset=912
              br $break|6
             end
             local.get $40
             local.get $42
-            v128.store offset=912
+            v128.store offset=928
             br $break|6
            end
            local.get $40
            local.get $42
-           v128.store offset=928
+           v128.store offset=944
            br $break|6
           end
           local.get $40
           local.get $42
-          v128.store offset=944
+          v128.store offset=960
           br $break|6
          end
          local.get $40
          local.get $42
-         v128.store offset=960
+         v128.store offset=976
          br $break|6
         end
         local.get $40
         local.get $42
-        v128.store offset=976
+        v128.store offset=992
         br $break|6
        end
        local.get $40
        local.get $42
-       v128.store offset=992
+       v128.store offset=1008
        br $break|6
       end
-      local.get $40
-      local.get $42
-      v128.store offset=1008
-      br $break|6
+      i32.const 2928
+      local.get $41
+      i32.const 10
+      call $~lib/number/I32#toString
+      call $~lib/string/String#concat
+      i32.const 3056
+      i32.const 201
+      i32.const 7
+      call $~lib/builtins/abort
+      unreachable
      end
     end
     global.get $assembly/simd/hV128
@@ -9991,9 +10710,16 @@
       v128.load offset=1008
       br $assembly/utils/v128/getV128|inlined.5
      end
-     i32.const 0
-     i32x4.splat
-     br $assembly/utils/v128/getV128|inlined.5
+     i32.const 3120
+     local.get $64
+     i32.const 10
+     call $~lib/number/I32#toString
+     call $~lib/string/String#concat
+     i32.const 3056
+     i32.const 341
+     i32.const 7
+     call $~lib/builtins/abort
+     unreachable
     end
     i32x4.add
     global.get $assembly/simd/tmpW

@@ -197,6 +197,8 @@ export function setV128(ptr: usize, i: i32, v: v128): void {
     case 63:
       v128.store(ptr, v, 1008);
       break;
+    default:
+      throw new Error(`setV128: expect i from 0 to 63, got ${i}`);
   }
 }
 
@@ -336,6 +338,6 @@ export function getV128(ptr: usize, i: i32): v128 {
     case 63:
       return v128.load(ptr, 1008);
     default:
-      return i32x4.splat(0);
+      throw new Error(`getV128: expect i from 0 to 63, got ${i}`);
   }
 }
