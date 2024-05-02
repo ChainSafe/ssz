@@ -99,8 +99,8 @@
  (export "final" (func $assembly/index/final))
  (export "digest" (func $assembly/index/digest))
  (export "digest64" (func $assembly/index/digest64))
- (export "hash4UintArray64s" (func $assembly/index/hash4UintArray64s))
- (export "hash4HashObjectInputs" (func $assembly/index/hash4HashObjectInputs))
+ (export "batchHash4UintArray64s" (func $assembly/index/batchHash4UintArray64s))
+ (export "batchHash4HashObjectInputs" (func $assembly/index/batchHash4HashObjectInputs))
  (export "memory" (memory $0))
  (start $~start)
  (func $~lib/rt/tlsf/Root#set:flMap (param $0 i32) (param $1 i32)
@@ -5751,7 +5751,7 @@
   call $~lib/polyfills/bswap<i32>
   i32.store offset=124
  )
- (func $assembly/index/hash4UintArray64s (param $0 i32)
+ (func $assembly/index/batchHash4UintArray64s (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -5948,7 +5948,7 @@
   local.get $0
   call $assembly/simd/digest64V128
  )
- (func $assembly/index/hash4HashObjectInputs (param $0 i32)
+ (func $assembly/index/batchHash4HashObjectInputs (param $0 i32)
   (local $1 i32)
   (local $2 i32)
   i32.const 0

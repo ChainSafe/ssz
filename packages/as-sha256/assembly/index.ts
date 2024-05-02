@@ -321,7 +321,7 @@ export function digest64(inPtr: usize, outPtr: usize): void {
  * remaining 48 items are computed inside hashBlocksV128 loop.
  * @param outPtr
  */
-export function hash4UintArray64s(outPtr: usize): void {
+export function batchHash4UintArray64s(outPtr: usize): void {
   for (i = 0; i < 16; i++) {
     store32(wPtr, PARALLEL_FACTOR * i, load32be(inputPtr, i));
     store32(wPtr, PARALLEL_FACTOR * i + 1, load32be(inputPtr, i + 16));
@@ -333,7 +333,7 @@ export function hash4UintArray64s(outPtr: usize): void {
 }
 
 /*
- * Hash 4 HashObject inputs, 64 bytes each similar to hash4UintArray64s
+ * Hash 4 HashObject inputs, 64 bytes each similar to batchHash4UintArray64s
  *
  * Input pointer is 64 u32 (256 bytes) as below:
  * input 0   input 1   input 2   input 3
@@ -352,7 +352,7 @@ export function hash4UintArray64s(outPtr: usize): void {
  * remaining 48 items are computed inside hashBlocksV128 loop.
  *
  */
-export function hash4HashObjectInputs(outPtr: usize): void {
+export function batchHash4HashObjectInputs(outPtr: usize): void {
   for (i = 0; i < 16 * PARALLEL_FACTOR; i++) {
     store32(wPtr, i, load32be(inputPtr, i));
   }

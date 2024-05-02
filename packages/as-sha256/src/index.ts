@@ -83,7 +83,7 @@ export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObj
  *          \    /      \    /      \   /       \   /
  * Outputs:   o0          o1          o2          o3
  */
-export function hash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
+export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
   if (inputs.length !== 4) {
     throw new Error("Input length must be 4");
   }
@@ -103,7 +103,7 @@ export function hash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
   inputUint8Array.set(inputs[2], 128);
   inputUint8Array.set(inputs[3], 192);
 
-  ctx.hash4UintArray64s(wasmOutputValue);
+  ctx.batchHash4UintArray64s(wasmOutputValue);
 
   const output0 = outputUint8Array.slice(0, 32);
   const output1 = outputUint8Array.slice(32, 64);
@@ -116,13 +116,13 @@ export function hash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
 /**
  * Hash 4 HashObject inputs in parallel
  *   - Each input (inputs{i}) is 4 bytes which make it 32 bytes
- *   - Each HashObject input contains 2 HashObjects which is 64 bytes similar to hash4UintArray64s
+ *   - Each HashObject input contains 2 HashObjects which is 64 bytes similar to batchHash4UintArray64s
  *
  * Inputs      i0    i1    i2    i3    i4    i5    i6   i7
  *               \   /      \    /       \   /      \   /
  * Outputs         o0          o1          o2         o3
  */
-export function hash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
+export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
     throw new Error("Input length must be 8");
   }
@@ -225,7 +225,7 @@ export function hash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   inputUint32Array[62] = inputs[5].h7;
   inputUint32Array[63] = inputs[7].h7;
 
-  ctx.hash4HashObjectInputs(wasmOutputValue);
+  ctx.batchHash4HashObjectInputs(wasmOutputValue);
 
   const output0 = byteArrayToHashObject(outputUint8Array.subarray(0, 32));
   const output1 = byteArrayToHashObject(outputUint8Array.subarray(32, 64));
