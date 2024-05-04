@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.15.1...ssz-v0.16.0) (2024-05-02)
+
+
+### Features
+
+* add `sliceFrom` to `ListCompositeTreeViewDU` ([#366](https://github.com/ChainSafe/ssz/issues/366)) ([b3fa4f1](https://github.com/ChainSafe/ssz/commit/b3fa4f1335e893f514afdf735b0da34b50b15b6f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 0.4.2
+    * @chainsafe/persistent-merkle-tree bumped to 0.7.2
+
 ## [0.15.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.15.0...ssz-v0.15.1) (2024-03-15)
 
 

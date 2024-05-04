@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.1...as-sha256-v0.4.2) (2024-05-02)
+
+
+### Bug Fixes
+
+* migrate to the latest assemblyscript ([#348](https://github.com/ChainSafe/ssz/issues/348)) ([9cf6991](https://github.com/ChainSafe/ssz/commit/9cf6991e7ece4e4002668f601ecb43bb8bd53f4e))
+
 ## [0.4.1](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.0...as-sha256-v0.4.1) (2023-04-21)
 
 
