@@ -225,11 +225,10 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     const activeFields = BitArray.fromBoolArray(this.fieldsEntries.map(({fieldName}) => value[fieldName] != null));
     // write active field bitvector
     output.uint8Array.set(activeFields.uint8Array, offset);
-    offset += activeFields.uint8Array.length;
 
     const {fixedEnd} = computeSerdesData(activeFields, this.fieldsEntries);
 
-    let fixedIndex = offset;
+    let fixedIndex = offset + activeFields.uint8Array.length;
     let variableIndex = offset + fixedEnd;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
@@ -241,7 +240,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
       if (fieldType.fixedSize === null) {
         // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+        output.dataView.setUint32(fixedIndex, variableIndex - activeFields.uint8Array.length - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.value_serializeToBytes(output, variableIndex, value[fieldName]);
@@ -292,11 +291,10 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     const activeFields = this.tree_getActiveFields(node);
     // write active field bitvector
     output.uint8Array.set(activeFields.uint8Array, offset);
-    offset += activeFields.uint8Array.length;
 
     const {fixedEnd} = computeSerdesData(activeFields, this.fieldsEntries);
 
-    let fixedIndex = offset;
+    let fixedIndex = offset + activeFields.uint8Array.length;
     let variableIndex = offset + fixedEnd;
 
     const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length);
@@ -310,7 +308,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       const node = nodes[i];
       if (fieldType.fixedSize === null) {
         // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+        output.dataView.setUint32(fixedIndex, variableIndex - activeFields.uint8Array.length - offset, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
@@ -501,7 +499,15 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
   equals(a: ValueOfFields<Fields>, b: ValueOfFields<Fields>): boolean {
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
+      const {fieldName, fieldType, optional} = this.fieldsEntries[i];
+      if (optional) {
+        if (a[fieldName] == null && b[fieldName] == null) {
+          continue;
+        }
+        if (a[fieldName] == null || b[fieldName] == null) {
+          return false;
+        }
+      }
       if (!fieldType.equals(a[fieldName], b[fieldName])) {
         return false;
       }
@@ -542,7 +548,14 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
 
     // Read offsets in one pass
-    const offsets = readVariableOffsets(data.dataView, start, end, fixedEnd, variableOffsetsPosition);
+    const offsets = readVariableOffsets(
+      data.dataView,
+      start,
+      end,
+      activeFieldsByteLen,
+      fixedEnd,
+      variableOffsetsPosition
+    );
     offsets.push(end - start); // The offsets are relative to the start
 
     // Merge fieldRangesFixedLen + offsets in one array
@@ -588,6 +601,7 @@ function readVariableOffsets(
   data: DataView,
   start: number,
   end: number,
+  activeFieldsEnd: number,
   fixedEnd: number,
   variableOffsetsPosition: number[]
 ): number[] {
@@ -595,12 +609,13 @@ function readVariableOffsets(
   // the offset indices so we can more easily deserialize the fields in once pass first we get the fixed sizes
   // Note: `fixedSizes[i] = null` if that field has variable length
 
-  const size = end - start;
+  const size = end - activeFieldsEnd;
+  const activeFieldsByteLen = activeFieldsEnd - start;
 
   // with the fixed sizes, we can read the offsets, and store for our single pass
   const offsets = new Array<number>(variableOffsetsPosition.length);
   for (let i = 0; i < variableOffsetsPosition.length; i++) {
-    const offset = data.getUint32(start + variableOffsetsPosition[i], true);
+    const offset = data.getUint32(start + variableOffsetsPosition[i], true) + activeFieldsByteLen;
 
     // Validate offsets. If the list is empty the offset points to the end of the buffer, offset == size
     if (offset > size) {
