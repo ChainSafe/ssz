@@ -1,9 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "engines": {
-    "node": ">=18 <21"
-  },
   "workspaces": [
     "packages/*"
   ],
