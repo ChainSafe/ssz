@@ -19,7 +19,7 @@
     "benchmark:files": "NODE_OPTIONS=--max_old_space_size=4096 benchmark --config .benchrc.yaml",
     "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
-    "check-readme": "yarn workspaces foreach -vp run check-readme"
+    "check-readme": "lerna run check-readme"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.6",
