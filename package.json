@@ -1,18 +1,21 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "node": ">=18 <21"
+  },
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "yarn@3.2.3",
+  "packageManager": "yarn@1.22.22",
   "scripts": {
-    "clean": "yarn workspaces foreach -vp run clean",
-    "generate": "yarn workspaces foreach -vp run generate",
-    "build": "yarn clean && yarn workspaces foreach -vp --topological run build",
-    "lint": "yarn workspaces foreach -vp run lint",
-    "check-types": "yarn workspaces foreach -vp run check-types",
-    "coverage": "yarn workspaces foreach -vp run coverage",
-    "test": "yarn workspaces foreach -vp run test",
+    "clean": "yarn workspaces run clean",
+    "generate": "yarn workspaces run generate",
+    "build": "yarn clean && yarn workspaces --topological run build",
+    "lint": "yarn workspaces run lint",
+    "check-types": "yarn workspaces run check-types",
+    "coverage": "yarn workspaces run coverage",
+    "test": "yarn workspaces run test",
     "benchmark:files": "NODE_OPTIONS=--max_old_space_size=4096 benchmark --config .benchrc.yaml",
     "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
@@ -56,6 +59,6 @@
     "webpack-dev-server": "^3.11.2"
   },
   "resolutions": {
-    "@chainsafe/ssz": "workspace:^"
+    "@types/react": "^17.0"
   }
 }
