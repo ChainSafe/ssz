@@ -1244,11 +1244,6 @@
     "@babel/helper-validator-identifier" "^7.24.5"
     to-fast-properties "^2.0.0"
 
-"@chainsafe/as-sha256@workspace:^":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.4.2.tgz#21ad1371e2245e430c1a554a05f10d333c6f42cc"
-  integrity sha512-HJ8GZBRjLeWtRsAXf3EbNsNzmTGpzTFjfpSf4yHkLYC+E52DhT6hwz+7qpj6I/EmFzSUm5tYYvT9K8GZokLQCQ==
-
 "@chainsafe/babel-plugin-inline-binary-import@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@chainsafe/babel-plugin-inline-binary-import/-/babel-plugin-inline-binary-import-1.0.3.tgz#08dde20d91cf5d18f2c253edf32547943a16e409"
@@ -1257,14 +1252,6 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
-"@chainsafe/persistent-merkle-tree@workspace:^":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.7.2.tgz#f0ef91daf36752f827432333cbc965f4bf6e750e"
-  integrity sha512-BUAqrmSUmy6bZhXxnhpR+aYoEDdCeS1dQvq/aje0CDEB14ZHF9UVN2mL9MolOD0ANUiP1OaPG3KfVBxvuW8aTg==
-  dependencies:
-    "@chainsafe/as-sha256" "^0.4.2"
-    "@noble/hashes" "^1.3.0"
-
 "@chainsafe/ssz@^0.15.1":
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.15.1.tgz#008a711c3bcdc0d207cd4be15108870b0b1c60c0"
@@ -1272,14 +1259,6 @@
   dependencies:
     "@chainsafe/as-sha256" "^0.4.1"
     "@chainsafe/persistent-merkle-tree" "^0.7.1"
-
-"@chainsafe/ssz@workspace:^":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.16.0.tgz#262c491ac037777a16e8d8db479da2ba27539b8d"
-  integrity sha512-CgTDyrkbAKvrKwHxPT5rerXAHP3NB+uOvpnN9Gn8aJ/4TGOKhOboj4131bSFUZ679uPJ6pu6391cvInuOdrglw==
-  dependencies:
-    "@chainsafe/as-sha256" "^0.4.2"
-    "@chainsafe/persistent-merkle-tree" "^0.7.2"
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -1790,7 +1769,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^17", "@types/react@^17.0.35":
+"@types/react@*", "@types/react@^17", "@types/react@^17.0", "@types/react@^17.0.35":
   version "17.0.80"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.80.tgz#a5dfc351d6a41257eb592d73d3a85d3b7dbcbb41"
   integrity sha512-LrgHIu2lEtIo8M7d1FcI3BdwXWoRQwMoXOZ7+dPTW0lYREjmlHl3P0U1VD0i/9tppOuv8/sam7sOjx34TxSFbA==
