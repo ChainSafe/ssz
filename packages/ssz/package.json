@@ -12,31 +12,31 @@
     "lib/**/*.js.map"
   ],
   "scripts": {
-    "build": "run -T tsc --project tsconfig.build.json",
-    "build-web": "run -T webpack --mode production --entry ./lib/web.js --output ./dist/ssz.min.js",
-    "build:docs": "run -T typedoc --exclude src/index.ts,src/web.ts --out docs src",
+    "build": "tsc --project tsconfig.build.json",
+    "build-web": "webpack --mode production --entry ./lib/web.js --output ./dist/ssz.min.js",
+    "build:docs": "typedoc --exclude src/index.ts,src/web.ts --out docs src",
     "build:release": "yarn clean && yarn run build && yarn build-web && yarn run build:docs",
-    "check-types": "run -T tsc --noEmit",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf lib && rm -rf dist && rm -f tsconfig.tsbuildinfo",
-    "lint": "run -T eslint --color --ext .ts src/ test/",
+    "lint": "eslint --color --ext .ts src/ test/",
     "lint:fix": "yarn run lint --fix",
     "prepublishOnly": "yarn build",
     "test": "yarn test:unit",
     "benchmark": "node --max-old-space-size=4096 --expose-gc ../../node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
-    "test:perf": "run -T mocha  \"test/perf/**/*.test.ts\"",
-    "test:unit": "run -T nyc mocha  \"test/unit/**/*.test.ts\"",
+    "test:perf": "mocha  \"test/perf/**/*.test.ts\"",
+    "test:unit": "nyc mocha  \"test/unit/**/*.test.ts\"",
     "test:spec": "yarn test:spec-generic && yarn test:spec-static",
-    "test:spec-generic": "run -T mocha  \"test/spec/generic/**/*.test.ts\"",
+    "test:spec-generic": "mocha  \"test/spec/generic/**/*.test.ts\"",
     "test:spec-static": "yarn test:spec-static-minimal && yarn test:spec-static-mainnet",
-    "test:spec-static-minimal": "LODESTAR_PRESET=minimal run -T  mocha test/spec/ssz_static.test.ts",
-    "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet run -T  mocha test/spec/ssz_static.test.ts",
+    "test:spec-static-minimal": "LODESTAR_PRESET=minimal  mocha test/spec/ssz_static.test.ts",
+    "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet  mocha test/spec/ssz_static.test.ts",
     "download-spec-tests": "node -r ts-node/register test/spec/downloadTests.ts"
   },
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@chainsafe/as-sha256": "workspace:^",
-    "@chainsafe/persistent-merkle-tree": "workspace:^"
+    "@chainsafe/as-sha256": "0.4.2",
+    "@chainsafe/persistent-merkle-tree": "0.7.2"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",

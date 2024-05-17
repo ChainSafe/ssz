@@ -28,16 +28,19 @@
     "build"
   ],
   "scripts": {
+    "clean": "rm -rf ./dist",
+    "lint": "echo 'no linting for this package'",
+    "check-types": "echo 'no type check for this package'",
     "generate": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
     "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert",
-    "build:lib": "run -T tsc -p tsconfig.build.json",
-    "build:web": "run -T webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
+    "build:lib": "tsc -p tsconfig.build.json",
+    "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "yarn run test:unit",
     "test:unit": "yarn run test:unit:node && yarn run test:unit:browser",
-    "test:unit:node": "run -T mocha -r ts-node/register test/unit/*.test.ts",
-    "test:unit:browser": "run -T karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.js",
+    "test:unit:node": "mocha -r ts-node/register test/unit/*.test.ts",
+    "test:unit:browser": "karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.js",
     "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/index.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:ci": "yarn test:as-ci"

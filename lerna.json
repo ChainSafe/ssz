@@ -1,0 +1,15 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "npmClient": "yarn",
+  "useNx": true,
+  "version": "1.18.1",
+  "stream": true,
+  "command": {
+    "version": {
+      "message": "chore(release): %s"
+    }
+  },
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
+}

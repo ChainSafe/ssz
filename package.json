@@ -4,19 +4,19 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "yarn@3.2.3",
+  "packageManager": "yarn@1.22.22",
   "scripts": {
-    "clean": "yarn workspaces foreach -vp run clean",
-    "generate": "yarn workspaces foreach -vp run generate",
-    "build": "yarn clean && yarn workspaces foreach -vp --topological run build",
-    "lint": "yarn workspaces foreach -vp run lint",
-    "check-types": "yarn workspaces foreach -vp run check-types",
-    "coverage": "yarn workspaces foreach -vp run coverage",
-    "test": "yarn workspaces foreach -vp run test",
+    "clean": "lerna run clean",
+    "generate": "lerna run generate",
+    "build": "yarn clean && lerna run build",
+    "lint": "lerna run lint",
+    "check-types": "lerna run check-types",
+    "coverage": "lerna run coverage",
+    "test": "lerna run test",
     "benchmark:files": "NODE_OPTIONS=--max_old_space_size=4096 benchmark --config .benchrc.yaml",
     "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
-    "check-readme": "yarn workspaces foreach -vp run check-readme"
+    "check-readme": "lerna run check-readme"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.6",
@@ -45,6 +45,7 @@
     "karma-firefox-launcher": "^1.2.0",
     "karma-mocha": "^1.3.0",
     "karma-webpack": "^5.0.0",
+    "lerna": "^8.1.3",
     "mocha": "^8.3.2",
     "nyc": "^15.0.0",
     "prettier": "^2.2.1",
@@ -56,6 +57,6 @@
     "webpack-dev-server": "^3.11.2"
   },
   "resolutions": {
-    "@chainsafe/ssz": "workspace:^"
+    "@types/react": "^17.0"
   }
 }
