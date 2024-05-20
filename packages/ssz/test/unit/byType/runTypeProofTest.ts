@@ -6,7 +6,7 @@ import {
   fromHexString,
   JsonPath,
   OptionalType,
-  SimpleVariantType,
+  ProfileType,
   StableContainerType,
   Type,
 } from "../../../src";
@@ -120,7 +120,7 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
     if (typeof jsonProp === "number") {
       view = (view as ArrayBasicTreeView<any>).get(jsonProp);
     } else if (typeof jsonProp === "string") {
-      if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof SimpleVariantType) {
+      if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
         // Coerce jsonProp to a fieldName. JSON paths may be in JSON notation or fieldName notation
         const fieldName =
           (type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] ?? jsonProp;
@@ -152,7 +152,7 @@ function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath
     if (typeof jsonProp === "number") {
       json = (json as unknown[])[jsonProp];
     } else if (typeof jsonProp === "string") {
-      if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof SimpleVariantType) {
+      if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
         if ((type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] === undefined) {
           throw Error(`Unknown jsonProp ${jsonProp} for type ${type.typeName}`);
         }

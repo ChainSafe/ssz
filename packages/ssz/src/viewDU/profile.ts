@@ -2,7 +2,7 @@ import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persis
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
-import {ContainerTypeGeneric} from "../view/simpleVariant";
+import {ContainerTypeGeneric} from "../view/profile";
 import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */

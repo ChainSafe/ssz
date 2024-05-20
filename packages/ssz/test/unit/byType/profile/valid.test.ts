@@ -1,4 +1,4 @@
-import {BitArray, SimpleVariantType, UintNumberType, hash64} from "../../../../src";
+import {BitArray, ProfileType, UintNumberType, hash64} from "../../../../src";
 import {runTypeTestValid} from "../runTypeTestValid";
 
 // taken from eip spec tests
@@ -6,7 +6,7 @@ import {runTypeTestValid} from "../runTypeTestValid";
 const uint16 = new UintNumberType(2);
 const byteType = new UintNumberType(1);
 
-const Circle1 = new SimpleVariantType(
+const Circle1 = new ProfileType(
   {
     side: uint16,
     color: byteType,
@@ -14,7 +14,7 @@ const Circle1 = new SimpleVariantType(
   BitArray.fromBoolArray([true, true, false, false])
 );
 
-const Square1 = new SimpleVariantType(
+const Square1 = new ProfileType(
   {
     color: byteType,
     radius: uint16,

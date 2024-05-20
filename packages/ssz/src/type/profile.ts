@@ -21,12 +21,12 @@ import {
   FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
-} from "../view/simpleVariant";
+} from "../view/profile";
 import {
   getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/simpleVariant";
+} from "../viewDU/profile";
 import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
 import {getActiveFields, mixInActiveFields, setActiveFields} from "./stableContainer";
@@ -36,14 +36,14 @@ import {zeroHash} from "../util/zeros";
 type BytesRange = {start: number; end: number};
 
 /**
- * SimpleVariant: ordered heterogeneous collection of values that inherits merkleization from a base stable container
+ * Profile: ordered heterogeneous collection of values that inherits merkleization from a base stable container
  *
  * Limitations:
  * - No reordering of fields for merkleization
  * - No optional fields
  */
 
-export type SimpleVariantOptions<Fields extends Record<string, unknown>> = {
+export type ProfileOptions<Fields extends Record<string, unknown>> = {
   typeName?: string;
   jsonCase?: KeyCase;
   casingMap?: CasingMap<Fields>;
@@ -67,7 +67,7 @@ type CasingMap<Fields extends Record<string, unknown>> = Partial<{[K in keyof Fi
  * Container: ordered heterogeneous collection of values
  * - Notation: Custom name per instance
  */
-export class SimpleVariantType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
+export class ProfileType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
   ContainerTreeViewDUType<Fields>
@@ -97,7 +97,7 @@ export class SimpleVariantType<Fields extends Record<string, Type<unknown>>> ext
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: SimpleVariantOptions<Fields>) {
+  constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
     super(opts?.cachePermanentRootStruct);
 
     // Render detailed typeName. Consumers should overwrite since it can get long
@@ -166,9 +166,9 @@ export class SimpleVariantType<Fields extends Record<string, Type<unknown>>> ext
   static named<Fields extends Record<string, Type<unknown>>>(
     fields: Fields,
     activeFields: BitArray,
-    opts: Require<SimpleVariantOptions<Fields>, "typeName">
-  ): SimpleVariantType<Fields> {
-    return new (namedClass(SimpleVariantType, opts.typeName))(fields, activeFields, opts);
+    opts: Require<ProfileOptions<Fields>, "typeName">
+  ): ProfileType<Fields> {
+    return new (namedClass(ProfileType, opts.typeName))(fields, activeFields, opts);
   }
 
   defaultValue(): ValueOfFields<Fields> {
