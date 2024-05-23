@@ -1,6 +1,6 @@
 import {zeroNode} from "./zeroNode";
 import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex";
-import {Node, LeafNode, BranchNode, HashComputation} from "./node";
+import {Node, LeafNode, BranchNode, HashComputation, HashComputationGroup, arrayAtIndex} from "./node";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 
@@ -341,14 +341,14 @@ export function setNodeAtDepth(rootNode: Node, nodesDepth: number, index: number
  * gindex and navigate upwards creating or caching nodes as necessary. Loop and repeat.
  *
  * Supports index up to `Number.MAX_SAFE_INTEGER`.
- * TODO: add offset to consume from ssz
+ * @param hashComps a map of HashComputation[] by level (could be from 0 to `nodesDepth - 1`)
  */
 export function setNodesAtDepth(
   rootNode: Node,
   nodesDepth: number,
   indexes: number[],
   nodes: Node[],
-  hashCompsByLevel: Array<HashComputation[]> | null = null
+  hashComps: HashComputationGroup | null = null
 ): Node {
   // depth depthi   gindexes   indexes
   // 0     1           1          0
@@ -367,6 +367,8 @@ export function setNodesAtDepth(
   if (nodesDepth === 0) {
     return nodes.length > 0 ? nodes[0] : rootNode;
   }
+  const hashCompsByLevel = hashComps?.byLevel ?? null;
+  const offset = hashComps?.offset ?? 0;
 
   /**
    * Contiguous filled stack of parent nodes. It get filled in the first descent
@@ -436,7 +438,11 @@ export function setNodesAtDepth(
         if (hashCompsByLevel != null) {
           // go with level of dest node (level 0 goes with root node)
           // in this case dest node is nodesDept - 2, same for below
-          hashCompsByLevel[nodesDepth - 1].push({src0: nodes[i], src1: nodes[i + 1], dest: node});
+          arrayAtIndex(hashCompsByLevel, nodesDepth - 1 + offset).push({
+            src0: nodes[i],
+            src1: nodes[i + 1],
+            dest: node,
+          });
         }
         // Move pointer one extra forward since node has consumed two nodes
         i++;
@@ -444,14 +450,18 @@ export function setNodesAtDepth(
         const oldNode = node;
         node = new BranchNode(nodes[i], oldNode.right);
         if (hashCompsByLevel != null) {
-          hashCompsByLevel[nodesDepth - 1].push({src0: nodes[i], src1: oldNode.right, dest: node});
+          arrayAtIndex(hashCompsByLevel, nodesDepth - 1 + offset).push({
+            src0: nodes[i],
+            src1: oldNode.right,
+            dest: node,
+          });
         }
       }
     } else {
       const oldNode = node;
       node = new BranchNode(oldNode.left, nodes[i]);
       if (hashCompsByLevel != null) {
-        hashCompsByLevel[nodesDepth - 1].push({src0: oldNode.left, src1: nodes[i], dest: node});
+        arrayAtIndex(hashCompsByLevel, nodesDepth - 1 + offset).push({src0: oldNode.left, src1: nodes[i], dest: node});
       }
     }
 
@@ -494,7 +504,11 @@ export function setNodesAtDepth(
           const oldNode = node;
           node = new BranchNode(oldNode, parentNodeStack[d].right);
           if (hashCompsByLevel != null) {
-            hashCompsByLevel[depth].push({src0: oldNode, src1: parentNodeStack[d].right, dest: node});
+            arrayAtIndex(hashCompsByLevel, depth + offset).push({
+              src0: oldNode,
+              src1: parentNodeStack[d].right,
+              dest: node,
+            });
           }
         } else {
           // Only store the left node if it's at d = diffDepth
@@ -508,14 +522,18 @@ export function setNodesAtDepth(
           const oldNode = node;
           node = new BranchNode(leftNode, oldNode);
           if (hashCompsByLevel != null) {
-            hashCompsByLevel[depth].push({src0: leftNode, src1: oldNode, dest: node});
+            arrayAtIndex(hashCompsByLevel, depth + offset).push({src0: leftNode, src1: oldNode, dest: node});
           }
           leftParentNodeStack[d] = undefined;
         } else {
           const oldNode = node;
           node = new BranchNode(parentNodeStack[d].left, oldNode);
           if (hashCompsByLevel != null) {
-            hashCompsByLevel[depth].push({src0: parentNodeStack[d].left, src1: oldNode, dest: node});
+            arrayAtIndex(hashCompsByLevel, depth + offset).push({
+              src0: parentNodeStack[d].left,
+              src1: oldNode,
+              dest: node,
+            });
           }
         }
       }
