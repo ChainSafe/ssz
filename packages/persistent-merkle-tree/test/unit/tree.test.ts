@@ -13,6 +13,7 @@ import {
   BranchNode,
   HashComputation,
   findDiffDepthi,
+  getHashComputations,
 } from "../../src";
 
 describe("fixed-depth tree iteration", () => {
@@ -49,6 +50,19 @@ describe("fixed-depth tree iteration", () => {
       }
     }
   });
+});
+
+describe("batchHash() vs root getter", () => {
+  const lengths = [4, 5, 6, 7, 10, 100, 1000];
+  for (const length of lengths) {
+    it(`length=${length}`, () => {
+      const leaves = Array.from({length: length}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i % 256)));
+      const depth = Math.ceil(Math.log2(length));
+      const tree = new Tree(subtreeFillToContents([...leaves], depth));
+      const tree2 = new Tree(subtreeFillToContents([...leaves], depth));
+      expect(tree.batchHash()).to.be.deep.equal(tree2.root);
+    });
+  }
 });
 
 describe("subtree mutation", () => {
@@ -162,7 +176,7 @@ describe("Tree batch setNodes", () => {
     for (let i = 0; i < gindexesBigint.length; i++) {
       treeOk.setNode(gindexesBigint[i], LeafNode.fromRoot(Buffer.alloc(32, gindexes[i])));
     }
-    getHashComputation(treeOk.rootNode, 0, hashComputationsOk);
+    getHashComputations(treeOk.rootNode, 0, hashComputationsOk);
 
     // For the large test cases, only compare the rootNode root (gindex 1)
     const maxGindex = depth > 6 ? 1 : 2 ** (depth + 1);
@@ -176,7 +190,8 @@ describe("Tree batch setNodes", () => {
         depth,
         indexes,
         gindexes.map((nodeValue) => LeafNode.fromRoot(Buffer.alloc(32, nodeValue))),
-        hashComputations
+        // TODO: more test cases with positive offset?
+        {byLevel: hashComputations, offset: 0}
       );
       tree.rootNode = newChunksNode;
       const roots = getTreeRoots(tree, maxGindex);
@@ -186,7 +201,7 @@ describe("Tree batch setNodes", () => {
       tree.root;
       // TODO: need sort?
       // TODO: confirm all nodes in HashComputation are populated with HashObjects, h0 !== null
-      for (let i = depth - 1; i > 0; i--) {
+      for (let i = depth - 1; i >= 0; i--) {
         expect(hashComputations[i].length).to.be.equal(hashComputationsOk[i].length, `incorrect length at depth ${i}`);
         for (let j = 0; j < hashComputations[i].length; j++) {
           const hcOk = hashComputationsOk[i][j];
@@ -273,17 +288,3 @@ function toHex(bytes: Buffer | Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
 }
 
-function getHashComputation(node: Node, level: number, hashCompsByLevel: Array<HashComputation[]>): void {
-  if (node.h0 === null) {
-    const hashComputations = hashCompsByLevel[level];
-    hashComputations.push({src0: node.left, src1: node.right, dest: node});
-    if (!node.left.isLeaf()) {
-      getHashComputation(node.left, level + 1, hashCompsByLevel);
-    }
-    if (!node.right.isLeaf()) {
-      getHashComputation(node.right, level + 1, hashCompsByLevel);
-    }
-  }
-
-  // else stop the recursion, LeafNode should have h0
-}
