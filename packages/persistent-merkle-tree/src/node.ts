@@ -9,6 +9,13 @@ export type HashComputation = {
   dest: Node;
 };
 
+export type HashComputationGroup = {
+  // global array
+  byLevel: Array<HashComputation[]>;
+  // offset from top
+  offset: number;
+};
+
 /**
  * An immutable binary merkle tree node
  */
@@ -76,69 +83,10 @@ export class BranchNode extends Node {
     }
   }
 
-  // TODO: private, unit tests, use Array[HashComputation[]] for better performance
-  getHashComputation(level: number, hashCompsByLevel: Map<number, HashComputation[]>): void {
-    if (this.h0 === null) {
-      let hashComputations = hashCompsByLevel.get(level);
-      if (hashComputations === undefined) {
-        hashComputations = [];
-        hashCompsByLevel.set(level, hashComputations);
-      }
-      hashComputations.push({src0: this.left, src1: this.right, dest: this});
-      if (!this.left.isLeaf()) {
-        (this.left as BranchNode).getHashComputation(level + 1, hashCompsByLevel);
-      }
-      if (!this.right.isLeaf()) {
-        (this.right as BranchNode).getHashComputation(level + 1, hashCompsByLevel);
-      }
-
-      return;
-    }
-
-    // else stop the recursion, LeafNode should have h0
-  }
-
   batchHash(): Uint8Array {
-    const hashCompsByLevel = new Map<number, HashComputation[]>();
-    this.getHashComputation(0, hashCompsByLevel);
-    const levelsDesc = Array.from(hashCompsByLevel.keys()).sort((a, b) => b - a);
-    for (const level of levelsDesc) {
-      const hcArr = hashCompsByLevel.get(level);
-      if (!hcArr) {
-        // should not happen
-        throw Error(`no hash computations for level ${level}`);
-      }
-      // HashComputations of the same level are safe to batch
-      const batch = Math.floor(hcArr.length / 4);
-      for (let i = 0; i < batch; i++) {
-        const item0 = hcArr[i * 4];
-        const item1 = hcArr[i * 4 + 1];
-        const item2 = hcArr[i * 4 + 2];
-        const item3 = hcArr[i * 4 + 3];
-
-        const [dest0, dest1, dest2, dest3] = hasher.hash8HashObjects([
-          item0.src0,
-          item0.src1,
-          item1.src0,
-          item1.src1,
-          item2.src0,
-          item2.src1,
-          item3.src0,
-          item3.src1,
-        ]);
-
-        item0.dest.applyHash(dest0);
-        item1.dest.applyHash(dest1);
-        item2.dest.applyHash(dest2);
-        item3.dest.applyHash(dest3);
-      }
-      // compute remaining separatedly
-      const remLen = hcArr.length % 4;
-      for (let i = remLen - 1; i >= 0; i--) {
-        const {src0, src1, dest} = hcArr[hcArr.length - i - 1];
-        dest.applyHash(hasher.digest64HashObjects(src0, src1));
-      }
-    }
+    const hashComputations: HashComputation[][] = [];
+    getHashComputations(this, 0, hashComputations);
+    executeHashComputations(hashComputations);
 
     if (this.h0 === null) {
       throw Error("Root is not computed by batch");
@@ -445,4 +393,70 @@ export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void 
   else if (hIndex === 6) node.h6 |= value;
   else if (hIndex === 7) node.h7 |= value;
   else throw Error("hIndex > 7");
+}
+
+/**
+ * Given an array of HashComputation, execute them from the end
+ * The consumer has the root node so it should be able to get the final root from there
+ */
+export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
+  for (let level = hashComputations.length - 1; level >= 0; level--) {
+    const hcArr = hashComputations[level];
+    if (!hcArr) {
+      // should not happen
+      throw Error(`no hash computations for level ${level}`);
+    }
+    // HashComputations of the same level are safe to batch
+    const batch = Math.floor(hcArr.length / 4);
+    for (let i = 0; i < batch; i++) {
+      const item0 = hcArr[i * 4];
+      const item1 = hcArr[i * 4 + 1];
+      const item2 = hcArr[i * 4 + 2];
+      const item3 = hcArr[i * 4 + 3];
+
+      const [dest0, dest1, dest2, dest3] = hasher.hash8HashObjects([
+        item0.src0,
+        item0.src1,
+        item1.src0,
+        item1.src1,
+        item2.src0,
+        item2.src1,
+        item3.src0,
+        item3.src1,
+      ]);
+
+      item0.dest.applyHash(dest0);
+      item1.dest.applyHash(dest1);
+      item2.dest.applyHash(dest2);
+      item3.dest.applyHash(dest3);
+    }
+    // compute remaining separatedly
+    const remLen = hcArr.length % 4;
+    for (let i = remLen - 1; i >= 0; i--) {
+      const {src0, src1, dest} = hcArr[hcArr.length - i - 1];
+      dest.applyHash(hasher.digest64HashObjects(src0, src1));
+    }
+  }
+}
+
+export function getHashComputations(node: Node, offset: number, hashCompsByLevel: Array<HashComputation[]>): void {
+  if (node.h0 === null) {
+    const hashComputations = arrayAtIndex(hashCompsByLevel, offset);
+    hashComputations.push({src0: node.left, src1: node.right, dest: node});
+    if (!node.left.isLeaf()) {
+      getHashComputations(node.left, offset + 1, hashCompsByLevel);
+    }
+    if (!node.right.isLeaf()) {
+      getHashComputations(node.right, offset + 1, hashCompsByLevel);
+    }
+  }
+
+  // else stop the recursion, LeafNode should have h0
+}
+
+export function arrayAtIndex<T>(twoDArray: Array<T[]>, index: number): T[] {
+  if (twoDArray[index] === undefined) {
+    twoDArray[index] = [];
+  }
+  return twoDArray[index];
 }
