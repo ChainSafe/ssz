@@ -1,3 +1,4 @@
+import {expect} from "chai";
 import {BitVectorType, BitArray} from "../../../../src";
 import {runViewTestMutation} from "../runViewTestMutation";
 
@@ -46,6 +47,22 @@ runViewTestMutation({
       },
     },
   ],
+});
+
+describe("BitVector batchHash", () => {
+  const sszType = new BitVectorType(4);
+  const value = fromNum(4, 0b0010);
+  const expectedRoot = sszType.toView(value).hashTreeRoot();
+
+  it("fresh ViewDU", () => {
+    expect(sszType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it("set then hashTreeRoot", () => {
+    const viewDU = sszType.toViewDU(fromNum(4, 0b0011));
+    viewDU.set(0, false);
+    expect(sszType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
 });
 
 function fromNum(bitLen: number, num: number): BitArray {

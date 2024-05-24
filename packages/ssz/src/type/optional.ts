@@ -1,4 +1,4 @@
-import {concatGindices, Gindex, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, Gindex, HashComputationGroup, Node, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {mixInLength} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -75,7 +75,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   // TODO add an OptionalViewDU
-  commitViewDU(view: ValueOfType<ElementType>): Node {
+  // TODO: batch
+  commitViewDU(view: ValueOfType<ElementType>, hashComps: HashComputationGroup | null = null): Node {
     return this.value_toTree(view);
   }
 

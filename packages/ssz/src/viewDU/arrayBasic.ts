@@ -1,4 +1,4 @@
-import {getNodeAtDepth, getNodesAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {getHashComputations, getNodeAtDepth, getNodesAtDepth, HashComputationGroup, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {ArrayBasicType} from "../view/arrayBasic";
@@ -151,8 +151,17 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     return values;
   }
 
-  commit(): void {
+  /**
+   * When we need to compute HashComputations (hashComps != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
+   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   */
+  commit(hashComps: HashComputationGroup | null = null): void {
+    const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0) {
+      if (!isOldRootHashed && hashComps !== null) {
+        getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+      }
       return;
     }
 
@@ -164,14 +173,25 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     }
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
-    // TODO: Ensure fast setNodesAtDepth() method is correct
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
+    const hashCompsThis =
+      hashComps != null && isOldRootHashed
+        ? {
+            byLevel: hashComps.byLevel,
+            offset: hashComps.offset + this.type.tree_chunksNodeOffset(),
+          }
+        : null;
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, hashCompsThis);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,
       newChunksNode,
-      this.dirtyLength ? this._length : undefined
+      this.dirtyLength ? this._length : null,
+      isOldRootHashed ? hashComps : null
     );
+
+    if (!isOldRootHashed && hashComps !== null) {
+      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    }
 
     this.nodesChanged.clear();
     this.dirtyLength = false;
