@@ -9,6 +9,7 @@ import {
   subtreeFillToContents,
   uint8ArrayToHashObject,
   setNodesAtDepth,
+  findDiffDepthi,
 } from "../../src";
 
 describe("fixed-depth tree iteration", () => {
@@ -182,6 +183,54 @@ describe("Tree batch setNodes", () => {
         }
         throw e;
       }
+    });
+  }
+});
+
+/**
+ * These tests passed/fixed the old version of findDiffDepthi
+ * To validate it manually, use `Number(index).toString(2)` and compare bits
+ */
+describe("findDiffDepthi", () => {
+  it("validate inputs", () => {
+    expect(() => findDiffDepthi(-1, 100)).to.throw("Expect different positive inputs, from=-1 to=100");
+    expect(() => findDiffDepthi(101, 101)).to.throw("Expect different positive inputs, from=101 to=101");
+  });
+
+  const testCases: {index0: number; index1: number; result: number}[] = [
+    {index0: 0, index1: 1, result: 0},
+    // 2 sides of a 4-width tree
+    {index0: 1, index1: 3, result: 1},
+    // 2 sides of a 8-width tree
+    {index0: 3, index1: 4, result: 2},
+    // 16 bits
+    {index0: 0, index1: 0xffff, result: 15},
+    // 31 bits, different number of bits
+    {index0: 5, index1: (0xffffffff >>> 1) - 5, result: 30},
+    // 31 bits, same number of bits
+    {index0: 0x7fffffff, index1: 0x70000000, result: 27},
+    // 32 bits tree, different number of bits
+    {index0: 0, index1: 0xffffffff, result: 31},
+    {index0: 0, index1: (0xffffffff >>> 1) + 1, result: 31},
+    {index0: 0xffffffff >>> 1, index1: (0xffffffff >>> 1) + 1, result: 31},
+    // 32 bits tree, same number of bits
+    {index0: 0xf0000000, index1: 0xffffffff, result: 27},
+    // below tests are same to first tests but go from right to left
+    // similar to {0, 1}
+    {index0: 0xffffffff - 1, index1: 0xffffffff, result: 0},
+    // similar to {1, 3}
+    {index0: 0xffffffff - 3, index1: 0xffffffff - 1, result: 1},
+    // similar to {3, 4}
+    {index0: 0xffffffff - 4, index1: 0xffffffff - 3, result: 2},
+    // more than 32 bits, same number of bits
+    {index0: 1153210973487, index1: 1344787435182, result: 37},
+    // more than 32 bits, different number of bits
+    {index0: 1153210973487, index1: 1344787435182 >>> 2, result: 40},
+  ];
+
+  for (const {index0, index1, result} of testCases) {
+    it(`expect diffi between ${index0} and ${index1} to be ${result}`, () => {
+      expect(findDiffDepthi(index0, index1)).to.be.equal(result);
     });
   }
 });

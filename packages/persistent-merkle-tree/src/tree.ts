@@ -692,6 +692,52 @@ export function treeZeroAfterIndex(rootNode: Node, nodesDepth: number, index: nu
   return node;
 }
 
+const NUMBER_32_MAX = 0xffffffff;
+const NUMBER_2_POW_32 = 2 ** 32;
+
+/**
+ * depth depthi   gindexes   indexes
+ * 0     1           1          0
+ * 1     0         2   3      0   1
+ * 2     -        4 5 6 7    0 1 2 3
+ *
+ * **Conditions**:
+ * - `from` and `to` must not be equal
+ *
+ * @param from Index
+ * @param to Index
+ */
+export function findDiffDepthi(from: number, to: number): number {
+  if (from === to || from < 0 || to < 0) {
+    throw Error(`Expect different positive inputs, from=${from} to=${to}`);
+  }
+  // 0 -> 0, 1 -> 1, 2 -> 2, 3 -> 2, 4 -> 3
+  const numBits0 = Math.ceil(Math.log2(from + 1));
+  const numBits1 = Math.ceil(Math.log2(to + 1));
+
+  // these indexes stay in 2 sides of a merkle tree
+  if (numBits0 !== numBits1) {
+    // must offset by one to match the depthi scale
+    return Math.max(numBits0, numBits1) - 1;
+  }
+
+  // same number of bits and > 32
+  if (numBits0 > 32) {
+    const highBits0 = Math.floor(from / NUMBER_2_POW_32) & NUMBER_32_MAX;
+    const highBits1 = Math.floor(to / NUMBER_2_POW_32) & NUMBER_32_MAX;
+    if (highBits0 === highBits1) {
+      // different part is just low bits
+      return findDiffDepthi32Bits(from & NUMBER_32_MAX, to & NUMBER_32_MAX);
+    }
+
+    // highBits are different, no need to compare low bits
+    return 32 + findDiffDepthi32Bits(highBits0, highBits1);
+  }
+
+  // same number of bits and <= 32
+  return findDiffDepthi32Bits(from, to);
+}
+
 /**
  * Returns true if the `index` at `depth` is a left node, false if it is a right node.
  *
@@ -713,22 +759,19 @@ function isLeftNode(depthi: number, index: number): boolean {
 }
 
 /**
- * depth depthi   gindexes   indexes
- * 0     1           1          0
- * 1     0         2   3      0   1
- * 2     -        4 5 6 7    0 1 2 3
- *
- * **Conditions**:
- * - `from` and `to` must not be equal
- *
- * @param from Index
- * @param to Index
+ * Similar to findDiffDepthi() but for 32-bit numbers only
  */
-function findDiffDepthi(from: number, to: number): number {
-  return (
-    // (0,0) -> 0 | (0,1) -> 1 | (0,2) -> 2
-    Math.ceil(Math.log2(-~(from ^ to))) -
-    // Must offset by one to match the depthi scale
-    1
-  );
+function findDiffDepthi32Bits(from: number, to: number): number {
+  const xor = from ^ to;
+  if (xor === 0) {
+    // this should not happen as checked in `findDiffDepthi`
+    // otherwise this function return -1 which is weird for diffi
+    throw Error(`Do not support equal value from=${from} to=${to}`);
+  }
+
+  // (0,0) -> 0 | (0,1) -> 1 | (0,2) -> 2
+  // xor < 0 means the 1st bit of `from` and `to` is diffent, which mean num bits diff 32
+  const numBitsDiff = xor < 0 ? 32 : Math.ceil(Math.log2(xor + 1));
+  // must offset by one to match the depthi scale
+  return numBitsDiff - 1;
 }
