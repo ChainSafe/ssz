@@ -1,5 +1,6 @@
 import {expect} from "chai";
 import {
+  BooleanType,
   ByteVectorType,
   ContainerNodeStructType,
   ContainerType,
@@ -7,6 +8,7 @@ import {
   ListCompositeType,
   NoneType,
   toHexString,
+  UintNumberType,
   UnionType,
   ValueOf,
 } from "../../../../src";
@@ -217,4 +219,91 @@ runViewTestMutation({
       },
     },
   ],
+});
+
+describe("ContainerViewDU batchHash", function () {
+  const childContainerType = new ContainerType({b0: uint64NumInfType, b1: uint64NumInfType});
+  const parentContainerType = new ContainerType({
+    // a basic type
+    a: uint64NumType,
+    b: childContainerType,
+  });
+
+  const value = {a: 10, b: {b0: 100, b1: 101}};
+  const expectedRoot = parentContainerType.toView(value).hashTreeRoot();
+
+  it("fresh ViewDU", () => {
+    expect(parentContainerType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it("full hash then modify basic type", () => {
+    const viewDU = parentContainerType.toViewDU({a: 9, b: {b0: 100, b1: 101}});
+    viewDU.hashTreeRoot();
+    viewDU.a += 1;
+    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it("full hash then modify full child container", () => {
+    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}});
+    viewDU.hashTreeRoot();
+    viewDU.b = childContainerType.toViewDU({b0: 100, b1: 101});
+    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it("full hash then modify partial child container", () => {
+    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}});
+    viewDU.hashTreeRoot();
+    viewDU.b.b0 = 100;
+    viewDU.b.b1 = 101;
+    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+});
+
+describe("ContainerNodeStruct batchHash", function () {
+  const EpochInf = new UintNumberType(8, {clipInfinity: true});
+
+  // Ethereum consensus validator type
+  const containerType = new ContainerNodeStructType({
+    pubkey: new ByteVectorType(48),
+    withdrawalCredentials: new ByteVectorType(32),
+    effectiveBalance: new UintNumberType(8),
+    slashed: new BooleanType(),
+    activationEligibilityEpoch: EpochInf,
+    activationEpoch: EpochInf,
+    exitEpoch: EpochInf,
+    withdrawableEpoch: EpochInf,
+  });
+  const value = {
+    pubkey: Buffer.alloc(48, 0xaa),
+    withdrawalCredentials: Buffer.alloc(32, 0xbb),
+    effectiveBalance: 32e9,
+    slashed: false,
+    activationEligibilityEpoch: 1_000_000,
+    activationEpoch: 2_000_000,
+    exitEpoch: 3_000_000,
+    withdrawableEpoch: 4_000_000,
+  };
+  const expectedRoot = containerType.toView(value).hashTreeRoot();
+
+  it("fresh ViewDU", () => {
+    expect(containerType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it("full hash then modify basic type", () => {
+    const viewDU = containerType.toViewDU({...value, exitEpoch: 3});
+    viewDU.hashTreeRoot();
+    viewDU.exitEpoch *= 1_000_000;
+    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it("modify basic type", () => {
+    const viewDU = containerType.toViewDU({
+      ...value,
+      exitEpoch: value.exitEpoch + 1,
+      withdrawableEpoch: value.withdrawableEpoch + 1,
+    });
+    viewDU.exitEpoch -= 1;
+    viewDU.withdrawableEpoch -= 1;
+    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
 });

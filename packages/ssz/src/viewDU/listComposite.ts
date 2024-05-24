@@ -44,8 +44,11 @@ export class ListCompositeTreeViewDU<
    * Note: Using index = -1, returns an empty list of length 0.
    */
   sliceTo(index: number): this {
-    // Commit before getting rootNode to ensure all pending data is in the rootNode
-    this.commit();
+    // it's the responsibility of consumer to call commit() before calling this method
+    // if we do the commit() here, it'll lose all HashComputations that we want to batch
+    if (this.viewsChanged.size > 0) {
+      throw Error(`Must commit changes before sliceTo(${index})`);
+    }
     const rootNode = this._rootNode;
     const length = this._length;
 
@@ -61,7 +64,7 @@ export class ListCompositeTreeViewDU<
 
     // Must set new length and commit to tree to restore the same tree at that index
     const newLength = index + 1;
-    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
+    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength, null);
 
     return this.type.getViewDU(newRootNode) as this;
   }
@@ -111,7 +114,11 @@ export class ListCompositeTreeViewDU<
    * Same method to `type/listComposite.ts` leveraging cached nodes.
    */
   serializeToBytes(output: ByteViews, offset: number): number {
-    this.commit();
+    // it's the responsibility of consumer to call commit() before calling this method
+    // if we do the commit() here, it'll lose all HashComputations that we want to batch
+    if (this.viewsChanged.size > 0) {
+      throw Error(`Must commit changes before serializeToBytes(Uint8Array(${output.uint8Array.length}, ${offset})`);
+    }
     this.populateAllNodes();
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     return tree_serializeToBytesArrayComposite(

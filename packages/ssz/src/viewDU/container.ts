@@ -1,9 +1,10 @@
-import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {getHashComputations, getNodeAtDepth, HashComputationGroup, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
 import {ContainerTypeGeneric} from "../view/container";
 import {TreeViewDU} from "./abstract";
+import { isNullOrUndefined } from "util";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -68,16 +69,31 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     };
   }
 
-  commit(): void {
+  /**
+   * When we need to compute HashComputations (hashComps != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
+   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   */
+  commit(hashComps: HashComputationGroup | null = null): void {
+    const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
+      if (!isOldRootHashed && hashComps !== null) {
+        getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+      }
       return;
     }
 
     const nodesChanged: {index: number; node: Node}[] = [];
 
+    let hashCompsView: HashComputationGroup | null = null;
+    // if old root is not hashed, no need to pass HashComputationGroup to child view bc we need to do full traversal here
+    if (hashComps != null && isOldRootHashed) {
+      // each view may mutate HashComputationGroup at offset + depth
+      hashCompsView = {byLevel: hashComps.byLevel, offset: hashComps.offset + this.type.depth};
+    }
     for (const [index, view] of this.viewsChanged) {
       const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
-      const node = fieldType.commitViewDU(view);
+      const node = fieldType.commitViewDU(view, hashCompsView);
       // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
       this.nodes[index] = node;
       nodesChanged.push({index, node});
@@ -96,7 +112,17 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     const indexes = nodesChangedSorted.map((entry) => entry.index);
     const nodes = nodesChangedSorted.map((entry) => entry.node);
 
-    this._rootNode = setNodesAtDepth(this._rootNode, this.type.depth, indexes, nodes);
+    this._rootNode = setNodesAtDepth(
+      this._rootNode,
+      this.type.depth,
+      indexes,
+      nodes,
+      isOldRootHashed ? hashComps : null
+    );
+
+    if (!isOldRootHashed && hashComps !== null) {
+      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    }
 
     this.nodesChanged.clear();
     this.viewsChanged.clear();
@@ -119,7 +145,11 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
    * Same method to `type/container.ts` that call ViewDU.serializeToBytes() of internal fields.
    */
   serializeToBytes(output: ByteViews, offset: number): number {
-    this.commit();
+    // it's the responsibility of consumer to call commit() before calling this method
+    // if we do the commit() here, it'll lose all HashComputations that we want to batch
+    if (this.nodesChanged.size !== 0 || this.viewsChanged.size !== 0) {
+      throw Error(`Must commit changes before serializeToBytes(Uint8Array(${output.uint8Array.length}, ${offset})`);
+    }
 
     let fixedIndex = offset;
     let variableIndex = offset + this.type.fixedEnd;
