@@ -9,6 +9,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [0.7.3](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.7.2...persistent-merkle-tree-v0.7.3) (2024-05-24)
+
+
+### Bug Fixes
+
+* findDiffDepthi to support more than 31 bytes ([#371](https://github.com/ChainSafe/ssz/issues/371)) ([3a1c8dc](https://github.com/ChainSafe/ssz/commit/3a1c8dc54a571dfed4cc426810472627b334e9b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.4.2 to 0.5.0
+
 ## [0.7.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.7.0...persistent-merkle-tree-v0.7.1) (2024-03-15)
 
 

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.2...as-sha256-v0.5.0) (2024-05-24)
+
+
+### Features
+
+* SIMD implementation for as-sha256 ([#367](https://github.com/ChainSafe/ssz/issues/367)) ([ec123ec](https://github.com/ChainSafe/ssz/commit/ec123ec3cfcc37ff82635da7a57ad9c74cc9accb))
+
 ## [0.4.2](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.1...as-sha256-v0.4.2) (2024-05-02)
 
 
