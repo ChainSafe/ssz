@@ -31,3 +31,5 @@ describe("hasher", () => {
     });
   }
 });
+
+// TODO - batch: test more methods

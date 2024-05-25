@@ -7,9 +7,12 @@ export * from "./types";
 export * from "./util";
 
 /**
- * Hasher used across the SSZ codebase
+ * Default hasher used across the SSZ codebase, this does not support batch hash.
+ * Use `as-sha256` hasher for batch hashing using SIMD.
+ * TODO - batch: Use `hashtree` hasher for 20x speedup
  */
 // export let hasher: Hasher = nobleHasher;
+// For testing purposes, we use the as-sha256 hasher
 export let hasher: Hasher = csHasher;
 
 /**
