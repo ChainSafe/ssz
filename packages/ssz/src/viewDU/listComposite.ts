@@ -105,7 +105,7 @@ export class ListCompositeTreeViewDU<
       newLength = nodes.length;
     }
 
-    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength);
+    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength, null);
 
     return this.type.getViewDU(newRootNode) as this;
   }

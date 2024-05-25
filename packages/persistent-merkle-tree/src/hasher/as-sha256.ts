@@ -1,8 +1,8 @@
-import {digest2Bytes32, digest64HashObjects, hash8HashObjects} from "@chainsafe/as-sha256";
+import {digest2Bytes32, digest64HashObjects, batchHash4HashObjectInputs} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
 
 export const hasher: Hasher = {
   digest64: digest2Bytes32,
   digest64HashObjects,
-  hash8HashObjects,
+  batchHash4HashObjectInputs,
 };
