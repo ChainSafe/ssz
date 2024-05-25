@@ -407,34 +407,18 @@ export function executeHashComputations(hashComputations: Array<HashComputation[
       throw Error(`no hash computations for level ${level}`);
     }
     // HashComputations of the same level are safe to batch
-    const batch = Math.floor(hcArr.length / 4);
-    for (let i = 0; i < batch; i++) {
-      const item0 = hcArr[i * 4];
-      const item1 = hcArr[i * 4 + 1];
-      const item2 = hcArr[i * 4 + 2];
-      const item3 = hcArr[i * 4 + 3];
-
-      const [dest0, dest1, dest2, dest3] = hasher.batchHash4HashObjectInputs([
-        item0.src0,
-        item0.src1,
-        item1.src0,
-        item1.src1,
-        item2.src0,
-        item2.src1,
-        item3.src0,
-        item3.src1,
-      ]);
-
-      item0.dest.applyHash(dest0);
-      item1.dest.applyHash(dest1);
-      item2.dest.applyHash(dest2);
-      item3.dest.applyHash(dest3);
+    const inputs: HashObject[] = [];
+    const dests: Node[] = [];
+    for (const {src0, src1, dest} of hcArr) {
+      inputs.push(src0, src1);
+      dests.push(dest);
     }
-    // compute remaining separatedly
-    const remLen = hcArr.length % 4;
-    for (let i = remLen - 1; i >= 0; i--) {
-      const {src0, src1, dest} = hcArr[hcArr.length - i - 1];
-      dest.applyHash(hasher.digest64HashObjects(src0, src1));
+    const outputs = hasher.batchHashObjects(inputs);
+    if (outputs.length !== dests.length) {
+      throw Error(`${inputs.length} inputs produce ${outputs.length} outputs, expected ${dests.length} outputs`);
+    }
+    for (let i = 0; i < outputs.length; i++) {
+      dests[i].applyHash(outputs[i]);
     }
   }
 }
