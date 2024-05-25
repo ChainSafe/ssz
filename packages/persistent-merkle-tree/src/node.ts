@@ -414,7 +414,7 @@ export function executeHashComputations(hashComputations: Array<HashComputation[
       const item2 = hcArr[i * 4 + 2];
       const item3 = hcArr[i * 4 + 3];
 
-      const [dest0, dest1, dest2, dest3] = hasher.hash8HashObjects([
+      const [dest0, dest1, dest2, dest3] = hasher.batchHash4HashObjectInputs([
         item0.src0,
         item0.src1,
         item1.src0,
