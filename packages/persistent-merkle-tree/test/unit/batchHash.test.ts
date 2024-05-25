@@ -5,8 +5,8 @@ import {subtreeFillToContents} from "../../src/subtree";
 import {zeroNode} from "../../src/zeroNode";
 
 describe("batchHash", function () {
-  // const numNodes = [200, 201, 202, 203];
-  const numNodes = [32, 33, 64];
+  const numNodes = [200, 201, 202, 203];
+  // const numNodes = [32, 33, 64];
   for (const numNode of numNodes) {
     it(`${numNode} nodes`, () => {
       const rootNode = createList(numNode);
@@ -36,7 +36,7 @@ function resetNodes(node: Node, depth: number): void {
 }
 
 function newLeafNodeFilled(i: number): LeafNode {
-  return LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 255)));
+  return LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 256)));
 }
 
 function createList(numNode: number): BranchNode {

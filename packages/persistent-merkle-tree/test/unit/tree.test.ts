@@ -12,7 +12,6 @@ import {
   findDiffDepthi,
   BranchNode,
   HashComputation,
-  findDiffDepthi,
   getHashComputations,
 } from "../../src";
 

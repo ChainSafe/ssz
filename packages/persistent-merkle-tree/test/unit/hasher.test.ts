@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import {expect} from "chai";
 import {uint8ArrayToHashObject, hasher, hashObjectToUint8Array} from "../../src/hasher";
 
 describe("hasher", function () {
@@ -14,3 +14,5 @@ describe("hasher", function () {
     expect(newRoot).to.be.deep.equal(root, "hash and hash2 is not equal");
   });
 });
+
+// TODO - batch: test more methods
