@@ -1,6 +1,6 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
-import {LeafNode} from "../../src";
+import {BranchNode, HashComputation, LeafNode, countToDepth, getHashComputations, subtreeFillToContents} from "../../src";
 
 describe("LeafNode uint", () => {
   const testCasesNode: {
@@ -194,3 +194,82 @@ describe("getUint with correct sign", () => {
     expect(leafNodeInt.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeInt.getUintBigint");
   });
 });
+
+describe("getHashComputations", () => {
+  const testCases: {numNode: number; expectedLengths: number[]}[] = [
+    {numNode: 16, expectedLengths: [1, 2, 4, 8]},
+    {numNode: 15, expectedLengths: [1, 2, 4, 8]},
+    {numNode: 14, expectedLengths: [1, 2, 4, 7]},
+    {numNode: 13, expectedLengths: [1, 2, 4, 7]},
+    {numNode: 12, expectedLengths: [1, 2, 3, 6]},
+    {numNode: 11, expectedLengths: [1, 2, 3, 6]},
+    {numNode: 10, expectedLengths: [1, 2, 3, 5]},
+    {numNode: 9, expectedLengths: [1, 2, 3, 5]},
+    // 0                root
+    // 1         l                  r
+    // 2      ll   lr           rl    rr
+    // 3  lll llr lrl lrr    rll rlr  rrl rrr
+    {numNode: 8, expectedLengths: [1, 2, 4]},
+    {numNode: 7, expectedLengths: [1, 2, 4]},
+    // has 0 node at end of level 2
+    {numNode: 6, expectedLengths: [1, 2, 3]},
+    {numNode: 5, expectedLengths: [1, 2, 3]},
+    {numNode: 4, expectedLengths: [1, 2]},
+  ];
+
+  for (const {numNode, expectedLengths} of testCases) {
+    it(`subtreeFillToContents with ${numNode} nodes`, () => {
+      const nodes = Array.from({length: numNode}, (_, i) => newLeafNodeFilled(i));
+      const depth = countToDepth(BigInt(numNode));
+      const rootNode = subtreeFillToContents(nodes, depth);
+      const hashComputations: HashComputation[][] = [];
+      getHashComputations(rootNode, 0, hashComputations);
+      expect(hashComputations.length).to.equal(expectedLengths.length);
+      for (let i = 0; i < hashComputations.length; i++) {
+        expect(hashComputations[i].length).to.equal(expectedLengths[i]);
+      }
+    });
+  }
+
+  // same to above with "1" prepended to the expectedLengths
+  const testCases2: {numNode: number; expectedLengths: number[]}[] = [
+    {numNode: 16, expectedLengths: [1, 1, 2, 4, 8]},
+    {numNode: 15, expectedLengths: [1, 1, 2, 4, 8]},
+    {numNode: 14, expectedLengths: [1, 1, 2, 4, 7]},
+    {numNode: 13, expectedLengths: [1, 1, 2, 4, 7]},
+    {numNode: 12, expectedLengths: [1, 1, 2, 3, 6]},
+    {numNode: 11, expectedLengths: [1, 1, 2, 3, 6]},
+    {numNode: 10, expectedLengths: [1, 1, 2, 3, 5]},
+    {numNode: 9, expectedLengths: [1, 1, 2, 3, 5]},
+    {numNode: 8, expectedLengths: [1, 1, 2, 4]},
+    {numNode: 7, expectedLengths: [1, 1, 2, 4]},
+    // has 0 node at end of level 2
+    {numNode: 6, expectedLengths: [1, 1, 2, 3]},
+    {numNode: 5, expectedLengths: [1, 1, 2, 3]},
+    {numNode: 4, expectedLengths: [1, 1, 2]},
+  ];
+
+  for (const {numNode, expectedLengths} of testCases2) {
+    it(`list with ${numNode} nodes`, () => {
+      const rootNode = createList(numNode);
+      const hashComputations: HashComputation[][] = [];
+      getHashComputations(rootNode, 0, hashComputations);
+      expect(hashComputations.length).to.equal(expectedLengths.length);
+      for (let i = 0; i < hashComputations.length; i++) {
+        expect(hashComputations[i].length).to.equal(expectedLengths[i]);
+      }
+    });
+  }
+});
+
+function createList(numNode: number): BranchNode {
+  const nodes = Array.from({length: numNode}, (_, i) => newLeafNodeFilled(i));
+  // add 1 to countToDepth for mix_in_length spec
+  const depth = countToDepth(BigInt(numNode)) + 1;
+  const node = subtreeFillToContents(nodes, depth);
+  return node as BranchNode;
+}
+
+function newLeafNodeFilled(i: number): LeafNode {
+  return LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 256)));
+}
