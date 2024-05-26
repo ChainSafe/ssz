@@ -23,4 +23,17 @@ export const hasher: Hasher = {
     }
     return outputs;
   },
+  executeHashComputations: (hashComputations) => {
+    for (let level = hashComputations.length - 1; level >= 0; level--) {
+      const hcArr = hashComputations[level];
+      if (!hcArr) {
+        // should not happen
+        throw Error(`no hash computations for level ${level}`);
+      }
+
+      for (const hc of hcArr) {
+        hc.dest.applyHash(digest64HashObjects(hc.src0, hc.src1));
+      }
+    }
+  },
 };
