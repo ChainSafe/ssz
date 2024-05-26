@@ -39,23 +39,29 @@ export const hasher: Hasher = {
       const batch = Math.floor(hcArr.length / 4);
       for (let i = 0; i < batch; i++) {
         const index = i * 4;
-        const outs = batchHash4HashObjectInputs([
-          hcArr[index].src0,
-          hcArr[index].src1,
-          hcArr[index + 1].src0,
-          hcArr[index + 1].src1,
-          hcArr[index + 2].src0,
-          hcArr[index + 2].src1,
-          hcArr[index + 3].src0,
-          hcArr[index + 3].src1,
+        // access array once
+        const {src0: src0_0, src1: src1_0, dest: dest_0} = hcArr[index];
+        const {src0: src0_1, src1: src1_1, dest: dest_1} = hcArr[index + 1];
+        const {src0: src0_2, src1: src1_2, dest: dest_2} = hcArr[index + 2];
+        const {src0: src0_3, src1: src1_3, dest: dest_3} = hcArr[index + 3];
+
+        const [o0, o1, o2, o3] = batchHash4HashObjectInputs([
+          src0_0,
+          src1_0,
+          src0_1,
+          src1_1,
+          src0_2,
+          src1_2,
+          src0_3,
+          src1_3,
         ]);
-        if (outs.length !== 4) {
-          throw Error(`batchHash4HashObjectInputs returned ${outs.length} outputs, expected 4`);
+        if (o0 == null || o1 == null || o2 == null || o3 == null) {
+          throw Error(`batchHash4HashObjectInputs return null at batch ${i} level ${level}`);
         }
-        hcArr[index].dest.applyHash(outs[0]);
-        hcArr[index + 1].dest.applyHash(outs[1]);
-        hcArr[index + 2].dest.applyHash(outs[2]);
-        hcArr[index + 3].dest.applyHash(outs[3]);
+        dest_0.applyHash(o0);
+        dest_1.applyHash(o1);
+        dest_2.applyHash(o2);
+        dest_3.applyHash(o3);
       }
 
       // remaining

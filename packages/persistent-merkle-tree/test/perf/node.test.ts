@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {BranchNode, getNodeH, LeafNode} from "../../src/node";
+import {BranchNode, getHashComputations, getNodeH, HashComputation, LeafNode} from "../../src/node";
 import {countToDepth, subtreeFillToContents} from "../../src";
 
 describe("HashObject LeafNode", () => {
@@ -46,6 +46,15 @@ describe("Node batchHash", () => {
   const numNodes = [250_000, 500_000, 1_000_000];
 
   for (const numNode of numNodes) {
+    itBench({
+      id: `getHashComputations ${numNode} nodes`,
+      beforeEach: () => createList(numNode),
+      fn: (rootNode: BranchNode) => {
+        const hashComputations: HashComputation[][] = [];
+        getHashComputations(rootNode, 0, hashComputations);
+      },
+    });
+
     itBench({
       id: `batchHash ${numNode} nodes`,
       beforeEach: () => createList(numNode),
