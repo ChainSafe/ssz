@@ -43,15 +43,12 @@ describe("HashObject LeafNode", () => {
 });
 
 describe("Node batchHash", () => {
-  const numNodes = [250_000, 500_000, 1_000_000, 2_000_000];
+  const numNodes = [250_000, 500_000, 1_000_000];
 
   for (const numNode of numNodes) {
     itBench({
       id: `batchHash ${numNode} nodes`,
-      before: () => {
-        return createList(numNode);
-      },
-      beforeEach: (rootNode: BranchNode) => rootNode,
+      beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {
         rootNode.batchHash();
       },
@@ -59,10 +56,7 @@ describe("Node batchHash", () => {
 
     itBench({
       id: `get root ${numNode} nodes`,
-      before: () => {
-        return createList(numNode);
-      },
-      beforeEach: (rootNode: BranchNode) => rootNode,
+      beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {
         rootNode.root;
       },
