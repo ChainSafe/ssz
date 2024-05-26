@@ -86,7 +86,7 @@ export class BranchNode extends Node {
   batchHash(): Uint8Array {
     const hashComputations: HashComputation[][] = [];
     getHashComputations(this, 0, hashComputations);
-    executeHashComputations(hashComputations);
+    hasher.executeHashComputations(hashComputations);
 
     if (this.h0 === null) {
       throw Error("Root is not computed by batch");
@@ -395,33 +395,6 @@ export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void 
   else throw Error("hIndex > 7");
 }
 
-/**
- * Given an array of HashComputation, execute them from the end
- * The consumer has the root node so it should be able to get the final root from there
- */
-export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
-  for (let level = hashComputations.length - 1; level >= 0; level--) {
-    const hcArr = hashComputations[level];
-    if (!hcArr) {
-      // should not happen
-      throw Error(`no hash computations for level ${level}`);
-    }
-    // HashComputations of the same level are safe to batch
-    const inputs: HashObject[] = [];
-    const dests: Node[] = [];
-    for (const {src0, src1, dest} of hcArr) {
-      inputs.push(src0, src1);
-      dests.push(dest);
-    }
-    const outputs = hasher.batchHashObjects(inputs);
-    if (outputs.length !== dests.length) {
-      throw Error(`${inputs.length} inputs produce ${outputs.length} outputs, expected ${dests.length} outputs`);
-    }
-    for (let i = 0; i < outputs.length; i++) {
-      dests[i].applyHash(outputs[i]);
-    }
-  }
-}
 
 export function getHashComputations(node: Node, offset: number, hashCompsByLevel: Array<HashComputation[]>): void {
   if (node.h0 === null) {

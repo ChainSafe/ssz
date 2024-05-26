@@ -1,4 +1,5 @@
 import type {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
+import {HashComputation} from "../node";
 
 export type Hasher = {
   /**
@@ -13,4 +14,8 @@ export type Hasher = {
    * Batch hash 2 * n HashObjects, return n HashObjects output
    */
   batchHashObjects(inputs: HashObject[]): HashObject[];
+  /**
+   * Execute a batch of HashComputations
+   */
+  executeHashComputations(hashComputations: Array<HashComputation[]>): void;
 };
