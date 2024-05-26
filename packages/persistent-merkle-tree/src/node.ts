@@ -395,7 +395,6 @@ export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void 
   else throw Error("hIndex > 7");
 }
 
-
 export function getHashComputations(node: Node, offset: number, hashCompsByLevel: Array<HashComputation[]>): void {
   if (node.h0 === null) {
     const hashComputations = arrayAtIndex(hashCompsByLevel, offset);
@@ -409,6 +408,10 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
   }
 
   // else stop the recursion, LeafNode should have h0
+}
+
+export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
+  hasher.executeHashComputations(hashComputations);
 }
 
 export function arrayAtIndex<T>(twoDArray: Array<T[]>, index: number): T[] {
