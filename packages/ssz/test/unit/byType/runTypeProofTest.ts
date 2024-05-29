@@ -1,6 +1,15 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
-import {BitArray, ContainerType, fromHexString, JsonPath, OptionalType, Type} from "../../../src";
+import {
+  BitArray,
+  ContainerType,
+  fromHexString,
+  JsonPath,
+  OptionalType,
+  ProfileType,
+  StableContainerType,
+  Type,
+} from "../../../src";
 import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite";
 import {ArrayBasicTreeView} from "../../../src/view/arrayBasic";
 import {RootHex} from "../../lodestarTypes";
@@ -37,9 +46,12 @@ export function runProofTestOnAllJsonPaths({
       const viewLeafFromProof = getJsonPathView(type, viewFromProof, jsonPath);
       const jsonLeaf = getJsonPathValue(type, json, jsonPath);
 
-      const jsonLeafFromProof = typeLeaf.toJson(
-        isCompositeType(typeLeaf) ? typeLeaf.toValueFromView(viewLeafFromProof) : viewLeafFromProof
-      );
+      const jsonLeafFromProof =
+        viewLeafFromProof == null
+          ? viewLeafFromProof
+          : typeLeaf.toJson(
+              isCompositeType(typeLeaf) ? typeLeaf.toValueFromView(viewLeafFromProof) : viewLeafFromProof
+            );
 
       expect(jsonLeafFromProof).to.deep.equal(jsonLeaf, "Wrong value fromProof");
 
@@ -108,9 +120,10 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
     if (typeof jsonProp === "number") {
       view = (view as ArrayBasicTreeView<any>).get(jsonProp);
     } else if (typeof jsonProp === "string") {
-      if (type instanceof ContainerType) {
+      if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
         // Coerce jsonProp to a fieldName. JSON paths may be in JSON notation or fieldName notation
-        const fieldName = type["jsonKeyToFieldName"][jsonProp] ?? jsonProp;
+        const fieldName =
+          (type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] ?? jsonProp;
         view = (view as Record<string, unknown>)[fieldName as string];
       } else {
         throw Error(`type ${type.typeName} is not a ContainerType - jsonProp '${jsonProp}'`);
@@ -139,8 +152,8 @@ function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath
     if (typeof jsonProp === "number") {
       json = (json as unknown[])[jsonProp];
     } else if (typeof jsonProp === "string") {
-      if (type instanceof ContainerType) {
-        if (type["jsonKeyToFieldName"][jsonProp] === undefined) {
+      if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
+        if ((type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] === undefined) {
           throw Error(`Unknown jsonProp ${jsonProp} for type ${type.typeName}`);
         }
 
