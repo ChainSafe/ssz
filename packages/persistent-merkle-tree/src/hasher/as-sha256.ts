@@ -51,6 +51,7 @@ export const hasher: Hasher = {
 
       for (const [i, hc] of hcArr.entries()) {
         const indexInBatch = i % 4;
+
         switch (indexInBatch) {
           case 0:
             src0_0 = hc.src0;
@@ -71,56 +72,56 @@ export const hasher: Hasher = {
             src0_3 = hc.src0;
             src1_3 = hc.src1;
             dest3 = hc.dest;
+
+            if (
+              src0_0 !== null &&
+              src1_0 !== null &&
+              dest0 !== null &&
+              src0_1 !== null &&
+              src1_1 !== null &&
+              dest1 !== null &&
+              src0_2 !== null &&
+              src1_2 !== null &&
+              dest2 !== null &&
+              src0_3 !== null &&
+              src1_3 !== null &&
+              dest3 !== null
+            ) {
+              const [o0, o1, o2, o3] = batchHash4HashObjectInputs([
+                src0_0,
+                src1_0,
+                src0_1,
+                src1_1,
+                src0_2,
+                src1_2,
+                src0_3,
+                src1_3,
+              ]);
+              if (o0 == null || o1 == null || o2 == null || o3 == null) {
+                throw Error(`batchHash4HashObjectInputs return null or undefined at batch ${i} level ${level}`);
+              }
+              dest0.applyHash(o0);
+              dest1.applyHash(o1);
+              dest2.applyHash(o2);
+              dest3.applyHash(o3);
+
+              // reset for next batch
+              src0_0 = null;
+              src1_0 = null;
+              dest0 = null;
+              src0_1 = null;
+              src1_1 = null;
+              dest1 = null;
+              src0_2 = null;
+              src1_2 = null;
+              dest2 = null;
+              src0_3 = null;
+              src1_3 = null;
+              dest3 = null;
+            }
             break;
           default:
             throw Error(`Unexpected indexInBatch ${indexInBatch}`);
-        }
-
-        if (
-          indexInBatch === 3 &&
-          src0_0 !== null &&
-          src1_0 !== null &&
-          dest0 !== null &&
-          src0_1 !== null &&
-          src1_1 !== null &&
-          dest1 !== null &&
-          src0_2 !== null &&
-          src1_2 !== null &&
-          dest2 !== null &&
-          src0_3 !== null &&
-          src1_3 !== null &&
-          dest3 !== null
-        ) {
-          const [o0, o1, o2, o3] = batchHash4HashObjectInputs([
-            src0_0,
-            src1_0,
-            src0_1,
-            src1_1,
-            src0_2,
-            src1_2,
-            src0_3,
-            src1_3,
-          ]);
-          if (o0 == null || o1 == null || o2 == null || o3 == null) {
-            throw Error(`batchHash4HashObjectInputs return null or undefined at batch ${i} level ${level}`);
-          }
-          dest0.applyHash(o0);
-          dest1.applyHash(o1);
-          dest2.applyHash(o2);
-          dest3.applyHash(o3);
-
-          src0_0 = null;
-          src1_0 = null;
-          dest0 = null;
-          src0_1 = null;
-          src1_1 = null;
-          dest1 = null;
-          src0_2 = null;
-          src1_2 = null;
-          dest2 = null;
-          src0_3 = null;
-          src1_3 = null;
-          dest3 = null;
         }
       }
 
