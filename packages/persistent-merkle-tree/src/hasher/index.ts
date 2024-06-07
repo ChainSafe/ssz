@@ -1,8 +1,8 @@
 import {Hasher} from "./types";
 // import {hasher as nobleHasher} from "./noble";
-import {hasher as csHasher} from "./as-sha256";
+// import {hasher as csHasher} from "./as-sha256";
+import {hasher as hashtreeHasher} from "./hashtree";
 
-export {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
 export * from "./types";
 export * from "./util";
 
@@ -13,7 +13,10 @@ export * from "./util";
  */
 // export let hasher: Hasher = nobleHasher;
 // For testing purposes, we use the as-sha256 hasher
-export let hasher: Hasher = csHasher;
+// export let hasher: Hasher = csHasher;
+
+// For testing purposes, we use the hashtree hasher
+export let hasher: Hasher = hashtreeHasher;
 
 /**
  * Set the hasher to be used across the SSZ codebase
