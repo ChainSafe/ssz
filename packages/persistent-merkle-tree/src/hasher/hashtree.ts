@@ -5,10 +5,14 @@ import {HashComputation, Node} from "../node";
 
 export const hasher: Hasher = {
   digest64(obj1: Uint8Array, obj2: Uint8Array): Uint8Array {
-    return hash(Uint8Array.of(obj1, obj2));
+    return hash(Uint8Array.from([...obj1, ...obj2]));
   },
   digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObject {
-    return byteArrayToHashObject(hasher.digest64(hashObjectToByteArray(obj1), hashObjectToByteArray(obj2)));
+    const input1 = Uint8Array.from(new Array<number>(32));
+    const input2 = Uint8Array.from(new Array<number>(32));
+    hashObjectToByteArray(obj1, input1, 0);
+    hashObjectToByteArray(obj2, input2, 0);
+    return byteArrayToHashObject(hasher.digest64(input1, input2));
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   batchHashObjects(inputs: HashObject[]): HashObject[] {
@@ -23,7 +27,7 @@ export const hasher: Hasher = {
       }
 
       // size input array to 2 HashObject per computation * 32 bytes per object
-      const input: Uint8Array = Uint8Array.of(new Array(hcArr.length * 2 * 32));
+      const input: Uint8Array = Uint8Array.from(new Array(hcArr.length * 2 * 32));
       const output: Node[] = [];
       for (const [i, hc] of hcArr.entries()) {
         const offset = (i - 1) * 64; // zero index * 2 leafs * 32 bytes
@@ -36,7 +40,7 @@ export const hasher: Hasher = {
 
       for (const [i, out] of output.entries()) {
         const offset = (i - 1) * 32;
-        out.applyHash(result.slice(offset, offset + 32));
+        out.applyHash(byteArrayToHashObject(result.slice(offset, offset + 32)));
       }
     }
   },
