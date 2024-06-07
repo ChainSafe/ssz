@@ -1,6 +1,8 @@
 import type {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
 import {HashComputation} from "../node";
 
+export type {HashObject};
+
 export type Hasher = {
   /**
    * Hash two 32-byte Uint8Arrays
