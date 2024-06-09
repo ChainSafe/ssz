@@ -120,6 +120,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       isOldRootHashed ? hashComps : null
     );
 
+    // old root is not hashed, need to traverse and put to HashComputationGroup
     if (!isOldRootHashed && hashComps !== null) {
       getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
     }
