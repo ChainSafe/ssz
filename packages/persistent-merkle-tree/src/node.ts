@@ -398,13 +398,11 @@ export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void 
 export function getHashComputations(node: Node, offset: number, hashCompsByLevel: Array<HashComputation[]>): void {
   if (node.h0 === null) {
     const hashComputations = arrayAtIndex(hashCompsByLevel, offset);
-    hashComputations.push({src0: node.left, src1: node.right, dest: node});
-    if (!node.left.isLeaf()) {
-      getHashComputations(node.left, offset + 1, hashCompsByLevel);
-    }
-    if (!node.right.isLeaf()) {
-      getHashComputations(node.right, offset + 1, hashCompsByLevel);
-    }
+    const {left, right} = node;
+    hashComputations.push({src0: left, src1: right, dest: node});
+    // leaf nodes should have h0 to stop the recursion
+    getHashComputations(left, offset + 1, hashCompsByLevel);
+    getHashComputations(right, offset + 1, hashCompsByLevel);
   }
 
   // else stop the recursion, LeafNode should have h0
