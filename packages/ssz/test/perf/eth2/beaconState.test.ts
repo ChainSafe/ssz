@@ -1,10 +1,18 @@
 import {itBench} from "@dapplion/benchmark";
-import {BranchNode, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
+import {
+  BranchNode,
+  HashComputationGroup,
+  getHashComputations,
+  executeHashComputations,
+  HashComputation,
+} from "@chainsafe/persistent-merkle-tree";
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes";
-import {BitArray, CompositeViewDU} from "../../../src";
+import {BitArray, CompositeViewDU, toHexString} from "../../../src";
 
 const vc = 100_000;
 const numModified = vc / 2;
+// TODO - batch: should confirm in unit test instead?
+const expectedRoot = "0xda08e9e2ce3d77df6d6cb29d744871bff4975365841c3b574534f86be352652b";
 
 /**
  * The fresh tree batch hash bechmark is in packages/persistent-merkle-tree/test/perf/node.test.ts
@@ -15,12 +23,14 @@ describe("BeaconState ViewDU partially modified tree", function () {
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       // commit() step is inside hashTreeRoot()
-      state.hashTreeRoot();
+      if (toHexString(state.hashTreeRoot()) !== expectedRoot) {
+        throw new Error("hashTreeRoot does not match expectedRoot");
+      }
     },
   });
 
   itBench({
-    id: `BeaconState ViewDU batchHash - commit step vc=${vc}`,
+    id: `BeaconState ViewDU hashTreeRoot - commit step vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       const hashComps: HashComputationGroup = {
@@ -32,7 +42,23 @@ describe("BeaconState ViewDU partially modified tree", function () {
   });
 
   itBench({
-    id: `BeaconState ViewDU batchHash - commit step each validator vc=${vc}`,
+    id: `BeaconState ViewDU hashTreeRoot - hash step vc=${vc}`,
+    beforeEach: () => {
+      const state = createPartiallyModifiedDenebState();
+      const hashComps: HashComputationGroup = {
+        byLevel: [],
+        offset: 0,
+      };
+      state.commit(hashComps);
+      return hashComps;
+    },
+    fn: (hashComps) => {
+      executeHashComputations(hashComps.byLevel);
+    },
+  });
+
+  itBench.skip({
+    id: `BeaconState ViewDU hashTreeRoot - commit step each validator vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       const hashComps: HashComputationGroup = {
@@ -51,6 +77,32 @@ describe("BeaconState ViewDU partially modified tree", function () {
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       state.commit();
       (state.node as BranchNode).batchHash();
+      if (toHexString(state.node.root) !== expectedRoot) {
+        throw new Error("hashTreeRoot does not match expectedRoot");
+      }
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU batchHash - getHashComputation vc=${vc}`,
+    beforeEach: () => createPartiallyModifiedDenebState(),
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      state.commit();
+      getHashComputations(state.node, 0, []);
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU batchHash - hash step vc=${vc}`,
+    beforeEach: () => {
+      const state = createPartiallyModifiedDenebState();
+      state.commit();
+      const hashComputations: HashComputation[][] = [];
+      getHashComputations(state.node, 0, hashComputations);
+      return hashComputations;
+    },
+    fn: (hashComputations: HashComputation[][]) => {
+      executeHashComputations(hashComputations);
     },
   });
 
@@ -60,10 +112,14 @@ describe("BeaconState ViewDU partially modified tree", function () {
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       state.commit();
       state.node.root;
+      if (toHexString(state.node.root) !== expectedRoot) {
+        throw new Error("hashTreeRoot does not match expectedRoot");
+      }
+      // console.log("@@@@ root", toHexString(state.node.root));
     },
   });
 
-  itBench({
+  itBench.skip({
     id: `BeaconState ViewDU recursive hash - commit step vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
