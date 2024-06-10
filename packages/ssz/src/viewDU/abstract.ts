@@ -1,4 +1,3 @@
-import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
 import {HashComputationGroup, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
@@ -65,7 +64,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
     if (this.node.h0 === null) {
       throw Error("Root is not computed by batch");
     }
-    return super.hashTreeRoot();
+    return this.node.root;
   }
 
   /**
