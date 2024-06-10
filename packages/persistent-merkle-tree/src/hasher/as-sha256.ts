@@ -3,6 +3,7 @@ import type {Hasher} from "./types";
 import {HashComputation, Node} from "../node";
 
 export const hasher: Hasher = {
+  name: "as-sha256",
   digest64: digest2Bytes32,
   digest64HashObjects,
   batchHashObjects: (inputs: HashObject[]) => {

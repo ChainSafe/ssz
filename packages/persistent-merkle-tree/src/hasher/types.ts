@@ -4,6 +4,8 @@ import {HashComputation} from "../node";
 export type {HashObject};
 
 export type Hasher = {
+  // name of the hashing library
+  name: string;
   /**
    * Hash two 32-byte Uint8Arrays
    */
