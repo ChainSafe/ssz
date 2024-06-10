@@ -106,7 +106,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     return this.value_toTree(view);
   }
 
-  // TODO: batch
+  // TODO - batch
   commitViewDU(view: ValueOfTypes<Types>, hashComps: HashComputationGroup | null = null): Node {
     return this.value_toTree(view);
   }
