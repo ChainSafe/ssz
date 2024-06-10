@@ -4,6 +4,7 @@ import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
 
 export const hasher: Hasher = {
+  name: "hashtree",
   digest64(obj1: Uint8Array, obj2: Uint8Array): Uint8Array {
     return hash(Uint8Array.from([...obj1, ...obj2]));
   },
@@ -16,7 +17,19 @@ export const hasher: Hasher = {
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   batchHashObjects(inputs: HashObject[]): HashObject[] {
-    throw new Error("batchHashObjects not implemented for hashtree hasher");
+    if (inputs.length === 0) {
+      return [];
+    }
+    // size input array to 2 HashObject per computation * 32 bytes per object
+    const input: Uint8Array = Uint8Array.from(new Array(inputs.length * 32));
+    inputs.forEach((hashObject, i) => hashObjectToByteArray(hashObject, input, i * 32));
+    const result: Uint8Array = hash(input);
+    const outputs: HashObject[] = [];
+    for (let i = 0; i < inputs.length / 2; i++) {
+      const offset = i * 32;
+      outputs.push(byteArrayToHashObject(result.slice(offset, offset + 32)));
+    }
+    return outputs;
   },
   executeHashComputations(hashComputations: Array<HashComputation[]>): void {
     for (let level = hashComputations.length - 1; level >= 0; level--) {
@@ -29,17 +42,17 @@ export const hasher: Hasher = {
       // size input array to 2 HashObject per computation * 32 bytes per object
       const input: Uint8Array = Uint8Array.from(new Array(hcArr.length * 2 * 32));
       const output: Node[] = [];
-      for (const [i, hc] of hcArr.entries()) {
-        const offset = (i - 1) * 64; // zero index * 2 leafs * 32 bytes
-        hashObjectToByteArray(hc.src0, input, offset);
-        hashObjectToByteArray(hc.src1, input, offset + 32);
-        output.push(hc.dest);
+      for (const [i, {src0, src1, dest}] of hcArr.entries()) {
+        const offset = i * 64; // zero index * 2 leafs * 32 bytes
+        hashObjectToByteArray(src0, input, offset);
+        hashObjectToByteArray(src1, input, offset + 32);
+        output.push(dest);
       }
 
       const result: Uint8Array = hash(input);
 
       for (const [i, out] of output.entries()) {
-        const offset = (i - 1) * 32;
+        const offset = i * 32;
         out.applyHash(byteArrayToHashObject(result.slice(offset, offset + 32)));
       }
     }
