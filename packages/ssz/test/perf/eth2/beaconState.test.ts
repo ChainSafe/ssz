@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
+import {BranchNode, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes";
 import {BitArray, CompositeViewDU} from "../../../src";
 
@@ -11,7 +11,7 @@ const numModified = vc / 2;
  */
 describe("BeaconState ViewDU partially modified tree", function () {
   itBench({
-    id: `BeaconState ViewDU batchHash vc=${vc}`,
+    id: `BeaconState ViewDU hashTreeRoot vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       // commit() step is inside hashTreeRoot()
@@ -42,6 +42,15 @@ describe("BeaconState ViewDU partially modified tree", function () {
       for (let i = 0; i < vc / 2; i++) {
         state.validators.get(i).commit(hashComps);
       }
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU batchHash vc=${vc}`,
+    beforeEach: () => createPartiallyModifiedDenebState(),
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      state.commit();
+      (state.node as BranchNode).batchHash();
     },
   });
 
