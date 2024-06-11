@@ -4,19 +4,9 @@ import {hasher as nobleHasher} from "../../src/hasher/noble";
 import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {linspace} from "../utils/misc";
-import {BranchNode, LeafNode} from "../../src/node";
-import {subtreeFillToContents} from "../../src";
+import {buildComparisonTrees} from "../utils/tree";
 
 const hashers = [hashtreeHasher, asSha256Hasher, nobleHasher];
-
-function buildComparisonTrees(depth: number): [BranchNode, BranchNode] {
-  const width = 2 ** (depth - 1);
-  const nodes = linspace(width).map((num) => LeafNode.fromRoot(Uint8Array.from(Buffer.alloc(32, num))));
-  const copy = nodes.map((node) => node.clone());
-  const branch1 = subtreeFillToContents(nodes, depth) as BranchNode;
-  const branch2 = subtreeFillToContents(copy, depth) as BranchNode;
-  return [branch1, branch2];
-}
 
 describe("hashers", function () {
   describe("digest64 vs digest64HashObjects methods should be the same", () => {
