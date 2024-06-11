@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {uint8ArrayToHashObject} from "../../src/hasher";
+import {HashObject, uint8ArrayToHashObject} from "../../src/hasher";
 import {hasher as asShaHasher} from "../../src/hasher/as-sha256";
 import {hasher as nobleHasher} from "../../src/hasher/noble";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
@@ -7,6 +7,11 @@ import {buildComparisonTrees} from "../utils/tree";
 
 describe("hasher", function () {
   this.timeout(0);
+
+  // total number of time running hash for 250_000 validators
+  // const iterations = 2_250_026;
+  const iterations = 1_000_000;
+
   const root1 = new Uint8Array(32);
   const root2 = new Uint8Array(32);
   for (let i = 0; i < root1.length; i++) {
@@ -18,9 +23,11 @@ describe("hasher", function () {
 
   const [tree] = buildComparisonTrees(16);
 
-  // total number of time running hash for 250_000 validators
-  // const iterations = 2_250_026;
-  const iterations = 1_000_000;
+  const hashObjects: HashObject[] = [];
+  for (let i = 0; i < iterations; i++) {
+    hashObjects.push(uint8ArrayToHashObject(root1));
+    hashObjects.push(uint8ArrayToHashObject(root2));
+  }
 
   for (const hasher of [asShaHasher, nobleHasher, hashtreeHasher]) {
     describe(hasher.name, () => {
@@ -40,7 +47,12 @@ describe("hasher", function () {
         },
       });
 
-      // itBench(`batchHash - ${hasher.name}`, () => {});
+      itBench({
+        id: `batchHash - ${hasher.name}`,
+        fn: () => {
+          hasher.batchHashObjects(hashObjects);
+        },
+      });
 
       itBench({
         id: `executeHashComputations - ${hasher.name}`,
