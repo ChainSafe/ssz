@@ -84,9 +84,7 @@ export class BranchNode extends Node {
   }
 
   batchHash(): Uint8Array {
-    const hashComputations: HashComputation[][] = [];
-    getHashComputations(this, 0, hashComputations);
-    executeHashComputations(hashComputations);
+    executeHashComputations(this.hashComputations);
 
     if (this.h0 === null) {
       throw Error("Root is not computed by batch");
@@ -115,6 +113,12 @@ export class BranchNode extends Node {
 
   get right(): Node {
     return this._right;
+  }
+
+  get hashComputations(): HashComputation[][] {
+    const hashComputations: HashComputation[][] = [];
+    getHashComputations(this, 0, hashComputations);
+    return hashComputations;
   }
 }
 
