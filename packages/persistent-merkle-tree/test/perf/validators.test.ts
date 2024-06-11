@@ -1,5 +1,13 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {BranchNode, LeafNode, subtreeFillToContents, Node, countToDepth, zeroNode} from "../../src";
+import {
+  BranchNode,
+  LeafNode,
+  subtreeFillToContents,
+  Node,
+  countToDepth,
+  zeroNode,
+  getHashComputations,
+} from "../../src";
 import {MemoryTracker} from "../utils/memTracker";
 
 /**
@@ -68,8 +76,7 @@ describe("Track the performance of validators", () => {
       return node;
     },
     fn: (node) => {
-      const hashComputationsByLevel = new Map();
-      (node as BranchNode).getHashComputation(0, hashComputationsByLevel);
+      (node as BranchNode).hashComputations;
     },
   });
 });
