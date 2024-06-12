@@ -1,4 +1,4 @@
-import {Node, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 import {Type, ByteViews} from "./abstract";
 import {isCompositeType} from "./composite";
 import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container";
@@ -106,9 +106,13 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
-  private valueToTree(value: ValueOfFields<Fields>): Node {
-    // TODO - batch get hash computations while creating tree
+  private valueToTree(
+    value: ValueOfFields<Fields>,
+    hashComps: HashComputationGroup | null = null,
+    hashCompRootNode: Node | null = null
+  ): Node {
     const nodes = this.fieldsEntries.map(({fieldName, fieldType}) => fieldType.value_toTree(value[fieldName]));
-    return subtreeFillToContents(nodes, this.depth);
+    const rootNode = subtreeFillToContents(nodes, this.depth, hashComps, hashCompRootNode);
+    return rootNode;
   }
 }
