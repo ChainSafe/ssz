@@ -53,7 +53,7 @@ export const hasher: Hasher = {
 
       for (const [i, out] of output.entries()) {
         const offset = i * 32;
-        out.applyHash(byteArrayToHashObject(result.slice(offset, offset + 32)));
+        out.applyHash(byteArrayToHashObject(result.subarray(offset, offset + 32)));
       }
     }
   },
