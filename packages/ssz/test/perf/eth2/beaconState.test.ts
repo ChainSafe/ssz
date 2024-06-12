@@ -9,15 +9,90 @@ import {
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes";
 import {BitArray, CompositeViewDU, toHexString} from "../../../src";
 
-const vc = 100_000;
+const vc = 200_000;
 const numModified = vc / 2;
-// TODO - batch: should confirm in unit test instead?
-const expectedRoot = "0xda08e9e2ce3d77df6d6cb29d744871bff4975365841c3b574534f86be352652b";
+// every we increase vc, need to change this value from "recursive hash" test
+const expectedRoot = "0x0bd3c6caecdf5b04e8ac48e41732aa5908019e072aa4e61c5298cf31a643eb70";
 
 /**
+ * This simulates a BeaconState being modified after an epoch transition in lodestar
  * The fresh tree batch hash bechmark is in packages/persistent-merkle-tree/test/perf/node.test.ts
+ * Note that this benchmark is not very stable because we cannot apply runsFactor as once commit() we
+ * cannot compute HashComputationGroup again.
+ * Increasing number of validators could be OOM since we have to create BeaconState every time
  */
-describe("BeaconState ViewDU partially modified tree", function () {
+describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numModified}`, function () {
+  itBench({
+    id: `BeaconState ViewDU recursive hash vc=${vc}`,
+    beforeEach: () => createPartiallyModifiedDenebState(),
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      state.commit();
+      state.node.root;
+      // console.log("@@@@ root", toHexString(state.node.root));
+      if (toHexString(state.node.root) !== expectedRoot) {
+        throw new Error("hashTreeRoot does not match expectedRoot");
+      }
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU recursive hash - commit step vc=${vc}`,
+    beforeEach: () => createPartiallyModifiedDenebState(),
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      state.commit();
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU validator tree creation vc=${numModified}`,
+    beforeEach: () => {
+      const state = createPartiallyModifiedDenebState();
+      state.commit();
+      return state;
+    },
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      const validators = state.validators;
+      for (let i = 0; i < numModified; i++) {
+        validators.getReadonly(i).node.left;
+      }
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU batchHash vc=${vc}`,
+    beforeEach: () => createPartiallyModifiedDenebState(),
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      state.commit();
+      (state.node as BranchNode).batchHash();
+      if (toHexString(state.node.root) !== expectedRoot) {
+        throw new Error("hashTreeRoot does not match expectedRoot");
+      }
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU batchHash - commit & getHashComputation vc=${vc}`,
+    beforeEach: () => createPartiallyModifiedDenebState(),
+    fn: (state: CompositeViewDU<typeof BeaconState>) => {
+      state.commit();
+      getHashComputations(state.node, 0, []);
+    },
+  });
+
+  itBench({
+    id: `BeaconState ViewDU batchHash - hash step vc=${vc}`,
+    beforeEach: () => {
+      const state = createPartiallyModifiedDenebState();
+      state.commit();
+      const hashComputations: HashComputation[][] = [];
+      getHashComputations(state.node, 0, hashComputations);
+      return hashComputations;
+    },
+    fn: (hashComputations: HashComputation[][]) => {
+      executeHashComputations(hashComputations);
+    },
+  });
+
   itBench({
     id: `BeaconState ViewDU hashTreeRoot vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
@@ -65,74 +140,22 @@ describe("BeaconState ViewDU partially modified tree", function () {
         byLevel: [],
         offset: 0,
       };
-      for (let i = 0; i < vc / 2; i++) {
+      for (let i = 0; i < numModified; i++) {
         state.validators.get(i).commit(hashComps);
       }
     },
   });
-
-  itBench({
-    id: `BeaconState ViewDU batchHash vc=${vc}`,
-    beforeEach: () => createPartiallyModifiedDenebState(),
-    fn: (state: CompositeViewDU<typeof BeaconState>) => {
-      state.commit();
-      (state.node as BranchNode).batchHash();
-      if (toHexString(state.node.root) !== expectedRoot) {
-        throw new Error("hashTreeRoot does not match expectedRoot");
-      }
-    },
-  });
-
-  itBench({
-    id: `BeaconState ViewDU batchHash - getHashComputation vc=${vc}`,
-    beforeEach: () => createPartiallyModifiedDenebState(),
-    fn: (state: CompositeViewDU<typeof BeaconState>) => {
-      state.commit();
-      getHashComputations(state.node, 0, []);
-    },
-  });
-
-  itBench({
-    id: `BeaconState ViewDU batchHash - hash step vc=${vc}`,
-    beforeEach: () => {
-      const state = createPartiallyModifiedDenebState();
-      state.commit();
-      const hashComputations: HashComputation[][] = [];
-      getHashComputations(state.node, 0, hashComputations);
-      return hashComputations;
-    },
-    fn: (hashComputations: HashComputation[][]) => {
-      executeHashComputations(hashComputations);
-    },
-  });
-
-  itBench({
-    id: `BeaconState ViewDU recursive hash vc=${vc}`,
-    beforeEach: () => createPartiallyModifiedDenebState(),
-    fn: (state: CompositeViewDU<typeof BeaconState>) => {
-      state.commit();
-      state.node.root;
-      if (toHexString(state.node.root) !== expectedRoot) {
-        throw new Error("hashTreeRoot does not match expectedRoot");
-      }
-      // console.log("@@@@ root", toHexString(state.node.root));
-    },
-  });
-
-  itBench.skip({
-    id: `BeaconState ViewDU recursive hash - commit step vc=${vc}`,
-    beforeEach: () => createPartiallyModifiedDenebState(),
-    fn: (state: CompositeViewDU<typeof BeaconState>) => {
-      state.commit();
-    },
-  });
 });
 
+let originalState: CompositeViewDU<typeof BeaconState> | null = null;
 function createPartiallyModifiedDenebState(): CompositeViewDU<typeof BeaconState> {
-  const state = createDenebState(vc);
-  // cache all roots
-  state.hashTreeRoot();
-  // modify half of validators and balances
+  if (originalState === null) {
+    originalState = createDenebState(vc);
+    // cache all roots
+    originalState.hashTreeRoot();
+  }
+
+  const state = originalState.clone();
   for (let i = 0; i < numModified; i++) {
     state.validators.get(i).effectiveBalance += 1e9;
     state.balances.set(i, state.balances.get(i) + 1e9);

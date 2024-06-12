@@ -1,4 +1,4 @@
-import {HashComputationGroup, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
 import {isCompositeType} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
@@ -34,8 +34,8 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
     }
 
-    if (hashComps !== null && this._rootNode.h0 === null) {
-      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    if (hashComps !== null) {
+      this._rootNode.getHashComputations(hashComps);
     }
   }
 
