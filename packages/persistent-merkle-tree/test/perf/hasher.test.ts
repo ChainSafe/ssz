@@ -8,9 +8,7 @@ import {buildComparisonTrees} from "../utils/tree";
 describe("hasher", function () {
   this.timeout(0);
 
-  // total number of time running hash for 250_000 validators
-  // const iterations = 2_250_026;
-  const iterations = 1_000_000;
+  const iterations = 500_000;
 
   const root1 = new Uint8Array(32);
   const root2 = new Uint8Array(32);
@@ -20,8 +18,6 @@ describe("hasher", function () {
   for (let i = 0; i < root2.length; i++) {
     root2[i] = 2;
   }
-
-  const [tree] = buildComparisonTrees(16);
 
   const hashObjects: HashObject[] = [];
   for (let i = 0; i < iterations; i++) {
@@ -56,7 +52,11 @@ describe("hasher", function () {
 
       itBench({
         id: `executeHashComputations - ${hasher.name}`,
-        fn: () => {
+        beforeEach: () => {
+          const [tree] = buildComparisonTrees(16);
+          return tree;
+        },
+        fn: (tree) => {
           hasher.executeHashComputations(tree.hashComputations);
         },
       });
