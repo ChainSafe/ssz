@@ -1,22 +1,43 @@
-import {hash} from "@chainsafe/hashtree";
+import {hash, hashInto} from "@chainsafe/hashtree";
 import {byteArrayToHashObject, hashObjectToByteArray} from "@chainsafe/as-sha256";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
 
+/**
+ * Best SIMD implementation is in 512 bits = 64 bytes
+ * If not, hashtree will make a loop inside
+ * Given sha256 operates on a block of 4 bytes, we can hash 16 inputs at once
+ * Each input is 64 bytes
+ */
+const PARALLEL_FACTOR = 16;
+const input = new Uint8Array(PARALLEL_FACTOR * 64);
+const output = new Uint8Array(PARALLEL_FACTOR * 32);
+
 export const hasher: Hasher = {
   name: "hashtree",
   digest64(obj1: Uint8Array, obj2: Uint8Array): Uint8Array {
-    return hash(Buffer.concat([obj1, obj2], 64));
+    // return hash(Buffer.concat([obj1, obj2], 64));
+    if (obj1.length !== 32 || obj2.length !== 32) {
+      throw new Error("Invalid input length");
+    }
+    input.set(obj1, 0);
+    input.set(obj2, 32);
+    const hashInput = input.subarray(0, 64);
+    const hashOutput = output.subarray(0, 32);
+    hashInto(hashInput, hashOutput);
+    return hashOutput.slice();
   },
   digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObject {
-    const input1 = new Uint8Array(32);
-    const input2 = new Uint8Array(32);
-    hashObjectToByteArray(obj1, input1, 0);
-    hashObjectToByteArray(obj2, input2, 0);
-    return byteArrayToHashObject(hasher.digest64(input1, input2));
+    hashObjectToByteArray(obj1, input, 0);
+    hashObjectToByteArray(obj2, input, 32);
+    const hashInput = input.subarray(0, 64);
+    const hashOutput = output.subarray(0, 32);
+    hashInto(hashInput, hashOutput);
+    return byteArrayToHashObject(hashOutput);
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   batchHashObjects(inputs: HashObject[]): HashObject[] {
+    // TODO - batch: remove
     if (inputs.length === 0) {
       return [];
     }
@@ -40,20 +61,37 @@ export const hasher: Hasher = {
       }
 
       // size input array to 2 HashObject per computation * 32 bytes per object
-      const input: Uint8Array = Uint8Array.from(new Array(hcArr.length * 2 * 32));
-      const output: Node[] = [];
+      // const input: Uint8Array = Uint8Array.from(new Array(hcArr.length * 2 * 32));
+      let destNodes: Node[] = [];
+
+      // hash every 16 inputs at once to avoid memory allocation
       for (const [i, {src0, src1, dest}] of hcArr.entries()) {
-        const offset = i * 64; // zero index * 2 leafs * 32 bytes
+        const indexInBatch = i % PARALLEL_FACTOR;
+        const offset = indexInBatch * 64;
         hashObjectToByteArray(src0, input, offset);
         hashObjectToByteArray(src1, input, offset + 32);
-        output.push(dest);
+        destNodes.push(dest);
+        if (indexInBatch === PARALLEL_FACTOR - 1) {
+          hashInto(input, output);
+          for (const [j, destNode] of destNodes.entries()) {
+            const outputOffset = j * 32;
+            destNode.applyHash(byteArrayToHashObject(output.subarray(outputOffset, outputOffset + 32)));
+          }
+          destNodes = [];
+        }
       }
 
-      const result: Uint8Array = hash(input);
-
-      for (const [i, out] of output.entries()) {
-        const offset = i * 32;
-        out.applyHash(byteArrayToHashObject(result.subarray(offset, offset + 32)));
+      const remaining = hcArr.length % PARALLEL_FACTOR;
+      // we prepared data in input, now hash the remaining
+      if (remaining > 0) {
+        const remainingInput = input.subarray(0, remaining * 64);
+        const remainingOutput = output.subarray(0, remaining * 32);
+        hashInto(remainingInput, remainingOutput);
+        // destNodes was prepared above
+        for (const [i, destNode] of destNodes.entries()) {
+          const offset = i * 32;
+          destNode.applyHash(byteArrayToHashObject(remainingOutput.subarray(offset, offset + 32)));
+        }
       }
     }
   },
