@@ -1,4 +1,4 @@
-import {hash, hashInto} from "@chainsafe/hashtree";
+import {hashInto} from "@chainsafe/hashtree";
 import {byteArrayToHashObject, hashObjectToByteArray} from "@chainsafe/as-sha256";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
@@ -37,20 +37,38 @@ export const hasher: Hasher = {
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   batchHashObjects(inputs: HashObject[]): HashObject[] {
-    // TODO - batch: remove
     if (inputs.length === 0) {
       return [];
     }
-    // size input array to 2 HashObject per computation * 32 bytes per object
-    const input = new Uint8Array(inputs.length * 32);
-    inputs.forEach((hashObject, i) => hashObjectToByteArray(hashObject, input, i * 32));
-    const result = hash(input);
-    const outputs: HashObject[] = [];
-    for (let i = 0; i < inputs.length / 2; i++) {
-      const offset = i * 32;
-      outputs.push(byteArrayToHashObject(result.slice(offset, offset + 32)));
+    if (inputs.length % 2 !== 0) {
+      throw new Error("inputs length must be even");
     }
-    return outputs;
+
+    const batch = PARALLEL_FACTOR * 2;
+    const outHashObjects: HashObject[] = [];
+    for (const [i, hashInput] of inputs.entries()) {
+      const indexInBatch = i % batch;
+      hashObjectToByteArray(hashInput, input, indexInBatch * 32);
+      if (indexInBatch === batch - 1) {
+        hashInto(input, output);
+        for (let j = 0; j < batch / 2; j++) {
+          outHashObjects.push(byteArrayToHashObject(output.subarray(j * 32, j * 32 + 32)));
+        }
+      }
+    }
+
+    // hash remaining
+    const remaining = inputs.length % batch;
+    if (remaining > 0) {
+      const remainingInput = input.subarray(0, remaining * 32);
+      const remainingOutput = output.subarray(0, remaining * 16);
+      hashInto(remainingInput, remainingOutput);
+      for (let i = 0; i < remaining / 2; i++) {
+        outHashObjects.push(byteArrayToHashObject(remainingOutput.subarray(i * 32, i * 32 + 32)));
+      }
+    }
+
+    return outHashObjects;
   },
   executeHashComputations(hashComputations: Array<HashComputation[]>): void {
     for (let level = hashComputations.length - 1; level >= 0; level--) {
