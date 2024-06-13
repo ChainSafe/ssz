@@ -44,7 +44,7 @@ describe("hasher", function () {
       });
 
       itBench({
-        id: `batchHash - ${hasher.name}`,
+        id: `batchHashObjects - ${hasher.name}`,
         fn: () => {
           hasher.batchHashObjects(hashObjects);
         },
