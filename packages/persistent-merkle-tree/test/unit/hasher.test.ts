@@ -64,7 +64,9 @@ describe("hashers", function () {
     for (const hasher of hashers) {
       it(hasher.name, () => {
         const [tree1, tree2] = buildComparisonTrees(8);
-        expectEqualHex(tree1.root, tree2.batchHash());
+        const hashComputations = tree2.hashComputations;
+        hasher.executeHashComputations(hashComputations);
+        expectEqualHex(tree1.root, tree2.root);
       });
     }
   });
