@@ -1,7 +1,7 @@
 import {hashInto} from "@chainsafe/hashtree";
-import {byteArrayToHashObject, hashObjectToByteArray} from "@chainsafe/as-sha256";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
+import { byteArrayToHashObject, hashObjectToByteArray } from "@chainsafe/as-sha256";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -10,30 +10,32 @@ import {HashComputation, Node} from "../node";
  * Each input is 64 bytes
  */
 const PARALLEL_FACTOR = 16;
-const input = new Uint8Array(PARALLEL_FACTOR * 64);
-const output = new Uint8Array(PARALLEL_FACTOR * 32);
+const uint8Input = new Uint8Array(PARALLEL_FACTOR * 64);
+const uint32Input = new Uint32Array(uint8Input.buffer);
+const uint8Output = new Uint8Array(PARALLEL_FACTOR * 32);
+const uint32Output = new Uint32Array(uint8Output.buffer);
+
 
 export const hasher: Hasher = {
   name: "hashtree",
   digest64(obj1: Uint8Array, obj2: Uint8Array): Uint8Array {
-    // return hash(Buffer.concat([obj1, obj2], 64));
     if (obj1.length !== 32 || obj2.length !== 32) {
       throw new Error("Invalid input length");
     }
-    input.set(obj1, 0);
-    input.set(obj2, 32);
-    const hashInput = input.subarray(0, 64);
-    const hashOutput = output.subarray(0, 32);
+    uint8Input.set(obj1, 0);
+    uint8Input.set(obj2, 32);
+    const hashInput = uint8Input.subarray(0, 64);
+    const hashOutput = uint8Output.subarray(0, 32);
     hashInto(hashInput, hashOutput);
     return hashOutput.slice();
   },
   digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObject {
-    hashObjectToByteArray(obj1, input, 0);
-    hashObjectToByteArray(obj2, input, 32);
-    const hashInput = input.subarray(0, 64);
-    const hashOutput = output.subarray(0, 32);
+    hashObjectToUint32Array(obj1, uint32Input, 0);
+    hashObjectToUint32Array(obj2, uint32Input, 8);
+    const hashInput = uint8Input.subarray(0, 64);
+    const hashOutput = uint8Output.subarray(0, 32);
     hashInto(hashInput, hashOutput);
-    return byteArrayToHashObject(hashOutput);
+    return uint32ArrayToHashObject(uint32Output, 0);
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   batchHashObjects(inputs: HashObject[]): HashObject[] {
@@ -48,11 +50,11 @@ export const hasher: Hasher = {
     const outHashObjects: HashObject[] = [];
     for (const [i, hashInput] of inputs.entries()) {
       const indexInBatch = i % batch;
-      hashObjectToByteArray(hashInput, input, indexInBatch * 32);
+      hashObjectToUint32Array(hashInput, uint32Input, indexInBatch * 8);
       if (indexInBatch === batch - 1) {
-        hashInto(input, output);
+        hashInto(uint8Input, uint8Output);
         for (let j = 0; j < batch / 2; j++) {
-          outHashObjects.push(byteArrayToHashObject(output.subarray(j * 32, j * 32 + 32)));
+          outHashObjects.push(uint32ArrayToHashObject(uint32Output, j * 8));
         }
       }
     }
@@ -60,11 +62,11 @@ export const hasher: Hasher = {
     // hash remaining
     const remaining = inputs.length % batch;
     if (remaining > 0) {
-      const remainingInput = input.subarray(0, remaining * 32);
-      const remainingOutput = output.subarray(0, remaining * 16);
+      const remainingInput = uint8Input.subarray(0, remaining * 32);
+      const remainingOutput = uint8Output.subarray(0, remaining * 16);
       hashInto(remainingInput, remainingOutput);
       for (let i = 0; i < remaining / 2; i++) {
-        outHashObjects.push(byteArrayToHashObject(remainingOutput.subarray(i * 32, i * 32 + 32)));
+        outHashObjects.push(uint32ArrayToHashObject(uint32Output, i * 8));
       }
     }
 
@@ -85,15 +87,16 @@ export const hasher: Hasher = {
       // hash every 16 inputs at once to avoid memory allocation
       for (const [i, {src0, src1, dest}] of hcArr.entries()) {
         const indexInBatch = i % PARALLEL_FACTOR;
-        const offset = indexInBatch * 64;
-        hashObjectToByteArray(src0, input, offset);
-        hashObjectToByteArray(src1, input, offset + 32);
+        const offset = indexInBatch * 16;
+
+        hashObjectToUint32Array(src0, uint32Input, offset);
+        hashObjectToUint32Array(src1, uint32Input, offset + 8);
         destNodes.push(dest);
         if (indexInBatch === PARALLEL_FACTOR - 1) {
-          hashInto(input, output);
+          hashInto(uint8Input, uint8Output);
           for (const [j, destNode] of destNodes.entries()) {
-            const outputOffset = j * 32;
-            destNode.applyHash(byteArrayToHashObject(output.subarray(outputOffset, outputOffset + 32)));
+            const outputOffset = j * 8;
+            destNode.applyHash(uint32ArrayToHashObject(uint32Output, outputOffset));
           }
           destNodes = [];
         }
@@ -102,15 +105,39 @@ export const hasher: Hasher = {
       const remaining = hcArr.length % PARALLEL_FACTOR;
       // we prepared data in input, now hash the remaining
       if (remaining > 0) {
-        const remainingInput = input.subarray(0, remaining * 64);
-        const remainingOutput = output.subarray(0, remaining * 32);
+        const remainingInput = uint8Input.subarray(0, remaining * 64);
+        const remainingOutput = uint8Output.subarray(0, remaining * 32);
         hashInto(remainingInput, remainingOutput);
         // destNodes was prepared above
         for (const [i, destNode] of destNodes.entries()) {
-          const offset = i * 32;
-          destNode.applyHash(byteArrayToHashObject(remainingOutput.subarray(offset, offset + 32)));
+          const offset = i * 8;
+          destNode.applyHash(uint32ArrayToHashObject(uint32Output, offset));
         }
       }
     }
   },
 };
+
+function hashObjectToUint32Array(obj: HashObject, arr: Uint32Array, offset: number): void {
+  arr[offset] = obj.h0;
+  arr[offset + 1] = obj.h1;
+  arr[offset + 2] = obj.h2;
+  arr[offset + 3] = obj.h3;
+  arr[offset + 4] = obj.h4;
+  arr[offset + 5] = obj.h5;
+  arr[offset + 6] = obj.h6;
+  arr[offset + 7] = obj.h7;
+}
+
+function uint32ArrayToHashObject(arr: Uint32Array, offset: number): HashObject {
+  return {
+    h0: arr[offset],
+    h1: arr[offset + 1],
+    h2: arr[offset + 2],
+    h3: arr[offset + 3],
+    h4: arr[offset + 4],
+    h5: arr[offset + 5],
+    h6: arr[offset + 6],
+    h7: arr[offset + 7],
+  };
+}
