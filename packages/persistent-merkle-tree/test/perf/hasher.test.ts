@@ -19,16 +19,17 @@ describe("hasher", function () {
     root2[i] = 2;
   }
 
-  const hashObjects: HashObject[] = [];
-  for (let i = 0; i < iterations; i++) {
-    hashObjects.push(uint8ArrayToHashObject(root1));
-    hashObjects.push(uint8ArrayToHashObject(root2));
-  }
-
+  const runsFactor = 10;
   for (const hasher of [asShaHasher, nobleHasher, hashtreeHasher]) {
     describe(hasher.name, () => {
-      itBench(`hash 2 Uint8Array ${iterations} times - ${hasher.name}`, () => {
-        for (let j = 0; j < iterations; j++) hasher.digest64(root1, root2);
+      itBench({
+        id: `hash 2 Uint8Array ${iterations} times - ${hasher.name}`,
+        fn: () => {
+          for (let i = 0; i < runsFactor; i++) {
+            for (let j = 0; j < iterations; j++) hasher.digest64(root1, root2);
+          }
+        },
+        runsFactor,
       });
 
       itBench({
@@ -39,15 +40,31 @@ describe("hasher", function () {
         }),
         beforeEach: (params) => params,
         fn: ({obj1, obj2}) => {
-          for (let j = 0; j < iterations; j++) hasher.digest64HashObjects(obj1, obj2);
+          for (let i = 0; i < runsFactor; i++) {
+            for (let j = 0; j < iterations; j++) hasher.digest64HashObjects(obj1, obj2);
+          }
         },
+        runsFactor,
       });
 
-      itBench({
+      // TODO: benchmark for this test is not stable, if it runs alone it's 20% - 30% faster
+      itBench.skip({
         id: `batchHashObjects - ${hasher.name}`,
-        fn: () => {
-          hasher.batchHashObjects(hashObjects);
+        before: () => {
+          const hashObjects: HashObject[] = [];
+          for (let i = 0; i < iterations; i++) {
+            hashObjects.push(uint8ArrayToHashObject(root1));
+            hashObjects.push(uint8ArrayToHashObject(root2));
+          }
+          return hashObjects;
         },
+        beforeEach: (hashObjects) => hashObjects,
+        fn: (hashObjects: HashObject[]) => {
+          for (let i = 0; i < runsFactor; i++) {
+            hasher.batchHashObjects(hashObjects);
+          }
+        },
+        runsFactor: 10,
       });
 
       itBench({
