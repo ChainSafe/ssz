@@ -1252,11 +1252,6 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
-"@chainsafe/hashtree-darwin-arm64@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/hashtree-darwin-arm64/-/hashtree-darwin-arm64-1.0.0.tgz#a9fb6b70eaf1f715c14caff22a64152a1903258e"
-  integrity sha512-duJfn57lUXkSedvEisEhXNJcUZAZLKY3D3t5Jx2EUfNS1PpVLM9k5oBG2cjolyNso2n94LJGlyYKFMrPoPig1w==
-
 "@chainsafe/hashtree-linux-arm64-gnu@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@chainsafe/hashtree-linux-arm64-gnu/-/hashtree-linux-arm64-gnu-1.0.0.tgz#168db259636261d9f3612354cad9f730a4be7110"
