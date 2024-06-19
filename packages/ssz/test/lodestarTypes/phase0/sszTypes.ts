@@ -2,7 +2,6 @@ import {
   BitListType,
   BitVectorType,
   ContainerType,
-  ContainerNodeStructType,
   ListBasicType,
   ListCompositeType,
   VectorBasicType,
@@ -17,6 +16,9 @@ import {
   ATTESTATION_SUBNET_COUNT,
 } from "../params";
 import * as primitiveSsz from "../primitive/sszTypes";
+import {ValidatorNodeStruct} from "./validator.js";
+
+export {ValidatorNodeStruct};
 
 const {
   EPOCHS_PER_ETH1_VOTING_PERIOD,
@@ -245,7 +247,6 @@ export const ValidatorContainer = new ContainerType(
   {typeName: "Validator", jsonCase: "eth2"}
 );
 
-export const ValidatorNodeStruct = new ContainerNodeStructType(ValidatorContainer.fields, ValidatorContainer.opts);
 // The main Validator type is the 'ContainerNodeStructType' version
 export const Validator = ValidatorNodeStruct;
 
