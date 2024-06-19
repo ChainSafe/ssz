@@ -33,6 +33,8 @@ export class BranchNodeStruct<T> extends Node {
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
       super.applyHash(this.rootNode.rootHashObject);
+      // this node has been hashed, we can clear the backed tree to release a lot of memory
+      this._rootNode = null;
     }
     return this;
   }
