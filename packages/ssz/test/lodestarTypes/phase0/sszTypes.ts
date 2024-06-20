@@ -16,7 +16,7 @@ import {
   ATTESTATION_SUBNET_COUNT,
 } from "../params";
 import * as primitiveSsz from "../primitive/sszTypes";
-import {ValidatorNodeStruct} from "./validator.js";
+import {ValidatorNodeStruct} from "./validator";
 
 export {ValidatorNodeStruct};
 
