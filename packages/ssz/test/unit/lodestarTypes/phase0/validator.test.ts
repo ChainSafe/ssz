@@ -2,7 +2,7 @@ import { BranchNode, LeafNode, Node, subtreeFillToContents } from "@chainsafe/pe
 import {ContainerType} from "../../../../../ssz/src/type/container";
 import {ssz} from "../../../lodestarTypes";
 import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
-import {ValidatorTreeViewDU} from "../../../lodestarTypes/phase0/viewDU/validatorNodeStruct";
+import {ValidatorTreeViewDU} from "../../../lodestarTypes/phase0/viewDU/validator";
 import { expect } from "chai";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
@@ -16,6 +16,7 @@ describe("Validator ssz types", function () {
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),
     withdrawalCredentials: Buffer.alloc(32, 100),
+    effectiveBalance: 32000000000,
   };
 
   const validators = [

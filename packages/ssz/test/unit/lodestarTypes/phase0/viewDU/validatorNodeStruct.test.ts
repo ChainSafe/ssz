@@ -1,5 +1,5 @@
 import { Node, BranchNode, LeafNode, subtreeFillToContents, getNodesAtDepth } from "@chainsafe/persistent-merkle-tree";
-import { validatorToTree } from "../../../../lodestarTypes/phase0/viewDU/validatorNodeStruct";
+import { validatorToTree } from "../../../../lodestarTypes/phase0/viewDU/validator";
 import { HashObject, hashObjectToByteArray } from "@chainsafe/as-sha256";
 import { ValidatorNodeStruct } from "../../../../lodestarTypes/phase0/validator";
 import { expect } from "chai";
