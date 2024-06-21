@@ -412,6 +412,7 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
   // else stop the recursion, LeafNode should have h0
 }
 
+// TODO - batch: move to hasher/index.ts
 export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
   hasher.executeHashComputations(hashComputations);
 }

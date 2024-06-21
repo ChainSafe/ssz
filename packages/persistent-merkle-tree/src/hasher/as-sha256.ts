@@ -6,6 +6,9 @@ export const hasher: Hasher = {
   name: "as-sha256",
   digest64: digest2Bytes32,
   digest64HashObjects,
+  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
+    throw new Error("Not implemented");
+  },
   batchHashObjects: (inputs: HashObject[]) => {
     // as-sha256 uses SIMD for batch hash
     if (inputs.length === 0) {

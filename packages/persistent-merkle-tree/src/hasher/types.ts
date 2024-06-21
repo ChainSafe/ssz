@@ -15,6 +15,12 @@ export type Hasher = {
    */
   digest64HashObjects(a: HashObject, b: HashObject): HashObject;
   /**
+   * Hash multiple chunks (1 chunk = 32 bytes) at multiple levels
+   * With nLevel = 3, hash multiple of 256 bytes, return multiple of 32 bytes.
+   * The result is unsafe as it will be overwritten by the next call.
+   */
+  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array
+  /**
    * Batch hash 2 * n HashObjects, return n HashObjects output
    */
   batchHashObjects(inputs: HashObject[]): HashObject[];

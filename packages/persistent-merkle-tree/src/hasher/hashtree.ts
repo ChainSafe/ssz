@@ -1,4 +1,4 @@
-import {hashInto} from "@chainsafe/hashtree";
+import {hash, hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
 import { byteArrayToHashObject, hashObjectToByteArray } from "@chainsafe/as-sha256";
@@ -10,7 +10,8 @@ import { byteArrayToHashObject, hashObjectToByteArray } from "@chainsafe/as-sha2
  * Each input is 64 bytes
  */
 const PARALLEL_FACTOR = 16;
-const uint8Input = new Uint8Array(PARALLEL_FACTOR * 64);
+const MAX_INPUT_SIZE = PARALLEL_FACTOR * 64;
+const uint8Input = new Uint8Array(MAX_INPUT_SIZE);
 const uint32Input = new Uint32Array(uint8Input.buffer);
 const uint8Output = new Uint8Array(PARALLEL_FACTOR * 32);
 const uint32Output = new Uint32Array(uint8Output.buffer);
@@ -36,6 +37,40 @@ export const hasher: Hasher = {
     const hashOutput = uint8Output.subarray(0, 32);
     hashInto(hashInput, hashOutput);
     return uint32ArrayToHashObject(uint32Output, 0);
+  },
+  // given nLevel = 3
+  // digest multiple of 8 chunks = 256 bytes
+  // the result is multiple of 1 chunk = 32 bytes
+  // this is the same to hashTreeRoot() of multiple validators
+  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
+    let inputLength = data.length;
+    const bytesInBatch = Math.pow(2, nLevel) * 32;
+    if (nLevel < 1) {
+      throw new Error(`Invalid nLevel, expect to be greater than 0, got ${nLevel}`);
+    }
+    if (inputLength % bytesInBatch !== 0) {
+      throw new Error(`Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`);
+    }
+    if (inputLength > MAX_INPUT_SIZE) {
+      throw new Error(`Invalid input length, expect to be less than ${MAX_INPUT_SIZE}, got ${inputLength}`);
+    }
+
+    let outputLength = Math.floor(inputLength / 2);
+    let hashOutput: Uint8Array | null = null;
+    for (let i = nLevel; i > 0; i--) {
+      uint8Input.set(hashOutput ?? data, 0);
+      const hashInput = uint8Input.subarray(0, inputLength);
+      hashOutput = uint8Output.subarray(0, outputLength);
+      hashInto(hashInput, hashOutput);
+      inputLength = outputLength;
+      outputLength = Math.floor(inputLength / 2);
+    }
+
+    if (hashOutput === null) {
+      throw new Error("hashOutput is null");
+    }
+    // the result is unsafe as it will be modified later, consumer should save the result if needed
+    return hashOutput;
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   batchHashObjects(inputs: HashObject[]): HashObject[] {

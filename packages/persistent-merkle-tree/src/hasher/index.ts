@@ -26,3 +26,11 @@ export let hasher: Hasher = hashtreeHasher;
 export function setHasher(newHasher: Hasher): void {
   hasher = newHasher;
 }
+
+export function digest64(a: Uint8Array, b: Uint8Array): Uint8Array {
+  return hasher.digest64(a, b);
+}
+
+export function digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
+  return hasher.digestNLevelUnsafe(data, nLevel);
+}

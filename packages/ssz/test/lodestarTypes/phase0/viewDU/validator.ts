@@ -1,4 +1,4 @@
-import { HashObject, byteArrayToHashObject } from "@chainsafe/as-sha256";
+import { HashObject, byteArrayToHashObject, hashObjectToByteArray } from "@chainsafe/as-sha256";
 import { BranchNodeStruct } from "../../../../src/branchNodeStruct";
 import { ContainerTypeGeneric } from "../../../../src/view/container";
 import { TreeViewDU } from "../../../../src/viewDU/abstract";
@@ -8,6 +8,7 @@ import {
   BranchNode,
   HashComputationGroup,
 } from "@chainsafe/persistent-merkle-tree";
+import { ByteViews } from "../../../../src/type/abstract";
 type Validator = {
   pubkey: Uint8Array;
   withdrawalCredentials: Uint8Array;
@@ -21,6 +22,11 @@ type Validator = {
 
 const numFields = 8;
 const NUMBER_2_POW_32 = 2 ** 32;
+/*
+ * Below constants are respective to their ssz type in `ValidatorType`.
+ */
+const UINT32_SIZE = 4;
+const CHUNK_SIZE = 32;
 
 /**
  * A specific ViewDU for validator designed to be efficient to batch hash and efficient to create tree
@@ -158,15 +164,37 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
    * Note that node[0] should be a branch node due to pubkey of 48 bytes.
    */
   valueToTree(nodes: Node[]): void {
-    if (this.valueChanged === null) {
-      return;
-    }
-
     if (nodes.length !== numFields) {
       throw new Error(`Expected ${numFields} fields, got ${nodes.length}`);
     }
 
-    validatorToTree(nodes, this.valueChanged);
+    // in case pushing a new validator to array, valueChanged could be null
+    const value = this.valueChanged ?? this._rootNode.value;
+    validatorToTree(nodes, value);
+  }
+
+  /**
+   * Write to level3 and level4 bytes to compute merkle root. Note that this is to compute
+   * merkle root and it's different from serialization (which is more compressed).
+   * pub0 + pub1 are at level4, they will be hashed to 1st chunked of level 3
+   * then use 8 chunks of level 3 to compute the root hash.
+   *           reserved     withdr     eff        sla        actElig    act        exit       with
+   * level 3 |----------|----------|----------|----------|----------|----------|----------|----------|
+   *
+   *            pub0       pub1
+   * level4  |----------|----------|
+   *
+   */
+  valueToMerkleBytes(level3: ByteViews, level4: Uint8Array): void {
+    if (level3.uint8Array.byteLength !== 8 * CHUNK_SIZE) {
+      throw Error(`Expected level3 to be 8 * CHUNK_SIZE bytes, got ${level3.uint8Array.byteLength}`);
+    }
+    if (level4.length !== 2 * CHUNK_SIZE) {
+      throw Error(`Expected level4 to be 2 * CHUNK_SIZE bytes, got ${level4.length}`);
+    }
+    // in case pushing a new validator to array, valueChanged could be null
+    const value = this.valueChanged ?? this._rootNode.value;
+    validatorToMerkleBytes(level3, level4, value);
   }
 
   /**
@@ -191,6 +219,44 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
   get name(): string {
     return this.type.typeName;
   }
+}
+
+  /**
+   * Write to level3 and level4 bytes to compute merkle root. Note that this is to compute
+   * merkle root and it's different from serialization (which is more compressed).
+   * pub0 + pub1 are at level4, they will be hashed to 1st chunked of level 3
+   * then use 8 chunks of level 3 to compute the root hash.
+   *           reserved     withdr     eff        sla        actElig    act        exit       with
+   * level 3 |----------|----------|----------|----------|----------|----------|----------|----------|
+   *
+   *            pub0       pub1
+   * level4  |----------|----------|
+   *
+   */
+export function validatorToMerkleBytes(level3: ByteViews, level4: Uint8Array, value: Validator): void {
+  const { pubkey, withdrawalCredentials, effectiveBalance, slashed, activationEligibilityEpoch, activationEpoch, exitEpoch, withdrawableEpoch } = value;
+  const { uint8Array: outputLevel3, dataView } = level3;
+
+  // pubkey = 48 bytes which is 2 * CHUNK_SIZE
+  level4.set(pubkey, 0);
+  let offset = CHUNK_SIZE;
+  outputLevel3.set(withdrawalCredentials, offset);
+  offset += CHUNK_SIZE;
+  // effectiveBalance is UintNum64
+  dataView.setUint32(offset, effectiveBalance & 0xffffffff, true);
+  dataView.setUint32(offset + 4, (effectiveBalance / NUMBER_2_POW_32) & 0xffffffff, true);
+
+  offset += CHUNK_SIZE;
+  // output[offset] = validator.slashed ? 1 : 0;
+  dataView.setUint32(offset, slashed ? 1 : 0, true);
+  offset += CHUNK_SIZE;
+  writeEpochInf(dataView, offset, activationEligibilityEpoch);
+  offset += CHUNK_SIZE;
+  writeEpochInf(dataView, offset, activationEpoch);
+  offset += CHUNK_SIZE;
+  writeEpochInf(dataView, offset, exitEpoch);
+  offset += CHUNK_SIZE;
+  writeEpochInf(dataView, offset, withdrawableEpoch);
 }
 
 /**
@@ -247,5 +313,22 @@ function writeEpochInfToNode(epoch: number, node: Node): void {
   } else {
     node.h0 = epoch & 0xffffffff;
     node.h1 = (epoch / NUMBER_2_POW_32) & 0xffffffff;
+  }
+}
+
+/**
+ * Write an epoch to DataView at offset.
+ */
+function writeEpochInf(dataView: DataView, offset: number, value: number): void {
+  if (value === Infinity) {
+    dataView.setUint32(offset, 0xffffffff, true);
+    offset += UINT32_SIZE;
+    dataView.setUint32(offset, 0xffffffff, true);
+    offset += UINT32_SIZE;
+  } else {
+    dataView.setUint32(offset, value & 0xffffffff, true);
+    offset += UINT32_SIZE;
+    dataView.setUint32(offset, (value / NUMBER_2_POW_32) & 0xffffffff, true);
+    offset += UINT32_SIZE;
   }
 }
