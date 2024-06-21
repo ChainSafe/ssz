@@ -1,26 +1,27 @@
-import {BranchNode, HashComputation, HashComputationGroup, LeafNode, Node, arrayAtIndex, executeHashComputations, getHashComputations, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, digestNLevelUnsafe, getHashComputations, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import { ListCompositeType } from "../../../../src/type/listComposite";
 import { ArrayCompositeTreeViewDUCache } from "../../../../src/viewDU/arrayComposite";
 import { ListCompositeTreeViewDU } from "../../../../src/viewDU/listComposite";
 import { ValidatorNodeStructType } from "../validator";
 import { ValidatorTreeViewDU } from "./validator";
+import { ByteViews } from "../../../../src";
+import { byteArrayToHashObject } from "@chainsafe/as-sha256";
 
 /**
- * Best SIMD implementation is in 512 bits = 64 bytes
- * If not, hashtree will make a loop inside
- * Given sha256 operates on a block of 4 bytes, we can hash 16 inputs at once
- * Each input is 64 bytes
- * TODO - batch: is 8 better?
+ * hashtree has a MAX_SIZE of 1024 bytes = 32 chunks
+ * Given a level3 of validators have 8 chunks, we can hash 4 validators at a time
  */
-const PARALLEL_FACTOR = 16;
+const PARALLEL_FACTOR = 4;
 
 export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNodeStructType> {
-  private batchHashComputations: Array<HashComputation[]>;
-  private singleHashComputations: Array<HashComputation[]>;
-  private batchHashRootNodes: Array<Node>;
-  private singleHashRootNode: Node;
-  private batchLevel3Nodes: Array<Node[]>;
-  private singleLevel3Nodes: Node[];
+  private batchLevel3Bytes: Uint8Array;
+  private batchLevel4Bytes: Uint8Array;
+  // 32 * 8 = 256 bytes each
+  private level3ByteViewsArr: ByteViews[];
+  // 64 bytes each
+  private level4BytesArr: Uint8Array[];
+  private singleLevel3ByteView: ByteViews;
+  private singleLevel4Bytes: Uint8Array;
 
   constructor(
     readonly type: ListCompositeType<ValidatorNodeStructType>,
@@ -28,101 +29,22 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     cache?: ArrayCompositeTreeViewDUCache
   ) {
     super(type, _rootNode, cache);
-
-    this.batchHashComputations = [];
-    this.singleHashComputations = [];
-    this.batchHashRootNodes = [];
-    this.batchLevel3Nodes = [];
-    this.singleLevel3Nodes = [];
+    // each level 3 of validator has 8 chunks, each chunk has 32 bytes
+    this.batchLevel3Bytes = new Uint8Array(PARALLEL_FACTOR * 8 * 32);
+    this.level3ByteViewsArr = [];
     for (let i = 0; i < PARALLEL_FACTOR; i++) {
-      // level 3, validator.pubkey
-      const pubkey0 = LeafNode.fromZero();
-      const pubkey1 = LeafNode.fromZero();
-      const pubkey = new BranchNode(pubkey0, pubkey1);
-      let hc: HashComputation = {src0: pubkey0, src1: pubkey1, dest: pubkey};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 3).push(hc);
-        this.singleLevel3Nodes.push(pubkey);
-      }
-      arrayAtIndex(this.batchHashComputations, 3).push(hc);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(pubkey);
-
-      // level 2
-      const withdrawalCredential = LeafNode.fromZero();
-      const node20 = new BranchNode(pubkey, withdrawalCredential);
-      hc = {src0: pubkey, src1: withdrawalCredential, dest: node20};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 2).push(hc);
-        this.singleLevel3Nodes.push(withdrawalCredential);
-      }
-      arrayAtIndex(this.batchHashComputations, 2).push(hc);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(withdrawalCredential);
-      // effectiveBalance, slashed
-      const effectiveBalance = LeafNode.fromZero();
-      const slashed = LeafNode.fromZero();
-      const node21 = new BranchNode(effectiveBalance, slashed);
-      hc = {src0: effectiveBalance, src1: slashed, dest: node21};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 2).push(hc);
-        this.singleLevel3Nodes.push(effectiveBalance);
-        this.singleLevel3Nodes.push(slashed);
-      }
-      arrayAtIndex(this.batchHashComputations, 2).push(hc);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(effectiveBalance);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(slashed);
-      // activationEligibilityEpoch, activationEpoch
-      const activationEligibilityEpoch = LeafNode.fromZero();
-      const activationEpoch = LeafNode.fromZero();
-      const node22 = new BranchNode(activationEligibilityEpoch, activationEpoch);
-      hc = {src0: activationEligibilityEpoch, src1: activationEpoch, dest: node22};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 2).push(hc);
-        this.singleLevel3Nodes.push(activationEligibilityEpoch);
-        this.singleLevel3Nodes.push(activationEpoch);
-      }
-      arrayAtIndex(this.batchHashComputations, 2).push(hc);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(activationEligibilityEpoch);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(activationEpoch);
-      // exitEpoch, withdrawableEpoch
-      const exitEpoch = LeafNode.fromZero();
-      const withdrawableEpoch = LeafNode.fromZero();
-      const node23 = new BranchNode(exitEpoch, withdrawableEpoch);
-      hc = {src0: exitEpoch, src1: withdrawableEpoch, dest: node23};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 2).push(hc);
-        this.singleLevel3Nodes.push(exitEpoch);
-        this.singleLevel3Nodes.push(withdrawableEpoch);
-      }
-      arrayAtIndex(this.batchHashComputations, 2).push(hc);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(exitEpoch);
-      arrayAtIndex(this.batchLevel3Nodes, i).push(withdrawableEpoch);
-
-      // level 1
-      const node10 = new BranchNode(node20, node21);
-      hc = {src0: node20, src1: node21, dest: node10};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 1).push(hc);
-      }
-      arrayAtIndex(this.batchHashComputations, 1).push(hc);
-      const node11 = new BranchNode(node22, node23);
-      hc = {src0: node22, src1: node23, dest: node11};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 1).push(hc);
-      }
-      arrayAtIndex(this.batchHashComputations, 1).push(hc);
-
-      // level 0
-      const node00 = new BranchNode(node10, node11);
-      hc = {src0: node10, src1: node11, dest: node00};
-      if (i === 0) {
-        arrayAtIndex(this.singleHashComputations, 0).push(hc);
-        // this.singleHashRootNode = node00;
-      }
-      arrayAtIndex(this.batchHashComputations, 0).push(hc);
-      this.batchHashRootNodes.push(node00);
+      const uint8Array = this.batchLevel3Bytes.subarray(i * 8 * 32, (i + 1) * 8 * 32);
+      const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
+      this.level3ByteViewsArr.push({uint8Array, dataView});
     }
-
-    this.singleHashRootNode = this.batchHashRootNodes[0];
+    this.singleLevel3ByteView = this.level3ByteViewsArr[0];
+    // each level 4 of validator has 2 chunks for pubkey, each chunk has 32 bytes
+    this.batchLevel4Bytes = new Uint8Array(PARALLEL_FACTOR * 2 * 32);
+    this.level4BytesArr = [];
+    for (let i = 0; i < PARALLEL_FACTOR; i++) {
+      this.level4BytesArr.push(this.batchLevel4Bytes.subarray(i * 2 * 32, (i + 1) * 2 * 32));
+    }
+    this.singleLevel4Bytes = this.level4BytesArr[0];
   }
 
   commit(hashComps: HashComputationGroup | null = null): void {
@@ -142,22 +64,49 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     // commit every 16 validators in batch
     for (let i = 0; i < endBatch; i++) {
       const indexInBatch = i % PARALLEL_FACTOR;
-      viewsChanged[i].valueToTree(this.batchLevel3Nodes[indexInBatch]);
+      viewsChanged[i].valueToMerkleBytes(this.level3ByteViewsArr[indexInBatch], this.level4BytesArr[indexInBatch]);
+
       if (indexInBatch === PARALLEL_FACTOR - 1) {
-        executeHashComputations(this.batchHashComputations);
+        // hash level 4
+        const pubkeyRoots = digestNLevelUnsafe(this.batchLevel4Bytes, 1);
+        if (pubkeyRoots.length !== PARALLEL_FACTOR * 32) {
+          throw new Error(`Invalid pubkeyRoots length, expect ${PARALLEL_FACTOR * 32}, got ${pubkeyRoots.length}`);
+        }
+        for (let j = 0; j < PARALLEL_FACTOR; j++) {
+          this.level3ByteViewsArr[j].uint8Array.set(pubkeyRoots.subarray(j * 32, (j + 1) * 32), 0);
+        }
+        const validatorRoots = digestNLevelUnsafe(this.batchLevel3Bytes, 3);
+        if (validatorRoots.length !== PARALLEL_FACTOR * 32) {
+          throw new Error(`Invalid validatorRoots length, expect ${PARALLEL_FACTOR * 32}, got ${validatorRoots.length}`);
+        }
         // commit all validators in this batch
         for (let j = PARALLEL_FACTOR - 1; j >= 0; j--) {
-          viewsChanged[i - j].commitToHashObject(this.batchHashRootNodes[PARALLEL_FACTOR - 1 - j]);
-          nodesChanged.push({index: i - j, node: viewsChanged[i - j].node});
+          const viewIndex = i - j;
+          const indexInBatch = viewIndex % PARALLEL_FACTOR;
+          const hashObject = byteArrayToHashObject(validatorRoots.subarray(indexInBatch * 32, (indexInBatch + 1) * 32));
+          viewsChanged[viewIndex].commitToHashObject(hashObject);
+          nodesChanged.push({index: viewIndex, node: viewsChanged[viewIndex].node});
         }
       }
     }
 
-    // commit the remaining validators one by one
+    // commit the remaining validators, we can do in batch too but don't want to create new Uint8Array views
+    // it's not much different to commit one by one
     for (let i = endBatch; i < viewsChanged.length; i++) {
-      viewsChanged[i].valueToTree(this.singleLevel3Nodes);
-      executeHashComputations(this.singleHashComputations);
-      viewsChanged[i].commitToHashObject(this.singleHashRootNode);
+      viewsChanged[i].valueToMerkleBytes(this.singleLevel3ByteView, this.singleLevel4Bytes);
+      // level 4 hash
+      const pubkeyRoot = digestNLevelUnsafe(this.singleLevel4Bytes, 1);
+      if (pubkeyRoot.length !== 32) {
+        throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
+      }
+      this.singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
+      // level 3 hash
+      const validatorRoot = digestNLevelUnsafe(this.singleLevel3ByteView.uint8Array, 3);
+      if (validatorRoot.length !== 32) {
+        throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
+      }
+      const hashObject = byteArrayToHashObject(validatorRoot);
+      viewsChanged[i].commitToHashObject(hashObject);
       nodesChanged.push({index: i, node: viewsChanged[i].node});
     }
 

@@ -9,6 +9,9 @@ export const hasher: Hasher = {
   name: "noble",
   digest64,
   digest64HashObjects: (a, b) => uint8ArrayToHashObject(digest64(hashObjectToUint8Array(a), hashObjectToUint8Array(b))),
+  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
+    throw new Error("Not implemented");
+  },
   batchHashObjects: (inputs: HashObject[]) => {
     // noble does not support batch hash
     if (inputs.length === 0) {
