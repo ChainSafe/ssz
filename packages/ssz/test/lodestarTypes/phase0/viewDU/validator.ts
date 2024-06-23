@@ -201,12 +201,9 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
    * The HashObject is computed by parent so that we don't need to create a tree from scratch.
    */
   commitToHashObject(ho: HashObject): void {
-    if (this.valueChanged === null) {
-      return;
-    }
-
     const oldRoot = this._rootNode;
-    const value = this.valueChanged;
+    // in case pushing a new validator to array, valueChanged could be null
+    const value = this.valueChanged ?? this._rootNode.value;
     this._rootNode = new BranchNodeStruct(oldRoot["valueToNode"], value);
     this._rootNode.applyHash(ho);
     this.valueChanged = null;
