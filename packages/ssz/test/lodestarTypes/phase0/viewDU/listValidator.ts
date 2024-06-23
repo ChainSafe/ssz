@@ -57,14 +57,16 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     }
 
     // TODO - batch: remove this type cast
-    const viewsChanged = Array.from(this.viewsChanged.values()) as ValidatorTreeViewDU[];
-    const endBatch = viewsChanged.length - (viewsChanged.length % PARALLEL_FACTOR);
+    const indicesChanged = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
+    const endBatch = indicesChanged.length - (indicesChanged.length % PARALLEL_FACTOR);
     // nodesChanged is sorted by index
     const nodesChanged: {index: number; node: Node}[] = [];
     // commit every 16 validators in batch
     for (let i = 0; i < endBatch; i++) {
       const indexInBatch = i % PARALLEL_FACTOR;
-      viewsChanged[i].valueToMerkleBytes(this.level3ByteViewsArr[indexInBatch], this.level4BytesArr[indexInBatch]);
+      const viewIndex = indicesChanged[i];
+      const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
+      viewChanged.valueToMerkleBytes(this.level3ByteViewsArr[indexInBatch], this.level4BytesArr[indexInBatch]);
 
       if (indexInBatch === PARALLEL_FACTOR - 1) {
         // hash level 4
@@ -81,19 +83,24 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
         }
         // commit all validators in this batch
         for (let j = PARALLEL_FACTOR - 1; j >= 0; j--) {
-          const viewIndex = i - j;
-          const indexInBatch = viewIndex % PARALLEL_FACTOR;
+          const viewIndex = indicesChanged[i - j];
+          const indexInBatch = (i - j) % PARALLEL_FACTOR;
           const hashObject = byteArrayToHashObject(validatorRoots.subarray(indexInBatch * 32, (indexInBatch + 1) * 32));
-          viewsChanged[viewIndex].commitToHashObject(hashObject);
-          nodesChanged.push({index: viewIndex, node: viewsChanged[viewIndex].node});
+          const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
+          viewChanged.commitToHashObject(hashObject);
+          nodesChanged.push({index: viewIndex, node: viewChanged.node});
+          // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+          this.nodes[viewIndex] = viewChanged.node;
         }
       }
     }
 
     // commit the remaining validators, we can do in batch too but don't want to create new Uint8Array views
     // it's not much different to commit one by one
-    for (let i = endBatch; i < viewsChanged.length; i++) {
-      viewsChanged[i].valueToMerkleBytes(this.singleLevel3ByteView, this.singleLevel4Bytes);
+    for (let i = endBatch; i < indicesChanged.length; i++) {
+      const viewIndex = indicesChanged[i];
+      const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
+      viewChanged.valueToMerkleBytes(this.singleLevel3ByteView, this.singleLevel4Bytes);
       // level 4 hash
       const pubkeyRoot = digestNLevelUnsafe(this.singleLevel4Bytes, 1);
       if (pubkeyRoot.length !== 32) {
@@ -106,8 +113,10 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
         throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
       }
       const hashObject = byteArrayToHashObject(validatorRoot);
-      viewsChanged[i].commitToHashObject(hashObject);
-      nodesChanged.push({index: i, node: viewsChanged[i].node});
+      viewChanged.commitToHashObject(hashObject);
+      nodesChanged.push({index: viewIndex, node: viewChanged.node});
+      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+      this.nodes[viewIndex] = viewChanged.node;
     }
 
     // do the remaining commit step the same to parent (ArrayCompositeTreeViewDU)
