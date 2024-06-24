@@ -6,7 +6,7 @@ import { ValidatorType } from "../validator";
 import {
   Node,
   BranchNode,
-  HashComputationGroup,
+  digestNLevelUnsafe,
 } from "@chainsafe/persistent-merkle-tree";
 import { ByteViews } from "../../../../src/type/abstract";
 type Validator = {
@@ -27,6 +27,12 @@ const NUMBER_2_POW_32 = 2 ** 32;
  */
 const UINT32_SIZE = 4;
 const CHUNK_SIZE = 32;
+
+// validator has 8 nodes at level 3
+const singleLevel3Bytes = new Uint8Array(8 * 32);
+const singleLevel3ByteView = {uint8Array: singleLevel3Bytes, dataView: new DataView(singleLevel3Bytes.buffer)};
+// validator has 2 nodes at level 4 (pubkey has 48 bytes = 2 * nodes)
+const singleLevel4Bytes = new Uint8Array(2 * 32);
 
 /**
  * A specific ViewDU for validator designed to be efficient to batch hash and efficient to create tree
@@ -50,18 +56,28 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
   }
 
   commit(): void {
-    if (this.valueChanged === null) {
-      // this does not suppor batch hash
-      this._rootNode.root;
-      return;
+    if (this.valueChanged !== null) {
+      const value = this.valueChanged;
+      this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
     }
 
-    const value = this.valueChanged;
+    if (this._rootNode.h0 === null) {
+      this.valueToMerkleBytes(singleLevel3ByteView, singleLevel4Bytes);
+      // level 4 hash
+      const pubkeyRoot = digestNLevelUnsafe(singleLevel4Bytes, 1);
+      if (pubkeyRoot.length !== 32) {
+        throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
+      }
+      singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
+      // level 3 hash
+      const validatorRoot = digestNLevelUnsafe(singleLevel3ByteView.uint8Array, 3);
+      if (validatorRoot.length !== 32) {
+        throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
+      }
+      const hashObject = byteArrayToHashObject(validatorRoot);
+      this._rootNode.applyHash(hashObject);
+    }
     this.valueChanged = null;
-
-    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
-    // this does not suppor batch hash
-    this._rootNode.root;
   }
 
   get pubkey(): Uint8Array {
@@ -203,10 +219,9 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
    * The HashObject is computed by parent so that we don't need to create a tree from scratch.
    */
   commitToHashObject(ho: HashObject): void {
-    const oldRoot = this._rootNode;
     // in case pushing a new validator to array, valueChanged could be null
     const value = this.valueChanged ?? this._rootNode.value;
-    this._rootNode = new BranchNodeStruct(oldRoot["valueToNode"], value);
+    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
     this._rootNode.applyHash(ho);
     this.valueChanged = null;
   }
