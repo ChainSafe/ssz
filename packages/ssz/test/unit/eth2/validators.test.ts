@@ -117,8 +117,9 @@ describe("Container with BranchNodeStruct", function () {
  * 3      pub         with         eff         sla        act         act         exit        with
  *      /     \
  * 4 pub0      pub1
+ * This does not suport batch hash
  **/
-describe("getHashComputations BranchNodeStruct", function () {
+describe.skip("getHashComputations BranchNodeStruct", function () {
   const testCases: {name: string; fn: (validator: ValueOf<typeof ValidatorNodeStruct>) => void}[] = [
     {name: "modify pubkey", fn: (validator) => (validator.pubkey = Buffer.alloc(48, 0x01))},
     {

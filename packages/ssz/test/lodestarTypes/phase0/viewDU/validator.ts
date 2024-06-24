@@ -49,17 +49,19 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
     return;
   }
 
-  commit(hashComps: HashComputationGroup | null = null): void {
-    if (this.valueChanged !== null) {
-      // TODO - batch: throw error when testing, should be committed by parent
-      const value = this.valueChanged;
-      this.valueChanged = null;
-      this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
+  commit(): void {
+    if (this.valueChanged === null) {
+      // this does not suppor batch hash
+      this._rootNode.root;
+      return;
     }
 
-    if (hashComps !== null) {
-      this._rootNode.getHashComputations(hashComps);
-    }
+    const value = this.valueChanged;
+    this.valueChanged = null;
+
+    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
+    // this does not suppor batch hash
+    this._rootNode.root;
   }
 
   get pubkey(): Uint8Array {
