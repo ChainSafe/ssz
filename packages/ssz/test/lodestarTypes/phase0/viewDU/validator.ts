@@ -89,7 +89,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
       this.valueChanged = this.type.clone(this._rootNode.value);
     }
 
-    this.valueChanged.pubkey = value;
+    this.valueChanged.pubkey = value.slice();
   }
 
   get withdrawalCredentials(): Uint8Array {
@@ -101,7 +101,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
       this.valueChanged = this.type.clone(this._rootNode.value);
     }
 
-    this.valueChanged.withdrawalCredentials = value;
+    this.valueChanged.withdrawalCredentials = value.slice();
   }
 
   get effectiveBalance(): number {
