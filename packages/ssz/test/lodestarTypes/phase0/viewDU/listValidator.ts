@@ -23,14 +23,12 @@ for (let i = 0; i < PARALLEL_FACTOR; i++) {
   const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
   level3ByteViewsArr.push({uint8Array, dataView});
 }
-const singleLevel3ByteView = level3ByteViewsArr[0];
 // each level 4 of validator has 2 chunks for pubkey, each chunk has 32 bytes
 const batchLevel4Bytes = new Uint8Array(PARALLEL_FACTOR * 2 * 32);
 const level4BytesArr: Uint8Array[] = [];
 for (let i = 0; i < PARALLEL_FACTOR; i++) {
   level4BytesArr.push(batchLevel4Bytes.subarray(i * 2 * 32, (i + 1) * 2 * 32));
 }
-const singleLevel4Bytes = level4BytesArr[0];
 
 export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNodeStructType> {
   constructor(
@@ -94,20 +92,7 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     for (let i = endBatch; i < indicesChanged.length; i++) {
       const viewIndex = indicesChanged[i];
       const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
-      viewChanged.valueToMerkleBytes(singleLevel3ByteView, singleLevel4Bytes);
-      // level 4 hash
-      const pubkeyRoot = digestNLevelUnsafe(singleLevel4Bytes, 1);
-      if (pubkeyRoot.length !== 32) {
-        throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
-      }
-      singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
-      // level 3 hash
-      const validatorRoot = digestNLevelUnsafe(singleLevel3ByteView.uint8Array, 3);
-      if (validatorRoot.length !== 32) {
-        throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
-      }
-      const hashObject = byteArrayToHashObject(validatorRoot);
-      viewChanged.commitToHashObject(hashObject);
+      viewChanged.commit();
       nodesChanged.push({index: viewIndex, node: viewChanged.node});
       // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
       this.nodes[viewIndex] = viewChanged.node;
