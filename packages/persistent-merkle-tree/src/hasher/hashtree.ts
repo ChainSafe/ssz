@@ -42,6 +42,7 @@ export const hasher: Hasher = {
   // digest multiple of 8 chunks = 256 bytes
   // the result is multiple of 1 chunk = 32 bytes
   // this is the same to hashTreeRoot() of multiple validators
+  // TODO - batch: data, offset, length to avoid subarray call
   digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
     let inputLength = data.length;
     const bytesInBatch = Math.pow(2, nLevel) * 32;
