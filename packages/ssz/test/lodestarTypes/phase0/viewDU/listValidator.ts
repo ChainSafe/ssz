@@ -1,4 +1,4 @@
-import {HashComputationGroup, Node, digestNLevelUnsafe, getHashComputations, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, digestNLevelUnsafe, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import { ListCompositeType } from "../../../../src/type/listComposite";
 import { ArrayCompositeTreeViewDUCache } from "../../../../src/viewDU/arrayComposite";
 import { ListCompositeTreeViewDU } from "../../../../src/viewDU/listComposite";
@@ -43,7 +43,8 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.viewsChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {
-        getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+        // not possible to get HashComputations due to BranchNodeStruct
+        this._rootNode.root;
       }
       return;
     }
@@ -119,7 +120,9 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     );
 
     if (!isOldRootHashed && hashComps !== null) {
-      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+      // should never happen, handle just in case
+      // not possible to get HashComputations due to BranchNodeStruct
+      this._rootNode.root;
     }
 
     this.viewsChanged.clear();
