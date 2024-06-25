@@ -1,9 +1,10 @@
-import { BranchNode, LeafNode, Node, subtreeFillToContents } from "@chainsafe/persistent-merkle-tree";
+import { BranchNode, LeafNode, Node, digestNLevelUnsafe, subtreeFillToContents } from "@chainsafe/persistent-merkle-tree";
 import {ContainerType} from "../../../../../ssz/src/type/container";
 import {ssz} from "../../../lodestarTypes";
 import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
 import {ValidatorTreeViewDU} from "../../../lodestarTypes/phase0/viewDU/validator";
 import { expect } from "chai";
+import { byteArrayToHashObject } from "@chainsafe/as-sha256";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 
@@ -46,13 +47,26 @@ describe("Validator ssz types", function () {
     const viewDU = ssz.phase0.Validator.toViewDU(validators[0]) as ValidatorTreeViewDU;
     viewDU.effectiveBalance = validators[1].effectiveBalance;
     viewDU.slashed = validators[1].slashed;
-    const nodes: Node[] = Array.from({length: 8}, () => LeafNode.fromZero());
-    nodes[0] = new BranchNode(LeafNode.fromZero(), LeafNode.fromZero());
-    viewDU.valueToTree(nodes);
-    const depth = 3;
-    const rootNode = subtreeFillToContents([...nodes], depth);
-    rootNode.root;
-    viewDU.commitToHashObject(rootNode);
+    // same logic to viewDU.commit();
+    // validator has 8 nodes at level 3
+    const singleLevel3Bytes = new Uint8Array(8 * 32);
+    const singleLevel3ByteView = {uint8Array: singleLevel3Bytes, dataView: new DataView(singleLevel3Bytes.buffer)};
+    // validator has 2 nodes at level 4 (pubkey has 48 bytes = 2 * nodes)
+    const singleLevel4Bytes = new Uint8Array(2 * 32);
+    viewDU.valueToMerkleBytes(singleLevel3ByteView, singleLevel4Bytes);
+    // level 4 hash
+    const pubkeyRoot = digestNLevelUnsafe(singleLevel4Bytes, 1);
+    if (pubkeyRoot.length !== 32) {
+      throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
+    }
+    singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
+    // level 3 hash
+    const validatorRoot = digestNLevelUnsafe(singleLevel3ByteView.uint8Array, 3);
+    if (validatorRoot.length !== 32) {
+      throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
+    }
+    const hashObject = byteArrayToHashObject(validatorRoot);
+    viewDU.commitToHashObject(hashObject);
     const expectedRoot = ValidatorContainer.hashTreeRoot(validators[1]);
     expect(viewDU.node.root).to.be.deep.equal(expectedRoot);
     expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
