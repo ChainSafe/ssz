@@ -56,8 +56,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
 
   commit(): void {
     if (this.valueChanged !== null) {
-      const value = this.valueChanged;
-      this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
+      this._rootNode = this.type.value_toTree(this.valueChanged) as BranchNodeStruct<Validator>;
     }
 
     if (this._rootNode.h0 === null) {
@@ -200,12 +199,13 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
   }
 
   /**
-   * The HashObject is computed by parent so that we don't need to create a tree from scratch.
+   * Batch hash flow: parent will compute hash and call this function
    */
   commitToHashObject(ho: HashObject): void {
-    // in case pushing a new validator to array, valueChanged could be null
-    const value = this.valueChanged ?? this._rootNode.value;
-    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<Validator>;
+    // (this.valueChanged === null means this viewDU is new
+    if (this.valueChanged !== null) {
+      this._rootNode = this.type.value_toTree(this.valueChanged) as BranchNodeStruct<Validator>;
+    }
     this._rootNode.applyHash(ho);
     this.valueChanged = null;
   }
