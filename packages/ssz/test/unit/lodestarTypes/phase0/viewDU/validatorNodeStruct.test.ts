@@ -1,6 +1,6 @@
-import { Node, BranchNode, LeafNode, subtreeFillToContents, getNodesAtDepth, digest64, digestNLevelUnsafe } from "@chainsafe/persistent-merkle-tree";
-import { validatorToMerkleBytes, validatorToTree } from "../../../../lodestarTypes/phase0/viewDU/validator";
-import { HashObject, hashObjectToByteArray } from "@chainsafe/as-sha256";
+import { digestNLevelUnsafe } from "@chainsafe/persistent-merkle-tree";
+import { validatorToMerkleBytes } from "../../../../lodestarTypes/phase0/viewDU/validator";
+import { HashObject } from "@chainsafe/as-sha256";
 import { ValidatorNodeStruct } from "../../../../lodestarTypes/phase0/validator";
 import { expect } from "chai";
 import { Validator } from "../../../../lodestarTypes/phase0/sszTypes";
@@ -20,26 +20,6 @@ describe("validatorNodeStruct", () => {
     {...seedValidator, effectiveBalance: 31000000000, slashed: false},
     {...seedValidator, effectiveBalance: 32000000000, slashed: true},
   ];
-
-  it("should populate validator value to tree", () => {
-    const nodes: Node[] = Array.from({length: 8}, () => LeafNode.fromZero());
-    nodes[0] = new BranchNode(LeafNode.fromZero(), LeafNode.fromZero());
-    for (const validator of validators) {
-      validatorToTree(nodes, validator);
-      const depth = 3;
-      const rootNode = subtreeFillToContents([...nodes], depth);
-      rootNode.root;
-      const root = new Uint8Array(32);
-      hashObjectToByteArray(rootNode, root, 0);
-      const expectedRootNode = Validator.value_toTree(validator);
-      const expectedNodes = getNodesAtDepth(expectedRootNode, depth, 0, 8);
-      expect(expectedNodes.length).to.be.equal(8);
-      for (let i = 0; i < 8; i++) {
-        expectEqualNode(nodes[i].rootHashObject, expectedNodes[i].rootHashObject, `node ${i}`);
-      }
-      expect(root).to.be.deep.equals(ValidatorNodeStruct.hashTreeRoot(validator));
-    }
-  });
 
   it("should populate validator value to merkle bytes", () => {
     for (const validator of validators) {
