@@ -16,7 +16,6 @@ import {
   ATTESTATION_SUBNET_COUNT,
 } from "../params";
 import * as primitiveSsz from "../primitive/sszTypes";
-import {ListValidatorType} from "./listValidator";
 import {ValidatorNodeStruct} from "./validator";
 
 export {ValidatorNodeStruct};
@@ -252,8 +251,7 @@ export const ValidatorContainer = new ContainerType(
 export const Validator = ValidatorNodeStruct;
 
 // Export as stand-alone for direct tree optimizations
-// export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
-export const Validators = new ListValidatorType(VALIDATOR_REGISTRY_LIMIT);
+export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
 export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 export const RandaoMixes = new VectorCompositeType(Bytes32, EPOCHS_PER_HISTORICAL_VECTOR);
 export const Slashings = new VectorBasicType(Gwei, EPOCHS_PER_SLASHINGS_VECTOR);
