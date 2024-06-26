@@ -5,6 +5,7 @@ import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {linspace} from "../utils/misc";
 import {buildComparisonTrees} from "../utils/tree";
+import {LeafNode, subtreeFillToContents} from "../../src";
 
 const hashers = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
@@ -70,6 +71,25 @@ describe("hashers", function () {
       });
     }
   });
+});
+
+describe("hasher.digestNLevelUnsafe", function () {
+  const hashers = [hashtreeHasher, asSha256Hasher];
+  for (const hasher of hashers) {
+    const numValidators = [1, 2, 3, 4];
+    for (const numValidator of numValidators) {
+      it (`${hasher.name} digestNLevelUnsafe ${numValidator} validators = ${8 * numValidator} chunk(s)`, () => {
+        const nodes = Array.from({length: 8 * numValidator}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i + numValidator)));
+        const hashInput = Buffer.concat(nodes.map((node) => node.root));
+        // slice() because output is unsafe
+        const hashOutput = hasher.digestNLevelUnsafe(hashInput, 3).slice();
+        for (let i = 0; i < numValidator; i++) {
+          const root = subtreeFillToContents(nodes.slice(i * 8, (i + 1) * 8), 3).root;
+          expectEqualHex(hashOutput.subarray(i * 32, (i + 1) * 32), root);
+        }
+      });
+    }
+  }
 });
 
 // TODO - batch: test more methods
