@@ -1,4 +1,4 @@
-import {HashComputationGroup, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
 
@@ -49,21 +49,6 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
    */
   hashTreeRoot(): Uint8Array {
-    // remember not to do a commit() before calling this function
-    // TODO - batch: should we a flag to signal a batch hash or not?
-    // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
-    // if consumers don't want to batch hash, just go with `this.node.root` similar to what View.hashTreeRoot() does
-    const hashComps: HashComputationGroup = {
-      byLevel: [],
-      offset: 0,
-    };
-    this.commit(hashComps);
-    executeHashComputations(hashComps.byLevel);
-
-    // This makes sure the root node is computed by batch
-    if (this.node.h0 === null) {
-      throw Error("Root is not computed by batch");
-    }
     return this.node.root;
   }
 

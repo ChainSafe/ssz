@@ -1,7 +1,5 @@
 import {Hasher} from "./types";
-// import {hasher as nobleHasher} from "./noble";
-// import {hasher as csHasher} from "./as-sha256";
-import {hasher as hashtreeHasher} from "./hashtree";
+import {hasher as csHasher} from "./as-sha256";
 
 export * from "./types";
 export * from "./util";
@@ -11,12 +9,8 @@ export * from "./util";
  * Use `as-sha256` hasher for batch hashing using SIMD.
  * TODO - batch: Use `hashtree` hasher for 20x speedup
  */
-// export let hasher: Hasher = nobleHasher;
-// For testing purposes, we use the as-sha256 hasher
-// export let hasher: Hasher = csHasher;
-
 // For testing purposes, we use the hashtree hasher
-export let hasher: Hasher = hashtreeHasher;
+export let hasher: Hasher = csHasher;
 
 /**
  * Set the hasher to be used across the SSZ codebase
