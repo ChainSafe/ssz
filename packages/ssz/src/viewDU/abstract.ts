@@ -49,6 +49,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
    */
   hashTreeRoot(): Uint8Array {
+    this.commit();
     return this.node.root;
   }
 
