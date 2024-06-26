@@ -50,8 +50,8 @@
     "@noble/hashes": "^1.3.0"
   },
   "peerDependencies": {
-    "@chainsafe/hashtree-linux-x64-gnu": "1.0.0",
-    "@chainsafe/hashtree-linux-arm64-gnu": "1.0.0",
-    "@chainsafe/hashtree-darwin-arm64": "1.0.0"
+    "@chainsafe/hashtree-linux-x64-gnu": "1.0.1",
+    "@chainsafe/hashtree-linux-arm64-gnu": "1.0.1",
+    "@chainsafe/hashtree-darwin-arm64": "1.0.1"
   }
 }

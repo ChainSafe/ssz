@@ -235,6 +235,35 @@ export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   return [output0, output1, output2, output3];
 }
 
+/**
+ * Hash an input into preallocated input using batch if possible.
+ */
+export function hashInto(input: Uint8Array, output: Uint8Array): void {
+  if (input.length % 64 !== 0) {
+    throw new Error(`Invalid input length ${input.length}`);
+  }
+  if (input.length !== output.length * 2) {
+    throw new Error(`Invalid output length ${output.length}`);
+  }
+  // for every 64 x 4 = 256 bytes, do the batch hash
+  const endBatch = Math.floor(input.length / 256);
+  for (let i = 0; i < endBatch; i++) {
+    inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
+    ctx.batchHash4UintArray64s(wasmOutputValue);
+    output.set(outputUint8Array.subarray(0, 128), i * 128);
+  }
+
+  const numHashed = endBatch * 4;
+  const remainingHash = Math.floor((input.length % 256) / 64);
+  const inputOffset = numHashed * 64;
+  const outputOffset = numHashed * 32;
+  for (let i = 0; i < remainingHash; i++) {
+    inputUint8Array.set(input.subarray(inputOffset + i * 64, inputOffset + (i + 1) * 64), 0);
+    ctx.digest64(wasmInputValue, wasmOutputValue);
+    output.set(outputUint8Array.subarray(0, 32), outputOffset + i * 32);
+  }
+}
+
 function update(data: Uint8Array): void {
   const INPUT_LENGTH = ctx.INPUT_LENGTH;
   if (data.length > INPUT_LENGTH) {

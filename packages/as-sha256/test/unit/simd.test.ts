@@ -44,4 +44,23 @@ describe("Test SIMD implementation of as-sha256", () => {
       expect(output).to.be.deep.equal(expectedOutput, "incorrect batchHash4UintArray64s result " + i);
     }
   });
+
+  const numHashes = [4, 5, 6, 7];
+  for (const numHash of numHashes) {
+    it(`hashInto ${numHash} hashes`, () => {
+      const inputs = Array.from({length: numHash}, () => crypto.randomBytes(64));
+      const input = new Uint8Array(numHash * 64);
+      for (let i = 0; i < numHash; i++) {
+        input.set(inputs[i], i * 64);
+      }
+      const output = new Uint8Array(numHash * 32);
+
+      sha256.hashInto(input, output);
+
+      const expectedOutputs = Array.from({length: numHash}, (_, i) => sha256.digest64(inputs[i]));
+      for (let i = 0; i < numHash; i++) {
+        expect(output.subarray(i * 32, (i + 1) * 32)).to.be.deep.equal(expectedOutputs[i]);
+      }
+    });
+  }
 });
