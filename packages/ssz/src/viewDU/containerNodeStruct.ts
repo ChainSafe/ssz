@@ -29,8 +29,6 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 
   commit(): void {
     if (this.valueChanged === null) {
-      // this does not suppor batch hash
-      this._rootNode.root;
       return;
     }
 
@@ -38,8 +36,6 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     this.valueChanged = null;
 
     this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
-    // this does not suppor batch hash
-    this._rootNode.root;
   }
 
   protected clearCache(): void {

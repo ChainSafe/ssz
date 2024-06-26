@@ -1,4 +1,3 @@
-import {HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
 
@@ -20,7 +19,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
   /**
    * Applies any deferred updates that may be pending in this ViewDU instance and updates its internal `Node`.
    */
-  abstract commit(hashComps?: HashComputationGroup | null): void;
+  abstract commit(): void;
 
   /**
    * Returns arbitrary data that is useful for this ViewDU instance to optimize data manipulation. This caches MUST
@@ -50,13 +49,12 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    */
   hashTreeRoot(): Uint8Array {
     this.commit();
-    return this.node.root;
+    return super.hashTreeRoot();
   }
 
   /**
    * Serialize view to binary data.
    * Commits any pending changes before computing the root.
-   * Warning: this calls commit() which evict all pending HashComputations. Consider calling hashTreeRoot() before this
    */
   serialize(): Uint8Array {
     this.commit();

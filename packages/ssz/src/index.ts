@@ -26,10 +26,8 @@ export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract";
 export {BasicType, isBasicType} from "./type/basic";
 export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite";
 export {TreeView} from "./view/abstract";
-export {ValueOfFields, ContainerTypeGeneric} from "./view/container";
+export {ValueOfFields} from "./view/container";
 export {TreeViewDU} from "./viewDU/abstract";
-export {ListCompositeTreeViewDU} from "./viewDU/listComposite";
-export {ArrayCompositeTreeViewDUCache} from "./viewDU/arrayComposite";
 
 // Values
 export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
@@ -38,6 +36,3 @@ export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
 
 export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";
-
-// others
-export {BranchNodeStruct} from "./branchNodeStruct";

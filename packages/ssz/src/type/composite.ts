@@ -3,7 +3,6 @@ import {
   createProof,
   getNode,
   Gindex,
-  HashComputationGroup,
   Node,
   Proof,
   ProofType,
@@ -127,7 +126,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   /** INTERNAL METHOD: Given a Tree View, returns a `Node` with all its updated data */
   abstract commitView(view: TV): Node;
   /** INTERNAL METHOD: Given a Deferred Update Tree View returns a `Node` with all its updated data */
-  abstract commitViewDU(view: TVDU, hashComps?: HashComputationGroup | null): Node;
+  abstract commitViewDU(view: TVDU): Node;
   /** INTERNAL METHOD: Return the cache of a Deferred Update Tree View. May return `undefined` if this ViewDU has no cache */
   abstract cacheOfViewDU(view: TVDU): unknown;
 

@@ -133,12 +133,6 @@ export class UintNumberType extends BasicType<number> {
     }
   }
 
-  value_toTree(value: number): Node {
-    const node = LeafNode.fromZero();
-    node.setUint(this.byteLength, 0, value, this.clipInfinity);
-    return node;
-  }
-
   tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const value = (node as LeafNode).getUint(this.byteLength, 0, this.clipInfinity);
     this.value_serializeToBytes(output, offset, value);

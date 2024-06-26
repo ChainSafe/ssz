@@ -1,4 +1,4 @@
-import {HashComputationGroup, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "./abstract";
 import {BasicType} from "./basic";
 import {ByteViews} from "./composite";
@@ -93,8 +93,8 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     return view.node;
   }
 
-  commitViewDU(view: ListBasicTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
-    view.commit(hashComps);
+  commitViewDU(view: ListBasicTreeViewDU<ElementType>): Node {
+    view.commit();
     return view.node;
   }
 
@@ -144,18 +144,8 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     return node.left;
   }
 
-  tree_chunksNodeOffset(): number {
-    // one more level for length, see setChunksNode below
-    return 1;
-  }
-
-  tree_setChunksNode(
-    rootNode: Node,
-    chunksNode: Node,
-    newLength: number | null,
-    hashComps: HashComputationGroup | null
-  ): Node {
-    return setChunksNode(rootNode, chunksNode, newLength, hashComps);
+  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
+    return setChunksNode(rootNode, chunksNode, newLength);
   }
 
   // Merkleization
