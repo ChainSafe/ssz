@@ -46,7 +46,7 @@
   "homepage": "https://github.com/ChainSafe/persistent-merkle-tree#readme",
   "dependencies": {
     "@chainsafe/as-sha256": "0.4.2",
-    "@chainsafe/hashtree": "1.0.0",
+    "@chainsafe/hashtree": "1.0.1",
     "@noble/hashes": "^1.3.0"
   },
   "peerDependencies": {
