@@ -1,10 +1,9 @@
-import { BranchNode, LeafNode, Node, digestNLevelUnsafe, subtreeFillToContents } from "@chainsafe/persistent-merkle-tree";
+import {digestNLevelUnsafe} from "@chainsafe/persistent-merkle-tree";
 import {ContainerType} from "../../../../../ssz/src/type/container";
 import {ssz} from "../../../lodestarTypes";
 import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
 import {ValidatorTreeViewDU} from "../../../lodestarTypes/phase0/viewDU/validator";
 import { expect } from "chai";
-import { byteArrayToHashObject } from "@chainsafe/as-sha256";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 
@@ -65,8 +64,7 @@ describe("Validator ssz types", function () {
     if (validatorRoot.length !== 32) {
       throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
     }
-    const hashObject = byteArrayToHashObject(validatorRoot);
-    viewDU.commitToHashObject(hashObject);
+    viewDU.commitToRoot(validatorRoot);
     const expectedRoot = ValidatorContainer.hashTreeRoot(validators[1]);
     expect(viewDU.node.root).to.be.deep.equal(expectedRoot);
     expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);

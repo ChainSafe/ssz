@@ -94,7 +94,7 @@ export class BranchNode extends Node {
 
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
-      super.applyHash(hasher.digest64HashObjects(this.left.rootHashObject, this.right.rootHashObject));
+      hasher.digest64HashObjects(this.left.rootHashObject, this.right.rootHashObject, this);
     }
     return this;
   }

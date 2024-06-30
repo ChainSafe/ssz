@@ -1,4 +1,4 @@
-import {digest2Bytes32, digest64HashObjects, HashObject, batchHash4HashObjectInputs, hashInto} from "@chainsafe/as-sha256";
+import {digest2Bytes32, digest64HashObjectsInto, digest64HashObjects, HashObject, batchHash4HashObjectInputs, hashInto} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
 import {HashComputation, Node} from "../node";
 
@@ -11,7 +11,7 @@ const buffer = new Uint8Array(MAX_INPUT_SIZE);
 export const hasher: Hasher = {
   name: "as-sha256",
   digest64: digest2Bytes32,
-  digest64HashObjects,
+  digest64HashObjects: digest64HashObjectsInto,
   // given nLevel = 3
   // digest multiple of 8 chunks = 256 bytes
   // the result is multiple of 1 chunk = 32 bytes
@@ -123,6 +123,7 @@ export const hasher: Hasher = {
               src1_3 !== null &&
               dest3 !== null
             ) {
+              // TODO - batch: find a way not allocate here
               const [o0, o1, o2, o3] = batchHash4HashObjectInputs([
                 src0_0,
                 src1_0,

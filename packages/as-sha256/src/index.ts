@@ -1,7 +1,7 @@
 import {newInstance} from "./wasm";
-import {HashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
+import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
 import SHA256 from "./sha256";
-export {HashObject, byteArrayToHashObject, hashObjectToByteArray, SHA256};
+export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
 const ctx = newInstance();
 const wasmInputValue = ctx.input.value;
@@ -52,6 +52,24 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
  * @returns
  */
 export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObject {
+  const result: HashObject = {
+    h0: 0,
+    h1: 0,
+    h2: 0,
+    h3: 0,
+    h4: 0,
+    h5: 0,
+    h6: 0,
+    h7: 0,
+  };
+  digest64HashObjectsInto(obj1, obj2, result);
+  return result;
+}
+
+/**
+ * Same to above but this set result to the output param to save memory.
+ */
+export function digest64HashObjectsInto(obj1: HashObject, obj2: HashObject, output: HashObject): void {
   // TODO: expect obj1 and obj2 as HashObject
   inputUint32Array[0] = obj1.h0;
   inputUint32Array[1] = obj1.h1;
@@ -73,7 +91,7 @@ export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObj
   ctx.digest64(wasmInputValue, wasmOutputValue);
 
   // extracting numbers from Uint32Array causes more memory
-  return byteArrayToHashObject(outputUint8Array);
+  byteArrayIntoHashObject(outputUint8Array, output);
 }
 
 /**
@@ -121,6 +139,7 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
  * Inputs      i0    i1    i2    i3    i4    i5    i6   i7
  *               \   /      \    /       \   /      \   /
  * Outputs         o0          o1          o2         o3
+ * // TODO - batch: support equivalent method to hash into
  */
 export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
