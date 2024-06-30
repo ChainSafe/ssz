@@ -5,7 +5,6 @@ import { ListCompositeTreeViewDU } from "../../../../src/viewDU/listComposite";
 import { ValidatorNodeStructType } from "../validator";
 import { ValidatorTreeViewDU } from "./validator";
 import { ByteViews } from "../../../../src";
-import { byteArrayToHashObject } from "@chainsafe/as-sha256";
 
 /**
  * hashtree has a MAX_SIZE of 1024 bytes = 32 chunks
@@ -78,9 +77,9 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
         for (let j = PARALLEL_FACTOR - 1; j >= 0; j--) {
           const viewIndex = indicesChanged[i - j];
           const indexInBatch = (i - j) % PARALLEL_FACTOR;
-          const hashObject = byteArrayToHashObject(validatorRoots.subarray(indexInBatch * 32, (indexInBatch + 1) * 32));
+          const validatorRoot = validatorRoots.subarray(indexInBatch * 32, (indexInBatch + 1) * 32);
           const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
-          viewChanged.commitToHashObject(hashObject);
+          viewChanged.commitToRoot(validatorRoot);
           nodesChanged.push({index: viewIndex, node: viewChanged.node});
           // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
           this.nodes[viewIndex] = viewChanged.node;

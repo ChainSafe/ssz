@@ -1,4 +1,4 @@
-import { HashObject, byteArrayToHashObject } from "@chainsafe/as-sha256";
+import { byteArrayIntoHashObject } from "@chainsafe/as-sha256";
 import { BranchNodeStruct } from "../../../../src/branchNodeStruct";
 import { ContainerTypeGeneric } from "../../../../src/view/container";
 import { TreeViewDU } from "../../../../src/viewDU/abstract";
@@ -72,8 +72,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
       if (validatorRoot.length !== 32) {
         throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
       }
-      const hashObject = byteArrayToHashObject(validatorRoot);
-      this._rootNode.applyHash(hashObject);
+      byteArrayIntoHashObject(validatorRoot, this._rootNode);
     }
     this.valueChanged = null;
   }
@@ -201,12 +200,12 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
   /**
    * Batch hash flow: parent will compute hash and call this function
    */
-  commitToHashObject(ho: HashObject): void {
-    // (this.valueChanged === null means this viewDU is new
+  commitToRoot(root: Uint8Array): void {
+    // this.valueChanged === null means this viewDU is new
     if (this.valueChanged !== null) {
       this._rootNode = this.type.value_toTree(this.valueChanged) as BranchNodeStruct<Validator>;
     }
-    this._rootNode.applyHash(ho);
+    byteArrayIntoHashObject(root, this._rootNode);
     this.valueChanged = null;
   }
 

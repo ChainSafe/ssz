@@ -40,8 +40,9 @@ describe("hasher", function () {
         }),
         beforeEach: (params) => params,
         fn: ({obj1, obj2}) => {
+          const result = {} as HashObject;
           for (let i = 0; i < runsFactor; i++) {
-            for (let j = 0; j < iterations; j++) hasher.digest64HashObjects(obj1, obj2);
+            for (let j = 0; j < iterations; j++) hasher.digest64HashObjects(obj1, obj2, result);
           }
         },
         runsFactor,

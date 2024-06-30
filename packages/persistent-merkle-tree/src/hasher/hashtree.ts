@@ -2,6 +2,7 @@ import {hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
 import { byteArrayToHashObject } from "@chainsafe/as-sha256";
+import { byteArrayIntoHashObject } from "@chainsafe/as-sha256/lib/hashObject";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -31,10 +32,10 @@ export const hasher: Hasher = {
     hashInto(hash64Input, hash64Output);
     return hash64Output.slice();
   },
-  digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObject {
-    hashObjectsToUint32Array(obj1, obj2, uint32Input);
+  digest64HashObjects(left: HashObject, right: HashObject, parent: HashObject): void {
+    hashObjectsToUint32Array(left, right, uint32Input);
     hashInto(hash64Input, hash64Output);
-    return byteArrayToHashObject(hash64Output);
+    byteArrayIntoHashObject(hash64Output, parent);
   },
   // given nLevel = 3
   // digest multiple of 8 chunks = 256 bytes
@@ -128,7 +129,7 @@ export const hasher: Hasher = {
         if (indexInBatch === PARALLEL_FACTOR - 1) {
           hashInto(uint8Input, uint8Output);
           for (const [j, destNode] of destNodes.entries()) {
-            destNode.applyHash(byteArrayToHashObject(uint8Output.subarray(j * 32, (j + 1) * 32)));
+            byteArrayIntoHashObject(uint8Output.subarray(j * 32, (j + 1) * 32), destNode);
           }
           destNodes = [];
         }
@@ -142,7 +143,7 @@ export const hasher: Hasher = {
         hashInto(remainingInput, remainingOutput);
         // destNodes was prepared above
         for (const [i, destNode] of destNodes.entries()) {
-          destNode.applyHash(byteArrayToHashObject(remainingOutput.subarray(i * 32, (i + 1) * 32)));
+          byteArrayIntoHashObject(remainingOutput.subarray(i * 32, (i + 1) * 32), destNode);
         }
       }
     }

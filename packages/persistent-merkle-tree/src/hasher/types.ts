@@ -13,7 +13,7 @@ export type Hasher = {
   /**
    * Hash two 32-byte HashObjects
    */
-  digest64HashObjects(a: HashObject, b: HashObject): HashObject;
+  digest64HashObjects(left: HashObject, right: HashObject, parent: HashObject): void;
   /**
    * Hash multiple chunks (1 chunk = 32 bytes) at multiple levels
    * With nLevel = 3, hash multiple of 256 bytes, return multiple of 32 bytes.

@@ -23,6 +23,7 @@ import {
   hash64,
 } from "../../../src";
 import {CompositeTypeAny} from "../../../src/type/composite";
+import { HashObject } from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {
   itBenchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));
@@ -129,8 +130,9 @@ describe("HashTreeRoot individual components", () => {
       for (let i = 0; i < count; i++) hash64(buf, buf);
     });
 
+    const hashResult = {} as HashObject;
     itBench(`hashTwoObjects x${count}`, () => {
-      for (let i = 0; i < count; i++) hasher.digest64HashObjects(ho, ho);
+      for (let i = 0; i < count; i++) hasher.digest64HashObjects(ho, ho, hashResult);
     });
   }
 

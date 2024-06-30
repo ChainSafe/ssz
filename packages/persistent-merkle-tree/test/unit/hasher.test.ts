@@ -5,7 +5,7 @@ import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {linspace} from "../utils/misc";
 import {buildComparisonTrees} from "../utils/tree";
-import {LeafNode, subtreeFillToContents} from "../../src";
+import {HashObject, LeafNode, subtreeFillToContents} from "../../src";
 
 const hashers = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
@@ -19,7 +19,8 @@ describe("hashers", function () {
 
         const obj1 = uint8ArrayToHashObject(root1);
         const obj2 = uint8ArrayToHashObject(root2);
-        const obj = hasher.digest64HashObjects(obj1, obj2);
+        const obj = {} as HashObject;
+        hasher.digest64HashObjects(obj1, obj2, obj);
         const newRoot = hashObjectToUint8Array(obj);
         expectEqualHex(root, newRoot);
       });
@@ -41,9 +42,15 @@ describe("hashers", function () {
     const hashObject1 = uint8ArrayToHashObject(root1);
     const root2 = Buffer.alloc(32, 0xff);
     const hashObject2 = uint8ArrayToHashObject(root2);
-    const hash1 = hashObjectToUint8Array(nobleHasher.digest64HashObjects(hashObject1, hashObject2));
-    const hash2 = hashObjectToUint8Array(asSha256Hasher.digest64HashObjects(hashObject1, hashObject2));
-    const hash3 = hashObjectToUint8Array(hashtreeHasher.digest64HashObjects(hashObject1, hashObject2));
+    const ho1 = {} as HashObject;
+    nobleHasher.digest64HashObjects(hashObject1, hashObject2, ho1)
+    const hash1 = hashObjectToUint8Array(ho1);
+    const ho2 = {} as HashObject;
+    asSha256Hasher.digest64HashObjects(hashObject1, hashObject2, ho2)
+    const hash2 = hashObjectToUint8Array(ho2);
+    const ho3 = {} as HashObject;
+    hashtreeHasher.digest64HashObjects(hashObject1, hashObject2, ho3);
+    const hash3 = hashObjectToUint8Array(ho3);
     expectEqualHex(hash1, hash2);
     expectEqualHex(hash1, hash3);
   });
