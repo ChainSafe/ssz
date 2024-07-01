@@ -19,7 +19,7 @@ export type Hasher = {
    * With nLevel = 3, hash multiple of 256 bytes, return multiple of 32 bytes.
    * The result is unsafe as it will be overwritten by the next call.
    */
-  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array
+  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array;
   /**
    * Batch hash 2 * n HashObjects, return n HashObjects output
    */

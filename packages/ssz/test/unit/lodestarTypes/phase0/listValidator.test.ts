@@ -1,12 +1,10 @@
-import { ListCompositeType } from "../../../../src/type/listComposite";
-import { ValidatorType } from "../../../lodestarTypes/phase0/validator";
-import {
-  preset,
-} from "../../../lodestarTypes/params";
-import { ssz } from "../../../lodestarTypes";
-import { expect } from "chai";
-import { ContainerType } from "../../../../src/type/container";
-import { Validator } from "../../../lodestarTypes/phase0";
+import {ListCompositeType} from "../../../../src/type/listComposite";
+import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
+import {preset} from "../../../lodestarTypes/params";
+import {ssz} from "../../../lodestarTypes";
+import {expect} from "chai";
+import {ContainerType} from "../../../../src/type/container";
+import {Validator} from "../../../lodestarTypes/phase0";
 const {VALIDATOR_REGISTRY_LIMIT} = preset;
 
 describe("ListValidator ssz type", function () {
@@ -25,8 +23,11 @@ describe("ListValidator ssz type", function () {
   const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
   const oldValidatorsType = new ListCompositeType(ValidatorContainer, VALIDATOR_REGISTRY_LIMIT);
   for (const numValidators of testCases) {
-    it (`should commit ${numValidators} validators`, () => {
-      const validators = Array.from({length: numValidators}, (_, i) => ({...seedValidator, withdrawableEpoch: seedValidator.withdrawableEpoch + i}));
+    it(`should commit ${numValidators} validators`, () => {
+      const validators = Array.from({length: numValidators}, (_, i) => ({
+        ...seedValidator,
+        withdrawableEpoch: seedValidator.withdrawableEpoch + i,
+      }));
       const oldViewDU = oldValidatorsType.toViewDU(validators);
       const newViewDU = ssz.phase0.Validators.toViewDU(validators);
       // modify all validators
@@ -39,11 +40,14 @@ describe("ListValidator ssz type", function () {
     });
   }
 
-  const testCases2 = [[1], [3, 5], [1,9, 7]];
+  const testCases2 = [[1], [3, 5], [1, 9, 7]];
   const numValidator = 33;
   for (const modifiedIndices of testCases2) {
     it(`should modify ${modifiedIndices.length} validators`, () => {
-      const validators = Array.from({length: numValidator}, (_, i) => ({...seedValidator, withdrawableEpoch: seedValidator.withdrawableEpoch + i}));
+      const validators = Array.from({length: numValidator}, (_, i) => ({
+        ...seedValidator,
+        withdrawableEpoch: seedValidator.withdrawableEpoch + i,
+      }));
       const oldViewDU = oldValidatorsType.toViewDU(validators);
       const newViewDU = ssz.phase0.Validators.toViewDU(validators);
       for (const index of modifiedIndices) {
@@ -52,13 +56,16 @@ describe("ListValidator ssz type", function () {
       }
       expect(newViewDU.hashTreeRoot()).to.be.deep.equal(oldViewDU.hashTreeRoot());
       expect(newViewDU.serialize()).to.be.deep.equal(oldViewDU.serialize());
-    })
+    });
   }
 
   const testCases3 = [1, 3, 5, 7];
   for (const numPush of testCases3) {
     it(`should push ${numPush} validators`, () => {
-      const validators = Array.from({length: numValidator}, (_, i) => ({...seedValidator, withdrawableEpoch: seedValidator.withdrawableEpoch + i}));
+      const validators = Array.from({length: numValidator}, (_, i) => ({
+        ...seedValidator,
+        withdrawableEpoch: seedValidator.withdrawableEpoch + i,
+      }));
       const oldViewDU = oldValidatorsType.toViewDU(validators);
       const newViewDU = ssz.phase0.Validators.toViewDU(validators);
       const newValidators: Validator[] = [];
@@ -77,6 +84,6 @@ describe("ListValidator ssz type", function () {
       for (let i = 0; i < numPush; i++) {
         expect(allValidators[numValidator + i]).to.be.deep.equal(newValidators[i]);
       }
-    })
+    });
   }
 });

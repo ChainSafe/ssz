@@ -1,13 +1,10 @@
-import { byteArrayIntoHashObject } from "@chainsafe/as-sha256";
-import { BranchNodeStruct } from "../../../../src/branchNodeStruct";
-import { ContainerTypeGeneric } from "../../../../src/view/container";
-import { TreeViewDU } from "../../../../src/viewDU/abstract";
-import { ValidatorType } from "../validator";
-import {
-  Node,
-  digestNLevelUnsafe,
-} from "@chainsafe/persistent-merkle-tree";
-import { ByteViews } from "../../../../src/type/abstract";
+import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
+import {BranchNodeStruct} from "../../../../src/branchNodeStruct";
+import {ContainerTypeGeneric} from "../../../../src/view/container";
+import {TreeViewDU} from "../../../../src/viewDU/abstract";
+import {ValidatorType} from "../validator";
+import {Node, digestNLevelUnsafe} from "@chainsafe/persistent-merkle-tree";
+import {ByteViews} from "../../../../src/type/abstract";
 type Validator = {
   pubkey: Uint8Array;
   withdrawalCredentials: Uint8Array;
@@ -19,7 +16,6 @@ type Validator = {
   withdrawableEpoch: number;
 };
 
-const numFields = 8;
 const NUMBER_2_POW_32 = 2 ** 32;
 /*
  * Below constants are respective to their ssz type in `ValidatorType`.
@@ -218,21 +214,30 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
   }
 }
 
-  /**
-   * Write to level3 and level4 bytes to compute merkle root. Note that this is to compute
-   * merkle root and it's different from serialization (which is more compressed).
-   * pub0 + pub1 are at level4, they will be hashed to 1st chunked of level 3
-   * then use 8 chunks of level 3 to compute the root hash.
-   *           reserved     withdr     eff        sla        actElig    act        exit       with
-   * level 3 |----------|----------|----------|----------|----------|----------|----------|----------|
-   *
-   *            pub0       pub1
-   * level4  |----------|----------|
-   *
-   */
+/**
+ * Write to level3 and level4 bytes to compute merkle root. Note that this is to compute
+ * merkle root and it's different from serialization (which is more compressed).
+ * pub0 + pub1 are at level4, they will be hashed to 1st chunked of level 3
+ * then use 8 chunks of level 3 to compute the root hash.
+ *           reserved     withdr     eff        sla        actElig    act        exit       with
+ * level 3 |----------|----------|----------|----------|----------|----------|----------|----------|
+ *
+ *            pub0       pub1
+ * level4  |----------|----------|
+ *
+ */
 export function validatorToMerkleBytes(level3: ByteViews, level4: Uint8Array, value: Validator): void {
-  const { pubkey, withdrawalCredentials, effectiveBalance, slashed, activationEligibilityEpoch, activationEpoch, exitEpoch, withdrawableEpoch } = value;
-  const { uint8Array: outputLevel3, dataView } = level3;
+  const {
+    pubkey,
+    withdrawalCredentials,
+    effectiveBalance,
+    slashed,
+    activationEligibilityEpoch,
+    activationEpoch,
+    exitEpoch,
+    withdrawableEpoch,
+  } = value;
+  const {uint8Array: outputLevel3, dataView} = level3;
 
   // pubkey = 48 bytes which is 2 * CHUNK_SIZE
   level4.set(pubkey, 0);

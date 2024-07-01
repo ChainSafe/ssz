@@ -1,4 +1,12 @@
-import {getHashComputations, getNodeAtDepth, getNodesAtDepth, HashComputationGroup, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {
+  getHashComputations,
+  getNodeAtDepth,
+  getNodesAtDepth,
+  HashComputationGroup,
+  LeafNode,
+  Node,
+  setNodesAtDepth,
+} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {ArrayBasicType} from "../view/arrayBasic";

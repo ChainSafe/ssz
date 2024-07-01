@@ -1,6 +1,6 @@
 import {zeroNode} from "./zeroNode";
 import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex";
-import {Node, LeafNode, BranchNode, HashComputation, HashComputationGroup, arrayAtIndex} from "./node";
+import {Node, LeafNode, BranchNode, HashComputationGroup, arrayAtIndex} from "./node";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 
@@ -798,7 +798,6 @@ export function findDiffDepthi(from: number, to: number): number {
   // same number of bits and <= 32
   return findDiffDepthi32Bits(from, to);
 }
-
 
 /**
  * Returns true if the `index` at `depth` is a left node, false if it is a right node.
