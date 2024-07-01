@@ -1,10 +1,16 @@
-import {getHashComputations, getNodeAtDepth, HashComputationGroup, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {
+  getHashComputations,
+  getNodeAtDepth,
+  HashComputationGroup,
+  LeafNode,
+  Node,
+  setNodesAtDepth,
+} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
 import {ContainerTypeGeneric} from "../view/container";
 import {TreeViewDU} from "./abstract";
-import { isNullOrUndefined } from "util";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

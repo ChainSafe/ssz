@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {itBench} from "@dapplion/benchmark";
 import {Validator} from "../../lodestarTypes/phase0/types";
 import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes";
 import {BranchNodeStruct, CompositeViewDU} from "../../../src";
@@ -69,8 +69,7 @@ describe("ContainerNodeStructViewDU vs ValidatorViewDU hashtreeroot", () => {
     fn: () => {
       listValidator.commit();
     },
-  })
-
+  });
 
   // this needs to create validator tree every time
   itBench({
@@ -81,7 +80,7 @@ describe("ContainerNodeStructViewDU vs ValidatorViewDU hashtreeroot", () => {
         node.h0 = null as unknown as number;
       }
     },
-    fn: ()  => {
+    fn: () => {
       for (const node of nodes) {
         node.root;
       }

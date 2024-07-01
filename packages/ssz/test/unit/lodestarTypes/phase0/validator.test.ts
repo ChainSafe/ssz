@@ -3,7 +3,7 @@ import {ContainerType} from "../../../../../ssz/src/type/container";
 import {ssz} from "../../../lodestarTypes";
 import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
 import {ValidatorTreeViewDU} from "../../../lodestarTypes/phase0/viewDU/validator";
-import { expect } from "chai";
+import {expect} from "chai";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 

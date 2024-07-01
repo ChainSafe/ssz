@@ -1,4 +1,11 @@
-import {digest2Bytes32, digest64HashObjectsInto, digest64HashObjects, HashObject, batchHash4HashObjectInputs, hashInto} from "@chainsafe/as-sha256";
+import {
+  digest2Bytes32,
+  digest64HashObjectsInto,
+  digest64HashObjects,
+  HashObject,
+  batchHash4HashObjectInputs,
+  hashInto,
+} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
 import {HashComputation, Node} from "../node";
 
@@ -23,7 +30,9 @@ export const hasher: Hasher = {
       throw new Error(`Invalid nLevel, expect to be greater than 0, got ${nLevel}`);
     }
     if (inputLength % bytesInBatch !== 0) {
-      throw new Error(`Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`);
+      throw new Error(
+        `Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`
+      );
     }
     if (inputLength > MAX_INPUT_SIZE) {
       throw new Error(`Invalid input length, expect to be less than ${MAX_INPUT_SIZE}, got ${inputLength}`);
@@ -35,7 +44,7 @@ export const hasher: Hasher = {
       const hashInput = buffer.subarray(0, inputLength);
       const hashOutput = buffer.subarray(0, outputLength);
       hashInto(hashInput, hashOutput);
-      inputLength = outputLength
+      inputLength = outputLength;
     }
 
     // the result is unsafe as it will be modified later, consumer should save the result if needed

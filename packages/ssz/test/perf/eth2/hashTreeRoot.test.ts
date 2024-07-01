@@ -23,7 +23,7 @@ import {
   hash64,
 } from "../../../src";
 import {CompositeTypeAny} from "../../../src/type/composite";
-import { HashObject } from "@chainsafe/as-sha256";
+import {HashObject} from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {
   itBenchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));

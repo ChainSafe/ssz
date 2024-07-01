@@ -2,7 +2,7 @@ import {ByteViews} from "../../../src/type/abstract";
 import {ContainerNodeStructType} from "../../../src/type/containerNodeStruct";
 import {ValueOfFields} from "../../../src/view/container";
 import * as primitiveSsz from "../primitive/sszTypes";
-import { ValidatorTreeViewDU } from "./viewDU/validator";
+import {ValidatorTreeViewDU} from "./viewDU/validator";
 import {Node} from "@chainsafe/persistent-merkle-tree";
 
 const {Boolean, Bytes32, UintNum64, BLSPubkey, EpochInf} = primitiveSsz;
