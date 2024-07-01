@@ -1,4 +1,4 @@
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {
   mixInLength,
   maxChunksToDepth,
@@ -97,8 +97,8 @@ export class ListCompositeType<
     return view.node;
   }
 
-  commitViewDU(view: ListCompositeTreeViewDU<ElementType>): Node {
-    view.commit();
+  commitViewDU(view: ListCompositeTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
+    view.commit(hashComps);
     return view.node;
   }
 
@@ -150,8 +150,18 @@ export class ListCompositeType<
     return node.left;
   }
 
-  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
-    return setChunksNode(rootNode, chunksNode, newLength);
+  tree_chunksNodeOffset(): number {
+    // one more level for length, see setChunksNode below
+    return 1;
+  }
+
+  tree_setChunksNode(
+    rootNode: Node,
+    chunksNode: Node,
+    newLength: number | null,
+    hashComps: HashComputationGroup | null
+  ): Node {
+    return setChunksNode(rootNode, chunksNode, newLength, hashComps);
   }
 
   // Merkleization

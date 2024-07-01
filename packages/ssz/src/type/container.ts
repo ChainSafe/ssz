@@ -7,6 +7,7 @@ import {
   toGindex,
   concatGindices,
   getNode,
+  HashComputationGroup,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
@@ -162,8 +163,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return view.node;
   }
 
-  commitViewDU(view: ContainerTreeViewDUType<Fields>): Node {
-    view.commit();
+  commitViewDU(view: ContainerTreeViewDUType<Fields>, hashComps: HashComputationGroup | null = null): Node {
+    view.commit(hashComps);
     return view.node;
   }
 

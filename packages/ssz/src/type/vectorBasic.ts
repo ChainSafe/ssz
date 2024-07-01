@@ -1,4 +1,4 @@
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -83,8 +83,8 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return view.node;
   }
 
-  commitViewDU(view: ArrayBasicTreeViewDU<ElementType>): Node {
-    view.commit();
+  commitViewDU(view: ArrayBasicTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
+    view.commit(hashComps);
     return view.node;
   }
 
@@ -130,6 +130,10 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   tree_getChunksNode(node: Node): Node {
     return node;
+  }
+
+  tree_chunksNodeOffset(): number {
+    return 0;
   }
 
   tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {

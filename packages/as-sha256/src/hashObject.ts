@@ -99,6 +99,25 @@ export function hashObjectToByteArray(obj: HashObject, byteArr: Uint8Array, offs
  * do it step by step to improve performance a bit.
  **/
 export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
+  const result: HashObject = {
+    h0: 0,
+    h1: 0,
+    h2: 0,
+    h3: 0,
+    h4: 0,
+    h5: 0,
+    h6: 0,
+    h7: 0,
+  };
+
+  byteArrayIntoHashObject(byteArr, result);
+  return result;
+}
+
+/**
+ * Same to above but this set result to the output param to save memory.
+ */
+export function byteArrayIntoHashObject(byteArr: Uint8Array, output: HashObject): void {
   let tmp = 0;
   tmp |= byteArr[3] & 0xff;
   tmp = tmp << 8;
@@ -107,7 +126,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[1] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[0] & 0xff;
-  const h0 = tmp;
+  output.h0 = tmp;
 
   tmp = 0;
   tmp |= byteArr[7] & 0xff;
@@ -117,7 +136,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[5] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[4] & 0xff;
-  const h1 = tmp;
+  output.h1 = tmp;
 
   tmp = 0;
   tmp |= byteArr[11] & 0xff;
@@ -127,7 +146,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[9] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[8] & 0xff;
-  const h2 = tmp;
+  output.h2 = tmp;
 
   tmp = 0;
   tmp |= byteArr[15] & 0xff;
@@ -137,7 +156,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[13] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[12] & 0xff;
-  const h3 = tmp;
+  output.h3 = tmp;
 
   tmp = 0;
   tmp |= byteArr[19] & 0xff;
@@ -147,7 +166,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[17] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[16] & 0xff;
-  const h4 = tmp;
+  output.h4 = tmp;
 
   tmp = 0;
   tmp |= byteArr[23] & 0xff;
@@ -157,7 +176,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[21] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[20] & 0xff;
-  const h5 = tmp;
+  output.h5 = tmp;
 
   tmp = 0;
   tmp |= byteArr[27] & 0xff;
@@ -167,7 +186,7 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[25] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[24] & 0xff;
-  const h6 = tmp;
+  output.h6 = tmp;
 
   tmp = 0;
   tmp |= byteArr[31] & 0xff;
@@ -177,16 +196,5 @@ export function byteArrayToHashObject(byteArr: Uint8Array): HashObject {
   tmp |= byteArr[29] & 0xff;
   tmp = tmp << 8;
   tmp |= byteArr[28] & 0xff;
-  const h7 = tmp;
-
-  return {
-    h0,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    h7,
-  };
+  output.h7 = tmp;
 }

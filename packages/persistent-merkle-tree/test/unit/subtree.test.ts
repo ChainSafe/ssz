@@ -1,6 +1,10 @@
-import {subtreeFillToContents, LeafNode, getNodesAtDepth} from "../../src";
+import { expect } from "chai";
+import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node} from "../../src";
 
-describe("subtreeFillToContents", () => {
+describe("subtreeFillToContents", function () {
+  // the hash computation takes time
+  this.timeout(5000);
+
   it("Simple case", () => {
     function nodeNum(num: number): LeafNode {
       return LeafNode.fromUint32(num);
@@ -35,7 +39,12 @@ describe("subtreeFillToContents", () => {
           expectedNodes[i] = node;
         }
 
-        const node = subtreeFillToContents(nodes, depth);
+        const hashComps = {
+          offset: 0,
+          byLevel: [],
+        };
+
+        const node = subtreeFillToContents(nodes, depth, hashComps);
         const retrievedNodes = getNodesAtDepth(node, depth, 0, count);
 
         // Assert correct
@@ -44,7 +53,57 @@ describe("subtreeFillToContents", () => {
             throw Error(`Wrong node at index ${i}`);
           }
         }
+        executeHashComputations(hashComps.byLevel);
+        if (node.h0 === null) {
+          throw Error("Root node h0 is null");
+        }
       });
     }
   }
+});
+
+describe("subtreeFillToContents - validator nodes", function () {
+  /**
+   * 0                                                root
+   *                               /                                         \
+   * 1                        10                                                11
+   *                   /                 \                                 /             \
+   * 2            20                          21                     22                    23
+   *           /       \                  /       \             /       \             /         \
+   * 3      pub         with         eff         sla        act         act         exit        with
+   *      /     \
+   * 4 pub0      pub1
+   **/
+  it("should compute HashComputations for validator nodes", () => {
+    const numNodes = 8;
+    const nodesArr: Array<Node[]> = [];
+    for (let count = 0; count < 2; count++) {
+      const nodes = new Array<Node>(numNodes);
+      for (let i = 1; i < numNodes; i++) {
+        const node = LeafNode.fromUint32(i);
+        nodes[i] = node;
+      }
+      nodes[0] = new BranchNode(LeafNode.fromUint32(0), LeafNode.fromUint32(1));
+      nodesArr.push(nodes);
+    }
+
+    // maxChunksToDepth in ssz returns 3 for 8 nodes
+    const depth = 3;
+    const root0 = subtreeFillToContents(nodesArr[0], depth);
+    const hashComps = {
+      offset: 0,
+      byLevel: new Array<[]>(),
+    };
+    const node = subtreeFillToContents(nodesArr[1], depth, hashComps);
+    expect(hashComps.byLevel.length).to.equal(4);
+    expect(hashComps.byLevel[0].length).to.equal(1);
+    expect(hashComps.byLevel[1].length).to.equal(2);
+    expect(hashComps.byLevel[2].length).to.equal(4);
+    expect(hashComps.byLevel[3].length).to.equal(1);
+    executeHashComputations(hashComps.byLevel);
+    if (node.h0 === null) {
+      throw Error("Root node h0 is null");
+    }
+    expect(node.root).to.deep.equal(root0.root);
+  });
 });

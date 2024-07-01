@@ -37,6 +37,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return this.commitViewDU(view);
   }
 
+  // TODO - batch
   commitViewDU(view: ByteArray): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(view));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
@@ -67,6 +68,12 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteArray {
     this.assertValidSize(end - start);
     return Uint8Array.prototype.slice.call(data.uint8Array, start, end);
+  }
+
+  value_toTree(value: ByteArray): Node {
+    // this saves 1 allocation of Uint8Array
+    const dataView = new DataView(value.buffer, value.byteOffset, value.byteLength);
+    return this.tree_deserializeFromBytes({uint8Array: value, dataView}, 0, value.length);
   }
 
   // Merkleization

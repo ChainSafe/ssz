@@ -1,4 +1,4 @@
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -90,8 +90,8 @@ export class VectorCompositeType<
     return view.node;
   }
 
-  commitViewDU(view: ArrayCompositeTreeViewDU<ElementType>): Node {
-    view.commit();
+  commitViewDU(view: ArrayCompositeTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
+    view.commit(hashComps);
     return view.node;
   }
 
@@ -137,6 +137,10 @@ export class VectorCompositeType<
 
   tree_getChunksNode(node: Node): Node {
     return node;
+  }
+
+  tree_chunksNodeOffset(): number {
+    return 0;
   }
 
   tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {

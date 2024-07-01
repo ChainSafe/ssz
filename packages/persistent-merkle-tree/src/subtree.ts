@@ -1,4 +1,4 @@
-import {BranchNode, Node} from "./node";
+import {BranchNode, HashComputationGroup, Node, arrayAtIndex, getHashComputations} from "./node";
 import {zeroNode} from "./zeroNode";
 
 export function subtreeFillToDepth(bottom: Node, depth: number): Node {
@@ -37,9 +37,16 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
 
 /**
  * WARNING: Mutates the provided nodes array.
+ * @param hashCompRootNode is a hacky way from ssz to set `dest` of HashComputation for BranchNodeStruct
  * TODO: Don't mutate the nodes array.
+ * TODO - batch: check consumers of this function, can we compute HashComputationGroup when deserializing ViewDU from Uint8Array?
  */
-export function subtreeFillToContents(nodes: Node[], depth: number): Node {
+export function subtreeFillToContents(
+  nodes: Node[],
+  depth: number,
+  hashComps: HashComputationGroup | null = null,
+  hashCompRootNode: Node | null = null
+): Node {
   const maxLength = 2 ** depth;
   if (nodes.length > maxLength) {
     throw new Error(`nodes.length ${nodes.length} over maxIndex at depth ${depth}`);
@@ -50,15 +57,33 @@ export function subtreeFillToContents(nodes: Node[], depth: number): Node {
   }
 
   if (depth === 0) {
-    return nodes[0];
+    const node = nodes[0];
+    if (hashComps !== null) {
+      // only use hashCompRootNode for >=1 nodes where we have a rebind
+      getHashComputations(node, hashComps.offset, hashComps.byLevel);
+    }
+    return node;
   }
 
   if (depth === 1) {
-    return nodes.length > 1
-      ? // All nodes at depth 1 available
-        new BranchNode(nodes[0], nodes[1])
-      : // Pad with zero node
-        new BranchNode(nodes[0], zeroNode(0));
+    // All nodes at depth 1 available
+    // If there is only one node, pad with zero node
+    const leftNode = nodes[0];
+    const rightNode = nodes.length > 1 ? nodes[1] : zeroNode(0);
+    const rootNode = new BranchNode(leftNode, rightNode);
+
+    if (hashComps !== null) {
+      const offset = hashComps.offset;
+      getHashComputations(leftNode, offset + 1, hashComps.byLevel);
+      getHashComputations(rightNode, offset + 1, hashComps.byLevel);
+      arrayAtIndex(hashComps.byLevel, offset).push({
+        src0: leftNode,
+        src1: rightNode,
+        dest: hashCompRootNode ?? rootNode,
+      });
+    }
+
+    return rootNode;
   }
 
   let count = nodes.length;
@@ -66,14 +91,43 @@ export function subtreeFillToContents(nodes: Node[], depth: number): Node {
   for (let d = depth; d > 0; d--) {
     const countRemainder = count % 2;
     const countEven = count - countRemainder;
+    const offset = hashComps ? hashComps.offset + d - 1 : null;
 
     // For each depth level compute the new BranchNodes and overwrite the nodes array
     for (let i = 0; i < countEven; i += 2) {
-      nodes[i / 2] = new BranchNode(nodes[i], nodes[i + 1]);
+      const left = nodes[i];
+      const right = nodes[i + 1];
+      const node = new BranchNode(left, right);
+      nodes[i / 2] = node;
+      if (offset !== null && hashComps !== null) {
+        arrayAtIndex(hashComps.byLevel, offset).push({
+          src0: left,
+          src1: right,
+          // d = 1 means we are at root node, use hashCompRootNode if possible
+          dest: d === 1 ? hashCompRootNode ?? node : node,
+        });
+        if (d === depth) {
+          // bottom up strategy so we don't need to go down the tree except for the last level
+          getHashComputations(left, offset + 1, hashComps.byLevel);
+          getHashComputations(right, offset + 1, hashComps.byLevel);
+        }
+      }
     }
 
     if (countRemainder > 0) {
-      nodes[countEven / 2] = new BranchNode(nodes[countEven], zeroNode(depth - d));
+      const left = nodes[countEven];
+      const right = zeroNode(depth - d);
+      const node = new BranchNode(left, right);
+      nodes[countEven / 2] = node;
+      if (offset !== null && hashComps !== null) {
+        if (d === depth) {
+          // only go down on the last level
+          getHashComputations(left, offset + 1, hashComps.byLevel);
+        }
+        // no need to getHashComputations for zero node
+        // no need to set hashCompRootNode here
+        arrayAtIndex(hashComps.byLevel, offset).push({src0: left, src1: right, dest: node});
+      }
     }
 
     // If there was remainer, 2 nodes are added to the count

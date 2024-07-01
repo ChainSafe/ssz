@@ -20,7 +20,9 @@
     "clean": "rm -rf lib",
     "build": "tsc",
     "lint": "eslint --color --ext .ts src/",
-    "benchmark": "node --max-old-space-size=4096 --expose-gc -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.perf.ts'",
+    "lint:fix": "yarn run lint --fix",
+    "benchmark:files": "node --max-old-space-size=4096 --expose-gc -r ts-node/register ../../node_modules/.bin/benchmark",
+    "benchmark": "yarn benchmark:files 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test": "mocha -r ts-node/register 'test/unit/**/*.test.ts'"
   },
@@ -45,6 +47,12 @@
   "homepage": "https://github.com/ChainSafe/persistent-merkle-tree#readme",
   "dependencies": {
     "@chainsafe/as-sha256": "0.4.2",
+    "@chainsafe/hashtree": "1.0.1",
     "@noble/hashes": "^1.3.0"
+  },
+  "peerDependencies": {
+    "@chainsafe/hashtree-linux-x64-gnu": "1.0.1",
+    "@chainsafe/hashtree-linux-arm64-gnu": "1.0.1",
+    "@chainsafe/hashtree-darwin-arm64": "1.0.1"
   }
 }

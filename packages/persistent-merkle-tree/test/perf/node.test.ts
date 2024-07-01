@@ -1,5 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
-import {getNodeH, LeafNode} from "../../src/node";
+import {BranchNode, getHashComputations, getNodeH, HashComputation, LeafNode} from "../../src/node";
+import {countToDepth, subtreeFillToContents} from "../../src";
 
 describe("HashObject LeafNode", () => {
   // Number of new nodes created in processAttestations() on average
@@ -40,3 +41,46 @@ describe("HashObject LeafNode", () => {
     }
   });
 });
+
+describe("Node batchHash", () => {
+  const numNodes = [250_000, 500_000, 1_000_000];
+
+  for (const numNode of numNodes) {
+    itBench({
+      id: `getHashComputations ${numNode} nodes`,
+      beforeEach: () => createList(numNode),
+      fn: (rootNode: BranchNode) => {
+        const hashComputations: HashComputation[][] = [];
+        getHashComputations(rootNode, 0, hashComputations);
+      },
+    });
+
+    itBench({
+      id: `batchHash ${numNode} nodes`,
+      beforeEach: () => createList(numNode),
+      fn: (rootNode: BranchNode) => {
+        rootNode.batchHash();
+      },
+    });
+
+    itBench({
+      id: `get root ${numNode} nodes`,
+      beforeEach: () => createList(numNode),
+      fn: (rootNode: BranchNode) => {
+        rootNode.root;
+      },
+    });
+  }
+});
+
+function createList(numNode: number): BranchNode {
+  const nodes = Array.from({length: numNode}, (_, i) => newLeafNodeFilled(i));
+  // add 1 to countToDepth for mix_in_length spec
+  const depth = countToDepth(BigInt(numNode)) + 1;
+  const node = subtreeFillToContents(nodes, depth);
+  return node as BranchNode;
+}
+
+function newLeafNodeFilled(i: number): LeafNode {
+  return LeafNode.fromRoot(new Uint8Array(Array.from({length: 32}, () => i % 256)));
+}
