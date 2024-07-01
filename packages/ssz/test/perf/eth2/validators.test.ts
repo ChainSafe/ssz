@@ -1,7 +1,7 @@
-import {itBench} from "@dapplion/benchmark";
+import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import {Validator} from "../../lodestarTypes/phase0/types";
-import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
-import {CompositeViewDU} from "../../../src";
+import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes";
+import {BranchNodeStruct, CompositeViewDU} from "../../../src";
 
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),
@@ -48,4 +48,43 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
       });
     }
   }
+});
+
+describe("ContainerNodeStructViewDU vs ValidatorViewDU hashtreeroot", () => {
+  // ListValidatorTreeViewDU commits every 4 validators in batch
+  const listValidator = Validators.toViewDU(Array.from({length: 4}, () => validatorStruct));
+  const nodes: BranchNodeStruct<Validator>[] = [];
+  for (let i = 0; i < listValidator.length; i++) {
+    nodes.push(listValidator.get(i).node as BranchNodeStruct<Validator>);
+  }
+
+  // this does not create validator tree every time, and it compute roots in batch
+  itBench({
+    id: "ValidatorViewDU hashTreeRoot",
+    beforeEach: () => {
+      for (let i = 0; i < listValidator.length; i++) {
+        listValidator.get(i).exitEpoch = 20242024;
+      }
+    },
+    fn: () => {
+      listValidator.commit();
+    },
+  })
+
+
+  // this needs to create validator tree every time
+  itBench({
+    id: "ContainerNodeStructViewDU hashTreeRoot",
+    beforeEach: () => {
+      for (const node of nodes) {
+        node.value.exitEpoch = 20242024;
+        node.h0 = null as unknown as number;
+      }
+    },
+    fn: ()  => {
+      for (const node of nodes) {
+        node.root;
+      }
+    },
+  });
 });
