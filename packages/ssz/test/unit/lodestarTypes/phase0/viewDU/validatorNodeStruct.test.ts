@@ -1,9 +1,8 @@
-import { digestNLevelUnsafe } from "@chainsafe/persistent-merkle-tree";
-import { validatorToMerkleBytes } from "../../../../lodestarTypes/phase0/viewDU/validator";
-import { HashObject } from "@chainsafe/as-sha256";
-import { ValidatorNodeStruct } from "../../../../lodestarTypes/phase0/validator";
-import { expect } from "chai";
-import { Validator } from "../../../../lodestarTypes/phase0/sszTypes";
+import {digestNLevelUnsafe} from "@chainsafe/persistent-merkle-tree";
+import {validatorToMerkleBytes} from "../../../../lodestarTypes/phase0/viewDU/validator";
+import {ValidatorNodeStruct} from "../../../../lodestarTypes/phase0/validator";
+import {expect} from "chai";
+import {Validator} from "../../../../lodestarTypes/phase0/sszTypes";
 
 describe("validatorNodeStruct", () => {
   const seedValidator = {
@@ -38,16 +37,5 @@ describe("validatorNodeStruct", () => {
       expect(root).to.be.deep.equals(expectedRoot0);
       expect(root).to.be.deep.equals(expectedRootNode2.root);
     }
-  })
+  });
 });
-
-function expectEqualNode(node1: HashObject, node2: HashObject, message: string) {
-  expect(node1.h0 >>> 0).to.be.equal(node2.h0 >>> 0, `${message} h0`);
-  expect(node1.h1 >>> 0).to.be.equal(node2.h1 >>> 0, `${message} h1`);
-  expect(node1.h2 >>> 0).to.be.equal(node2.h2 >>> 0, `${message} h2`);
-  expect(node1.h3 >>> 0).to.be.equal(node2.h3 >>> 0, `${message} h3`);
-  expect(node1.h4 >>> 0).to.be.equal(node2.h4 >>> 0, `${message} h4`);
-  expect(node1.h5 >>> 0).to.be.equal(node2.h5 >>> 0, `${message} h5`);
-  expect(node1.h6 >>> 0).to.be.equal(node2.h6 >>> 0, `${message} h6`);
-  expect(node1.h7 >>> 0).to.be.equal(node2.h7 >>> 0, `${message} h7`);
-}

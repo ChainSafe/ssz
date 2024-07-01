@@ -11,7 +11,7 @@ export const hasher: Hasher = {
   digest64HashObjects: (left, right, parent) => {
     byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), parent);
   },
-  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
+  digestNLevelUnsafe(): Uint8Array {
     throw new Error("Not implemented");
   },
   batchHashObjects: (inputs: HashObject[]) => {

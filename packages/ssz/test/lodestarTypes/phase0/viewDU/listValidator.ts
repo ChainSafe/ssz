@@ -1,10 +1,10 @@
 import {HashComputationGroup, Node, digestNLevelUnsafe, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
-import { ListCompositeType } from "../../../../src/type/listComposite";
-import { ArrayCompositeTreeViewDUCache } from "../../../../src/viewDU/arrayComposite";
-import { ListCompositeTreeViewDU } from "../../../../src/viewDU/listComposite";
-import { ValidatorNodeStructType } from "../validator";
-import { ValidatorTreeViewDU } from "./validator";
-import { ByteViews } from "../../../../src";
+import {ListCompositeType} from "../../../../src/type/listComposite";
+import {ArrayCompositeTreeViewDUCache} from "../../../../src/viewDU/arrayComposite";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite";
+import {ValidatorNodeStructType} from "../validator";
+import {ValidatorTreeViewDU} from "./validator";
+import {ByteViews} from "../../../../src";
 
 /**
  * hashtree has a MAX_SIZE of 1024 bytes = 32 chunks
@@ -71,7 +71,9 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
         }
         const validatorRoots = digestNLevelUnsafe(batchLevel3Bytes, 3);
         if (validatorRoots.length !== PARALLEL_FACTOR * 32) {
-          throw new Error(`Invalid validatorRoots length, expect ${PARALLEL_FACTOR * 32}, got ${validatorRoots.length}`);
+          throw new Error(
+            `Invalid validatorRoots length, expect ${PARALLEL_FACTOR * 32}, got ${validatorRoots.length}`
+          );
         }
         // commit all validators in this batch
         for (let j = PARALLEL_FACTOR - 1; j >= 0; j--) {

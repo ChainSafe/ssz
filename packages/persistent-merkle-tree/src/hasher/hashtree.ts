@@ -1,8 +1,8 @@
 import {hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
-import { byteArrayToHashObject } from "@chainsafe/as-sha256";
-import { byteArrayIntoHashObject } from "@chainsafe/as-sha256/lib/hashObject";
+import {byteArrayToHashObject} from "@chainsafe/as-sha256";
+import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/lib/hashObject";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -49,7 +49,9 @@ export const hasher: Hasher = {
       throw new Error(`Invalid nLevel, expect to be greater than 0, got ${nLevel}`);
     }
     if (inputLength % bytesInBatch !== 0) {
-      throw new Error(`Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`);
+      throw new Error(
+        `Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`
+      );
     }
     if (inputLength > MAX_INPUT_SIZE) {
       throw new Error(`Invalid input length, expect to be less than ${MAX_INPUT_SIZE}, got ${inputLength}`);
