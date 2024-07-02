@@ -34,3 +34,7 @@ export function digest64(a: Uint8Array, b: Uint8Array): Uint8Array {
 export function digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
   return hasher.digestNLevelUnsafe(data, nLevel);
 }
+
+export function merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+  hasher.merkleizeInto(data, padFor, output, offset);
+}

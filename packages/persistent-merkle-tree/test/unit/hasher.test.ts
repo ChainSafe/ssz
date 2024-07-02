@@ -6,6 +6,8 @@ import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {linspace} from "../utils/misc";
 import {buildComparisonTrees} from "../utils/tree";
 import {HashObject, LeafNode, subtreeFillToContents} from "../../src";
+import { expect } from "chai";
+import { zeroHash } from "../../src/zeroHash";
 
 const hashers = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
@@ -94,6 +96,32 @@ describe("hasher.digestNLevelUnsafe", function () {
           const root = subtreeFillToContents(nodes.slice(i * 8, (i + 1) * 8), 3).root;
           expectEqualHex(hashOutput.subarray(i * 32, (i + 1) * 32), root);
         }
+      });
+    }
+  }
+});
+
+describe("hasher.merkleizeInto", function () {
+  const numNodes = [5, 6, 7, 8];
+  for (const hasher of [hashtreeHasher, asSha256Hasher]) {
+    it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
+      const data = Buffer.alloc(63, 0);
+      const output = Buffer.alloc(32);
+      expect(() => hasher.merkleizeInto(data, 1, output, 0)).to.throw("Invalid input length");
+    });
+
+    for (const numNode of numNodes) {
+      it(`${hasher.name}.merkleizeInto for ${numNode} nodes`, () => {
+
+        const nodes = Array.from({length: numNode}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
+        const data = Buffer.concat(nodes.map((node) => node.root));
+        const output = Buffer.alloc(32);
+        const maxChunkCount = 8;
+        const padData = numNode % 2 === 1 ? Buffer.concat([data, zeroHash(0)]) : data;
+        hasher.merkleizeInto(padData, maxChunkCount, output, 0);
+        const depth = Math.ceil(Math.log2(maxChunkCount));
+        const root = subtreeFillToContents(nodes, depth).root;
+        expectEqualHex(output, root);
       });
     }
   }
