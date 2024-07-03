@@ -11,7 +11,7 @@ export const hasher: Hasher = {
   digest64HashObjects: (left, right, parent) => {
     byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), parent);
   },
-  merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+  merkleizeInto(): void {
     throw new Error("Not implemented");
   },
   digestNLevelUnsafe(): Uint8Array {

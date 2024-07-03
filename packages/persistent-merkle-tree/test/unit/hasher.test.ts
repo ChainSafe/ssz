@@ -107,7 +107,7 @@ describe("hasher.merkleizeInto", function () {
     it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
       const data = Buffer.alloc(63, 0);
       const output = Buffer.alloc(32);
-      expect(() => hasher.merkleizeInto(data, 1, output, 0)).to.throw("Invalid input length");
+      expect(() => hasher.merkleizeInto(data, 2, output, 0)).to.throw("Invalid input length");
     });
 
     for (const numNode of numNodes) {

@@ -3,7 +3,7 @@ import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
 import {byteArrayToHashObject} from "@chainsafe/as-sha256";
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import { zeroHash } from "../zeroHash";
+import {merkleize} from "./util";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -40,38 +40,10 @@ export const hasher: Hasher = {
   },
   // input data is unsafe because it's modified
   // if its chunk count is not even, need to be appended with zero hash at layer 0 so that we don't need
-  // a new memory allocation here
+  // a new memory allocation here (even through we don't need it if padFor = 1)
+  // TODO - batch: deduplicate with as-sha256
   merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    if (padFor < 1) {
-      throw new Error(`Invalid padFor, expect to be greater than 0, got ${padFor}`);
-    }
-
-    if (data.length % 64 !== 0) {
-      throw new Error(`Invalid input length, expect to be multiple of 64 bytes, got ${data.length}`);
-    }
-
-    const layerCount = padFor <= 1 ? 1 : Math.ceil(Math.log2(padFor));
-    let inputLength = data.length;
-    let outputLength = Math.floor(inputLength / 2);
-    let bufferIn = data;
-    // hash into the same buffer
-    for (let i = 0; i < layerCount; i++) {
-      const bufferOut = data.subarray(0, outputLength);
-      hashInto(bufferIn, bufferOut);
-      const chunkCount = Math.floor(outputLength / 32);
-      if (chunkCount % 2 === 1 && i < layerCount - 1) {
-        // extend to 1 more chunk
-        inputLength = outputLength + 32;
-        bufferIn = data.subarray(0, inputLength);
-        bufferIn.set(zeroHash(i + 1), outputLength);
-      } else {
-        bufferIn = bufferOut;
-        inputLength = outputLength;
-      }
-      outputLength = Math.floor(inputLength / 2);
-    }
-
-    output.set(bufferIn.subarray(0, 32), offset);
+    return merkleize(data, padFor, output, offset, hashInto);
   },
   // given nLevel = 3
   // digest multiple of 8 chunks = 256 bytes
