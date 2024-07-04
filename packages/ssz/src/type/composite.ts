@@ -239,7 +239,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     const merkleBytes = this.getChunkBytes(value);
     merkleizeInto(merkleBytes, this.maxChunkCount, output, offset);
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = output.slice(offset, 32);
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = output.slice(offset, offset + 32);
     }
   }
 
