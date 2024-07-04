@@ -1,5 +1,5 @@
 import {sha256} from "@noble/hashes/sha256";
-import {digest64HashObjects, HashObject, byteArrayIntoHashObject} from "@chainsafe/as-sha256";
+import {digest64HashObjects, byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
 import {hashObjectToUint8Array} from "./util";
 
@@ -14,23 +14,8 @@ export const hasher: Hasher = {
   merkleizeInto(): void {
     throw new Error("Not implemented");
   },
-  digestNLevelUnsafe(): Uint8Array {
+  digestNLevel(): Uint8Array {
     throw new Error("Not implemented");
-  },
-  batchHashObjects: (inputs: HashObject[]) => {
-    // noble does not support batch hash
-    if (inputs.length === 0) {
-      return [];
-    } else if (inputs.length % 2 !== 0) {
-      throw new Error(`Expect inputs.length to be even, got ${inputs.length}`);
-    }
-
-    const outputs = new Array<HashObject>();
-    for (let i = 0; i < inputs.length; i += 2) {
-      const output = digest64HashObjects(inputs[i], inputs[i + 1]);
-      outputs.push(output);
-    }
-    return outputs;
   },
   executeHashComputations: (hashComputations) => {
     for (let level = hashComputations.length - 1; level >= 0; level--) {

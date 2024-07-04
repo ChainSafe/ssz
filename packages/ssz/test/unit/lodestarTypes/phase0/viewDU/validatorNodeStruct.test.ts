@@ -1,5 +1,5 @@
-import {digestNLevelUnsafe} from "@chainsafe/persistent-merkle-tree";
-import {validatorToMerkleBytes} from "../../../../lodestarTypes/phase0/viewDU/validator";
+import {digestNLevel} from "@chainsafe/persistent-merkle-tree";
+import {validatorToChunkBytes} from "../../../../lodestarTypes/phase0/viewDU/validator";
 import {ValidatorNodeStruct} from "../../../../lodestarTypes/phase0/validator";
 import {expect} from "chai";
 import {Validator} from "../../../../lodestarTypes/phase0/sszTypes";
@@ -28,11 +28,11 @@ describe("validatorNodeStruct", () => {
       const dataView = new DataView(level3.buffer, level3.byteOffset, level3.byteLength);
       // pubkey takes 2 chunks, has to go to another level
       const level4 = new Uint8Array(32 * 2);
-      validatorToMerkleBytes({uint8Array: level3, dataView}, level4, validator);
+      validatorToChunkBytes({uint8Array: level3, dataView}, level4, validator);
       // additional slice() call make it easier to debug
-      const pubkeyRoot = digestNLevelUnsafe(level4, 1).slice();
+      const pubkeyRoot = digestNLevel(level4, 1).slice();
       level3.set(pubkeyRoot, 0);
-      const root = digestNLevelUnsafe(level3, 3).slice();
+      const root = digestNLevel(level3, 3).slice();
       const expectedRootNode2 = Validator.value_toTree(validator);
       expect(root).to.be.deep.equals(expectedRoot0);
       expect(root).to.be.deep.equals(expectedRootNode2.root);

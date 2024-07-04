@@ -13,7 +13,13 @@ export function uint8ArrayToHashObject(byteArr: Uint8Array): HashObject {
 
 type HashIntoFn = (input: Uint8Array, output: Uint8Array) => void;
 
-export function merkleize(
+/**
+ * Input data is unsafe because it's modified
+ * If its chunk count is not even, need to be appended with zero hash at layer 0 so that we don't need
+ * a new memory allocation here (even through we don't need it if padFor = 1)
+ * The Uint8Array(32) will be written to output at offset
+ */
+export function doMerkleizeInto(
   data: Uint8Array,
   padFor: number,
   output: Uint8Array,
@@ -60,4 +66,38 @@ export function merkleize(
   }
 
   output.set(bufferIn.subarray(0, 32), offset);
+}
+
+/**
+ * Input data is unsafe because it's modified
+ * given nLevel = 3
+ * digest multiple of 8 chunks = 256 bytes
+ * the result is multiple of 1 chunk = 32 bytes
+ * this is the same to hashTreeRoot() of multiple validators
+ */
+export function doDigestNLevel(data: Uint8Array, nLevel: number, hashInto: HashIntoFn): Uint8Array {
+  let inputLength = data.length;
+  const bytesInBatch = Math.pow(2, nLevel) * 32;
+  if (nLevel < 1) {
+    throw new Error(`Invalid nLevel, expect to be greater than 0, got ${nLevel}`);
+  }
+  if (inputLength % bytesInBatch !== 0) {
+    throw new Error(
+      `Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`
+    );
+  }
+
+  let outputLength = Math.floor(inputLength / 2);
+
+  // hash into same buffer
+  let bufferIn = data;
+  for (let i = nLevel; i > 0; i--) {
+    const bufferOut = bufferIn.subarray(0, outputLength);
+    hashInto(bufferIn, bufferOut);
+    bufferIn = bufferOut;
+    inputLength = outputLength;
+    outputLength = Math.floor(inputLength / 2);
+  }
+
+  return bufferIn;
 }

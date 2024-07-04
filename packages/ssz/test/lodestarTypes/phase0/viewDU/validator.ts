@@ -3,7 +3,7 @@ import {BranchNodeStruct} from "../../../../src/branchNodeStruct";
 import {ContainerTypeGeneric} from "../../../../src/view/container";
 import {TreeViewDU} from "../../../../src/viewDU/abstract";
 import {ValidatorType} from "../validator";
-import {Node, digestNLevelUnsafe} from "@chainsafe/persistent-merkle-tree";
+import {Node} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews} from "../../../../src/type/abstract";
 type Validator = {
   pubkey: Uint8Array;
@@ -23,11 +23,7 @@ const NUMBER_2_POW_32 = 2 ** 32;
 const UINT32_SIZE = 4;
 const CHUNK_SIZE = 32;
 
-// validator has 8 nodes at level 3
-const singleLevel3Bytes = new Uint8Array(8 * 32);
-const singleLevel3ByteView = {uint8Array: singleLevel3Bytes, dataView: new DataView(singleLevel3Bytes.buffer)};
-// validator has 2 nodes at level 4 (pubkey has 48 bytes = 2 * nodes)
-const singleLevel4Bytes = new Uint8Array(2 * 32);
+const temporaryRoot = new Uint8Array(32);
 
 /**
  * A specific ViewDU for validator designed to be efficient to batch hash and efficient to create tree
@@ -56,19 +52,9 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
     }
 
     if (this._rootNode.h0 === null) {
-      this.valueToMerkleBytes(singleLevel3ByteView, singleLevel4Bytes);
-      // level 4 hash
-      const pubkeyRoot = digestNLevelUnsafe(singleLevel4Bytes, 1);
-      if (pubkeyRoot.length !== 32) {
-        throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
-      }
-      singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
-      // level 3 hash
-      const validatorRoot = digestNLevelUnsafe(singleLevel3ByteView.uint8Array, 3);
-      if (validatorRoot.length !== 32) {
-        throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
-      }
-      byteArrayIntoHashObject(validatorRoot, this._rootNode);
+      const value = this.valueChanged ?? this._rootNode.value;
+      this.type.hashTreeRootInto(value, temporaryRoot, 0);
+      byteArrayIntoHashObject(temporaryRoot, this._rootNode);
     }
     this.valueChanged = null;
   }
@@ -181,7 +167,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
    * level4  |----------|----------|
    *
    */
-  valueToMerkleBytes(level3: ByteViews, level4: Uint8Array): void {
+  valueToChunkBytes(level3: ByteViews, level4: Uint8Array): void {
     if (level3.uint8Array.byteLength !== 8 * CHUNK_SIZE) {
       throw Error(`Expected level3 to be 8 * CHUNK_SIZE bytes, got ${level3.uint8Array.byteLength}`);
     }
@@ -190,7 +176,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
     }
     // in case pushing a new validator to array, valueChanged could be null
     const value = this.valueChanged ?? this._rootNode.value;
-    validatorToMerkleBytes(level3, level4, value);
+    validatorToChunkBytes(level3, level4, value);
   }
 
   /**
@@ -226,7 +212,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
  * level4  |----------|----------|
  *
  */
-export function validatorToMerkleBytes(level3: ByteViews, level4: Uint8Array, value: Validator): void {
+export function validatorToChunkBytes(level3: ByteViews, level4: Uint8Array, value: Validator): void {
   const {
     pubkey,
     withdrawalCredentials,
