@@ -145,6 +145,11 @@ export abstract class Type<V> {
    */
   abstract hashTreeRoot(value: V): Uint8Array;
 
+  /**
+   * Same to hashTreeRoot() but here we write result to output.
+   */
+  abstract hashTreeRootInto(value: V, output: Uint8Array, offset: number): void;
+
   // JSON support
 
   /** Parse JSON representation of a type to value */
