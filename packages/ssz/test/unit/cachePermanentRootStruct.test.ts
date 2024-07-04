@@ -11,8 +11,10 @@ describe("cachePermanentRootStruct", () => {
 
     const root = type.hashTreeRoot(value);
     const root2 = type.hashTreeRoot(value);
-    expect(root).to.equal(root2, "Second hashTreeRoot should return the same Uint8Array");
+    // previously this is the same reference, since we move to merkleizeInto() it is not anymore
+    // this should not be an issue anyway
+    expect(root).to.deep.equal(root2, "Second hashTreeRoot should return the same Uint8Array");
 
-    expect(type["getCachedPermanentRoot"](value)).to.equal(root, "Should have cached root");
+    expect(type["getCachedPermanentRoot"](value)).to.deep.equal(root, "Should have cached root");
   });
 });
