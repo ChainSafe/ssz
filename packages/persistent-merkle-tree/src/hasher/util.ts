@@ -24,8 +24,14 @@ export function merkleize(
     throw new Error(`Invalid padFor, expect to be greater than 0, got ${padFor}`);
   }
 
-  if (data.length < 32) {
-    throw new Error(`Invalid input length, expect to be at least 32 bytes, got ${data.length}`);
+  const layerCount = Math.ceil(Math.log2(padFor));
+  if (data.length === 0) {
+    output.set(zeroHash(layerCount), offset);
+    return;
+  }
+
+  if (data.length % 32 !== 0) {
+    throw new Error(`Invalid input length, expect to be multiple of 32 bytes, got ${data.length}`);
   }
 
   // if padFor = 1, only need 32 bytes
@@ -33,7 +39,6 @@ export function merkleize(
     throw new Error(`Invalid input length, expect to be multiple of 64 bytes, got ${data.length}, padFor=${padFor}`);
   }
 
-  const layerCount = Math.ceil(Math.log2(padFor));
   let inputLength = data.length;
   let outputLength = Math.floor(inputLength / 2);
   let bufferIn = data;
