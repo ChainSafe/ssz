@@ -1,4 +1,4 @@
-import {digestNLevelUnsafe} from "@chainsafe/persistent-merkle-tree";
+import {digestNLevel} from "@chainsafe/persistent-merkle-tree";
 import {ContainerType} from "../../../../../ssz/src/type/container";
 import {ssz} from "../../../lodestarTypes";
 import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
@@ -52,15 +52,15 @@ describe("Validator ssz types", function () {
     const singleLevel3ByteView = {uint8Array: singleLevel3Bytes, dataView: new DataView(singleLevel3Bytes.buffer)};
     // validator has 2 nodes at level 4 (pubkey has 48 bytes = 2 * nodes)
     const singleLevel4Bytes = new Uint8Array(2 * 32);
-    viewDU.valueToMerkleBytes(singleLevel3ByteView, singleLevel4Bytes);
+    viewDU.valueToChunkBytes(singleLevel3ByteView, singleLevel4Bytes);
     // level 4 hash
-    const pubkeyRoot = digestNLevelUnsafe(singleLevel4Bytes, 1);
+    const pubkeyRoot = digestNLevel(singleLevel4Bytes, 1);
     if (pubkeyRoot.length !== 32) {
       throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
     }
     singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
     // level 3 hash
-    const validatorRoot = digestNLevelUnsafe(singleLevel3ByteView.uint8Array, 3);
+    const validatorRoot = digestNLevel(singleLevel3ByteView.uint8Array, 3);
     if (validatorRoot.length !== 32) {
       throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
     }

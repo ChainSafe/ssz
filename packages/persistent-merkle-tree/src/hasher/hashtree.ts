@@ -1,9 +1,8 @@
 import {hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types";
 import {HashComputation, Node} from "../node";
-import {byteArrayToHashObject} from "@chainsafe/as-sha256";
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {merkleize} from "./util";
+import {doDigestNLevel, doMerkleizeInto} from "./util";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -38,82 +37,11 @@ export const hasher: Hasher = {
     hashInto(hash64Input, hash64Output);
     byteArrayIntoHashObject(hash64Output, parent);
   },
-  // input data is unsafe because it's modified
-  // if its chunk count is not even, need to be appended with zero hash at layer 0 so that we don't need
-  // a new memory allocation here (even through we don't need it if padFor = 1)
-  // TODO - batch: deduplicate with as-sha256
   merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return merkleize(data, padFor, output, offset, hashInto);
+    return doMerkleizeInto(data, padFor, output, offset, hashInto);
   },
-  // given nLevel = 3
-  // digest multiple of 8 chunks = 256 bytes
-  // the result is multiple of 1 chunk = 32 bytes
-  // this is the same to hashTreeRoot() of multiple validators
-  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
-    let inputLength = data.length;
-    const bytesInBatch = Math.pow(2, nLevel) * 32;
-    if (nLevel < 1) {
-      throw new Error(`Invalid nLevel, expect to be greater than 0, got ${nLevel}`);
-    }
-    if (inputLength % bytesInBatch !== 0) {
-      throw new Error(
-        `Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`
-      );
-    }
-    if (inputLength > MAX_INPUT_SIZE) {
-      throw new Error(`Invalid input length, expect to be less than ${MAX_INPUT_SIZE}, got ${inputLength}`);
-    }
-
-    let outputLength = Math.floor(inputLength / 2);
-
-    uint8Input.set(data, 0);
-    // hash into same buffer
-    let bufferIn = uint8Input.subarray(0, inputLength);
-    for (let i = nLevel; i > 0; i--) {
-      const bufferOut = bufferIn.subarray(0, outputLength);
-      hashInto(bufferIn, bufferOut);
-      bufferIn = bufferOut;
-      inputLength = outputLength;
-      outputLength = Math.floor(inputLength / 2);
-    }
-
-    // the result is unsafe as it will be modified later, consumer should save the result if needed
-    return bufferIn;
-  },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  batchHashObjects(inputs: HashObject[]): HashObject[] {
-    if (inputs.length === 0) {
-      return [];
-    }
-    if (inputs.length % 2 !== 0) {
-      throw new Error("inputs length must be even");
-    }
-
-    const batch = PARALLEL_FACTOR * 2;
-    const outHashObjects: HashObject[] = [];
-    for (const [i, hashInput] of inputs.entries()) {
-      const indexInBatch = i % batch;
-      hashObjectToUint32Array(hashInput, uint32Input, indexInBatch * 8);
-      if (indexInBatch === batch - 1) {
-        hashInto(uint8Input, uint8Output);
-        for (let j = 0; j < batch / 2; j++) {
-          outHashObjects.push(byteArrayToHashObject(uint8Output.subarray(j * 32, (j + 1) * 32)));
-        }
-      }
-    }
-
-    // hash remaining
-    const remaining = inputs.length % batch;
-    if (remaining > 0) {
-      const remainingInput = uint8Input.subarray(0, remaining * 32);
-      const remainingOutput = uint8Output.subarray(0, remaining * 16);
-      hashInto(remainingInput, remainingOutput);
-      for (let i = 0; i < remaining / 2; i++) {
-        outHashObjects.push(byteArrayToHashObject(remainingOutput.subarray(i * 32, (i + 1) * 32)));
-      }
-    }
-
-    return outHashObjects;
+  digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
+    return doDigestNLevel(data, nLevel, hashInto);
   },
   executeHashComputations(hashComputations: Array<HashComputation[]>): void {
     for (let level = hashComputations.length - 1; level >= 0; level--) {

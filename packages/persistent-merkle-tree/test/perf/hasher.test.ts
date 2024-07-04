@@ -48,26 +48,6 @@ describe("hasher", function () {
         runsFactor,
       });
 
-      // TODO: benchmark for this test is not stable, if it runs alone it's 20% - 30% faster
-      itBench.skip({
-        id: `batchHashObjects - ${hasher.name}`,
-        before: () => {
-          const hashObjects: HashObject[] = [];
-          for (let i = 0; i < iterations; i++) {
-            hashObjects.push(uint8ArrayToHashObject(root1));
-            hashObjects.push(uint8ArrayToHashObject(root2));
-          }
-          return hashObjects;
-        },
-        beforeEach: (hashObjects) => hashObjects,
-        fn: (hashObjects: HashObject[]) => {
-          for (let i = 0; i < runsFactor; i++) {
-            hasher.batchHashObjects(hashObjects);
-          }
-        },
-        runsFactor: 10,
-      });
-
       itBench({
         id: `executeHashComputations - ${hasher.name}`,
         beforeEach: () => {

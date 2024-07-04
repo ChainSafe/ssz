@@ -2,80 +2,22 @@ import {
   digest2Bytes32,
   digest64HashObjectsInto,
   digest64HashObjects,
-  HashObject,
   batchHash4HashObjectInputs,
   hashInto,
 } from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
 import {HashComputation, Node} from "../node";
-import {merkleize} from "./util";
-
-// each validator needs to digest 8 chunks of 32 bytes = 4 hashes
-// support up to 4 validators
-const MAX_HASH = 16;
-const MAX_INPUT_SIZE = MAX_HASH * 64;
-const buffer = new Uint8Array(MAX_INPUT_SIZE);
+import {doDigestNLevel, doMerkleizeInto} from "./util";
 
 export const hasher: Hasher = {
   name: "as-sha256",
   digest64: digest2Bytes32,
   digest64HashObjects: digest64HashObjectsInto,
-  // TODO - batch: deduplicate with hashtree
   merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return merkleize(data, padFor, output, offset, hashInto);
+    return doMerkleizeInto(data, padFor, output, offset, hashInto);
   },
-  // given nLevel = 3
-  // digest multiple of 8 chunks = 256 bytes
-  // the result is multiple of 1 chunk = 32 bytes
-  // this is the same to hashTreeRoot() of multiple validators
-  digestNLevelUnsafe(data: Uint8Array, nLevel: number): Uint8Array {
-    let inputLength = data.length;
-    const bytesInBatch = Math.pow(2, nLevel) * 32;
-    if (nLevel < 1) {
-      throw new Error(`Invalid nLevel, expect to be greater than 0, got ${nLevel}`);
-    }
-    if (inputLength % bytesInBatch !== 0) {
-      throw new Error(
-        `Invalid input length, expect to be multiple of ${bytesInBatch} for nLevel ${nLevel}, got ${inputLength}`
-      );
-    }
-    if (inputLength > MAX_INPUT_SIZE) {
-      throw new Error(`Invalid input length, expect to be less than ${MAX_INPUT_SIZE}, got ${inputLength}`);
-    }
-
-    buffer.set(data, 0);
-    for (let i = nLevel; i > 0; i--) {
-      const outputLength = Math.floor(inputLength / 2);
-      const hashInput = buffer.subarray(0, inputLength);
-      const hashOutput = buffer.subarray(0, outputLength);
-      hashInto(hashInput, hashOutput);
-      inputLength = outputLength;
-    }
-
-    // the result is unsafe as it will be modified later, consumer should save the result if needed
-    return buffer.subarray(0, inputLength);
-  },
-  batchHashObjects: (inputs: HashObject[]) => {
-    // as-sha256 uses SIMD for batch hash
-    if (inputs.length === 0) {
-      return [];
-    } else if (inputs.length % 2 !== 0) {
-      throw new Error(`Expect inputs.length to be even, got ${inputs.length}`);
-    }
-
-    const batch = Math.floor(inputs.length / 8);
-    const outputs = new Array<HashObject>();
-    for (let i = 0; i < batch; i++) {
-      const outs = batchHash4HashObjectInputs(inputs.slice(i * 8, i * 8 + 8));
-      outputs.push(...outs);
-    }
-
-    for (let i = batch * 8; i < inputs.length; i += 2) {
-      const output = digest64HashObjects(inputs[i], inputs[i + 1]);
-      outputs.push(output);
-    }
-
-    return outputs;
+  digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
+    return doDigestNLevel(data, nLevel, hashInto);
   },
   executeHashComputations: (hashComputations: Array<HashComputation[]>) => {
     for (let level = hashComputations.length - 1; level >= 0; level--) {

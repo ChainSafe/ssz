@@ -1,4 +1,4 @@
-import {HashComputationGroup, Node, digestNLevelUnsafe, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, Node, digestNLevel, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ListCompositeType} from "../../../../src/type/listComposite";
 import {ArrayCompositeTreeViewDUCache} from "../../../../src/viewDU/arrayComposite";
 import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite";
@@ -28,6 +28,15 @@ const level4BytesArr: Uint8Array[] = [];
 for (let i = 0; i < PARALLEL_FACTOR; i++) {
   level4BytesArr.push(batchLevel4Bytes.subarray(i * 2 * 32, (i + 1) * 2 * 32));
 }
+const pubkeyRoots: Uint8Array[] = [];
+for (let i = 0; i < PARALLEL_FACTOR; i++) {
+  pubkeyRoots.push(batchLevel4Bytes.subarray(i * 32, (i + 1) * 32));
+}
+
+const validatorRoots: Uint8Array[] = [];
+for (let i = 0; i < PARALLEL_FACTOR; i++) {
+  validatorRoots.push(batchLevel3Bytes.subarray(i * 32, (i + 1) * 32));
+}
 
 export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNodeStructType> {
   constructor(
@@ -55,33 +64,29 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
     const nodesChanged: {index: number; node: Node}[] = [];
     // commit every 16 validators in batch
     for (let i = 0; i < endBatch; i++) {
+      if (i % PARALLEL_FACTOR === 0) {
+        batchLevel3Bytes.fill(0);
+        batchLevel4Bytes.fill(0);
+      }
       const indexInBatch = i % PARALLEL_FACTOR;
       const viewIndex = indicesChanged[i];
       const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
-      viewChanged.valueToMerkleBytes(level3ByteViewsArr[indexInBatch], level4BytesArr[indexInBatch]);
+      viewChanged.valueToChunkBytes(level3ByteViewsArr[indexInBatch], level4BytesArr[indexInBatch]);
 
       if (indexInBatch === PARALLEL_FACTOR - 1) {
-        // hash level 4
-        const pubkeyRoots = digestNLevelUnsafe(batchLevel4Bytes, 1);
-        if (pubkeyRoots.length !== PARALLEL_FACTOR * 32) {
-          throw new Error(`Invalid pubkeyRoots length, expect ${PARALLEL_FACTOR * 32}, got ${pubkeyRoots.length}`);
-        }
+        // hash level 4, this is populated to pubkeyRoots
+        digestNLevel(batchLevel4Bytes, 1);
         for (let j = 0; j < PARALLEL_FACTOR; j++) {
-          level3ByteViewsArr[j].uint8Array.set(pubkeyRoots.subarray(j * 32, (j + 1) * 32), 0);
+          level3ByteViewsArr[j].uint8Array.set(pubkeyRoots[j], 0);
         }
-        const validatorRoots = digestNLevelUnsafe(batchLevel3Bytes, 3);
-        if (validatorRoots.length !== PARALLEL_FACTOR * 32) {
-          throw new Error(
-            `Invalid validatorRoots length, expect ${PARALLEL_FACTOR * 32}, got ${validatorRoots.length}`
-          );
-        }
+        // hash level 3, this is populated to validatorRoots
+        digestNLevel(batchLevel3Bytes, 3);
         // commit all validators in this batch
         for (let j = PARALLEL_FACTOR - 1; j >= 0; j--) {
           const viewIndex = indicesChanged[i - j];
           const indexInBatch = (i - j) % PARALLEL_FACTOR;
-          const validatorRoot = validatorRoots.subarray(indexInBatch * 32, (indexInBatch + 1) * 32);
           const viewChanged = this.viewsChanged.get(viewIndex) as ValidatorTreeViewDU;
-          viewChanged.commitToRoot(validatorRoot);
+          viewChanged.commitToRoot(validatorRoots[indexInBatch]);
           nodesChanged.push({index: viewIndex, node: viewChanged.node});
           // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
           this.nodes[viewIndex] = viewChanged.node;

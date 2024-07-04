@@ -57,19 +57,6 @@ describe("hashers", function () {
     expectEqualHex(hash1, hash3);
   });
 
-  it("all hashers should return the same values from batchHashObjects", () => {
-    const hashObjects = linspace(254)
-      .map((num) => Buffer.alloc(32, num))
-      .map(uint8ArrayToHashObject);
-    const results1 = nobleHasher.batchHashObjects(hashObjects).map(hashObjectToUint8Array);
-    const results2 = asSha256Hasher.batchHashObjects(hashObjects).map(hashObjectToUint8Array);
-    const results3 = hashtreeHasher.batchHashObjects(hashObjects).map(hashObjectToUint8Array);
-    Object.values(results1).forEach((result1, i) => {
-      expectEqualHex(result1, results2[i]);
-      expectEqualHex(result1, results3[i]);
-    });
-  });
-
   describe("all hashers should return the same values from executeHashComputations", () => {
     for (const hasher of hashers) {
       it(hasher.name, () => {
@@ -82,16 +69,15 @@ describe("hashers", function () {
   });
 });
 
-describe("hasher.digestNLevelUnsafe", function () {
+describe("hasher.digestNLevel", function () {
   const hashers = [hashtreeHasher, asSha256Hasher];
   for (const hasher of hashers) {
     const numValidators = [1, 2, 3, 4];
     for (const numValidator of numValidators) {
-      it (`${hasher.name} digestNLevelUnsafe ${numValidator} validators = ${8 * numValidator} chunk(s)`, () => {
+      it (`${hasher.name} digestNLevel ${numValidator} validators = ${8 * numValidator} chunk(s)`, () => {
         const nodes = Array.from({length: 8 * numValidator}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i + numValidator)));
         const hashInput = Buffer.concat(nodes.map((node) => node.root));
-        // slice() because output is unsafe
-        const hashOutput = hasher.digestNLevelUnsafe(hashInput, 3).slice();
+        const hashOutput = hasher.digestNLevel(hashInput, 3).slice();
         for (let i = 0; i < numValidator; i++) {
           const root = subtreeFillToContents(nodes.slice(i * 8, (i + 1) * 8), 3).root;
           expectEqualHex(hashOutput.subarray(i * 32, (i + 1) * 32), root);
