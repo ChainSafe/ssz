@@ -8,7 +8,7 @@ export function hashObjectToUint8Array(obj: HashObject): Uint8Array {
 }
 
 export function uint8ArrayToHashObject(byteArr: Uint8Array): HashObject {
-  return byteArrayToHashObject(byteArr);
+  return byteArrayToHashObject(byteArr, 0);
 }
 
 type HashIntoFn = (input: Uint8Array, output: Uint8Array) => void;

@@ -32,7 +32,7 @@ describe("Test SIMD implementation of as-sha256", () => {
 
   it("testHash4HashObjectInputs", () => {
     const input1 = "gajindergajindergajindergajinder";
-    const inputHashObject = byteArrayToHashObject(Buffer.from(input1, "utf8"));
+    const inputHashObject = byteArrayToHashObject(Buffer.from(input1, "utf8"), 0);
     const outputs = sha256.batchHash4HashObjectInputs(Array.from({length: 8}, () => inputHashObject));
     const expectedOutput = new Uint8Array([
       190, 57, 56, 15, 241, 208, 38, 30, 111, 55, 218, 254, 66, 120, 182, 98, 239, 97, 31, 28, 178, 247, 192, 161,

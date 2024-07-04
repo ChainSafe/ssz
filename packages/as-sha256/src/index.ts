@@ -91,7 +91,7 @@ export function digest64HashObjectsInto(obj1: HashObject, obj2: HashObject, outp
   ctx.digest64(wasmInputValue, wasmOutputValue);
 
   // extracting numbers from Uint32Array causes more memory
-  byteArrayIntoHashObject(outputUint8Array, output);
+  byteArrayIntoHashObject(outputUint8Array, 0, output);
 }
 
 /**
@@ -246,10 +246,10 @@ export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
 
   ctx.batchHash4HashObjectInputs(wasmOutputValue);
 
-  const output0 = byteArrayToHashObject(outputUint8Array.subarray(0, 32));
-  const output1 = byteArrayToHashObject(outputUint8Array.subarray(32, 64));
-  const output2 = byteArrayToHashObject(outputUint8Array.subarray(64, 96));
-  const output3 = byteArrayToHashObject(outputUint8Array.subarray(96, 128));
+  const output0 = byteArrayToHashObject(outputUint8Array, 0);
+  const output1 = byteArrayToHashObject(outputUint8Array, 32);
+  const output2 = byteArrayToHashObject(outputUint8Array, 64);
+  const output3 = byteArrayToHashObject(outputUint8Array, 96);
 
   return [output0, output1, output2, output3];
 }

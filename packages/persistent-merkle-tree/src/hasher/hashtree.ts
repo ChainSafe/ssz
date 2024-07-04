@@ -35,7 +35,7 @@ export const hasher: Hasher = {
   digest64HashObjects(left: HashObject, right: HashObject, parent: HashObject): void {
     hashObjectsToUint32Array(left, right, uint32Input);
     hashInto(hash64Input, hash64Output);
-    byteArrayIntoHashObject(hash64Output, parent);
+    byteArrayIntoHashObject(hash64Output, 0, parent);
   },
   merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
     return doMerkleizeInto(data, padFor, output, offset, hashInto);
@@ -66,7 +66,7 @@ export const hasher: Hasher = {
         if (indexInBatch === PARALLEL_FACTOR - 1) {
           hashInto(uint8Input, uint8Output);
           for (const [j, destNode] of destNodes.entries()) {
-            byteArrayIntoHashObject(uint8Output.subarray(j * 32, (j + 1) * 32), destNode);
+            byteArrayIntoHashObject(uint8Output, j * 32, destNode);
           }
           destNodes = [];
         }
@@ -80,7 +80,7 @@ export const hasher: Hasher = {
         hashInto(remainingInput, remainingOutput);
         // destNodes was prepared above
         for (const [i, destNode] of destNodes.entries()) {
-          byteArrayIntoHashObject(remainingOutput.subarray(i * 32, (i + 1) * 32), destNode);
+          byteArrayIntoHashObject(remainingOutput, i * 32, destNode);
         }
       }
     }

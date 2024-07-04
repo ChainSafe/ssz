@@ -9,7 +9,7 @@ export const hasher: Hasher = {
   name: "noble",
   digest64,
   digest64HashObjects: (left, right, parent) => {
-    byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), parent);
+    byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), 0, parent);
   },
   merkleizeInto(): void {
     throw new Error("Not implemented");

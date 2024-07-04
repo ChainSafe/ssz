@@ -54,7 +54,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
     if (this._rootNode.h0 === null) {
       const value = this.valueChanged ?? this._rootNode.value;
       this.type.hashTreeRootInto(value, temporaryRoot, 0);
-      byteArrayIntoHashObject(temporaryRoot, this._rootNode);
+      byteArrayIntoHashObject(temporaryRoot, 0, this._rootNode);
     }
     this.valueChanged = null;
   }
@@ -187,7 +187,7 @@ export class ValidatorTreeViewDU extends TreeViewDU<ContainerTypeGeneric<typeof 
     if (this.valueChanged !== null) {
       this._rootNode = this.type.value_toTree(this.valueChanged) as BranchNodeStruct<Validator>;
     }
-    byteArrayIntoHashObject(root, this._rootNode);
+    byteArrayIntoHashObject(root, 0, this._rootNode);
     this.valueChanged = null;
   }
 
