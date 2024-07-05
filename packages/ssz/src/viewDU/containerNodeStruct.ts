@@ -28,7 +28,8 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 
   commit(hashComps: HashComputationMeta | null = null): void {
     if (this.valueChanged === null) {
-      if (hashComps !== null) {
+      const isOldRootHashed = this._rootNode.h0 !== null;
+      if (!isOldRootHashed && hashComps !== null) {
         hashComps.bottomNodes.push(this._rootNode);
       }
       return;
