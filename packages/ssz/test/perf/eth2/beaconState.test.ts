@@ -18,7 +18,7 @@ const expectedRoot = "0x0bd3c6caecdf5b04e8ac48e41732aa5908019e072aa4e61c5298cf31
  */
 describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numModified}`, function () {
   itBench({
-    id: `BeaconState ViewDU recursive hash vc=${vc}`,
+    id: `BeaconState ViewDU recursive hash - total vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       state.commit();
@@ -39,17 +39,14 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   itBench({
-    id: `BeaconState ViewDU validator tree creation vc=${numModified}`,
+    id: `BeaconState ViewDU recursive hash - hash vc=${numModified}`,
     beforeEach: () => {
       const state = createPartiallyModifiedDenebState();
       state.commit();
       return state;
     },
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
-      const validators = state.validators;
-      for (let i = 0; i < numModified; i++) {
-        validators.getReadonly(i).node.left;
-      }
+      state.node.root;
     },
   });
 
@@ -87,10 +84,10 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
         bottomNodes: [],
       };
       state.commit(hashComps);
-      return hashComps;
+      return {state, hashComps};
     },
-    fn: (hashComps) => {
-      executeHashComputations(hashComps.byLevel);
+    fn: ({state, hashComps}) => {
+      state.type.executeHashComputationMeta(hashComps);
     },
   });
 });
