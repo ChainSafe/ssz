@@ -1,8 +1,8 @@
-import {HashComputationGroup, Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
+import {Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ValueOf, ByteViews} from "./abstract";
+import {ValueOf, ByteViews, HashComputationMeta} from "./abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic";
 import {
@@ -98,7 +98,7 @@ export class ListCompositeType<
     return view.node;
   }
 
-  commitViewDU(view: ListCompositeTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
+  commitViewDU(view: ListCompositeTreeViewDU<ElementType>, hashComps: HashComputationMeta | null = null): Node {
     view.commit(hashComps);
     return view.node;
   }
@@ -160,7 +160,7 @@ export class ListCompositeType<
     rootNode: Node,
     chunksNode: Node,
     newLength: number | null,
-    hashComps: HashComputationGroup | null
+    hashComps: HashComputationMeta | null
   ): Node {
     return setChunksNode(rootNode, chunksNode, newLength, hashComps);
   }

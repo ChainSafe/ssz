@@ -7,12 +7,11 @@ import {
   toGindex,
   concatGindices,
   getNode,
-  HashComputationGroup,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
+import {HashComputationMeta, Type, ValueOf} from "./abstract";
 import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
 import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
@@ -166,7 +165,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return view.node;
   }
 
-  commitViewDU(view: ContainerTreeViewDUType<Fields>, hashComps: HashComputationGroup | null = null): Node {
+  commitViewDU(view: ContainerTreeViewDUType<Fields>, hashComps: HashComputationMeta | null = null): Node {
     view.commit(hashComps);
     return view.node;
   }

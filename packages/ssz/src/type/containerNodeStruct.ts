@@ -1,4 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
+import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import {Type, ByteViews} from "./abstract";
 import {isCompositeType} from "./composite";
 import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container";
@@ -24,6 +25,9 @@ import {ValueOfFields} from "../view/container";
  * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
  */
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
+  // Temporary root to avoid allocating new Uint8Array every time
+  private temporaryRoot = new Uint8Array(32);
+
   constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
     super(fields, {
       // Overwrite default "Container" typeName
@@ -70,7 +74,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const value = this.value_deserializeFromBytes(data, start, end);
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+    return new BranchNodeStruct(this.valueToTree.bind(this), this.computeRootInto.bind(this), value);
   }
 
   // Proofs
@@ -91,7 +95,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     super.tree_serializeToBytes({uint8Array, dataView}, 0, node);
     const value = this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
     return {
-      node: new BranchNodeStruct(this.valueToTree.bind(this), value),
+      node: new BranchNodeStruct(this.valueToTree.bind(this), this.computeRootInto.bind(this), value),
       done: true,
     };
   }
@@ -103,7 +107,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
   }
 
   value_toTree(value: ValueOfFields<Fields>): Node {
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+    return new BranchNodeStruct(this.valueToTree.bind(this), this.computeRootInto.bind(this), value);
   }
 
   private valueToTree(value: ValueOfFields<Fields>): Node {
@@ -111,5 +115,14 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
     return super.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+  }
+
+  private computeRootInto(value: ValueOfFields<Fields>, node: Node): void {
+    if (node.h0 !== null) {
+      return;
+    }
+
+    this.hashTreeRootInto(value, this.temporaryRoot, 0);
+    byteArrayIntoHashObject(this.temporaryRoot, 0, node);
   }
 }

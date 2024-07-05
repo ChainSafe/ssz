@@ -1,8 +1,11 @@
-import {Node} from "@chainsafe/persistent-merkle-tree";
+import {Node, HashComputationGroup, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 
 /* eslint-disable @typescript-eslint/member-ordering  */
 
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
+export type HashComputationMeta = HashComputationGroup & {
+  bottomNodes: Node[];
+};
 
 /**
  * JSON path property
@@ -90,6 +93,15 @@ export abstract class Type<V> {
   abstract tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number;
   /** INTERNAL METHOD: Deserialize tree from a section of ArrayBuffer views */
   abstract tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node;
+  /** Execute hash computations leveraging batch hash */
+  executeHashComputationMeta(hashComps: HashComputationMeta): void {
+    // BranchNodeStructs are not computed in batch, they are at the lowest level so need to be computed first
+    for (const bottomNode of hashComps.bottomNodes) {
+      bottomNode.rootHashObject;
+    }
+
+    executeHashComputations(hashComps.byLevel);
+  }
 
   /** INTERNAL METHOD: Merkleize value to tree */
   value_toTree(value: V): Node {

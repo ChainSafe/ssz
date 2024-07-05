@@ -1,6 +1,6 @@
-import {HashComputationGroup, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
+import {HashComputationMeta} from "../type/abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering  */
 
@@ -20,7 +20,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
   /**
    * Applies any deferred updates that may be pending in this ViewDU instance and updates its internal `Node`.
    */
-  abstract commit(hashComps?: HashComputationGroup | null): void;
+  abstract commit(hashComps?: HashComputationMeta | null): void;
 
   /**
    * Returns arbitrary data that is useful for this ViewDU instance to optimize data manipulation. This caches MUST
@@ -53,12 +53,14 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
     // TODO - batch: should we a flag to signal a batch hash or not?
     // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
     // if consumers don't want to batch hash, just go with `this.node.root` similar to what View.hashTreeRoot() does
-    const hashComps: HashComputationGroup = {
+    const hashComps: HashComputationMeta = {
       byLevel: [],
       offset: 0,
+      bottomNodes: [],
     };
     this.commit(hashComps);
-    executeHashComputations(hashComps.byLevel);
+
+    this.type.executeHashComputationMeta(hashComps);
 
     // This makes sure the root node is computed by batch
     if (this.node.h0 === null) {

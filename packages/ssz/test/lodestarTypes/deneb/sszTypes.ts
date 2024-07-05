@@ -10,6 +10,7 @@ import {ssz as phase0Ssz} from "../phase0";
 import {ssz as altairSsz} from "../altair";
 import {ssz as bellatrixSsz} from "../bellatrix";
 import {ssz as capellaSsz} from "../capella";
+import {BeaconStateType} from "../beaconState";
 const {
   HISTORICAL_ROOTS_LIMIT,
   MAX_BLOB_COMMITMENTS_PER_BLOCK,
@@ -229,7 +230,7 @@ export const SignedBuilderBid = new ContainerType(
 
 // We don't spread capella.BeaconState fields since we need to replace
 // latestExecutionPayloadHeader and we cannot keep order doing that
-export const BeaconState = new ContainerType(
+export const BeaconState = new BeaconStateType(
   {
     genesisTime: UintNum64,
     genesisValidatorsRoot: Root,

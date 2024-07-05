@@ -2,11 +2,10 @@ import {
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationGroup,
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
+import {HashComputationMeta, ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeType} from "../view/arrayComposite";
 import {TreeViewDU} from "./abstract";
@@ -172,10 +171,10 @@ export class ArrayCompositeTreeViewDU<
 
   /**
    * When we need to compute HashComputations (hashComps != null):
-   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
-   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationMeta
+   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationMeta
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationMeta | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.viewsChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {
@@ -185,13 +184,14 @@ export class ArrayCompositeTreeViewDU<
     }
 
     const nodesChanged: {index: number; node: Node}[] = [];
-    // each view may mutate HashComputationGroup at offset + depth
+    // each view may mutate HashComputationMeta at offset + depth
     const hashCompsView =
       hashComps != null && isOldRootHashed
         ? {
             byLevel: hashComps.byLevel,
             // Depth includes the extra level for the length node
             offset: hashComps.offset + this.type.depth,
+            bottomNodes: hashComps.bottomNodes,
           }
         : null;
 

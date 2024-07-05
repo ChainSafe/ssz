@@ -4,6 +4,7 @@ import {ssz as primitiveSsz} from "../primitive";
 import {ssz as phase0Ssz} from "../phase0";
 import {ssz as altairSsz} from "../altair";
 import {stringType} from "../utils/StringType";
+import {BeaconStateType} from "../beaconState";
 const {
   BYTES_PER_LOGS_BLOOM,
   HISTORICAL_ROOTS_LIMIT,
@@ -110,7 +111,7 @@ export const PowBlock = new ContainerType(
 
 // we don't reuse phase0.BeaconState fields since we need to replace some keys
 // and we cannot keep order doing that
-export const BeaconState = new ContainerType(
+export const BeaconState = new BeaconStateType(
   {
     genesisTime: UintNum64,
     genesisValidatorsRoot: Root,

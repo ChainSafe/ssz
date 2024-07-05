@@ -1,7 +1,8 @@
-import {HashComputationGroup, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
+import {Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {BitArray} from "../value/bitArray";
 import {CompositeType} from "../type/composite";
 import {TreeViewDU} from "./abstract";
+import {HashComputationMeta} from "../type/abstract";
 
 /**
  * Thin wrapper around BitArray to upstream changes after `this.commit()`
@@ -22,7 +23,7 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
     return;
   }
 
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationMeta | null = null): void {
     if (this._bitArray !== null) {
       this._rootNode = this.type.value_toTree(this._bitArray);
     }

@@ -2,12 +2,11 @@ import {
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationGroup,
   LeafNode,
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
+import {HashComputationMeta, ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {ArrayBasicType} from "../view/arrayBasic";
 import {TreeViewDU} from "./abstract";
@@ -161,10 +160,10 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
 
   /**
    * When we need to compute HashComputations (hashComps != null):
-   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
-   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationMeta
+   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationMeta
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationMeta | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {

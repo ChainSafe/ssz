@@ -1,6 +1,5 @@
 import {
   BranchNode,
-  HashComputationGroup,
   LeafNode,
   Node,
   getNodesAtDepth,
@@ -8,7 +7,7 @@ import {
   packedRootsBytesToNode,
   arrayAtIndex,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf, ByteViews} from "./abstract";
+import {Type, ValueOf, ByteViews, HashComputationMeta} from "./abstract";
 import {BasicType} from "./basic";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
@@ -45,7 +44,7 @@ export function setChunksNode(
   rootNode: Node,
   chunksNode: Node,
   newLength: number | null,
-  hashComps: HashComputationGroup | null
+  hashComps: HashComputationMeta | null
 ): Node {
   const lengthNode =
     newLength !== null

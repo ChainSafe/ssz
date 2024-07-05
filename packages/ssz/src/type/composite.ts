@@ -3,7 +3,6 @@ import {
   createProof,
   getNode,
   Gindex,
-  HashComputationGroup,
   Node,
   Proof,
   ProofType,
@@ -13,7 +12,7 @@ import {
 import {byteArrayEquals} from "../util/byteArray";
 import {symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
+import {Type, ByteViews, JsonPath, JsonPathProp, HashComputationMeta} from "./abstract";
 export {ByteViews};
 
 export const LENGTH_GINDEX = BigInt(3);
@@ -129,7 +128,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   /** INTERNAL METHOD: Given a Tree View, returns a `Node` with all its updated data */
   abstract commitView(view: TV): Node;
   /** INTERNAL METHOD: Given a Deferred Update Tree View returns a `Node` with all its updated data */
-  abstract commitViewDU(view: TVDU, hashComps?: HashComputationGroup | null): Node;
+  abstract commitViewDU(view: TVDU, hashComps?: HashComputationMeta | null): Node;
   /** INTERNAL METHOD: Return the cache of a Deferred Update Tree View. May return `undefined` if this ViewDU has no cache */
   abstract cacheOfViewDU(view: TVDU): unknown;
 

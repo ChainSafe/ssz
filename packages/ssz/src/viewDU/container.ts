@@ -1,12 +1,5 @@
-import {
-  getHashComputations,
-  getNodeAtDepth,
-  HashComputationGroup,
-  LeafNode,
-  Node,
-  setNodesAtDepth,
-} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type} from "../type/abstract";
+import {getHashComputations, getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {ByteViews, HashComputationMeta, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
 import {ContainerTypeGeneric} from "../view/container";
@@ -77,10 +70,10 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 
   /**
    * When we need to compute HashComputations (hashComps != null):
-   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
-   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationMeta
+   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationMeta
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationMeta | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {
@@ -91,11 +84,15 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 
     const nodesChanged: {index: number; node: Node}[] = [];
 
-    let hashCompsView: HashComputationGroup | null = null;
-    // if old root is not hashed, no need to pass HashComputationGroup to child view bc we need to do full traversal here
+    let hashCompsView: HashComputationMeta | null = null;
+    // if old root is not hashed, no need to pass HashComputationMeta to child view bc we need to do full traversal here
     if (hashComps != null && isOldRootHashed) {
-      // each view may mutate HashComputationGroup at offset + depth
-      hashCompsView = {byLevel: hashComps.byLevel, offset: hashComps.offset + this.type.depth};
+      // each view may mutate HashComputationMeta at offset + depth
+      hashCompsView = {
+        byLevel: hashComps.byLevel,
+        offset: hashComps.offset + this.type.depth,
+        bottomNodes: hashComps.bottomNodes,
+      };
     }
     for (const [index, view] of this.viewsChanged) {
       const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
@@ -126,7 +123,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       isOldRootHashed ? hashComps : null
     );
 
-    // old root is not hashed, need to traverse and put to HashComputationGroup
+    // old root is not hashed, need to traverse and put to HashComputationMeta
     if (!isOldRootHashed && hashComps !== null) {
       getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
     }

@@ -1,4 +1,5 @@
 import {BitVectorType, ContainerType, ListBasicType, ListCompositeType, VectorCompositeType} from "../../../src";
+import {BeaconStateType} from "../beaconState";
 import {preset, FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT} from "../params";
 const {
   SYNC_COMMITTEE_SIZE,
@@ -130,7 +131,7 @@ export const InactivityScores = new ListBasicType(UintNum64, VALIDATOR_REGISTRY_
 
 // we don't reuse phase0.BeaconState fields since we need to replace some keys
 // and we cannot keep order doing that
-export const BeaconState = new ContainerType(
+export const BeaconState = new BeaconStateType(
   {
     genesisTime: UintNum64,
     genesisValidatorsRoot: Root,

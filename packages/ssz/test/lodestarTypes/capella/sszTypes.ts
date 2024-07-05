@@ -4,6 +4,7 @@ import {ssz as primitiveSsz} from "../primitive";
 import {ssz as phase0Ssz} from "../phase0";
 import {ssz as altairSsz} from "../altair";
 import {ssz as bellatrixSsz} from "../bellatrix";
+import {BeaconStateType} from "../beaconState";
 const {
   HISTORICAL_ROOTS_LIMIT,
   MAX_WITHDRAWALS_PER_PAYLOAD,
@@ -127,7 +128,7 @@ export const HistoricalSummary = new ContainerType(
 
 // we don't reuse bellatrix.BeaconState fields since we need to replace some keys
 // and we cannot keep order doing that
-export const BeaconState = new ContainerType(
+export const BeaconState = new BeaconStateType(
   {
     genesisTime: UintNum64,
     genesisValidatorsRoot: Root,

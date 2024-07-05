@@ -1,10 +1,11 @@
-import {concatGindices, Gindex, HashComputationGroup, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, Gindex, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
 import {BitArray} from "../value/bitArray";
 import {BitArrayTreeView} from "../view/bitArray";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray";
 import {getChunkBytes} from "./byteArray";
+import {HashComputationMeta} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -29,7 +30,7 @@ export abstract class BitArrayType extends CompositeType<BitArray, BitArrayTreeV
     return view.node;
   }
 
-  commitViewDU(view: BitArrayTreeViewDU, hashComps: HashComputationGroup | null = null): Node {
+  commitViewDU(view: BitArrayTreeViewDU, hashComps: HashComputationMeta | null = null): Node {
     view.commit(hashComps);
     return view.node;
   }

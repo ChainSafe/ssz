@@ -1,5 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract";
+import {HashComputationMeta, Type, ValueOf} from "../type/abstract";
 import {isCompositeType} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
 import {ContainerTypeGeneric, ValueOfFields} from "../view/container";
@@ -7,7 +7,6 @@ import {ContainerTreeViewDUTypeConstructor} from "./container";
 import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
-
 class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>
 > {
@@ -27,10 +26,11 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     return;
   }
 
-  commit(): void {
+  commit(hashComps: HashComputationMeta | null = null): void {
     if (this.valueChanged === null) {
-      // this does not suppor batch hash
-      this._rootNode.root;
+      if (hashComps !== null) {
+        hashComps.bottomNodes.push(this._rootNode);
+      }
       return;
     }
 
@@ -38,8 +38,9 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     this.valueChanged = null;
 
     this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
-    // this does not suppor batch hash
-    this._rootNode.root;
+    if (hashComps !== null) {
+      hashComps.bottomNodes.push(this._rootNode);
+    }
   }
 
   protected clearCache(): void {
