@@ -4,7 +4,7 @@ export {BitVectorType} from "./type/bitVector";
 export {BooleanType} from "./type/boolean";
 export {ByteListType} from "./type/byteList";
 export {ByteVectorType} from "./type/byteVector";
-export {ContainerType} from "./type/container";
+export {ContainerType, ContainerOptions} from "./type/container";
 export {ContainerNodeStructType} from "./type/containerNodeStruct";
 export {ListBasicType} from "./type/listBasic";
 export {ListCompositeType} from "./type/listComposite";
@@ -15,6 +15,7 @@ export {OptionalType} from "./type/optional";
 export {VectorBasicType} from "./type/vectorBasic";
 export {VectorCompositeType} from "./type/vectorComposite";
 export {ListUintNum64Type} from "./type/listUintNum64";
+export {HashComputationMeta} from "./type/abstract";
 
 // Base types
 export {ArrayType} from "./type/array";
