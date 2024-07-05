@@ -32,7 +32,7 @@ describe("digest64 vs batchHash4UintArray64s vs digest64HashObjects vs batchHash
     }
   });
 
-  const hashObject = byteArrayToHashObject(Buffer.from("gajindergajindergajindergajinder", "utf8"));
+  const hashObject = byteArrayToHashObject(Buffer.from("gajindergajindergajindergajinder", "utf8"), 0);
   itBench(`digest64HashObjects ${iterations * 4} times`, () => {
     for (let j = 0; j < iterations * 4; j++) sha256.digest64HashObjects(hashObject, hashObject);
   });
