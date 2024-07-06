@@ -1,9 +1,9 @@
 import {digestNLevel} from "@chainsafe/persistent-merkle-tree";
 import {ContainerType} from "../../../../../ssz/src/type/container";
 import {ssz} from "../../../lodestarTypes";
-import {ValidatorType} from "../../../lodestarTypes/phase0/validator";
-import {ValidatorTreeViewDU} from "../../../lodestarTypes/phase0/viewDU/validator";
+import {ValidatorNodeStruct, ValidatorType, validatorToChunkBytes} from "../../../lodestarTypes/phase0/validator";
 import {expect} from "chai";
+import {Validator} from "../../../lodestarTypes/phase0/sszTypes";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 
@@ -39,34 +39,40 @@ describe("Validator ssz types", function () {
       expect(root3).to.be.deep.equal(root);
     }
   });
+});
 
-  it("ViewDU.commitToHashObject()", () => {
-    // transform validator from 0 to 1
-    // TODO - batch: avoid this type casting
-    const viewDU = ssz.phase0.Validator.toViewDU(validators[0]) as ValidatorTreeViewDU;
-    viewDU.effectiveBalance = validators[1].effectiveBalance;
-    viewDU.slashed = validators[1].slashed;
-    // same logic to viewDU.commit();
-    // validator has 8 nodes at level 3
-    const singleLevel3Bytes = new Uint8Array(8 * 32);
-    const singleLevel3ByteView = {uint8Array: singleLevel3Bytes, dataView: new DataView(singleLevel3Bytes.buffer)};
-    // validator has 2 nodes at level 4 (pubkey has 48 bytes = 2 * nodes)
-    const singleLevel4Bytes = new Uint8Array(2 * 32);
-    viewDU.valueToChunkBytes(singleLevel3ByteView, singleLevel4Bytes);
-    // level 4 hash
-    const pubkeyRoot = digestNLevel(singleLevel4Bytes, 1);
-    if (pubkeyRoot.length !== 32) {
-      throw new Error(`Invalid pubkeyRoot length, expect 32, got ${pubkeyRoot.length}`);
+describe("validatorToChunkBytes", function () {
+  const seedValidator = {
+    activationEligibilityEpoch: 10,
+    activationEpoch: 11,
+    exitEpoch: Infinity,
+    slashed: false,
+    withdrawableEpoch: 13,
+    pubkey: Buffer.alloc(48, 100),
+    withdrawalCredentials: Buffer.alloc(32, 100),
+  };
+
+  const validators = [
+    {...seedValidator, effectiveBalance: 31000000000, slashed: false},
+    {...seedValidator, effectiveBalance: 32000000000, slashed: true},
+  ];
+
+  it("should populate validator value to merkle bytes", () => {
+    for (const validator of validators) {
+      const expectedRoot0 = ValidatorNodeStruct.hashTreeRoot(validator);
+      // validator has 8 fields
+      const level3 = new Uint8Array(32 * 8);
+      const dataView = new DataView(level3.buffer, level3.byteOffset, level3.byteLength);
+      // pubkey takes 2 chunks, has to go to another level
+      const level4 = new Uint8Array(32 * 2);
+      validatorToChunkBytes({uint8Array: level3, dataView}, level4, validator);
+      // additional slice() call make it easier to debug
+      const pubkeyRoot = digestNLevel(level4, 1).slice();
+      level3.set(pubkeyRoot, 0);
+      const root = digestNLevel(level3, 3).slice();
+      const expectedRootNode2 = Validator.value_toTree(validator);
+      expect(root).to.be.deep.equals(expectedRoot0);
+      expect(root).to.be.deep.equals(expectedRootNode2.root);
     }
-    singleLevel3ByteView.uint8Array.set(pubkeyRoot, 0);
-    // level 3 hash
-    const validatorRoot = digestNLevel(singleLevel3ByteView.uint8Array, 3);
-    if (validatorRoot.length !== 32) {
-      throw new Error(`Invalid validatorRoot length, expect 32, got ${validatorRoot.length}`);
-    }
-    viewDU.commitToRoot(validatorRoot);
-    const expectedRoot = ValidatorContainer.hashTreeRoot(validators[1]);
-    expect(viewDU.node.root).to.be.deep.equal(expectedRoot);
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });
