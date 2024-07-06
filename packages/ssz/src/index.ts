@@ -30,6 +30,7 @@ export {ValueOfFields, ContainerTypeGeneric} from "./view/container";
 export {TreeViewDU} from "./viewDU/abstract";
 export {ListCompositeTreeViewDU} from "./viewDU/listComposite";
 export {ArrayCompositeTreeViewDUCache} from "./viewDU/arrayComposite";
+export {ContainerNodeStructTreeViewDU} from "./viewDU/containerNodeStruct";
 
 // Values
 export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
