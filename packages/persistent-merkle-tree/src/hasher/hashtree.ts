@@ -51,6 +51,11 @@ export const hasher: Hasher = {
         throw Error(`no hash computations for level ${level}`);
       }
 
+      if (hcArr.length === 0) {
+        // nothing to hash
+        continue;
+      }
+
       // size input array to 2 HashObject per computation * 32 bytes per object
       // const input: Uint8Array = Uint8Array.from(new Array(hcArr.length * 2 * 32));
       let destNodes: Node[] = [];

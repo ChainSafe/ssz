@@ -2,6 +2,21 @@ import {HashComputationGroup, executeHashComputations} from "@chainsafe/persiste
 import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
 
+/**
+ * Always allocating a new HashComputationGroup for each hashTreeRoot() is not great for gc
+ * because a lot of ViewDUs are not changed and computed root already.
+ */
+let nextHashComps: HashComputationGroup = {
+  byLevel: [],
+  offset: 0,
+};
+
+const symbolCachedTreeRoot = Symbol("ssz_cached_tree_root");
+
+export type NodeWithCachedTreeRoot = {
+  [symbolCachedTreeRoot]?: Uint8Array;
+};
+
 /* eslint-disable @typescript-eslint/member-ordering  */
 
 /**
@@ -50,21 +65,32 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    */
   hashTreeRoot(): Uint8Array {
     // remember not to do a commit() before calling this function
-    // TODO - batch: should we a flag to signal a batch hash or not?
     // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
     // if consumers don't want to batch hash, just go with `this.node.root` similar to what View.hashTreeRoot() does
-    const hashComps: HashComputationGroup = {
-      byLevel: [],
-      offset: 0,
-    };
-    this.commit(hashComps);
-    executeHashComputations(hashComps.byLevel);
 
-    // This makes sure the root node is computed by batch
-    if (this.node.h0 === null) {
-      throw Error("Root is not computed by batch");
+    const hashComps = nextHashComps;
+    this.commit(hashComps);
+    if (nextHashComps.byLevel.length > 0 || nextHashComps.offset !== 0) {
+      // preallocate for the next time
+      nextHashComps = {
+        byLevel: [],
+        offset: 0,
+      };
+      executeHashComputations(hashComps.byLevel);
+      // This makes sure the root node is computed by batch
+      if (this.node.h0 === null) {
+        throw Error("Root is not computed by batch");
+      }
     }
-    return this.node.root;
+
+    const cachedRoot = (this.node as NodeWithCachedTreeRoot)[symbolCachedTreeRoot];
+    if (cachedRoot) {
+      return cachedRoot;
+    } else {
+      const root = this.node.root;
+      (this.node as NodeWithCachedTreeRoot)[symbolCachedTreeRoot] = root;
+      return root;
+    }
   }
 
   /**
