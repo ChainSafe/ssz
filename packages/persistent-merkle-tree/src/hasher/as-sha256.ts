@@ -27,6 +27,11 @@ export const hasher: Hasher = {
         throw Error(`no hash computations for level ${level}`);
       }
 
+      if (hcArr.length === 0) {
+        // nothing to hash
+        continue;
+      }
+
       // HashComputations of the same level are safe to batch
       let src0_0: Node | null = null;
       let src1_0: Node | null = null;
