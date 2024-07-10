@@ -197,9 +197,12 @@ export class ArrayCompositeTreeViewDU<
 
     for (const [index, view] of this.viewsChanged) {
       const node = this.type.elementType.commitViewDU(view, hashCompsView);
-      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-      this.nodes[index] = node;
-      nodesChanged.push({index, node});
+      // there's a chance the view is not changed, no need to rebind nodes in that case
+      if (this.nodes[index] !== node) {
+        // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+        this.nodes[index] = node;
+        nodesChanged.push({index, node});
+      }
 
       // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
       const cache = this.type.elementType.cacheOfViewDU(view);
