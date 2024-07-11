@@ -89,37 +89,39 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       return;
     }
 
-    const nodesChanged: {index: number; node: Node}[] = [];
-
     let hashCompsView: HashComputationGroup | null = null;
     // if old root is not hashed, no need to pass HashComputationGroup to child view bc we need to do full traversal here
     if (hashComps != null && isOldRootHashed) {
       // each view may mutate HashComputationGroup at offset + depth
       hashCompsView = {byLevel: hashComps.byLevel, offset: hashComps.offset + this.type.depth};
     }
-    for (const [index, view] of this.viewsChanged) {
-      const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
-      const node = fieldType.commitViewDU(view, hashCompsView);
-      // there's a chance the view is not changed, no need to rebind nodes in that case
-      if (this.nodes[index] !== node) {
-        // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-        this.nodes[index] = node;
-        nodesChanged.push({index, node});
+
+    // union all changes then sort, they should not be duplicated
+    const combinedIndexes = [...this.nodesChanged, ...Array.from(this.viewsChanged.keys())].sort((a, b) => a - b);
+    const indexes: number[] = [];
+    const nodes: Node[] = [];
+    for (const index of combinedIndexes) {
+      const view = this.viewsChanged.get(index);
+      if (view) {
+        // composite type
+        const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
+        const node = fieldType.commitViewDU(view, hashCompsView);
+        // there's a chance the view is not changed, no need to rebind nodes in that case
+        if (this.nodes[index] !== node) {
+          // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+          this.nodes[index] = node;
+          indexes.push(index);
+          nodes.push(node);
+        }
+        // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
+        const cache = fieldType.cacheOfViewDU(view);
+        if (cache) this.caches[index] = cache;
+      } else {
+        // basic type
+        indexes.push(index);
+        nodes.push(this.nodes[index]);
       }
-
-      // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
-      const cache = fieldType.cacheOfViewDU(view);
-      if (cache) this.caches[index] = cache;
     }
-
-    for (const index of this.nodesChanged) {
-      nodesChanged.push({index, node: this.nodes[index]});
-    }
-
-    // TODO: Optimize to loop only once, Numerical sort ascending
-    const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
-    const indexes = nodesChangedSorted.map((entry) => entry.index);
-    const nodes = nodesChangedSorted.map((entry) => entry.node);
 
     this._rootNode = setNodesAtDepth(
       this._rootNode,
