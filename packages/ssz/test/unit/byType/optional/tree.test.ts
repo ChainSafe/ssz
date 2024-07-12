@@ -19,7 +19,7 @@ describe("Optional view tests", () => {
     const viewDU = type.toViewDU(value);
 
     expect(toHexString(type.commitView(view).root)).equals(toHexString(root));
-    expect(toHexString(type.commitViewDU(viewDU).root)).equals(toHexString(root));
+    expect(toHexString(type.commitViewDU(viewDU).node.root)).equals(toHexString(root));
   });
 
   // unimplemented
@@ -33,6 +33,6 @@ describe("Optional view tests", () => {
     const viewDU = type.toViewDU(value);
 
     expect(toHexString(type.commitView(view).root)).equals(toHexString(root));
-    expect(toHexString(type.commitViewDU(viewDU).root)).equals(toHexString(root));
+    expect(toHexString(type.commitViewDU(viewDU).node.root)).equals(toHexString(root));
   });
 });

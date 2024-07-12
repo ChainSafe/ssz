@@ -175,13 +175,13 @@ export class ArrayCompositeTreeViewDU<
    *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
    *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationGroup | null = null): boolean {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.viewsChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {
         getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
       }
-      return;
+      return false;
     }
 
     const nodesChanged: {index: number; node: Node}[] = [];
@@ -196,9 +196,9 @@ export class ArrayCompositeTreeViewDU<
         : null;
 
     for (const [index, view] of this.viewsChanged) {
-      const node = this.type.elementType.commitViewDU(view, hashCompsView);
+      const {node, change} = this.type.elementType.commitViewDU(view, hashCompsView);
       // there's a chance the view is not changed, no need to rebind nodes in that case
-      if (this.nodes[index] !== node) {
+      if (change || this.nodes[index] !== node) {
         // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
         this.nodes[index] = node;
         nodesChanged.push({index, node});
@@ -237,6 +237,7 @@ export class ArrayCompositeTreeViewDU<
 
     this.viewsChanged.clear();
     this.dirtyLength = false;
+    return true;
   }
 
   protected clearCache(): void {

@@ -164,13 +164,13 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
    *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
    *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationGroup | null = null): boolean {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {
         getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
       }
-      return;
+      return false;
     }
 
     // Numerical sort ascending
@@ -203,6 +203,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
 
     this.nodesChanged.clear();
     this.dirtyLength = false;
+    return true;
   }
 
   protected clearCache(): void {

@@ -87,9 +87,12 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return view.node;
   }
 
-  commitViewDU(view: ArrayBasicTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
-    view.commit(hashComps);
-    return view.node;
+  commitViewDU(
+    view: ArrayBasicTreeViewDU<ElementType>,
+    hashComps: HashComputationGroup | null = null
+  ): {node: Node; change: boolean} {
+    const change = view.commit(hashComps);
+    return {node: view.node, change};
   }
 
   cacheOfViewDU(view: ArrayBasicTreeViewDU<ElementType>): unknown {

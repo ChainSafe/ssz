@@ -10,7 +10,7 @@ describe("ListCompositeType types", () => {
   for (const len of [300_000]) {
     for (const type of [containerType, containerNodeStructType]) {
       const viewDU = type.defaultViewDU();
-      const node = type.commitViewDU(viewDU);
+      const node = type.commitViewDU(viewDU).node;
       const cache = type.cacheOfViewDU(viewDU);
 
       itBench(`${type.typeName} getViewDU x${len}`, () => {

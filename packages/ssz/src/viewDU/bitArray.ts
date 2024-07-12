@@ -22,14 +22,18 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
     return;
   }
 
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationGroup | null = null): boolean {
+    let change = false;
     if (this._bitArray !== null) {
       this._rootNode = this.type.value_toTree(this._bitArray);
+      change = true;
     }
 
     if (hashComps !== null && this._rootNode.h0 === null) {
       getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
     }
+
+    return change;
   }
 
   // Wrapped API from BitArray

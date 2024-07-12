@@ -166,9 +166,12 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return view.node;
   }
 
-  commitViewDU(view: ContainerTreeViewDUType<Fields>, hashComps: HashComputationGroup | null = null): Node {
-    view.commit(hashComps);
-    return view.node;
+  commitViewDU(
+    view: ContainerTreeViewDUType<Fields>,
+    hashComps: HashComputationGroup | null = null
+  ): {node: Node; change: boolean} {
+    const change = view.commit(hashComps);
+    return {node: view.node, change};
   }
 
   // Serialization + deserialization

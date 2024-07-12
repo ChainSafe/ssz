@@ -128,8 +128,8 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
 
   /** INTERNAL METHOD: Given a Tree View, returns a `Node` with all its updated data */
   abstract commitView(view: TV): Node;
-  /** INTERNAL METHOD: Given a Deferred Update Tree View returns a `Node` with all its updated data */
-  abstract commitViewDU(view: TVDU, hashComps?: HashComputationGroup | null): Node;
+  /** INTERNAL METHOD: Given a Deferred Update Tree View returns a `Node` and if it's changed or not */
+  abstract commitViewDU(view: TVDU, hashComps?: HashComputationGroup | null): {node: Node; change: boolean};
   /** INTERNAL METHOD: Return the cache of a Deferred Update Tree View. May return `undefined` if this ViewDU has no cache */
   abstract cacheOfViewDU(view: TVDU): unknown;
 
@@ -185,7 +185,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    * @see {@link CompositeType.getViewDU}
    */
   toValueFromViewDU(view: TVDU): V {
-    const node = this.commitViewDU(view);
+    const {node} = this.commitViewDU(view);
     return this.tree_toValue(node);
   }
 
@@ -194,7 +194,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    * @see {@link CompositeType.getView} and {@link CompositeType.getViewDU}
    */
   toViewFromViewDU(view: TVDU): TV {
-    const node = this.commitViewDU(view);
+    const {node} = this.commitViewDU(view);
     return this.getView(new Tree(node));
   }
 

@@ -98,9 +98,12 @@ export class ListCompositeType<
     return view.node;
   }
 
-  commitViewDU(view: ListCompositeTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
-    view.commit(hashComps);
-    return view.node;
+  commitViewDU(
+    view: ListCompositeTreeViewDU<ElementType>,
+    hashComps: HashComputationGroup | null = null
+  ): {node: Node; change: boolean} {
+    const change = view.commit(hashComps);
+    return {node: view.node, change};
   }
 
   cacheOfViewDU(view: ListCompositeTreeViewDU<ElementType>): unknown {

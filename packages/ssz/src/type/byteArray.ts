@@ -33,15 +33,16 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   }
 
   commitView(view: ByteArray): Node {
-    return this.commitViewDU(view);
+    return this.commitViewDU(view).node;
   }
 
   // TODO - batch
-  commitViewDU(view: ByteArray): Node {
+  commitViewDU(view: ByteArray): {node: Node; change: boolean} {
     const uint8Array = new Uint8Array(this.value_serializedSize(view));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, view);
-    return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+    const node = this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+    return {node, change: true};
   }
 
   cacheOfViewDU(): unknown {

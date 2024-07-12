@@ -161,7 +161,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     assertNode(type.commitView(view), "deserializeToView");
 
     const viewDU = type.deserializeToViewDU(copy(testDataSerialized));
-    assertNode(type.commitViewDU(viewDU), "deserializeToViewDU");
+    assertNode(type.commitViewDU(viewDU).node, "deserializeToViewDU");
 
     // Buffer.prototype.slice does not copy memory, test .deserialize() is mutation safe https://github.com/nodejs/node/issues/28087
     const bytes = Buffer.from(copy(testDataSerialized));

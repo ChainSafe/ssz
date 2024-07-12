@@ -35,10 +35,10 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
    * This ViewDU does not support batch hash by default so we need to compute root immediately.
    * Otherwise consumers may call commit() multiple times and not able to compute hashTreeRoot().
    */
-  commit(): void {
+  commit(): boolean {
     if (this.valueChanged === null) {
       this._rootNode.rootHashObject;
-      return;
+      return false;
     }
 
     const value = this.valueChanged;
@@ -46,6 +46,7 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
 
     this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
     this._rootNode.rootHashObject;
+    return true;
   }
 
   /**

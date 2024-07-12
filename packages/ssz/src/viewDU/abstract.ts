@@ -34,8 +34,9 @@ export type NodeWithCachedTreeRoot = {
 export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unknown>> extends TreeView<T> {
   /**
    * Applies any deferred updates that may be pending in this ViewDU instance and updates its internal `Node`.
+   * Return true if it changed the root node, false otherwise.
    */
-  abstract commit(hashComps?: HashComputationGroup | null): void;
+  abstract commit(hashComps?: HashComputationGroup | null): boolean;
 
   /**
    * Returns arbitrary data that is useful for this ViewDU instance to optimize data manipulation. This caches MUST

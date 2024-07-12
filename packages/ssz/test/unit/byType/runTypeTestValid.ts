@@ -129,7 +129,7 @@ export function runTypeTestValid<T>({
           const view = type.toViewFromViewDU(viewDU);
           const viewDU2 = type.toViewDUFromView(view);
           expect(toHexString(type.commitView(view).root)).equals(rootHex, "Wrong recovered View");
-          expect(toHexString(type.commitViewDU(viewDU2).root)).equals(rootHex, "Wrong recovered ViewDU");
+          expect(toHexString(type.commitViewDU(viewDU2).node.root)).equals(rootHex, "Wrong recovered ViewDU");
 
           // Cache manipulation
           const viewDUCache = type.cacheOfViewDU(viewDU);

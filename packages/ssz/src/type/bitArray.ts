@@ -29,9 +29,9 @@ export abstract class BitArrayType extends CompositeType<BitArray, BitArrayTreeV
     return view.node;
   }
 
-  commitViewDU(view: BitArrayTreeViewDU, hashComps: HashComputationGroup | null = null): Node {
-    view.commit(hashComps);
-    return view.node;
+  commitViewDU(view: BitArrayTreeViewDU, hashComps: HashComputationGroup | null = null): {node: Node; change: boolean} {
+    const change = view.commit(hashComps);
+    return {node: view.node, change};
   }
 
   cacheOfViewDU(view: BitArrayTreeViewDU): unknown {

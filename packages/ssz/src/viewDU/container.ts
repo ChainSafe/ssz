@@ -80,13 +80,13 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
    *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
    *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashComps: HashComputationGroup | null = null): boolean {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
       if (!isOldRootHashed && hashComps !== null) {
         getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
       }
-      return;
+      return false;
     }
 
     const nodesChanged: {index: number; node: Node}[] = [];
@@ -99,9 +99,9 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     }
     for (const [index, view] of this.viewsChanged) {
       const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
-      const node = fieldType.commitViewDU(view, hashCompsView);
+      const {node, change} = fieldType.commitViewDU(view, hashCompsView);
       // there's a chance the view is not changed, no need to rebind nodes in that case
-      if (this.nodes[index] !== node) {
+      if (change || this.nodes[index] !== node) {
         // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
         this.nodes[index] = node;
         nodesChanged.push({index, node});
@@ -136,6 +136,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 
     this.nodesChanged.clear();
     this.viewsChanged.clear();
+    return true;
   }
 
   protected clearCache(): void {

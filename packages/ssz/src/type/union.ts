@@ -113,8 +113,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   }
 
   // TODO - batch
-  commitViewDU(view: ValueOfTypes<Types>): Node {
-    return this.value_toTree(view);
+  commitViewDU(view: ValueOfTypes<Types>): {node: Node; change: boolean} {
+    const node = this.value_toTree(view);
+    // value_toTree always returns a new node
+    return {node, change: true};
   }
 
   value_serializedSize(value: ValueOfTypes<Types>): number {
