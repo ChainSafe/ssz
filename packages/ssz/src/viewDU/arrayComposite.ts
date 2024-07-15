@@ -147,10 +147,13 @@ export class ArrayCompositeTreeViewDU<
   /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    */
-  getAllReadonly(): CompositeViewDU<ElementType>[] {
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    if (views && views.length !== this._length) {
+      throw Error(`Expected ${this._length} views, got ${views.length}`);
+    }
     this.populateAllNodes();
 
-    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
     }
@@ -160,10 +163,13 @@ export class ArrayCompositeTreeViewDU<
   /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     this.populateAllNodes();
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }

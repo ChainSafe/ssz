@@ -88,11 +88,14 @@ export class ArrayCompositeTreeView<
    * The returned views don't have a parent hook to this View's Tree, so changes in the returned views won't be
    * propagated upwards. To get linked element Views use `this.get()`
    */
-  getAllReadonly(): CompositeView<ElementType>[] {
+  getAllReadonly(views?: CompositeView<ElementType>[]): CompositeView<ElementType>[] {
+    if (views && views.length !== this.length) {
+      throw Error(`Expected ${this.length} views, got ${views.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const views = new Array<CompositeView<ElementType>>(length);
+    views = views ?? new Array<CompositeView<ElementType>>(length);
     for (let i = 0; i < length; i++) {
       // TODO: Optimize
       views[i] = this.type.elementType.getView(new Tree(nodes[i]));
@@ -105,11 +108,14 @@ export class ArrayCompositeTreeView<
    * The returned values are not Views so any changes won't be propagated upwards.
    * To get linked element Views use `this.get()`
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this.length) {
+      throw Error(`Expected ${this.length} values, got ${values.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const values = new Array<ValueOf<ElementType>>(length);
+    values = values ?? new Array<ValueOf<ElementType>>(length);
     for (let i = 0; i < length; i++) {
       values[i] = this.type.elementType.tree_toValue(nodes[i]);
     }
