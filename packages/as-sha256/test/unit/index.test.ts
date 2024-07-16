@@ -51,8 +51,8 @@ describe("sha256", function () {
       // digestTwoHashObjects should be the same to digest64
       const buffer1 = Buffer.from(input1, "utf-8");
       const buffer2 = Buffer.from(input2, "utf-8");
-      const obj1 = sha256.byteArrayToHashObject(buffer1);
-      const obj2 = sha256.byteArrayToHashObject(buffer2);
+      const obj1 = sha256.byteArrayToHashObject(buffer1, 0);
+      const obj2 = sha256.byteArrayToHashObject(buffer2, 0);
       const obj = sha256.digest64HashObjects(obj1, obj2);
       const output2 = new Uint8Array(32);
       sha256.hashObjectToByteArray(obj, output2, 0);
@@ -97,7 +97,7 @@ describe("sha256.hashObjectToByteArray and sha256.byteArrayToHashObject", functi
   ];
   for (const [i, byteArr] of tcs.entries()) {
     it("test case " + i, function () {
-      const obj = sha256.byteArrayToHashObject(byteArr);
+      const obj = sha256.byteArrayToHashObject(byteArr, 0);
       const newByteArr = new Uint8Array(32);
       sha256.hashObjectToByteArray(obj, newByteArr, 0);
       expect(newByteArr).to.be.deep.equal(byteArr, "failed test case" + i);

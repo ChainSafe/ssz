@@ -1,7 +1,7 @@
 import {newInstance} from "./wasm";
-import {HashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
+import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
 import SHA256 from "./sha256";
-export {HashObject, byteArrayToHashObject, hashObjectToByteArray, SHA256};
+export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
 const ctx = newInstance();
 const wasmInputValue = ctx.input.value;
@@ -52,6 +52,24 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
  * @returns
  */
 export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObject {
+  const result: HashObject = {
+    h0: 0,
+    h1: 0,
+    h2: 0,
+    h3: 0,
+    h4: 0,
+    h5: 0,
+    h6: 0,
+    h7: 0,
+  };
+  digest64HashObjectsInto(obj1, obj2, result);
+  return result;
+}
+
+/**
+ * Same to above but this set result to the output param to save memory.
+ */
+export function digest64HashObjectsInto(obj1: HashObject, obj2: HashObject, output: HashObject): void {
   // TODO: expect obj1 and obj2 as HashObject
   inputUint32Array[0] = obj1.h0;
   inputUint32Array[1] = obj1.h1;
@@ -73,7 +91,7 @@ export function digest64HashObjects(obj1: HashObject, obj2: HashObject): HashObj
   ctx.digest64(wasmInputValue, wasmOutputValue);
 
   // extracting numbers from Uint32Array causes more memory
-  return byteArrayToHashObject(outputUint8Array);
+  byteArrayIntoHashObject(outputUint8Array, 0, output);
 }
 
 /**
@@ -121,6 +139,7 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
  * Inputs      i0    i1    i2    i3    i4    i5    i6   i7
  *               \   /      \    /       \   /      \   /
  * Outputs         o0          o1          o2         o3
+ * // TODO - batch: support equivalent method to hash into
  */
 export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
@@ -227,12 +246,41 @@ export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
 
   ctx.batchHash4HashObjectInputs(wasmOutputValue);
 
-  const output0 = byteArrayToHashObject(outputUint8Array.subarray(0, 32));
-  const output1 = byteArrayToHashObject(outputUint8Array.subarray(32, 64));
-  const output2 = byteArrayToHashObject(outputUint8Array.subarray(64, 96));
-  const output3 = byteArrayToHashObject(outputUint8Array.subarray(96, 128));
+  const output0 = byteArrayToHashObject(outputUint8Array, 0);
+  const output1 = byteArrayToHashObject(outputUint8Array, 32);
+  const output2 = byteArrayToHashObject(outputUint8Array, 64);
+  const output3 = byteArrayToHashObject(outputUint8Array, 96);
 
   return [output0, output1, output2, output3];
+}
+
+/**
+ * Hash an input into preallocated input using batch if possible.
+ */
+export function hashInto(input: Uint8Array, output: Uint8Array): void {
+  if (input.length % 64 !== 0) {
+    throw new Error(`Invalid input length ${input.length}`);
+  }
+  if (input.length !== output.length * 2) {
+    throw new Error(`Invalid output length ${output.length}`);
+  }
+  // for every 64 x 4 = 256 bytes, do the batch hash
+  const endBatch = Math.floor(input.length / 256);
+  for (let i = 0; i < endBatch; i++) {
+    inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
+    ctx.batchHash4UintArray64s(wasmOutputValue);
+    output.set(outputUint8Array.subarray(0, 128), i * 128);
+  }
+
+  const numHashed = endBatch * 4;
+  const remainingHash = Math.floor((input.length % 256) / 64);
+  const inputOffset = numHashed * 64;
+  const outputOffset = numHashed * 32;
+  for (let i = 0; i < remainingHash; i++) {
+    inputUint8Array.set(input.subarray(inputOffset + i * 64, inputOffset + (i + 1) * 64), 0);
+    ctx.digest64(wasmInputValue, wasmOutputValue);
+    output.set(outputUint8Array.subarray(0, 32), outputOffset + i * 32);
+  }
 }
 
 function update(data: Uint8Array): void {

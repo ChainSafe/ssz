@@ -89,7 +89,7 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
     tree.setNode(BigInt(18), LeafNode.fromRoot(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
     // setHashObjectFn
-    const getNewNodeFn = (): Node => LeafNode.fromHashObject(byteArrayToHashObject(Buffer.alloc(32, 2)));
+    const getNewNodeFn = (): Node => LeafNode.fromHashObject(byteArrayToHashObject(Buffer.alloc(32, 2), 0));
     const tree2 = new Tree(zeroNode(depth));
     tree2.setNodeWithFn(BigInt(18), getNewNodeFn);
     expect(toHex(tree2.root)).to.equal("3cfd85690fdd88abcf22ca7acf45bb47835326ff3166d3c953d5a23263fea2b2");
@@ -103,7 +103,7 @@ describe("Tree.setNode vs Tree.setHashObjectFn", () => {
     tree.setNode(BigInt(60), LeafNode.fromRoot(Buffer.alloc(32, 2)));
     expect(toHex(tree.root)).to.equal("02607e58782c912e2f96f4ff9daf494d0d115e7c37e8c2b7ddce17213591151b");
     // setHashObjectFn
-    const getNewNodeFn = (): Node => LeafNode.fromHashObject(byteArrayToHashObject(Buffer.alloc(32, 2)));
+    const getNewNodeFn = (): Node => LeafNode.fromHashObject(byteArrayToHashObject(Buffer.alloc(32, 2), 0));
     const tree2 = new Tree(zeroNode(depth));
     tree2.setNodeWithFn(BigInt(18), getNewNodeFn);
     tree2.setNodeWithFn(BigInt(46), getNewNodeFn);

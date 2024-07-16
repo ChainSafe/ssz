@@ -16,8 +16,8 @@ describe("digestTwoHashObjects vs digest64 vs digest", () => {
   const input2 = "gajindergajindergajindergajinder";
   const buffer1 = Buffer.from(input1, "utf-8");
   const buffer2 = Buffer.from(input2, "utf-8");
-  const obj1 = sha256.byteArrayToHashObject(buffer1);
-  const obj2 = sha256.byteArrayToHashObject(buffer2);
+  const obj1 = sha256.byteArrayToHashObject(buffer1, 0);
+  const obj2 = sha256.byteArrayToHashObject(buffer2, 0);
   // total number of time running hash for 200000 balances
   const iterations = 50023;
   itBench(`digestTwoHashObjects ${iterations} times`, () => {
@@ -71,7 +71,7 @@ describe("hash - compare to java", () => {
 describe("utils", () => {
   const input1 = "gajindergajindergajindergajinder";
   const buffer1 = Buffer.from(input1, "utf-8");
-  const obj1 = sha256.byteArrayToHashObject(buffer1);
+  const obj1 = sha256.byteArrayToHashObject(buffer1, 0);
 
   // total number of time running hash for 200000 balances
   const iterations = 50023;
@@ -82,6 +82,6 @@ describe("utils", () => {
   });
 
   itBench(`byteArrayToHashObject ${iterations} times`, () => {
-    for (let j = 0; j < iterations; j++) sha256.byteArrayToHashObject(buffer1);
+    for (let j = 0; j < iterations; j++) sha256.byteArrayToHashObject(buffer1, 0);
   });
 });
