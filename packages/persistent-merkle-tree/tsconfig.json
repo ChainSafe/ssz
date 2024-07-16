@@ -5,6 +5,7 @@
     "module": "commonjs",
     "lib": ["esnext", "dom"],
     "outDir": "lib",
+    "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
     "pretty": true,

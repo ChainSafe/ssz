@@ -1,12 +1,12 @@
 import {Hasher} from "./types";
 import {hasher as nobleHasher} from "./noble";
+import type {HashComputation} from "../node";
 
-export {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
 export * from "./types";
 export * from "./util";
 
 /**
- * Hasher used across the SSZ codebase
+ * Default hasher used across the SSZ codebase, this does not support batch hash.
  */
 export let hasher: Hasher = nobleHasher;
 
@@ -17,4 +17,20 @@ export let hasher: Hasher = nobleHasher;
  */
 export function setHasher(newHasher: Hasher): void {
   hasher = newHasher;
+}
+
+export function digest64(a: Uint8Array, b: Uint8Array): Uint8Array {
+  return hasher.digest64(a, b);
+}
+
+export function digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
+  return hasher.digestNLevel(data, nLevel);
+}
+
+export function merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+  hasher.merkleizeInto(data, padFor, output, offset);
+}
+
+export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
+  hasher.executeHashComputations(hashComputations);
 }
