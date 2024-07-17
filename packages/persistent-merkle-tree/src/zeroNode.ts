@@ -19,6 +19,11 @@ export function zeroNode(height: number): Node {
     for (let i = zeroes.length; i <= height; i++) {
       zeroes[i] = new BranchNode(zeroes[i - 1], zeroes[i - 1]);
     }
+
+    // make sure hash is precomputed in order not to put zeroNodes to HashComputation
+    // otherwise get OOM
+    zeroes[height].root;
   }
+
   return zeroes[height];
 }

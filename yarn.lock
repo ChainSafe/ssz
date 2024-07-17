@@ -1252,6 +1252,30 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
+"@chainsafe/hashtree-darwin-arm64@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/hashtree-darwin-arm64/-/hashtree-darwin-arm64-1.0.1.tgz#e2c60090c56a1c8dc8bdff329856184ad32e4cd5"
+  integrity sha512-+KmEgQMpO7FDL3klAcpXbQ4DPZvfCe0qSaBBrtT4vLF8V1JGm3sp+j7oibtxtOsLKz7nJMiK1pZExi7vjXu8og==
+
+"@chainsafe/hashtree-linux-arm64-gnu@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/hashtree-linux-arm64-gnu/-/hashtree-linux-arm64-gnu-1.0.1.tgz#49d2604a6c9106219448af3eaf76f4da6e44daca"
+  integrity sha512-p1hnhGq2aFY+Zhdn1Q6L/6yLYNKjqXfn/Pc8jiM0e3+Lf/hB+yCdqYVu1pto26BrZjugCFZfupHaL4DjUTDttw==
+
+"@chainsafe/hashtree-linux-x64-gnu@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/hashtree-linux-x64-gnu/-/hashtree-linux-x64-gnu-1.0.1.tgz#31c5a2bb196b78f04f2bf4bfb5c1bf1f3331f071"
+  integrity sha512-uCIGuUWuWV0LiB4KLMy6JFa7Jp6NmPl3hKF5BYWu8TzUBe7vSXMZfqTzGxXPggFYN2/0KymfRdG9iDCOJfGRqg==
+
+"@chainsafe/hashtree@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@chainsafe/hashtree/-/hashtree-1.0.1.tgz#587666a261e1da6a37904095ce875fddc53c7c89"
+  integrity sha512-bleu9FjqBeR/l6W1u2Lz+HsS0b0LLJX2eUt3hOPBN7VqOhidx8wzkVh2S7YurS+iTQtfdK4K5QU9tcTGNrGwDg==
+  optionalDependencies:
+    "@chainsafe/hashtree-darwin-arm64" "1.0.1"
+    "@chainsafe/hashtree-linux-arm64-gnu" "1.0.1"
+    "@chainsafe/hashtree-linux-x64-gnu" "1.0.1"
+
 "@chainsafe/ssz@^0.15.1":
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.15.1.tgz#008a711c3bcdc0d207cd4be15108870b0b1c60c0"
