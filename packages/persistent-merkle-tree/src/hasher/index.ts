@@ -6,7 +6,7 @@ export * from "./types";
 export * from "./util";
 
 /**
- * Default hasher used across the SSZ codebase, this does not support batch hash.
+ * Hasher used across the SSZ codebase, by default, this does not support batch hash.
  */
 export let hasher: Hasher = nobleHasher;
 
@@ -31,6 +31,6 @@ export function merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Arr
   hasher.merkleizeInto(data, padFor, output, offset);
 }
 
-export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
+export function executeHashComputations(hashComputations: HashComputation[][]): void {
   hasher.executeHashComputations(hashComputations);
 }

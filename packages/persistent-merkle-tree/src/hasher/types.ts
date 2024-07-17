@@ -29,5 +29,5 @@ export type Hasher = {
   /**
    * Execute a batch of HashComputations
    */
-  executeHashComputations(hashComputations: Array<HashComputation[]>): void;
+  executeHashComputations(hashComputations: HashComputation[][]): void;
 };

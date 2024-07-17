@@ -19,7 +19,7 @@ export const hasher: Hasher = {
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);
   },
-  executeHashComputations: (hashComputations: Array<HashComputation[]>) => {
+  executeHashComputations: (hashComputations: HashComputation[][]) => {
     for (let level = hashComputations.length - 1; level >= 0; level--) {
       const hcArr = hashComputations[level];
       if (!hcArr) {

@@ -11,7 +11,7 @@ export type HashComputation = {
 
 export type HashComputationGroup = {
   // global array
-  byLevel: Array<HashComputation[]>;
+  byLevel: HashComputation[][];
   // offset from top
   offset: number;
 };
@@ -402,7 +402,7 @@ export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void 
 /**
  * Get HashComputations from a root node all the way to the leaf nodes.
  */
-export function getHashComputations(node: Node, offset: number, hashCompsByLevel: Array<HashComputation[]>): void {
+export function getHashComputations(node: Node, offset: number, hashCompsByLevel: HashComputation[][]): void {
   if (node.h0 === null) {
     const hashComputations = arrayAtIndex(hashCompsByLevel, offset);
     const {left, right} = node;
@@ -415,7 +415,7 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
   // else stop the recursion, node is hashed
 }
 
-export function arrayAtIndex<T>(twoDArray: Array<T[]>, index: number): T[] {
+export function arrayAtIndex<T>(twoDArray: T[][], index: number): T[] {
   if (twoDArray[index] === undefined) {
     twoDArray[index] = [];
   }
