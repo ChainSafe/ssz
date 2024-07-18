@@ -23,7 +23,7 @@ export type ArrayCompositeType<
     rootNode: Node,
     chunksNode: Node,
     newLength: number | null,
-    hashComps: HashComputationGroup | null
+    hashComps?: HashComputationGroup | null
   ): Node;
 };
 

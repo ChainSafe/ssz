@@ -28,7 +28,7 @@ export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeTy
     rootNode: Node,
     chunksNode: Node,
     newLength: number | null,
-    hashComps: HashComputationGroup | null
+    hashComps?: HashComputationGroup | null
   ): Node;
 };
 

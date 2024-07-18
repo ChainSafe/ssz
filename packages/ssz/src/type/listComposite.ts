@@ -159,7 +159,7 @@ export class ListCompositeType<
     rootNode: Node,
     chunksNode: Node,
     newLength: number | null,
-    hashComps: HashComputationGroup | null
+    hashComps: HashComputationGroup | null = null
   ): Node {
     return setChunksNode(rootNode, chunksNode, newLength, hashComps);
   }

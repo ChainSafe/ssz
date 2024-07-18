@@ -153,7 +153,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     rootNode: Node,
     chunksNode: Node,
     newLength: number | null,
-    hashComps: HashComputationGroup | null
+    hashComps: HashComputationGroup | null = null
   ): Node {
     return setChunksNode(rootNode, chunksNode, newLength, hashComps);
   }
