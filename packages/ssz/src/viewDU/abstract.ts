@@ -64,8 +64,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
    */
   hashTreeRoot(): Uint8Array {
-    // remember not to do a commit() before calling this function
-    // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
+    // if calling commit() before this function, it'll traverse down the tree to get HashComputations
     // if consumers don't want to batch hash, just go with `this.node.root` similar to what View.hashTreeRoot() does
     // there should not be another ViewDU.hashTreeRoot() during this flow so it's safe to reuse nextHashComps
     const hashComps = nextHashComps;

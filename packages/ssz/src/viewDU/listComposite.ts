@@ -44,11 +44,8 @@ export class ListCompositeTreeViewDU<
    * Note: Using index = -1, returns an empty list of length 0.
    */
   sliceTo(index: number): this {
-    // it's the responsibility of consumer to call commit() before calling this method
-    // if we do the commit() here, it'll lose all HashComputations that we want to batch
-    if (this.viewsChanged.size > 0) {
-      throw Error(`Must commit changes before sliceTo(${index})`);
-    }
+    // Commit before getting rootNode to ensure all pending data is in the rootNode
+    this.commit();
     const rootNode = this._rootNode;
     const length = this._length;
 
@@ -114,11 +111,7 @@ export class ListCompositeTreeViewDU<
    * Same method to `type/listComposite.ts` leveraging cached nodes.
    */
   serializeToBytes(output: ByteViews, offset: number): number {
-    // it's the responsibility of consumer to call commit() before calling this method
-    // if we do the commit() here, it'll lose all HashComputations that we want to batch
-    if (this.viewsChanged.size > 0) {
-      throw Error(`Must commit changes before serializeToBytes(Uint8Array(${output.uint8Array.length}, ${offset})`);
-    }
+    this.commit();
     this.populateAllNodes();
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     return tree_serializeToBytesArrayComposite(

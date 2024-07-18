@@ -49,11 +49,8 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends
       throw Error(`Does not support sliceTo() with negative index ${index}`);
     }
 
-    // it's the responsibility of consumer to call commit() before calling this method
-    // if we do the commit() here, it'll lose all HashComputations that we want to batch
-    if (this.nodesChanged.size > 0) {
-      throw Error(`Must commit changes before sliceTo(${index})`);
-    }
+    // Commit before getting rootNode to ensure all pending data is in the rootNode
+    this.commit();
 
     // All nodes beyond length are already zero
     if (index >= this._length - 1) {
@@ -87,11 +84,7 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends
    * Same method to `type/listBasic.ts` leveraging cached nodes.
    */
   serializeToBytes(output: ByteViews, offset: number): number {
-    // it's the responsibility of consumer to call commit() before calling this method
-    // if we do the commit() here, it'll lose all HashComputations that we want to batch
-    if (this.nodesChanged.size > 0) {
-      throw Error(`Must commit changes before serializeToBytes(Uint8Array(${output.uint8Array.length}), ${offset})`);
-    }
+    this.commit();
     const {nodes, nodesPopulated} = this.cache;
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     return tree_serializeToBytesArrayBasic(
