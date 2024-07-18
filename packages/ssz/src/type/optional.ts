@@ -75,6 +75,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   // TODO add an OptionalViewDU
+  // TODO - batch
   commitViewDU(view: ValueOfType<ElementType>): Node {
     return this.value_toTree(view);
   }

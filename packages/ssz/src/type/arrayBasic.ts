@@ -1,10 +1,12 @@
 import {
   BranchNode,
+  HashComputationGroup,
   LeafNode,
   Node,
   getNodesAtDepth,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
+  arrayAtIndex,
 } from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf, ByteViews} from "./abstract";
 import {BasicType} from "./basic";
@@ -39,14 +41,23 @@ export function addLengthNode(chunksNode: Node, length: number): Node {
   return new BranchNode(chunksNode, LeafNode.fromUint32(length));
 }
 
-export function setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node {
+export function setChunksNode(
+  rootNode: Node,
+  chunksNode: Node,
+  newLength: number | null,
+  hashComps: HashComputationGroup | null
+): Node {
   const lengthNode =
-    newLength !== undefined
+    newLength !== null
       ? // If newLength is set, create a new node for length
         LeafNode.fromUint32(newLength)
       : // else re-use existing node
         (rootNode.right as LeafNode);
-  return new BranchNode(chunksNode, lengthNode);
+  const branchNode = new BranchNode(chunksNode, lengthNode);
+  if (hashComps !== null) {
+    arrayAtIndex(hashComps.byLevel, hashComps.offset).push({src0: chunksNode, src1: lengthNode, dest: branchNode});
+  }
+  return branchNode;
 }
 
 export type ArrayProps = {isList: true; limit: number} | {isList: false; length: number};

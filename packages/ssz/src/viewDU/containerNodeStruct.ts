@@ -8,7 +8,7 @@ import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
+export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>
 > {
   protected valueChanged: ValueOfFields<Fields> | null = null;
@@ -27,7 +27,32 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     return;
   }
 
+  get value(): ValueOfFields<Fields> {
+    return this.valueChanged ?? this._rootNode.value;
+  }
+
+  /**
+   * This ViewDU does not support batch hash by default so we need to compute root immediately.
+   * Otherwise consumers may call commit() multiple times and not able to compute hashTreeRoot().
+   */
   commit(): void {
+    if (this.valueChanged === null) {
+      this._rootNode.rootHashObject;
+      return;
+    }
+
+    const value = this.valueChanged;
+    this.valueChanged = null;
+
+    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
+    this._rootNode.rootHashObject;
+  }
+
+  /**
+   * Same to commit() without hash, allow to do the batch hash at consumer side, like in ListValidatorViewDU
+   * of ethereum consensus node.
+   */
+  commitNoHash(): void {
     if (this.valueChanged === null) {
       return;
     }
@@ -46,7 +71,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewDUTypeConstructor<Fields> {
-  class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}
+  class CustomContainerTreeViewDU extends ContainerNodeStructTreeViewDU<Fields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {

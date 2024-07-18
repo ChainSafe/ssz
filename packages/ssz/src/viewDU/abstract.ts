@@ -1,5 +1,21 @@
+import {HashComputationGroup, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
+
+/**
+ * Always allocating a new HashComputationGroup for each hashTreeRoot() is not great for gc
+ * because a lot of ViewDUs are not changed and computed root already.
+ */
+let nextHashComps: HashComputationGroup = {
+  byLevel: [],
+  offset: 0,
+};
+
+const symbolCachedTreeRoot = Symbol("ssz_cached_tree_root");
+
+export type NodeWithCachedTreeRoot = {
+  [symbolCachedTreeRoot]?: Uint8Array;
+};
 
 /* eslint-disable @typescript-eslint/member-ordering  */
 
@@ -19,7 +35,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
   /**
    * Applies any deferred updates that may be pending in this ViewDU instance and updates its internal `Node`.
    */
-  abstract commit(): void;
+  abstract commit(hashComps?: HashComputationGroup | null): void;
 
   /**
    * Returns arbitrary data that is useful for this ViewDU instance to optimize data manipulation. This caches MUST
@@ -48,13 +64,39 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
    */
   hashTreeRoot(): Uint8Array {
-    this.commit();
-    return super.hashTreeRoot();
+    // remember not to do a commit() before calling this function
+    // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
+    // if consumers don't want to batch hash, just go with `this.node.root` similar to what View.hashTreeRoot() does
+    // there should not be another ViewDU.hashTreeRoot() during this flow so it's safe to reuse nextHashComps
+    const hashComps = nextHashComps;
+    this.commit(hashComps);
+    if (nextHashComps.byLevel.length > 0 || nextHashComps.offset !== 0) {
+      // preallocate for the next time
+      nextHashComps = {
+        byLevel: [],
+        offset: 0,
+      };
+      executeHashComputations(hashComps.byLevel);
+      // This makes sure the root node is computed by batch
+      if (this.node.h0 === null) {
+        throw Error("Root is not computed by batch");
+      }
+    }
+
+    const cachedRoot = (this.node as NodeWithCachedTreeRoot)[symbolCachedTreeRoot];
+    if (cachedRoot) {
+      return cachedRoot;
+    } else {
+      const root = this.node.root;
+      (this.node as NodeWithCachedTreeRoot)[symbolCachedTreeRoot] = root;
+      return root;
+    }
   }
 
   /**
    * Serialize view to binary data.
    * Commits any pending changes before computing the root.
+   * Warning: this calls commit() which evict all pending HashComputations. Consider calling hashTreeRoot() before this
    */
   serialize(): Uint8Array {
     this.commit();
