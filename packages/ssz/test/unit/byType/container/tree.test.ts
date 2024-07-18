@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {
   BooleanType,
+  ByteListType,
   ByteVectorType,
   ContainerNodeStructType,
   ContainerType,
@@ -221,15 +222,18 @@ runViewTestMutation({
   ],
 });
 
-describe("ContainerViewDU batchHash", function () {
+describe.only("ContainerViewDU batchHash", function () {
   const childContainerType = new ContainerType({b0: uint64NumInfType, b1: uint64NumInfType});
+  // 2 chunks
+  const byteListType = new ByteListType(64);
   const parentContainerType = new ContainerType({
     // a basic type
     a: uint64NumType,
     b: childContainerType,
+    c: byteListType,
   });
 
-  const value = {a: 10, b: {b0: 100, b1: 101}};
+  const value = {a: 10, b: {b0: 100, b1: 101}, c: Buffer.alloc(64, 1)};
   const expectedRoot = parentContainerType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
@@ -237,24 +241,31 @@ describe("ContainerViewDU batchHash", function () {
   });
 
   it("full hash then modify basic type", () => {
-    const viewDU = parentContainerType.toViewDU({a: 9, b: {b0: 100, b1: 101}});
+    const viewDU = parentContainerType.toViewDU({a: 9, b: {b0: 100, b1: 101}, c: Buffer.alloc(64, 1)});
     viewDU.hashTreeRoot();
     viewDU.a += 1;
     expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify full child container", () => {
-    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}});
+    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}, c: Buffer.alloc(64, 1)});
     viewDU.hashTreeRoot();
     viewDU.b = childContainerType.toViewDU({b0: 100, b1: 101});
     expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify partial child container", () => {
-    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}});
+    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}, c: Buffer.alloc(64, 1)});
     viewDU.hashTreeRoot();
     viewDU.b.b0 = 100;
     viewDU.b.b1 = 101;
+    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+
+  it.only("full hash then modify full byte list", () => {
+    const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 100, b1: 101}, c: Buffer.alloc(64, 0)});
+    viewDU.hashTreeRoot();
+    viewDU.c = Buffer.alloc(64, 1);
     expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });
