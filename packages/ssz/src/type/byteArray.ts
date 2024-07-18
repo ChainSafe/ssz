@@ -1,4 +1,12 @@
-import {concatGindices, getHashComputations, Gindex, HashComputationGroup, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
+import {
+  concatGindices,
+  getHashComputations,
+  Gindex,
+  HashComputationGroup,
+  Node,
+  toGindex,
+  Tree,
+} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
 import {splitIntoRootChunks} from "../util/merkleize";
 import {ByteViews} from "./abstract";

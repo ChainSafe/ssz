@@ -222,7 +222,7 @@ runViewTestMutation({
   ],
 });
 
-describe.only("ContainerViewDU batchHash", function () {
+describe("ContainerViewDU batchHash", function () {
   const childContainerType = new ContainerType({b0: uint64NumInfType, b1: uint64NumInfType});
   // 2 chunks
   const byteListType = new ByteListType(64);
@@ -262,7 +262,7 @@ describe.only("ContainerViewDU batchHash", function () {
     expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
-  it.only("full hash then modify full byte list", () => {
+  it("full hash then modify full byte list", () => {
     const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 100, b1: 101}, c: Buffer.alloc(64, 0)});
     viewDU.hashTreeRoot();
     viewDU.c = Buffer.alloc(64, 1);
