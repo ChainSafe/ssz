@@ -74,8 +74,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     return this.value_toTree(view);
   }
 
-  // TODO add an OptionalViewDU
-  // TODO - batch
+  // TODO add an OptionalViewDU, handle HashComputationGroup
   commitViewDU(view: ValueOfType<ElementType>): Node {
     return this.value_toTree(view);
   }
