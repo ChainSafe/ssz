@@ -20,6 +20,8 @@ const uint8Output = new Uint8Array(PARALLEL_FACTOR * 32);
 // convenient reusable Uint8Array for hash64
 const hash64Input = uint8Input.subarray(0, 64);
 const hash64Output = uint8Output.subarray(0, 32);
+// size input array to 2 HashObject per computation * 32 bytes per object
+const destNodes: Node[] = new Array<Node>(PARALLEL_FACTOR);
 
 export const hasher: Hasher = {
   name: "hashtree",
@@ -56,10 +58,6 @@ export const hasher: Hasher = {
         continue;
       }
 
-      // size input array to 2 HashObject per computation * 32 bytes per object
-      // const input: Uint8Array = Uint8Array.from(new Array(hcArr.length * 2 * 32));
-      let destNodes: Node[] = [];
-
       // hash every 16 inputs at once to avoid memory allocation
       for (const [i, {src0, src1, dest}] of hcArr.entries()) {
         const indexInBatch = i % PARALLEL_FACTOR;
@@ -67,13 +65,12 @@ export const hasher: Hasher = {
 
         hashObjectToUint32Array(src0, uint32Input, offset);
         hashObjectToUint32Array(src1, uint32Input, offset + 8);
-        destNodes.push(dest);
+        destNodes[indexInBatch] = dest;
         if (indexInBatch === PARALLEL_FACTOR - 1) {
           hashInto(uint8Input, uint8Output);
           for (const [j, destNode] of destNodes.entries()) {
             byteArrayIntoHashObject(uint8Output, j * 32, destNode);
           }
-          destNodes = [];
         }
       }
 
@@ -84,8 +81,8 @@ export const hasher: Hasher = {
         const remainingOutput = uint8Output.subarray(0, remaining * 32);
         hashInto(remainingInput, remainingOutput);
         // destNodes was prepared above
-        for (const [i, destNode] of destNodes.entries()) {
-          byteArrayIntoHashObject(remainingOutput, i * 32, destNode);
+        for (let j = 0; j < remaining; j++) {
+          byteArrayIntoHashObject(remainingOutput, j * 32, destNodes[j]);
         }
       }
     }
