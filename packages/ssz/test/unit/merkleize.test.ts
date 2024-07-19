@@ -1,7 +1,6 @@
 import {expect} from "chai";
 import {bitLength, maxChunksToDepth, merkleize, mixInLength, nextPowerOf2} from "../../src/util/merkleize";
-import {merkleizeInto, LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {zeroHash} from "../../src/util/zeros";
+import {merkleizeInto, LeafNode, zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 describe("util / merkleize / bitLength", () => {
   const bitLengthByIndex = [0, 1, 2, 2, 3, 3, 3, 3, 4, 4];
