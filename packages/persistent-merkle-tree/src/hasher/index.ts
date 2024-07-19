@@ -1,6 +1,6 @@
 import {Hasher} from "./types";
 import {hasher as nobleHasher} from "./noble";
-import type {HashComputation} from "../node";
+import type {HashComputation} from "../hashComputation";
 
 export * from "./types";
 export * from "./util";

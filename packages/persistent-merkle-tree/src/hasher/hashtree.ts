@@ -1,6 +1,7 @@
 import {hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types";
-import {HashComputation, Node} from "../node";
+import {Node} from "../node";
+import type { HashComputation } from "../hashComputation";
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/lib/hashObject";
 import {doDigestNLevel, doMerkleizeInto} from "./util";
 

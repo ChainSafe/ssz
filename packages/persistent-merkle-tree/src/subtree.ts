@@ -1,4 +1,5 @@
-import {BranchNode, HashComputationGroup, Node, arrayAtIndex, getHashComputations} from "./node";
+import {BranchNode, Node} from "./node";
+import {getHashComputations, arrayAtIndex, HashComputationGroup} from "./hashComputation";
 import {zeroNode} from "./zeroNode";
 
 export function subtreeFillToDepth(bottom: Node, depth: number): Node {

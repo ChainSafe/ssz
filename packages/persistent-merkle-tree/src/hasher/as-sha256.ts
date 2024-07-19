@@ -6,7 +6,8 @@ import {
   hashInto,
 } from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
-import {HashComputation, Node} from "../node";
+import {Node} from "../node";
+import type {HashComputation} from "../hashComputation";
 import {doDigestNLevel, doMerkleizeInto} from "./util";
 
 export const hasher: Hasher = {

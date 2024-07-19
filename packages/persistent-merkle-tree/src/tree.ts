@@ -1,6 +1,7 @@
 import {zeroNode} from "./zeroNode";
 import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex";
-import {Node, LeafNode, BranchNode, HashComputationGroup, arrayAtIndex} from "./node";
+import {Node, LeafNode, BranchNode} from "./node";
+import { HashComputationGroup, arrayAtIndex } from "./hashComputation";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 

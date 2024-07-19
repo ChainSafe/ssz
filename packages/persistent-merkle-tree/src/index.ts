@@ -1,6 +1,7 @@
 export * from "./gindex";
 export * from "./hasher";
 export * from "./node";
+export * from "./hashComputation";
 export * from "./packedNode";
 export * from "./proof";
 export * from "./subtree";
