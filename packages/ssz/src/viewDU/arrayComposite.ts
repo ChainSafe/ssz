@@ -2,7 +2,7 @@ import {
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationGroup,
+  HashComputationLevel,
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
@@ -181,24 +181,19 @@ export class ArrayCompositeTreeViewDU<
    *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
    *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hashCompsOffset = 0, hashCompsByLevel: HashComputationLevel[] | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.viewsChanged.size === 0) {
-      if (!isOldRootHashed && hashComps !== null) {
-        getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+      if (!isOldRootHashed && hashCompsByLevel !== null) {
+        getHashComputations(this._rootNode, hashCompsOffset, hashCompsByLevel);
       }
       return;
     }
 
     // each view may mutate HashComputationGroup at offset + depth
-    const hashCompsView =
-      hashComps != null && isOldRootHashed
-        ? {
-            byLevel: hashComps.byLevel,
-            // Depth includes the extra level for the length node
-            offset: hashComps.offset + this.type.depth,
-          }
-        : null;
+    const offsetView = hashCompsOffset + this.type.depth;
+    // Depth includes the extra level for the length node
+    const byLevelView = hashCompsByLevel != null && isOldRootHashed ? hashCompsByLevel : null;
 
     const indexesChanged = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
     const indexes: number[] = [];
@@ -210,7 +205,7 @@ export class ArrayCompositeTreeViewDU<
         throw Error("View not found in viewsChanged, index=" + index);
       }
 
-      const node = this.type.elementType.commitViewDU(view, hashCompsView);
+      const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
       // there's a chance the view is not changed, no need to rebind nodes in that case
       if (this.nodes[index] !== node) {
         // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
@@ -226,24 +221,20 @@ export class ArrayCompositeTreeViewDU<
     }
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
-    const hashCompsThis =
-      hashComps != null && isOldRootHashed
-        ? {
-            byLevel: hashComps.byLevel,
-            offset: hashComps.offset + this.type.tree_chunksNodeOffset(),
-          }
-        : null;
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, hashCompsThis);
+    const offsetThis = hashCompsOffset + this.type.tree_chunksNodeOffset();
+    const byLevelThis = hashCompsByLevel != null && isOldRootHashed ? hashCompsByLevel : null;
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, offsetThis, byLevelThis);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,
       newChunksNode,
       this.dirtyLength ? this._length : null,
-      hashComps
+      hashCompsOffset,
+      hashCompsByLevel
     );
 
-    if (!isOldRootHashed && hashComps !== null) {
-      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    if (!isOldRootHashed && hashCompsByLevel !== null) {
+      getHashComputations(this._rootNode, hashCompsOffset, hashCompsByLevel);
     }
 
     this.viewsChanged.clear();

@@ -7,7 +7,7 @@ import {
 } from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
 import {Node} from "../node";
-import type {HashComputation} from "../hashComputation";
+import type {HashComputationLevel} from "../hashComputation";
 import {doDigestNLevel, doMerkleizeInto} from "./util";
 
 export const hasher: Hasher = {
@@ -20,7 +20,7 @@ export const hasher: Hasher = {
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);
   },
-  executeHashComputations: (hashComputations: HashComputation[][]) => {
+  executeHashComputations: (hashComputations: HashComputationLevel[]) => {
     for (let level = hashComputations.length - 1; level >= 0; level--) {
       const hcArr = hashComputations[level];
       if (!hcArr) {
@@ -47,7 +47,8 @@ export const hasher: Hasher = {
       let src1_3: Node | null = null;
       let dest3: Node | null = null;
 
-      for (const [i, hc] of hcArr.entries()) {
+      for (let i = 0; i < hcArr.length; i++) {
+        const hc = hcArr.get(i);
         const indexInBatch = i % 4;
 
         switch (indexInBatch) {

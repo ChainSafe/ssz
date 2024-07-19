@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node} from "../../src";
+import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel} from "../../src";
 
 describe("subtreeFillToContents", function () {
   // the hash computation takes time
@@ -39,12 +39,8 @@ describe("subtreeFillToContents", function () {
           expectedNodes[i] = node;
         }
 
-        const hashComps = {
-          offset: 0,
-          byLevel: [],
-        };
-
-        const node = subtreeFillToContents(nodes, depth, hashComps);
+        const hashCompsByLevel: HashComputationLevel[] = [];
+        const node = subtreeFillToContents(nodes, depth, 0, hashCompsByLevel);
         const retrievedNodes = getNodesAtDepth(node, depth, 0, count);
 
         // Assert correct
@@ -53,7 +49,7 @@ describe("subtreeFillToContents", function () {
             throw Error(`Wrong node at index ${i}`);
           }
         }
-        executeHashComputations(hashComps.byLevel);
+        executeHashComputations(hashCompsByLevel);
         if (node.h0 === null) {
           throw Error("Root node h0 is null");
         }
@@ -90,17 +86,14 @@ describe("subtreeFillToContents - validator nodes", function () {
     // maxChunksToDepth in ssz returns 3 for 8 nodes
     const depth = 3;
     const root0 = subtreeFillToContents(nodesArr[0], depth);
-    const hashComps = {
-      offset: 0,
-      byLevel: new Array<[]>(),
-    };
-    const node = subtreeFillToContents(nodesArr[1], depth, hashComps);
-    expect(hashComps.byLevel.length).to.equal(4);
-    expect(hashComps.byLevel[0].length).to.equal(1);
-    expect(hashComps.byLevel[1].length).to.equal(2);
-    expect(hashComps.byLevel[2].length).to.equal(4);
-    expect(hashComps.byLevel[3].length).to.equal(1);
-    executeHashComputations(hashComps.byLevel);
+    const hashCompsByLevel: HashComputationLevel[] = [];
+    const node = subtreeFillToContents(nodesArr[1], depth, 0, hashCompsByLevel);
+    expect(hashCompsByLevel.length).to.equal(4);
+    expect(hashCompsByLevel[0].length).to.equal(1);
+    expect(hashCompsByLevel[1].length).to.equal(2);
+    expect(hashCompsByLevel[2].length).to.equal(4);
+    expect(hashCompsByLevel[3].length).to.equal(1);
+    executeHashComputations(hashCompsByLevel);
     if (node.h0 === null) {
       throw Error("Root node h0 is null");
     }

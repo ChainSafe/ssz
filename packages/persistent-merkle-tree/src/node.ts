@@ -1,6 +1,5 @@
 import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {executeHashComputations, hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
-import { HashComputation, getHashComputations } from "./hashComputation";
+import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
 
 const TWO_POWER_32 = 2 ** 32;
 
@@ -71,15 +70,6 @@ export class BranchNode extends Node {
     }
   }
 
-  batchHash(): Uint8Array {
-    executeHashComputations(this.hashComputations);
-
-    if (this.h0 === null) {
-      throw Error("Root is not computed by batch");
-    }
-    return this.root;
-  }
-
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
       hasher.digest64HashObjects(this.left.rootHashObject, this.right.rootHashObject, this);
@@ -101,12 +91,6 @@ export class BranchNode extends Node {
 
   get right(): Node {
     return this._right;
-  }
-
-  get hashComputations(): HashComputation[][] {
-    const hashComputations: HashComputation[][] = [];
-    getHashComputations(this, 0, hashComputations);
-    return hashComputations;
   }
 }
 

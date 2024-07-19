@@ -1,6 +1,6 @@
 import {Hasher} from "./types";
-import {hasher as nobleHasher} from "./noble";
-import type {HashComputation} from "../hashComputation";
+import {hasher as hashtreeHasher} from "./hashtree";
+import type {HashComputationLevel} from "../hashComputation";
 
 export * from "./types";
 export * from "./util";
@@ -8,7 +8,7 @@ export * from "./util";
 /**
  * Hasher used across the SSZ codebase, by default, this does not support batch hash.
  */
-export let hasher: Hasher = nobleHasher;
+export let hasher: Hasher = hashtreeHasher;
 
 /**
  * Set the hasher to be used across the SSZ codebase
@@ -31,6 +31,6 @@ export function merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Arr
   hasher.merkleizeInto(data, padFor, output, offset);
 }
 
-export function executeHashComputations(hashComputations: HashComputation[][]): void {
+export function executeHashComputations(hashComputations: HashComputationLevel[]): void {
   hasher.executeHashComputations(hashComputations);
 }

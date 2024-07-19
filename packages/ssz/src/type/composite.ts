@@ -3,12 +3,13 @@ import {
   createProof,
   getNode,
   Gindex,
-  HashComputationGroup,
   Node,
   Proof,
   ProofType,
   Tree,
   merkleizeInto,
+  HashComputationLevel,
+  HashComputationGroup,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
 import {symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
@@ -61,6 +62,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    */
   abstract readonly isViewMutable: boolean;
   protected chunkBytesBuffer = new Uint8Array(0);
+  private hcGroup: HashComputationGroup | null = null;
 
   constructor(
     /**
@@ -129,9 +131,20 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   /** INTERNAL METHOD: Given a Tree View, returns a `Node` with all its updated data */
   abstract commitView(view: TV): Node;
   /** INTERNAL METHOD: Given a Deferred Update Tree View returns a `Node` with all its updated data */
-  abstract commitViewDU(view: TVDU, hashComps?: HashComputationGroup | null): Node;
+  abstract commitViewDU(view: TVDU, hcOffset?: number, hcByLevel?: HashComputationLevel[] | null): Node;
   /** INTERNAL METHOD: Return the cache of a Deferred Update Tree View. May return `undefined` if this ViewDU has no cache */
   abstract cacheOfViewDU(view: TVDU): unknown;
+
+  /**
+   * Single instance of HashComputationGroup per type. A lot of types will not have this if there are not ViewDU instances.
+   */
+  getHCGroup(): HashComputationGroup {
+    if (!this.hcGroup) {
+      this.hcGroup = new HashComputationGroup([]);
+    }
+    this.hcGroup.reset();
+    return this.hcGroup;
+  }
 
   /**
    * Deserialize binary data to a Tree View.

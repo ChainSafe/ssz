@@ -1,4 +1,4 @@
-import {getNodesAtDepth, HashComputationGroup, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, HashComputationLevel, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {CompositeType} from "../type/composite";
@@ -28,7 +28,8 @@ export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeTy
     rootNode: Node,
     chunksNode: Node,
     newLength: number | null,
-    hashComps: HashComputationGroup | null
+    hcOffset?: number,
+    hcByLevel?: HashComputationLevel[] | null
   ): Node;
 };
 

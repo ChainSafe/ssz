@@ -1,7 +1,7 @@
 import {hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types";
 import {Node} from "../node";
-import type { HashComputation } from "../hashComputation";
+import type {HashComputationLevel} from "../hashComputation";
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/lib/hashObject";
 import {doDigestNLevel, doMerkleizeInto} from "./util";
 
@@ -46,7 +46,7 @@ export const hasher: Hasher = {
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);
   },
-  executeHashComputations(hashComputations: HashComputation[][]): void {
+  executeHashComputations(hashComputations: HashComputationLevel[]): void {
     for (let level = hashComputations.length - 1; level >= 0; level--) {
       const hcArr = hashComputations[level];
       if (!hcArr) {
@@ -60,7 +60,11 @@ export const hasher: Hasher = {
       }
 
       // hash every 16 inputs at once to avoid memory allocation
-      for (const [i, {src0, src1, dest}] of hcArr.entries()) {
+      for (let i = 0; i < hcArr.length; i++) {
+        const {src0, src1, dest} = hcArr.get(i);
+        if (!src0 || !src1 || !dest) {
+          throw new Error(`Invalid HashComputation at index ${i}`);
+        }
         const indexInBatch = i % PARALLEL_FACTOR;
         const offset = indexInBatch * 16;
 

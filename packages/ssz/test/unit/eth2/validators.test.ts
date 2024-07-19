@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
-import {HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 
 type Validator = ValueOf<typeof ValidatorContainer>;
 const validator: Validator = {
@@ -149,20 +149,17 @@ describe.skip("getHashComputations BranchNodeStruct", function () {
 
   for (const {name, fn} of testCases) {
     it(name, () => {
-      const hashComps: HashComputationGroup = {
-        byLevel: [],
-        offset: 0,
-      };
+      const hcByLevel: HashComputationLevel[] = [];
       const validatorViewDU = ValidatorNodeStruct.toViewDU(validator);
       // cache all roots
       validatorViewDU.hashTreeRoot();
       fn(validatorViewDU);
-      validatorViewDU.commit(hashComps);
-      expect(hashComps.byLevel.length).to.be.equal(4);
-      expect(hashComps.byLevel[0].length).to.be.equal(1);
-      expect(hashComps.byLevel[1].length).to.be.equal(2);
-      expect(hashComps.byLevel[2].length).to.be.equal(4);
-      expect(hashComps.byLevel[3].length).to.be.equal(1);
+      validatorViewDU.commit(0, hcByLevel);
+      expect(hcByLevel.length).to.be.equal(4);
+      expect(hcByLevel[0].length).to.be.equal(1);
+      expect(hcByLevel[1].length).to.be.equal(2);
+      expect(hcByLevel[2].length).to.be.equal(4);
+      expect(hcByLevel[3].length).to.be.equal(1);
     });
   }
 });

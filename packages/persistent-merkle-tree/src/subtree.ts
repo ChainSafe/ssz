@@ -1,5 +1,5 @@
 import {BranchNode, Node} from "./node";
-import {getHashComputations, arrayAtIndex, HashComputationGroup} from "./hashComputation";
+import {getHashComputations, levelAtIndex, HashComputationLevel} from "./hashComputation";
 import {zeroNode} from "./zeroNode";
 
 export function subtreeFillToDepth(bottom: Node, depth: number): Node {
@@ -45,7 +45,8 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
 export function subtreeFillToContents(
   nodes: Node[],
   depth: number,
-  hashComps: HashComputationGroup | null = null
+  hashCompsOffset = 0,
+  hashCompsByLevel: HashComputationLevel[] | null = null
 ): Node {
   const maxLength = 2 ** depth;
   if (nodes.length > maxLength) {
@@ -58,8 +59,8 @@ export function subtreeFillToContents(
 
   if (depth === 0) {
     const node = nodes[0];
-    if (hashComps !== null) {
-      getHashComputations(node, hashComps.offset, hashComps.byLevel);
+    if (hashCompsByLevel !== null) {
+      getHashComputations(node, hashCompsOffset, hashCompsByLevel);
     }
     return node;
   }
@@ -71,15 +72,10 @@ export function subtreeFillToContents(
     const rightNode = nodes.length > 1 ? nodes[1] : zeroNode(0);
     const rootNode = new BranchNode(leftNode, rightNode);
 
-    if (hashComps !== null) {
-      const offset = hashComps.offset;
-      getHashComputations(leftNode, offset + 1, hashComps.byLevel);
-      getHashComputations(rightNode, offset + 1, hashComps.byLevel);
-      arrayAtIndex(hashComps.byLevel, offset).push({
-        src0: leftNode,
-        src1: rightNode,
-        dest: rootNode,
-      });
+    if (hashCompsByLevel !== null) {
+      getHashComputations(leftNode, hashCompsOffset + 1, hashCompsByLevel);
+      getHashComputations(rightNode, hashCompsOffset + 1, hashCompsByLevel);
+      levelAtIndex(hashCompsByLevel, hashCompsOffset).push(leftNode, rightNode, rootNode);
     }
 
     return rootNode;
@@ -90,7 +86,7 @@ export function subtreeFillToContents(
   for (let d = depth; d > 0; d--) {
     const countRemainder = count % 2;
     const countEven = count - countRemainder;
-    const offset = hashComps ? hashComps.offset + d - 1 : null;
+    const offset = hashCompsByLevel ? hashCompsOffset + d - 1 : null;
 
     // For each depth level compute the new BranchNodes and overwrite the nodes array
     for (let i = 0; i < countEven; i += 2) {
@@ -98,16 +94,12 @@ export function subtreeFillToContents(
       const right = nodes[i + 1];
       const node = new BranchNode(left, right);
       nodes[i / 2] = node;
-      if (offset !== null && hashComps !== null) {
-        arrayAtIndex(hashComps.byLevel, offset).push({
-          src0: left,
-          src1: right,
-          dest: node,
-        });
+      if (offset !== null && hashCompsByLevel !== null) {
+        levelAtIndex(hashCompsByLevel, offset).push(left, right, node);
         if (d === depth) {
           // bottom up strategy so we don't need to go down the tree except for the last level
-          getHashComputations(left, offset + 1, hashComps.byLevel);
-          getHashComputations(right, offset + 1, hashComps.byLevel);
+          getHashComputations(left, offset + 1, hashCompsByLevel);
+          getHashComputations(right, offset + 1, hashCompsByLevel);
         }
       }
     }
@@ -117,13 +109,13 @@ export function subtreeFillToContents(
       const right = zeroNode(depth - d);
       const node = new BranchNode(left, right);
       nodes[countEven / 2] = node;
-      if (offset !== null && hashComps !== null) {
+      if (offset !== null && hashCompsByLevel !== null) {
         if (d === depth) {
           // only go down on the last level
-          getHashComputations(left, offset + 1, hashComps.byLevel);
+          getHashComputations(left, offset + 1, hashCompsByLevel);
         }
         // no need to getHashComputations for zero node
-        arrayAtIndex(hashComps.byLevel, offset).push({src0: left, src1: right, dest: node});
+        levelAtIndex(hashCompsByLevel, offset).push(left, right, node);
       }
     }
 
