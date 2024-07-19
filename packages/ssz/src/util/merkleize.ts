@@ -1,5 +1,5 @@
 import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
-import {zeroHash} from "./zeros";
+import {zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 /** Dedicated property to cache hashTreeRoot of immutable CompositeType values */
 export const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");

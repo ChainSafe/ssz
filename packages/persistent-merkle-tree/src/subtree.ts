@@ -39,13 +39,12 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
  * WARNING: Mutates the provided nodes array.
  * @param hashCompRootNode is a hacky way from ssz to set `dest` of HashComputation for BranchNodeStruct
  * TODO: Don't mutate the nodes array.
- * TODO - batch: check consumers of this function, can we compute HashComputationGroup when deserializing ViewDU from Uint8Array?
+ * hashComps is an output parameter that will be filled with the hash computations if exists.
  */
 export function subtreeFillToContents(
   nodes: Node[],
   depth: number,
-  hashComps: HashComputationGroup | null = null,
-  hashCompRootNode: Node | null = null
+  hashComps: HashComputationGroup | null = null
 ): Node {
   const maxLength = 2 ** depth;
   if (nodes.length > maxLength) {
@@ -59,7 +58,6 @@ export function subtreeFillToContents(
   if (depth === 0) {
     const node = nodes[0];
     if (hashComps !== null) {
-      // only use hashCompRootNode for >=1 nodes where we have a rebind
       getHashComputations(node, hashComps.offset, hashComps.byLevel);
     }
     return node;
@@ -79,7 +77,7 @@ export function subtreeFillToContents(
       arrayAtIndex(hashComps.byLevel, offset).push({
         src0: leftNode,
         src1: rightNode,
-        dest: hashCompRootNode ?? rootNode,
+        dest: rootNode,
       });
     }
 
@@ -103,8 +101,7 @@ export function subtreeFillToContents(
         arrayAtIndex(hashComps.byLevel, offset).push({
           src0: left,
           src1: right,
-          // d = 1 means we are at root node, use hashCompRootNode if possible
-          dest: d === 1 ? hashCompRootNode ?? node : node,
+          dest: node,
         });
         if (d === depth) {
           // bottom up strategy so we don't need to go down the tree except for the last level
@@ -125,7 +122,6 @@ export function subtreeFillToContents(
           getHashComputations(left, offset + 1, hashComps.byLevel);
         }
         // no need to getHashComputations for zero node
-        // no need to set hashCompRootNode here
         arrayAtIndex(hashComps.byLevel, offset).push({src0: left, src1: right, dest: node});
       }
     }

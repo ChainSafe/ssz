@@ -1,5 +1,5 @@
 import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
+import {executeHashComputations, hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
 
 const TWO_POWER_32 = 2 ** 32;
 
@@ -11,7 +11,7 @@ export type HashComputation = {
 
 export type HashComputationGroup = {
   // global array
-  byLevel: Array<HashComputation[]>;
+  byLevel: HashComputation[][];
   // offset from top
   offset: number;
 };
@@ -399,7 +399,10 @@ export function bitwiseOrNodeH(node: Node, hIndex: number, value: number): void 
   else throw Error("hIndex > 7");
 }
 
-export function getHashComputations(node: Node, offset: number, hashCompsByLevel: Array<HashComputation[]>): void {
+/**
+ * Get HashComputations from a root node all the way to the leaf nodes.
+ */
+export function getHashComputations(node: Node, offset: number, hashCompsByLevel: HashComputation[][]): void {
   if (node.h0 === null) {
     const hashComputations = arrayAtIndex(hashCompsByLevel, offset);
     const {left, right} = node;
@@ -409,15 +412,10 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
     getHashComputations(right, offset + 1, hashCompsByLevel);
   }
 
-  // else stop the recursion, LeafNode should have h0
+  // else stop the recursion, node is hashed
 }
 
-// TODO - batch: move to hasher/index.ts
-export function executeHashComputations(hashComputations: Array<HashComputation[]>): void {
-  hasher.executeHashComputations(hashComputations);
-}
-
-export function arrayAtIndex<T>(twoDArray: Array<T[]>, index: number): T[] {
+export function arrayAtIndex<T>(twoDArray: T[][], index: number): T[] {
   if (twoDArray[index] === undefined) {
     twoDArray[index] = [];
   }

@@ -70,7 +70,7 @@ describe("hashers", function () {
 });
 
 describe("hasher.digestNLevel", function () {
-  const hashers = [hashtreeHasher, asSha256Hasher];
+  const hashers = [nobleHasher, hashtreeHasher, asSha256Hasher];
   for (const hasher of hashers) {
     const numValidators = [1, 2, 3, 4];
     for (const numValidator of numValidators) {
@@ -90,7 +90,7 @@ describe("hasher.digestNLevel", function () {
 
 describe("hasher.merkleizeInto", function () {
   const numNodes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  for (const hasher of [hashtreeHasher, asSha256Hasher]) {
+  for (const hasher of [nobleHasher, hashtreeHasher, asSha256Hasher]) {
     it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
       const data = Buffer.alloc(63, 0);
       const output = Buffer.alloc(32);
@@ -114,4 +114,3 @@ describe("hasher.merkleizeInto", function () {
   }
 });
 
-// TODO - batch: test more methods
