@@ -4,6 +4,7 @@ import {hasher as asShaHasher} from "../../src/hasher/as-sha256";
 import {hasher as nobleHasher} from "../../src/hasher/noble";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {buildComparisonTrees} from "../utils/tree";
+import { HashComputationLevel, getHashComputations } from "../../src";
 
 describe("hasher", function () {
   this.timeout(0);
@@ -55,7 +56,9 @@ describe("hasher", function () {
           return tree;
         },
         fn: (tree) => {
-          hasher.executeHashComputations(tree.hashComputations);
+          const hcByLevel: HashComputationLevel[] = [];
+          getHashComputations(tree, 0, hcByLevel);
+          hasher.executeHashComputations(hcByLevel);
         },
       });
     });
