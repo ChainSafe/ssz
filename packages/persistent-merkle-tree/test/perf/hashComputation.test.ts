@@ -9,7 +9,7 @@ describe("HashComputationLevel", function () {
   const length = 100_000;
   itBench({
     id: "HashComputationLevel.push then loop",
-    before: () => new HashComputationLevel([]),
+    before: () => new HashComputationLevel(),
     beforeEach: (level) => {
       level.reset();
       return level;

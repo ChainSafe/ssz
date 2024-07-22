@@ -1,10 +1,10 @@
 import type {Node} from "./node";
-// TODO - batch: unit tests
 
 export type HashComputation = {
   src0: Node;
   src1: Node;
   dest: Node;
+  next: HashComputation | null;
 };
 
 /**
@@ -13,37 +13,73 @@ export type HashComputation = {
  */
 export class HashComputationLevel {
   private _length: number;
+  private _totalLength: number;
+  // use LinkedList to avoid memory allocation when the list grows
+  // always have a fixed head although length is 0
+  private head: HashComputation;
+  private tail: HashComputation | null;
+  private pointer: HashComputation | null;
 
-  constructor(private readonly hashComps: HashComputation[]) {
+  constructor() {
     this._length = 0;
+    this._totalLength = 0;
+    this.head = {
+      src0: null as unknown as Node,
+      src1: null as unknown as Node,
+      dest: null as unknown as Node,
+      next: null,
+    };
+    this.tail = null;
+    this.pointer = null;
   }
 
   get length(): number {
     return this._length;
   }
 
+  get totalLength(): number {
+    return this._totalLength;
+  }
+
   /**
    * run before every run
    */
   reset(): void {
+    // keep this.head
+    this.tail = null;
     this._length = 0;
-  }
-
-  get(index: number): HashComputation {
-    return this.hashComps[index];
+    // totalLength is not reset
+    this.pointer = null;
   }
 
   push(src0: Node, src1: Node, dest: Node): void {
-    if (this._length < this.hashComps.length) {
-      const existing = this.hashComps[this._length];
-      existing.src0 = src0;
-      existing.src1 = src1;
-      existing.dest = dest;
-    } else {
-      this.hashComps.push({src0, src1, dest});
+    if (this.tail !== null) {
+      let newTail = this.tail.next;
+      if (newTail !== null) {
+        newTail.src0 = src0;
+        newTail.src1 = src1;
+        newTail.dest = dest;
+      } else {
+        // grow the list
+        newTail = {src0, src1, dest, next: null};
+        this.tail.next = newTail;
+        this._totalLength++;
+      }
+      this.tail = newTail;
+      this._length++;
+      return;
     }
 
-    this._length++;
+    // first item
+    this.head.src0 = src0;
+    this.head.src1 = src1;
+    this.head.dest = dest;
+    this.tail = this.head;
+    this._length = 1;
+    if (this._totalLength === 0) {
+      this._totalLength = 1;
+    }
+    // else _totalLength > 0, do not set
   }
 
   /**
@@ -51,16 +87,59 @@ export class HashComputationLevel {
    * hashComps may still refer to the old Nodes, we should release them to avoid memory leak.
    */
   clean(): void {
-    for (let i = this._length; i < this.hashComps.length; i++) {
-      const hc = this.hashComps[i];
-      if (!hc.src0) {
+    let hc = this.tail?.next ?? null;
+    while (hc !== null) {
+      if (hc.src0 === null) {
         // we may have already cleaned it in the previous run, return early
         break;
       }
       hc.src0 = null as unknown as Node;
       hc.src1 = null as unknown as Node;
       hc.dest = null as unknown as Node;
+      hc = hc.next;
     }
+  }
+
+  next(): IteratorResult<HashComputation> {
+    if (!this.pointer || this.tail === null) {
+      return {done: true, value: undefined};
+    }
+
+    // never yield value beyond the tail
+    const value = this.pointer;
+    const isNull = value.src0 === null;
+    this.pointer = this.pointer.next;
+
+    return isNull ? {done: true, value: undefined} : {done: false, value};
+  }
+
+  [Symbol.iterator](): IterableIterator<HashComputation> {
+    this.pointer = this.head;
+    return this;
+  }
+
+  /**
+   * Not great due to memory allocation.
+   * Mainly used for testing.
+   */
+  toArray(): HashComputation[] {
+    const hashComps: HashComputation[] = [];
+    for (const hc of this) {
+      hashComps.push(hc);
+    }
+    return hashComps;
+  }
+
+  /**
+   * For testing.
+   */
+  dump(): HashComputation[] {
+    const hashComps: HashComputation[] = [];
+    let hc : HashComputation | null = null;
+    for (hc = this.head; hc !== null; hc = hc.next) {
+      hashComps.push(hc);
+    }
+    return hashComps;
   }
 }
 
@@ -71,16 +150,6 @@ export class HashComputationGroup {
     for (const level of this.byLevel) {
       level.reset();
     }
-  }
-
-  push(level: number, src0: Node, src1: Node, dest: Node): void {
-    let hashComps = this.byLevel[level];
-    if (hashComps === undefined) {
-      hashComps = new HashComputationLevel([]);
-      this.byLevel[level] = hashComps;
-    }
-
-    hashComps.push(src0, src1, dest);
   }
 
   clean(): void {
@@ -108,7 +177,7 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
 
 export function levelAtIndex(hashCompsByLevel: HashComputationLevel[], index: number): HashComputationLevel {
   if (hashCompsByLevel[index] === undefined) {
-    hashCompsByLevel[index] = new HashComputationLevel([]);
+    hashCompsByLevel[index] = new HashComputationLevel();
   }
   return hashCompsByLevel[index];
 }

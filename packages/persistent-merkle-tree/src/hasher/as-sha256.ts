@@ -47,8 +47,8 @@ export const hasher: Hasher = {
       let src1_3: Node | null = null;
       let dest3: Node | null = null;
 
-      for (let i = 0; i < hcArr.length; i++) {
-        const hc = hcArr.get(i);
+      let i = 0;
+      for (const hc of hcArr) {
         const indexInBatch = i % 4;
 
         switch (indexInBatch) {
@@ -123,6 +123,7 @@ export const hasher: Hasher = {
           default:
             throw Error(`Unexpected indexInBatch ${indexInBatch}`);
         }
+        i++;
       }
 
       // remaining

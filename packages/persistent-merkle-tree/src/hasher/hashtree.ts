@@ -60,8 +60,8 @@ export const hasher: Hasher = {
       }
 
       // hash every 16 inputs at once to avoid memory allocation
-      for (let i = 0; i < hcArr.length; i++) {
-        const {src0, src1, dest} = hcArr.get(i);
+      let i = 0;
+      for (const {src0, src1, dest} of hcArr) {
         if (!src0 || !src1 || !dest) {
           throw new Error(`Invalid HashComputation at index ${i}`);
         }
@@ -77,6 +77,7 @@ export const hasher: Hasher = {
             byteArrayIntoHashObject(uint8Output, j * 32, destNode);
           }
         }
+        i++;
       }
 
       const remaining = hcArr.length % PARALLEL_FACTOR;

@@ -168,7 +168,7 @@ describe("Tree batch setNodes", () => {
     const treeOk = new Tree(zeroNode(depth));
     // cache all roots
     treeOk.root;
-    const hashComputationsOk: Array<HashComputationLevel> = Array.from({length: depth}, () => new HashComputationLevel([]));
+    const hashComputationsOk: Array<HashComputationLevel> = Array.from({length: depth}, () => new HashComputationLevel());
     const tree = new Tree(zeroNode(depth));
     tree.root;
     const gindexesBigint = gindexes.map((gindex) => BigInt(gindex));
@@ -206,10 +206,12 @@ describe("Tree batch setNodes", () => {
       // TODO: need sort?
       // TODO: confirm all nodes in HashComputation are populated with HashObjects, h0 !== null
       for (let i = depth - 1; i >= 0; i--) {
-        expect(hashCompsByLevel[i].length).to.be.equal(hashComputationsOk[i].length, `incorrect length at depth ${i}`);
-        for (let j = 0; j < hashCompsByLevel[i].length; j++) {
-          const hcOk = hashComputationsOk[i].get(j);
-          const hc = hashCompsByLevel[i].get(j);
+        const hcArr = hashCompsByLevel[i].toArray();
+        const hcOkArr = hashComputationsOk[i].toArray();
+        expect(hcArr.length).to.be.equal(hcOkArr.length, `incorrect length at depth ${i}`);
+        for (let j = 0; j < hcArr.length; j++) {
+          const hcOk = hcOkArr[j];
+          const hc = hcArr[j];
           expect(hc.src0.root).to.be.deep.equal(hcOk.src0.root);
           expect(hc.src1.root).to.be.deep.equal(hcOk.src1.root);
           expect(hc.dest.root).to.be.deep.equal(hcOk.dest.root);

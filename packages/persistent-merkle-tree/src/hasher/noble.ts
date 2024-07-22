@@ -42,8 +42,7 @@ export const hasher: Hasher = {
         throw Error(`no hash computations for level ${level}`);
       }
 
-      for (let i = 0; i < hcArr.length; i++) {
-        const hc = hcArr.get(i);
+      for (const hc of hcArr) {
         hc.dest.applyHash(digest64HashObjects(hc.src0, hc.src1));
       }
     }
