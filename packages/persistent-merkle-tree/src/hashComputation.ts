@@ -144,7 +144,10 @@ export class HashComputationLevel {
 }
 
 export class HashComputationGroup {
-  constructor(readonly byLevel: HashComputationLevel[]) {}
+  readonly byLevel: HashComputationLevel[];
+  constructor() {
+    this.byLevel = [];
+  }
 
   reset(): void {
     for (const level of this.byLevel) {

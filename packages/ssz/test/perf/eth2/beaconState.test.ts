@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {HashComputationLevel, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes";
 import {BitArray, CompositeViewDU, toHexString} from "../../../src";
 
@@ -52,12 +52,13 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
     },
   });
 
+  const hc = new HashComputationGroup();
   itBench({
     id: `BeaconState ViewDU hashTreeRoot vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
-      // commit() step is inside hashTreeRoot()
-      if (toHexString(state.hashTreeRoot()) !== expectedRoot) {
+      // commit() step is inside hashTreeRoot(), reuse HashComputationGroup
+      if (toHexString(state.hashTreeRoot(hc)) !== expectedRoot) {
         throw new Error("hashTreeRoot does not match expectedRoot");
       }
     },
