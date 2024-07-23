@@ -1,5 +1,14 @@
 import type {Node} from "./node";
 
+/**
+ * HashComputation to be later used to compute hash of nodes from bottom up.
+ * This is also an item of a linked list.
+ *     ╔═════════════════════╗             ╔══════════════════════╗
+ *     ║       dest          ║             ║      next_dest       ║
+ *     ║     /      \        ║  ========>  ║     /       \        ║
+ *     ║  src0      src1     ║             ║  next_src0  next_src1║
+ *     ╚═════════════════════╝             ╚══════════════════════╝
+ */
 export type HashComputation = {
   src0: Node;
   src1: Node;
@@ -10,6 +19,7 @@ export type HashComputation = {
 /**
  * Model HashComputation[] at the same level that support reusing the same memory.
  * Before every run, reset() should be called.
+ * After every run, clean() should be called.
  */
 export class HashComputationLevel {
   private _length: number;
@@ -52,6 +62,10 @@ export class HashComputationLevel {
     this.pointer = null;
   }
 
+  /**
+   * Append a new HashComputation to tail.
+   * This will overwrite the existing HashComputation if it is not null, or grow the list if needed.
+   */
   push(src0: Node, src1: Node, dest: Node): void {
     if (this.tail !== null) {
       let newTail = this.tail.next;
@@ -100,6 +114,9 @@ export class HashComputationLevel {
     }
   }
 
+  /**
+   * Implement Iterator for this class
+   */
   next(): IteratorResult<HashComputation> {
     if (!this.pointer || this.tail === null) {
       return {done: true, value: undefined};
@@ -113,6 +130,10 @@ export class HashComputationLevel {
     return isNull ? {done: true, value: undefined} : {done: false, value};
   }
 
+  /**
+   * This is convenient method to consume HashComputationLevel with for-of loop
+   * See "next" method above for the actual implementation
+   */
   [Symbol.iterator](): IterableIterator<HashComputation> {
     this.pointer = this.head;
     return this;
@@ -135,7 +156,7 @@ export class HashComputationLevel {
    */
   dump(): HashComputation[] {
     const hashComps: HashComputation[] = [];
-    let hc : HashComputation | null = null;
+    let hc: HashComputation | null = null;
     for (hc = this.head; hc !== null; hc = hc.next) {
       hashComps.push(hc);
     }
@@ -143,6 +164,9 @@ export class HashComputationLevel {
   }
 }
 
+/**
+ * Model HashComputationLevel[] at different levels.
+ */
 export class HashComputationGroup {
   readonly byLevel: HashComputationLevel[];
   constructor() {
@@ -178,6 +202,9 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
   // else stop the recursion, node is hashed
 }
 
+/**
+ * Utility to get HashComputationLevel at a specific index.
+ */
 export function levelAtIndex(hashCompsByLevel: HashComputationLevel[], index: number): HashComputationLevel {
   if (hashCompsByLevel[index] === undefined) {
     hashCompsByLevel[index] = new HashComputationLevel();
