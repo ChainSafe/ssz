@@ -4,9 +4,10 @@ import { HashComputation, HashComputationLevel, LeafNode, zeroHash } from "../..
 describe("HashComputationLevel", function () {
   const src = LeafNode.fromRoot(zeroHash(0));
   const dest = LeafNode.fromRoot(zeroHash(1));
-  const hashComp: HashComputation = {src0: src, src1: src, dest};
+  const hashComp: HashComputation = {src0: src, src1: src, dest, next: null};
 
-  const length = 100_000;
+  const length = 1_000_000;
+
   itBench({
     id: "HashComputationLevel.push then loop",
     before: () => new HashComputationLevel(),
@@ -19,8 +20,8 @@ describe("HashComputationLevel", function () {
         level.push(src, src, dest);
       }
       level.clean();
-      for (let i = 0; i < length; i++) {
-        const {src0, src1, dest} = level.get(i);
+      for (const hc of level) {
+        const {src0, src1, dest} = hc;
       }
     }
   });
