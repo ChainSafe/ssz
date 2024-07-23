@@ -1,6 +1,7 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
-import {BranchNode, HashComputation, LeafNode, countToDepth, getHashComputations, subtreeFillToContents} from "../../src";
+import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src";
+import {HashComputation, HashComputationLevel, getHashComputations} from "../../src/hashComputation";
 
 describe("LeafNode uint", () => {
   const testCasesNode: {
@@ -222,7 +223,7 @@ describe("getHashComputations", () => {
       const nodes = Array.from({length: numNode}, (_, i) => newLeafNodeFilled(i));
       const depth = countToDepth(BigInt(numNode));
       const rootNode = subtreeFillToContents(nodes, depth);
-      const hashComputations: HashComputation[][] = [];
+      const hashComputations: HashComputationLevel[] = [];
       getHashComputations(rootNode, 0, hashComputations);
       expect(hashComputations.length).to.equal(expectedLengths.length);
       for (let i = 0; i < hashComputations.length; i++) {
@@ -252,7 +253,7 @@ describe("getHashComputations", () => {
   for (const {numNode, expectedLengths} of testCases2) {
     it(`list with ${numNode} nodes`, () => {
       const rootNode = createList(numNode);
-      const hashComputations: HashComputation[][] = [];
+      const hashComputations: HashComputationLevel[] = [];
       getHashComputations(rootNode, 0, hashComputations);
       expect(hashComputations.length).to.equal(expectedLengths.length);
       for (let i = 0; i < hashComputations.length; i++) {

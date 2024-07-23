@@ -5,7 +5,7 @@ import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {linspace} from "../utils/misc";
 import {buildComparisonTrees} from "../utils/tree";
-import {HashObject, LeafNode, subtreeFillToContents} from "../../src";
+import {HashComputationLevel, HashObject, LeafNode, getHashComputations, subtreeFillToContents} from "../../src";
 import { expect } from "chai";
 import { zeroHash } from "../../src/zeroHash";
 
@@ -61,7 +61,8 @@ describe("hashers", function () {
     for (const hasher of hashers) {
       it(hasher.name, () => {
         const [tree1, tree2] = buildComparisonTrees(8);
-        const hashComputations = tree2.hashComputations;
+        const hashComputations: HashComputationLevel[] = [];
+        getHashComputations(tree1, 0, hashComputations);
         hasher.executeHashComputations(hashComputations);
         expectEqualHex(tree1.root, tree2.root);
       });
