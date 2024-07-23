@@ -2,7 +2,7 @@ import {
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationGroup,
+  HashComputationLevel,
   LeafNode,
   Node,
   setNodesAtDepth,
@@ -163,15 +163,15 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   }
 
   /**
-   * When we need to compute HashComputations (hashComps != null):
-   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
-   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0) {
-      if (!isOldRootHashed && hashComps !== null) {
-        getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+      if (!isOldRootHashed && hcByLevel !== null) {
+        getHashComputations(this._rootNode, hcOffset, hcByLevel);
       }
       return;
     }
@@ -184,24 +184,20 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     }
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
-    const hashCompsThis =
-      hashComps != null && isOldRootHashed
-        ? {
-            byLevel: hashComps.byLevel,
-            offset: hashComps.offset + this.type.tree_chunksNodeOffset(),
-          }
-        : null;
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, hashCompsThis);
+    const offsetThis = hcOffset + this.type.tree_chunksNodeOffset();
+    const byLevelThis = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, offsetThis, byLevelThis);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,
       newChunksNode,
       this.dirtyLength ? this._length : null,
-      isOldRootHashed ? hashComps : null
+      hcOffset,
+      isOldRootHashed ? hcByLevel : null
     );
 
-    if (!isOldRootHashed && hashComps !== null) {
-      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    if (!isOldRootHashed && hcByLevel !== null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
     }
 
     this.nodesChanged.clear();

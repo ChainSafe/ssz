@@ -64,7 +64,7 @@ export class ListCompositeTreeViewDU<
 
     // Must set new length and commit to tree to restore the same tree at that index
     const newLength = index + 1;
-    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength, null);
+    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
 
     return this.type.getViewDU(newRootNode) as this;
   }
@@ -105,7 +105,7 @@ export class ListCompositeTreeViewDU<
       newLength = nodes.length;
     }
 
-    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength, null);
+    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength);
 
     return this.type.getViewDU(newRootNode) as this;
   }

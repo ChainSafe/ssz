@@ -79,7 +79,7 @@ export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends
 
     // Must set new length and commit to tree to restore the same tree at that index
     const newLength = index + 1;
-    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength, null);
+    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
     return this.type.getViewDU(newRootNode) as this;
   }
 

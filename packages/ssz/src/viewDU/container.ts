@@ -1,7 +1,7 @@
 import {
   getHashComputations,
   getNodeAtDepth,
-  HashComputationGroup,
+  HashComputationLevel,
   LeafNode,
   Node,
   setNodesAtDepth,
@@ -76,25 +76,23 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
   }
 
   /**
-   * When we need to compute HashComputations (hashComps != null):
-   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
-   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
    */
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
-      if (!isOldRootHashed && hashComps !== null) {
-        getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+      if (!isOldRootHashed && hcByLevel !== null) {
+        getHashComputations(this._rootNode, hcOffset, hcByLevel);
       }
       return;
     }
 
-    let hashCompsView: HashComputationGroup | null = null;
-    // if old root is not hashed, no need to pass HashComputationGroup to child view bc we need to do full traversal here
-    if (hashComps != null && isOldRootHashed) {
-      // each view may mutate HashComputationGroup at offset + depth
-      hashCompsView = {byLevel: hashComps.byLevel, offset: hashComps.offset + this.type.depth};
-    }
+    // each view may mutate hcByLevel at offset + depth
+    const offsetView = hcOffset + this.type.depth;
+    // if old root is not hashed, no need to pass hcByLevel to child view bc we need to do full traversal here
+    const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
     // union all changes then sort, they should not be duplicated
     const combinedIndexes = [...this.nodesChanged, ...Array.from(this.viewsChanged.keys())].sort((a, b) => a - b);
@@ -105,7 +103,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       if (view) {
         // composite type
         const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
-        const node = fieldType.commitViewDU(view, hashCompsView);
+        const node = fieldType.commitViewDU(view, offsetView, byLevelView);
         // there's a chance the view is not changed, no need to rebind nodes in that case
         if (this.nodes[index] !== node) {
           // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
@@ -128,12 +126,13 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       this.type.depth,
       indexes,
       nodes,
-      isOldRootHashed ? hashComps : null
+      hcOffset,
+      isOldRootHashed ? hcByLevel : null
     );
 
-    // old root is not hashed, need to traverse and put to HashComputationGroup
-    if (!isOldRootHashed && hashComps !== null) {
-      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    // old root is not hashed, need to traverse
+    if (!isOldRootHashed && hcByLevel !== null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
     }
 
     this.nodesChanged.clear();

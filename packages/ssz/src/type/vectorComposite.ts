@@ -1,4 +1,4 @@
-import {HashComputationGroup, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -94,8 +94,12 @@ export class VectorCompositeType<
     return view.node;
   }
 
-  commitViewDU(view: ArrayCompositeTreeViewDU<ElementType>, hashComps: HashComputationGroup | null = null): Node {
-    view.commit(hashComps);
+  commitViewDU(
+    view: ArrayCompositeTreeViewDU<ElementType>,
+    hcOffset = 0,
+    hcByLevel: HashComputationLevel[] | null = null
+  ): Node {
+    view.commit(hcOffset, hcByLevel);
     return view.node;
   }
 

@@ -1,4 +1,4 @@
-import {HashComputationGroup, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {BitArray} from "../value/bitArray";
 import {CompositeType} from "../type/composite";
 import {TreeViewDU} from "./abstract";
@@ -22,13 +22,13 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
     return;
   }
 
-  commit(hashComps: HashComputationGroup | null = null): void {
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     if (this._bitArray !== null) {
       this._rootNode = this.type.value_toTree(this._bitArray);
     }
 
-    if (hashComps !== null && this._rootNode.h0 === null) {
-      getHashComputations(this._rootNode, hashComps.offset, hashComps.byLevel);
+    if (hcByLevel !== null && this._rootNode.h0 === null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
     }
   }
 

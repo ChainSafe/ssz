@@ -1,12 +1,12 @@
 import {
   BranchNode,
-  HashComputationGroup,
   LeafNode,
   Node,
   getNodesAtDepth,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  arrayAtIndex,
+  levelAtIndex,
+  HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf, ByteViews} from "./abstract";
 import {BasicType} from "./basic";
@@ -45,7 +45,8 @@ export function setChunksNode(
   rootNode: Node,
   chunksNode: Node,
   newLength: number | null,
-  hashComps: HashComputationGroup | null
+  hcOffset = 0,
+  hcByLevel: HashComputationLevel[] | null = null
 ): Node {
   const lengthNode =
     newLength !== null
@@ -54,8 +55,8 @@ export function setChunksNode(
       : // else re-use existing node
         (rootNode.right as LeafNode);
   const branchNode = new BranchNode(chunksNode, lengthNode);
-  if (hashComps !== null) {
-    arrayAtIndex(hashComps.byLevel, hashComps.offset).push({src0: chunksNode, src1: lengthNode, dest: branchNode});
+  if (hcByLevel !== null) {
+    levelAtIndex(hcByLevel, hcOffset).push(chunksNode, lengthNode, branchNode);
   }
   return branchNode;
 }

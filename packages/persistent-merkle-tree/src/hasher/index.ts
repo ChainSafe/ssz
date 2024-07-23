@@ -1,6 +1,6 @@
 import {Hasher} from "./types";
 import {hasher as nobleHasher} from "./noble";
-import type {HashComputation} from "../node";
+import type {HashComputationLevel} from "../hashComputation";
 
 export * from "./types";
 export * from "./util";
@@ -31,6 +31,6 @@ export function merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Arr
   hasher.merkleizeInto(data, padFor, output, offset);
 }
 
-export function executeHashComputations(hashComputations: HashComputation[][]): void {
+export function executeHashComputations(hashComputations: HashComputationLevel[]): void {
   hasher.executeHashComputations(hashComputations);
 }
