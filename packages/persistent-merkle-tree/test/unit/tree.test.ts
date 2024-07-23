@@ -187,7 +187,7 @@ describe("Tree batch setNodes", () => {
 
     it(`${id} - setNodesAtDepth()`, () => {
       const chunksNode = tree.rootNode;
-      const hashCompsByLevel: HashComputationLevel[] = [];
+      const hcByLevel: HashComputationLevel[] = [];
       const newChunksNode = setNodesAtDepth(
         chunksNode,
         depth,
@@ -195,7 +195,7 @@ describe("Tree batch setNodes", () => {
         gindexes.map((nodeValue) => LeafNode.fromRoot(Buffer.alloc(32, nodeValue))),
         // TODO: more test cases with positive offset?
         0,
-        hashCompsByLevel
+        hcByLevel
       );
       tree.rootNode = newChunksNode;
       const roots = getTreeRoots(tree, maxGindex);
@@ -206,7 +206,7 @@ describe("Tree batch setNodes", () => {
       // TODO: need sort?
       // TODO: confirm all nodes in HashComputation are populated with HashObjects, h0 !== null
       for (let i = depth - 1; i >= 0; i--) {
-        const hcArr = hashCompsByLevel[i].toArray();
+        const hcArr = hcByLevel[i].toArray();
         const hcOkArr = hashComputationsOk[i].toArray();
         expect(hcArr.length).to.be.equal(hcOkArr.length, `incorrect length at depth ${i}`);
         for (let j = 0; j < hcArr.length; j++) {

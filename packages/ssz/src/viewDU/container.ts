@@ -76,9 +76,9 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
   }
 
   /**
-   * When we need to compute HashComputations (hashComps != null):
-   *   - if old _rootNode is hashed, then only need to put pending changes to HashComputationGroup
-   *   - if old _rootNode is not hashed, need to traverse and put to HashComputationGroup
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
    */
   commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     const isOldRootHashed = this._rootNode.h0 !== null;
@@ -89,9 +89,9 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
       return;
     }
 
-    // each view may mutate HashComputationGroup at offset + depth
+    // each view may mutate hcByLevel at offset + depth
     const offsetView = hcOffset + this.type.depth;
-    // if old root is not hashed, no need to pass HashComputationGroup to child view bc we need to do full traversal here
+    // if old root is not hashed, no need to pass hcByLevel to child view bc we need to do full traversal here
     const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
     // union all changes then sort, they should not be duplicated

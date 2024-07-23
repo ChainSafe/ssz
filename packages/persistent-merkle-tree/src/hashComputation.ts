@@ -189,14 +189,14 @@ export class HashComputationGroup {
 /**
  * Get HashComputations from a root node all the way to the leaf nodes.
  */
-export function getHashComputations(node: Node, offset: number, hashCompsByLevel: HashComputationLevel[]): void {
+export function getHashComputations(node: Node, offset: number, hcByLevel: HashComputationLevel[]): void {
   if (node.h0 === null) {
-    const hashComputations = levelAtIndex(hashCompsByLevel, offset);
+    const hashComputations = levelAtIndex(hcByLevel, offset);
     const {left, right} = node;
     hashComputations.push(left, right, node);
     // leaf nodes should have h0 to stop the recursion
-    getHashComputations(left, offset + 1, hashCompsByLevel);
-    getHashComputations(right, offset + 1, hashCompsByLevel);
+    getHashComputations(left, offset + 1, hcByLevel);
+    getHashComputations(right, offset + 1, hcByLevel);
   }
 
   // else stop the recursion, node is hashed
@@ -205,9 +205,9 @@ export function getHashComputations(node: Node, offset: number, hashCompsByLevel
 /**
  * Utility to get HashComputationLevel at a specific index.
  */
-export function levelAtIndex(hashCompsByLevel: HashComputationLevel[], index: number): HashComputationLevel {
-  if (hashCompsByLevel[index] === undefined) {
-    hashCompsByLevel[index] = new HashComputationLevel();
+export function levelAtIndex(hcByLevel: HashComputationLevel[], index: number): HashComputationLevel {
+  if (hcByLevel[index] === undefined) {
+    hcByLevel[index] = new HashComputationLevel();
   }
-  return hashCompsByLevel[index];
+  return hcByLevel[index];
 }

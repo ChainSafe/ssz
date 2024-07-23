@@ -39,8 +39,8 @@ describe("subtreeFillToContents", function () {
           expectedNodes[i] = node;
         }
 
-        const hashCompsByLevel: HashComputationLevel[] = [];
-        const node = subtreeFillToContents(nodes, depth, 0, hashCompsByLevel);
+        const hcByLevel: HashComputationLevel[] = [];
+        const node = subtreeFillToContents(nodes, depth, 0, hcByLevel);
         const retrievedNodes = getNodesAtDepth(node, depth, 0, count);
 
         // Assert correct
@@ -49,7 +49,7 @@ describe("subtreeFillToContents", function () {
             throw Error(`Wrong node at index ${i}`);
           }
         }
-        executeHashComputations(hashCompsByLevel);
+        executeHashComputations(hcByLevel);
         if (node.h0 === null) {
           throw Error("Root node h0 is null");
         }
@@ -86,14 +86,14 @@ describe("subtreeFillToContents - validator nodes", function () {
     // maxChunksToDepth in ssz returns 3 for 8 nodes
     const depth = 3;
     const root0 = subtreeFillToContents(nodesArr[0], depth);
-    const hashCompsByLevel: HashComputationLevel[] = [];
-    const node = subtreeFillToContents(nodesArr[1], depth, 0, hashCompsByLevel);
-    expect(hashCompsByLevel.length).to.equal(4);
-    expect(hashCompsByLevel[0].length).to.equal(1);
-    expect(hashCompsByLevel[1].length).to.equal(2);
-    expect(hashCompsByLevel[2].length).to.equal(4);
-    expect(hashCompsByLevel[3].length).to.equal(1);
-    executeHashComputations(hashCompsByLevel);
+    const hcByLevel: HashComputationLevel[] = [];
+    const node = subtreeFillToContents(nodesArr[1], depth, 0, hcByLevel);
+    expect(hcByLevel.length).to.equal(4);
+    expect(hcByLevel[0].length).to.equal(1);
+    expect(hcByLevel[1].length).to.equal(2);
+    expect(hcByLevel[2].length).to.equal(4);
+    expect(hcByLevel[3].length).to.equal(1);
+    executeHashComputations(hcByLevel);
     if (node.h0 === null) {
       throw Error("Root node h0 is null");
     }

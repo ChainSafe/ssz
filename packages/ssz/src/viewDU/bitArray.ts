@@ -22,13 +22,13 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
     return;
   }
 
-  commit(hashCompsOffset = 0, hashCompsByLevel: HashComputationLevel[] | null = null): void {
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     if (this._bitArray !== null) {
       this._rootNode = this.type.value_toTree(this._bitArray);
     }
 
-    if (hashCompsByLevel !== null && this._rootNode.h0 === null) {
-      getHashComputations(this._rootNode, hashCompsOffset, hashCompsByLevel);
+    if (hcByLevel !== null && this._rootNode.h0 === null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
     }
   }
 
