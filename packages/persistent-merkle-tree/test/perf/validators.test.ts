@@ -1,6 +1,5 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import {
-  BranchNode,
   LeafNode,
   subtreeFillToContents,
   Node,
@@ -9,6 +8,7 @@ import {
   getHashComputations,
 } from "../../src";
 import {MemoryTracker} from "../utils/memTracker";
+import {batchHash} from "../utils/batchHash";
 
 /**
  * Below is measured on Mac M1.
@@ -36,8 +36,7 @@ describe("Track the performance of validators", () => {
 
   const tracker = new MemoryTracker();
   tracker.logDiff("Start");
-  // const vc = 250_000;
-  const vc = 1_600_000;
+  const vc = 250_000;
   // see createValidatorList
   const depth = countToDepth(BigInt(vc)) + 1;
   // cache roots of zero nodes
@@ -65,7 +64,7 @@ describe("Track the performance of validators", () => {
       return node;
     },
     fn: (node) => {
-      (node as BranchNode).batchHash();
+      batchHash(node);
     },
   });
 
@@ -76,7 +75,7 @@ describe("Track the performance of validators", () => {
       return node;
     },
     fn: (node) => {
-      (node as BranchNode).hashComputations;
+      getHashComputations(node, 0, []);
     },
   });
 });

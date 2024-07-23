@@ -10,12 +10,10 @@ import {
   uint8ArrayToHashObject,
   setNodesAtDepth,
   findDiffDepthi,
-  BranchNode,
-  HashComputation,
   getHashComputations,
   HashComputationLevel,
-  executeHashComputations,
 } from "../../src";
+import {batchHash} from "../utils/batchHash";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
@@ -294,14 +292,3 @@ function toHex(bytes: Buffer | Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
 }
 
-/**
- * This is only a test utility function, don't want to use it in production because it allocates memory every time.
- */
-function batchHash(node: Node): void {
-  const hashComputations: HashComputationLevel[] = [];
-  getHashComputations(node, 0, hashComputations);
-  executeHashComputations(hashComputations);
-  if (node.h0 === null) {
-    throw Error("Root node h0 is null");
-  }
-}

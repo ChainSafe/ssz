@@ -1,6 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
-import {BranchNode, getHashComputations, getNodeH, HashComputation, LeafNode} from "../../src/node";
-import {countToDepth, subtreeFillToContents} from "../../src";
+import {BranchNode, getNodeH, LeafNode} from "../../src/node";
+import {countToDepth, getHashComputations, HashComputation, subtreeFillToContents} from "../../src";
+import {batchHash} from "../utils/batchHash";
 
 describe("HashObject LeafNode", () => {
   // Number of new nodes created in processAttestations() on average
@@ -50,8 +51,7 @@ describe("Node batchHash", () => {
       id: `getHashComputations ${numNode} nodes`,
       beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {
-        const hashComputations: HashComputation[][] = [];
-        getHashComputations(rootNode, 0, hashComputations);
+        getHashComputations(rootNode, 0, []);
       },
     });
 
@@ -59,7 +59,7 @@ describe("Node batchHash", () => {
       id: `batchHash ${numNode} nodes`,
       beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {
-        rootNode.batchHash();
+        batchHash(rootNode);
       },
     });
 
