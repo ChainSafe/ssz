@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel} from "../../src";
+import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel, zeroNode} from "../../src";
 
 describe("subtreeFillToContents", function () {
   // the hash computation takes time
@@ -58,7 +58,46 @@ describe("subtreeFillToContents", function () {
   }
 });
 
-describe("subtreeFillToContents - validator nodes", function () {
+describe("subtreeFillToContents with hcByLevel", function () {
+
+  it("depth = 0", () => {
+    // return zeroNode, no hash computations
+    const nodes = [LeafNode.fromZero()];
+    const hcByLevel: HashComputationLevel[] = [];
+    subtreeFillToContents(nodes, 0, 0, hcByLevel);
+    expect(hcByLevel.length).to.equal(0);
+  });
+
+  it("depth = 1, bottom nodes are leaf nodes", () => {
+    // return BranchNode, hash computations
+    const nodes = [LeafNode.fromZero(), LeafNode.fromZero()];
+    const hcByLevel: HashComputationLevel[] = [];
+    const node = subtreeFillToContents(nodes, 1, 0, hcByLevel);
+    expect(hcByLevel.length).to.equal(1);
+    expect(hcByLevel[0].length).to.equal(1);
+    executeHashComputations(hcByLevel);
+    if (node.h0 === null) {
+      throw Error("Root node h0 is null");
+    }
+    expect(node.root).to.deep.equal(zeroNode(1).root);
+  });
+
+  it("depth = 1, bottom nodes are branch nodes", () => {
+    const node0 = new BranchNode(LeafNode.fromZero(), LeafNode.fromZero());
+    const node1 = new BranchNode(LeafNode.fromZero(), LeafNode.fromZero());
+    const nodes = [node0, node1];
+    const hcByLevel: HashComputationLevel[] = [];
+    const node = subtreeFillToContents(nodes, 1, 0, hcByLevel);
+    expect(hcByLevel.length).to.equal(2);
+    expect(hcByLevel[0].length).to.equal(1);
+    expect(hcByLevel[1].length).to.equal(2);
+    executeHashComputations(hcByLevel);
+    if (node.h0 === null) {
+      throw Error("Root node h0 is null");
+    }
+    expect(node.root).to.deep.equal(zeroNode(2).root);
+  });
+
   /**
    * 0                                                root
    *                               /                                         \
@@ -97,6 +136,7 @@ describe("subtreeFillToContents - validator nodes", function () {
     if (node.h0 === null) {
       throw Error("Root node h0 is null");
     }
+    // node.root is computed in batch, root0.root is computed in a single call
     expect(node.root).to.deep.equal(root0.root);
   });
 });

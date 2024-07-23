@@ -301,7 +301,7 @@ function batchHash(node: Node): void {
   const hashComputations: HashComputationLevel[] = [];
   getHashComputations(node, 0, hashComputations);
   executeHashComputations(hashComputations);
-  if (node === null) {
+  if (node.h0 === null) {
     throw Error("Root node h0 is null");
   }
 }
