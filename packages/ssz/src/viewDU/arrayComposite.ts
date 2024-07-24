@@ -10,6 +10,7 @@ import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeType} from "../view/arrayComposite";
 import {TreeViewDU} from "./abstract";
+import {ListIterator} from "../interface";
 
 export type ArrayCompositeTreeViewDUCache = {
   nodes: Node[];
@@ -161,6 +162,20 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
+   * Similar to getAllReadonly but support returning a LiaIterator that could be reused
+   */
+  getAllReadonlyIter(views?: ListIterator<CompositeViewDU<ElementType>>): ListIterator<CompositeViewDU<ElementType>> {
+    this.populateAllNodes();
+
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
+    for (let i = 0; i < this._length; i++) {
+      const view = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
+      views.push(view);
+    }
+    return views;
+  }
+
+  /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    */
   getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
@@ -172,6 +187,20 @@ export class ArrayCompositeTreeViewDU<
     values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
+    }
+    return values;
+  }
+
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   */
+  getAllReadonlyValuesIter(values?: ListIterator<ValueOf<ElementType>>): ListIterator<ValueOf<ElementType>> {
+    this.populateAllNodes();
+
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
+    for (let i = 0; i < this._length; i++) {
+      const value = this.type.elementType.tree_toValue(this.nodes[i]);
+      values.push(value);
     }
     return values;
   }

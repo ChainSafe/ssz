@@ -55,7 +55,10 @@ export class HashComputationLevel {
    * run before every run
    */
   reset(): void {
-    // keep this.head
+    // keep this.head object, only release the data
+    this.head.src0 = null as unknown as Node;
+    this.head.src1 = null as unknown as Node;
+    this.head.dest = null as unknown as Node;
     this.tail = null;
     this._length = 0;
     // totalLength is not reset
