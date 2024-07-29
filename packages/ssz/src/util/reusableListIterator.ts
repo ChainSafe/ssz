@@ -20,6 +20,8 @@ export class ReusableListIterator<T> implements ListIterator<T> {
   private _length = 0;
   private _totalLength = 0;
   private pointer: LinkedNode<T> | null;
+  // this avoids memory allocation
+  private iteratorResult: IteratorResult<T>;
 
   constructor() {
     this.head = {
@@ -28,6 +30,7 @@ export class ReusableListIterator<T> implements ListIterator<T> {
     };
     this.tail = null;
     this.pointer = null;
+    this.iteratorResult = {} as IteratorResult<T>;
   }
 
   get length(): number {
@@ -48,6 +51,7 @@ export class ReusableListIterator<T> implements ListIterator<T> {
     this._length = 0;
     // totalLength is not reset
     this.pointer = null;
+    this.iteratorResult = {} as IteratorResult<T>;
   }
 
   /**
@@ -102,10 +106,12 @@ export class ReusableListIterator<T> implements ListIterator<T> {
 
     // never yield value beyond the tail
     const value = this.pointer.data;
-    const isNull = value === null;
     this.pointer = this.pointer.next;
-
-    return isNull ? {done: true, value: undefined} : {done: false, value};
+    // should not allocate new object here
+    const isNull = value === null;
+    this.iteratorResult.done = isNull;
+    this.iteratorResult.value = isNull ? undefined: value;
+    return this.iteratorResult;
   }
 
   /**
