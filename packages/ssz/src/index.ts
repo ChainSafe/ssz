@@ -37,6 +37,7 @@ export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
 
 // Utils
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
+export {ReusableListIterator} from "./util/reusableListIterator";
 
 export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";
 
