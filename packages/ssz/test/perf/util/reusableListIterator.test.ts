@@ -1,50 +1,44 @@
-import { itBench, setBenchOpts } from "@dapplion/benchmark";
-import { ReusableListIterator } from "../../../src";
-
-class A {
-  constructor(private readonly x: number, private readonly y: string, private readonly z: Uint8Array) {}
-}
+import {itBench} from "@dapplion/benchmark";
+import {ReusableListIterator} from "../../../src";
+import {Validator} from "../../lodestarTypes/phase0";
+import {getValidator} from "../../utils/generateEth2Objs";
 
 /**
- * ReusableListIterator is 2x slower than using Array in this benchmark, however it does not allocate new array every time.
-    ✓ ReusableListIterator 2000000 items                                  70.00170 ops/s    14.28537 ms/op        -        105 runs   2.01 s
-    ✓ Array 2000000 items                                                 156.8627 ops/s    6.375003 ms/op        -        114 runs   1.23 s
+ * This test create validator object every time intentionally, this mimics an environment where there are a lot of memory allocation.
+ * On average, Array is very fast, however it's pretty expensive to allocate a big array and it may cause a spike due to gc randomly.
+ * ReusableListIterator is faster in average and it's more stable due to no memory allocation involved.
+ *   ReusableListIterator
+    ✓ ReusableListIterator 2000000 items                                 0.5724982 ops/s    1.746731  s/op        -         13 runs   24.1 s
+    ✓ Array 2000000 items                                                0.4655988 ops/s    2.147772  s/op        -         14 runs   32.0 s
  */
 describe("ReusableListIterator", function () {
-  setBenchOpts({
-    minRuns: 100
-  });
-
-  const pool = Array.from({length: 1024}, (_, i) => new A(i, String(i), Buffer.alloc(32, 1)));
-
   const length = 2_000_000;
-  const list = new ReusableListIterator();
+  const list = new ReusableListIterator<Validator>();
   itBench({
     id: `ReusableListIterator ${length} items`,
     fn: () => {
       // reusable, just reset
       list.reset();
       for (let i = 0; i < length; i++) {
-        list.push(pool[i % 1024]);
+        list.push(getValidator(i));
       }
       for (const a of list) {
         a;
       }
-    }
+    },
   });
 
   itBench({
     id: `Array ${length} items`,
     fn: () => {
       // allocate every time
-      const arr = new Array<A>(length);
+      const arr = new Array<Validator>(length);
       for (let i = 0; i < length; i++) {
-        arr[i] = pool[i % 1024]
+        arr[i] = getValidator(i);
       }
       for (const a of arr) {
         a;
       }
-    }
-  })
+    },
+  });
 });
-

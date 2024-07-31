@@ -51,7 +51,7 @@ export class ReusableListIterator<T> implements ListIterator<T> {
     this._length = 0;
     // totalLength is not reset
     this.pointer = null;
-    this.iteratorResult = {} as IteratorResult<T>;
+    // no need to reset iteratorResult
   }
 
   /**
@@ -110,7 +110,7 @@ export class ReusableListIterator<T> implements ListIterator<T> {
     // should not allocate new object here
     const isNull = value === null;
     this.iteratorResult.done = isNull;
-    this.iteratorResult.value = isNull ? undefined: value;
+    this.iteratorResult.value = isNull ? undefined : value;
     return this.iteratorResult;
   }
 
