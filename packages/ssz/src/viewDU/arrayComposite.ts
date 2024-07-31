@@ -162,12 +162,13 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * Similar to getAllReadonly but support returning a LiaIterator that could be reused
+   * Similar to getAllReadonly but support ListIterator interface.
+   * Use ReusableListIterator to reuse over multiple calls.
    */
   getAllReadonlyIter(views?: ListIterator<CompositeViewDU<ElementType>>): ListIterator<CompositeViewDU<ElementType>> {
     this.populateAllNodes();
 
-    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>();
     for (let i = 0; i < this._length; i++) {
       const view = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
       views.push(view);
@@ -192,12 +193,13 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * Similar to getAllReadonlyValues but support ListIterator interface.
+   * Use ReusableListIterator to reuse over multiple calls.
    */
   getAllReadonlyValuesIter(values?: ListIterator<ValueOf<ElementType>>): ListIterator<ValueOf<ElementType>> {
     this.populateAllNodes();
 
-    values = values ?? new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>();
     for (let i = 0; i < this._length; i++) {
       const value = this.type.elementType.tree_toValue(this.nodes[i]);
       values.push(value);
