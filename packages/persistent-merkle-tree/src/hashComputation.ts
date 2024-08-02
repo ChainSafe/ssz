@@ -21,7 +21,7 @@ export type HashComputation = {
  * Before every run, reset() should be called.
  * After every run, clean() should be called.
  */
-export class HashComputationLevel {
+export class HashComputationLevel implements IterableIterator<HashComputation> {
   private _length: number;
   private _totalLength: number;
   // use LinkedList to avoid memory allocation when the list grows
@@ -143,8 +143,8 @@ export class HashComputationLevel {
   }
 
   /**
-   * Not great due to memory allocation.
-   * Mainly used for testing.
+   * Not great due to memory allocation, for testing only.
+   * This converts all HashComputation with data to an array.
    */
   toArray(): HashComputation[] {
     const hashComps: HashComputation[] = [];
@@ -155,7 +155,8 @@ export class HashComputationLevel {
   }
 
   /**
-   * For testing.
+   * For testing only.
+   * This dumps all backed HashComputation objects, note that some HashComputation may not have data.
    */
   dump(): HashComputation[] {
     const hashComps: HashComputation[] = [];
@@ -191,15 +192,30 @@ export class HashComputationGroup {
 
 /**
  * Get HashComputations from a root node all the way to the leaf nodes.
+ * hcByLevel is the global array to store HashComputationLevel at different levels
+ * at this ${node}, we only add more HashComputations starting from ${index}
+ *
+ * ╔═══ hcByLevel ══════╗
+ * ║ level 0            ║
+ * ║ level 1            ║
+ * ║ ...                ║
+ * ║                    ║          node
+ * ║                    ║       /        \
+ * ║ level ${index}     ║      01        02
+ * ║                    ║    /    \    /    \
+ * ║ level ${index + 1} ║  03      04 05     06
+ * ║                    ║
+ * ║ ...                ║
+ * ╚════════════════════╝
  */
-export function getHashComputations(node: Node, offset: number, hcByLevel: HashComputationLevel[]): void {
+export function getHashComputations(node: Node, index: number, hcByLevel: HashComputationLevel[]): void {
   if (node.h0 === null) {
-    const hashComputations = levelAtIndex(hcByLevel, offset);
+    const hashComputations = levelAtIndex(hcByLevel, index);
     const {left, right} = node;
     hashComputations.push(left, right, node);
     // leaf nodes should have h0 to stop the recursion
-    getHashComputations(left, offset + 1, hcByLevel);
-    getHashComputations(right, offset + 1, hcByLevel);
+    getHashComputations(left, index + 1, hcByLevel);
+    getHashComputations(right, index + 1, hcByLevel);
   }
 
   // else stop the recursion, node is hashed
