@@ -1,4 +1,4 @@
-import {allocUnsafe} from "uint8arrays/alloc";
+import {allocUnsafe} from "./alloc";
 import {newInstance} from "./wasm";
 import {HashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
 import SHA256 from "./sha256";
@@ -9,6 +9,8 @@ const wasmInputValue = ctx.input.value;
 const wasmOutputValue = ctx.output.value;
 const inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 const outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.PARALLEL_FACTOR * 32);
+/** output uint8array, length 32, used to easily copy output data */
+const outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
 const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 
 export function digest(data: Uint8Array): Uint8Array {
@@ -258,13 +260,13 @@ function final(): Uint8Array {
 /** allocate memory and copy result */
 function allocDigest(): Uint8Array {
   const out = allocUnsafe(32);
-  out.set(outputUint8Array);
+  out.set(outputUint8Array32);
   return out;
 }
 
 /** allocate memory and copy result at offset */
 function allocDigestOffset(offset: number): Uint8Array {
   const out = allocUnsafe(32);
-  out.set(outputUint8Array, offset);
+  out.set(outputUint8Array.subarray(offset, offset + 32));
   return out;
 }
