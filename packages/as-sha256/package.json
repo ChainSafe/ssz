@@ -49,6 +49,5 @@
     "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
     "assemblyscript": "^0.27.24",
     "benchmark": "^2.1.4"
-  },
-  "dependencies": {}
+  }
 }
