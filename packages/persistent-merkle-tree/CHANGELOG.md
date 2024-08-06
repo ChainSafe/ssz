@@ -9,6 +9,31 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [0.8.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.7.2...persistent-merkle-tree-v0.8.0) (2024-08-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382))
+
+### Features
+
+* implement batch hash utils ([#384](https://github.com/ChainSafe/ssz/issues/384)) ([1578883](https://github.com/ChainSafe/ssz/commit/15788839b71287e2ff22254bfcabba8221b08a00))
+* implement HashComputationLevel using LinkedList ([#389](https://github.com/ChainSafe/ssz/issues/389)) ([e2c8329](https://github.com/ChainSafe/ssz/commit/e2c83298f9cdb29de407737df85da9292c8eb754))
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382)) ([ccadf43](https://github.com/ChainSafe/ssz/commit/ccadf431cea6164822e72771304192b2728d7bb2))
+
+
+### Bug Fixes
+
+* findDiffDepthi to support more than 31 bytes ([#371](https://github.com/ChainSafe/ssz/issues/371)) ([3a1c8dc](https://github.com/ChainSafe/ssz/commit/3a1c8dc54a571dfed4cc426810472627b334e9b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.4.2 to 0.5.0
+
 ## [0.7.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.7.0...persistent-merkle-tree-v0.7.1) (2024-03-15)
 
 

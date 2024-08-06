@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.16.0...ssz-v0.17.0) (2024-08-06)
+
+
+### Features
+
+* implement batch hash utils ([#384](https://github.com/ChainSafe/ssz/issues/384)) ([1578883](https://github.com/ChainSafe/ssz/commit/15788839b71287e2ff22254bfcabba8221b08a00))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.4.2 to 0.5.0
+    * @chainsafe/persistent-merkle-tree bumped from 0.7.2 to 0.8.0
+
 ## [0.16.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.15.1...ssz-v0.16.0) (2024-05-02)
 
 
