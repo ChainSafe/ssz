@@ -1,5 +1,5 @@
 import type {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import type {HashComputation} from "../node";
+import type {HashComputationLevel} from "../hashComputation";
 
 export type {HashObject};
 
@@ -29,5 +29,5 @@ export type Hasher = {
   /**
    * Execute a batch of HashComputations
    */
-  executeHashComputations(hashComputations: HashComputation[][]): void;
+  executeHashComputations(hashComputations: HashComputationLevel[]): void;
 };

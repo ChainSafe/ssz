@@ -1,6 +1,7 @@
 import {zeroNode} from "./zeroNode";
 import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex";
-import {Node, LeafNode, BranchNode, HashComputationGroup, arrayAtIndex} from "./node";
+import {Node, LeafNode, BranchNode} from "./node";
+import {HashComputationLevel, levelAtIndex} from "./hashComputation";
 import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
 import {createSingleProof} from "./proof/single";
 
@@ -71,13 +72,6 @@ export class Tree {
    */
   get root(): Uint8Array {
     return this.rootNode.root;
-  }
-
-  batchHash(): Uint8Array {
-    if (!this.rootNode.isLeaf()) {
-      return (this.rootNode as BranchNode).batchHash();
-    }
-    return this.root;
   }
 
   /**
@@ -341,14 +335,15 @@ export function setNodeAtDepth(rootNode: Node, nodesDepth: number, index: number
  * gindex and navigate upwards creating or caching nodes as necessary. Loop and repeat.
  *
  * Supports index up to `Number.MAX_SAFE_INTEGER`.
- * @param hashComps a map of HashComputation[] by level (could be from 0 to `nodesDepth - 1`)
+ * @param hcByLevel an array of HashComputation[] by level (could be from 0 to `nodesDepth - 1`)
  */
 export function setNodesAtDepth(
   rootNode: Node,
   nodesDepth: number,
   indexes: number[],
   nodes: Node[],
-  hashComps: HashComputationGroup | null = null
+  hcOffset = 0,
+  hcByLevel: HashComputationLevel[] | null = null
 ): Node {
   // depth depthi   gindexes   indexes
   // 0     1           1          0
@@ -367,8 +362,6 @@ export function setNodesAtDepth(
   if (nodesDepth === 0) {
     return nodes.length > 0 ? nodes[0] : rootNode;
   }
-  const hashCompsByLevel = hashComps?.byLevel ?? null;
-  const offset = hashComps?.offset ?? 0;
 
   /**
    * Contiguous filled stack of parent nodes. It get filled in the first descent
@@ -435,33 +428,25 @@ export function setNodesAtDepth(
       // Next node is the very next to the right of current node
       if (index + 1 === indexes[i + 1]) {
         node = new BranchNode(nodes[i], nodes[i + 1]);
-        if (hashCompsByLevel != null) {
+        if (hcByLevel != null) {
           // go with level of dest node (level 0 goes with root node)
           // in this case dest node is nodesDept - 2, same for below
-          arrayAtIndex(hashCompsByLevel, nodesDepth - 1 + offset).push({
-            src0: nodes[i],
-            src1: nodes[i + 1],
-            dest: node,
-          });
+          levelAtIndex(hcByLevel, nodesDepth - 1 + hcOffset).push(nodes[i], nodes[i + 1], node);
         }
         // Move pointer one extra forward since node has consumed two nodes
         i++;
       } else {
         const oldNode = node;
         node = new BranchNode(nodes[i], oldNode.right);
-        if (hashCompsByLevel != null) {
-          arrayAtIndex(hashCompsByLevel, nodesDepth - 1 + offset).push({
-            src0: nodes[i],
-            src1: oldNode.right,
-            dest: node,
-          });
+        if (hcByLevel != null) {
+          levelAtIndex(hcByLevel, nodesDepth - 1 + hcOffset).push(nodes[i], oldNode.right, node);
         }
       }
     } else {
       const oldNode = node;
       node = new BranchNode(oldNode.left, nodes[i]);
-      if (hashCompsByLevel != null) {
-        arrayAtIndex(hashCompsByLevel, nodesDepth - 1 + offset).push({src0: oldNode.left, src1: nodes[i], dest: node});
+      if (hcByLevel != null) {
+        levelAtIndex(hcByLevel, nodesDepth - 1 + hcOffset).push(oldNode.left, nodes[i], node);
       }
     }
 
@@ -503,12 +488,8 @@ export function setNodesAtDepth(
           // Also, if still has to move upwards, rebind since the node won't be visited anymore
           const oldNode = node;
           node = new BranchNode(oldNode, parentNodeStack[d].right);
-          if (hashCompsByLevel != null) {
-            arrayAtIndex(hashCompsByLevel, depth + offset).push({
-              src0: oldNode,
-              src1: parentNodeStack[d].right,
-              dest: node,
-            });
+          if (hcByLevel != null) {
+            levelAtIndex(hcByLevel, depth + hcOffset).push(oldNode, parentNodeStack[d].right, node);
           }
         } else {
           // Only store the left node if it's at d = diffDepth
@@ -521,19 +502,15 @@ export function setNodesAtDepth(
         if (leftNode !== undefined) {
           const oldNode = node;
           node = new BranchNode(leftNode, oldNode);
-          if (hashCompsByLevel != null) {
-            arrayAtIndex(hashCompsByLevel, depth + offset).push({src0: leftNode, src1: oldNode, dest: node});
+          if (hcByLevel != null) {
+            levelAtIndex(hcByLevel, depth + hcOffset).push(leftNode, oldNode, node);
           }
           leftParentNodeStack[d] = undefined;
         } else {
           const oldNode = node;
           node = new BranchNode(parentNodeStack[d].left, oldNode);
-          if (hashCompsByLevel != null) {
-            arrayAtIndex(hashCompsByLevel, depth + offset).push({
-              src0: parentNodeStack[d].left,
-              src1: oldNode,
-              dest: node,
-            });
+          if (hcByLevel != null) {
+            levelAtIndex(hcByLevel, depth + hcOffset).push(parentNodeStack[d].left, oldNode, node);
           }
         }
       }
