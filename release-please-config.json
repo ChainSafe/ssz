@@ -9,7 +9,8 @@
         "bumpMinorPreMajor": true,
         "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
-        "versioning": "default"
+        "versioning": "default",
+        "release-as": "0.5.0"
       },
       "packages/persistent-merkle-tree": {
         "releaseType": "node",
@@ -18,7 +19,8 @@
         "bumpMinorPreMajor": true,
         "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
-        "versioning": "default"
+        "versioning": "default",
+        "release-as": "0.8.0"
       },
       "packages/persistent-ts": {
         "releaseType": "node",
