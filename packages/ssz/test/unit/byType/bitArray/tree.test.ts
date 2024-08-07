@@ -51,19 +51,19 @@ for (const type of [new BitVectorType(4), new BitListType(4)]) {
   });
 }
 
-describe("BitArray batchHash", () => {
+describe("BitArray batchHashTreeRoot", () => {
   const sszType = new BitListType(4);
   const value = fromNum(4, 0b0010);
   const expectedRoot = sszType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(sszType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(sszType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("set then hashTreeRoot", () => {
     const viewDU = sszType.toViewDU(fromNum(4, 0b0011));
     viewDU.set(0, false);
-    expect(sszType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(sszType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });
 

@@ -38,7 +38,6 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
 
 /**
  * WARNING: Mutates the provided nodes array.
- * @param hashCompRootNode is a hacky way from ssz to set `dest` of HashComputation for BranchNodeStruct
  * TODO: Don't mutate the nodes array.
  * hcByLevel is an output parameter that will be filled with the hash computations if exists.
  */

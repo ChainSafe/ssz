@@ -49,19 +49,19 @@ runViewTestMutation({
   ],
 });
 
-describe("BitVector batchHash", () => {
+describe("BitVector batchHashTreeRoot", () => {
   const sszType = new BitVectorType(4);
   const value = fromNum(4, 0b0010);
   const expectedRoot = sszType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(sszType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(sszType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
-  it("set then hashTreeRoot", () => {
+  it("set then batchHashTreeRoot", () => {
     const viewDU = sszType.toViewDU(fromNum(4, 0b0011));
     viewDU.set(0, false);
-    expect(sszType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(sszType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });
 

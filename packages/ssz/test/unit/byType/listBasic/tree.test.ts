@@ -241,31 +241,31 @@ describe("ListBasicType.sliceTo", () => {
   }
 });
 
-describe("ListBasicType batchHash", function () {
+describe("ListBasicType batchHashTreeRoot", function () {
   const value = [1, 2, 3, 4];
   const expectedRoot = ListN64Uint64NumberType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(ListN64Uint64NumberType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(ListN64Uint64NumberType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
-  it("push then hashTreeRoot()", () => {
+  it("push then batchHashTreeRoot()", () => {
     const viewDU = ListN64Uint64NumberType.defaultViewDU();
     viewDU.push(1);
     viewDU.push(2);
     viewDU.push(3);
     viewDU.push(4);
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
-  it("push then modify then hashTreeRoot()", () => {
+  it("push then modify then batchHashTreeRoot()", () => {
     const viewDU = ListN64Uint64NumberType.defaultViewDU();
     viewDU.push(1);
     viewDU.push(2);
     viewDU.push(3);
     viewDU.push(44);
     viewDU.set(3, 4);
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify", () => {
@@ -274,10 +274,10 @@ describe("ListBasicType batchHash", function () {
     viewDU.push(2);
     viewDU.push(33);
     viewDU.push(44);
-    viewDU.hashTreeRoot();
+    viewDU.batchHashTreeRoot();
     viewDU.set(2, 3);
     viewDU.set(3, 4);
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   // similar to a fresh ViewDU but it's good to test
@@ -288,7 +288,7 @@ describe("ListBasicType batchHash", function () {
     viewDU.push(3);
     viewDU.push(4);
     viewDU.push(5);
-    viewDU.hashTreeRoot();
-    expect(viewDU.sliceTo(3).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    viewDU.batchHashTreeRoot();
+    expect(viewDU.sliceTo(3).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });

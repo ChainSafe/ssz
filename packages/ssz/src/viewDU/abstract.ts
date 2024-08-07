@@ -58,10 +58,17 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * See spec for definition of hashTreeRoot:
    * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
    */
-  hashTreeRoot(hcGroup: HashComputationGroup = new HashComputationGroup()): Uint8Array {
+  hashTreeRoot(): Uint8Array {
+    this.commit();
+    return super.hashTreeRoot();
+  }
+
+  /**
+   * The same to hashTreeRoot() but with batch hash computation.
+   * Consumer can provide a HashComputationGroup() to save memory allocation.
+   */
+  batchHashTreeRoot(hcGroup: HashComputationGroup = new HashComputationGroup()): Uint8Array {
     // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
-    // if consumers don't want to batch hash, just go with `this.node.root` similar to what View.hashTreeRoot() does
-    // there should not be another ViewDU.hashTreeRoot() during this flow so it's safe to reuse nextHashComps
     const offset = 0;
     hcGroup.reset();
     this.commit(offset, hcGroup.byLevel);

@@ -221,7 +221,7 @@ runViewTestMutation({
   ],
 });
 
-describe("ContainerViewDU batchHash", function () {
+describe("ContainerViewDU batchHashTreeRoot", function () {
   const childContainerType = new ContainerType({b0: uint64NumInfType, b1: uint64NumInfType});
   const parentContainerType = new ContainerType({
     // a basic type
@@ -233,29 +233,29 @@ describe("ContainerViewDU batchHash", function () {
   const expectedRoot = parentContainerType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(parentContainerType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(parentContainerType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify basic type", () => {
     const viewDU = parentContainerType.toViewDU({a: 9, b: {b0: 100, b1: 101}});
-    viewDU.hashTreeRoot();
+    viewDU.batchHashTreeRoot();
     viewDU.a += 1;
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify full child container", () => {
     const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}});
-    viewDU.hashTreeRoot();
+    viewDU.batchHashTreeRoot();
     viewDU.b = childContainerType.toViewDU({b0: 100, b1: 101});
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify partial child container", () => {
     const viewDU = parentContainerType.toViewDU({a: 10, b: {b0: 99, b1: 999}});
-    viewDU.hashTreeRoot();
+    viewDU.batchHashTreeRoot();
     viewDU.b.b0 = 100;
     viewDU.b.b1 = 101;
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });
 
@@ -286,14 +286,14 @@ describe("ContainerNodeStruct batchHash", function () {
   const expectedRoot = containerType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(containerType.toViewDU(value).hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(containerType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("full hash then modify basic type", () => {
     const viewDU = containerType.toViewDU({...value, exitEpoch: 3});
-    viewDU.hashTreeRoot();
+    viewDU.batchHashTreeRoot();
     viewDU.exitEpoch *= 1_000_000;
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
   it("modify basic type", () => {
@@ -304,6 +304,6 @@ describe("ContainerNodeStruct batchHash", function () {
     });
     viewDU.exitEpoch -= 1;
     viewDU.withdrawableEpoch -= 1;
-    expect(viewDU.hashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });

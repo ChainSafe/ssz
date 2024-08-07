@@ -35,8 +35,10 @@ describe("Validator ssz types", function () {
       const root = ValidatorContainer.hashTreeRoot(validator);
       const root2 = ssz.phase0.Validator.hashTreeRoot(validator);
       const root3 = ssz.phase0.Validator.toViewDU(validator).hashTreeRoot();
+      const root4 = ssz.phase0.Validator.toViewDU(validator).batchHashTreeRoot();
       expect(root2).to.be.deep.equal(root);
       expect(root3).to.be.deep.equal(root);
+      expect(root4).to.be.deep.equal(root);
     }
   });
 });

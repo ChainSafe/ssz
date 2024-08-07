@@ -2,7 +2,6 @@ import {expect} from "chai";
 import {describe, it} from "mocha";
 import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
-import {HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 
 type Validator = ValueOf<typeof ValidatorContainer>;
 const validator: Validator = {
@@ -34,6 +33,7 @@ describe("Container with BranchNodeStruct", function () {
     getExitEpoch: (treeBacked) => treeBacked.exitEpoch,
     getPubkey: (treeBacked) => toHexString(treeBacked.pubkey),
     hashTreeRoot: (treeBacked) => treeBacked.hashTreeRoot(),
+    batchHashTreeRoot: (treeBacked) => treeBacked.batchHashTreeRoot(),
     getProof: (treeBacked) => treeBacked.createProof(validatorProofJsonPaths),
     serialize: (treeBacked) => treeBacked.serialize(),
   };
@@ -104,62 +104,4 @@ describe("Container with BranchNodeStruct", function () {
       expect(validatorListTB.get(0).toValue()).to.deep.equal(validator);
     });
   });
-});
-
-/**
- * modifying any fields should result in the whole tree being recomputed
- * 0                                                root
- *                               /                                         \
- * 1                        10                                                11
- *                   /                 \                                 /             \
- * 2            20                          21                     22                    23
- *           /       \                  /       \             /       \             /         \
- * 3      pub         with         eff         sla        act         act         exit        with
- *      /     \
- * 4 pub0      pub1
- * This does not suport batch hash
- **/
-describe.skip("getHashComputations BranchNodeStruct", function () {
-  const testCases: {name: string; fn: (validator: ValueOf<typeof ValidatorNodeStruct>) => void}[] = [
-    {name: "modify pubkey", fn: (validator) => (validator.pubkey = Buffer.alloc(48, 0x01))},
-    {
-      name: "modify withdrawalCredentials",
-      fn: (validator) => (validator.withdrawalCredentials = Buffer.alloc(32, 0x01)),
-    },
-    {name: "modify effectiveBalance", fn: (validator) => (validator.effectiveBalance += 1e9)},
-    {name: "modify slashed", fn: (validator) => (validator.slashed = true)},
-    {name: "modify activationEligibilityEpoch", fn: (validator) => (validator.activationEligibilityEpoch += 1e6)},
-    {name: "modify activationEpoch", fn: (validator) => (validator.activationEpoch += 1e6)},
-    {name: "modify exitEpoch", fn: (validator) => (validator.exitEpoch += 1e6)},
-    {name: "modify withdrawableEpoch", fn: (validator) => (validator.withdrawableEpoch += 1e6)},
-    {
-      name: "modify all",
-      fn: (validator) => {
-        validator.pubkey = Buffer.alloc(48, 0x01);
-        validator.withdrawalCredentials = Buffer.alloc(32, 0x01);
-        validator.effectiveBalance += 1e9;
-        validator.slashed = true;
-        validator.activationEligibilityEpoch += 1e6;
-        validator.activationEpoch += 1e6;
-        validator.exitEpoch += 1e6;
-        validator.withdrawableEpoch += 1e6;
-      },
-    },
-  ];
-
-  for (const {name, fn} of testCases) {
-    it(name, () => {
-      const hcByLevel: HashComputationLevel[] = [];
-      const validatorViewDU = ValidatorNodeStruct.toViewDU(validator);
-      // cache all roots
-      validatorViewDU.hashTreeRoot();
-      fn(validatorViewDU);
-      validatorViewDU.commit(0, hcByLevel);
-      expect(hcByLevel.length).to.be.equal(4);
-      expect(hcByLevel[0].length).to.be.equal(1);
-      expect(hcByLevel[1].length).to.be.equal(2);
-      expect(hcByLevel[2].length).to.be.equal(4);
-      expect(hcByLevel[3].length).to.be.equal(1);
-    });
-  }
 });

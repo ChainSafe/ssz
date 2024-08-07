@@ -35,7 +35,7 @@ describe("ListValidator ssz type", function () {
         oldViewDU.get(i).activationEpoch = 2024;
         newViewDU.get(i).activationEpoch = 2024;
       }
-      expect(newViewDU.hashTreeRoot()).to.be.deep.equal(oldViewDU.hashTreeRoot());
+      expect(newViewDU.batchHashTreeRoot()).to.be.deep.equal(oldViewDU.batchHashTreeRoot());
       expect(newViewDU.serialize()).to.be.deep.equal(oldViewDU.serialize());
     });
   }
@@ -54,7 +54,7 @@ describe("ListValidator ssz type", function () {
         oldViewDU.get(index).activationEpoch = 2024;
         newViewDU.get(index).activationEpoch = 2024;
       }
-      expect(newViewDU.hashTreeRoot()).to.be.deep.equal(oldViewDU.hashTreeRoot());
+      expect(newViewDU.batchHashTreeRoot()).to.be.deep.equal(oldViewDU.batchHashTreeRoot());
       expect(newViewDU.serialize()).to.be.deep.equal(oldViewDU.serialize());
     });
   }
@@ -78,7 +78,7 @@ describe("ListValidator ssz type", function () {
         newViewDU.push(ssz.phase0.Validator.toViewDU(validator));
       }
       oldViewDU.commit();
-      expect(newViewDU.hashTreeRoot()).to.be.deep.equal(oldViewDU.node.root);
+      expect(newViewDU.batchHashTreeRoot()).to.be.deep.equal(oldViewDU.node.root);
       expect(newViewDU.serialize()).to.be.deep.equal(oldViewDU.serialize());
       const allValidators = newViewDU.getAllReadonlyValues();
       for (let i = 0; i < numPush; i++) {
