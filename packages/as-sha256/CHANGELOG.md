@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.2...as-sha256-v0.5.0) (2024-08-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382))
+
+### Features
+
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382)) ([ccadf43](https://github.com/ChainSafe/ssz/commit/ccadf431cea6164822e72771304192b2728d7bb2))
+* SIMD implementation for as-sha256 ([#367](https://github.com/ChainSafe/ssz/issues/367)) ([ec123ec](https://github.com/ChainSafe/ssz/commit/ec123ec3cfcc37ff82635da7a57ad9c74cc9accb))
+* use allocUnsafe to allocate hash digests ([#391](https://github.com/ChainSafe/ssz/issues/391)) ([8ea1bb4](https://github.com/ChainSafe/ssz/commit/8ea1bb4809592691e568238520cb3c2aa9257c25))
+
 ## [0.4.2](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.1...as-sha256-v0.4.2) (2024-05-02)
 
 

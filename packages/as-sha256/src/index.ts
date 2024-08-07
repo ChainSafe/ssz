@@ -1,3 +1,4 @@
+import {allocUnsafe} from "./alloc";
 import {newInstance} from "./wasm";
 import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
 import SHA256 from "./sha256";
@@ -8,6 +9,8 @@ const wasmInputValue = ctx.input.value;
 const wasmOutputValue = ctx.output.value;
 const inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 const outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.PARALLEL_FACTOR * 32);
+/** output uint8array, length 32, used to easily copy output data */
+const outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
 const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 
 export function digest(data: Uint8Array): Uint8Array {
@@ -18,7 +21,7 @@ export function digest(data: Uint8Array): Uint8Array {
   if (data.length <= ctx.INPUT_LENGTH) {
     inputUint8Array.set(data);
     ctx.digest(data.length);
-    return outputUint8Array.slice(0, 32);
+    return allocDigest();
   }
 
   ctx.init();
@@ -30,7 +33,7 @@ export function digest64(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
     inputUint8Array.set(data);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    return outputUint8Array.slice(0, 32);
+    return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
 }
@@ -40,7 +43,7 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2, 32);
     ctx.digest64(wasmInputValue, wasmOutputValue);
-    return outputUint8Array.slice(0, 32);
+    return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
 }
@@ -123,10 +126,10 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
 
   ctx.batchHash4UintArray64s(wasmOutputValue);
 
-  const output0 = outputUint8Array.slice(0, 32);
-  const output1 = outputUint8Array.slice(32, 64);
-  const output2 = outputUint8Array.slice(64, 96);
-  const output3 = outputUint8Array.slice(96, 128);
+  const output0 = allocDigest();
+  const output1 = allocDigestOffset(32);
+  const output2 = allocDigestOffset(64);
+  const output3 = allocDigestOffset(96);
 
   return [output0, output1, output2, output3];
 }
@@ -287,7 +290,7 @@ function update(data: Uint8Array): void {
   const INPUT_LENGTH = ctx.INPUT_LENGTH;
   if (data.length > INPUT_LENGTH) {
     for (let i = 0; i < data.length; i += INPUT_LENGTH) {
-      const sliced = data.slice(i, i + INPUT_LENGTH);
+      const sliced = data.subarray(i, i + INPUT_LENGTH);
       inputUint8Array.set(sliced);
       ctx.update(wasmInputValue, sliced.length);
     }
@@ -299,5 +302,19 @@ function update(data: Uint8Array): void {
 
 function final(): Uint8Array {
   ctx.final(wasmOutputValue);
-  return outputUint8Array.slice(0, 32);
+  return allocDigest();
+}
+
+/** allocate memory and copy result */
+function allocDigest(): Uint8Array {
+  const out = allocUnsafe(32);
+  out.set(outputUint8Array32);
+  return out;
+}
+
+/** allocate memory and copy result at offset */
+function allocDigestOffset(offset: number): Uint8Array {
+  const out = allocUnsafe(32);
+  out.set(outputUint8Array.subarray(offset, offset + 32));
+  return out;
 }

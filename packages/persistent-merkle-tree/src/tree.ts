@@ -432,7 +432,7 @@ export function setNodesAtDepth(
         if (hcByLevel != null) {
           // go with level of dest node (level 0 goes with root node)
           // in this case dest node is nodesDept - 2, same for below
-          levelAtIndex(hcByLevel, nodesDepth - 1 + offset).push(nodes[i], nodes[i + 1], node);
+          levelAtIndex(hcByLevel, nodesDepth - 1 + hcOffset).push(nodes[i], nodes[i + 1], node);
         }
         // Move pointer one extra forward since node has consumed two nodes
         i++;
@@ -440,14 +440,14 @@ export function setNodesAtDepth(
         const oldNode = node;
         node = new BranchNode(nodes[i], oldNode.right);
         if (hcByLevel != null) {
-          levelAtIndex(hcByLevel, nodesDepth - 1 + offset).push(nodes[i], oldNode.right, node);
+          levelAtIndex(hcByLevel, nodesDepth - 1 + hcOffset).push(nodes[i], oldNode.right, node);
         }
       }
     } else {
       const oldNode = node;
       node = new BranchNode(oldNode.left, nodes[i]);
       if (hcByLevel != null) {
-        levelAtIndex(hcByLevel, nodesDepth - 1 + offset).push(oldNode.left, nodes[i], node);
+        levelAtIndex(hcByLevel, nodesDepth - 1 + hcOffset).push(oldNode.left, nodes[i], node);
       }
     }
 
@@ -490,7 +490,7 @@ export function setNodesAtDepth(
           const oldNode = node;
           node = new BranchNode(oldNode, parentNodeStack[d].right);
           if (hcByLevel != null) {
-            levelAtIndex(hcByLevel, depth + offset).push(oldNode, parentNodeStack[d].right, node);
+            levelAtIndex(hcByLevel, depth + hcOffset).push(oldNode, parentNodeStack[d].right, node);
           }
         } else {
           // Only store the left node if it's at d = diffDepth
@@ -504,14 +504,14 @@ export function setNodesAtDepth(
           const oldNode = node;
           node = new BranchNode(leftNode, oldNode);
           if (hcByLevel != null) {
-            levelAtIndex(hcByLevel, depth + offset).push(leftNode, oldNode, node);
+            levelAtIndex(hcByLevel, depth + hcOffset).push(leftNode, oldNode, node);
           }
           leftParentNodeStack[d] = undefined;
         } else {
           const oldNode = node;
           node = new BranchNode(parentNodeStack[d].left, oldNode);
           if (hcByLevel != null) {
-            levelAtIndex(hcByLevel, depth + offset).push(parentNodeStack[d].left, oldNode, node);
+            levelAtIndex(hcByLevel, depth + hcOffset).push(parentNodeStack[d].left, oldNode, node);
           }
         }
       }
