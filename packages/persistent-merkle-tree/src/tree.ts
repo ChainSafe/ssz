@@ -362,7 +362,6 @@ export function setNodesAtDepth(
   if (nodesDepth === 0) {
     return nodes.length > 0 ? nodes[0] : rootNode;
   }
-  const offset = hcOffset;
 
   /**
    * Contiguous filled stack of parent nodes. It get filled in the first descent
