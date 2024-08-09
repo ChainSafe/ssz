@@ -3,21 +3,20 @@ import {describe, it} from "mocha";
 import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
 
+type Validator = ValueOf<typeof ValidatorContainer>;
+const validator: Validator = {
+  pubkey: Buffer.alloc(48, 0xaa),
+  withdrawalCredentials: Buffer.alloc(32, 0xbb),
+  effectiveBalance: 32e9,
+  slashed: false,
+  activationEligibilityEpoch: 1_000_000,
+  activationEpoch: 2_000_000,
+  exitEpoch: 3_000_000,
+  withdrawableEpoch: 4_000_000,
+};
+
 describe("Container with BranchNodeStruct", function () {
   this.timeout(0);
-
-  type Validator = ValueOf<typeof ValidatorContainer>;
-
-  const validator: Validator = {
-    pubkey: Buffer.alloc(48, 0xaa),
-    withdrawalCredentials: Buffer.alloc(32, 0xbb),
-    effectiveBalance: 32e9,
-    slashed: false,
-    activationEligibilityEpoch: 1_000_000,
-    activationEpoch: 2_000_000,
-    exitEpoch: 3_000_000,
-    withdrawableEpoch: 4_000_000,
-  };
 
   const validatorViewDU = ValidatorContainer.toViewDU(validator);
   const validatorNodeStructViewDU = ValidatorNodeStruct.toViewDU(validator);
@@ -34,6 +33,7 @@ describe("Container with BranchNodeStruct", function () {
     getExitEpoch: (treeBacked) => treeBacked.exitEpoch,
     getPubkey: (treeBacked) => toHexString(treeBacked.pubkey),
     hashTreeRoot: (treeBacked) => treeBacked.hashTreeRoot(),
+    batchHashTreeRoot: (treeBacked) => treeBacked.batchHashTreeRoot(),
     getProof: (treeBacked) => treeBacked.createProof(validatorProofJsonPaths),
     serialize: (treeBacked) => treeBacked.serialize(),
   };

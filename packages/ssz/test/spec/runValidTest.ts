@@ -117,6 +117,20 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     assertRoot(root, "type.hashTreeRoot()");
   }
 
+  if (isCompositeType(type)) {
+    // batchHashTreeRoot()
+    const root = wrapErr(() => {
+      const node = type.value_toTree(testDataValue);
+      const viewDU = type.getViewDU(node);
+      if (viewDU instanceof TreeViewDU) {
+        return viewDU.batchHashTreeRoot();
+      } else {
+        return type.hashTreeRoot(testDataValue);
+      }
+    }, "type.hashTreeRoot()");
+    assertRoot(root, "ViewDU.batchHashTreeRoot()");
+  }
+
   // value -> tree - value_toTree()
   const node = wrapErr(() => type.value_toTree(testDataValue), "type.value_toTree()");
   assertNode(node, "type.value_toTree()");

@@ -32,15 +32,22 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
   },
   opts?: {only?: boolean; skip?: boolean}
 ): void {
-  function assertValidView(view: TreeViewDU<CT>, value: ValueOf<CT>, message: string): void {
+  function assertValidView(view: TreeViewDU<CT>, value: ValueOf<CT>, message: string, batchHash: boolean): void {
     expect(type.toJson(view.toValue())).to.deep.equal(type.toJson(value), `Wrong json - ${message}`);
 
     expect(toHexString(view.serialize())).to.equal(toHexString(type.serialize(value)), `Wrong serialized - ${message}`);
 
-    expect(toHexString(view.hashTreeRoot())).to.equal(
-      toHexString(type.hashTreeRoot(value)),
-      `Wrong hashTreeRoot - ${message}`
-    );
+    if (batchHash) {
+      expect(toHexString(view.batchHashTreeRoot())).to.equal(
+        toHexString(type.hashTreeRoot(value)),
+        `Wrong batchHashTreeRoot - ${message}`
+      );
+    } else {
+      expect(toHexString(view.hashTreeRoot())).to.equal(
+        toHexString(type.hashTreeRoot(value)),
+        `Wrong hashTreeRoot - ${message}`
+      );
+    }
   }
 
   // eslint-disable-next-line no-only-tests/no-only-tests
@@ -61,46 +68,48 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
 
           const tvAfter = fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore;
 
-          assertValidView(tvAfter as TreeViewDU<CT>, valueAfter, "after mutation");
+          assertValidView(tvAfter as TreeViewDU<CT>, valueAfter, "after mutation", false);
 
           if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
         });
       }
 
-      const treeViewDUId = `${id} - TreeViewDU`;
-      if ((!onlyId || treeViewDUId.includes(onlyId)) && !skipTreeViewDU) {
-        it(treeViewDUId, () => {
-          const tvBefore = type.toViewDU(valueBefore) as TreeViewDU<CT>;
+      for (const batchHash of [false, true]) {
+        const treeViewDUId = `${id} - TreeViewDU, batchHash = ${batchHash}`;
+        if ((!onlyId || treeViewDUId.includes(onlyId)) && !skipTreeViewDU) {
+          it(treeViewDUId, () => {
+            const tvBefore = type.toViewDU(valueBefore) as TreeViewDU<CT>;
 
-          // Set to mutable, and edit
-          const tvAfter = (fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore) as CompositeViewDU<CT>;
-
-          if (treeViewToStruct) {
-            const tvAfterStruct = treeViewToStruct(tvAfter);
-            expect(type.toJson(tvAfterStruct)).to.deep.equal(
-              type.toJson(valueAfter),
-              "Wrong value after mutation before commit"
-            );
-          }
-
-          if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
-
-          type.commitViewDU(tvAfter);
-          assertValidView(tvAfter as TreeViewDU<CT>, valueAfter, "after mutation");
-
-          if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
-
-          if (!skipCloneMutabilityViewDU) {
-            // Ensure correct mutability of clone and caches
             // Set to mutable, and edit
-            const tvBefore2 = type.toViewDU(valueBefore) as TreeViewDU<CT>;
-            const tvAfter2 = (fn(tvBefore2 as CompositeViewDU<CT>) ?? tvBefore2) as CompositeViewDU<CT>;
-            // Drop changes
-            (tvAfter2 as TreeViewDU<CT>).clone();
-            // Assert same value as before
-            assertValidView(tvAfter2 as TreeViewDU<CT>, valueBefore, "dropped mutation");
-          }
-        });
+            const tvAfter = (fn(tvBefore as CompositeViewDU<CT>) ?? tvBefore) as CompositeViewDU<CT>;
+
+            if (treeViewToStruct) {
+              const tvAfterStruct = treeViewToStruct(tvAfter);
+              expect(type.toJson(tvAfterStruct)).to.deep.equal(
+                type.toJson(valueAfter),
+                "Wrong value after mutation before commit"
+              );
+            }
+
+            if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
+
+            type.commitViewDU(tvAfter);
+            assertValidView(tvAfter as TreeViewDU<CT>, valueAfter, "after mutation", batchHash);
+
+            if (assertFn) assertFn(tvAfter as CompositeViewDU<CT>);
+
+            if (!skipCloneMutabilityViewDU) {
+              // Ensure correct mutability of clone and caches
+              // Set to mutable, and edit
+              const tvBefore2 = type.toViewDU(valueBefore) as TreeViewDU<CT>;
+              const tvAfter2 = (fn(tvBefore2 as CompositeViewDU<CT>) ?? tvBefore2) as CompositeViewDU<CT>;
+              // Drop changes
+              (tvAfter2 as TreeViewDU<CT>).clone();
+              // Assert same value as before
+              assertValidView(tvAfter2 as TreeViewDU<CT>, valueBefore, "dropped mutation", batchHash);
+            }
+          });
+        }
       }
     }
   });
