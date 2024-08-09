@@ -65,7 +65,7 @@ describe("hasher", function () {
   }
 });
 
-describe.only("hashtree", function () {
+describe("hashtree", function () {
   itBench({
     id: `getHashComputations`,
     beforeEach: () => {
