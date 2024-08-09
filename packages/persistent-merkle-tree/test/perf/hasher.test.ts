@@ -1,10 +1,10 @@
 import {itBench} from "@dapplion/benchmark";
-import {HashObject, uint8ArrayToHashObject} from "../../src/hasher";
+import {HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher";
 import {hasher as asShaHasher} from "../../src/hasher/as-sha256";
 import {hasher as nobleHasher} from "../../src/hasher/noble";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {buildComparisonTrees} from "../utils/tree";
-import { HashComputationLevel, getHashComputations } from "../../src";
+import {HashComputationLevel, getHashComputations} from "../../src";
 
 describe("hasher", function () {
   this.timeout(0);
@@ -65,4 +65,41 @@ describe("hasher", function () {
   }
 });
 
-// TODO - batch: test more methods
+describe("hashtree", function () {
+  itBench({
+    id: `getHashComputations`,
+    beforeEach: () => {
+      const [tree] = buildComparisonTrees(16);
+      return tree;
+    },
+    fn: (tree) => {
+      const hcByLevel: HashComputationLevel[] = [];
+      getHashComputations(tree, 0, hcByLevel);
+    },
+  });
+
+  itBench({
+    id: `executeHashComputations - hashtree`,
+    beforeEach: () => {
+      const [tree] = buildComparisonTrees(16);
+      return tree;
+    },
+    fn: (tree) => {
+      const hcByLevel: HashComputationLevel[] = [];
+      getHashComputations(tree, 0, hcByLevel);
+      hashtreeHasher.executeHashComputations(hcByLevel);
+    },
+  });
+
+  itBench({
+    id: `root - hashtree`,
+    beforeEach: () => {
+      const [tree] = buildComparisonTrees(16);
+      setHasher(hashtreeHasher);
+      return tree;
+    },
+    fn: (tree) => {
+     tree.root;
+    },
+  });
+});
