@@ -1,4 +1,4 @@
-import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";

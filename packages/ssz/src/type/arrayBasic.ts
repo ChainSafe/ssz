@@ -5,8 +5,8 @@ import {
   getNodesAtDepth,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  levelAtIndex,
   HashComputationLevel,
+  levelAtIndex,
 } from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf, ByteViews} from "./abstract";
 import {BasicType} from "./basic";

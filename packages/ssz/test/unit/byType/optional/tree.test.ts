@@ -8,7 +8,7 @@ const SimpleObject = new ContainerType({
 });
 
 describe("Optional view tests", () => {
-  // unimplemented
+  // TODO: implement
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   it.skip("optional simple type", () => {
     const type = new OptionalType(byteType);
@@ -22,7 +22,7 @@ describe("Optional view tests", () => {
     expect(toHexString(type.commitViewDU(viewDU).root)).equals(toHexString(root));
   });
 
-  // unimplemented
+  // TODO: implement
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   it.skip("optional composite type", () => {
     const type = new OptionalType(SimpleObject);

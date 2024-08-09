@@ -1,4 +1,4 @@
-import {Node} from "@chainsafe/persistent-merkle-tree";
+import {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
 import {isCompositeType} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
@@ -32,35 +32,22 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
   }
 
   /**
-   * This ViewDU does not support batch hash by default so we need to compute root immediately.
-   * Otherwise consumers may call commit() multiple times and not able to compute hashTreeRoot().
+   * There are 2 cases:
+   * - normal commit() or hashTreeRoot(): hcByLevel is null, no need to compute root
+   * - batchHashTreeRoot(): hcByLevel is not null, need to compute root because this does not support HashComputation
    */
-  commit(): void {
-    if (this.valueChanged === null) {
+  commit(_?: number, hcByLevel: HashComputationLevel[] | null = null): void {
+    if (this.valueChanged !== null) {
+      const value = this.valueChanged;
+      this.valueChanged = null;
+
+      this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
+    }
+
+    if (this._rootNode.h0 === null && hcByLevel !== null) {
+      // consumer is batchHashTreeRoot()
       this._rootNode.rootHashObject;
-      return;
     }
-
-    const value = this.valueChanged;
-    this.valueChanged = null;
-
-    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
-    this._rootNode.rootHashObject;
-  }
-
-  /**
-   * Same to commit() without hash, allow to do the batch hash at consumer side, like in ListValidatorViewDU
-   * of ethereum consensus node.
-   */
-  commitNoHash(): void {
-    if (this.valueChanged === null) {
-      return;
-    }
-
-    const value = this.valueChanged;
-    this.valueChanged = null;
-
-    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
   }
 
   protected clearCache(): void {

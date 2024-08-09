@@ -65,7 +65,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
 
   /**
    * The same to hashTreeRoot() but with batch hash computation.
-   * Consumer can provide a HashComputationGroup() to save memory allocation.
+   * Consumer can allocate and reuse a HashComputationGroup() if needed.
    */
   batchHashTreeRoot(hcGroup: HashComputationGroup = new HashComputationGroup()): Uint8Array {
     // in ethereum consensus, the only type goes with TVDU is BeaconState and it's really more efficient to hash the tree in batch
@@ -91,7 +91,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
   /**
    * Serialize view to binary data.
    * Commits any pending changes before computing the root.
-   * Warning: this calls commit() which evict all pending HashComputations. Consider calling hashTreeRoot() before this
+   * This calls commit() which evict all pending HashComputations. Consider calling hashTreeRoot() before this
    */
   serialize(): Uint8Array {
     this.commit();

@@ -1,4 +1,4 @@
-import {concatGindices, Gindex, HashComputationLevel, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, Gindex, Node, toGindex, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
 import {BitArray} from "../value/bitArray";

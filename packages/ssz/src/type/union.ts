@@ -1,4 +1,13 @@
-import {concatGindices, getNode, Gindex, Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
+import {
+  concatGindices,
+  getNode,
+  Gindex,
+  Node,
+  Tree,
+  merkleizeInto,
+  getHashComputations,
+  HashComputationLevel,
+} from "@chainsafe/persistent-merkle-tree";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {Type, ByteViews} from "./abstract";
@@ -112,9 +121,12 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     return this.value_toTree(view);
   }
 
-  // TODO - batch
-  commitViewDU(view: ValueOfTypes<Types>): Node {
-    return this.value_toTree(view);
+  commitViewDU(view: ValueOfTypes<Types>, hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): Node {
+    const node = this.value_toTree(view);
+    if (hcByLevel !== null && node.h0 === null) {
+      getHashComputations(node, hcOffset, hcByLevel);
+    }
+    return node;
   }
 
   value_serializedSize(value: ValueOfTypes<Types>): number {
