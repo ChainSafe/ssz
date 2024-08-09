@@ -1,4 +1,12 @@
-import {concatGindices, Gindex, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
+import {
+  concatGindices,
+  Gindex,
+  Node,
+  toGindex,
+  Tree,
+  HashComputationLevel,
+  getHashComputations,
+} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
 import {splitIntoRootChunks} from "../util/merkleize";
 import {ByteViews} from "./abstract";
@@ -37,11 +45,16 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return this.commitViewDU(view);
   }
 
-  commitViewDU(view: ByteArray): Node {
+  // there is no respective ViewDU for this type
+  commitViewDU(view: ByteArray, hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(view));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, view);
-    return this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+    const node = this.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+    if (hcByLevel !== null && node.h0 === null) {
+      getHashComputations(node, hcOffset, hcByLevel);
+    }
+    return node;
   }
 
   cacheOfViewDU(): unknown {

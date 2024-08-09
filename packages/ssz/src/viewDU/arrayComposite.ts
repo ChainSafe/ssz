@@ -1,4 +1,11 @@
-import {getNodeAtDepth, getNodesAtDepth, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {
+  getHashComputations,
+  getNodeAtDepth,
+  getNodesAtDepth,
+  HashComputationLevel,
+  Node,
+  setNodesAtDepth,
+} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeType} from "../view/arrayComposite";
@@ -163,15 +170,29 @@ export class ArrayCompositeTreeViewDU<
     return values;
   }
 
-  commit(): void {
+  /**
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
+   */
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
+    const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.viewsChanged.size === 0) {
+      if (!isOldRootHashed && hcByLevel !== null) {
+        getHashComputations(this._rootNode, hcOffset, hcByLevel);
+      }
       return;
     }
+
+    // each view may mutate hcByLevel at offset + depth
+    const offsetView = hcOffset + this.type.depth;
+    // Depth includes the extra level for the length node
+    const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
     const nodesChanged: {index: number; node: Node}[] = [];
 
     for (const [index, view] of this.viewsChanged) {
-      const node = this.type.elementType.commitViewDU(view);
+      const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
       // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
       this.nodes[index] = node;
       nodesChanged.push({index, node});
@@ -187,14 +208,21 @@ export class ArrayCompositeTreeViewDU<
     const nodes = nodesChangedSorted.map((entry) => entry.node);
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
-    // TODO: Ensure fast setNodesAtDepth() method is correct
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
+    const offsetThis = hcOffset + this.type.tree_chunksNodeOffset();
+    const byLevelThis = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, offsetThis, byLevelThis);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,
       newChunksNode,
-      this.dirtyLength ? this._length : undefined
+      this.dirtyLength ? this._length : null,
+      hcOffset,
+      hcByLevel
     );
+
+    if (!isOldRootHashed && hcByLevel !== null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
+    }
 
     this.viewsChanged.clear();
     this.dirtyLength = false;

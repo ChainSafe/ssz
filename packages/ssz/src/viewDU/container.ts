@@ -1,4 +1,11 @@
-import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {
+  getHashComputations,
+  getNodeAtDepth,
+  HashComputationLevel,
+  LeafNode,
+  Node,
+  setNodesAtDepth,
+} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
@@ -68,16 +75,30 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     };
   }
 
-  commit(): void {
+  /**
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
+   */
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
+    const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
+      if (!isOldRootHashed && hcByLevel !== null) {
+        getHashComputations(this._rootNode, hcOffset, hcByLevel);
+      }
       return;
     }
+
+    // each view may mutate hcByLevel at offset + depth
+    const offsetView = hcOffset + this.type.depth;
+    // if old root is not hashed, no need to pass hcByLevel to child view bc we need to do full traversal here
+    const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
     const nodesChanged: {index: number; node: Node}[] = [];
 
     for (const [index, view] of this.viewsChanged) {
       const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
-      const node = fieldType.commitViewDU(view);
+      const node = fieldType.commitViewDU(view, offsetView, byLevelView);
       // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
       this.nodes[index] = node;
       nodesChanged.push({index, node});
@@ -96,7 +117,19 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     const indexes = nodesChangedSorted.map((entry) => entry.index);
     const nodes = nodesChangedSorted.map((entry) => entry.node);
 
-    this._rootNode = setNodesAtDepth(this._rootNode, this.type.depth, indexes, nodes);
+    this._rootNode = setNodesAtDepth(
+      this._rootNode,
+      this.type.depth,
+      indexes,
+      nodes,
+      hcOffset,
+      isOldRootHashed ? hcByLevel : null
+    );
+
+    // old root is not hashed, need to traverse
+    if (!isOldRootHashed && hcByLevel !== null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
+    }
 
     this.nodesChanged.clear();
     this.viewsChanged.clear();

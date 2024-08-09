@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
 import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes";
 import * as sszAltair from "../../lodestarTypes/altair/sszTypes";
 import {
@@ -65,6 +65,16 @@ describe("HashTreeRoot frequent eth2 objects", () => {
       beforeEach: (bytes) => sszAltair.BeaconState.deserializeToViewDU(bytes),
       fn: (state) => {
         state.hashTreeRoot();
+      },
+    });
+
+    const hc = new HashComputationGroup();
+    itBench<CompositeViewDU<typeof sszAltair.BeaconState>, Uint8Array>({
+      id: `BeaconState vc ${validatorCount} - batchHashTreeRoot tree`,
+      before: () => getStateViewDU().serialize(),
+      beforeEach: (bytes) => sszAltair.BeaconState.deserializeToViewDU(bytes),
+      fn: (state) => {
+        state.batchHashTreeRoot(hc);
       },
     });
 

@@ -1,4 +1,4 @@
-import {concatGindices, Gindex, Node, toGindex, Tree} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, Gindex, Node, toGindex, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
 import {splitIntoRootChunks} from "../util/merkleize";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
@@ -29,8 +29,8 @@ export abstract class BitArrayType extends CompositeType<BitArray, BitArrayTreeV
     return view.node;
   }
 
-  commitViewDU(view: BitArrayTreeViewDU): Node {
-    view.commit();
+  commitViewDU(view: BitArrayTreeViewDU, hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): Node {
+    view.commit(hcOffset, hcByLevel);
     return view.node;
   }
 

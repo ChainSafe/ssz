@@ -1,4 +1,4 @@
-import {getNodesAtDepth, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, Node, toGindexBitstring, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {TreeView} from "./abstract";
@@ -16,8 +16,16 @@ export type ArrayCompositeType<
   tree_setLength(tree: Tree, length: number): void;
   /** INTERNAL METHOD: Return the chunks node from a root node */
   tree_getChunksNode(rootNode: Node): Node;
+  /** INTERNAL METHOD: Return the offset from root for HashComputation */
+  tree_chunksNodeOffset(): number;
   /** INTERNAL METHOD: Return a new root node with changed chunks node and length */
-  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node;
+  tree_setChunksNode(
+    rootNode: Node,
+    chunksNode: Node,
+    newLength: number | null,
+    hcOffset?: number,
+    hcByLevel?: HashComputationLevel[] | null
+  ): Node;
 };
 
 export class ArrayCompositeTreeView<
