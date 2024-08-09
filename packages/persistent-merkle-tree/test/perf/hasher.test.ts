@@ -79,7 +79,7 @@ describe("hashtree", function () {
   });
 
   itBench({
-    id: `executeHashComputations - hashtree`,
+    id: `executeHashComputations`,
     beforeEach: () => {
       const [tree] = buildComparisonTrees(16);
       return tree;
@@ -92,7 +92,7 @@ describe("hashtree", function () {
   });
 
   itBench({
-    id: `root - hashtree`,
+    id: `get root`,
     beforeEach: () => {
       const [tree] = buildComparisonTrees(16);
       setHasher(hashtreeHasher);
