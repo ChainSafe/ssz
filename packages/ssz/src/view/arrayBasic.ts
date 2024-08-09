@@ -1,4 +1,4 @@
-import {getNodesAtDepth, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {CompositeType} from "../type/composite";
@@ -21,8 +21,16 @@ export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeTy
   tree_setLength(tree: Tree, length: number): void;
   /** INTERNAL METHOD: Return the chunks node from a root node */
   tree_getChunksNode(rootNode: Node): Node;
+  /** INTERNAL METHOD: Return the offset from root for HashComputation */
+  tree_chunksNodeOffset(): number;
   /** INTERNAL METHOD: Return a new root node with changed chunks node and length */
-  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node;
+  tree_setChunksNode(
+    rootNode: Node,
+    chunksNode: Node,
+    newLength: number | null,
+    hcOffset?: number,
+    hcByLevel?: HashComputationLevel[] | null
+  ): Node;
 };
 
 export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends TreeView<ArrayBasicType<ElementType>> {
@@ -76,13 +84,16 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
    */
-  getAll(): ValueOf<ElementType>[] {
+  getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this.length) {
+      throw Error(`Expected ${this.length} values, got ${values.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
     const leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
 
-    const values = new Array<ValueOf<ElementType>>(length);
+    values = values ?? new Array<ValueOf<ElementType>>(length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(length / itemsPerChunk);
     const remainder = length % itemsPerChunk;

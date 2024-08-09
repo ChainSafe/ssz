@@ -1,4 +1,4 @@
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -11,9 +11,9 @@ import {
   tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
-  value_getRootsArrayComposite,
   maxSizeArrayComposite,
   minSizeArrayComposite,
+  value_getChunkBytesArrayComposite,
 } from "./arrayComposite";
 import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite";
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite";
@@ -65,6 +65,10 @@ export class VectorCompositeType<
     this.minSize = minSizeArrayComposite(elementType, length);
     this.maxSize = maxSizeArrayComposite(elementType, length);
     this.defaultLen = length;
+    this.chunkBytesBuffer =
+      this.maxChunkCount % 2 === 1
+        ? new Uint8Array(this.maxChunkCount * 32 + 32)
+        : new Uint8Array(this.maxChunkCount * 32);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,8 +94,12 @@ export class VectorCompositeType<
     return view.node;
   }
 
-  commitViewDU(view: ArrayCompositeTreeViewDU<ElementType>): Node {
-    view.commit();
+  commitViewDU(
+    view: ArrayCompositeTreeViewDU<ElementType>,
+    hcOffset = 0,
+    hcByLevel: HashComputationLevel[] | null = null
+  ): Node {
+    view.commit(hcOffset, hcByLevel);
     return view.node;
   }
 
@@ -139,14 +147,18 @@ export class VectorCompositeType<
     return node;
   }
 
+  tree_chunksNodeOffset(): number {
+    return 0;
+  }
+
   tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
     return chunksNode;
   }
 
   // Merkleization
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    return value_getRootsArrayComposite(this.elementType, this.length, value);
+  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    return value_getChunkBytesArrayComposite(this.elementType, this.length, value, this.chunkBytesBuffer);
   }
 
   // JSON: inherited from ArrayType

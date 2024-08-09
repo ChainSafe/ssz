@@ -1,8 +1,16 @@
-import {getNodeAtDepth, getNodesAtDepth, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {
+  getHashComputations,
+  getNodeAtDepth,
+  getNodesAtDepth,
+  HashComputationLevel,
+  Node,
+  setNodesAtDepth,
+} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeType} from "../view/arrayComposite";
 import {TreeViewDU} from "./abstract";
+import {ListIterator} from "../interface";
 
 export type ArrayCompositeTreeViewDUCache = {
   nodes: Node[];
@@ -140,10 +148,13 @@ export class ArrayCompositeTreeViewDU<
   /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    */
-  getAllReadonly(): CompositeViewDU<ElementType>[] {
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    if (views && views.length !== this._length) {
+      throw Error(`Expected ${this._length} views, got ${views.length}`);
+    }
     this.populateAllNodes();
 
-    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
     }
@@ -151,50 +162,111 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * Similar to getAllReadonly but support ListIterator interface.
+   * Use ReusableListIterator to reuse over multiple calls.
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  getAllReadonlyIter(views?: ListIterator<CompositeViewDU<ElementType>>): ListIterator<CompositeViewDU<ElementType>> {
     this.populateAllNodes();
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>();
+    for (let i = 0; i < this._length; i++) {
+      const view = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
+      views.push(view);
+    }
+    return views;
+  }
+
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   */
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
+    this.populateAllNodes();
+
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }
     return values;
   }
 
-  commit(): void {
+  /**
+   * Similar to getAllReadonlyValues but support ListIterator interface.
+   * Use ReusableListIterator to reuse over multiple calls.
+   */
+  getAllReadonlyValuesIter(values?: ListIterator<ValueOf<ElementType>>): ListIterator<ValueOf<ElementType>> {
+    this.populateAllNodes();
+
+    values = values ?? new Array<ValueOf<ElementType>>();
+    for (let i = 0; i < this._length; i++) {
+      const value = this.type.elementType.tree_toValue(this.nodes[i]);
+      values.push(value);
+    }
+    return values;
+  }
+
+  /**
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
+   */
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
+    const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.viewsChanged.size === 0) {
+      if (!isOldRootHashed && hcByLevel !== null) {
+        getHashComputations(this._rootNode, hcOffset, hcByLevel);
+      }
       return;
     }
 
-    const nodesChanged: {index: number; node: Node}[] = [];
+    // each view may mutate hcByLevel at offset + depth
+    const offsetView = hcOffset + this.type.depth;
+    // Depth includes the extra level for the length node
+    const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
-    for (const [index, view] of this.viewsChanged) {
-      const node = this.type.elementType.commitViewDU(view);
-      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-      this.nodes[index] = node;
-      nodesChanged.push({index, node});
+    const indexesChanged = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
+    const indexes: number[] = [];
+    const nodes: Node[] = [];
+    for (const index of indexesChanged) {
+      const view = this.viewsChanged.get(index);
+      if (!view) {
+        // should not happen
+        throw Error("View not found in viewsChanged, index=" + index);
+      }
+
+      const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
+      // there's a chance the view is not changed, no need to rebind nodes in that case
+      if (this.nodes[index] !== node) {
+        // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+        this.nodes[index] = node;
+        // nodesChanged.push({index, node});
+        indexes.push(index);
+        nodes.push(node);
+      }
 
       // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
       const cache = this.type.elementType.cacheOfViewDU(view);
       if (cache) this.caches[index] = cache;
     }
 
-    // TODO: Optimize to loop only once, Numerical sort ascending
-    const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
-    const indexes = nodesChangedSorted.map((entry) => entry.index);
-    const nodes = nodesChangedSorted.map((entry) => entry.node);
-
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
-    // TODO: Ensure fast setNodesAtDepth() method is correct
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
+    const offsetThis = hcOffset + this.type.tree_chunksNodeOffset();
+    const byLevelThis = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, offsetThis, byLevelThis);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,
       newChunksNode,
-      this.dirtyLength ? this._length : undefined
+      this.dirtyLength ? this._length : null,
+      hcOffset,
+      hcByLevel
     );
+
+    if (!isOldRootHashed && hcByLevel !== null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
+    }
 
     this.viewsChanged.clear();
     this.dirtyLength = false;

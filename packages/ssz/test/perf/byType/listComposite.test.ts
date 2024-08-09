@@ -1,5 +1,13 @@
 import {itBench} from "@dapplion/benchmark";
-import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src";
+import {
+  CompositeViewDU,
+  ContainerNodeStructType,
+  ContainerType,
+  ListCompositeType,
+  ReusableListIterator,
+  UintNumberType,
+  ValueOf,
+} from "../../../src";
 
 const byteType = new UintNumberType(1);
 
@@ -20,33 +28,53 @@ describe("ListCompositeType types", () => {
       });
     }
 
-    for (const type of [
-      new ListCompositeType(containerType, 2 ** 40, {typeName: "List(Container)"}),
-      new ListCompositeType(containerNodeStructType, 2 ** 40, {typeName: "List(ContainerNodeStruct)"}),
-    ]) {
-      const viewDU = type.toViewDU(newFilledArray(len, {a: 1, b: 2}));
+    for (const [i, type] of [containerType, containerNodeStructType].entries()) {
+      const listType = new ListCompositeType(type, 2 ** 40, {
+        typeName: `List(${i === 0 ? "Container" : "ContainerNodeStruct"})`,
+      });
+      const viewDU = listType.toViewDU(newFilledArray(len, {a: 1, b: 2}));
 
-      itBench(`${type.typeName} len ${len} ViewDU.getAllReadonly() + iterate`, () => {
+      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonly() + iterate`, () => {
         const values = viewDU.getAllReadonly();
         for (let i = 0; i < len; i++) {
           values[i];
         }
       });
 
-      itBench(`${type.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
+      const viewDUs = new ReusableListIterator<CompositeViewDU<typeof type>>();
+      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyIter() + iterate`, () => {
+        viewDUs.reset();
+        viewDU.getAllReadonlyIter(viewDUs);
+        viewDUs.clean();
+        for (const viewDU of viewDUs) {
+          viewDU;
+        }
+      });
+
+      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
         const values = viewDU.getAllReadonlyValues();
         for (let i = 0; i < len; i++) {
           values[i];
         }
       });
 
-      itBench(`${type.typeName} len ${len} ViewDU.get(i)`, () => {
+      const values = new ReusableListIterator<ValueOf<typeof type>>();
+      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyValuesIter() + iterate`, () => {
+        values.clean();
+        viewDU.getAllReadonlyValuesIter(values);
+        values.reset();
+        for (const value of values) {
+          value;
+        }
+      });
+
+      itBench(`${listType.typeName} len ${len} ViewDU.get(i)`, () => {
         for (let i = 0; i < len; i++) {
           viewDU.get(i);
         }
       });
 
-      itBench(`${type.typeName} len ${len} ViewDU.getReadonly(i)`, () => {
+      itBench(`${listType.typeName} len ${len} ViewDU.getReadonly(i)`, () => {
         for (let i = 0; i < len; i++) {
           viewDU.getReadonly(i);
         }

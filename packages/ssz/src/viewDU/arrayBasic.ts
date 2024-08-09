@@ -1,4 +1,12 @@
-import {getNodeAtDepth, getNodesAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {
+  getHashComputations,
+  getNodeAtDepth,
+  getNodesAtDepth,
+  HashComputationLevel,
+  LeafNode,
+  Node,
+  setNodesAtDepth,
+} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {ArrayBasicType} from "../view/arrayBasic";
@@ -102,7 +110,10 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
    */
-  getAll(): ValueOf<ElementType>[] {
+  getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     if (!this.nodesPopulated) {
       const nodesPrev = this.nodes;
       const chunksNode = this.type.tree_getChunksNode(this.node);
@@ -117,7 +128,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       this.nodesPopulated = true;
     }
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(this._length / itemsPerChunk);
     const remainder = this._length % itemsPerChunk;
@@ -151,8 +162,17 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     return values;
   }
 
-  commit(): void {
+  /**
+   * When we need to compute HashComputations (hcByLevel != null):
+   *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
+   *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel
+   */
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
+    const isOldRootHashed = this._rootNode.h0 !== null;
     if (this.nodesChanged.size === 0) {
+      if (!isOldRootHashed && hcByLevel !== null) {
+        getHashComputations(this._rootNode, hcOffset, hcByLevel);
+      }
       return;
     }
 
@@ -164,14 +184,21 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
     }
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
-    // TODO: Ensure fast setNodesAtDepth() method is correct
-    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes);
+    const offsetThis = hcOffset + this.type.tree_chunksNodeOffset();
+    const byLevelThis = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
+    const newChunksNode = setNodesAtDepth(chunksNode, this.type.chunkDepth, indexes, nodes, offsetThis, byLevelThis);
 
     this._rootNode = this.type.tree_setChunksNode(
       this._rootNode,
       newChunksNode,
-      this.dirtyLength ? this._length : undefined
+      this.dirtyLength ? this._length : null,
+      hcOffset,
+      isOldRootHashed ? hcByLevel : null
     );
+
+    if (!isOldRootHashed && hcByLevel !== null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
+    }
 
     this.nodesChanged.clear();
     this.dirtyLength = false;

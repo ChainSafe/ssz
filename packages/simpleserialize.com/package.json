@@ -25,6 +25,7 @@
     "eyzy-tree": "^0.2.2",
     "file-saver": "^2.0.5",
     "js-yaml": "^4.1.0",
+    "null-loader": "^4.0.1",
     "react": "^17.0.2",
     "react-alert": "^7.0.1",
     "react-alert-template-basic": "^1.0.0",

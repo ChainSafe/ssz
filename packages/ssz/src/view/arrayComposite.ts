@@ -1,7 +1,8 @@
-import {getNodesAtDepth, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, Node, toGindexBitstring, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {TreeView} from "./abstract";
+import {ListIterator} from "../interface";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayCompositeType<
@@ -16,8 +17,16 @@ export type ArrayCompositeType<
   tree_setLength(tree: Tree, length: number): void;
   /** INTERNAL METHOD: Return the chunks node from a root node */
   tree_getChunksNode(rootNode: Node): Node;
+  /** INTERNAL METHOD: Return the offset from root for HashComputation */
+  tree_chunksNodeOffset(): number;
   /** INTERNAL METHOD: Return a new root node with changed chunks node and length */
-  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node;
+  tree_setChunksNode(
+    rootNode: Node,
+    chunksNode: Node,
+    newLength: number | null,
+    hcOffset?: number,
+    hcByLevel?: HashComputationLevel[] | null
+  ): Node;
 };
 
 export class ArrayCompositeTreeView<
@@ -81,14 +90,33 @@ export class ArrayCompositeTreeView<
    * The returned views don't have a parent hook to this View's Tree, so changes in the returned views won't be
    * propagated upwards. To get linked element Views use `this.get()`
    */
-  getAllReadonly(): CompositeView<ElementType>[] {
+  getAllReadonly(views?: CompositeView<ElementType>[]): CompositeView<ElementType>[] {
+    if (views && views.length !== this.length) {
+      throw Error(`Expected ${this.length} views, got ${views.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const views = new Array<CompositeView<ElementType>>(length);
+    views = views ?? new Array<CompositeView<ElementType>>(length);
     for (let i = 0; i < length; i++) {
       // TODO: Optimize
       views[i] = this.type.elementType.getView(new Tree(nodes[i]));
+    }
+    return views;
+  }
+
+  /**
+   * Similar to getAllReadonly but support ListIterator interface.
+   * Use ReusableListIterator to reuse over multiple calls.
+   */
+  getAllReadonlyIter(views?: ListIterator<CompositeView<ElementType>>): ListIterator<CompositeView<ElementType>> {
+    const length = this.length;
+    const chunksNode = this.type.tree_getChunksNode(this.node);
+    const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
+    views = views ?? new Array<CompositeView<ElementType>>();
+    for (let i = 0; i < length; i++) {
+      // TODO: Optimize
+      views.push(this.type.elementType.getView(new Tree(nodes[i])));
     }
     return views;
   }
@@ -98,13 +126,31 @@ export class ArrayCompositeTreeView<
    * The returned values are not Views so any changes won't be propagated upwards.
    * To get linked element Views use `this.get()`
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this.length) {
+      throw Error(`Expected ${this.length} values, got ${values.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const values = new Array<ValueOf<ElementType>>(length);
+    values = values ?? new Array<ValueOf<ElementType>>(length);
     for (let i = 0; i < length; i++) {
       values[i] = this.type.elementType.tree_toValue(nodes[i]);
+    }
+    return values;
+  }
+
+  /**
+   * Similar to getAllReadonlyValues but support ListIterator interface.
+   * Use ReusableListIterator to reuse over multiple calls.
+   */
+  getAllReadonlyValuesIter(values?: ListIterator<ValueOf<ElementType>>): ListIterator<ValueOf<ElementType>> {
+    const length = this.length;
+    const chunksNode = this.type.tree_getChunksNode(this.node);
+    const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
+    values = values ?? new Array<ValueOf<ElementType>>();
+    for (let i = 0; i < length; i++) {
+      values.push(this.type.elementType.tree_toValue(nodes[i]));
     }
     return values;
   }

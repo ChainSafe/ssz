@@ -1,5 +1,5 @@
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {ValueOf, ByteViews} from "./abstract";
@@ -59,6 +59,10 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     this.minSize = this.fixedSize;
     this.maxSize = this.fixedSize;
     this.defaultLen = length;
+    // pad 1 chunk if maxChunkCount is not even
+    this.chunkBytesBuffer = new Uint8Array(
+      this.maxChunkCount % 2 === 1 ? this.maxChunkCount * 32 + 32 : this.maxChunkCount * 32
+    );
   }
 
   static named<ElementType extends BasicType<unknown>>(
@@ -83,8 +87,12 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return view.node;
   }
 
-  commitViewDU(view: ArrayBasicTreeViewDU<ElementType>): Node {
-    view.commit();
+  commitViewDU(
+    view: ArrayBasicTreeViewDU<ElementType>,
+    hcOffset = 0,
+    hcByLevel: HashComputationLevel[] | null = null
+  ): Node {
+    view.commit(hcOffset, hcByLevel);
     return view.node;
   }
 
@@ -132,17 +140,23 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return node;
   }
 
+  tree_chunksNodeOffset(): number {
+    return 0;
+  }
+
   tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
     return chunksNode;
   }
 
   // Merkleization
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    const uint8Array = new Uint8Array(this.fixedSize);
+  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const uint8Array = this.chunkBytesBuffer.subarray(0, this.fixedSize);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
-    return splitIntoRootChunks(uint8Array);
+
+    // remaining bytes from this.fixedSize to this.chunkBytesBuffer.length must be zeroed
+    return this.chunkBytesBuffer;
   }
 
   // JSON: inherited from ArrayType

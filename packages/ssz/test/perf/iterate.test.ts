@@ -1,6 +1,6 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {ListBasicType, UintNumberType} from "../../src";
-import {Validators} from "../lodestarTypes/phase0/sszTypes";
+import {CompositeViewDU, ListBasicType, ReusableListIterator, UintNumberType} from "../../src";
+import {Validators, Validator} from "../lodestarTypes/phase0/sszTypes";
 
 describe("iterate", () => {
   setBenchOpts({noThreshold: true});
@@ -51,6 +51,22 @@ describe("readonly values - iterator vs array", () => {
     const validatorsArray = validators.getAllReadonly();
     for (let i = 0; i < validatorsArray.length; i++) {
       validatorsArray[i];
+    }
+  });
+
+  const viewDUs = new ReusableListIterator<CompositeViewDU<typeof Validator>>();
+  itBench("compositeListValue.getAllReadonlyIter()", () => {
+    viewDUs.reset();
+    validators.getAllReadonlyIter(viewDUs);
+    viewDUs.clean();
+  });
+
+  itBench("compositeListValue.getAllReadonlyIter() + loop all", () => {
+    viewDUs.reset();
+    validators.getAllReadonlyIter(viewDUs);
+    viewDUs.clean();
+    for (const viewDU of viewDUs) {
+      viewDU;
     }
   });
 });

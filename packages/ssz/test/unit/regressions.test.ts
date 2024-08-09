@@ -32,6 +32,8 @@ describe("Regressions / known issues", () => {
     const bytes = SyncCommitteeBits.serialize(bitArray);
     const rootByTreeBacked = SyncCommitteeBits.deserializeToViewDU(bytes).hashTreeRoot();
     expect(toHexString(rootByStruct)).to.be.equal(toHexString(rootByTreeBacked), "Inconsistent hashTreeRoot");
+    const rootByBatch = SyncCommitteeBits.deserializeToViewDU(bytes).batchHashTreeRoot();
+    expect(toHexString(rootByStruct)).to.be.equal(toHexString(rootByBatch), "Inconsistent hashTreeRoot");
   });
 
   it("converts bit arrays to tree", function () {
