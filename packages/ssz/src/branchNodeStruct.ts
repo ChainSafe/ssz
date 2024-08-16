@@ -9,18 +9,15 @@ import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
  * expensive because the tree has to be recreated every time.
  */
 export class BranchNodeStruct<T> extends Node {
-  constructor(
-    private readonly valueToNode: (value: T) => Node,
-    private readonly hashTreeRootInto: (value: T, node: Node) => void,
-    readonly value: T
-  ) {
+  constructor(private readonly valueToNode: (value: T) => Node, readonly value: T) {
     // First null value is to save an extra variable to check if a node has a root or not
     super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
   }
 
   get rootHashObject(): HashObject {
     if (this.h0 === null) {
-      this.hashTreeRootInto(this.value, this);
+      const node = this.valueToNode(this.value);
+      super.applyHash(node.rootHashObject);
     }
     return this;
   }
