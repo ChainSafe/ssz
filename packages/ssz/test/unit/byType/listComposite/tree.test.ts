@@ -3,6 +3,7 @@ import {CompositeView, ContainerType, ListCompositeType, toHexString, UintNumber
 import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite";
 import {ssz} from "../../../lodestarTypes/primitive";
 import {runViewTestMutation} from "../runViewTestMutation";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(
@@ -196,13 +197,16 @@ describe("ListCompositeType.sliceTo", () => {
 });
 
 describe("ListCompositeType.sliceFrom", () => {
-  it("Slice List from multiple length", () => {
-    const listType = new ListCompositeType(ssz.Root, 1024);
-    const listLength = 16;
-    const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
-    const listView = listType.toViewDU(list);
+  const listType = new ListCompositeType(ssz.Root, 1024);
+  const listLength = 16;
+  const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+  let listView: ListCompositeTreeViewDU<typeof ssz.Root>;
+  beforeEach(() => {
+    listView = listType.toViewDU(list);
+  });
 
-    for (let i = -(listLength + 1); i < listLength + 1; i++) {
+  for (let i = -(listLength + 1); i < listLength + 1; i++) {
+    it(`Slice List from list length ${listLength}`, () => {
       // compare list.slice(i) to listView.sliceFrom(i), they should be equivalent
       const slicedList = list.slice(i);
       const slicedListView = listView.sliceFrom(i);
@@ -210,6 +214,6 @@ describe("ListCompositeType.sliceFrom", () => {
       expect(slicedListView.length).to.equal(slicedList.length);
       expect(toHexString(slicedListView.serialize())).to.equal(toHexString(listType.serialize(slicedList)));
       expect(toHexString(slicedListView.hashTreeRoot())).to.equal(toHexString(listType.hashTreeRoot(slicedList)));
-    }
-  });
+    });
+  }
 });
