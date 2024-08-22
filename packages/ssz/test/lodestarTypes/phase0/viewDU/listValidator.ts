@@ -84,6 +84,8 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
         indicesChanged.push(index);
       }
     }
+
+    // these validators don't have roots, we compute roots in batch
     const sortedIndicesChanged = indicesChanged.sort((a, b) => a - b);
     const endBatch = sortedIndicesChanged.length - (sortedIndicesChanged.length % PARALLEL_FACTOR);
     // nodesChanged is sorted by index
