@@ -118,7 +118,12 @@ function createPartiallyModifiedDenebState(): CompositeViewDU<typeof BeaconState
   for (let i = 0; i < numModified; i++) {
     state.validators.get(i).effectiveBalance += 1e9;
   }
+  // all balances are modified as in epoch transition
   state.balances = BeaconState.fields.balances.toViewDU(Array.from({length: vc}, () => 32e9));
+  // remaining validators are accessed with no modification
+  for (let i = numModified; i < vc; i++) {
+    state.validators.get(i);
+  }
 
   state.eth1Data = BeaconState.fields.eth1Data.toViewDU({
     depositRoot: Buffer.alloc(32, 0x02),
