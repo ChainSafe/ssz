@@ -156,11 +156,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
    * Same method to `type/container.ts` that call ViewDU.serializeToBytes() of internal fields.
    */
   serializeToBytes(output: ByteViews, offset: number): number {
-    // it's the responsibility of consumer to call commit() before calling this method
-    // if we do the commit() here, it'll lose all HashComputations that we want to batch
-    if (this.nodesChanged.size !== 0 || this.viewsChanged.size !== 0) {
-      throw Error(`Must commit changes before serializeToBytes(Uint8Array(${output.uint8Array.length}, ${offset})`);
-    }
+    this.commit();
 
     let fixedIndex = offset;
     let variableIndex = offset + this.type.fixedEnd;
