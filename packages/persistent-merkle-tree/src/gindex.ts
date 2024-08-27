@@ -95,6 +95,9 @@ export interface GindexIterator extends Iterable<Bit> {
   remainingBitLength(): number;
 }
 
+/**
+ * Iterates from root to node at gindex 
+ */
 export function gindexIterator(gindex: Gindex | GindexBitstring): GindexIterator {
   let bitstring: string;
   if (typeof gindex === "string") {
