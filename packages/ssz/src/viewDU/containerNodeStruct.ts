@@ -1,4 +1,4 @@
-import {Node} from "@chainsafe/persistent-merkle-tree";
+import {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
 import {isCompositeType} from "../type/composite";
 import {BranchNodeStruct} from "../branchNodeStruct";
@@ -8,7 +8,7 @@ import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
+export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>
 > {
   protected valueChanged: ValueOfFields<Fields> | null = null;
@@ -27,15 +27,27 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     return;
   }
 
-  commit(): void {
-    if (this.valueChanged === null) {
-      return;
+  get value(): ValueOfFields<Fields> {
+    return this.valueChanged ?? this._rootNode.value;
+  }
+
+  /**
+   * There are 2 cases:
+   * - normal commit() or hashTreeRoot(): hcByLevel is null, no need to compute root
+   * - batchHashTreeRoot(): hcByLevel is not null, need to compute root because this does not support HashComputation
+   */
+  commit(_?: number, hcByLevel: HashComputationLevel[] | null = null): void {
+    if (this.valueChanged !== null) {
+      const value = this.valueChanged;
+      this.valueChanged = null;
+
+      this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
     }
 
-    const value = this.valueChanged;
-    this.valueChanged = null;
-
-    this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
+    if (this._rootNode.h0 === null && hcByLevel !== null) {
+      // consumer is batchHashTreeRoot()
+      this._rootNode.rootHashObject;
+    }
   }
 
   protected clearCache(): void {
@@ -46,7 +58,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewDUTypeConstructor<Fields> {
-  class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}
+  class CustomContainerTreeViewDU extends ContainerNodeStructTreeViewDU<Fields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {

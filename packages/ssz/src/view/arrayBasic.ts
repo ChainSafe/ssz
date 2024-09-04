@@ -1,4 +1,4 @@
-import {getNodesAtDepth, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {BasicType} from "../type/basic";
 import {CompositeType} from "../type/composite";
@@ -21,8 +21,16 @@ export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeTy
   tree_setLength(tree: Tree, length: number): void;
   /** INTERNAL METHOD: Return the chunks node from a root node */
   tree_getChunksNode(rootNode: Node): Node;
+  /** INTERNAL METHOD: Return the offset from root for HashComputation */
+  tree_chunksNodeOffset(): number;
   /** INTERNAL METHOD: Return a new root node with changed chunks node and length */
-  tree_setChunksNode(rootNode: Node, chunksNode: Node, newLength?: number): Node;
+  tree_setChunksNode(
+    rootNode: Node,
+    chunksNode: Node,
+    newLength: number | null,
+    hcOffset?: number,
+    hcByLevel?: HashComputationLevel[] | null
+  ): Node;
 };
 
 export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends TreeView<ArrayBasicType<ElementType>> {
