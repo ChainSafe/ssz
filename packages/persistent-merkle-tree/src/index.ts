@@ -8,3 +8,4 @@ export * from "./subtree";
 export * from "./tree";
 export * from "./zeroNode";
 export * from "./zeroHash";
+export * from "./snapshot";

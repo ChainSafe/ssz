@@ -10,6 +10,7 @@ import {
   Bit,
   getGindicesAtDepth,
   getGindexBits,
+  toGindex,
 } from "../../src";
 
 describe("countToDepth", () => {
