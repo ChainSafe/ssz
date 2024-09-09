@@ -4,4 +4,4 @@ export type Snapshot = {
   finalized: Uint8Array[];
   root: Uint8Array;
   count: number;
-}
+};

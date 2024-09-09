@@ -9,6 +9,12 @@ export type Snapshot = {
   count: number;
 };
 
+export const ZERO_SNAPSHOT = {
+  finalized: [],
+  root: zeroNode(0).root,
+  count: 0,
+};
+
 /**
  * Given a tree, return a snapshot of the tree with the root, finalized nodes, and count.
  * Tree could be full tree, or partial tree. See https://github.com/ChainSafe/ssz/issues/293

@@ -13,16 +13,16 @@ describe("toSnapshot and fromSnapshot", () => {
   for (let count = 1; count <= maxItems; count ++) {
     it(`toSnapshot and fromSnapshot with count ${count}`, () => {
       const nodes = Array.from({length: count}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
-      const rootNode = subtreeFillToContents(nodes, depth);
-      const snapshot = toSnapshot(rootNode, depth, count);
-      const restoredRootNode = fromSnapshot(snapshot, depth);
+      const fullListRootNode = subtreeFillToContents(nodes, depth);
+      const snapshot = toSnapshot(fullListRootNode, depth, count);
+      const partialListRootNode = fromSnapshot(snapshot, depth);
 
       // 1st step - check if the restored root node is the same
-      expect(restoredRootNode.root).to.deep.equal(rootNode.root);
+      expect(partialListRootNode.root).to.deep.equal(fullListRootNode.root);
 
       // 2nd step - make sure we can add more nodes to the restored tree
-      const fullTree = new Tree(rootNode);
-      const partialTree = new Tree(restoredRootNode);
+      const fullTree = new Tree(fullListRootNode);
+      const partialTree = new Tree(partialListRootNode);
       for (let i = count; i < maxItems; i++) {
         const gindex = toGindex(depth, BigInt(i));
         fullTree.setNode(gindex, LeafNode.fromRoot(Buffer.alloc(32, i)));
@@ -39,37 +39,43 @@ describe("toSnapshot and fromSnapshot", () => {
     // setNodesAtDepth() api is what ssz uses to grow the tree in its commit() phase
     it(`toSnapshot and fromSnapshot with count ${count} then grow with setNodeAtDepth`, () => {
       const nodes = Array.from({length: count}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
-      const rootNode = subtreeFillToContents(nodes, depth);
-      const snapshot = toSnapshot(rootNode, depth, count);
-      const restoredRootNode = fromSnapshot(snapshot, depth);
+      const fullListRootNode = subtreeFillToContents(nodes, depth);
+      const snapshot = toSnapshot(fullListRootNode, depth, count);
+      const partialListRootNode = fromSnapshot(snapshot, depth);
 
       // 1st step - check if the restored root node is the same
-      expect(restoredRootNode.root).to.deep.equal(rootNode.root);
+      expect(partialListRootNode.root).to.deep.equal(fullListRootNode.root);
 
       // 2nd step - grow the tree with setNodesAtDepth
       for (let i = count; i < maxItems; i++) {
         const addedNodes = Array.from({length: i - count + 1}, (_, j) => LeafNode.fromRoot(Buffer.alloc(32, j)));
         const indices = Array.from({length: i - count + 1}, (_, j) => j + count);
-        const root1 = setNodesAtDepth(rootNode, depth, indices, addedNodes);
-        const root2 = setNodesAtDepth(restoredRootNode, depth, indices, addedNodes);
+        const root1 = setNodesAtDepth(fullListRootNode, depth, indices, addedNodes);
+        const root2 = setNodesAtDepth(partialListRootNode, depth, indices, addedNodes);
         expect(root2.root).to.deep.equal(root1.root);
+
+        for (let j = count; j <= i; j++) {
+          const snapshot1 = toSnapshot(root1, depth, j);
+          const snapshot2 = toSnapshot(root2, depth, j);
+          expect(snapshot2).to.deep.equal(snapshot1);
+        }
       }
     });
 
     it(`toSnapshot() multiple times with count ${count}`, () => {
       const nodes = Array.from({length: count}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
-      const rootNode = subtreeFillToContents(nodes, depth);
-      const snapshot = toSnapshot(rootNode, depth, count);
-      const restoredRootNode = fromSnapshot(snapshot, depth);
+      const fullListRootNode = subtreeFillToContents(nodes, depth);
+      const snapshot = toSnapshot(fullListRootNode, depth, count);
+      const partialListRootNode = fromSnapshot(snapshot, depth);
 
       // 1st step - check if the restored root node is the same
-      expect(restoredRootNode.root).to.deep.equal(rootNode.root);
+      expect(partialListRootNode.root).to.deep.equal(fullListRootNode.root);
 
-      const snapshot2 = toSnapshot(restoredRootNode, depth, count);
+      const snapshot2 = toSnapshot(partialListRootNode, depth, count);
       const restoredRootNode2 = fromSnapshot(snapshot2, depth);
 
       // 2nd step - check if the restored root node is the same
-      expect(restoredRootNode2.root).to.deep.equal(restoredRootNode.root);
+      expect(restoredRootNode2.root).to.deep.equal(partialListRootNode.root);
     });
   }
 });
