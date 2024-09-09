@@ -1,16 +1,10 @@
-import {
-  Node,
-  subtreeFillToContents,
-  treeZeroAfterIndex,
-  zeroNode,
-  toSnapshot,
-  Snapshot,
-} from "@chainsafe/persistent-merkle-tree";
+import {Node, subtreeFillToContents, treeZeroAfterIndex, zeroNode, toSnapshot} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ListCompositeType} from "../view/listComposite";
 import {ArrayCompositeTreeViewDU, ArrayCompositeTreeViewDUCache} from "./arrayComposite";
 import {tree_serializeToBytesArrayComposite} from "../type/arrayComposite";
+import {Snapshot} from "../util/types";
 
 export class ListCompositeTreeViewDU<
   ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
@@ -130,7 +124,8 @@ export class ListCompositeTreeViewDU<
     const rootNode = this.sliceTo(count - 1)._rootNode;
     const chunksNode = this.type.tree_getChunksNode(rootNode);
 
-    return toSnapshot(chunksNode, this.type.chunkDepth, count);
+    const snapshot = toSnapshot(chunksNode, this.type.chunkDepth, count);
+    return {...snapshot, root: rootNode.root};
   }
 
   /**

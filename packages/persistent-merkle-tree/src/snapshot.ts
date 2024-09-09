@@ -3,9 +3,8 @@ import {zeroNode} from "./zeroNode";
 import {Gindex, toGindex} from "./gindex";
 import {LeafNode, Node} from "./node";
 
-export type Snapshot = {
+type Snapshot = {
   finalized: Uint8Array[];
-  root: Uint8Array;
   count: number;
 };
 
@@ -25,7 +24,6 @@ export function toSnapshot(rootNode: Node, depth: number, count: number): Snapsh
 
   return {
     finalized,
-    root: rootNode.root,
     count,
   };
 }
@@ -46,10 +44,6 @@ export function fromSnapshot(snapshot: Snapshot, depth: number): Node {
   for (const [i, gindex] of finalizedGindices.entries()) {
     const node = LeafNode.fromRoot(snapshot.finalized[i]);
     tree.setNode(gindex, node);
-  }
-
-  if (!byteArrayEquals(tree.root, snapshot.root)) {
-    throw new Error(`Snapshot root is incorrect, expected ${snapshot.root}, got ${tree.root}`);
   }
 
   return tree.rootNode;
@@ -90,14 +84,4 @@ export function indexToFinalizedGindices(depth: number, index: number): Gindex[]
   }
 
   return result;
-}
-
-function byteArrayEquals(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
 }

@@ -1,16 +1,10 @@
-import {
-  Node,
-  Snapshot,
-  zeroNode,
-  subtreeFillToContents,
-  getNodesAtDepth,
-  ZERO_SNAPSHOT,
-} from "@chainsafe/persistent-merkle-tree";
+import {Node, zeroNode, subtreeFillToContents, getNodesAtDepth, ZERO_SNAPSHOT} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeTreeViewDUCache} from "./arrayComposite";
 import {ListCompositeTreeViewDU} from "./listComposite";
 import {PartialListCompositeType} from "../type/partialListComposite";
+import {Snapshot} from "../util/types";
 
 /**
  * Similar to ListCompositeTreeViewDU but this is created from a snapshot so some methods are not supported

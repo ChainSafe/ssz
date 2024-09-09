@@ -1,8 +1,10 @@
-import {fromSnapshot, zeroNode, Snapshot} from "@chainsafe/persistent-merkle-tree";
+import {fromSnapshot, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {ListCompositeTreeView} from "../view/listComposite";
 import {ListCompositeOpts, ListCompositeType} from "./listComposite";
 import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite";
+import {Snapshot} from "../util/types";
+import {byteArrayEquals} from "../util/byteArray";
 
 /**
  * Similar to ListCompositeType, this is mainly used to create a PartialListCompositeTreeViewDU from a snapshot.
@@ -20,6 +22,10 @@ export class PartialListCompositeType<
     const chunksNode = fromSnapshot(snapshot, this.chunkDepth);
     // old root node could be whatever, so leave zeroNode(0) here
     const rootNode = this.tree_setChunksNode(zeroNode(0), chunksNode, snapshot.count);
+
+    if (!byteArrayEquals(rootNode.root, snapshot.root)) {
+      throw new Error(`Snapshot root is incorrect, expected ${snapshot.root}, got ${rootNode.root}`);
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new PartialListCompositeTreeViewDU(this, rootNode, snapshot);
   }
