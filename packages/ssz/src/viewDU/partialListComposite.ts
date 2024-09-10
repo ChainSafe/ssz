@@ -36,6 +36,8 @@ export class PartialListCompositeTreeViewDU<
     return super.toSnapshot(count);
   }
 
+  /** Methods in ArrayCompositeTreeViewDU */
+
   get(index: number): CompositeViewDU<ElementType> {
     if (index < this.snapshot.count) {
       throw new Error(`Cannot get index ${index} less than existing snapshot count ${this.snapshot.count}`);
@@ -67,6 +69,12 @@ export class PartialListCompositeTreeViewDU<
   getAllReadonlyValues(): ValueOf<ElementType>[] {
     throw new Error("getAllReadonlyValues() is not supported for PartialListCompositeTreeViewDU");
   }
+
+  // commit() is inherited from ArrayCompositeTreeViewDU
+
+  /** Methods in ListCompositeTreeViewDU */
+
+  // push() is inherited from ListCompositeTreeViewDU
 
   /**
    * Similar to ListCompositeTreeViewDU.sliceTo() but:
@@ -122,22 +130,14 @@ export class PartialListCompositeTreeViewDU<
     return new PartialListCompositeTreeViewDU(this.type, newRootNode, ZERO_SNAPSHOT) as this;
   }
 
-  /**
-   * Similar to ListCompositeTreeViewDU.toValue() but we need to set undefined values for items 0 to snapshot.count - 1
-   */
-  toValue(): ValueOf<ElementType>[] {
-    const values = new Array<ValueOf<ElementType>>(this.length);
-
-    const snapshotCount = this.snapshot.count;
-    const allNodes = getNodesAtDepth(this._rootNode, this.type.depth, snapshotCount, this.length - snapshotCount);
-    const type = this.type.elementType;
-    // value of 0 to snapshot.count - 1 is from snapshot, and they are undefined
-    for (let i = snapshotCount; i < this.length; i++) {
-      values[i] = type.toValueFromViewDU(type.getViewDU(allNodes[i - snapshotCount]));
-    }
-
-    return values;
+  serializeToBytes(): number {
+    throw new Error("serializeToBytes() is not supported for PartialListCompositeTreeViewDU");
   }
+
+  /** Methods in TreeViewDU */
+
+  // hashTreeRoot() is inherited from TreeViewDU
+  // batchHashTreeRoot() is inherited from TreeViewDU
 
   /**
    * Does not support serialize and deserialize, it works through snapshot.
@@ -157,6 +157,24 @@ export class PartialListCompositeTreeViewDU<
       this.clearCache();
       return this.rootNodeToViewDU(this.node, cache) as this;
     }
+  }
+
+  /**
+   * Mainly used for testing, to ensure the snapshot is correct.
+   * Set undefined values for items 0 to snapshot.count - 1
+   */
+  toValue(): ValueOf<ElementType>[] {
+    const values = new Array<ValueOf<ElementType>>(this.length);
+
+    const snapshotCount = this.snapshot.count;
+    const allNodes = getNodesAtDepth(this._rootNode, this.type.depth, snapshotCount, this.length - snapshotCount);
+    const type = this.type.elementType;
+    // value of 0 to snapshot.count - 1 is from snapshot, and they are undefined
+    for (let i = snapshotCount; i < this.length; i++) {
+      values[i] = type.toValueFromViewDU(type.getViewDU(allNodes[i - snapshotCount]));
+    }
+
+    return values;
   }
 
   /**
