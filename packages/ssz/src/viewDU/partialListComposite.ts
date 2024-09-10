@@ -27,6 +27,9 @@ export class PartialListCompositeTreeViewDU<
     this.snapshot = snapshot;
   }
 
+  /**
+   * Create snapshot from the first `count` elements of the list.
+   */
   toSnapshot(count: number): Snapshot {
     if (count < this.snapshot.count) {
       throw new Error(
