@@ -5,6 +5,7 @@ import {ListCompositeType} from "../view/listComposite";
 import {ArrayCompositeTreeViewDU, ArrayCompositeTreeViewDUCache} from "./arrayComposite";
 import {tree_serializeToBytesArrayComposite} from "../type/arrayComposite";
 import {Snapshot} from "../util/types";
+import {zeroSnapshot} from "../util/snapshot";
 
 export class ListCompositeTreeViewDU<
   ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
@@ -116,8 +117,12 @@ export class ListCompositeTreeViewDU<
   toSnapshot(count: number): Snapshot {
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
-    if (count <= 0 || count > this._length) {
+    if (count < 0 || count > this._length) {
       throw Error(`Invalid count ${count}, length is ${this._length}`);
+    }
+
+    if (count === 0) {
+      return zeroSnapshot(this.type.chunkDepth);
     }
 
     // sliceTo is inclusive

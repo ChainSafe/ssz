@@ -29,7 +29,7 @@ describe("PartialListCompositeType ViewDU", function () {
     for (let snapshotCount = 1; snapshotCount <= maxItem; snapshotCount++) {
       it(`snapshotCount=${snapshotCount}`, function () {
         const snapshot = fullList.toSnapshot(snapshotCount);
-        const partialList = partialListType.snapshotToViewDU(snapshot);
+        const partialList = partialListType.toPartialViewDU(snapshot);
         expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
         expect(partialList.toValue()).to.deep.equal(new Array(snapshotCount));
 
@@ -52,7 +52,7 @@ describe("PartialListCompositeType ViewDU", function () {
     for (let snapshotCount = 1; snapshotCount <= maxItem; snapshotCount++) {
       it(`snapshotCount=${snapshotCount}`, function () {
         const snapshot = fullList.toSnapshot(snapshotCount);
-        const partialList = partialListType.snapshotToViewDU(snapshot);
+        const partialList = partialListType.toPartialViewDU(snapshot);
         expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
         expect(partialList.toValue()).to.deep.equal(new Array(snapshotCount));
 
@@ -71,7 +71,7 @@ describe("PartialListCompositeType ViewDU", function () {
     for (let snapshotCount = 1; snapshotCount <= maxItem; snapshotCount++) {
       it(`snapshotCount=${snapshotCount}`, function () {
         const snapshot = fullList.toSnapshot(snapshotCount);
-        const partialList = partialListType.snapshotToViewDU(snapshot);
+        const partialList = partialListType.toPartialViewDU(snapshot);
         expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
         expect(partialList.toValue()).to.deep.equal(new Array(snapshotCount));
 
@@ -94,7 +94,7 @@ describe("PartialListCompositeType ViewDU", function () {
     for (let snapshotCount = 1; snapshotCount <= maxItem; snapshotCount++) {
       it(`snapshotCount=${snapshotCount}`, function () {
         const snapshot = fullList.toSnapshot(snapshotCount);
-        const partialList = partialListType.snapshotToViewDU(snapshot);
+        const partialList = partialListType.toPartialViewDU(snapshot);
         expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
         expect(partialList.toValue()).to.deep.equal(new Array(snapshotCount));
 
@@ -120,7 +120,7 @@ describe("PartialListCompositeType ViewDU", function () {
     for (let snapshotCount = 1; snapshotCount <= maxItem; snapshotCount++) {
       it(`snapshotCount=${snapshotCount}`, function () {
         const snapshot = fullList.toSnapshot(snapshotCount);
-        const partialList = partialListType.snapshotToViewDU(snapshot);
+        const partialList = partialListType.toPartialViewDU(snapshot);
         expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
         expect(partialList.toValue()).to.deep.equal(new Array(snapshotCount));
 

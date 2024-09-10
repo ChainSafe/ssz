@@ -4,7 +4,8 @@ import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeTreeViewDUCache} from "./arrayComposite";
 import {ListCompositeTreeViewDU} from "./listComposite";
 import {PartialListCompositeType} from "../type/partialListComposite";
-import {Snapshot, ZERO_SNAPSHOT} from "../util/types";
+import {Snapshot} from "../util/types";
+import {zeroSnapshot} from "../util/snapshot";
 
 /**
  * Similar to ListCompositeTreeViewDU but this is created from a snapshot so some methods are not supported
@@ -93,7 +94,7 @@ export class PartialListCompositeTreeViewDU<
     if (index === this.snapshot.count - 1) {
       // super.sliceTo() uses treeZeroAfterIndex() which does not work well in this case
       // this is because treeZeroAfterIndex() requires navigating the tree to index first which we don't have in this case
-      return this.type.snapshotToViewDU(this.snapshot) as this;
+      return this.type.toPartialViewDU(this.snapshot) as this;
     }
 
     return super.sliceTo(index);
@@ -126,8 +127,8 @@ export class PartialListCompositeTreeViewDU<
 
     const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength);
 
-    // Use ZERO_SNAPSHOT because this is equivalent to a full tree
-    return new PartialListCompositeTreeViewDU(this.type, newRootNode, ZERO_SNAPSHOT) as this;
+    // Use zeroSnapshot because this is equivalent to a full tree
+    return new PartialListCompositeTreeViewDU(this.type, newRootNode, zeroSnapshot(this.type.chunkDepth)) as this;
   }
 
   serializeToBytes(): number {

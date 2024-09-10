@@ -13,7 +13,11 @@ type Snapshot = {
  * Tree could be full tree, or partial tree. See https://github.com/ChainSafe/ssz/issues/293
  */
 export function toSnapshot(rootNode: Node, depth: number, count: number): Snapshot {
-  const finalizedGindices = indexToFinalizedGindices(depth, count - 1);
+  if (count < 0) {
+    throw new Error(`Expect count to be non-negative, got ${count}`);
+  }
+
+  const finalizedGindices = count > 0 ? indexToFinalizedGindices(depth, count - 1) : [];
   const finalized = finalizedGindices.map((gindex) => getNode(rootNode, gindex).root);
 
   return {
@@ -28,15 +32,19 @@ export function toSnapshot(rootNode: Node, depth: number, count: number): Snapsh
  */
 export function fromSnapshot(snapshot: Snapshot, depth: number): Node {
   const tree = new Tree(zeroNode(depth));
+  const {count, finalized} = snapshot;
+  if (count < 0) {
+    throw new Error(`Expect count to be non-negative, got ${count}`);
+  }
 
-  const finalizedGindices = indexToFinalizedGindices(depth, snapshot.count - 1);
+  const finalizedGindices = count > 0 ? indexToFinalizedGindices(depth, count - 1) : [];
 
-  if (finalizedGindices.length !== snapshot.finalized.length) {
-    throw new Error(`Expected ${finalizedGindices.length} finalized gindices, got ${snapshot.finalized.length}`);
+  if (finalizedGindices.length !== finalized.length) {
+    throw new Error(`Expected ${finalizedGindices.length} finalized gindices, got ${finalized.length}`);
   }
 
   for (const [i, gindex] of finalizedGindices.entries()) {
-    const node = LeafNode.fromRoot(snapshot.finalized[i]);
+    const node = LeafNode.fromRoot(finalized[i]);
     tree.setNode(gindex, node);
   }
 

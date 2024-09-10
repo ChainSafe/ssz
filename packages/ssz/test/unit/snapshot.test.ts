@@ -18,11 +18,11 @@ describe("snapshot", () => {
   }
   fullList.commit();
 
-  for (let snapshotCount = 1; snapshotCount <= maxItems; snapshotCount++) {
+  for (let snapshotCount = 0; snapshotCount <= maxItems; snapshotCount++) {
     // toSnapshot uses sliceTo, it's good to test sliceFrom too
     it(`toSnapshot and fromSnapshot then sliceTo/sliceFrom with snapshotCount ${snapshotCount}`, () => {
       const snapshot = fullList.toSnapshot(snapshotCount);
-      const partialList = partialListType.snapshotToViewDU(snapshot);
+      const partialList = partialListType.toPartialViewDU(snapshot);
 
       // 1st step - check if the restored root node is the same
       expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
@@ -48,7 +48,7 @@ describe("snapshot", () => {
 
     it(`toSnapshot and fromSnapshot then subsequent toSnapshot calls with snapshotCount ${snapshotCount}`, () => {
       const snapshot = fullList.toSnapshot(snapshotCount);
-      const partialList = partialListType.snapshotToViewDU(snapshot);
+      const partialList = partialListType.toPartialViewDU(snapshot);
 
       // 1st step - check if the restored root node is the same
       expect(partialList.hashTreeRoot()).to.deep.equal(fullList.sliceTo(snapshotCount - 1).hashTreeRoot());
@@ -61,7 +61,7 @@ describe("snapshot", () => {
         // confirm toSnapshot() works
         for (let j = snapshotCount; j <= i; j++) {
           const snapshot2 = partialList.toSnapshot(j);
-          const partialList2 = partialListType.snapshotToViewDU(snapshot2);
+          const partialList2 = partialListType.toPartialViewDU(snapshot2);
           // sliceTo() is inclusive
           const fullListToJ = fullList.sliceTo(j - 1);
           expect(partialList2.length).to.equal(fullListToJ.length);

@@ -10,7 +10,7 @@ describe("toSnapshot and fromSnapshot", () => {
   const depth = 4;
   const maxItems = Math.pow(2, depth);
 
-  for (let count = 1; count <= maxItems; count ++) {
+  for (let count = 0; count <= maxItems; count ++) {
     it(`toSnapshot and fromSnapshot with count ${count}`, () => {
       const nodes = Array.from({length: count}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
       const fullListRootNode = subtreeFillToContents(nodes, depth);
