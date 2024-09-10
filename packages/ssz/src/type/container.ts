@@ -79,6 +79,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
   constructor(readonly fields: Fields, readonly opts?: ContainerOptions<Fields>) {
+    console.dir('Viktar custom ssz ContainerType created');
     super(opts?.cachePermanentRootStruct);
 
     // Render detailed typeName. Consumers should overwrite since it can get long
