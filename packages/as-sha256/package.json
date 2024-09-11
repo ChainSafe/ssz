@@ -5,12 +5,12 @@
   "author": "ChainSafe Systems",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ChainSafe/as-sha256/issues"
+    "url": "https://github.com/ChainSafe/ssz/issues"
   },
-  "homepage": "https://github.com/ChainSafe/as-sha256#readme",
+  "homepage": "https://github.com/ChainSafe/ssz/tree/master/packages/as-sha256/#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chainsafe/as-sha256.git"
+    "url": "git+https://github.com/chainsafe/ssz.git"
   },
   "main": "lib/index.js",
   "typesVersions": {
