@@ -4,7 +4,6 @@ import {
   ContainerNodeStructType,
   ContainerType,
   ListCompositeType,
-  ReusableListIterator,
   toHexString,
   UintNumberType,
   ValueOf,
@@ -121,21 +120,11 @@ describe("ListCompositeType tree reads", () => {
       // Only for viewDU
       if (view instanceof ArrayCompositeTreeViewDU) {
         expect(() => view.getAllReadonly()).to.throw("Must commit changes before reading all nodes");
-        expect(() => view.getAllReadonlyIter()).to.throw("Must commit changes before reading all nodes");
         view.commit();
       }
 
       expect(view.getAllReadonly().map(elementToValue)).deep.equals(values, "Wrong getAllReadonly()");
-      (view.getAllReadonlyIter() as CompositeView<typeof containerUintsType>[]).map(elementToValue);
       expect(view.getAllReadonlyValues()).deep.equals(values, "Wrong getAllReadonlyValues()");
-      const result = new ReusableListIterator<ValueOf<typeof containerUintsType>>();
-      view.getAllReadonlyValuesIter(result);
-      expect(result.toArray()).deep.equals(values, "Wrong getAllReadonlyValues()");
-      // reuse ReusableListIterator
-      result.reset();
-      view.getAllReadonlyValuesIter(result);
-      result.clean();
-      expect(result.toArray()).deep.equals(values, "Wrong getAllReadonlyValues()");
 
       // Only for viewDU
       if (view instanceof ArrayCompositeTreeViewDU) {

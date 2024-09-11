@@ -1,13 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {
-  CompositeViewDU,
-  ContainerNodeStructType,
-  ContainerType,
-  ListCompositeType,
-  ReusableListIterator,
-  UintNumberType,
-  ValueOf,
-} from "../../../src";
+import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src";
 
 const byteType = new UintNumberType(1);
 
@@ -41,30 +33,10 @@ describe("ListCompositeType types", () => {
         }
       });
 
-      const viewDUs = new ReusableListIterator<CompositeViewDU<typeof type>>();
-      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyIter() + iterate`, () => {
-        viewDUs.reset();
-        viewDU.getAllReadonlyIter(viewDUs);
-        viewDUs.clean();
-        for (const viewDU of viewDUs) {
-          viewDU;
-        }
-      });
-
       itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
         const values = viewDU.getAllReadonlyValues();
         for (let i = 0; i < len; i++) {
           values[i];
-        }
-      });
-
-      const values = new ReusableListIterator<ValueOf<typeof type>>();
-      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyValuesIter() + iterate`, () => {
-        values.clean();
-        viewDU.getAllReadonlyValuesIter(values);
-        values.reset();
-        for (const value of values) {
-          value;
         }
       });
 

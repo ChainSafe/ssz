@@ -10,7 +10,6 @@ import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ArrayCompositeType} from "../view/arrayComposite";
 import {TreeViewDU} from "./abstract";
-import {ListIterator} from "../interface";
 
 export type ArrayCompositeTreeViewDUCache = {
   nodes: Node[];
@@ -162,18 +161,13 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * Similar to getAllReadonly but support ListIterator interface.
-   * Use ReusableListIterator to reuse over multiple calls.
+   * Apply `fn` to each ViewDU in the array
    */
-  getAllReadonlyIter(views?: ListIterator<CompositeViewDU<ElementType>>): ListIterator<CompositeViewDU<ElementType>> {
+  forEach(fn: (viewDU: CompositeViewDU<ElementType>, index: number) => void): void {
     this.populateAllNodes();
-
-    views = views ?? new Array<CompositeViewDU<ElementType>>();
     for (let i = 0; i < this._length; i++) {
-      const view = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
-      views.push(view);
+      fn(this.type.elementType.getViewDU(this.nodes[i], this.caches[i]), i);
     }
-    return views;
   }
 
   /**
@@ -193,18 +187,13 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * Similar to getAllReadonlyValues but support ListIterator interface.
-   * Use ReusableListIterator to reuse over multiple calls.
+   * Apply `fn` to each value in the array
    */
-  getAllReadonlyValuesIter(values?: ListIterator<ValueOf<ElementType>>): ListIterator<ValueOf<ElementType>> {
+  forEachValue(fn: (value: ValueOf<ElementType>, index: number) => void): void {
     this.populateAllNodes();
-
-    values = values ?? new Array<ValueOf<ElementType>>();
     for (let i = 0; i < this._length; i++) {
-      const value = this.type.elementType.tree_toValue(this.nodes[i]);
-      values.push(value);
+      fn(this.type.elementType.tree_toValue(this.nodes[i]), i);
     }
-    return values;
   }
 
   /**
