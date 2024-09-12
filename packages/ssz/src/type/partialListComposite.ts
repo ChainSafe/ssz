@@ -5,6 +5,7 @@ import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite";
 import {Snapshot} from "../util/types";
 import {byteArrayEquals} from "../util/byteArray";
 import {zeroSnapshot} from "../util/snapshot";
+import {addLengthNode} from "./arrayBasic";
 
 /**
  * Similar to ListCompositeType, this is mainly used to create a PartialListCompositeTreeViewDU from a snapshot.
@@ -47,8 +48,7 @@ export class PartialListCompositeType<
    */
   toPartialViewDU(snapshot: Snapshot): PartialListCompositeTreeViewDU<ElementType> {
     const chunksNode = fromSnapshot(snapshot, this.chunkDepth);
-    // old root node could be whatever, so leave zeroNode(0) here
-    const rootNode = this.tree_setChunksNode(zeroNode(0), chunksNode, snapshot.count);
+    const rootNode = addLengthNode(chunksNode, snapshot.count);
 
     if (!byteArrayEquals(rootNode.root, snapshot.root)) {
       throw new Error(`Snapshot root is incorrect, expected ${snapshot.root}, got ${rootNode.root}`);
@@ -61,8 +61,7 @@ export class PartialListCompositeType<
    * Creates a PartialListCompositeTreeViewDU from a zero snapshot.
    */
   defaultPartialViewDU(): PartialListCompositeTreeViewDU<ElementType> {
-    // old root node could be whatever, so leave zeroNode(0) here
-    const rootNode = this.tree_setChunksNode(zeroNode(0), zeroNode(this.chunkDepth), 0);
+    const rootNode = addLengthNode(zeroNode(this.chunkDepth), 0);
 
     return new PartialListCompositeTreeViewDU(this, rootNode, zeroSnapshot(this.chunkDepth));
   }
