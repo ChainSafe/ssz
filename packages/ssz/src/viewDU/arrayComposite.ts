@@ -147,10 +147,13 @@ export class ArrayCompositeTreeViewDU<
   /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    */
-  getAllReadonly(): CompositeViewDU<ElementType>[] {
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    if (views && views.length !== this._length) {
+      throw Error(`Expected ${this._length} views, got ${views.length}`);
+    }
     this.populateAllNodes();
 
-    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
     }
@@ -158,16 +161,39 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
+   * Apply `fn` to each ViewDU in the array
+   */
+  forEach(fn: (viewDU: CompositeViewDU<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.type.elementType.getViewDU(this.nodes[i], this.caches[i]), i);
+    }
+  }
+
+  /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     this.populateAllNodes();
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }
     return values;
+  }
+
+  /**
+   * Apply `fn` to each value in the array
+   */
+  forEachValue(fn: (value: ValueOf<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.type.elementType.tree_toValue(this.nodes[i]), i);
+    }
   }
 
   /**
@@ -189,23 +215,30 @@ export class ArrayCompositeTreeViewDU<
     // Depth includes the extra level for the length node
     const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
-    const nodesChanged: {index: number; node: Node}[] = [];
+    const indexesChanged = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
+    const indexes: number[] = [];
+    const nodes: Node[] = [];
+    for (const index of indexesChanged) {
+      const view = this.viewsChanged.get(index);
+      if (!view) {
+        // should not happen
+        throw Error("View not found in viewsChanged, index=" + index);
+      }
 
-    for (const [index, view] of this.viewsChanged) {
       const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
-      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-      this.nodes[index] = node;
-      nodesChanged.push({index, node});
+      // there's a chance the view is not changed, no need to rebind nodes in that case
+      if (this.nodes[index] !== node) {
+        // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+        this.nodes[index] = node;
+        // nodesChanged.push({index, node});
+        indexes.push(index);
+        nodes.push(node);
+      }
 
       // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
       const cache = this.type.elementType.cacheOfViewDU(view);
       if (cache) this.caches[index] = cache;
     }
-
-    // TODO: Optimize to loop only once, Numerical sort ascending
-    const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
-    const indexes = nodesChangedSorted.map((entry) => entry.index);
-    const nodes = nodesChangedSorted.map((entry) => entry.node);
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     const offsetThis = hcOffset + this.type.tree_chunksNodeOffset();

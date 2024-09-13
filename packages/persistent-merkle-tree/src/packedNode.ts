@@ -18,9 +18,16 @@ export function packedRootsBytesToNode(depth: number, dataView: DataView, start:
  *
  *    h0     h1     h2     h3     h4     h5     h6     h7
  * |------|------|------|------|------|------|------|------|
+ *
+ * @param values list of uint64 numbers
+ * @param leafNodes optional list of LeafNodes to reuse
  */
-export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
-  const leafNodes = new Array<LeafNode>(Math.ceil(values.length / 4));
+export function packedUintNum64sToLeafNodes(values: number[], leafNodes?: LeafNode[]): LeafNode[] {
+  const nodeCount = Math.ceil(values.length / 4);
+  if (leafNodes && leafNodes.length !== nodeCount) {
+    throw new Error(`Invalid leafNode length: ${leafNodes.length} !== ${nodeCount}`);
+  }
+  leafNodes = leafNodes ?? new Array<LeafNode>(Math.ceil(values.length / 4));
   for (let i = 0; i < values.length; i++) {
     const nodeIndex = Math.floor(i / 4);
     const leafNode = leafNodes[nodeIndex] ?? new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);

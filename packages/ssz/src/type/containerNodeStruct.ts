@@ -24,6 +24,9 @@ import {ValueOfFields} from "../view/container";
  * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
  */
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
+  // Temporary root to avoid allocating new Uint8Array every time
+  private temporaryRoot = new Uint8Array(32);
+
   constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
     super(fields, {
       // Overwrite default "Container" typeName
@@ -106,7 +109,6 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
-  // TODO: Optimize conversion
   private valueToTree(value: ValueOfFields<Fields>): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);

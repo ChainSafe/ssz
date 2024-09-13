@@ -16,6 +16,12 @@ export interface List<T> extends ArrayLike<T> {
   pop(): T | undefined;
 }
 
+export interface ListIterator<T> {
+  readonly length: number;
+  push(...values: T[]): void;
+  [Symbol.iterator](): Iterator<T>;
+}
+
 export type Container<T extends Record<string, unknown>> = T;
 
 export type ByteVector = Vector<number>;
