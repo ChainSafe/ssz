@@ -29,6 +29,7 @@ export {TreeView} from "./view/abstract";
 export {ValueOfFields, ContainerTypeGeneric} from "./view/container";
 export {TreeViewDU} from "./viewDU/abstract";
 export {ListCompositeTreeViewDU} from "./viewDU/listComposite";
+export {ListBasicTreeViewDU} from "./viewDU/listBasic";
 export {ArrayCompositeTreeViewDUCache} from "./viewDU/arrayComposite";
 export {ContainerNodeStructTreeViewDU} from "./viewDU/containerNodeStruct";
 
