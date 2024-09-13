@@ -29,6 +29,9 @@ export type NodeWithCachedTreeRoot = {
 export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unknown>> extends TreeView<T> {
   /**
    * Applies any deferred updates that may be pending in this ViewDU instance and updates its internal `Node`.
+   * @param hcOffset The offset of the current node from root
+   * @param hcByLevel The global HashComputationLevel array, this is output parameter
+   * These are optional parameters that are used to compute hashTreeRoot() in batch if they are provided.
    */
   abstract commit(hcOffset?: number, hcByLevel?: HashComputationLevel[] | null): void;
 

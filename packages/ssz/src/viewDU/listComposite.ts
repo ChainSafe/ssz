@@ -80,6 +80,8 @@ export class ListCompositeTreeViewDU<
   sliceFrom(index: number): this {
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
+    // populate to `this.nodes` to ensure all nodes are loaded
+    this.populateAllNodes();
 
     // If negative index, try to make it positive long as |index| < length
     if (index < 0) {

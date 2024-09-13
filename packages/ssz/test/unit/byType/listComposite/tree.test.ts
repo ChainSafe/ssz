@@ -11,6 +11,7 @@ import {
 import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite";
 import {ssz} from "../../../lodestarTypes/primitive";
 import {runViewTestMutation} from "../runViewTestMutation";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(
@@ -204,13 +205,16 @@ describe("ListCompositeType.sliceTo", () => {
 });
 
 describe("ListCompositeType.sliceFrom", () => {
-  it("Slice List from multiple length", () => {
-    const listType = new ListCompositeType(ssz.Root, 1024);
-    const listLength = 16;
-    const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
-    const listView = listType.toViewDU(list);
+  const listType = new ListCompositeType(ssz.Root, 1024);
+  const listLength = 16;
+  const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+  let listView: ListCompositeTreeViewDU<typeof ssz.Root>;
+  beforeEach(() => {
+    listView = listType.toViewDU(list);
+  });
 
-    for (let i = -(listLength + 1); i < listLength + 1; i++) {
+  for (let i = -(listLength + 1); i < listLength + 1; i++) {
+    it(`Slice List from list length ${listLength}`, () => {
       // compare list.slice(i) to listView.sliceFrom(i), they should be equivalent
       const slicedList = list.slice(i);
       const slicedListView = listView.sliceFrom(i);
@@ -218,8 +222,120 @@ describe("ListCompositeType.sliceFrom", () => {
       expect(slicedListView.length).to.equal(slicedList.length);
       expect(toHexString(slicedListView.serialize())).to.equal(toHexString(listType.serialize(slicedList)));
       expect(toHexString(slicedListView.hashTreeRoot())).to.equal(toHexString(listType.hashTreeRoot(slicedList)));
-    }
+    });
+  }
+});
+
+describe("ListCompositeType batchHashTreeRoot", () => {
+  const value = [
+    {a: 1, b: 2},
+    {a: 3, b: 4},
+  ];
+  const containerStructUintsType = new ContainerNodeStructType(
+    {a: uint64NumInfType, b: uint64NumInfType},
+    {typeName: "ContainerNodeStruct(uint64)"}
+  );
+  const listOfContainersType2 = new ListCompositeType(containerStructUintsType, 4, {
+    typeName: "ListCompositeType(ContainerNodeStructType)",
   });
+
+  for (const list of [listOfContainersType, listOfContainersType2]) {
+    const typeName = list.typeName;
+    const expectedRoot = list.toView(value).hashTreeRoot();
+
+    it(`${typeName} - fresh ViewDU`, () => {
+      expect(listOfContainersType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+
+    it(`${typeName} - push then batchHashTreeRoot()`, () => {
+      const viewDU = listOfContainersType.defaultViewDU();
+      viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.push(containerUintsType.toViewDU({a: 3, b: 4}));
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+
+      // assign again, commit() then batchHashTreeRoot()
+      viewDU.set(0, containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
+      viewDU.commit();
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+
+    it(`${typeName} - full hash then modify full non-hashed child element`, () => {
+      const viewDU = listOfContainersType.defaultViewDU();
+      viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.push(containerUintsType.toViewDU({a: 33, b: 44}));
+      viewDU.batchHashTreeRoot();
+      viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+
+      // assign the same value again, commit() then batchHashTreeRoot()
+      viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
+      viewDU.commit();
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+
+    it(`${typeName} - full hash then modify partially hashed child element`, () => {
+      const viewDU = listOfContainersType.defaultViewDU();
+      viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.push(containerUintsType.toViewDU({a: 33, b: 44}));
+      viewDU.batchHashTreeRoot();
+      const item1 = containerUintsType.toViewDU({a: 3, b: 44});
+      item1.batchHashTreeRoot();
+      item1.b = 4;
+      viewDU.set(1, item1);
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+
+      // assign the same value again, commit() then batchHashTreeRoot()
+      const item2 = viewDU.get(1);
+      item2.a = 3;
+      item2.b = 4;
+      viewDU.commit();
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+
+    it(`${typeName} - full hash then modify full hashed child element`, () => {
+      const viewDU = listOfContainersType.defaultViewDU();
+      viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.push(containerUintsType.toViewDU({a: 33, b: 44}));
+      viewDU.batchHashTreeRoot();
+      const item1 = containerUintsType.toViewDU({a: 3, b: 4});
+      item1.batchHashTreeRoot();
+      viewDU.set(1, item1);
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+
+      // assign the same value again, commit() then batchHashTreeRoot()
+      const newItem = containerUintsType.toViewDU({a: 3, b: 4});
+      viewDU.set(1, newItem);
+      viewDU.commit();
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+
+    it(`${typeName} - full hash then modify partial child element`, () => {
+      const viewDU = listOfContainersType.defaultViewDU();
+      viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.push(containerUintsType.toViewDU({a: 33, b: 44}));
+      viewDU.batchHashTreeRoot();
+      viewDU.get(1).a = 3;
+      viewDU.get(1).b = 4;
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+
+      // assign the same value again, commit() then batchHashTreeRoot()
+      viewDU.get(1).a = 3;
+      viewDU.get(1).b = 4;
+      viewDU.commit();
+      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+
+    // similar to a fresh ViewDU but it's good to test
+    it(`${typeName} - sliceTo()`, () => {
+      const viewDU = listOfContainersType.defaultViewDU();
+      viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
+      viewDU.push(containerUintsType.toViewDU({a: 3, b: 4}));
+      viewDU.push(containerUintsType.toViewDU({a: 5, b: 6}));
+      viewDU.batchHashTreeRoot();
+      expect(viewDU.sliceTo(1).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    });
+  }
 });
 
 describe("ListCompositeType batchHashTreeRoot", () => {

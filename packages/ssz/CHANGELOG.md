@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.17.0...ssz-v0.17.1) (2024-08-19)
+
+
+### Bug Fixes
+
+* sliceFrom api ([#394](https://github.com/ChainSafe/ssz/issues/394)) ([4ca1d6f](https://github.com/ChainSafe/ssz/commit/4ca1d6f789428c52d012e0e2d8fa5809849e581e))
+
 ## [0.17.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.16.0...ssz-v0.17.0) (2024-08-06)
 
 
