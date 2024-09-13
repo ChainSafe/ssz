@@ -28,8 +28,8 @@ export class ListUintNum64Type extends ListBasicType<UintNumberType> {
 
   /**
    * Return a ListBasicTreeViewDU with nodes populated
-   * @param unusedViewDU optional, if provided we'll create ViewDU using the provided rootNode. Consumer should recompute
-   * parent hashes of the returned ViewDU in this case.
+   * @param unusedViewDU optional, if provided we'll create ViewDU using the provided rootNode. Need to rehash the whole
+   * tree in this case to make it clean for consumers.
    */
   toViewDU(value: number[], unusedViewDU?: ListBasicTreeViewDU<UintNumberType>): ListBasicTreeViewDU<UintNumberType> {
     // no need to serialize and deserialize like in the abstract class
@@ -58,34 +58,38 @@ export class ListUintNum64Type extends ListBasicType<UintNumberType> {
 
   /**
    * No need to serialize and deserialize like in the abstract class
-   * // TODO: modify this?
+   * This should be conformed to parent's signature so cannot provide an `unusedViewDU` parameter here
    */
   value_toTree(value: number[]): Node {
     const {treeNode} = this.packedUintNum64sToNode(value);
     return treeNode;
   }
 
-  private packedUintNum64sToNode(value: number[], oldRootNode?: Node): {treeNode: Node; leafNodes: LeafNode[]} {
+  private packedUintNum64sToNode(value: number[], unusedRootNode?: Node): {treeNode: Node; leafNodes: LeafNode[]} {
     if (value.length > this.limit) {
       throw new Error(`Exceeds limit: ${value.length} > ${this.limit}`);
     }
 
-    if (oldRootNode) {
-      const oldLength = getLengthFromRootNode(oldRootNode);
+    if (unusedRootNode) {
+      // create new tree from unusedRootNode
+      const oldLength = getLengthFromRootNode(unusedRootNode);
       if (oldLength > value.length) {
         throw new Error(`Cannot decrease length: ${oldLength} > ${value.length}`);
       }
+
       const oldNodeCount = Math.ceil(oldLength / 4);
-      const oldChunksNode = oldRootNode.left;
+      const oldChunksNode = unusedRootNode.left;
       const oldLeafNodes = getNodesAtDepth(oldChunksNode, this.chunkDepth, 0, oldNodeCount) as LeafNode[];
       if (oldLeafNodes.length !== oldNodeCount) {
         throw new Error(`oldLeafNodes.length ${oldLeafNodes.length} !== oldNodeCount ${oldNodeCount}`);
       }
+
       const newNodeCount = Math.ceil(value.length / 4);
       const count = newNodeCount - oldNodeCount;
       const newLeafNodes = Array.from({length: count}, () => new LeafNode(0, 0, 0, 0, 0, 0, 0, 0));
       const leafNodes = [...oldLeafNodes, ...newLeafNodes];
       packedUintNum64sToLeafNodes(value, leafNodes);
+
       // middle nodes are not changed so consumer must recompute parent hashes
       const newChunksNode = setNodesAtDepth(
         oldChunksNode,
@@ -94,9 +98,11 @@ export class ListUintNum64Type extends ListBasicType<UintNumberType> {
         newLeafNodes
       );
       const treeNode = addLengthNode(newChunksNode, value.length);
+
       return {treeNode, leafNodes};
     }
 
+    // create new tree from scratch
     const leafNodes = packedUintNum64sToLeafNodes(value);
     // subtreeFillToContents mutates the leafNodes array
     const chunksNode = subtreeFillToContents([...leafNodes], this.chunkDepth);
@@ -112,6 +118,10 @@ export class ListUintNum64Type extends ListBasicType<UintNumberType> {
   }
 }
 
+/**
+ * Consider moving this to persistent-merkle-tree.
+ * For now this is the only flow to force get hash computations.
+ */
 function forceGetHashComputations(
   node: Node,
   nodeDepth: number,
