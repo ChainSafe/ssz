@@ -1,4 +1,4 @@
-import {BitArray, ProfileType, UintNumberType, hash64} from "../../../../src";
+import {BitArray, ProfileType, UintNumberType} from "../../../../src";
 import {runTypeTestValid} from "../runTypeTestValid";
 
 // taken from eip spec tests

@@ -11,12 +11,18 @@ import {
   getNode,
   zeroNode,
   countToDepth,
-  setNodeH,
   getNodeH,
   setNode,
   setNodeWithFn,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, hash64, maxChunksToDepth, merkleize, splitIntoRootChunks, symbolCachedPermanentRoot} from "../util/merkleize";
+import {
+  ValueWithCachedPermanentRoot,
+  hash64,
+  maxChunksToDepth,
+  merkleize,
+  splitIntoRootChunks,
+  symbolCachedPermanentRoot,
+} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {Type, ValueOf} from "./abstract";

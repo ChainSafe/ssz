@@ -62,7 +62,7 @@ runTypeTestValid({
     },
   ],
 });
-// 
+//
 runTypeTestValid({
   type: Shape2,
   defaultValue: {side: null, color: 0, radius: null},

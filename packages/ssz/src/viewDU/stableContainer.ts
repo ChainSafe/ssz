@@ -5,7 +5,7 @@ import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composit
 import {computeSerdesData, ContainerTypeGeneric} from "../view/stableContainer";
 import {TreeViewDU} from "./abstract";
 import {OptionalType} from "../type/optional";
-import { BitArray } from "../value/bitArray"
+import {BitArray} from "../value/bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

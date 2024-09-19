@@ -29,7 +29,7 @@ import {
 } from "../viewDU/profile";
 import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
-import {getActiveFields, mixInActiveFields, setActiveFields} from "./stableContainer";
+import {mixInActiveFields, setActiveFields} from "./stableContainer";
 import {zeroHash} from "../util/zeros";
 /* eslint-disable @typescript-eslint/member-ordering */
 
