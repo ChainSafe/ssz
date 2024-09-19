@@ -8,6 +8,7 @@ import {
   concatGindices,
   getNode,
   BranchNode,
+  zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
@@ -30,7 +31,6 @@ import {
 import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
 import {mixInActiveFields, setActiveFields} from "./stableContainer";
-import {zeroHash} from "../util/zeros";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
