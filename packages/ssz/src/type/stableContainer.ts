@@ -25,8 +25,8 @@ import {
 } from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
+import {JsonPath, Type, ValueOf} from "./abstract";
+import {CompositeType, ByteViews, CompositeTypeAny, isCompositeType} from "./composite";
 import {
   getContainerTreeViewClass,
   ValueOfFields,
@@ -405,6 +405,42 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       return null;
     }
     return this.fieldsEntries[index].fieldName as string;
+  }
+
+  tree_createProofGindexes(node: Node, jsonPaths: JsonPath[]): Gindex[] {
+    const gindexes: Gindex[] = [];
+    const activeFields = this.tree_getActiveFields(node);
+
+    for (const jsonPath of jsonPaths) {
+      const prop = jsonPath[0];
+      if (prop == null) {
+        continue;
+      }
+      const fieldIndex = this.fieldsEntries.findIndex((entry) => entry.fieldName === prop);
+      if (fieldIndex === -1) throw Error(`Unknown container property ${prop}`);
+      const entry = this.fieldsEntries[fieldIndex];
+      if (entry.optional && !activeFields.get(fieldIndex)) {
+        // field is inactive and doesn't count as a leaf
+        continue;
+      }
+
+      // same to Composite
+      const {type, gindex} = this.getPathInfo(jsonPath);
+      if (!isCompositeType(type)) {
+        gindexes.push(gindex);
+      } else {
+        // if the path subtype is composite, include the gindices of all the leaves
+        const leafGindexes = type.tree_getLeafGindices(
+          gindex,
+          type.fixedSize === null ? getNode(node, gindex) : undefined
+        );
+        for (const gindex of leafGindexes) {
+          gindexes.push(gindex);
+        }
+      }
+    }
+
+    return gindexes;
   }
 
   tree_getLeafGindices(rootGindex: Gindex, rootNode?: Node): Gindex[] {
