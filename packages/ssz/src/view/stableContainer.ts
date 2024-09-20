@@ -30,7 +30,7 @@ export type NonOptionalFields<Fields extends Record<string, Type<unknown>>> = {
 };
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
-export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
+export type StableContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
   unknown
@@ -67,9 +67,9 @@ export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
 };
 
 export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
-  TreeView<ContainerTypeGeneric<Fields>>;
+  TreeView<StableContainerTypeGeneric<Fields>>;
 export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<unknown>>> = {
-  new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
+  new (type: StableContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };
 
 /**
@@ -87,8 +87,10 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
+class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<
+  StableContainerTypeGeneric<Fields>
+> {
+  constructor(readonly type: StableContainerTypeGeneric<Fields>, readonly tree: Tree) {
     super();
   }
 
@@ -98,7 +100,7 @@ class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends Tr
 }
 
 export function getContainerTreeViewClass<Fields extends Record<string, Type<unknown>>>(
-  type: ContainerTypeGeneric<Fields>
+  type: StableContainerTypeGeneric<Fields>
 ): ContainerTreeViewTypeConstructor<Fields> {
   class CustomContainerTreeView extends ContainerTreeView<Fields> {}
 
