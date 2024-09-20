@@ -9,7 +9,7 @@ import {
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
-import {ContainerTypeGeneric} from "../view/container";
+import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container";
 import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
@@ -36,8 +36,8 @@ type ContainerTreeViewDUCache = {
   nodesPopulated: boolean;
 };
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
-  ContainerTypeGeneric<Fields>
+export class BasicContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
+  BasicContainerTypeGeneric<Fields>
 > {
   protected nodes: Node[] = [];
   protected caches: unknown[];
@@ -46,7 +46,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
   private nodesPopulated: boolean;
 
   constructor(
-    readonly type: ContainerTypeGeneric<Fields>,
+    readonly type: BasicContainerTypeGeneric<Fields>,
     protected _rootNode: Node,
     cache?: ContainerTreeViewDUCache
   ) {
@@ -146,6 +146,16 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     // It's not necessary to clear this.viewsChanged since they have no effect on the cache.
     // However preserving _SOME_ caches results in a very unpredictable experience.
     this.viewsChanged.clear();
+  }
+}
+
+class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends BasicContainerTreeViewDU<Fields> {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    protected _rootNode: Node,
+    cache?: ContainerTreeViewDUCache
+  ) {
+    super(type, _rootNode, cache);
   }
 
   /**
