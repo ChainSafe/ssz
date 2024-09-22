@@ -651,7 +651,7 @@ function readVariableOffsets(
   // the offset indices so we can more easily deserialize the fields in once pass first we get the fixed sizes
   // Note: `fixedSizes[i] = null` if that field has variable length
 
-  const size = end - activeFieldsEnd;
+  const size = end - start;
   const activeFieldsByteLen = activeFieldsEnd - start;
 
   // with the fixed sizes, we can read the offsets, and store for our single pass

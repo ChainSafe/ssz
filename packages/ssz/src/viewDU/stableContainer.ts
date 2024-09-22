@@ -1,4 +1,4 @@
-import {getNodeAtDepth, LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {getNodeAtDepth, LeafNode, Node, zeroNode, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType} from "../type/composite";
@@ -64,6 +64,14 @@ class StableContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> ex
   get cache(): ContainerTreeViewDUCache {
     const result = super.cache;
     return {...result, activeFields: this.activeFields};
+  }
+
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
+    super.commit(hcOffset, hcByLevel);
+    this._rootNode = this.type.tree_setActiveFields(this._rootNode, this.activeFields);
+    if (hcByLevel !== null) {
+      hcByLevel[hcOffset].push(this._rootNode.left, this._rootNode.right, this._rootNode);
+    }
   }
 
   /**
