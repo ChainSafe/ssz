@@ -30,6 +30,8 @@ export type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Typ
   new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
 };
 
+export type ChangedNode = {index: number; node: Node};
+
 type ContainerTreeViewDUCache = {
   nodes: Node[];
   caches: unknown[];
@@ -94,7 +96,7 @@ export class BasicContainerTreeViewDU<Fields extends Record<string, Type<unknown
     // if old root is not hashed, no need to pass hcByLevel to child view bc we need to do full traversal here
     const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
-    const nodesChanged: {index: number; node: Node}[] = [];
+    const nodesChanged: ChangedNode[] = [];
 
     for (const [index, view] of this.viewsChanged) {
       const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
@@ -114,8 +116,7 @@ export class BasicContainerTreeViewDU<Fields extends Record<string, Type<unknown
 
     // TODO: Optimize to loop only once, Numerical sort ascending
     const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
-    const indexes = nodesChangedSorted.map((entry) => entry.index);
-    const nodes = nodesChangedSorted.map((entry) => entry.node);
+    const {indexes, nodes} = this.parseNodesChanged(nodesChangedSorted);
 
     this._rootNode = setNodesAtDepth(
       this._rootNode,
@@ -133,6 +134,12 @@ export class BasicContainerTreeViewDU<Fields extends Record<string, Type<unknown
 
     this.nodesChanged.clear();
     this.viewsChanged.clear();
+  }
+
+  protected parseNodesChanged(nodes: ChangedNode[]): {indexes: number[]; nodes: Node[]} {
+    const indexes = nodes.map((entry) => entry.index);
+    const nodesArray = nodes.map((entry) => entry.node);
+    return {indexes, nodes: nodesArray};
   }
 
   protected clearCache(): void {

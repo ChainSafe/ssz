@@ -1,20 +1,32 @@
-import {getNodeAtDepth, LeafNode, Node, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {getNodeAtDepth, LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
-import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
+import {CompositeType, isCompositeType} from "../type/composite";
 import {ContainerTypeGeneric} from "../view/profile";
 import {TreeViewDU} from "./abstract";
+import {BasicContainerTreeViewDU, ChangedNode} from "./container";
+import {OptionalType} from "../type/optional";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
+export type ViewDUValue<T extends Type<unknown>> = T extends CompositeType<unknown, unknown, infer TVDU>
+  ? // If composite, return view. MAY propagate changes updwards
+    TVDU
+  : // If basic, return struct value. Will NOT propagate changes upwards
+  T extends BasicType<infer V>
+  ? V
+  : never;
+
+export type OptionalViewDUValue<T extends Type<unknown>> = T extends CompositeType<unknown, unknown, infer TVDU>
+  ? // If composite, return view. MAY propagate changes updwards
+    TVDU | null | undefined
+  : // If basic, return struct value. Will NOT propagate changes upwards
+  T extends BasicType<infer V>
+  ? V | null | undefined
+  : never;
+
 export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
-  [K in keyof Fields]: Fields[K] extends CompositeType<unknown, unknown, infer TVDU>
-    ? // If composite, return view. MAY propagate changes updwards
-      TVDU
-    : // If basic, return struct value. Will NOT propagate changes upwards
-    Fields[K] extends BasicType<infer V>
-    ? V
-    : never;
+  [K in keyof Fields]: Fields[K] extends OptionalType<infer U> ? OptionalViewDUValue<U> : ViewDUValue<Fields[K]>;
 };
 
 export type ContainerTreeViewDUType<Fields extends Record<string, Type<unknown>>> = FieldsViewDU<Fields> &
@@ -29,94 +41,29 @@ type ContainerTreeViewDUCache = {
   nodesPopulated: boolean;
 };
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
-  ContainerTypeGeneric<Fields>
-> {
-  protected nodes: Node[] = [];
-  protected caches: unknown[];
-  protected readonly nodesChanged = new Set<number>();
-  protected readonly viewsChanged = new Map<number, unknown>();
-  private nodesPopulated: boolean;
-
+class ProfileTreeViewDU<Fields extends Record<string, Type<unknown>>> extends BasicContainerTreeViewDU<Fields> {
   constructor(
     readonly type: ContainerTypeGeneric<Fields>,
     protected _rootNode: Node,
     cache?: ContainerTreeViewDUCache
   ) {
-    super();
-
-    if (cache) {
-      this.nodes = cache.nodes;
-      this.caches = cache.caches;
-      this.nodesPopulated = cache.nodesPopulated;
-    } else {
-      this.nodes = [];
-      this.caches = [];
-      this.nodesPopulated = false;
-    }
+    super(type, _rootNode, cache);
   }
 
-  get node(): Node {
-    return this._rootNode;
-  }
-
-  get cache(): ContainerTreeViewDUCache {
-    return {
-      nodes: this.nodes,
-      caches: this.caches,
-      nodesPopulated: this.nodesPopulated,
-    };
-  }
-
-  commit(): void {
-    if (this.nodesChanged.size === 0 && this.viewsChanged.size === 0) {
-      return;
+  protected parseNodesChanged(nodesArray: ChangedNode[]): {indexes: number[]; nodes: Node[]} {
+    const indexes = new Array<number>(nodesArray.length);
+    const nodes = new Array<Node>(nodesArray.length);
+    for (const [i, change] of nodesArray.entries()) {
+      const {index, node} = change;
+      const chunkIndex = this.type.fieldsEntries[index].chunkIndex;
+      indexes[i] = chunkIndex;
+      nodes[i] = node;
     }
-
-    const nodesChanged: {index: number; node: Node}[] = [];
-
-    for (const [index, view] of this.viewsChanged) {
-      const fieldType = this.type.fieldsEntries[index].fieldType as unknown as CompositeTypeAny;
-      const node = fieldType.commitViewDU(view);
-      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-      this.nodes[index] = node;
-      nodesChanged.push({index, node});
-
-      // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
-      const cache = fieldType.cacheOfViewDU(view);
-      if (cache) this.caches[index] = cache;
-    }
-
-    for (const index of this.nodesChanged) {
-      nodesChanged.push({index, node: this.nodes[index]});
-    }
-
-    // TODO: Optimize to loop only once, Numerical sort ascending
-    const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
-    const indexes = nodesChangedSorted.map((entry) => entry.index);
-    const nodes = nodesChangedSorted.map((entry) => entry.node);
-
-    this._rootNode = setNodesAtDepth(this._rootNode, this.type.depth, indexes, nodes);
-
-    this.nodesChanged.clear();
-    this.viewsChanged.clear();
-  }
-
-  protected clearCache(): void {
-    this.nodes = [];
-    this.caches = [];
-    this.nodesPopulated = false;
-
-    // Must clear nodesChanged, otherwise a subsequent commit call will break, because it assumes a node is there
-    this.nodesChanged.clear();
-
-    // It's not necessary to clear this.viewsChanged since they have no effect on the cache.
-    // However preserving _SOME_ caches results in a very unpredictable experience.
-    this.viewsChanged.clear();
+    return {indexes, nodes};
   }
 
   /**
-   * Same method to `type/container.ts` that call ViewDU.serializeToBytes() of internal fields.
+   * Same method to `type/profile.ts` that call ViewDU.serializeToBytes() of internal fields.
    */
   serializeToBytes(output: ByteViews, offset: number): number {
     this.commit();
@@ -157,7 +104,7 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
 export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewDUTypeConstructor<Fields> {
-  class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}
+  class CustomContainerTreeViewDU extends ProfileTreeViewDU<Fields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -222,7 +169,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
           let node = this.nodes[index];
           if (node === undefined) {
-            node = getNodeAtDepth(this._rootNode, this.type.depth, index);
+            node = getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex);
             this.nodes[index] = node;
           }
 

@@ -6,7 +6,7 @@ import {runTypeTestValid} from "../runTypeTestValid";
 const uint16 = new UintNumberType(2);
 const byteType = new UintNumberType(1);
 
-const Circle1 = new ProfileType(
+const Square = new ProfileType(
   {
     side: uint16,
     color: byteType,
@@ -14,7 +14,7 @@ const Circle1 = new ProfileType(
   BitArray.fromBoolArray([true, true, false, false])
 );
 
-const Square1 = new ProfileType(
+const Circle = new ProfileType(
   {
     color: byteType,
     radius: uint16,
@@ -23,7 +23,7 @@ const Square1 = new ProfileType(
 );
 
 runTypeTestValid({
-  type: Circle1,
+  type: Square,
   defaultValue: {side: 0, color: 0},
   values: [
     {
@@ -36,7 +36,7 @@ runTypeTestValid({
 });
 
 runTypeTestValid({
-  type: Square1,
+  type: Circle,
   defaultValue: {color: 0, radius: 0},
   values: [
     {

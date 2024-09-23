@@ -96,7 +96,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
           const leafNodePrev = getNodeAtDepth(this.node, this.type.depth, chunkIndex) as LeafNode;
           const leafNode = leafNodePrev.clone();
           fieldType.tree_setToNode(leafNode, value);
-          this.tree.setNodeAtDepth(this.type.depth, index, leafNode);
+          this.tree.setNodeAtDepth(this.type.depth, chunkIndex, leafNode);
         },
       });
     }

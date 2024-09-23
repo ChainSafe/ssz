@@ -253,10 +253,10 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
   tree_serializedSize(node: Node): number {
     let totalSize = 0;
-    const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
+    const nodes = getNodesAtDepth(node, this.depth, 0, this.activeFields.bitLen) as Node[];
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldType} = this.fieldsEntries[i];
-      const node = nodes[i];
+      const {fieldType, chunkIndex} = this.fieldsEntries[i];
+      const node = nodes[chunkIndex];
       // Offset (4 bytes) + size
       totalSize += fieldType.fixedSize === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedSize;
     }
@@ -603,7 +603,7 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
  */
 export function renderContainerTypeName<Fields extends Record<string, Type<unknown>>>(
   fields: Fields,
-  prefix = "Container"
+  prefix = "Profile"
 ): string {
   const fieldNames = Object.keys(fields) as (keyof Fields)[];
   const fieldTypeNames = fieldNames.map((fieldName) => `${fieldName}: ${fields[fieldName].typeName}`).join(", ");
