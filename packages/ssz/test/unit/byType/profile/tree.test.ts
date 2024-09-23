@@ -13,6 +13,7 @@ import {
   NoneType,
   OptionalType,
   ProfileType,
+  StableContainerType,
   toHexString,
   UnionType,
   ValueOf,
@@ -629,5 +630,42 @@ describe("ProfileViewDU batchHashTreeRoot", function () {
     viewDU.n = listBasicType.toViewDU([1, 2]);
     viewDU.commit();
     expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+});
+
+describe("Profile type merkleization vs StableContainer", () => {
+  const optionalType = new OptionalType(uint64NumType);
+  const listBasicType = new ListBasicType(uint64NumType, 10);
+
+  const stableType = new StableContainerType(
+    {
+      a: optionalType,
+      b: uint64NumType,
+      c: listBasicType,
+      d: optionalType,
+    },
+    8
+  );
+
+  const profileType = new ProfileType(
+    {
+      b: uint64NumType,
+      c: listBasicType,
+    },
+    BitArray.fromBoolArray([false, true, true, false, false, false, false, false])
+  );
+
+  const value = {b: 100, c: [10, 200]};
+
+  it("batchHashTreeRoot()", () => {
+    const stableViewDU = stableType.toViewDU({...value, a: null, d: null});
+    const profileViewDU = profileType.toViewDU(value);
+    expect(stableViewDU.batchHashTreeRoot()).to.be.deep.equal(profileViewDU.batchHashTreeRoot());
+  });
+
+  it("hashTreeRoot()", () => {
+    const stableViewDU = stableType.toViewDU({...value, a: null, d: null});
+    const profileViewDU = profileType.toViewDU(value);
+    expect(stableViewDU.hashTreeRoot()).to.be.deep.equal(profileViewDU.hashTreeRoot());
   });
 });

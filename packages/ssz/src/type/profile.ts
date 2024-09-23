@@ -65,6 +65,7 @@ type CasingMap<Fields extends Record<string, unknown>> = Partial<{[K in keyof Fi
 
 /**
  * Container: ordered heterogeneous collection of values
+ * - EIP: https://eips.ethereum.org/EIPS/eip-7495
  * - Notation: Custom name per instance
  */
 export class ProfileType<Fields extends Record<string, Type<unknown>>> extends CompositeType<

@@ -79,6 +79,7 @@ function toNonOptionalType<T extends Type<unknown>>(type: T): NonOptionalType<T>
 
 /**
  * StableContainer: ordered heterogeneous collection of values
+ * - EIP: https://eips.ethereum.org/EIPS/eip-7495
  * - Notation: Custom name per instance
  */
 export class StableContainerType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
@@ -102,10 +103,6 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   // readonly fixedEnd: number;
   protected readonly fieldsGindex: Record<keyof Fields, Gindex>;
   protected readonly jsonKeyToFieldName: Record<string, keyof Fields>;
-  // protected readonly isFixedLen: boolean[];
-  // protected readonly fieldRangesFixedLen: BytesRange[];
-  // /** Offsets position relative to start of serialized Container. Length may not equal field count. */
-  // protected readonly variableOffsetsPosition: number[];
 
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
@@ -559,12 +556,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   }
 
   /**
-   * Deserializer helper: Returns the bytes ranges of all active fields, both variable and fixed size.
-   * Also returns the active field bitvector.
-   *
-   * Fields may not be contiguous in the serialized bytes, so the returned ranges are [start, end].
-   * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
-   * - For variable size fields does a first pass over the fixed section to read offsets
+   * `activeFields` is a bitvector prepended to the serialized data.
    */
   getFieldRanges(data: ByteViews, start: number, end: number): {activeFields: BitArray; fieldRanges: BytesRange[]} {
     const activeFieldsByteLen = Math.ceil(this.fieldsEntries.length / 8);

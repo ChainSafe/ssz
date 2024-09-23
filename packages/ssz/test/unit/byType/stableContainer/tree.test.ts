@@ -607,3 +607,42 @@ describe("StableContainerViewDU batchHashTreeRoot", function () {
     expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 });
+
+describe("StableContainer backward compatibility", function () {
+  it("add 1 optional field", () => {
+    const optionalType = new OptionalType(uint64NumType);
+    const listBasicType = new ListBasicType(uint64NumType, 10);
+    const Type1 = new StableContainerType(
+      {
+        a: optionalType,
+        b: optionalType,
+        c: listBasicType,
+      },
+      8
+    );
+
+    // grow the container with type c
+    const Type2 = new StableContainerType(
+      {
+        a: optionalType,
+        b: optionalType,
+        c: listBasicType,
+        d: optionalType,
+      },
+      8
+    );
+
+    const value = {a: null, b: 2, c: [1, 2], d: null};
+    const viewDU2 = Type2.toViewDU(value);
+    const serialized = viewDU2.serialize();
+    const byteView = {
+      uint8Array: serialized,
+      dataView: new DataView(serialized.buffer, serialized.byteOffset, serialized.byteLength),
+    };
+    // can deserialize
+    const node = Type1.tree_deserializeFromBytes(byteView, 0, serialized.length);
+    const viewDU = Type2.getViewDU(node);
+    // hashTreeRoot is the same
+    expect(viewDU.hashTreeRoot()).to.deep.equal(viewDU2.hashTreeRoot());
+  });
+});
