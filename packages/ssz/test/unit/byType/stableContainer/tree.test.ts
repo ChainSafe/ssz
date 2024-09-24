@@ -21,6 +21,7 @@ import {
 } from "../../../../src";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes";
 import {runViewTestMutation} from "../runViewTestMutation";
+import {getNodesAtDepth, zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable
@@ -608,7 +609,45 @@ describe("StableContainerViewDU batchHashTreeRoot", function () {
   });
 });
 
-describe("StableContainer backward compatibility", function () {
+describe("StableContainer BitVector[N]", () => {
+  const optionalType = new OptionalType(uint64NumType);
+
+  it("should have correct serialized size", () => {
+    for (const maxFields of [8, 16, 64, 256]) {
+      const stableType = new StableContainerType({a: optionalType}, maxFields);
+      // should prepend with BitVector[N]
+      const bytesLength = Math.ceil(maxFields / 8);
+      expect(stableType.defaultView().serialize().length).to.be.equal(bytesLength);
+      expect(stableType.defaultViewDU().serialize().length).to.be.equal(bytesLength);
+      expect(stableType.serialize(stableType.defaultValue()).length).to.be.equal(bytesLength);
+    }
+  });
+
+  it("should have correct active_fields", () => {
+    for (const maxFields of [64, 256, 512, 1024]) {
+      const stableType = new StableContainerType({a: optionalType}, maxFields);
+      const view = stableType.defaultViewDU();
+      view.a = 1;
+      view.commit();
+      const activeFieldsDepth = Math.ceil(Math.log2(Math.ceil(maxFields / 256)));
+      const activeFieldsRootNodes = getNodesAtDepth(view.node.right, activeFieldsDepth, 0, 4);
+      let isFirst = true;
+      for (const node of activeFieldsRootNodes) {
+        if (isFirst) {
+          const root = node.root;
+          expect(root[0]).to.be.equal(1);
+          root[0] = 0;
+          expect(root).to.deep.equal(zeroHash(0));
+        } else {
+          expect(node.root).to.deep.equal(zeroHash(0));
+        }
+        isFirst = false;
+      }
+    }
+  });
+});
+
+describe("StableContainer backward compatibility", () => {
   it("add 1 optional field", () => {
     const optionalType = new OptionalType(uint64NumType);
     const listBasicType = new ListBasicType(uint64NumType, 10);

@@ -221,7 +221,7 @@ export function computeSerdesData<Fields extends Record<string, Type<unknown>>>(
   const isFixedLen: boolean[] = [];
   const fieldRangesFixedLen: BytesRange[] = [];
   const variableOffsetsPosition: number[] = [];
-  let pointerFixed = Math.ceil(fields.length / 8);
+  let pointerFixed = Math.ceil(activeFields.bitLen / 8);
 
   for (const [i, {fieldName, fieldType, optional}] of fields.entries()) {
     // if the field is inactive

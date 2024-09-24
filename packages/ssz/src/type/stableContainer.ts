@@ -207,7 +207,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   // [0x000000c]    [0xaabbaabbaabbaabb][0xffffffffffffffffffffffff]
 
   value_serializedSize(value: ValueOfFields<Fields>): number {
-    let totalSize = Math.ceil(this.fieldsEntries.length / 8);
+    let totalSize = Math.ceil(this.maxChunkCount / 8);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
       // skip optional fields with nullish values
@@ -225,7 +225,10 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
   value_serializeToBytes(output: ByteViews, offset: number, value: ValueOfFields<Fields>): number {
     // compute active field bitvector
-    const activeFields = BitArray.fromBoolArray(this.fieldsEntries.map(({fieldName}) => value[fieldName] != null));
+    const activeFields = BitArray.fromBoolArray([
+      ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
+      ...Array.from({length: this.maxChunkCount - this.fieldsEntries.length}, () => false),
+    ]);
     // write active field bitvector
     output.uint8Array.set(activeFields.uint8Array, offset);
 
@@ -273,8 +276,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   }
 
   tree_serializedSize(node: Node): number {
-    let totalSize = Math.ceil(this.fieldsEntries.length / 8);
     const activeFields = this.tree_getActiveFields(node);
+    let totalSize = Math.ceil(activeFields.bitLen / 8);
     const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length) as Node[];
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldType, optional} = this.fieldsEntries[i];
@@ -559,12 +562,10 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
    * `activeFields` is a bitvector prepended to the serialized data.
    */
   getFieldRanges(data: ByteViews, start: number, end: number): {activeFields: BitArray; fieldRanges: BytesRange[]} {
-    const activeFieldsByteLen = Math.ceil(this.fieldsEntries.length / 8);
+    // this.maxChunkCount = maxFields
+    const activeFieldsByteLen = Math.ceil(this.maxChunkCount / 8);
     // active fields bitvector, do not mutate
-    const activeFields = new BitArray(
-      data.uint8Array.subarray(start, start + activeFieldsByteLen),
-      this.fieldsEntries.length
-    );
+    const activeFields = new BitArray(data.uint8Array.subarray(start, start + activeFieldsByteLen), this.maxChunkCount);
 
     const {variableOffsetsPosition, fixedEnd, fieldRangesFixedLen, isFixedLen} = computeSerdesData(
       activeFields,
@@ -612,7 +613,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
   // helpers for the active fields
   tree_getActiveFields(rootNode: Node): BitArray {
-    return getActiveFields(rootNode, this.fieldsEntries.length);
+    // this.maxChunkCount = maxFields
+    return getActiveFields(rootNode, this.maxChunkCount);
   }
 
   tree_setActiveFields(rootNode: Node, activeFields: BitArray): Node {
@@ -620,11 +622,11 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   }
 
   tree_getActiveField(rootNode: Node, fieldIndex: number): boolean {
-    return getActiveField(rootNode, this.fieldsEntries.length, fieldIndex);
+    return getActiveField(rootNode, this.maxChunkCount, fieldIndex);
   }
 
   tree_setActiveField(rootNode: Node, fieldIndex: number, value: boolean): Node {
-    return setActiveField(rootNode, this.fieldsEntries.length, fieldIndex, value);
+    return setActiveField(rootNode, this.maxChunkCount, fieldIndex, value);
   }
 }
 
@@ -745,7 +747,7 @@ export function getActiveFields(rootNode: Node, bitLen: number): BitArray {
   }
 
   const activeFieldsBuf = new Uint8Array(Math.ceil(bitLen / 8));
-  const depth = countToDepth(BigInt(activeFieldsBuf.length));
+  const depth = countToDepth(BigInt(Math.ceil(activeFieldsBuf.length / 32)));
   const nodes = getNodesAtDepth(rootNode.right, depth, 0, Math.ceil(bitLen / 256));
   for (let i = 0; i < nodes.length; i++) {
     activeFieldsBuf.set(nodes[i].root, i * 32);
