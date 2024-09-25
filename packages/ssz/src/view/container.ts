@@ -3,7 +3,7 @@ import {Type, ValueOf} from "../type/abstract";
 import {isBasicType, BasicType} from "../type/basic";
 import {isCompositeType, CompositeType} from "../type/composite";
 import {TreeView} from "./abstract";
-import type {NonOptionalFields} from "./stableContainer";
+import {NonOptionalFields} from "../type/optional";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;

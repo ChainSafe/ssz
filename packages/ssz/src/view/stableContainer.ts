@@ -11,7 +11,7 @@ import {Type, ValueOf} from "../type/abstract";
 import {isBasicType, BasicType} from "../type/basic";
 import {isCompositeType, CompositeType} from "../type/composite";
 import {TreeView} from "./abstract";
-import {OptionalType} from "../type/optional";
+import {NonOptionalFields, OptionalType} from "../type/optional";
 import {BitArray} from "../value/bitArray";
 
 // some code is here to break the circular dependency between type, view, and viewDU
@@ -22,11 +22,6 @@ export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   jsonKey: string;
   gindex: Gindex;
   optional: boolean;
-};
-
-export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
-export type NonOptionalFields<Fields extends Record<string, Type<unknown>>> = {
-  [K in keyof Fields]: NonOptionalType<Fields[K]>;
 };
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */

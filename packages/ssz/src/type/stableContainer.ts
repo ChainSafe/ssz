@@ -33,8 +33,6 @@ import {
   FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
-  NonOptionalType,
-  NonOptionalFields,
   computeSerdesData,
 } from "../view/stableContainer";
 import {
@@ -43,7 +41,7 @@ import {
   ContainerTreeViewDUTypeConstructor,
 } from "../viewDU/stableContainer";
 import {Case} from "../util/strings";
-import {OptionalType} from "./optional";
+import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional";
 import {BitArray} from "../value/bitArray";
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -68,14 +66,6 @@ export type KeyCase =
   | "pascal";
 
 type CasingMap<Fields extends Record<string, unknown>> = Partial<{[K in keyof Fields]: string}>;
-
-function isOptionalType(type: Type<unknown>): type is OptionalType<Type<unknown>> {
-  return type instanceof OptionalType;
-}
-
-function toNonOptionalType<T extends Type<unknown>>(type: T): NonOptionalType<T> {
-  return (isOptionalType(type) ? type.elementType : type) as NonOptionalType<T>;
-}
 
 /**
  * StableContainer: ordered heterogeneous collection of values
