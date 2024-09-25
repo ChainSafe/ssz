@@ -107,6 +107,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
+  private padActiveFields: boolean[];
 
   constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
     super(opts?.cachePermanentRootStruct);
@@ -133,6 +134,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
         optional: isOptionalType(fieldType),
       });
     }
+
+    this.padActiveFields = Array.from({length: this.maxChunkCount - this.fieldsEntries.length}, () => false);
 
     if (this.fieldsEntries.length === 0) {
       throw Error("StableContainer must have > 0 fields");
@@ -227,7 +230,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
-      ...Array.from({length: this.maxChunkCount - this.fieldsEntries.length}, () => false),
+      ...this.padActiveFields,
     ]);
     // write active field bitvector
     output.uint8Array.set(activeFields.uint8Array, offset);
@@ -355,7 +358,10 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
 
     // compute active field bitvector
-    const activeFields = BitArray.fromBoolArray(this.fieldsEntries.map(({fieldName}) => value[fieldName] != null));
+    const activeFields = BitArray.fromBoolArray([
+      ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
+      ...this.padActiveFields,
+    ]);
     const root = mixInActiveFields(super.hashTreeRoot(value), activeFields);
 
     if (this.cachePermanentRootStruct) {
@@ -795,25 +801,29 @@ export function getActiveField(rootNode: Node, bitLen: number, fieldIndex: numbe
 }
 
 export function setActiveField(rootNode: Node, bitLen: number, fieldIndex: number, value: boolean): Node {
-  const bitIx = Math.min(fieldIndex / 8);
-  const byteIx = fieldIndex % 8;
+  const byteIx = Math.floor(fieldIndex / 8);
+  const bitIx = fieldIndex % 8;
 
   // fast path for depth 1, the bitvector fits in one chunk
   if (bitLen <= 256) {
     const activeFieldsBuf = rootNode.right.root;
     activeFieldsBuf[byteIx] |= (value ? 1 : 0) << bitIx;
 
-    return setNode(rootNode, "11", LeafNode.fromRoot(activeFieldsBuf));
+    const activeFieldGindex = BigInt(3);
+    return setNode(rootNode, activeFieldGindex, LeafNode.fromRoot(activeFieldsBuf));
   }
 
   const chunkCount = Math.ceil(bitLen / 256);
   const chunkIx = bitLen % 256;
   const depth = Math.ceil(Math.log2(chunkCount));
-  return setNodeWithFn(rootNode, BigInt(2 * depth + chunkIx), (node) => {
+  const activeFieldsNode = rootNode.right;
+  const newActiveFieldsNode = setNodeWithFn(activeFieldsNode, BigInt(2 * depth + chunkIx), (node) => {
     const chunkBuf = node.root;
     chunkBuf[byteIx] |= (value ? 1 : 0) << bitIx;
     return LeafNode.fromRoot(chunkBuf);
   });
+
+  return new BranchNode(rootNode.left, newActiveFieldsNode);
 }
 
 export function mixInActiveFields(root: Uint8Array, activeFields: BitArray): Uint8Array {

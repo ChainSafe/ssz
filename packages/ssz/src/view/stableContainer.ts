@@ -140,7 +140,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
           this.tree.setNodeAtDepth(this.type.depth, index, leafNode);
           // only update the active field if necessary
           if (!this.type.tree_getActiveField(this.tree.rootNode, index)) {
-            this.tree.rootNode = this.type.tree_setActiveField(this.tree.rootNode, index, false);
+            this.tree.rootNode = this.type.tree_setActiveField(this.tree.rootNode, index, true);
           }
         },
       });

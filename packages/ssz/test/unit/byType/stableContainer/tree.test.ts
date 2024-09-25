@@ -626,22 +626,26 @@ describe("StableContainer BitVector[N]", () => {
   it("should have correct active_fields", () => {
     for (const maxFields of [64, 256, 512, 1024]) {
       const stableType = new StableContainerType({a: optionalType}, maxFields);
-      const view = stableType.defaultViewDU();
-      view.a = 1;
-      view.commit();
-      const activeFieldsDepth = Math.ceil(Math.log2(Math.ceil(maxFields / 256)));
-      const activeFieldsRootNodes = getNodesAtDepth(view.node.right, activeFieldsDepth, 0, 4);
-      let isFirst = true;
-      for (const node of activeFieldsRootNodes) {
-        if (isFirst) {
-          const root = node.root;
-          expect(root[0]).to.be.equal(1);
-          root[0] = 0;
-          expect(root).to.deep.equal(zeroHash(0));
-        } else {
-          expect(node.root).to.deep.equal(zeroHash(0));
+      for (const view of [stableType.defaultView(), stableType.defaultViewDU()]) {
+        view.a = 1;
+        // commit() inside ViewDU
+        view.hashTreeRoot();
+        const activeFieldsDepth = Math.ceil(Math.log2(Math.ceil(maxFields / 256)));
+        const activeFieldsRootNodes = getNodesAtDepth(view.node.right, activeFieldsDepth, 0, 4);
+        let isFirst = true;
+        for (const node of activeFieldsRootNodes) {
+          if (isFirst) {
+            const root = node.root;
+            expect(root[0]).to.be.equal(1);
+            root[0] = 0;
+            expect(root).to.deep.equal(zeroHash(0));
+          } else {
+            expect(node.root).to.deep.equal(zeroHash(0));
+          }
+          isFirst = false;
         }
-        isFirst = false;
+
+        expect(view.node.root).to.be.deep.equal(stableType.hashTreeRoot({a: 1}));
       }
     }
   });
