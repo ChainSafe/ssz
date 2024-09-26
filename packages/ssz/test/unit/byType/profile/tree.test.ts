@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {
   BitArray,
   BitListType,
@@ -619,8 +620,7 @@ describe("ProfileViewDU batchHashTreeRoot", function () {
     expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
 
-  // TODO: Profile is not working with OptionalType
-  it.skip("full hash then modify OptionalType", () => {
+  it("full hash then modify OptionalType", () => {
     const viewDU = parentContainerType.toViewDU({...value, n: null});
     viewDU.batchHashTreeRoot();
     viewDU.n = listBasicType.toViewDU([1, 2]);
@@ -630,6 +630,78 @@ describe("ProfileViewDU batchHashTreeRoot", function () {
     viewDU.n = listBasicType.toViewDU([1, 2]);
     viewDU.commit();
     expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+  });
+});
+
+describe("Optional types", () => {
+  it("offsets are relative to the start of serialized active fields, after the Bitvector[N]", () => {
+    const parentContainer = new ProfileType(
+      {
+        a: new OptionalType(list8Uint64NumInfType),
+      },
+      BitArray.fromBoolArray([true])
+    );
+
+    const value = {a: [1]};
+    // 1st  byte is for OptionalFields, 2nd byte is the start of fixed parts
+    // value 4 is relative to 2nd byte
+    const expectedBytes = new Uint8Array([1, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]);
+    const data = {uint8Array: expectedBytes, dataView: new DataView(expectedBytes.buffer, 0, expectedBytes.length)};
+    const expectedRoot = parentContainer.hashTreeRoot(value);
+    expect(parentContainer.serialize(value)).to.deep.equal(expectedBytes);
+
+    let viewDU = parentContainer.toViewDU(value);
+    expect(viewDU.serialize()).to.deep.equal(expectedBytes);
+    expect(viewDU.batchHashTreeRoot()).to.deep.equal(expectedRoot);
+
+    viewDU = parentContainer.getViewDU(parentContainer.tree_deserializeFromBytes(data, 0, data.uint8Array.length));
+    expect(viewDU.serialize()).to.deep.equal(expectedBytes);
+    expect(viewDU.batchHashTreeRoot()).to.deep.equal(expectedRoot);
+
+    let view = parentContainer.toView(value);
+    expect(view.serialize()).to.deep.equal(expectedBytes);
+    expect(view.hashTreeRoot()).to.deep.equal(expectedRoot);
+
+    view = parentContainer.getView(
+      new Tree(parentContainer.tree_deserializeFromBytes(data, 0, data.uint8Array.length))
+    );
+    expect(view.serialize()).to.deep.equal(expectedBytes);
+    expect(view.hashTreeRoot()).to.deep.equal(expectedRoot);
+
+    const value2 = parentContainer.deserialize(expectedBytes);
+    expect(value2).to.be.deep.equal(value);
+    expect(parentContainer.serialize(value2)).to.deep.equal(expectedBytes);
+    expect(parentContainer.hashTreeRoot(value2)).to.deep.equal(expectedRoot);
+  });
+
+  it("set null vs 0", () => {
+    const parentContainer = new ProfileType(
+      {
+        a: new OptionalType(uint64NumInfType),
+      },
+      BitArray.fromBoolArray([true])
+    );
+
+    const value = {a: 0};
+    const valueNull = {a: null};
+
+    // value
+    const value2 = parentContainer.deserialize(parentContainer.serialize(value));
+    expect(value2).to.be.deep.equal(value);
+    const valueNull2 = parentContainer.deserialize(parentContainer.serialize(valueNull));
+    expect(valueNull2).to.be.deep.equal(valueNull);
+
+    // ViewDU
+    const viewDU = parentContainer.toViewDU(value);
+    expect(viewDU.a).to.be.equal(0);
+    const viewDUNull = parentContainer.toViewDU(valueNull);
+    expect(viewDUNull.a).to.be.null;
+
+    // View
+    const view = parentContainer.toView(value);
+    expect(view.a).to.be.equal(0);
+    const viewNull = parentContainer.toView(valueNull);
+    expect(viewNull.a).to.be.null;
   });
 });
 

@@ -22,6 +22,7 @@ import {
   FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
+  computeSerdesData,
 } from "../view/profile";
 import {
   getContainerTreeViewDUClass,
@@ -31,17 +32,10 @@ import {
 import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
 import {mixInActiveFields, setActiveFields} from "./stableContainer";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
-
-/**
- * Profile: ordered heterogeneous collection of values that inherits merkleization from a base stable container
- *
- * Limitations:
- * - No reordering of fields for merkleization
- * - No optional fields
- */
 
 export type ProfileOptions<Fields extends Record<string, unknown>> = {
   typeName?: string;
@@ -64,9 +58,9 @@ export type KeyCase =
 type CasingMap<Fields extends Record<string, unknown>> = Partial<{[K in keyof Fields]: string}>;
 
 /**
- * Container: ordered heterogeneous collection of values
+ * Profile: ordered heterogeneous collection of values that inherits merkleization from a base stable container
  * - EIP: https://eips.ethereum.org/EIPS/eip-7495
- * - Notation: Custom name per instance
+ * - No reordering of fields for merkleization
  */
 export class ProfileType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
   ValueOfFields<Fields>,
@@ -84,19 +78,15 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   readonly activeFields: BitArray;
 
   // Precomputed data for faster serdes
-  readonly fieldsEntries: FieldEntry<Fields>[];
+  readonly fieldsEntries: FieldEntry<NonOptionalFields<Fields>>[];
   /** End of fixed section of serialized Container */
-  readonly fixedEnd: number;
   protected readonly fieldsGindex: Record<keyof Fields, Gindex>;
   protected readonly jsonKeyToFieldName: Record<string, keyof Fields>;
-  protected readonly isFixedLen: boolean[];
-  protected readonly fieldRangesFixedLen: BytesRange[];
-  /** Offsets position relative to start of serialized Container. Length may not equal field count. */
-  protected readonly variableOffsetsPosition: number[];
 
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
+  private optionalFieldsCount: number;
 
   constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
     super(opts?.cachePermanentRootStruct);
@@ -115,19 +105,27 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     // Precalculated data for faster serdes
     this.fieldsEntries = [];
     const fieldNames = Object.keys(fields) as (keyof Fields)[];
+    this.optionalFieldsCount = 0;
     for (let i = 0, fieldIx = 0; i < this.activeFields.bitLen; i++) {
       if (!this.activeFields.get(i)) {
         continue;
       }
 
       const fieldName = fieldNames[fieldIx++];
+      const fieldType = fields[fieldName];
+      const optional = isOptionalType(fieldType);
       this.fieldsEntries.push({
         fieldName,
-        fieldType: this.fields[fieldName],
+        fieldType: toNonOptionalType(fieldType),
         jsonKey: precomputeJsonKey(fieldName, opts?.casingMap, opts?.jsonCase),
         gindex: toGindex(this.depth, BigInt(i)),
         chunkIndex: i,
+        optional,
       });
+
+      if (optional) {
+        this.optionalFieldsCount++;
+      }
     }
 
     if (this.fieldsEntries.length === 0) {
@@ -152,12 +150,6 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     this.maxSize = maxLen;
     this.fixedSize = fixedSize;
 
-    const {isFixedLen, fieldRangesFixedLen, variableOffsetsPosition, fixedEnd} = precomputeSerdesData(fields);
-    this.isFixedLen = isFixedLen;
-    this.fieldRangesFixedLen = fieldRangesFixedLen;
-    this.variableOffsetsPosition = variableOffsetsPosition;
-    this.fixedEnd = fixedEnd;
-
     // TODO: This options are necessary for ContainerNodeStruct to override this.
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
@@ -174,8 +166,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
   defaultValue(): ValueOfFields<Fields> {
     const value = {} as ValueOfFields<Fields>;
-    for (const {fieldName, fieldType} of this.fieldsEntries) {
-      value[fieldName] = fieldType.defaultValue() as ValueOf<Fields[keyof Fields]>;
+    for (const {fieldName, fieldType, optional} of this.fieldsEntries) {
+      value[fieldName] = (optional ? null : fieldType.defaultValue()) as ValueOf<Fields[keyof Fields]>;
     }
     return value;
   }
@@ -210,9 +202,12 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   // [0x000000c]    [0xaabbaabbaabbaabb][0xffffffffffffffffffffffff]
 
   value_serializedSize(value: ValueOfFields<Fields>): number {
-    let totalSize = 0;
+    let totalSize = Math.ceil(this.optionalFieldsCount / 8);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
+      const {fieldName, fieldType, optional} = this.fieldsEntries[i];
+      if (optional && value[fieldName] == null) {
+        continue;
+      }
       // Offset (4 bytes) + size
       totalSize +=
         fieldType.fixedSize === null ? 4 + fieldType.value_serializedSize(value[fieldName]) : fieldType.fixedSize;
@@ -221,14 +216,33 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   value_serializeToBytes(output: ByteViews, offset: number, value: ValueOfFields<Fields>): number {
-    let fixedIndex = offset;
-    let variableIndex = offset + this.fixedEnd;
+    const optionalFields = BitArray.fromBitLen(this.optionalFieldsCount);
+    let optionalIndex = 0;
+    for (let i = 0; i < this.fieldsEntries.length; i++) {
+      const {fieldName, optional} = this.fieldsEntries[i];
+      if (optional) {
+        optionalFields.set(optionalIndex++, value[fieldName] !== null);
+      }
+    }
+
+    output.uint8Array.set(optionalFields.uint8Array, offset);
+
+    const {fixedEnd} = computeSerdesData(optionalFields, this.fieldsEntries);
+
+    const optionalFieldsLen = optionalFields.uint8Array.length;
+    let fixedIndex = offset + optionalFieldsLen;
+    let variableIndex = offset + fixedEnd + optionalFieldsLen;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
+      const {fieldName, fieldType, optional} = this.fieldsEntries[i];
+      // skip optional fields with nullish values
+      if (optional && value[fieldName] == null) {
+        continue;
+      }
+
       if (fieldType.fixedSize === null) {
-        // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+        // write offset relative to the start of serialized active fields, after the Bitvector[N]
+        output.dataView.setUint32(fixedIndex, variableIndex - offset - optionalFieldsLen, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.value_serializeToBytes(output, variableIndex, value[fieldName]);
@@ -240,11 +254,18 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfFields<Fields> {
-    const fieldRanges = this.getFieldRanges(data.dataView, start, end);
+    const {optionalFields, fieldRanges} = this.getFieldRanges(data, start, end);
     const value = {} as {[K in keyof Fields]: unknown};
+    const optionalFieldsLen = optionalFields.uint8Array.length;
+    start += optionalFieldsLen;
 
+    let optionalIndex = 0;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType} = this.fieldsEntries[i];
+      const {fieldName, fieldType, optional} = this.fieldsEntries[i];
+      if (optional && !optionalFields.get(optionalIndex++)) {
+        value[fieldName] = null;
+        continue;
+      }
       const fieldRange = fieldRanges[i];
       value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
     }
@@ -253,11 +274,15 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   tree_serializedSize(node: Node): number {
-    let totalSize = 0;
+    let totalSize = Math.ceil(this.optionalFieldsCount / 8);
     const nodes = getNodesAtDepth(node, this.depth, 0, this.activeFields.bitLen) as Node[];
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldType, chunkIndex} = this.fieldsEntries[i];
+      const {fieldType, chunkIndex, optional} = this.fieldsEntries[i];
       const node = nodes[chunkIndex];
+      // zeroNode() means optional field is null, it's different from a node with all zeros
+      if (optional && node === zeroNode(0)) {
+        continue;
+      }
       // Offset (4 bytes) + size
       totalSize += fieldType.fixedSize === null ? 4 + fieldType.tree_serializedSize(node) : fieldType.fixedSize;
     }
@@ -265,18 +290,42 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
-    let fixedIndex = offset;
-    let variableIndex = offset + this.fixedEnd;
+    const optionalFields = BitArray.fromBitLen(this.optionalFieldsCount);
+    const optionalFieldsLen = optionalFields.uint8Array.length;
 
     const nodes = getNodesAtDepth(node, this.depth, 0, this.activeFields.bitLen);
+    let optionalIndex = -1;
+    if (this.optionalFieldsCount > 0) {
+      // 1st loop to compute optional fields
+      for (let i = 0; i < this.fieldsEntries.length; i++) {
+        const {chunkIndex, optional} = this.fieldsEntries[i];
+        const node = nodes[chunkIndex];
+        if (optional) {
+          optionalIndex++;
+          if (node !== zeroNode(0)) {
+            optionalFields.set(optionalIndex, true);
+          }
+        }
+      }
+    }
 
+    output.uint8Array.set(optionalFields.uint8Array, offset);
+
+    const {fixedEnd} = computeSerdesData(optionalFields, this.fieldsEntries);
+    let fixedIndex = offset + optionalFieldsLen;
+    let variableIndex = offset + fixedEnd + optionalFieldsLen;
+
+    // 2nd loop to serialize fields
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldType, chunkIndex} = this.fieldsEntries[i];
+      const {fieldType, chunkIndex, optional} = this.fieldsEntries[i];
       const node = nodes[chunkIndex];
+      if (optional && node === zeroNode(0)) {
+        continue;
+      }
 
       if (fieldType.fixedSize === null) {
-        // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+        // write offset relative to the start of serialized active fields, after the Bitvector[N]
+        output.dataView.setUint32(fixedIndex, variableIndex - offset - optionalFieldsLen, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
@@ -288,11 +337,21 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    const fieldRanges = this.getFieldRanges(data.dataView, start, end);
+    const {optionalFields, fieldRanges} = this.getFieldRanges(data, start, end);
     const nodes = new Array<Node>(this.activeFields.bitLen).fill(zeroNode(0));
+    const optionalFieldsLen = optionalFields.uint8Array.length;
+    start += optionalFieldsLen;
 
+    let optionalIndex = -1;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldType, chunkIndex} = this.fieldsEntries[i];
+      const {fieldType, chunkIndex, optional} = this.fieldsEntries[i];
+      if (optional) {
+        optionalIndex++;
+        if (!optionalFields.get(optionalIndex)) {
+          continue;
+        }
+      }
+
       const fieldRange = fieldRanges[i];
       nodes[chunkIndex] = fieldType.tree_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
     }
@@ -304,6 +363,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   // Merkleization
 
   hashTreeRoot(value: ValueOfFields<Fields>): Uint8Array {
+    // TODO: handle cachePermanentRootStruct
     const root = super.hashTreeRoot(value);
     return mixInActiveFields(root, this.activeFields);
   }
@@ -313,7 +373,10 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
     // already asserted that # of active fields in bitvector === # of fields
     for (let i = 0; i < this.fieldsEntries.length; i++) {
-      const {fieldName, fieldType, chunkIndex} = this.fieldsEntries[i];
+      const {fieldName, fieldType, chunkIndex, optional} = this.fieldsEntries[i];
+      if (optional && struct[fieldName] == null) {
+        continue;
+      }
       roots[chunkIndex] = fieldType.hashTreeRoot(struct[fieldName]);
     }
 
@@ -433,48 +496,74 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
    * Fields may not be contiguous in the serialized bytes, so the returned ranges are [start, end].
    * - For fixed size fields re-uses the pre-computed values this.fieldRangesFixedLen
    * - For variable size fields does a first pass over the fixed section to read offsets
+   * - offsets are relative to the start of serialized active fields, after the Bitvector[N]
    */
-  getFieldRanges(data: DataView, start: number, end: number): BytesRange[] {
-    if (this.variableOffsetsPosition.length === 0) {
+  getFieldRanges(data: ByteViews, start: number, end: number): {optionalFields: BitArray; fieldRanges: BytesRange[]} {
+    const optionalFieldsByteLen = Math.ceil(this.optionalFieldsCount / 8);
+    const optionalFields = new BitArray(
+      data.uint8Array.subarray(start, start + optionalFieldsByteLen),
+      this.optionalFieldsCount
+    );
+
+    const {variableOffsetsPosition, fixedEnd, fieldRangesFixedLen, isFixedLen} = computeSerdesData(
+      optionalFields,
+      this.fieldsEntries
+    );
+
+    if (variableOffsetsPosition.length === 0) {
       // Validate fixed length container
       const size = end - start;
-      if (size !== this.fixedEnd) {
-        throw Error(`${this.typeName} size ${size} not equal fixed size ${this.fixedEnd}`);
+      if (size !== fixedEnd + optionalFieldsByteLen) {
+        throw Error(
+          `${this.typeName} size ${size} not equal fixed end plus optionalFieldsByteLen ${
+            fixedEnd + optionalFieldsByteLen
+          }`
+        );
       }
 
-      return this.fieldRangesFixedLen;
+      return {optionalFields, fieldRanges: fieldRangesFixedLen};
     }
 
     // Read offsets in one pass
-    const offsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
-    offsets.push(end - start); // The offsets are relative to the start
+    const offsets = readVariableOffsets(
+      data.dataView,
+      start,
+      end,
+      optionalFieldsByteLen,
+      fixedEnd,
+      variableOffsetsPosition
+    );
+    offsets.push(end - start - optionalFieldsByteLen); // The offsets are relative to the start of serialized optional fields
 
     // Merge fieldRangesFixedLen + offsets in one array
     let variableIdx = 0;
     let fixedIdx = 0;
-    const fieldRanges = new Array<BytesRange>(this.isFixedLen.length);
+    const fieldRanges = new Array<BytesRange>(isFixedLen.length);
 
-    for (let i = 0; i < this.isFixedLen.length; i++) {
-      if (this.isFixedLen[i]) {
+    for (let i = 0; i < isFixedLen.length; i++) {
+      if (isFixedLen[i]) {
         // push from fixLen ranges ++
-        fieldRanges[i] = this.fieldRangesFixedLen[fixedIdx++];
+        fieldRanges[i] = fieldRangesFixedLen[fixedIdx++];
       } else {
         // push from varLen ranges ++
         fieldRanges[i] = {start: offsets[variableIdx], end: offsets[variableIdx + 1]};
         variableIdx++;
       }
     }
-    return fieldRanges;
+
+    return {optionalFields, fieldRanges};
   }
 }
 
 /**
  * Returns the byte ranges of all variable size fields.
+ * Offsets are relative to the start of serialized active fields, after the Bitvector[N]
  */
 function readVariableOffsets(
   data: DataView,
   start: number,
   end: number,
+  optionalFieldsEnd: number,
   fixedEnd: number,
   variableOffsetsPosition: number[]
 ): number[] {
@@ -483,11 +572,12 @@ function readVariableOffsets(
   // Note: `fixedSizes[i] = null` if that field has variable length
 
   const size = end - start;
+  const optionalFieldsByteLen = optionalFieldsEnd - start;
 
   // with the fixed sizes, we can read the offsets, and store for our single pass
   const offsets = new Array<number>(variableOffsetsPosition.length);
   for (let i = 0; i < variableOffsetsPosition.length; i++) {
-    const offset = data.getUint32(start + variableOffsetsPosition[i], true);
+    const offset = data.getUint32(start + variableOffsetsPosition[i] + optionalFieldsByteLen, true);
 
     // Validate offsets. If the list is empty the offset points to the end of the buffer, offset == size
     if (offset > size) {
@@ -507,46 +597,6 @@ function readVariableOffsets(
   }
 
   return offsets;
-}
-
-/**
- * Precompute fixed and variable offsets position for faster deserialization.
- * @returns Does a single pass over all fields and returns:
- * - isFixedLen: If field index [i] is fixed length
- * - fieldRangesFixedLen: For fields with fixed length, their range of bytes
- * - variableOffsetsPosition: Position of the 4 bytes offset for variable size fields
- * - fixedEnd: End of the fixed size range
- * -
- */
-function precomputeSerdesData(fields: Record<string, Type<unknown>>): {
-  isFixedLen: boolean[];
-  fieldRangesFixedLen: BytesRange[];
-  variableOffsetsPosition: number[];
-  fixedEnd: number;
-} {
-  const isFixedLen: boolean[] = [];
-  const fieldRangesFixedLen: BytesRange[] = [];
-  const variableOffsetsPosition: number[] = [];
-  let pointerFixed = 0;
-
-  for (const fieldType of Object.values(fields)) {
-    isFixedLen.push(fieldType.fixedSize !== null);
-    if (fieldType.fixedSize === null) {
-      // Variable length
-      variableOffsetsPosition.push(pointerFixed);
-      pointerFixed += 4;
-    } else {
-      fieldRangesFixedLen.push({start: pointerFixed, end: pointerFixed + fieldType.fixedSize});
-      pointerFixed += fieldType.fixedSize;
-    }
-  }
-
-  return {
-    isFixedLen,
-    fieldRangesFixedLen,
-    variableOffsetsPosition,
-    fixedEnd: pointerFixed,
-  };
 }
 
 /**

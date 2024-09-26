@@ -1,11 +1,12 @@
-import {getNodeAtDepth, LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {getNodeAtDepth, LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType} from "../type/composite";
-import {ContainerTypeGeneric} from "../view/profile";
+import {computeSerdesData, ContainerTypeGeneric} from "../view/profile";
 import {TreeViewDU} from "./abstract";
 import {BasicContainerTreeViewDU, ChangedNode} from "./container";
 import {OptionalType} from "../type/optional";
+import {BitArray} from "../value/bitArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -68,18 +69,38 @@ class ProfileTreeViewDU<Fields extends Record<string, Type<unknown>>> extends Ba
   serializeToBytes(output: ByteViews, offset: number): number {
     this.commit();
 
-    let fixedIndex = offset;
-    let variableIndex = offset + this.type.fixedEnd;
+    const optionalArr: boolean[] = [];
     for (let index = 0; index < this.type.fieldsEntries.length; index++) {
-      const {fieldType, chunkIndex} = this.type.fieldsEntries[index];
+      const {chunkIndex, optional} = this.type.fieldsEntries[index];
       let node = this.nodes[index];
       if (node === undefined) {
         node = getNodeAtDepth(this._rootNode, this.type.depth, chunkIndex);
         this.nodes[index] = node;
       }
+      if (optional) {
+        optionalArr.push(node !== zeroNode(0));
+      }
+    }
+
+    const optionalFields = BitArray.fromBoolArray(optionalArr);
+    output.uint8Array.set(optionalFields.uint8Array, offset);
+
+    const {fixedEnd} = computeSerdesData(optionalFields, this.type.fieldsEntries);
+
+    const optionalFieldsLen = optionalFields.uint8Array.length;
+    let fixedIndex = offset + optionalFieldsLen;
+    let variableIndex = offset + fixedEnd + optionalFieldsLen;
+    for (let index = 0; index < this.type.fieldsEntries.length; index++) {
+      const {fieldType, optional} = this.type.fieldsEntries[index];
+      const node = this.nodes[index];
+      // all nodes are populated above
+      if (optional && node === zeroNode(0)) {
+        continue;
+      }
+
       if (fieldType.fixedSize === null) {
-        // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - offset, true);
+        // write offset relative to the start of serialized active fields, after the Bitvector[N]
+        output.dataView.setUint32(fixedIndex, variableIndex - offset - optionalFieldsLen, true);
         fixedIndex += 4;
         // write serialized element to variable section
         // basic types always have fixedSize
@@ -108,7 +129,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
-    const {fieldName, fieldType, chunkIndex} = type.fieldsEntries[index];
+    const {fieldName, fieldType, chunkIndex, optional} = type.fieldsEntries[index];
 
     // If the field type is basic, the value to get and set will be the actual 'struct' value (i.e. a JS number).
     // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
@@ -127,10 +148,20 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
             this.nodes[index] = node;
           }
 
+          if (optional && node === zeroNode(0)) {
+            return null;
+          }
+
           return fieldType.tree_getFromNode(node as LeafNode) as unknown;
         },
 
         set: function (this: CustomContainerTreeViewDU, value) {
+          if (optional && value == null) {
+            this.nodes[index] = zeroNode(0);
+            this.nodesChanged.add(index);
+            return;
+          }
+
           // Create new node if current leafNode is not dirty
           let nodeChanged: LeafNode;
           if (this.nodesChanged.has(index)) {
@@ -173,6 +204,10 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
             this.nodes[index] = node;
           }
 
+          if (optional && node === zeroNode(0)) {
+            return null;
+          }
+
           // Keep a reference to the new view to call .commit on it latter, only if mutable
           const view = fieldType.getViewDU(node, this.caches[index]);
           if (fieldType.isViewMutable) {
@@ -188,6 +223,12 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         // Expects TreeViewDU of fieldName
         set: function (this: CustomContainerTreeViewDU, view: unknown) {
+          if (optional && view == null) {
+            this.nodes[index] = zeroNode(0);
+            this.nodesChanged.add(index);
+            return;
+          }
+
           // When setting a view:
           // - Not necessary to commit node
           // - Not necessary to persist cache
