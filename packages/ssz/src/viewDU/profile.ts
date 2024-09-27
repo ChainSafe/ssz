@@ -122,10 +122,10 @@ class ProfileTreeViewDU<Fields extends Record<string, Type<unknown>>> extends Ba
   }
 }
 
-export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
+export function getProfileTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewDUTypeConstructor<Fields> {
-  class CustomContainerTreeViewDU extends ProfileTreeViewDU<Fields> {}
+  class CustomProfileTreeViewDU extends ProfileTreeViewDU<Fields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -135,12 +135,12 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
     // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (isBasicType(fieldType)) {
-      Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+      Object.defineProperty(CustomProfileTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // TODO: Review the memory cost of this closures
-        get: function (this: CustomContainerTreeViewDU) {
+        get: function (this: CustomProfileTreeViewDU) {
           // First walk through the tree to get the root node for that index
           let node = this.nodes[index];
           if (node === undefined) {
@@ -155,7 +155,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
           return fieldType.tree_getFromNode(node as LeafNode) as unknown;
         },
 
-        set: function (this: CustomContainerTreeViewDU, value) {
+        set: function (this: CustomProfileTreeViewDU, value) {
           if (optional && value == null) {
             this.nodes[index] = zeroNode(0);
             this.nodesChanged.add(index);
@@ -186,12 +186,12 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else if (isCompositeType(fieldType)) {
-      Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+      Object.defineProperty(CustomProfileTreeViewDU.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // Returns TreeViewDU of fieldName
-        get: function (this: CustomContainerTreeViewDU) {
+        get: function (this: CustomProfileTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -222,7 +222,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
         },
 
         // Expects TreeViewDU of fieldName
-        set: function (this: CustomContainerTreeViewDU, view: unknown) {
+        set: function (this: CustomProfileTreeViewDU, view: unknown) {
           if (optional && view == null) {
             this.nodes[index] = zeroNode(0);
             this.nodesChanged.add(index);
@@ -246,7 +246,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
   }
 
   // Change class name
-  Object.defineProperty(CustomContainerTreeViewDU, "name", {value: type.typeName, writable: false});
+  Object.defineProperty(CustomProfileTreeViewDU, "name", {value: type.typeName, writable: false});
 
-  return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields>;
+  return CustomProfileTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields>;
 }

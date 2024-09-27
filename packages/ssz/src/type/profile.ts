@@ -11,13 +11,13 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize";
+import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {Type, ValueOf} from "./abstract";
 import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
 import {
-  getContainerTreeViewClass,
+  getProfileTreeViewClass,
   ValueOfFields,
   FieldEntry,
   ContainerTreeViewType,
@@ -25,7 +25,7 @@ import {
   computeSerdesData,
 } from "../view/profile";
 import {
-  getContainerTreeViewDUClass,
+  getProfileTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
 } from "../viewDU/profile";
@@ -42,8 +42,8 @@ export type ProfileOptions<Fields extends Record<string, unknown>> = {
   jsonCase?: KeyCase;
   casingMap?: CasingMap<Fields>;
   cachePermanentRootStruct?: boolean;
-  getContainerTreeViewClass?: typeof getContainerTreeViewClass;
-  getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
+  getProfileTreeViewClass?: typeof getProfileTreeViewClass;
+  getProfileTreeViewDUClass?: typeof getProfileTreeViewDUClass;
 };
 
 export type KeyCase =
@@ -89,7 +89,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   private optionalFieldsCount: number;
 
   constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
-    super(opts?.cachePermanentRootStruct);
+    super();
 
     // Render detailed typeName. Consumers should overwrite since it can get long
     this.typeName = opts?.typeName ?? renderContainerTypeName(fields);
@@ -152,8 +152,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
     // TODO: This options are necessary for ContainerNodeStruct to override this.
     // Refactor this constructor to allow customization without pollutin the options
-    this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
-    this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
+    this.TreeView = opts?.getProfileTreeViewClass?.(this) ?? getProfileTreeViewClass(this);
+    this.TreeViewDU = opts?.getProfileTreeViewDUClass?.(this) ?? getProfileTreeViewDUClass(this);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -361,11 +361,22 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   // Merkleization
-
   hashTreeRoot(value: ValueOfFields<Fields>): Uint8Array {
-    // TODO: handle cachePermanentRootStruct
-    const root = super.hashTreeRoot(value);
-    return mixInActiveFields(root, this.activeFields);
+    // Return cached mutable root if any
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        return cachedRoot;
+      }
+    }
+
+    const root = mixInActiveFields(super.hashTreeRoot(value), this.activeFields);
+
+    if (this.cachePermanentRootStruct) {
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+    }
+
+    return root;
   }
 
   protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
@@ -385,9 +396,6 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
   // Proofs
 
-  // getPropertyGindex
-  // getPropertyType
-  // tree_getLeafGindices
   /** INTERNAL METHOD: For view's API, create proof from a tree */
 
   getPropertyGindex(prop: string): Gindex | null {

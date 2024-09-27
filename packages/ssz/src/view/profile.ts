@@ -68,7 +68,7 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
+class ProfileTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
   constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
     super();
   }
@@ -78,10 +78,10 @@ class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends Tr
   }
 }
 
-export function getContainerTreeViewClass<Fields extends Record<string, Type<unknown>>>(
+export function getProfileTreeViewClass<Fields extends Record<string, Type<unknown>>>(
   type: ContainerTypeGeneric<Fields>
 ): ContainerTreeViewTypeConstructor<Fields> {
-  class CustomContainerTreeView extends ContainerTreeView<Fields> {}
+  class CustomProfileTreeView extends ProfileTreeView<Fields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -91,12 +91,12 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
     // The view must use the tree_getFromNode() and tree_setToNode() methods to persist the struct data to the node,
     // and use the cached views array to store the new node.
     if (isBasicType(fieldType)) {
-      Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+      Object.defineProperty(CustomProfileTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // TODO: Review the memory cost of this closures
-        get: function (this: CustomContainerTreeView) {
+        get: function (this: CustomProfileTreeView) {
           const leafNode = getNodeAtDepth(this.node, this.type.depth, chunkIndex) as LeafNode;
           if (optional && leafNode === zeroNode(0)) {
             return null;
@@ -105,7 +105,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
           return fieldType.tree_getFromNode(leafNode);
         },
 
-        set: function (this: CustomContainerTreeView, value) {
+        set: function (this: CustomProfileTreeView, value) {
           if (optional && value == null) {
             const leafNode = zeroNode(0);
             this.tree.setNodeAtDepth(this.type.depth, chunkIndex, leafNode);
@@ -124,12 +124,12 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
     // cache the view itself to retain the caches of the child view. To set a value the view must return a node to
     // set it to the parent tree in the field gindex.
     else if (isCompositeType(fieldType)) {
-      Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+      Object.defineProperty(CustomProfileTreeView.prototype, fieldName, {
         configurable: false,
         enumerable: true,
 
         // Returns TreeView of fieldName
-        get: function (this: CustomContainerTreeView) {
+        get: function (this: CustomProfileTreeView) {
           const gindex = toGindexBitstring(this.type.depth, chunkIndex);
           const tree = this.tree.getSubtree(gindex);
           if (optional && tree.rootNode === zeroNode(0)) {
@@ -140,7 +140,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
         },
 
         // Expects TreeView of fieldName
-        set: function (this: CustomContainerTreeView, value: unknown) {
+        set: function (this: CustomProfileTreeView, value: unknown) {
           if (optional && value == null) {
             this.tree.setNodeAtDepth(this.type.depth, chunkIndex, zeroNode(0));
           }
@@ -159,9 +159,9 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
   }
 
   // Change class name
-  Object.defineProperty(CustomContainerTreeView, "name", {value: type.typeName, writable: false});
+  Object.defineProperty(CustomProfileTreeView, "name", {value: type.typeName, writable: false});
 
-  return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
+  return CustomProfileTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
 }
 
 // TODO: deduplicate

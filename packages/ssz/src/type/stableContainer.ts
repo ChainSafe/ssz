@@ -101,8 +101,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   private padActiveFields: boolean[];
 
   constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
-    // TODO: should pass this to parent?? unit test to confirm
-    super(opts?.cachePermanentRootStruct);
+    super();
 
     this.fields = fields;
 
@@ -382,10 +381,6 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   }
 
   // Proofs
-
-  // getPropertyGindex
-  // getPropertyType
-  // tree_getLeafGindices
 
   getPropertyGindex(prop: string): Gindex | null {
     const gindex = this.fieldsGindex[prop] ?? this.fieldsGindex[this.jsonKeyToFieldName[prop]];
