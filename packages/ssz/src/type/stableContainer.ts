@@ -10,6 +10,7 @@ import {
   concatGindices,
   getNode,
   zeroNode,
+  zeroHash,
   countToDepth,
   getNodeH,
   setNode,
@@ -100,6 +101,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   private padActiveFields: boolean[];
 
   constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
+    // TODO: should pass this to parent?? unit test to confirm
     super(opts?.cachePermanentRootStruct);
 
     this.fields = fields;
@@ -227,7 +229,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
     const {fixedEnd} = computeSerdesData(activeFields, this.fieldsEntries);
 
-    let fixedIndex = offset + activeFields.uint8Array.length;
+    const activeFieldsLen = activeFields.uint8Array.length;
+    let fixedIndex = offset + activeFieldsLen;
     let variableIndex = offset + fixedEnd;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
@@ -238,8 +241,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       }
 
       if (fieldType.fixedSize === null) {
-        // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - activeFields.uint8Array.length - offset, true);
+        // write offset relative to the start of serialized active fields, after the Bitvector[N]
+        output.dataView.setUint32(fixedIndex, variableIndex - offset - activeFieldsLen, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.value_serializeToBytes(output, variableIndex, value[fieldName]);
@@ -293,7 +296,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
     const {fixedEnd} = computeSerdesData(activeFields, this.fieldsEntries);
 
-    let fixedIndex = offset + activeFields.uint8Array.length;
+    const activeFieldsLen = activeFields.uint8Array.length;
+    let fixedIndex = offset + activeFieldsLen;
     let variableIndex = offset + fixedEnd;
 
     const nodes = getNodesAtDepth(node, this.depth, 0, this.fieldsEntries.length);
@@ -306,8 +310,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
       const node = nodes[i];
       if (fieldType.fixedSize === null) {
-        // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - activeFields.uint8Array.length - offset, true);
+        // write offset relative to the start of serialized active fields, after the Bitvector[N]
+        output.dataView.setUint32(fixedIndex, variableIndex - offset - activeFieldsLen, true);
         fixedIndex += 4;
         // write serialized element to variable section
         variableIndex = fieldType.tree_serializeToBytes(output, variableIndex, node);
@@ -367,7 +371,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        roots[i] = new Uint8Array(32);
+        roots[i] = zeroHash(0);
         continue;
       }
 

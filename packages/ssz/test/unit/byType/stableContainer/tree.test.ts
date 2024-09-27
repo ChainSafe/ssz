@@ -21,7 +21,7 @@ import {
 } from "../../../../src";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes";
 import {runViewTestMutation} from "../runViewTestMutation";
-import {getNodesAtDepth, zeroHash} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, Tree, zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable
@@ -648,6 +648,38 @@ describe("StableContainer BitVector[N]", () => {
         expect(view.node.root).to.be.deep.equal(stableType.hashTreeRoot({a: 1}));
       }
     }
+  });
+
+  it("offsets are relative to the start of serialized active fields, after the Bitvector[N]", () => {
+    const stableType = new StableContainerType({a: new OptionalType(list8Uint64NumInfType)}, 64);
+    const value = {a: [1]};
+    // first 8 bytes are the active fields
+    // value 4 at 9th byte is relative to the 9th byte
+    const expectedBytes = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]);
+    const data = {uint8Array: expectedBytes, dataView: new DataView(expectedBytes.buffer, 0, expectedBytes.length)};
+    const expectedRoot = stableType.hashTreeRoot(value);
+    expect(stableType.serialize(value)).to.be.deep.equal(expectedBytes);
+
+    let viewDU = stableType.toViewDU(value);
+    expect(viewDU.serialize()).to.be.deep.equal(expectedBytes);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+
+    viewDU = stableType.getViewDU(stableType.tree_deserializeFromBytes(data, 0, data.uint8Array.length));
+    expect(viewDU.serialize()).to.deep.equal(expectedBytes);
+    expect(viewDU.batchHashTreeRoot()).to.deep.equal(expectedRoot);
+
+    let view = stableType.toView(value);
+    expect(view.serialize()).to.deep.equal(expectedBytes);
+    expect(view.hashTreeRoot()).to.deep.equal(expectedRoot);
+
+    view = stableType.getView(new Tree(stableType.tree_deserializeFromBytes(data, 0, data.uint8Array.length)));
+    expect(view.serialize()).to.deep.equal(expectedBytes);
+    expect(view.hashTreeRoot()).to.deep.equal(expectedRoot);
+
+    const value2 = stableType.deserialize(expectedBytes);
+    expect(value2).to.be.deep.equal(value);
+    expect(stableType.serialize(value2)).to.deep.equal(expectedBytes);
+    expect(stableType.hashTreeRoot(value2)).to.deep.equal(expectedRoot);
   });
 });
 

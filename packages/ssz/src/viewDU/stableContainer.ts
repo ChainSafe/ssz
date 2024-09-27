@@ -86,7 +86,8 @@ class StableContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> ex
 
     const {fixedEnd} = computeSerdesData(activeFields, this.type.fieldsEntries);
 
-    let fixedIndex = offset + activeFields.uint8Array.length;
+    const activeFieldsLen = activeFields.uint8Array.length;
+    let fixedIndex = offset + activeFieldsLen;
     let variableIndex = offset + fixedEnd;
     for (let index = 0; index < this.type.fieldsEntries.length; index++) {
       const {fieldType, optional} = this.type.fieldsEntries[index];
@@ -100,8 +101,8 @@ class StableContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> ex
         this.nodes[index] = node;
       }
       if (fieldType.fixedSize === null) {
-        // write offset
-        output.dataView.setUint32(fixedIndex, variableIndex - activeFields.uint8Array.length - offset, true);
+        // write offset relative to the start of serialized active fields, after the Bitvector[N]
+        output.dataView.setUint32(fixedIndex, variableIndex - offset - activeFieldsLen, true);
         fixedIndex += 4;
         // write serialized element to variable section
         // basic types always have fixedSize
