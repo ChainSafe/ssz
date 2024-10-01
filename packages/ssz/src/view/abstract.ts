@@ -67,4 +67,9 @@ export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown
   clone(): this {
     return this.type.getView(new Tree(this.node)) as this;
   }
+
+  /** Upgrade the current View/ViewDU to a root node of new type */
+  upgradeToNewType(newType: T): Node {
+    throw Error(`Not implemented for type ${this.type.typeName}, new type ${newType.typeName}`);
+  }
 }
