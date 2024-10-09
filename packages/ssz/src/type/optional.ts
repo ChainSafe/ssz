@@ -15,6 +15,11 @@ import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 /* eslint-disable @typescript-eslint/member-ordering */
 
+export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
+export type NonOptionalFields<Fields extends Record<string, Type<unknown>>> = {
+  [K in keyof Fields]: NonOptionalType<Fields[K]>;
+};
+
 export type OptionalOpts = {
   typeName?: string;
 };
@@ -257,4 +262,12 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
 
     return this.elementType.equals(a, b);
   }
+}
+
+export function isOptionalType(type: Type<unknown>): type is OptionalType<Type<unknown>> {
+  return type instanceof OptionalType;
+}
+
+export function toNonOptionalType<T extends Type<unknown>>(type: T): NonOptionalType<T> {
+  return (isOptionalType(type) ? type.elementType : type) as NonOptionalType<T>;
 }

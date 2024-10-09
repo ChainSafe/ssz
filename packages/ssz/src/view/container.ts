@@ -3,6 +3,7 @@ import {Type, ValueOf} from "../type/abstract";
 import {isBasicType, BasicType} from "../type/basic";
 import {isCompositeType, CompositeType} from "../type/composite";
 import {TreeView} from "./abstract";
+import {NonOptionalFields} from "../type/optional";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;
@@ -12,13 +13,16 @@ export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
 };
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
-export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
+export type BasicContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
   ValueOfFields<Fields>,
   ContainerTreeViewType<Fields>,
   unknown
 > & {
   readonly fields: Fields;
-  readonly fieldsEntries: FieldEntry<Fields>[];
+  readonly fieldsEntries: (FieldEntry<Fields> | FieldEntry<NonOptionalFields<Fields>>)[];
+};
+
+export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = BasicContainerTypeGeneric<Fields> & {
   readonly fixedEnd: number;
 };
 
@@ -35,7 +39,7 @@ export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
 };
 
 export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
-  TreeView<ContainerTypeGeneric<Fields>>;
+  TreeView<BasicContainerTypeGeneric<Fields>>;
 export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<unknown>>> = {
   new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
 };

@@ -16,6 +16,8 @@ export {OptionalType} from "./type/optional";
 export {VectorBasicType} from "./type/vectorBasic";
 export {VectorCompositeType} from "./type/vectorComposite";
 export {ListUintNum64Type} from "./type/listUintNum64";
+export {StableContainerType} from "./type/stableContainer";
+export {ProfileType} from "./type/profile";
 
 // Base types
 export {ArrayType} from "./type/array";
