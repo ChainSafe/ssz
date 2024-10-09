@@ -1,4 +1,13 @@
-import {getNodeAtDepth, Gindex, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {
+  getNodeAtDepth,
+  Gindex,
+  LeafNode,
+  Node,
+  toGindexBitstring,
+  Tree,
+  BranchNode,
+  zeroNode,
+} from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract";
 import {isBasicType, BasicType} from "../type/basic";
 import {isCompositeType, CompositeType} from "../type/composite";
@@ -62,6 +71,10 @@ class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends Tr
 
   get node(): Node {
     return this.tree.rootNode;
+  }
+
+  upgradeToNewType(newType: ContainerTypeGeneric<Fields>): Node {
+    return upgradeToNewType(this.node, this.type, newType);
   }
 }
 
@@ -130,4 +143,30 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
   Object.defineProperty(CustomContainerTreeView, "name", {value: type.typeName, writable: false});
 
   return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
+}
+
+/** Upgrade the current View/ViewDU to a root node of new type */
+export function upgradeToNewType<Fields extends Record<string, Type<unknown>>>(
+  rootNode: Node,
+  oldType: ContainerTypeGeneric<Fields>,
+  newType: ContainerTypeGeneric<Fields>
+): Node {
+  const newFieldsCount = newType.fieldsEntries.length;
+  const currentFieldsCount = oldType.fieldsEntries.length;
+  if (newFieldsCount < currentFieldsCount) {
+    throw Error(`Cannot convert to a type with fewer fields: ${newFieldsCount} < ${currentFieldsCount}`);
+  }
+
+  if (newType.depth === oldType.depth) {
+    // no need to grow the tree
+    return rootNode;
+  }
+
+  // grow the tree
+  let node = rootNode;
+  for (let depth = oldType.depth; depth < newType.depth; depth++) {
+    node = new BranchNode(node, zeroNode(depth));
+  }
+
+  return node;
 }

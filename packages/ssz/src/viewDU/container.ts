@@ -9,7 +9,7 @@ import {
 import {ByteViews, Type} from "../type/abstract";
 import {BasicType, isBasicType} from "../type/basic";
 import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite";
-import {ContainerTypeGeneric} from "../view/container";
+import {ContainerTypeGeneric, upgradeToNewType} from "../view/container";
 import {TreeViewDU} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */
@@ -184,6 +184,12 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
     }
 
     return variableIndex;
+  }
+
+  upgradeToNewType(newType: ContainerTypeGeneric<Fields>): Node {
+    this.commit();
+
+    return upgradeToNewType(this.node, this.type, newType);
   }
 }
 
