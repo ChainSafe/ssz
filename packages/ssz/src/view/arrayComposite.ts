@@ -1,32 +1,17 @@
-import {getNodesAtDepth, Node, toGindexBitstring, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {TreeView} from "./abstract";
+import {ArrayType} from "./arrayBasic";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayCompositeType<
   ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>
-> = CompositeType<ValueOf<ElementType>[], unknown, unknown> & {
-  readonly elementType: ElementType;
-  readonly chunkDepth: number;
-
-  /** INTERNAL METHOD: Return the length of this type from an Array's root node */
-  tree_getLength(node: Node): number;
-  /** INTERNAL METHOD: Mutate a tree's rootNode with a new length value */
-  tree_setLength(tree: Tree, length: number): void;
-  /** INTERNAL METHOD: Return the chunks node from a root node */
-  tree_getChunksNode(rootNode: Node): Node;
-  /** INTERNAL METHOD: Return the offset from root for HashComputation */
-  tree_chunksNodeOffset(): number;
-  /** INTERNAL METHOD: Return a new root node with changed chunks node and length */
-  tree_setChunksNode(
-    rootNode: Node,
-    chunksNode: Node,
-    newLength: number | null,
-    hcOffset?: number,
-    hcByLevel?: HashComputationLevel[] | null
-  ): Node;
-};
+> = CompositeType<ValueOf<ElementType>[], unknown, unknown> &
+  ArrayType & {
+    readonly elementType: ElementType;
+    readonly chunkDepth: number;
+  };
 
 export class ArrayCompositeTreeView<
   ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>

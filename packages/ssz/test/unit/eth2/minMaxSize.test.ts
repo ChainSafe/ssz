@@ -22,7 +22,8 @@ describe("Get minSize and maxSize of eth2 data structures", () => {
       CommitteeIndices: {minSize: 0, maxSize: 16384},
       DepositMessage: {minSize: 88, maxSize: 88},
       DepositData: {minSize: 184, maxSize: 184},
-      DepositDataRootList: {minSize: 0, maxSize: 137438953472},
+      DepositDataRootFullList: {minSize: 0, maxSize: 137438953472},
+      DepositDataRootPartialList: {minSize: 0, maxSize: 137438953472},
       DepositEvent: {minSize: 200, maxSize: 200},
       Eth1Data: {minSize: 72, maxSize: 72},
       Eth1DataVotes: {minSize: 0, maxSize: 2304},
@@ -70,6 +71,7 @@ describe("Get minSize and maxSize of eth2 data structures", () => {
       BeaconBlocksByRootRequest: {minSize: 0, maxSize: 32768},
       Genesis: {minSize: 44, maxSize: 44},
       HistoricalBatchRoots: {minSize: 64, maxSize: 64},
+      DepositsDataSnapshot: {minSize: 84, maxSize: 137438953556},
     },
     altair: {
       SyncSubnets: {minSize: 1, maxSize: 1},

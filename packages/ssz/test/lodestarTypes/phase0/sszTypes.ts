@@ -9,6 +9,7 @@ import {
   VectorCompositeType,
 } from "../../../src";
 import {ListUintNum64Type} from "../../../src/type/listUintNum64";
+import {PartialListCompositeType} from "../../../src/type/partialListComposite";
 import {
   preset,
   MAX_REQUEST_BLOCKS,
@@ -140,7 +141,8 @@ export const DepositData = new ContainerType(
   {typeName: "DepositData", jsonCase: "eth2"}
 );
 
-export const DepositDataRootList = new ListCompositeType(Root, 2 ** DEPOSIT_CONTRACT_TREE_DEPTH);
+export const DepositDataRootFullList = new ListCompositeType(Root, 2 ** DEPOSIT_CONTRACT_TREE_DEPTH);
+export const DepositDataRootPartialList = new PartialListCompositeType(Root, 2 ** DEPOSIT_CONTRACT_TREE_DEPTH);
 
 export const DepositEvent = new ContainerType(
   {
@@ -170,6 +172,20 @@ export const Eth1DataOrdered = new ContainerType(
     blockNumber: UintNum64,
   },
   {typeName: "Eth1DataOrdered", jsonCase: "eth2"}
+);
+
+/**
+ * Specific type for EIP-4881.
+ */
+export const DepositsDataSnapshot = new ContainerType(
+  {
+    finalized: DepositDataRootFullList,
+    depositRoot: Root,
+    depositCount: UintNum64,
+    executionBlockHash: Root,
+    executionBlockHeight: UintNum64,
+  },
+  {typeName: "DepositsDataSnapshot", jsonCase: "eth2"}
 );
 
 /** Spec'ed but only used in lodestar as a type */

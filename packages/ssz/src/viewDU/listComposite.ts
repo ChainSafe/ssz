@@ -1,9 +1,11 @@
-import {Node, subtreeFillToContents, treeZeroAfterIndex, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {Node, subtreeFillToContents, treeZeroAfterIndex, zeroNode, toSnapshot} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, ValueOf} from "../type/abstract";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {ListCompositeType} from "../view/listComposite";
 import {ArrayCompositeTreeViewDU, ArrayCompositeTreeViewDUCache} from "./arrayComposite";
 import {tree_serializeToBytesArrayComposite} from "../type/arrayComposite";
+import {Snapshot} from "../util/types";
+import {zeroSnapshot} from "../util/snapshot";
 
 export class ListCompositeTreeViewDU<
   ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
@@ -63,7 +65,7 @@ export class ListCompositeTreeViewDU<
     const newLength = index + 1;
     const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
 
-    return this.type.getViewDU(newRootNode) as this;
+    return this.rootNodeToViewDU(newRootNode);
   }
 
   /**
@@ -106,7 +108,29 @@ export class ListCompositeTreeViewDU<
 
     const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength);
 
-    return this.type.getViewDU(newRootNode) as this;
+    return this.rootNodeToViewDU(newRootNode);
+  }
+
+  /**
+   * Create snapshot from the first `count` elements of the list.
+   */
+  toSnapshot(count: number): Snapshot {
+    // Commit before getting rootNode to ensure all pending data is in the rootNode
+    this.commit();
+    if (count < 0 || count > this._length) {
+      throw Error(`Invalid count ${count}, length is ${this._length}`);
+    }
+
+    if (count === 0) {
+      return zeroSnapshot(this.type.chunkDepth);
+    }
+
+    // sliceTo is inclusive
+    const rootNode = this.sliceTo(count - 1)._rootNode;
+    const chunksNode = this.type.tree_getChunksNode(rootNode);
+
+    const snapshot = toSnapshot(chunksNode, this.type.chunkDepth, count);
+    return {...snapshot, root: rootNode.root};
   }
 
   /**
@@ -125,5 +149,9 @@ export class ListCompositeTreeViewDU<
       offset,
       this.nodes
     );
+  }
+
+  protected rootNodeToViewDU(rootNode: Node): this {
+    return this.type.getViewDU(rootNode) as this;
   }
 }

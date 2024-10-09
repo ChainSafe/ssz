@@ -8,6 +8,7 @@ export {ContainerType} from "./type/container";
 export {ContainerNodeStructType} from "./type/containerNodeStruct";
 export {ListBasicType} from "./type/listBasic";
 export {ListCompositeType} from "./type/listComposite";
+export {PartialListCompositeType} from "./type/partialListComposite";
 export {NoneType} from "./type/none";
 export {UintBigintType, UintNumberType} from "./type/uint";
 export {UnionType} from "./type/union";
@@ -34,5 +35,5 @@ export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
 
 // Utils
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
-
+export {Snapshot} from "./util/types";
 export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";
