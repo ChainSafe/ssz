@@ -10,11 +10,15 @@ export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeTy
   ValueOf<ElementType>[],
   TreeView<ArrayBasicType<ElementType>>,
   TreeViewDU<ArrayBasicType<ElementType>>
-> & {
-  readonly elementType: ElementType;
-  readonly itemsPerChunk: number;
-  readonly chunkDepth: number;
+> &
+  ArrayType & {
+    readonly elementType: ElementType;
+    readonly itemsPerChunk: number;
+    readonly chunkDepth: number;
+  };
 
+/** Common type for both ArrayBasicType and ArrayCompositeTypesrc/view/arrayBasic.ts */
+export type ArrayType = {
   /** INTERNAL METHOD: Return the length of this type from an Array's root node */
   tree_getLength(node: Node): number;
   /** INTERNAL METHOD: Mutate a tree's rootNode with a new length value */
