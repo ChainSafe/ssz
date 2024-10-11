@@ -38,6 +38,7 @@ import {
 import {Case} from "../util/strings";
 import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional";
 import {BitArray} from "../value/bitArray";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
@@ -350,7 +351,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
 
     const merkleBytes = this.getChunkBytes(value);
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     merkleizeInto(merkleBytes, this.maxChunkCount, root, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
@@ -750,12 +751,15 @@ export function getActiveFields(rootNode: Node, bitLen: number): BitArray {
   return new BitArray(activeFieldsBuf, bitLen);
 }
 
+// This is a global buffer to avoid creating a new one for each call to getActiveFields
+const singleChunkActiveFieldsBuf = new Uint8Array(32);
+
 export function setActiveFields(rootNode: Node, activeFields: BitArray): Node {
   // fast path for depth 1, the bitvector fits in one chunk
   if (activeFields.bitLen <= 256) {
-    const activeFieldsBuf = new Uint8Array(32);
-    activeFieldsBuf.set(activeFields.uint8Array);
-    return new BranchNode(rootNode.left, LeafNode.fromRoot(activeFieldsBuf));
+    singleChunkActiveFieldsBuf.fill(0);
+    singleChunkActiveFieldsBuf.set(activeFields.uint8Array);
+    return new BranchNode(rootNode.left, LeafNode.fromRoot(singleChunkActiveFieldsBuf));
   }
 
   const activeFieldsChunkCount = Math.ceil(activeFields.bitLen / 256);
@@ -825,7 +829,8 @@ export function mixInActiveFields(root: Uint8Array, activeFields: BitArray, outp
     activeFieldsSingleChunk.fill(0);
     activeFieldsSingleChunk.set(activeFields.uint8Array);
     // 1 chunk for root, 1 chunk for activeFields
-    merkleizeInto(mixInActiveFieldsChunkBytes, 2, output, offset);
+    const chunkCount = 2;
+    merkleizeInto(mixInActiveFieldsChunkBytes, chunkCount, output, offset);
     return;
   }
 

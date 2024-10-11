@@ -1,3 +1,4 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
   concatGindices,
   createProof,
@@ -218,7 +219,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
       }
     }
 
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     this.hashTreeRootInto(value, root, 0);
 
     // hashTreeRootInto will cache the root if cachePermanentRootStruct is true

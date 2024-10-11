@@ -1,3 +1,4 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
   getNodesAtDepth,
   Node,
@@ -11,7 +12,6 @@ import {namedClass} from "../util/named";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
 import {ByteViews} from "./composite";
 import {ByteArrayType, ByteArray} from "./byteArray";
-
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export interface ByteListOptions {
@@ -101,7 +101,7 @@ export class ByteListType extends ByteArrayType {
   // Merkleization: inherited from ByteArrayType
 
   hashTreeRoot(value: ByteArray): Uint8Array {
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     this.hashTreeRootInto(value, root, 0);
     return root;
   }

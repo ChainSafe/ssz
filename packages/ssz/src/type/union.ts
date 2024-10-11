@@ -14,6 +14,7 @@ import {Type, ByteViews} from "./abstract";
 import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 import {NoneType} from "./none";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -177,7 +178,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   // Merkleization
 
   hashTreeRoot(value: ValueOfTypes<Types>): Uint8Array {
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     this.hashTreeRootInto(value, root, 0);
     return root;
   }

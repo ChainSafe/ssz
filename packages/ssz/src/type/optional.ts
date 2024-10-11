@@ -13,6 +13,7 @@ import {namedClass} from "../util/named";
 import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
 import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
@@ -178,7 +179,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   // Merkleization
 
   hashTreeRoot(value: ValueOfType<ElementType>): Uint8Array {
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     this.hashTreeRootInto(value, root, 0);
     return root;
   }

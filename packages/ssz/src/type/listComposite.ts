@@ -19,6 +19,7 @@ import {ArrayCompositeType} from "../view/arrayComposite";
 import {ListCompositeTreeView} from "../view/listComposite";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite";
 import {ArrayType} from "./array";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -181,7 +182,7 @@ export class ListCompositeType<
       }
     }
 
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     this.hashTreeRootInto(value, root, 0);
 
     // hashTreeRootInto will cache the root if cachePermanentRootStruct is true

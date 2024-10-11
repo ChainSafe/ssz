@@ -17,6 +17,7 @@ import {ArrayBasicType} from "../view/arrayBasic";
 import {ListBasicTreeView} from "../view/listBasic";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic";
 import {ArrayType} from "./array";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -174,7 +175,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
       }
     }
 
-    const root = new Uint8Array(32);
+    const root = allocUnsafe(32);
     this.hashTreeRootInto(value, root, 0);
 
     // hashTreeRootInto will cache the root if cachePermanentRootStruct is true

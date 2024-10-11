@@ -30,6 +30,7 @@ export abstract class BasicType<V> extends Type<V> {
   }
 
   hashTreeRoot(value: V): Uint8Array {
+    // cannot use allocUnsafe() here because hashTreeRootInto() may not fill the whole 32 bytes
     const root = new Uint8Array(32);
     this.hashTreeRootInto(value, root, 0);
     return root;
