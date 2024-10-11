@@ -34,7 +34,6 @@ import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
 import {mixInActiveFields, setActiveFields} from "./stableContainer";
 import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional";
-import {Uint8} from "../../test/lodestarTypes/sszTypes";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
