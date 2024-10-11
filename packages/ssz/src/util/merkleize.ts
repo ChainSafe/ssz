@@ -1,5 +1,4 @@
-import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
-import {zeroHash} from "@chainsafe/persistent-merkle-tree";
+import {hasher, zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 /** Dedicated property to cache hashTreeRoot of immutable CompositeType values */
 export const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
@@ -41,22 +40,6 @@ export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
   }
 
   return chunks[0];
-}
-
-/**
- * Split a long Uint8Array into Uint8Array of exactly 32 bytes
- */
-export function splitIntoRootChunks(longChunk: Uint8Array): Uint8Array[] {
-  const chunkCount = Math.ceil(longChunk.length / 32);
-  const chunks = new Array<Uint8Array>(chunkCount);
-
-  for (let i = 0; i < chunkCount; i++) {
-    const chunk = new Uint8Array(32);
-    chunk.set(longChunk.slice(i * 32, (i + 1) * 32));
-    chunks[i] = chunk;
-  }
-
-  return chunks;
 }
 
 /** @ignore */

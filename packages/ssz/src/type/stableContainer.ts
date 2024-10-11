@@ -11,19 +11,13 @@ import {
   getNode,
   zeroNode,
   zeroHash,
+  merkleizeInto,
   countToDepth,
   getNodeH,
   setNode,
   setNodeWithFn,
 } from "@chainsafe/persistent-merkle-tree";
-import {
-  ValueWithCachedPermanentRoot,
-  hash64,
-  maxChunksToDepth,
-  merkleize,
-  splitIntoRootChunks,
-  symbolCachedPermanentRoot,
-} from "../util/merkleize";
+import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {JsonPath, Type, ValueOf} from "./abstract";
@@ -153,6 +147,9 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
+    const fieldBytes = this.fieldsEntries.length * 32;
+    const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
+    this.chunkBytesBuffer = new Uint8Array(chunkBytes);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -341,43 +338,45 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   }
 
   // Merkleization
-  hashTreeRoot(value: ValueOfFields<Fields>): Uint8Array {
+  // hashTreeRoot is the same to parent as it call hashTreeRootInto()
+  hashTreeRootInto(value: ValueOfFields<Fields>, output: Uint8Array, offset: number): void {
     // Return cached mutable root if any
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
       if (cachedRoot) {
-        return cachedRoot;
+        output.set(cachedRoot, offset);
+        return;
       }
     }
 
+    const merkleBytes = this.getChunkBytes(value);
+    const root = new Uint8Array(32);
+    merkleizeInto(merkleBytes, this.maxChunkCount, root, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
       ...this.padActiveFields,
     ]);
-    const root = mixInActiveFields(super.hashTreeRoot(value), activeFields);
+    mixInActiveFields(root, activeFields, root, 0);
+    output.set(root, offset);
 
     if (this.cachePermanentRootStruct) {
       (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
     }
-
-    return root;
   }
 
-  protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
-    const roots = new Array<Uint8Array>(this.fieldsEntries.length);
-
+  protected getChunkBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.chunkBytesBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        roots[i] = zeroHash(0);
-        continue;
+        this.chunkBytesBuffer.set(zeroHash(0), i * 32);
+      } else {
+        fieldType.hashTreeRootInto(struct[fieldName], this.chunkBytesBuffer, i * 32);
       }
-
-      roots[i] = fieldType.hashTreeRoot(struct[fieldName]);
     }
 
-    return roots;
+    return this.chunkBytesBuffer;
   }
 
   // Proofs
@@ -815,15 +814,23 @@ export function setActiveField(rootNode: Node, bitLen: number, fieldIndex: numbe
   return new BranchNode(rootNode.left, newActiveFieldsNode);
 }
 
-export function mixInActiveFields(root: Uint8Array, activeFields: BitArray): Uint8Array {
+// This is a global buffer to avoid creating a new one for each call to getChunkBytes
+const mixInActiveFieldsChunkBytes = new Uint8Array(64);
+const activeFieldsSingleChunk = mixInActiveFieldsChunkBytes.subarray(32);
+
+export function mixInActiveFields(root: Uint8Array, activeFields: BitArray, output: Uint8Array, offset: number): void {
   // fast path for depth 1, the bitvector fits in one chunk
+  mixInActiveFieldsChunkBytes.set(root, 0);
   if (activeFields.bitLen <= 256) {
-    const activeFieldsChunk = new Uint8Array(32);
-    activeFieldsChunk.set(activeFields.uint8Array);
-    return hash64(root, activeFieldsChunk);
+    activeFieldsSingleChunk.fill(0);
+    activeFieldsSingleChunk.set(activeFields.uint8Array);
+    // 1 chunk for root, 1 chunk for activeFields
+    merkleizeInto(mixInActiveFieldsChunkBytes, 2, output, offset);
+    return;
   }
 
-  const activeFieldsChunks = splitIntoRootChunks(activeFields.uint8Array);
-  const activeFieldsRoot = merkleize(activeFieldsChunks, activeFieldsChunks.length);
-  return hash64(root, activeFieldsRoot);
+  const chunkCount = Math.ceil(activeFields.uint8Array.length / 32);
+  merkleizeInto(activeFields.uint8Array, chunkCount, activeFieldsSingleChunk, 0);
+  // 1 chunk for root, 1 chunk for activeFields
+  merkleizeInto(mixInActiveFieldsChunkBytes, 2, output, offset);
 }
