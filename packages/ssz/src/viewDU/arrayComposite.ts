@@ -215,30 +215,26 @@ export class ArrayCompositeTreeViewDU<
     // Depth includes the extra level for the length node
     const byLevelView = hcByLevel != null && isOldRootHashed ? hcByLevel : null;
 
-    const indexesChanged = Array.from(this.viewsChanged.keys()).sort((a, b) => a - b);
-    const indexes: number[] = [];
-    const nodes: Node[] = [];
-    for (const index of indexesChanged) {
-      const view = this.viewsChanged.get(index);
-      if (!view) {
-        // should not happen
-        throw Error("View not found in viewsChanged, index=" + index);
-      }
+    const nodesChanged: {index: number; node: Node}[] = [];
 
+    for (const [index, view] of this.viewsChanged) {
       const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
       // there's a chance the view is not changed, no need to rebind nodes in that case
       if (this.nodes[index] !== node) {
         // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
         this.nodes[index] = node;
-        // nodesChanged.push({index, node});
-        indexes.push(index);
-        nodes.push(node);
+        nodesChanged.push({index, node});
       }
 
       // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
       const cache = this.type.elementType.cacheOfViewDU(view);
       if (cache) this.caches[index] = cache;
     }
+
+    // TODO: Optimize to loop only once, Numerical sort ascending
+    const nodesChangedSorted = nodesChanged.sort((a, b) => a.index - b.index);
+    const indexes = nodesChangedSorted.map((entry) => entry.index);
+    const nodes = nodesChangedSorted.map((entry) => entry.node);
 
     const chunksNode = this.type.tree_getChunksNode(this._rootNode);
     const offsetThis = hcOffset + this.type.tree_chunksNodeOffset();
