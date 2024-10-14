@@ -240,6 +240,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     const merkleBytes = this.getChunkBytes(value);
     merkleizeInto(merkleBytes, this.maxChunkCount, output, offset);
     if (this.cachePermanentRootStruct) {
+      // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
       const cachedRoot = Uint8Array.prototype.slice.call(output, offset, offset + 32);
       (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = cachedRoot;
     }

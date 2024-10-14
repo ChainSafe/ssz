@@ -38,7 +38,6 @@ import {
 import {Case} from "../util/strings";
 import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional";
 import {BitArray} from "../value/bitArray";
-import {allocUnsafe} from "@chainsafe/as-sha256";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
@@ -94,6 +93,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
   private padActiveFields: boolean[];
+  // temporary root to avoid memory allocation
+  private tempRoot = new Uint8Array(32);
 
   constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
     super();
@@ -351,18 +352,16 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
 
     const merkleBytes = this.getChunkBytes(value);
-    const root = allocUnsafe(32);
-    merkleizeInto(merkleBytes, this.maxChunkCount, root, 0);
+    merkleizeInto(merkleBytes, this.maxChunkCount, this.tempRoot, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
       ...this.padActiveFields,
     ]);
-    mixInActiveFields(root, activeFields, root, 0);
-    output.set(root, offset);
+    mixInActiveFields(this.tempRoot, activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = this.tempRoot.slice();
     }
   }
 

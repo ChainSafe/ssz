@@ -207,7 +207,12 @@ export class ListCompositeType<
     merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = output.slice(offset, offset + 32);
+      // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = Uint8Array.prototype.slice.call(
+        output,
+        offset,
+        offset + 32
+      );
     }
   }
 

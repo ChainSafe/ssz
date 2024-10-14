@@ -34,7 +34,6 @@ import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
 import {mixInActiveFields, setActiveFields} from "./stableContainer";
 import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional";
-import {allocUnsafe} from "@chainsafe/as-sha256";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
@@ -89,6 +88,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
   private optionalFieldsCount: number;
+  // temporary root to avoid memory allocation
+  private tempRoot = new Uint8Array(32);
 
   constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
     super();
@@ -378,13 +379,11 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     }
 
     const merkleBytes = this.getChunkBytes(value);
-    const root = allocUnsafe(32);
-    merkleizeInto(merkleBytes, this.maxChunkCount, root, 0);
-    mixInActiveFields(root, this.activeFields, root, 0);
-    output.set(root, offset);
+    merkleizeInto(merkleBytes, this.maxChunkCount, this.tempRoot, 0);
+    mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = this.tempRoot.slice();
     }
   }
 
