@@ -1,5 +1,12 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
-import {mixInLength, maxChunksToDepth} from "../util/merkleize";
+import {allocUnsafe} from "@chainsafe/as-sha256";
+import {
+  getNodesAtDepth,
+  merkleizeInto,
+  Node,
+  packedNodeRootsToBytes,
+  packedRootsBytesToNode,
+} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {ByteViews} from "./composite";
@@ -29,6 +36,12 @@ export class BitListType extends BitArrayType {
   readonly maxSize: number;
   readonly maxChunkCount: number;
   readonly isList = true;
+  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthChunkBytes.buffer,
+    this.mixInLengthChunkBytes.byteOffset,
+    this.mixInLengthChunkBytes.byteLength
+  );
 
   constructor(readonly limitBits: number, opts?: BitListOptions) {
     super();
@@ -101,7 +114,18 @@ export class BitListType extends BitArrayType {
   // Merkleization: inherited from BitArrayType
 
   hashTreeRoot(value: BitArray): Uint8Array {
-    return mixInLength(super.hashTreeRoot(value), value.bitLen);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
+  }
+
+  hashTreeRootInto(value: BitArray, output: Uint8Array, offset: number): void {
+    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.bitLen, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType
