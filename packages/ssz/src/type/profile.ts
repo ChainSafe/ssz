@@ -12,7 +12,7 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
+import {ValueWithCachedPermanentRoot, cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {Type, ValueOf} from "./abstract";
@@ -368,7 +368,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
   // Merkleization
   // hashTreeRoot is the same to parent as it call hashTreeRootInto()
-  hashTreeRootInto(value: ValueOfFields<Fields>, output: Uint8Array, offset: number): void {
+  hashTreeRootInto(value: ValueOfFields<Fields>, output: Uint8Array, offset: number, safeCache = false): void {
     // Return cached mutable root if any
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
@@ -383,7 +383,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = this.tempRoot.slice();
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
   }
 

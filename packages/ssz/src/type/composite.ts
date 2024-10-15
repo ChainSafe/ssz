@@ -12,7 +12,7 @@ import {
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
-import {symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode";
 import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
 export {ByteViews};
@@ -220,14 +220,15 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     }
 
     const root = allocUnsafe(32);
-    this.hashTreeRootInto(value, root, 0);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
     // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  hashTreeRootInto(value: V, output: Uint8Array, offset: number): void {
+  hashTreeRootInto(value: V, output: Uint8Array, offset: number, safeCache = false): void {
     // Return cached mutable root if any
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
@@ -240,9 +241,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     const merkleBytes = this.getChunkBytes(value);
     merkleizeInto(merkleBytes, this.maxChunkCount, output, offset);
     if (this.cachePermanentRootStruct) {
-      // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-      const cachedRoot = Uint8Array.prototype.slice.call(output, offset, offset + 32);
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = cachedRoot;
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
   }
 

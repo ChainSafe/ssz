@@ -1,5 +1,5 @@
 import {HashComputationLevel, Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {ValueOf, ByteViews} from "./abstract";
@@ -183,14 +183,15 @@ export class ListCompositeType<
     }
 
     const root = allocUnsafe(32);
-    this.hashTreeRootInto(value, root, 0);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
     // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number): void {
+  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number, safeCache = false): void {
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
       if (cachedRoot) {
@@ -207,12 +208,7 @@ export class ListCompositeType<
     merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = Uint8Array.prototype.slice.call(
-        output,
-        offset,
-        offset + 32
-      );
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
   }
 

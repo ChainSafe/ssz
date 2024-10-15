@@ -8,6 +8,28 @@ export type ValueWithCachedPermanentRoot = {
   [symbolCachedPermanentRoot]?: Uint8Array;
 };
 
+/**
+ * Cache a root for a ValueWithCachedPermanentRoot instance
+ * - if safeCache is true and output is 32 bytes and offset is 0, use output directly
+ * - if safeCache, use output subarray
+ * - otherwise, need to clone the root at output offset
+ */
+export function cacheRoot(
+  value: ValueWithCachedPermanentRoot,
+  output: Uint8Array,
+  offset: number,
+  safeCache: boolean
+): void {
+  const cachedRoot =
+    safeCache && output.length === 32 && offset === 0
+      ? output
+      : safeCache
+      ? output.subarray(offset, offset + 32)
+      : // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+        Uint8Array.prototype.slice.call(output, offset, offset + 32);
+  value[symbolCachedPermanentRoot] = cachedRoot;
+}
+
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
   return hasher.digest64(bytes32A, bytes32B);
 }

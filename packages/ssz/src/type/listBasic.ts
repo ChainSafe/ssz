@@ -10,7 +10,7 @@ import {
   addLengthNode,
   setChunksNode,
 } from "./arrayBasic";
-import {maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {ArrayBasicType} from "../view/arrayBasic";
@@ -176,14 +176,15 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     }
 
     const root = allocUnsafe(32);
-    this.hashTreeRootInto(value, root, 0);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
     // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number): void {
+  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number, safeCache = false): void {
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
       if (cachedRoot) {
@@ -200,7 +201,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = output.subarray(offset, offset + 32).slice();
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
   }
 
