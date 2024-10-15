@@ -1,13 +1,14 @@
 import {
   concatGindices,
   Gindex,
+  merkleizeBlocksBytes,
   Node,
   Tree,
   zeroNode,
-  HashComputationLevel,
   getHashComputations,
+  HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
-import {mixInLength} from "../util/merkleize.js";
+import { allocUnsafe } from "@chainsafe/as-sha256";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
@@ -47,6 +48,12 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthChunkBytes.buffer,
+    this.mixInLengthChunkBytes.byteOffset,
+    this.mixInLengthChunkBytes.byteLength
+  );
 
   constructor(readonly elementType: ElementType, opts?: OptionalOpts) {
     super();
@@ -59,6 +66,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.minSize = 0;
     // Max size includes prepended 0x01 byte
     this.maxSize = elementType.maxSize + 1;
+    this.chunkBytesBuffer = new Uint8Array(32);
   }
 
   static named<ElementType extends Type<unknown>>(
@@ -171,13 +179,27 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   // Merkleization
 
   hashTreeRoot(value: ValueOfType<ElementType>): Uint8Array {
-    const selector = value === null ? 0 : 1;
-    return mixInLength(super.hashTreeRoot(value), selector);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
   }
 
-  protected getRoots(value: ValueOfType<ElementType>): Uint8Array[] {
-    const valueRoot = value === null ? new Uint8Array(32) : this.elementType.hashTreeRoot(value);
-    return [valueRoot];
+  hashTreeRootInto(value: ValueOfType<ElementType>, output: Uint8Array, offset: number): void {
+    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    const selector = value === null ? 0 : 1;
+    this.mixInLengthBuffer.writeUIntLE(selector, 32, 6);
+    // one for hashTreeRoot(value), one for selector
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+  }
+
+  protected getChunkBytes(value: ValueOfType<ElementType>): Uint8Array {
+    if (value === null) {
+      this.chunkBytesBuffer.fill(0);
+    } else {
+      this.elementType.hashTreeRootInto(value, this.chunkBytesBuffer, 0);
+    }
+    return this.chunkBytesBuffer;
   }
 
   // Proofs

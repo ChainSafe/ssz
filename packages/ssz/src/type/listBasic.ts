@@ -1,4 +1,5 @@
-import {LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, Tree, HashComputationLevel, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
+import { allocUnsafe } from "@chainsafe/as-sha256";
 import {ValueOf} from "./abstract.js";
 import {BasicType} from "./basic.js";
 import {ByteViews} from "./composite.js";
@@ -10,13 +11,7 @@ import {
   addLengthNode,
   setChunksNode,
 } from "./arrayBasic.js";
-import {
-  mixInLength,
-  maxChunksToDepth,
-  splitIntoRootChunks,
-  symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
-} from "../util/merkleize.js";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {ArrayBasicType} from "../view/arrayBasic.js";
@@ -52,6 +47,12 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthChunkBytes.buffer,
+    this.mixInLengthChunkBytes.byteOffset,
+    this.mixInLengthChunkBytes.byteLength
+  );
   protected readonly defaultLen = 0;
 
   constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListBasicOpts) {
@@ -174,20 +175,52 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
       }
     }
 
-    const root = mixInLength(super.hashTreeRoot(value), value.length);
+    const root = allocUnsafe(32);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
-    if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
-    }
+    // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number, safeCache = false): void {
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        output.set(cachedRoot, offset);
+        return;
+      }
+    }
+
+    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+
+    if (this.cachePermanentRootStruct) {
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
+    }
+  }
+
+  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const byteLen = this.value_serializedSize(value);
+    const chunkByteLen = Math.ceil(byteLen / 64) * 64;
+    // reallocate this.verkleBytes if needed
+    if (byteLen > this.chunkBytesBuffer.length) {
+      // pad 1 chunk if maxChunkCount is not even
+      this.chunkBytesBuffer = new Uint8Array(chunkByteLen);
+    }
+    const chunkBytes = this.chunkBytesBuffer.subarray(0, chunkByteLen);
+    const uint8Array = chunkBytes.subarray(0, byteLen);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, value.length, {uint8Array, dataView}, 0, value);
-    return splitIntoRootChunks(uint8Array);
+
+    // all padding bytes must be zero, this is similar to set zeroHash(0)
+    this.chunkBytesBuffer.subarray(byteLen, chunkByteLen).fill(0);
+    return chunkBytes;
   }
 
   // JSON: inherited from ArrayType

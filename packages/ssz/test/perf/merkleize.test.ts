@@ -1,4 +1,5 @@
 import {describe, bench} from "@chainsafe/benchmark";
+import {merkleizeInto} from "@chainsafe/persistent-merkle-tree";
 import {bitLength} from "../../src/util/merkleize.js";
 
 describe("merkleize / bitLength", () => {
@@ -9,6 +10,23 @@ describe("merkleize / bitLength", () => {
 
     bench(`bitLengthStr(${n})`, () => {
       bitLengthStr(n);
+    });
+  }
+});
+
+describe("merkleize vs persistent-merkle-tree merkleizeInto", () => {
+  const chunkCounts = [4, 8, 16, 32];
+
+  for (const chunkCount of chunkCounts) {
+    const rootArr = Array.from({length: chunkCount}, (_, i) => Buffer.alloc(32, i));
+    const roots = Buffer.concat(rootArr);
+    const result = Buffer.alloc(32);
+    itBench(`merkleizeInto ${chunkCount} chunks`, () => {
+      merkleizeInto(roots, chunkCount, result, 0);
+    });
+
+    itBench(`merkleize ${chunkCount} chunks`, () => {
+      merkleize(rootArr, chunkCount);
     });
   }
 });

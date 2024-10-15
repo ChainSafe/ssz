@@ -1,11 +1,11 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
-import {mixInLength, maxChunksToDepth} from "../util/merkleize.js";
+import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
+import { allocUnsafe } from "@chainsafe/as-sha256";
+import {maxChunksToDepth} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {ByteViews} from "./composite.js";
 import {ByteArrayType, ByteArray} from "./byteArray.js";
-
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export interface ByteListOptions {
@@ -34,6 +34,12 @@ export class ByteListType extends ByteArrayType {
   readonly maxSize: number;
   readonly maxChunkCount: number;
   readonly isList = true;
+  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthChunkBytes.buffer,
+    this.mixInLengthChunkBytes.byteOffset,
+    this.mixInLengthChunkBytes.byteLength
+  );
 
   constructor(readonly limitBytes: number, opts?: ByteListOptions) {
     super();
@@ -89,7 +95,18 @@ export class ByteListType extends ByteArrayType {
   // Merkleization: inherited from ByteArrayType
 
   hashTreeRoot(value: ByteArray): Uint8Array {
-    return mixInLength(super.hashTreeRoot(value), value.length);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
+  }
+
+  hashTreeRootInto(value: Uint8Array, output: Uint8Array, offset: number): void {
+    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType

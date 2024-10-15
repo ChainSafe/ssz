@@ -101,13 +101,10 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   // 0x0000000000000000000000000000000000000000000000000000000000000000
   if (process.env.RENDER_ROOTS) {
     if (type.isBasic) {
-      console.log("ROOTS Basic", toHexString(type.serialize(testDataValue)));
+      console.log("Chunk Bytes Basic", toHexString(type.serialize(testDataValue)));
     } else {
-      const roots = (type as CompositeType<unknown, unknown, unknown>)["getRoots"](testDataValue);
-      console.log(
-        "ROOTS Composite",
-        roots.map((root) => toHexString(root))
-      );
+      const chunkBytes = (type as CompositeType<unknown, unknown, unknown>)["getChunkBytes"](testDataValue);
+      console.log("Chunk Bytes Composite", toHexString(chunkBytes));
     }
   }
 

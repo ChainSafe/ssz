@@ -1,10 +1,6 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {
-  mixInLength,
-  maxChunksToDepth,
-  symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
-} from "../util/merkleize.js";
+import {Node, Tree, HashComputationLevel, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
+import { allocUnsafe } from "@chainsafe/as-sha256";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {ValueOf, ByteViews} from "./abstract.js";
@@ -17,8 +13,8 @@ import {
   tree_serializedSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
-  value_getRootsArrayComposite,
   maxSizeArrayComposite,
+  value_getChunkBytesArrayComposite,
 } from "./arrayComposite.js";
 import {ArrayCompositeType} from "../view/arrayComposite.js";
 import {ListCompositeTreeView} from "../view/listComposite.js";
@@ -56,6 +52,12 @@ export class ListCompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthChunkBytes.buffer,
+    this.mixInLengthChunkBytes.byteOffset,
+    this.mixInLengthChunkBytes.byteLength
+  );
   protected readonly defaultLen = 0;
 
   constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {
@@ -180,17 +182,43 @@ export class ListCompositeType<
       }
     }
 
-    const root = mixInLength(super.hashTreeRoot(value), value.length);
+    const root = allocUnsafe(32);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
-    if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
-    }
+    // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    return value_getRootsArrayComposite(this.elementType, value.length, value);
+  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number, safeCache = false): void {
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        output.set(cachedRoot, offset);
+        return;
+      }
+    }
+
+    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+
+    if (this.cachePermanentRootStruct) {
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
+    }
+  }
+
+  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const byteLen = value.length * 32;
+    const chunkByteLen = this.chunkBytesBuffer.byteLength;
+    if (byteLen > chunkByteLen) {
+      this.chunkBytesBuffer = new Uint8Array(Math.ceil(byteLen / 64) * 64);
+    }
+    return value_getChunkBytesArrayComposite(this.elementType, value.length, value, this.chunkBytesBuffer);
   }
 
   // JSON: inherited from ArrayType

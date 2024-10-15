@@ -4,10 +4,11 @@ import {
   Gindex,
   Node,
   Tree,
-  HashComputationLevel,
+  merkleizeBlocksBytes,
   getHashComputations,
+  HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
-import {mixInLength} from "../util/merkleize.js";
+import { allocUnsafe } from "@chainsafe/as-sha256";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {Type, ByteViews} from "./abstract.js";
@@ -48,6 +49,12 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthChunkBytes.buffer,
+    this.mixInLengthChunkBytes.byteOffset,
+    this.mixInLengthChunkBytes.byteLength
+  );
 
   protected readonly maxSelector: number;
 
@@ -85,6 +92,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     this.minSize = 1 + Math.min(...minLens);
     this.maxSize = 1 + Math.max(...maxLens);
     this.maxSelector = this.types.length - 1;
+    this.chunkBytesBuffer = new Uint8Array(32);
   }
 
   static named<Types extends Type<unknown>[]>(types: Types, opts: Require<UnionOpts, "typeName">): UnionType<Types> {
@@ -170,12 +178,21 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   // Merkleization
 
   hashTreeRoot(value: ValueOfTypes<Types>): Uint8Array {
-    return mixInLength(super.hashTreeRoot(value), value.selector);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
   }
 
-  protected getRoots(value: ValueOfTypes<Types>): Uint8Array[] {
-    const valueRoot = this.types[value.selector].hashTreeRoot(value.value);
-    return [valueRoot];
+  hashTreeRootInto(value: ValueOfTypes<Types>, output: Uint8Array, offset: number): void {
+    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    this.mixInLengthBuffer.writeUIntLE(value.selector, 32, 6);
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+  }
+
+  protected getChunkBytes(value: ValueOfTypes<Types>): Uint8Array {
+    this.types[value.selector].hashTreeRootInto(value.value, this.chunkBytesBuffer, 0);
+    return this.chunkBytesBuffer;
   }
 
   // Proofs
