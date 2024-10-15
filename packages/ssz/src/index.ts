@@ -39,3 +39,4 @@ export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
 export {Snapshot} from "./util/types";
 export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";
+export {upgradeToNewType} from "./util/upgrade";

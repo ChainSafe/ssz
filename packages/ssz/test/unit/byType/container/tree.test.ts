@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {
   BitArray,
   BitListType,
@@ -12,6 +13,7 @@ import {
   ListCompositeType,
   NoneType,
   toHexString,
+  Type,
   UintNumberType,
   UnionType,
   ValueOf,
@@ -20,6 +22,7 @@ import {
 } from "../../../../src";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes";
 import {runViewTestMutation} from "../runViewTestMutation";
+import {upgradeToNewType} from "../../../../src/util/upgrade";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable
@@ -634,4 +637,54 @@ describe("ContainerNodeStruct batchHashTreeRoot", function () {
     viewDU.withdrawableEpoch -= 1;
     expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
   });
+});
+
+describe("upgradeToNewType utility", () => {
+  const numFields = [2, 7, 15, 17, 31, 33, 63, 65, 127, 129];
+  for (const [i, numField] of numFields.entries()) {
+    it(`upgradeToNewType with ${numField} fields`, () => {
+      const fields: Record<string, Type<unknown>> = {};
+      for (let j = 0; j < numField; j++) {
+        fields[`f${j}`] = uint64NumInfType;
+      }
+      const oldType = new ContainerType(fields);
+      const view = oldType.defaultView();
+      const viewDU = oldType.defaultViewDU();
+      for (let j = 0; j < numField; j++) {
+        (view as Record<string, number>)[`f${j}`] = j;
+        (viewDU as Record<string, number>)[`f${j}`] = j;
+      }
+
+      for (let j = i + 1; j < numFields.length; j++) {
+        const newFields: Record<string, Type<unknown>> = {};
+        for (let k = 0; k < numFields[j]; k++) {
+          (newFields as Record<string, Type<unknown>>)[`f${k}`] = uint64NumInfType;
+        }
+
+        const newType = new ContainerType(newFields);
+        const newView = newType.getView(new Tree(upgradeToNewType(view.node, oldType, newType)));
+        // commit view DU to make sure the view is updated before accessing viewDU.node
+        viewDU.commit();
+        const newViewDU = newType.getViewDU(upgradeToNewType(viewDU.node, oldType, newType));
+        for (let k = i + 1; k < numFields[j]; k++) {
+          (newView as Record<string, number>)[`f${k}`] = k;
+          (newViewDU as Record<string, number>)[`f${k}`] = k;
+        }
+        newViewDU.commit();
+
+        const expectedValue = newType.defaultValue();
+        for (let k = 0; k < numFields[j]; k++) {
+          (expectedValue as Record<string, number>)[`f${k}`] = k;
+        }
+        const expectedViewDU = newType.toViewDU(expectedValue);
+
+        expect(newView.toValue()).to.be.deep.equal(expectedValue);
+        expect(newView.hashTreeRoot()).to.be.deep.equal(expectedViewDU.hashTreeRoot());
+        expect(newView.serialize()).to.be.deep.equal(expectedViewDU.serialize());
+        expect(newViewDU.toValue()).to.be.deep.equal(expectedValue);
+        expect(newViewDU.hashTreeRoot()).to.be.deep.equal(expectedViewDU.hashTreeRoot());
+        expect(newViewDU.serialize()).to.be.deep.equal(expectedViewDU.serialize());
+      }
+    });
+  }
 });
