@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.5.0...as-sha256-v0.5.0) (2024-10-15)
+
+
+### Bug Fixes
+
+* add homepage/repo etc to as-sha256 package.json ([#401](https://github.com/ChainSafe/ssz/issues/401)) ([1dc50ef](https://github.com/ChainSafe/ssz/commit/1dc50ef2985a03c315bbce44165cd271a4a6e2df))
+
 ## [0.5.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.4.2...as-sha256-v0.5.0) (2024-08-06)
 
 

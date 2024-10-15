@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.17.1...ssz-v0.18.0) (2024-10-15)
+
+
+### Features
+
+* add StableContainer ([#373](https://github.com/ChainSafe/ssz/issues/373)) ([78a0291](https://github.com/ChainSafe/ssz/commit/78a029128878685248806ec71100fcedf3cb77ec))
+* implement ViewDU.batchHashTreeRoot() ([#392](https://github.com/ChainSafe/ssz/issues/392)) ([8dd6600](https://github.com/ChainSafe/ssz/commit/8dd6600ad41e9a0d25182ca50f0ffd9be7fc5b8c))
+* snapshot apis for EIP-4881 ([#400](https://github.com/ChainSafe/ssz/issues/400)) ([32fb35a](https://github.com/ChainSafe/ssz/commit/32fb35ad3dcb67465c04dcaf5d7afd93af5219e8))
+
 ## [0.17.1](https://github.com/ChainSafe/ssz/compare/ssz-v0.17.0...ssz-v0.17.1) (2024-08-19)
 
 
