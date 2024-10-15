@@ -9,6 +9,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [0.8.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.8.0...persistent-merkle-tree-v0.8.0) (2024-10-15)
+
+
+### Features
+
+* implement ViewDU.batchHashTreeRoot() ([#392](https://github.com/ChainSafe/ssz/issues/392)) ([8dd6600](https://github.com/ChainSafe/ssz/commit/8dd6600ad41e9a0d25182ca50f0ffd9be7fc5b8c))
+* snapshot apis for EIP-4881 ([#400](https://github.com/ChainSafe/ssz/issues/400)) ([32fb35a](https://github.com/ChainSafe/ssz/commit/32fb35ad3dcb67465c04dcaf5d7afd93af5219e8))
+
 ## [0.8.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.7.2...persistent-merkle-tree-v0.8.0) (2024-08-06)
 
 
