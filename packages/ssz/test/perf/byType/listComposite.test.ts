@@ -20,33 +20,33 @@ describe("ListCompositeType types", () => {
       });
     }
 
-    for (const [i, type] of [containerType, containerNodeStructType].entries()) {
-      const listType = new ListCompositeType(type, 2 ** 40, {
-        typeName: `List(${i === 0 ? "Container" : "ContainerNodeStruct"})`,
-      });
-      const viewDU = listType.toViewDU(newFilledArray(len, {a: 1, b: 2}));
+    for (const type of [
+      new ListCompositeType(containerType, 2 ** 40, {typeName: "List(Container)"}),
+      new ListCompositeType(containerNodeStructType, 2 ** 40, {typeName: "List(ContainerNodeStruct)"}),
+    ]) {
+      const viewDU = type.toViewDU(newFilledArray(len, {a: 1, b: 2}));
 
-      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonly() + iterate`, () => {
+      itBench(`${type.typeName} len ${len} ViewDU.getAllReadonly() + iterate`, () => {
         const values = viewDU.getAllReadonly();
         for (let i = 0; i < len; i++) {
           values[i];
         }
       });
 
-      itBench(`${listType.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
+      itBench(`${type.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
         const values = viewDU.getAllReadonlyValues();
         for (let i = 0; i < len; i++) {
           values[i];
         }
       });
 
-      itBench(`${listType.typeName} len ${len} ViewDU.get(i)`, () => {
+      itBench(`${type.typeName} len ${len} ViewDU.get(i)`, () => {
         for (let i = 0; i < len; i++) {
           viewDU.get(i);
         }
       });
 
-      itBench(`${listType.typeName} len ${len} ViewDU.getReadonly(i)`, () => {
+      itBench(`${type.typeName} len ${len} ViewDU.getReadonly(i)`, () => {
         for (let i = 0; i < len; i++) {
           viewDU.getReadonly(i);
         }
