@@ -211,21 +211,29 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   }
 }
 
-/**
- * @param length In List length = value.length, Vector length = fixed value
- */
-export function value_getRootsArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
+export function value_getChunkBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
-  value: ValueOf<ElementType>[]
-): Uint8Array[] {
-  const roots = new Array<Uint8Array>(length);
+  value: ValueOf<ElementType>[],
+  chunkBytesBuffer: Uint8Array
+): Uint8Array {
+  const isOddChunk = length % 2 === 1;
+  const chunkBytesLen = isOddChunk ? length * 32 + 32 : length * 32;
+  if (chunkBytesLen > chunkBytesBuffer.length) {
+    throw new Error(`chunkBytesBuffer is too small: ${chunkBytesBuffer.length} < ${chunkBytesLen}`);
+  }
+  const chunkBytes = chunkBytesBuffer.subarray(0, chunkBytesLen);
 
   for (let i = 0; i < length; i++) {
-    roots[i] = elementType.hashTreeRoot(value[i]);
+    elementType.hashTreeRootInto(value[i], chunkBytes, i * 32);
   }
 
-  return roots;
+  if (isOddChunk) {
+    // similar to append zeroHash(0)
+    chunkBytes.subarray(length * 32, chunkBytesLen).fill(0);
+  }
+
+  return chunkBytes;
 }
 
 function readOffsetsArrayComposite(
