@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### Dependencies
+
+
+
 ## [0.18.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.17.1...ssz-v0.18.0) (2024-10-15)
 
 
