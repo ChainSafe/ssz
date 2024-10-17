@@ -8,7 +8,6 @@ import {
   getHashComputations,
 } from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
-import {splitIntoRootChunks} from "../util/merkleize";
 import {ByteViews} from "./abstract";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
 
@@ -82,10 +81,23 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return Uint8Array.prototype.slice.call(data.uint8Array, start, end);
   }
 
+  value_toTree(value: ByteArray): Node {
+    // this saves 1 allocation of Uint8Array
+    const dataView = new DataView(value.buffer, value.byteOffset, value.byteLength);
+    return this.tree_deserializeFromBytes({uint8Array: value, dataView}, 0, value.length);
+  }
+
   // Merkleization
 
-  protected getRoots(value: ByteArray): Uint8Array[] {
-    return splitIntoRootChunks(value);
+  protected getChunkBytes(value: ByteArray): Uint8Array {
+    // reallocate this.merkleBytes if needed
+    if (value.length > this.chunkBytesBuffer.length) {
+      const chunkCount = Math.ceil(value.length / 32);
+      const chunkBytes = chunkCount * 32;
+      // pad 1 chunk if maxChunkCount is not even
+      this.chunkBytesBuffer = chunkCount % 2 === 1 ? new Uint8Array(chunkBytes + 32) : new Uint8Array(chunkBytes);
+    }
+    return getChunkBytes(value, this.chunkBytesBuffer);
   }
 
   // Proofs
@@ -148,4 +160,17 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   }
 
   protected abstract assertValidSize(size: number): void;
+}
+
+export function getChunkBytes(data: Uint8Array, merkleBytesBuffer: Uint8Array): Uint8Array {
+  if (data.length > merkleBytesBuffer.length) {
+    throw new Error(`data length ${data.length} exceeds merkleBytesBuffer length ${merkleBytesBuffer.length}`);
+  }
+
+  merkleBytesBuffer.set(data);
+  const valueLen = data.length;
+  const chunkByteLen = Math.ceil(valueLen / 64) * 64;
+  // all padding bytes must be zero, this is similar to set zeroHash(0)
+  merkleBytesBuffer.subarray(valueLen, chunkByteLen).fill(0);
+  return merkleBytesBuffer.subarray(0, chunkByteLen);
 }

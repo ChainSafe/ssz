@@ -6,12 +6,13 @@ import {
   Gindex,
   toGindex,
   concatGindices,
+  merkleizeInto,
   getNode,
   BranchNode,
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
+import {ValueWithCachedPermanentRoot, cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {Type, ValueOf} from "./abstract";
@@ -87,6 +88,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
   private optionalFieldsCount: number;
+  // temporary root to avoid memory allocation
+  private tempRoot = new Uint8Array(32);
 
   constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
     super();
@@ -154,6 +157,9 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getProfileTreeViewClass?.(this) ?? getProfileTreeViewClass(this);
     this.TreeViewDU = opts?.getProfileTreeViewDUClass?.(this) ?? getProfileTreeViewDUClass(this);
+    const fieldBytes = this.activeFields.bitLen * 32;
+    const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
+    this.chunkBytesBuffer = new Uint8Array(chunkBytes);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -361,37 +367,38 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   // Merkleization
-  hashTreeRoot(value: ValueOfFields<Fields>): Uint8Array {
+  // hashTreeRoot is the same to parent as it call hashTreeRootInto()
+  hashTreeRootInto(value: ValueOfFields<Fields>, output: Uint8Array, offset: number, safeCache = false): void {
     // Return cached mutable root if any
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
       if (cachedRoot) {
-        return cachedRoot;
+        output.set(cachedRoot, offset);
+        return;
       }
     }
 
-    const root = mixInActiveFields(super.hashTreeRoot(value), this.activeFields);
+    const merkleBytes = this.getChunkBytes(value);
+    merkleizeInto(merkleBytes, this.maxChunkCount, this.tempRoot, 0);
+    mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
-
-    return root;
   }
 
-  protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
-    const roots = new Array<Uint8Array>(this.activeFields.bitLen).fill(zeroHash(0));
-
-    // already asserted that # of active fields in bitvector === # of fields
+  protected getChunkBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.chunkBytesBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, chunkIndex, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        continue;
+        this.chunkBytesBuffer.set(zeroHash(0), chunkIndex * 32);
+      } else {
+        fieldType.hashTreeRootInto(struct[fieldName], this.chunkBytesBuffer, chunkIndex * 32);
       }
-      roots[chunkIndex] = fieldType.hashTreeRoot(struct[fieldName]);
     }
-
-    return roots;
+    // remaining bytes are zeroed as we never write them
+    return this.chunkBytesBuffer;
   }
 
   // Proofs
