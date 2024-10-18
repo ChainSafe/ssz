@@ -133,7 +133,6 @@ function forceGetHashComputations(
     return;
   }
 
-  // if (node.h0 === null) {
   const hashComputations = levelAtIndex(hcByLevel, index);
   const {left, right} = node;
   hashComputations.push(left, right, node);
