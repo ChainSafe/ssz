@@ -1,5 +1,5 @@
 import {Hasher} from "./types";
-import {hasher as hashtreeHasher} from "./hashtree";
+import {hasher as nobleHasher} from "./noble";
 import type {HashComputationLevel} from "../hashComputation";
 
 export * from "./types";
@@ -8,7 +8,7 @@ export * from "./util";
 /**
  * Hasher used across the SSZ codebase, by default, this does not support batch hash.
  */
-export let hasher: Hasher = hashtreeHasher;
+export let hasher: Hasher = nobleHasher;
 
 /**
  * Set the hasher to be used across the SSZ codebase
