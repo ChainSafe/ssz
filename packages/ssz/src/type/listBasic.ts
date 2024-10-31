@@ -205,21 +205,21 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     }
   }
 
-  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
     const byteLen = this.value_serializedSize(value);
     const chunkByteLen = Math.ceil(byteLen / 64) * 64;
     // reallocate this.verkleBytes if needed
-    if (byteLen > this.chunkBytesBuffer.length) {
+    if (byteLen > this.blocksBuffer.length) {
       // pad 1 chunk if maxChunkCount is not even
-      this.chunkBytesBuffer = new Uint8Array(chunkByteLen);
+      this.blocksBuffer = new Uint8Array(chunkByteLen);
     }
-    const chunkBytes = this.chunkBytesBuffer.subarray(0, chunkByteLen);
+    const chunkBytes = this.blocksBuffer.subarray(0, chunkByteLen);
     const uint8Array = chunkBytes.subarray(0, byteLen);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, value.length, {uint8Array, dataView}, 0, value);
 
     // all padding bytes must be zero, this is similar to set zeroHash(0)
-    this.chunkBytesBuffer.subarray(byteLen, chunkByteLen).fill(0);
+    this.blocksBuffer.subarray(byteLen, chunkByteLen).fill(0);
     return chunkBytes;
   }
 

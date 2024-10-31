@@ -159,7 +159,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     this.TreeViewDU = opts?.getProfileTreeViewDUClass?.(this) ?? getProfileTreeViewDUClass(this);
     const fieldBytes = this.activeFields.bitLen * 32;
     const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
-    this.chunkBytesBuffer = new Uint8Array(chunkBytes);
+    this.blocksBuffer = new Uint8Array(chunkBytes);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -378,8 +378,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
       }
     }
 
-    const merkleBytes = this.getChunkBytes(value);
-    merkleizeInto(merkleBytes, this.maxChunkCount, this.tempRoot, 0);
+    const blocksBytes = this.getBlocksBytes(value);
+    merkleizeInto(blocksBytes, this.maxChunkCount, this.tempRoot, 0);
     mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
@@ -387,18 +387,18 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     }
   }
 
-  protected getChunkBytes(struct: ValueOfFields<Fields>): Uint8Array {
-    this.chunkBytesBuffer.fill(0);
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, chunkIndex, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        this.chunkBytesBuffer.set(zeroHash(0), chunkIndex * 32);
+        this.blocksBuffer.set(zeroHash(0), chunkIndex * 32);
       } else {
-        fieldType.hashTreeRootInto(struct[fieldName], this.chunkBytesBuffer, chunkIndex * 32);
+        fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, chunkIndex * 32);
       }
     }
     // remaining bytes are zeroed as we never write them
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // Proofs

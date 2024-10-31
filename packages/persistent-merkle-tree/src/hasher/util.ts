@@ -14,13 +14,15 @@ export function uint8ArrayToHashObject(byteArr: Uint8Array): HashObject {
 type HashIntoFn = (input: Uint8Array, output: Uint8Array) => void;
 
 /**
- * Input data is unsafe because it's modified
- * If its chunk count is not even, need to be appended with zero hash at layer 0 so that we don't need
- * a new memory allocation here (even through we don't need it if padFor = 1)
+ * A SHA256 block is 64 bytes
+ *   - if padFor > 1 blocksBytes need to be multiple of 64 bytes.
+ *   - if padFor = 1, blocksBytes need to be at least 32 bytes
+ *   - if padFor = 0, throw error
+ * blocksBytes is unsafe because it's modified
  * The Uint8Array(32) will be written to output at offset
  */
 export function doMerkleizeInto(
-  data: Uint8Array,
+  blocksBytes: Uint8Array,
   padFor: number,
   output: Uint8Array,
   offset: number,
@@ -31,32 +33,34 @@ export function doMerkleizeInto(
   }
 
   const layerCount = Math.ceil(Math.log2(padFor));
-  if (data.length === 0) {
+  if (blocksBytes.length === 0) {
     output.set(zeroHash(layerCount), offset);
     return;
   }
 
-  if (data.length % 32 !== 0) {
-    throw new Error(`Invalid input length, expect to be multiple of 32 bytes, got ${data.length}`);
+  if (blocksBytes.length % 32 !== 0) {
+    throw new Error(`Invalid input length, expect to be multiple of 32 bytes, got ${blocksBytes.length}`);
   }
 
   // if padFor = 1, only need 32 bytes
-  if (padFor > 1 && data.length % 64 !== 0) {
-    throw new Error(`Invalid input length, expect to be multiple of 64 bytes, got ${data.length}, padFor=${padFor}`);
+  if (padFor > 1 && blocksBytes.length % 64 !== 0) {
+    throw new Error(
+      `Invalid input length, expect to be multiple of 64 bytes, got ${blocksBytes.length}, padFor=${padFor}`
+    );
   }
 
-  let inputLength = data.length;
+  let inputLength = blocksBytes.length;
   let outputLength = Math.floor(inputLength / 2);
-  let bufferIn = data;
+  let bufferIn = blocksBytes;
   // hash into the same buffer
   for (let i = 0; i < layerCount; i++) {
-    const bufferOut = data.subarray(0, outputLength);
+    const bufferOut = blocksBytes.subarray(0, outputLength);
     hashInto(bufferIn, bufferOut);
     const chunkCount = Math.floor(outputLength / 32);
     if (chunkCount % 2 === 1 && i < layerCount - 1) {
       // extend to 1 more chunk
       inputLength = outputLength + 32;
-      bufferIn = data.subarray(0, inputLength);
+      bufferIn = blocksBytes.subarray(0, inputLength);
       bufferIn.set(zeroHash(i + 1), outputLength);
     } else {
       bufferIn = bufferOut;

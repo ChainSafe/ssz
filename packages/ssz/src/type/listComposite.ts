@@ -212,13 +212,13 @@ export class ListCompositeType<
     }
   }
 
-  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
     const byteLen = value.length * 32;
-    const chunkByteLen = this.chunkBytesBuffer.byteLength;
-    if (byteLen > chunkByteLen) {
-      this.chunkBytesBuffer = new Uint8Array(Math.ceil(byteLen / 64) * 64);
+    const blockByteLen = this.blocksBuffer.byteLength;
+    if (byteLen > blockByteLen) {
+      this.blocksBuffer = new Uint8Array(Math.ceil(byteLen / 64) * 64);
     }
-    return value_getChunkBytesArrayComposite(this.elementType, value.length, value, this.chunkBytesBuffer);
+    return value_getChunkBytesArrayComposite(this.elementType, value.length, value, this.blocksBuffer);
   }
 
   // JSON: inherited from ArrayType

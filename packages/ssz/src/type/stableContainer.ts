@@ -151,7 +151,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
     const fieldBytes = this.fieldsEntries.length * 32;
     const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
-    this.chunkBytesBuffer = new Uint8Array(chunkBytes);
+    this.blocksBuffer = new Uint8Array(chunkBytes);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -351,8 +351,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       }
     }
 
-    const merkleBytes = this.getChunkBytes(value);
-    merkleizeInto(merkleBytes, this.maxChunkCount, this.tempRoot, 0);
+    const blockBytes = this.getBlocksBytes(value);
+    merkleizeInto(blockBytes, this.maxChunkCount, this.tempRoot, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
@@ -365,18 +365,18 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
   }
 
-  protected getChunkBytes(struct: ValueOfFields<Fields>): Uint8Array {
-    this.chunkBytesBuffer.fill(0);
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        this.chunkBytesBuffer.set(zeroHash(0), i * 32);
+        this.blocksBuffer.set(zeroHash(0), i * 32);
       } else {
-        fieldType.hashTreeRootInto(struct[fieldName], this.chunkBytesBuffer, i * 32);
+        fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);
       }
     }
 
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // Proofs

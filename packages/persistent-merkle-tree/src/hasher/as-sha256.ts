@@ -14,8 +14,8 @@ export const hasher: Hasher = {
   name: "as-sha256",
   digest64: digest2Bytes32,
   digest64HashObjects: digest64HashObjectsInto,
-  merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeInto(data, padFor, output, offset, hashInto);
+  merkleizeInto(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+    return doMerkleizeInto(blocksBytes, padFor, output, offset, hashInto);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

@@ -92,7 +92,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     this.minSize = 1 + Math.min(...minLens);
     this.maxSize = 1 + Math.max(...maxLens);
     this.maxSelector = this.types.length - 1;
-    this.chunkBytesBuffer = new Uint8Array(32);
+    this.blocksBuffer = new Uint8Array(32);
   }
 
   static named<Types extends Type<unknown>[]>(types: Types, opts: Require<UnionOpts, "typeName">): UnionType<Types> {
@@ -190,9 +190,9 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
-  protected getChunkBytes(value: ValueOfTypes<Types>): Uint8Array {
-    this.types[value.selector].hashTreeRootInto(value.value, this.chunkBytesBuffer, 0);
-    return this.chunkBytesBuffer;
+  protected getBlocksBytes(value: ValueOfTypes<Types>): Uint8Array {
+    this.types[value.selector].hashTreeRootInto(value.value, this.blocksBuffer, 0);
+    return this.blocksBuffer;
   }
 
   // Proofs

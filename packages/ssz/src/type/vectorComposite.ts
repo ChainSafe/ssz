@@ -65,7 +65,7 @@ export class VectorCompositeType<
     this.minSize = minSizeArrayComposite(elementType, length);
     this.maxSize = maxSizeArrayComposite(elementType, length);
     this.defaultLen = length;
-    this.chunkBytesBuffer =
+    this.blocksBuffer =
       this.maxChunkCount % 2 === 1
         ? new Uint8Array(this.maxChunkCount * 32 + 32)
         : new Uint8Array(this.maxChunkCount * 32);
@@ -157,8 +157,8 @@ export class VectorCompositeType<
 
   // Merkleization
 
-  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
-    return value_getChunkBytesArrayComposite(this.elementType, this.length, value, this.chunkBytesBuffer);
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    return value_getChunkBytesArrayComposite(this.elementType, this.length, value, this.blocksBuffer);
   }
 
   // JSON: inherited from ArrayType

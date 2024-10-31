@@ -89,15 +89,15 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
 
   // Merkleization
 
-  protected getChunkBytes(value: ByteArray): Uint8Array {
-    // reallocate this.merkleBytes if needed
-    if (value.length > this.chunkBytesBuffer.length) {
+  protected getBlocksBytes(value: ByteArray): Uint8Array {
+    // reallocate this.blocksBuffer if needed
+    if (value.length > this.blocksBuffer.length) {
       const chunkCount = Math.ceil(value.length / 32);
       const chunkBytes = chunkCount * 32;
       // pad 1 chunk if maxChunkCount is not even
-      this.chunkBytesBuffer = chunkCount % 2 === 1 ? new Uint8Array(chunkBytes + 32) : new Uint8Array(chunkBytes);
+      this.blocksBuffer = chunkCount % 2 === 1 ? new Uint8Array(chunkBytes + 32) : new Uint8Array(chunkBytes);
     }
-    return getChunkBytes(value, this.chunkBytesBuffer);
+    return getBlockBytes(value, this.blocksBuffer);
   }
 
   // Proofs
@@ -162,15 +162,15 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   protected abstract assertValidSize(size: number): void;
 }
 
-export function getChunkBytes(data: Uint8Array, merkleBytesBuffer: Uint8Array): Uint8Array {
-  if (data.length > merkleBytesBuffer.length) {
-    throw new Error(`data length ${data.length} exceeds merkleBytesBuffer length ${merkleBytesBuffer.length}`);
+export function getBlockBytes(value: Uint8Array, blocksBuffer: Uint8Array): Uint8Array {
+  if (value.length > blocksBuffer.length) {
+    throw new Error(`data length ${value.length} exceeds blocksBuffer length ${blocksBuffer.length}`);
   }
 
-  merkleBytesBuffer.set(data);
-  const valueLen = data.length;
+  blocksBuffer.set(value);
+  const valueLen = value.length;
   const chunkByteLen = Math.ceil(valueLen / 64) * 64;
   // all padding bytes must be zero, this is similar to set zeroHash(0)
-  merkleBytesBuffer.subarray(valueLen, chunkByteLen).fill(0);
-  return merkleBytesBuffer.subarray(0, chunkByteLen);
+  blocksBuffer.subarray(valueLen, chunkByteLen).fill(0);
+  return blocksBuffer.subarray(0, chunkByteLen);
 }

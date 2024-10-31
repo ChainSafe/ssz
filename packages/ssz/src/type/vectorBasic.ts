@@ -60,7 +60,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     this.maxSize = this.fixedSize;
     this.defaultLen = length;
     // pad 1 chunk if maxChunkCount is not even
-    this.chunkBytesBuffer = new Uint8Array(
+    this.blocksBuffer = new Uint8Array(
       this.maxChunkCount % 2 === 1 ? this.maxChunkCount * 32 + 32 : this.maxChunkCount * 32
     );
   }
@@ -150,13 +150,13 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   // Merkleization
 
-  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
-    const uint8Array = this.chunkBytesBuffer.subarray(0, this.fixedSize);
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const uint8Array = this.blocksBuffer.subarray(0, this.fixedSize);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
 
     // remaining bytes from this.fixedSize to this.chunkBytesBuffer.length must be zeroed
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // JSON: inherited from ArrayType

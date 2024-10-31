@@ -66,7 +66,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.minSize = 0;
     // Max size includes prepended 0x01 byte
     this.maxSize = elementType.maxSize + 1;
-    this.chunkBytesBuffer = new Uint8Array(32);
+    this.blocksBuffer = new Uint8Array(32);
   }
 
   static named<ElementType extends Type<unknown>>(
@@ -193,13 +193,13 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
-  protected getChunkBytes(value: ValueOfType<ElementType>): Uint8Array {
+  protected getBlocksBytes(value: ValueOfType<ElementType>): Uint8Array {
     if (value === null) {
-      this.chunkBytesBuffer.fill(0);
+      this.blocksBuffer.fill(0);
     } else {
-      this.elementType.hashTreeRootInto(value, this.chunkBytesBuffer, 0);
+      this.elementType.hashTreeRootInto(value, this.blocksBuffer, 0);
     }
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // Proofs
