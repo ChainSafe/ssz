@@ -3,7 +3,7 @@ import {Hasher, HashObject} from "./types";
 import {Node} from "../node";
 import type {HashComputationLevel} from "../hashComputation";
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {doDigestNLevel, doMerkleizeInto} from "./util";
+import {doDigestNLevel, doMerkleizeBlocksBytes} from "./util";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -40,8 +40,8 @@ export const hasher: Hasher = {
     hashInto(hash64Input, hash64Output);
     byteArrayIntoHashObject(hash64Output, 0, parent);
   },
-  merkleizeInto(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeInto(blocksBytes, padFor, output, offset, hashInto);
+  merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

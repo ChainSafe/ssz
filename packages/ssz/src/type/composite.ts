@@ -8,7 +8,7 @@ import {
   Proof,
   ProofType,
   Tree,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
@@ -239,7 +239,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     }
 
     const blocksBuffer = this.getBlocksBytes(value);
-    merkleizeInto(blocksBuffer, this.maxChunkCount, output, offset);
+    merkleizeBlocksBytes(blocksBuffer, this.maxChunkCount, output, offset);
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }

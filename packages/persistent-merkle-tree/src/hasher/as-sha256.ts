@@ -8,14 +8,14 @@ import {
 import type {Hasher} from "./types";
 import {Node} from "../node";
 import type {HashComputationLevel} from "../hashComputation";
-import {doDigestNLevel, doMerkleizeInto} from "./util";
+import {doDigestNLevel, doMerkleizeBlocksBytes} from "./util";
 
 export const hasher: Hasher = {
   name: "as-sha256",
   digest64: digest2Bytes32,
   digest64HashObjects: digest64HashObjectsInto,
-  merkleizeInto(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeInto(blocksBytes, padFor, output, offset, hashInto);
+  merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

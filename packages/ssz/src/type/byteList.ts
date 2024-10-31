@@ -4,7 +4,7 @@ import {
   Node,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  merkleizeInto,
+  merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
 import {Require} from "../util/types";
@@ -112,7 +112,7 @@ export class ByteListType extends ByteArrayType {
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType

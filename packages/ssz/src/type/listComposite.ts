@@ -1,4 +1,4 @@
-import {HashComputationLevel, Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -205,7 +205,7 @@ export class ListCompositeType<
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);

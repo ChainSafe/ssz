@@ -4,7 +4,7 @@ import {
   Gindex,
   Node,
   Tree,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   getHashComputations,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
@@ -187,7 +187,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
     this.mixInLengthBuffer.writeUIntLE(value.selector, 32, 6);
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
   protected getBlocksBytes(value: ValueOfTypes<Types>): Uint8Array {

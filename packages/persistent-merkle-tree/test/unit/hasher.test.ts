@@ -89,24 +89,24 @@ describe("hasher.digestNLevel", function () {
 });
 
 
-describe("hasher.merkleizeInto", function () {
+describe("hasher.merkleizeBlocksBytes", function () {
   const numNodes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   for (const hasher of [nobleHasher, hashtreeHasher, asSha256Hasher]) {
     it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
       const data = Buffer.alloc(63, 0);
       const output = Buffer.alloc(32);
-      expect(() => hasher.merkleizeInto(data, 2, output, 0)).to.throw("Invalid input length");
+      expect(() => hasher.merkleizeBlocksBytes(data, 2, output, 0)).to.throw("Invalid input length");
     });
 
     for (const numNode of numNodes) {
-      it(`${hasher.name}.merkleizeInto for ${numNode} nodes`, () => {
+      it(`${hasher.name}.merkleizeBlocksBytes for ${numNode} nodes`, () => {
 
         const nodes = Array.from({length: numNode}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
         const data = Buffer.concat(nodes.map((node) => node.root));
         const output = Buffer.alloc(32);
         const chunkCount = Math.max(numNode, 1);
         const padData = numNode % 2 === 1 ? Buffer.concat([data, zeroHash(0)]) : data;
-        hasher.merkleizeInto(padData, chunkCount, output, 0);
+        hasher.merkleizeBlocksBytes(padData, chunkCount, output, 0);
         const depth = Math.ceil(Math.log2(chunkCount));
         const root = subtreeFillToContents(nodes, depth).root;
         expectEqualHex(output, root);

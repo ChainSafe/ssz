@@ -21,7 +21,7 @@ type HashIntoFn = (input: Uint8Array, output: Uint8Array) => void;
  * blocksBytes is unsafe because it's modified
  * The Uint8Array(32) will be written to output at offset
  */
-export function doMerkleizeInto(
+export function doMerkleizeBlocksBytes(
   blocksBytes: Uint8Array,
   padFor: number,
   output: Uint8Array,

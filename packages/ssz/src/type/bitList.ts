@@ -1,7 +1,7 @@
 import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
   getNodesAtDepth,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   Node,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
@@ -125,7 +125,7 @@ export class BitListType extends BitArrayType {
     this.mixInLengthBuffer.writeUIntLE(value.bitLen, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType

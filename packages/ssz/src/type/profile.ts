@@ -6,7 +6,7 @@ import {
   Gindex,
   toGindex,
   concatGindices,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   getNode,
   BranchNode,
   zeroHash,
@@ -379,7 +379,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     }
 
     const blocksBytes = this.getBlocksBytes(value);
-    merkleizeInto(blocksBytes, this.maxChunkCount, this.tempRoot, 0);
+    merkleizeBlocksBytes(blocksBytes, this.maxChunkCount, this.tempRoot, 0);
     mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {

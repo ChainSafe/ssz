@@ -11,7 +11,7 @@ import {
   getNode,
   zeroNode,
   zeroHash,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   countToDepth,
   getNodeH,
   setNode,
@@ -352,7 +352,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
 
     const blockBytes = this.getBlocksBytes(value);
-    merkleizeInto(blockBytes, this.maxChunkCount, this.tempRoot, 0);
+    merkleizeBlocksBytes(blockBytes, this.maxChunkCount, this.tempRoot, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
@@ -829,12 +829,12 @@ export function mixInActiveFields(root: Uint8Array, activeFields: BitArray, outp
     activeFieldsSingleChunk.set(activeFields.uint8Array);
     // 1 chunk for root, 1 chunk for activeFields
     const chunkCount = 2;
-    merkleizeInto(mixInActiveFieldsChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(mixInActiveFieldsChunkBytes, chunkCount, output, offset);
     return;
   }
 
   const chunkCount = Math.ceil(activeFields.uint8Array.length / 32);
-  merkleizeInto(activeFields.uint8Array, chunkCount, activeFieldsSingleChunk, 0);
+  merkleizeBlocksBytes(activeFields.uint8Array, chunkCount, activeFieldsSingleChunk, 0);
   // 1 chunk for root, 1 chunk for activeFields
-  merkleizeInto(mixInActiveFieldsChunkBytes, 2, output, offset);
+  merkleizeBlocksBytes(mixInActiveFieldsChunkBytes, 2, output, offset);
 }

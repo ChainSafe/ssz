@@ -1,4 +1,4 @@
-import {HashComputationLevel, LeafNode, Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, LeafNode, Node, Tree, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "./abstract";
 import {BasicType} from "./basic";
 import {ByteViews} from "./composite";
@@ -198,7 +198,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);

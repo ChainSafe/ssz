@@ -1,7 +1,7 @@
 import {
   concatGindices,
   Gindex,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   Node,
   Tree,
   zeroNode,
@@ -190,7 +190,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.mixInLengthBuffer.writeUIntLE(selector, 32, 6);
     // one for hashTreeRoot(value), one for selector
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
   }
 
   protected getBlocksBytes(value: ValueOfType<ElementType>): Uint8Array {
