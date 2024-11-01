@@ -100,7 +100,7 @@ export function doMerkleizeBlockArray(
   }
 
   const layerCount = Math.ceil(Math.log2(padFor));
-  if (blocks.length === 0) {
+  if (blockLimit === 0) {
     output.set(zeroHash(layerCount), offset);
     return;
   }
