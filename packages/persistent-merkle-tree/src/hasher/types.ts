@@ -21,6 +21,12 @@ export type Hasher = {
    */
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void;
   /**
+   * Merkleize n SHA256 blocks, each is 64 bytes Uint8Array
+   * padFor is maxChunkCount, use it to compute layers to hash
+   * blocks are mutated after the function
+   */
+  merkleizeBlockArray(blocks: Uint8Array[], padFor: number, output: Uint8Array, offset: number): void;
+  /**
    * Hash multiple chunks (1 chunk = 32 bytes) at multiple levels
    * With nLevel = 3, hash multiple of 256 bytes, return multiple of 32 bytes.
    * The result is unsafe as it will be overwritten by the next call.
