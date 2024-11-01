@@ -87,8 +87,8 @@ export function doMerkleizeBlockArray(
   hashInto: HashIntoFn,
   buffer: Uint8Array
 ): void {
-  if (padFor < 2) {
-    throw new Error(`Invalid padFor, expect to be at least 2, got ${padFor}`);
+  if (padFor < 1) {
+    throw new Error(`Invalid padFor, expect to be at least 1, got ${padFor}`);
   }
 
   const layerCount = Math.ceil(Math.log2(padFor));

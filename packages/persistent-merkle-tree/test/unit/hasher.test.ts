@@ -126,11 +126,11 @@ describe("hasher.merkleizeBlockArray", function () {
       expect(() => hasher.merkleizeBlockArray([data], 2, output, 0)).to.throw("Invalid block length, expect to be 64 bytes, got 63");
     });
 
-    it (`${hasher.name} should throw error if chunkCount <= 1`, () => {
+    it (`${hasher.name} should throw error if chunkCount < 1`, () => {
       const data = Buffer.alloc(64, 0);
       const output = Buffer.alloc(32);
-      const chunkCount = 1;
-      expect(() => hasher.merkleizeBlockArray([data], 1, output, 0)).to.throw("Invalid padFor, expect to be at least 2, got 1");
+      const chunkCount = 0;
+      expect(() => hasher.merkleizeBlockArray([data], chunkCount, output, 0)).to.throw("Invalid padFor, expect to be at least 1, got 0");
     });
 
     // hashtree has a buffer of 16 * 64 bytes = 32 nodes
