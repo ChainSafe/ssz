@@ -241,7 +241,7 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     a: uint64NumType,
     b: new BooleanType(),
     c: unionType,
-    d: new ByteListType(64),
+    d: new ByteListType(1024),
     e: new ByteVectorType(64),
     // a child container type
     f: childContainerType,
@@ -259,7 +259,8 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     a: 10,
     b: true,
     c: {selector: 1, value: 100},
-    d: Buffer.alloc(64, 2),
+    // make this not divisible by 64 to test edge case
+    d: Buffer.alloc(65, 2),
     e: Buffer.alloc(64, 1),
     f: {f0: 100, f1: 101},
     g: {g0: 100, g1: 101},
@@ -271,6 +272,7 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     m: BitArray.fromSingleBit(4, 1),
   };
   const expectedRoot = parentContainerType.toView(value).hashTreeRoot();
+  expect(parentContainerType.hashTreeRoot(value)).to.be.deep.equal(expectedRoot);
 
   it("fresh ViewDU", () => {
     expect(parentContainerType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
@@ -327,9 +329,10 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
 
   it("full hash then modify ByteListType", () => {
     const viewDU = parentContainerType.toViewDU(value);
+    viewDU.d = Buffer.alloc(1024, 3);
     viewDU.batchHashTreeRoot();
-    // this takes more than 1 chunk so the resulting node is a branch node
-    viewDU.d = viewDU.d.slice();
+    // set back to the original value, this takes more than 1 chunk so the resulting node is a branch node
+    viewDU.d = Buffer.alloc(65, 2);
     expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
