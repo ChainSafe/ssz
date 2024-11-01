@@ -152,7 +152,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
 
-    // remaining bytes from this.fixedSize to this.chunkBytesBuffer.length must be zeroed
+    // remaining bytes from this.fixedSize to this.blocksBuffer.length must be zeroed
     return this.blocksBuffer;
   }
 

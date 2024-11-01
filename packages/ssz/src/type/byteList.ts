@@ -43,11 +43,11 @@ export class ByteListType extends ByteArrayType {
   readonly isList = true;
   readonly blockArray: Uint8Array[] = [];
   private blockBytesLen = 0;
-  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthChunkBytes.buffer,
-    this.mixInLengthChunkBytes.byteOffset,
-    this.mixInLengthChunkBytes.byteLength
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
   );
 
   constructor(readonly limitBytes: number, opts?: ByteListOptions) {
@@ -140,13 +140,13 @@ export class ByteListType extends ByteArrayType {
 
     // compute hashTreeRoot
     const blockLimit = Math.ceil(value.length / 64);
-    merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthChunkBytes, 0);
+    merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthBlockBytes, 0);
 
     // mixInLength
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType

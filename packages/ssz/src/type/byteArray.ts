@@ -95,7 +95,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
       const chunkCount = Math.ceil(value.length / 32);
       this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
     }
-    return getBlockBytes(value, this.blocksBuffer);
+    return getBlocksBytes(value, this.blocksBuffer);
   }
 
   // Proofs
@@ -160,15 +160,15 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   protected abstract assertValidSize(size: number): void;
 }
 
-export function getBlockBytes(value: Uint8Array, blocksBuffer: Uint8Array): Uint8Array {
+export function getBlocksBytes(value: Uint8Array, blocksBuffer: Uint8Array): Uint8Array {
   if (value.length > blocksBuffer.length) {
     throw new Error(`data length ${value.length} exceeds blocksBuffer length ${blocksBuffer.length}`);
   }
 
   blocksBuffer.set(value);
   const valueLen = value.length;
-  const chunkByteLen = Math.ceil(valueLen / 64) * 64;
+  const blockByteLen = Math.ceil(valueLen / 64) * 64;
   // all padding bytes must be zero, this is similar to set zeroHash(0)
-  blocksBuffer.subarray(valueLen, chunkByteLen).fill(0);
-  return blocksBuffer.subarray(0, chunkByteLen);
+  blocksBuffer.subarray(valueLen, blockByteLen).fill(0);
+  return blocksBuffer.subarray(0, blockByteLen);
 }

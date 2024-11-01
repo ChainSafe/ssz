@@ -13,7 +13,7 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
   maxSizeArrayComposite,
-  value_getChunkBytesArrayComposite,
+  value_getBlocksBytesArrayComposite,
 } from "./arrayComposite";
 import {ArrayCompositeType} from "../view/arrayComposite";
 import {ListCompositeTreeView} from "../view/listComposite";
@@ -52,11 +52,11 @@ export class ListCompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthChunkBytes.buffer,
-    this.mixInLengthChunkBytes.byteOffset,
-    this.mixInLengthChunkBytes.byteLength
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
   );
   protected readonly defaultLen = 0;
 
@@ -200,12 +200,12 @@ export class ListCompositeType<
       }
     }
 
-    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
     // mixInLength
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
@@ -218,7 +218,7 @@ export class ListCompositeType<
     if (byteLen > blockByteLen) {
       this.blocksBuffer = new Uint8Array(Math.ceil(byteLen / 64) * 64);
     }
-    return value_getChunkBytesArrayComposite(this.elementType, value.length, value, this.blocksBuffer);
+    return value_getBlocksBytesArrayComposite(this.elementType, value.length, value, this.blocksBuffer);
   }
 
   // JSON: inherited from ArrayType

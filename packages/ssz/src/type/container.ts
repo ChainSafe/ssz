@@ -131,8 +131,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
     const fieldBytes = this.fieldsEntries.length * 32;
-    const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
-    this.blocksBuffer = new Uint8Array(chunkBytes);
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(

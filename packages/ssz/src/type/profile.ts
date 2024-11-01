@@ -158,8 +158,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     this.TreeView = opts?.getProfileTreeViewClass?.(this) ?? getProfileTreeViewClass(this);
     this.TreeViewDU = opts?.getProfileTreeViewDUClass?.(this) ?? getProfileTreeViewDUClass(this);
     const fieldBytes = this.activeFields.bitLen * 32;
-    const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
-    this.blocksBuffer = new Uint8Array(chunkBytes);
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(

@@ -49,11 +49,11 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthChunkBytes.buffer,
-    this.mixInLengthChunkBytes.byteOffset,
-    this.mixInLengthChunkBytes.byteLength
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
   );
 
   protected readonly maxSelector: number;
@@ -185,10 +185,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   }
 
   hashTreeRootInto(value: ValueOfTypes<Types>, output: Uint8Array, offset: number): void {
-    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
     this.mixInLengthBuffer.writeUIntLE(value.selector, 32, 6);
     const chunkCount = 2;
-    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
   protected getBlocksBytes(value: ValueOfTypes<Types>): Uint8Array {

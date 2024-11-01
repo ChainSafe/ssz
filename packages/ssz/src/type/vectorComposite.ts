@@ -13,7 +13,7 @@ import {
   tree_serializeToBytesArrayComposite,
   maxSizeArrayComposite,
   minSizeArrayComposite,
-  value_getChunkBytesArrayComposite,
+  value_getBlocksBytesArrayComposite,
 } from "./arrayComposite";
 import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite";
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite";
@@ -155,7 +155,7 @@ export class VectorCompositeType<
   // Merkleization
 
   protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
-    return value_getChunkBytesArrayComposite(this.elementType, this.length, value, this.blocksBuffer);
+    return value_getBlocksBytesArrayComposite(this.elementType, this.length, value, this.blocksBuffer);
   }
 
   // JSON: inherited from ArrayType
