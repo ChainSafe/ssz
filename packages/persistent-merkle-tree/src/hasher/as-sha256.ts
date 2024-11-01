@@ -20,8 +20,8 @@ export const hasher: Hasher = {
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
     return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
-  merkleizeBlockArray(blocks, padFor, output, offset) {
-    return doMerkleizeBlockArray(blocks, padFor, output, offset, hashInto, buffer);
+  merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
+    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

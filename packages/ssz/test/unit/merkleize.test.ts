@@ -81,7 +81,11 @@ describe("merkleize should be equal to merkleizeBlockArray of hasher", () => {
       const expectedRoot = Buffer.alloc(32);
       // depth of 79 nodes are 7, make it 10 to test the padding
       const chunkCount = Math.max(numNode, 10);
-      merkleizeBlockArray(blocks, chunkCount, expectedRoot, 0);
+      // add redundant blocks, should not affect the result
+      const blockLimit = blocks.length;
+      blocks.push(Buffer.alloc(64, 1));
+      blocks.push(Buffer.alloc(64, 2));
+      merkleizeBlockArray(blocks, blockLimit, chunkCount, expectedRoot, 0);
       const roots = nodes.map((node) => node.root);
       expect(merkleize(roots, chunkCount)).to.be.deep.equal(expectedRoot);
     });

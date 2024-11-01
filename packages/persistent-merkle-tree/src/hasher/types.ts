@@ -25,7 +25,13 @@ export type Hasher = {
    * padFor is maxChunkCount, use it to compute layers to hash
    * blocks are mutated after the function
    */
-  merkleizeBlockArray(blocks: Uint8Array[], padFor: number, output: Uint8Array, offset: number): void;
+  merkleizeBlockArray(
+    blocks: Uint8Array[],
+    blockLimit: number,
+    padFor: number,
+    output: Uint8Array,
+    offset: number
+  ): void;
   /**
    * Hash multiple chunks (1 chunk = 32 bytes) at multiple levels
    * With nLevel = 3, hash multiple of 256 bytes, return multiple of 32 bytes.

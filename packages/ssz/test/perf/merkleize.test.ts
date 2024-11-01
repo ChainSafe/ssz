@@ -39,7 +39,7 @@ describe("merkleize vs persistent-merkle-tree merkleizeBlocksBytes", () => {
     });
 
     itBench(`merkleizeBlockArray ${chunkCount} chunks`, () => {
-      merkleizeBlockArray(blockArray, chunkCount, result, 0);
+      merkleizeBlockArray(blockArray, blockArray.length, chunkCount, result, 0);
     });
   }
 });

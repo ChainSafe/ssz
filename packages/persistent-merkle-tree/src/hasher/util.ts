@@ -78,9 +78,11 @@ export function doMerkleizeBlocksBytes(
  * Merkleize multiple SHA256 blocks into ${output} at ${offset}
  * @param padFor is maxChunkCount, should be >= 2
  * @param blocks is unsafe because it's modified
+ * @param blockLimit number of blocks, should be <= blocks.length so that consumer can reuse memory
  */
 export function doMerkleizeBlockArray(
   blocks: Uint8Array[],
+  blockLimit: number,
   padFor: number,
   output: Uint8Array,
   offset: number,
@@ -89,6 +91,12 @@ export function doMerkleizeBlockArray(
 ): void {
   if (padFor < 1) {
     throw new Error(`Invalid padFor, expect to be at least 1, got ${padFor}`);
+  }
+
+  if (blockLimit > blocks.length) {
+    throw new Error(
+      `Invalid blockLimit, expect to be less than or equal blocks.length ${blocks.length}, got ${blockLimit}`
+    );
   }
 
   const layerCount = Math.ceil(Math.log2(padFor));
@@ -115,7 +123,8 @@ export function doMerkleizeBlockArray(
   let bufferIn = buffer;
   // hash into the same buffer
   let bufferOut = buffer.subarray(0, halfBatchSize * BLOCK_SIZE);
-  let blockCount = blocks.length;
+  // ignore remaining blocks
+  let blockCount = blockLimit;
   // hash into the same blocks to save memory allocation
   for (let layer = 0; layer < layerCount; layer++) {
     let outBlockIndex = 0;
