@@ -215,14 +215,14 @@ export function value_getChunkBytesArrayComposite<ElementType extends CompositeT
   elementType: ElementType,
   length: number,
   value: ValueOf<ElementType>[],
-  chunkBytesBuffer: Uint8Array
+  blocksBuffer: Uint8Array
 ): Uint8Array {
   const isOddChunk = length % 2 === 1;
   const chunkBytesLen = isOddChunk ? length * 32 + 32 : length * 32;
-  if (chunkBytesLen > chunkBytesBuffer.length) {
-    throw new Error(`chunkBytesBuffer is too small: ${chunkBytesBuffer.length} < ${chunkBytesLen}`);
+  if (chunkBytesLen > blocksBuffer.length) {
+    throw new Error(`blocksBuffer is too small: ${blocksBuffer.length} < ${chunkBytesLen}`);
   }
-  const chunkBytes = chunkBytesBuffer.subarray(0, chunkBytesLen);
+  const chunkBytes = blocksBuffer.subarray(0, chunkBytesLen);
 
   for (let i = 0; i < length; i++) {
     elementType.hashTreeRootInto(value[i], chunkBytes, i * 32);

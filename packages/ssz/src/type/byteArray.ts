@@ -93,9 +93,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     // reallocate this.blocksBuffer if needed
     if (value.length > this.blocksBuffer.length) {
       const chunkCount = Math.ceil(value.length / 32);
-      const chunkBytes = chunkCount * 32;
-      // pad 1 chunk if maxChunkCount is not even
-      this.blocksBuffer = chunkCount % 2 === 1 ? new Uint8Array(chunkBytes + 32) : new Uint8Array(chunkBytes);
+      this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
     }
     return getBlockBytes(value, this.blocksBuffer);
   }

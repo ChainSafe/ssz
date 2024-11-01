@@ -208,7 +208,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
     const byteLen = this.value_serializedSize(value);
     const chunkByteLen = Math.ceil(byteLen / 64) * 64;
-    // reallocate this.verkleBytes if needed
+    // reallocate this.blocksBuffer if needed
     if (byteLen > this.blocksBuffer.length) {
       // pad 1 chunk if maxChunkCount is not even
       this.blocksBuffer = new Uint8Array(chunkByteLen);

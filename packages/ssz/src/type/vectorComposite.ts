@@ -65,10 +65,7 @@ export class VectorCompositeType<
     this.minSize = minSizeArrayComposite(elementType, length);
     this.maxSize = maxSizeArrayComposite(elementType, length);
     this.defaultLen = length;
-    this.blocksBuffer =
-      this.maxChunkCount % 2 === 1
-        ? new Uint8Array(this.maxChunkCount * 32 + 32)
-        : new Uint8Array(this.maxChunkCount * 32);
+    this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

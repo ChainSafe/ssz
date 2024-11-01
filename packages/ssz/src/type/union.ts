@@ -92,6 +92,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     this.minSize = 1 + Math.min(...minLens);
     this.maxSize = 1 + Math.max(...maxLens);
     this.maxSelector = this.types.length - 1;
+    // maxChunkCount = 1 so this.blocksBuffer.length = 32 in this case
     this.blocksBuffer = new Uint8Array(32);
   }
 

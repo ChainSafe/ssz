@@ -44,9 +44,7 @@ export abstract class BitArrayType extends CompositeType<BitArray, BitArrayTreeV
     // reallocate this.blocksBuffer if needed
     if (value.uint8Array.length > this.blocksBuffer.length) {
       const chunkCount = Math.ceil(value.bitLen / 8 / 32);
-      const chunkBytes = chunkCount * 32;
-      // pad 1 chunk if maxChunkCount is not even
-      this.blocksBuffer = chunkCount % 2 === 1 ? new Uint8Array(chunkBytes + 32) : new Uint8Array(chunkBytes);
+      this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
     }
     return getBlockBytes(value.uint8Array, this.blocksBuffer);
   }

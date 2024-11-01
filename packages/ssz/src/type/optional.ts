@@ -66,6 +66,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.minSize = 0;
     // Max size includes prepended 0x01 byte
     this.maxSize = elementType.maxSize + 1;
+    // maxChunkCount = 1 so this.blocksBuffer.length = 32 in this case
     this.blocksBuffer = new Uint8Array(32);
   }
 
