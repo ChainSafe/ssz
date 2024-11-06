@@ -8,7 +8,7 @@ import {
   Proof,
   ProofType,
   Tree,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
@@ -61,7 +61,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    * Required for ContainerNodeStruct to ensure no dangerous types are constructed.
    */
   abstract readonly isViewMutable: boolean;
-  protected chunkBytesBuffer = new Uint8Array(0);
+  protected blocksBuffer = new Uint8Array(0);
 
   constructor(
     /**
@@ -238,8 +238,8 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
       }
     }
 
-    const merkleBytes = this.getChunkBytes(value);
-    merkleizeInto(merkleBytes, this.maxChunkCount, output, offset);
+    const blocksBuffer = this.getBlocksBytes(value);
+    merkleizeBlocksBytes(blocksBuffer, this.maxChunkCount, output, offset);
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
@@ -258,10 +258,10 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   //   to hashObject and back.
 
   /**
-   * Get merkle bytes of each value, the returned Uint8Array should be multiple of 64 bytes.
+   * Get multiple SHA256 blocks, each is 64 bytes long.
    * If chunk count is not even, need to append zeroHash(0)
    */
-  protected abstract getChunkBytes(value: V): Uint8Array;
+  protected abstract getBlocksBytes(value: V): Uint8Array;
 
   // Proofs API
 

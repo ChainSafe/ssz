@@ -11,7 +11,7 @@ import {
   getNode,
   zeroNode,
   zeroHash,
-  merkleizeInto,
+  merkleizeBlocksBytes,
   countToDepth,
   getNodeH,
   setNode,
@@ -150,8 +150,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
     const fieldBytes = this.fieldsEntries.length * 32;
-    const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
-    this.chunkBytesBuffer = new Uint8Array(chunkBytes);
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -351,8 +350,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       }
     }
 
-    const merkleBytes = this.getChunkBytes(value);
-    merkleizeInto(merkleBytes, this.maxChunkCount, this.tempRoot, 0);
+    const blockBytes = this.getBlocksBytes(value);
+    merkleizeBlocksBytes(blockBytes, this.maxChunkCount, this.tempRoot, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
@@ -365,18 +364,18 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
   }
 
-  protected getChunkBytes(struct: ValueOfFields<Fields>): Uint8Array {
-    this.chunkBytesBuffer.fill(0);
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        this.chunkBytesBuffer.set(zeroHash(0), i * 32);
+        this.blocksBuffer.set(zeroHash(0), i * 32);
       } else {
-        fieldType.hashTreeRootInto(struct[fieldName], this.chunkBytesBuffer, i * 32);
+        fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);
       }
     }
 
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // Proofs
@@ -817,24 +816,24 @@ export function setActiveField(rootNode: Node, bitLen: number, fieldIndex: numbe
   return new BranchNode(rootNode.left, newActiveFieldsNode);
 }
 
-// This is a global buffer to avoid creating a new one for each call to getChunkBytes
-const mixInActiveFieldsChunkBytes = new Uint8Array(64);
-const activeFieldsSingleChunk = mixInActiveFieldsChunkBytes.subarray(32);
+// This is a global buffer to avoid creating a new one for each call to getBlocksBytes
+const mixInActiveFieldsBlockBytes = new Uint8Array(64);
+const activeFieldsSingleChunk = mixInActiveFieldsBlockBytes.subarray(32);
 
 export function mixInActiveFields(root: Uint8Array, activeFields: BitArray, output: Uint8Array, offset: number): void {
   // fast path for depth 1, the bitvector fits in one chunk
-  mixInActiveFieldsChunkBytes.set(root, 0);
+  mixInActiveFieldsBlockBytes.set(root, 0);
   if (activeFields.bitLen <= 256) {
     activeFieldsSingleChunk.fill(0);
     activeFieldsSingleChunk.set(activeFields.uint8Array);
     // 1 chunk for root, 1 chunk for activeFields
     const chunkCount = 2;
-    merkleizeInto(mixInActiveFieldsChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(mixInActiveFieldsBlockBytes, chunkCount, output, offset);
     return;
   }
 
   const chunkCount = Math.ceil(activeFields.uint8Array.length / 32);
-  merkleizeInto(activeFields.uint8Array, chunkCount, activeFieldsSingleChunk, 0);
+  merkleizeBlocksBytes(activeFields.uint8Array, chunkCount, activeFieldsSingleChunk, 0);
   // 1 chunk for root, 1 chunk for activeFields
-  merkleizeInto(mixInActiveFieldsChunkBytes, 2, output, offset);
+  merkleizeBlocksBytes(mixInActiveFieldsBlockBytes, 2, output, offset);
 }

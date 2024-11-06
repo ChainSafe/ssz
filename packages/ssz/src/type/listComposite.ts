@@ -1,4 +1,10 @@
-import {HashComputationLevel, Node, Tree, merkleizeInto} from "@chainsafe/persistent-merkle-tree";
+import {
+  HashComputationLevel,
+  Node,
+  Tree,
+  merkleizeBlocksBytes,
+  merkleizeBlockArray,
+} from "@chainsafe/persistent-merkle-tree";
 import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
 import {Require} from "../util/types";
 import {namedClass} from "../util/named";
@@ -13,7 +19,6 @@ import {
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
   maxSizeArrayComposite,
-  value_getChunkBytesArrayComposite,
 } from "./arrayComposite";
 import {ArrayCompositeType} from "../view/arrayComposite";
 import {ListCompositeTreeView} from "../view/listComposite";
@@ -52,11 +57,12 @@ export class ListCompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly blockArray: Uint8Array[] = [];
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthChunkBytes.buffer,
-    this.mixInLengthChunkBytes.byteOffset,
-    this.mixInLengthChunkBytes.byteLength
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
   );
   protected readonly defaultLen = 0;
 
@@ -200,25 +206,48 @@ export class ListCompositeType<
       }
     }
 
-    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    // should not call super.hashTreeRootInto() here
+    // use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation
+    // reallocate this.blockArray if needed
+    if (value.length > this.blockArray.length) {
+      const blockDiff = value.length - this.blockArray.length;
+      const newBlocksBytes = new Uint8Array(blockDiff * 64);
+      for (let i = 0; i < blockDiff; i++) {
+        this.blockArray.push(newBlocksBytes.subarray(i * 64, (i + 1) * 64));
+      }
+    }
+
+    // populate this.blockArray
+    for (let i = 0; i < value.length; i++) {
+      // 2 values share a block
+      const block = this.blockArray[Math.floor(i / 2)];
+      const offset = i % 2 === 0 ? 0 : 32;
+      this.elementType.hashTreeRootInto(value[i], block, offset);
+    }
+
+    const blockLimit = Math.ceil(value.length / 2);
+    // zero out the last block if needed
+    if (value.length % 2 === 1) {
+      this.blockArray[blockLimit - 1].fill(0, 32);
+    }
+
+    // compute hashTreeRoot
+    merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthBlockBytes, 0);
+
     // mixInLength
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeInto(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
   }
 
-  protected getChunkBytes(value: ValueOf<ElementType>[]): Uint8Array {
-    const byteLen = value.length * 32;
-    const chunkByteLen = this.chunkBytesBuffer.byteLength;
-    if (byteLen > chunkByteLen) {
-      this.chunkBytesBuffer = new Uint8Array(Math.ceil(byteLen / 64) * 64);
-    }
-    return value_getChunkBytesArrayComposite(this.elementType, value.length, value, this.chunkBytesBuffer);
+  protected getBlocksBytes(): Uint8Array {
+    // we use merkleizeBlockArray for hashTreeRoot() computation
+    throw Error("getBlockBytes should not be called for ListCompositeType");
   }
 
   // JSON: inherited from ArrayType
