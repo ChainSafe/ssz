@@ -15,11 +15,23 @@ export type Hasher = {
    */
   digest64HashObjects(left: HashObject, right: HashObject, parent: HashObject): void;
   /**
-   * Merkleize n chunk of data, 32 bytes each
+   * Merkleize n SHA256 blocks in a single Uint8Array, each block is 64 bytes
    * padFor is maxChunkCount, use it to compute layers to hash
-   * data is mutated after the function
+   * blocksBytes is mutated after the function
    */
-  merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void;
+  merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void;
+  /**
+   * Merkleize n SHA256 blocks, each is 64 bytes Uint8Array
+   * padFor is maxChunkCount, use it to compute layers to hash
+   * blocks are mutated after the function
+   */
+  merkleizeBlockArray(
+    blocks: Uint8Array[],
+    blockLimit: number,
+    padFor: number,
+    output: Uint8Array,
+    offset: number
+  ): void;
   /**
    * Hash multiple chunks (1 chunk = 32 bytes) at multiple levels
    * With nLevel = 3, hash multiple of 256 bytes, return multiple of 32 bytes.
