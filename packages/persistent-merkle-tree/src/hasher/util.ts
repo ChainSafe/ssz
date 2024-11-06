@@ -79,6 +79,10 @@ export function doMerkleizeBlocksBytes(
  * @param blockLimit number of blocks, should be <= blocks.length so that consumer can reuse memory
  * @param padFor is maxChunkCount, should be >= 2
  * @param blocks is unsafe because it's modified
+ * @param output the result is stored here
+ * @param offset the offset to store the result
+ * @param hashInto the hash function of each hasher
+ * @param buffer is a temporary buffer of each hasher to work with the hashInto() function
  */
 export function doMerkleizeBlockArray(
   blocks: Uint8Array[],
