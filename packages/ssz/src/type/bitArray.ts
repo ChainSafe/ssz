@@ -4,7 +4,7 @@ import {CompositeType, LENGTH_GINDEX} from "./composite";
 import {BitArray} from "../value/bitArray";
 import {BitArrayTreeView} from "../view/bitArray";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray";
-import {getBlockBytes} from "./byteArray";
+import {getBlocksBytes} from "./byteArray";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -44,11 +44,9 @@ export abstract class BitArrayType extends CompositeType<BitArray, BitArrayTreeV
     // reallocate this.blocksBuffer if needed
     if (value.uint8Array.length > this.blocksBuffer.length) {
       const chunkCount = Math.ceil(value.bitLen / 8 / 32);
-      const chunkBytes = chunkCount * 32;
-      // pad 1 chunk if maxChunkCount is not even
-      this.blocksBuffer = chunkCount % 2 === 1 ? new Uint8Array(chunkBytes + 32) : new Uint8Array(chunkBytes);
+      this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
     }
-    return getBlockBytes(value.uint8Array, this.blocksBuffer);
+    return getBlocksBytes(value.uint8Array, this.blocksBuffer);
   }
 
   // Proofs

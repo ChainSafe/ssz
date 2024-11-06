@@ -47,11 +47,11 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthChunkBytes.buffer,
-    this.mixInLengthChunkBytes.byteOffset,
-    this.mixInLengthChunkBytes.byteLength
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
   );
   protected readonly defaultLen = 0;
 
@@ -193,12 +193,12 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
       }
     }
 
-    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
     // mixInLength
     this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
-    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
 
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
@@ -207,20 +207,20 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
 
   protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
     const byteLen = this.value_serializedSize(value);
-    const chunkByteLen = Math.ceil(byteLen / 64) * 64;
-    // reallocate this.verkleBytes if needed
+    const blockByteLen = Math.ceil(byteLen / 64) * 64;
+    // reallocate this.blocksBuffer if needed
     if (byteLen > this.blocksBuffer.length) {
       // pad 1 chunk if maxChunkCount is not even
-      this.blocksBuffer = new Uint8Array(chunkByteLen);
+      this.blocksBuffer = new Uint8Array(blockByteLen);
     }
-    const chunkBytes = this.blocksBuffer.subarray(0, chunkByteLen);
-    const uint8Array = chunkBytes.subarray(0, byteLen);
+    const blockBytes = this.blocksBuffer.subarray(0, blockByteLen);
+    const uint8Array = blockBytes.subarray(0, byteLen);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, value.length, {uint8Array, dataView}, 0, value);
 
     // all padding bytes must be zero, this is similar to set zeroHash(0)
-    this.blocksBuffer.subarray(byteLen, chunkByteLen).fill(0);
-    return chunkBytes;
+    this.blocksBuffer.subarray(byteLen, blockByteLen).fill(0);
+    return blockBytes;
   }
 
   // JSON: inherited from ArrayType

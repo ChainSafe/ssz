@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {bitLength, maxChunksToDepth, merkleize, mixInLength, nextPowerOf2} from "../../src/util/merkleize";
-import {merkleizeBlocksBytes, LeafNode, zeroHash} from "@chainsafe/persistent-merkle-tree";
+import {merkleizeBlocksBytes, LeafNode, zeroHash, merkleizeBlockArray} from "@chainsafe/persistent-merkle-tree";
 
 describe("util / merkleize / bitLength", () => {
   const bitLengthByIndex = [0, 1, 2, 2, 3, 3, 3, 3, 4, 4];
@@ -59,6 +59,34 @@ describe("merkleize should be equal to merkleizeBlocksBytes of hasher", () => {
       const expectedRoot = Buffer.alloc(32);
       const chunkCount = Math.max(numNode, 1);
       merkleizeBlocksBytes(padData, chunkCount, expectedRoot, 0);
+      expect(merkleize(roots, chunkCount)).to.be.deep.equal(expectedRoot);
+    });
+  }
+});
+
+// same to the above but with merkleizeBlockArray() method
+describe("merkleize should be equal to merkleizeBlockArray of hasher", () => {
+  // hashtree has a buffer of 16 * 64 bytes = 32 nodes
+  const numNodes = [64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79];
+  for (const numNode of numNodes) {
+    it(`merkleize for ${numNode} nodes`, () => {
+      const nodes = Array.from({length: numNode}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
+      const data = Buffer.concat(nodes.map((node) => node.root));
+      const padData = numNode % 2 === 1 ? Buffer.concat([data, zeroHash(0)]) : data;
+      expect(padData.length % 64).to.equal(0);
+      const blocks: Uint8Array[] = [];
+      for (let i = 0; i < padData.length; i += 64) {
+        blocks.push(padData.slice(i, i + 64));
+      }
+      const expectedRoot = Buffer.alloc(32);
+      // depth of 79 nodes are 7, make it 10 to test the padding
+      const chunkCount = Math.max(numNode, 10);
+      // add redundant blocks, should not affect the result
+      const blockLimit = blocks.length;
+      blocks.push(Buffer.alloc(64, 1));
+      blocks.push(Buffer.alloc(64, 2));
+      merkleizeBlockArray(blocks, blockLimit, chunkCount, expectedRoot, 0);
+      const roots = nodes.map((node) => node.root);
       expect(merkleize(roots, chunkCount)).to.be.deep.equal(expectedRoot);
     });
   }

@@ -36,6 +36,16 @@ export function merkleizeBlocksBytes(
   hasher.merkleizeBlocksBytes(blocksBytes, padFor, output, offset);
 }
 
+export function merkleizeBlockArray(
+  blocks: Uint8Array[],
+  blockLimit: number,
+  padFor: number,
+  output: Uint8Array,
+  offset: number
+): void {
+  hasher.merkleizeBlockArray(blocks, blockLimit, padFor, output, offset);
+}
+
 export function executeHashComputations(hashComputations: HashComputationLevel[]): void {
   hasher.executeHashComputations(hashComputations);
 }

@@ -115,3 +115,56 @@ describe("hasher.merkleizeBlocksBytes", function () {
   }
 });
 
+/**
+ * The same to the previous test, but using the merkleizeBlockArray method
+ */
+describe("hasher.merkleizeBlockArray", function () {
+  for (const hasher of [nobleHasher, hashtreeHasher, asSha256Hasher]) {
+    it (`${hasher.name} should throw error if invalid blockLimit`, () => {
+      const data = Buffer.alloc(64, 0);
+      const output = Buffer.alloc(32);
+      expect(() => hasher.merkleizeBlockArray([data], 2, 2, output, 0)).to.throw("Invalid blockLimit, expect to be less than or equal blocks.length 1, got 2");
+    });
+
+    it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
+      const data = Buffer.alloc(63, 0);
+      const output = Buffer.alloc(32);
+      expect(() => hasher.merkleizeBlockArray([data], 1, 2, output, 0)).to.throw("Invalid block length, expect to be 64 bytes, got 63");
+    });
+
+    it (`${hasher.name} should throw error if chunkCount < 1`, () => {
+      const data = Buffer.alloc(64, 0);
+      const output = Buffer.alloc(32);
+      const chunkCount = 0;
+      expect(() => hasher.merkleizeBlockArray([data], 1, chunkCount, output, 0)).to.throw("Invalid padFor, expect to be at least 1, got 0");
+    });
+
+    // hashtree has a buffer of 16 * 64 bytes = 32 nodes
+    const numNodes = [64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79];
+    for (const numNode of numNodes) {
+      it(`${hasher.name}.merkleizeBlockArray for ${numNode} nodes`, () => {
+
+        const nodes = Array.from({length: numNode}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
+        const data = Buffer.concat(nodes.map((node) => node.root));
+        const output = Buffer.alloc(32);
+        // depth of 79 nodes are 7, make it 10 to test the padding
+        const chunkCount = Math.max(numNode, 10);
+        const padData = numNode % 2 === 1 ? Buffer.concat([data, zeroHash(0)]) : data;
+        expect(padData.length % 64).to.equal(0);
+        const blocks: Uint8Array[] = [];
+        for (let i = 0; i < padData.length; i += 64) {
+          blocks.push(padData.slice(i, i + 64));
+        }
+        const blockLimit = blocks.length;
+        // should be able to run with above blocks, however add some redundant blocks similar to the consumer
+        blocks.push(Buffer.alloc(64, 1));
+        blocks.push(Buffer.alloc(64, 2));
+        hasher.merkleizeBlockArray(blocks, blockLimit, chunkCount, output, 0);
+        const depth = Math.ceil(Math.log2(chunkCount));
+        const root = subtreeFillToContents(nodes, depth).root;
+        expectEqualHex(output, root);
+      });
+    }
+  }
+});
+

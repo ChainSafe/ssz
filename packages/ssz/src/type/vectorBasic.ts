@@ -59,10 +59,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     this.minSize = this.fixedSize;
     this.maxSize = this.fixedSize;
     this.defaultLen = length;
-    // pad 1 chunk if maxChunkCount is not even
-    this.blocksBuffer = new Uint8Array(
-      this.maxChunkCount % 2 === 1 ? this.maxChunkCount * 32 + 32 : this.maxChunkCount * 32
-    );
+    this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
   static named<ElementType extends BasicType<unknown>>(
@@ -155,7 +152,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
 
-    // remaining bytes from this.fixedSize to this.chunkBytesBuffer.length must be zeroed
+    // remaining bytes from this.fixedSize to this.blocksBuffer.length must be zeroed
     return this.blocksBuffer;
   }
 

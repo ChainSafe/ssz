@@ -8,7 +8,10 @@ import {
 import type {Hasher} from "./types";
 import {Node} from "../node";
 import type {HashComputationLevel} from "../hashComputation";
-import {doDigestNLevel, doMerkleizeBlocksBytes} from "./util";
+import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util";
+
+/** hashInto() function of as-sha256 loop through every 256 bytes */
+const buffer = new Uint8Array(4 * BLOCK_SIZE);
 
 export const hasher: Hasher = {
   name: "as-sha256",
@@ -16,6 +19,9 @@ export const hasher: Hasher = {
   digest64HashObjects: digest64HashObjectsInto,
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
     return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
+  },
+  merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
+    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);
