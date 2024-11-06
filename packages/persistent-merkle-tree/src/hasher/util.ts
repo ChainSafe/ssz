@@ -76,9 +76,9 @@ export function doMerkleizeBlocksBytes(
 
 /**
  * Merkleize multiple SHA256 blocks into ${output} at ${offset}
+ * @param blockLimit number of blocks, should be <= blocks.length so that consumer can reuse memory
  * @param padFor is maxChunkCount, should be >= 2
  * @param blocks is unsafe because it's modified
- * @param blockLimit number of blocks, should be <= blocks.length so that consumer can reuse memory
  */
 export function doMerkleizeBlockArray(
   blocks: Uint8Array[],

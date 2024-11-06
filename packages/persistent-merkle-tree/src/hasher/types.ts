@@ -22,6 +22,7 @@ export type Hasher = {
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void;
   /**
    * Merkleize n SHA256 blocks, each is 64 bytes Uint8Array
+   * blockLimit is the number of blocks to hash, should be <= blocks.length
    * padFor is maxChunkCount, use it to compute layers to hash
    * blocks are mutated after the function
    */

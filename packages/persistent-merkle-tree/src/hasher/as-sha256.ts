@@ -10,7 +10,10 @@ import {Node} from "../node";
 import type {HashComputationLevel} from "../hashComputation";
 import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util";
 
-/** hashInto() function of as-sha256 loop through every 256 bytes */
+/**
+ * hashInto() function of as-sha256 loop through every 256 bytes
+ * This is the same to hashInto() function of as-sha256 https://github.com/ChainSafe/ssz/blob/cf3e1f038c8bf7cba1bb27c38540e50b0391d0e6/packages/as-sha256/src/index.ts#L270
+ */
 const buffer = new Uint8Array(4 * BLOCK_SIZE);
 
 export const hasher: Hasher = {
