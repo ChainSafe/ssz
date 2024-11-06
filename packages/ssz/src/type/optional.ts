@@ -48,11 +48,11 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly mixInLengthChunkBytes = new Uint8Array(64);
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthChunkBytes.buffer,
-    this.mixInLengthChunkBytes.byteOffset,
-    this.mixInLengthChunkBytes.byteLength
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
   );
 
   constructor(readonly elementType: ElementType, opts?: OptionalOpts) {
@@ -66,7 +66,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.minSize = 0;
     // Max size includes prepended 0x01 byte
     this.maxSize = elementType.maxSize + 1;
-    this.chunkBytesBuffer = new Uint8Array(32);
+    // maxChunkCount = 1 so this.blocksBuffer.length = 32 in this case
+    this.blocksBuffer = new Uint8Array(32);
   }
 
   static named<ElementType extends Type<unknown>>(
@@ -185,21 +186,21 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   hashTreeRootInto(value: ValueOfType<ElementType>, output: Uint8Array, offset: number): void {
-    super.hashTreeRootInto(value, this.mixInLengthChunkBytes, 0);
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
     const selector = value === null ? 0 : 1;
     this.mixInLengthBuffer.writeUIntLE(selector, 32, 6);
     // one for hashTreeRoot(value), one for selector
     const chunkCount = 2;
-    merkleizeBlocksBytes(this.mixInLengthChunkBytes, chunkCount, output, offset);
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
-  protected getChunkBytes(value: ValueOfType<ElementType>): Uint8Array {
+  protected getBlocksBytes(value: ValueOfType<ElementType>): Uint8Array {
     if (value === null) {
-      this.chunkBytesBuffer.fill(0);
+      this.blocksBuffer.fill(0);
     } else {
-      this.elementType.hashTreeRootInto(value, this.chunkBytesBuffer, 0);
+      this.elementType.hashTreeRootInto(value, this.blocksBuffer, 0);
     }
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // Proofs

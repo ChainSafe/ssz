@@ -211,29 +211,29 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   }
 }
 
-export function value_getChunkBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
+export function value_getBlocksBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   value: ValueOf<ElementType>[],
-  chunkBytesBuffer: Uint8Array
+  blocksBuffer: Uint8Array
 ): Uint8Array {
-  const isOddChunk = length % 2 === 1;
-  const chunkBytesLen = isOddChunk ? length * 32 + 32 : length * 32;
-  if (chunkBytesLen > chunkBytesBuffer.length) {
-    throw new Error(`chunkBytesBuffer is too small: ${chunkBytesBuffer.length} < ${chunkBytesLen}`);
+  const blockBytesLen = Math.ceil(length / 2) * 64;
+  if (blockBytesLen > blocksBuffer.length) {
+    throw new Error(`blocksBuffer is too small: ${blocksBuffer.length} < ${blockBytesLen}`);
   }
-  const chunkBytes = chunkBytesBuffer.subarray(0, chunkBytesLen);
+  const blocksBytes = blocksBuffer.subarray(0, blockBytesLen);
 
   for (let i = 0; i < length; i++) {
-    elementType.hashTreeRootInto(value[i], chunkBytes, i * 32);
+    elementType.hashTreeRootInto(value[i], blocksBytes, i * 32);
   }
 
+  const isOddChunk = length % 2 === 1;
   if (isOddChunk) {
     // similar to append zeroHash(0)
-    chunkBytes.subarray(length * 32, chunkBytesLen).fill(0);
+    blocksBytes.subarray(length * 32, blockBytesLen).fill(0);
   }
 
-  return chunkBytes;
+  return blocksBytes;
 }
 
 function readOffsetsArrayComposite(

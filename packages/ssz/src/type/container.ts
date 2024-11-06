@@ -131,8 +131,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
     const fieldBytes = this.fieldsEntries.length * 32;
-    const chunkBytes = Math.ceil(fieldBytes / 64) * 64;
-    this.chunkBytesBuffer = new Uint8Array(chunkBytes);
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -275,13 +274,13 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // Merkleization
 
-  protected getChunkBytes(struct: ValueOfFields<Fields>): Uint8Array {
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
-      fieldType.hashTreeRootInto(struct[fieldName], this.chunkBytesBuffer, i * 32);
+      fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);
     }
     // remaining bytes are zeroed as we never write them
-    return this.chunkBytesBuffer;
+    return this.blocksBuffer;
   }
 
   // Proofs
