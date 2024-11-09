@@ -1,7 +1,13 @@
 import {sha256} from "@noble/hashes/sha256";
 import {digest64HashObjects, byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types";
-import {doDigestNLevel, doMerkleizeInto, hashObjectToUint8Array} from "./util";
+import {
+  BLOCK_SIZE,
+  doDigestNLevel,
+  doMerkleizeBlockArray,
+  doMerkleizeBlocksBytes,
+  hashObjectToUint8Array,
+} from "./util";
 
 const digest64 = (a: Uint8Array, b: Uint8Array): Uint8Array => sha256.create().update(a).update(b).digest();
 const hashInto = (input: Uint8Array, output: Uint8Array): void => {
@@ -22,14 +28,20 @@ const hashInto = (input: Uint8Array, output: Uint8Array): void => {
   }
 };
 
+/** should be multiple of 64, make it the same to as-sha256 */
+const buffer = new Uint8Array(4 * BLOCK_SIZE);
+
 export const hasher: Hasher = {
   name: "noble",
   digest64,
   digest64HashObjects: (left, right, parent) => {
     byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), 0, parent);
   },
-  merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeInto(data, padFor, output, offset, hashInto);
+  merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
+    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
+  },
+  merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
+    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

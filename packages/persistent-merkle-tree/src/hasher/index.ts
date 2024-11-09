@@ -27,8 +27,23 @@ export function digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
   return hasher.digestNLevel(data, nLevel);
 }
 
-export function merkleizeInto(data: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-  hasher.merkleizeInto(data, padFor, output, offset);
+export function merkleizeBlocksBytes(
+  blocksBytes: Uint8Array,
+  padFor: number,
+  output: Uint8Array,
+  offset: number
+): void {
+  hasher.merkleizeBlocksBytes(blocksBytes, padFor, output, offset);
+}
+
+export function merkleizeBlockArray(
+  blocks: Uint8Array[],
+  blockLimit: number,
+  padFor: number,
+  output: Uint8Array,
+  offset: number
+): void {
+  hasher.merkleizeBlockArray(blocks, blockLimit, padFor, output, offset);
 }
 
 export function executeHashComputations(hashComputations: HashComputationLevel[]): void {
