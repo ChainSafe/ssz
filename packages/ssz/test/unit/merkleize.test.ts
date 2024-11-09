@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {bitLength, maxChunksToDepth, merkleize, mixInLength, nextPowerOf2} from "../../src/util/merkleize";
-import {merkleizeInto, LeafNode, zeroHash} from "@chainsafe/persistent-merkle-tree";
+import {merkleizeBlocksBytes, LeafNode, zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 describe("util / merkleize / bitLength", () => {
   const bitLengthByIndex = [0, 1, 2, 2, 3, 3, 3, 3, 4, 4];
@@ -41,7 +41,7 @@ describe("util / merkleize / mixInLength", () => {
       mixInLengthBuffer.set(root, 0);
       mixInLengthBuffer.writeUIntLE(length, 32, 6);
       const finalRoot = new Uint8Array(32);
-      merkleizeInto(mixInLengthBuffer, 2, finalRoot, 0);
+      merkleizeBlocksBytes(mixInLengthBuffer, 2, finalRoot, 0);
       const expectedRoot = mixInLength(root, length);
       expect(finalRoot).to.be.deep.equal(expectedRoot);
     });
@@ -58,7 +58,7 @@ describe("merkleize should be equal to merkleizeInto of hasher", () => {
       const roots = nodes.map((node) => node.root);
       const expectedRoot = Buffer.alloc(32);
       const chunkCount = Math.max(numNode, 1);
-      merkleizeInto(padData, chunkCount, expectedRoot, 0);
+      merkleizeBlocksBytes(padData, chunkCount, expectedRoot, 0);
       expect(merkleize(roots, chunkCount)).to.be.deep.equal(expectedRoot);
     });
   }
