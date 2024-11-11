@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {UnionType, UintNumberType, NoneType, ValueOf, toHexString} from "../../../../src";
 
 const byteType = new UintNumberType(1);

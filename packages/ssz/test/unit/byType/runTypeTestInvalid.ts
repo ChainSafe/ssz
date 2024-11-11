@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {CompositeType, fromHexString, Type} from "../../../src";
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -52,7 +52,7 @@ export function runTypeTestInvalid<T>({type, values}: {type: Type<T>; values: In
       if (json !== undefined) {
         if (!id) id = String(json);
         it(`${id} - fromJson`, () => {
-          expect(() => type.fromJson(json)).to.throw(error);
+          expect(() => type.fromJson(json)).toThrow(error);
         });
       }
 
@@ -62,21 +62,21 @@ export function runTypeTestInvalid<T>({type, values}: {type: Type<T>; values: In
         const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
 
         it(`${id} - struct deserialize`, () => {
-          expect(() => type.deserialize(uint8Array)).to.throw(error);
+          expect(() => type.deserialize(uint8Array)).toThrow(error);
         });
 
         it(`${id} - tree deserialize`, () => {
-          expect(() => type.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length)).to.throw(error);
+          expect(() => type.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length)).toThrow(error);
         });
 
         const typeComposite = type as CompositeType<unknown, unknown, unknown>;
         if (!typeComposite.isBasic) {
           it(`${id} - tree deserialize toView`, () => {
-            expect(() => typeComposite.deserializeToView(fromHexString(serialized))).to.throw(error);
+            expect(() => typeComposite.deserializeToView(fromHexString(serialized))).toThrow(error);
           });
 
           it(`${id} - tree deserialize toViewDU`, () => {
-            expect(() => typeComposite.deserializeToViewDU(fromHexString(serialized))).to.throw(error);
+            expect(() => typeComposite.deserializeToViewDU(fromHexString(serialized))).toThrow(error);
           });
         }
       }

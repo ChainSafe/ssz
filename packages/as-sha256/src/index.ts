@@ -1,6 +1,7 @@
 import {allocUnsafe} from "./alloc";
 import {newInstance} from "./wasm";
-import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
+import type {HashObject} from "./hashObject";
+import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
 import SHA256 from "./sha256";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 

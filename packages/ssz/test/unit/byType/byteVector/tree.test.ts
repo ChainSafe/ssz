@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ByteVectorType, ContainerType} from "../../../../src";
 
 describe("ByteVectorType proofs", () => {
@@ -6,8 +6,8 @@ describe("ByteVectorType proofs", () => {
   const containerRootType = new ContainerType({root: rootType});
 
   it("Not allow navigating beyond this type", () => {
-    expect(() => rootType.getPropertyType()).to.throw();
-    expect(() => rootType.getIndexProperty()).to.throw();
+    expect(() => rootType.getPropertyType()).toThrow();
+    expect(() => rootType.getIndexProperty()).toThrow();
 
     const containerRoot = containerRootType.defaultViewDU();
     const proof = containerRoot.createProof([["root", 0]]);

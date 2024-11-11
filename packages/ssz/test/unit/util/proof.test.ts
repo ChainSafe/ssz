@@ -1,5 +1,5 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ContainerNodeStructType, ContainerType, ListCompositeType} from "../../../src";
 import {bytes32Type, uint16NumType} from "../../utils/primitiveTypes";
 import {treePartialToJsonPaths, TreeDataTypeCode} from "../../../src/util/proof/treePartialToJsonPaths";
@@ -31,12 +31,12 @@ describe("Create proof of Array of Objects", () => {
 
     const root = parentObj.hashTreeRoot();
     root[0]++; // Change the root to invalidate the proof (++ overflows)
-    expect(() => ArrayObject.createFromProof(proof, root)).to.throw();
+    expect(() => ArrayObject.createFromProof(proof, root)).toThrow();
   });
 
   it("Prevent navigation beyond basic types", () => {
     const simpleObj = SimpleObject.defaultView();
-    expect(() => simpleObj.createProof([["a", 0]])).to.throw();
+    expect(() => simpleObj.createProof([["a", 0]])).toThrow();
   });
 });
 

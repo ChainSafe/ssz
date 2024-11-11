@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {toHexString} from "../../../src/util/byteArray";
 import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src";
 

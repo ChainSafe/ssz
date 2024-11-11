@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {
   BitArray,
@@ -276,43 +276,43 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
   const expectedRoot = parentContainerType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(parentContainerType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(parentContainerType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify Number type", () => {
     const viewDU = parentContainerType.toViewDU({...value, a: 9});
     viewDU.batchHashTreeRoot();
     viewDU.a += 1;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.a = 10;
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify BooleanType", () => {
     const viewDU = parentContainerType.toViewDU({...value, b: false});
     viewDU.batchHashTreeRoot();
     viewDU.b = true;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.b = true;
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify UnionType", () => {
     const viewDU = parentContainerType.toViewDU({...value, c: {selector: 1, value: 101}});
     viewDU.batchHashTreeRoot();
     viewDU.c = unionType.toViewDU({selector: 1, value: 100});
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.c = unionType.toViewDU({selector: 1, value: 100});
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify ByteVectorType", () => {
@@ -320,12 +320,12 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     // this takes more than 1 chunk so the resulting node is a branch node
     viewDU.e = viewDU.e.slice();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.e = viewDU.e.slice();
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify ByteListType", () => {
@@ -333,24 +333,24 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     // this takes more than 1 chunk so the resulting node is a branch node
     viewDU.d = viewDU.d.slice();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.d = viewDU.d.slice();
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify full child container", () => {
     const viewDU = parentContainerType.toViewDU({...value, f: {f0: 99, f1: 999}});
     viewDU.batchHashTreeRoot();
     viewDU.f = childContainerType.toViewDU({f0: 100, f1: 101});
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.f = childContainerType.toViewDU({f0: 100, f1: 101});
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify partial child container", () => {
@@ -358,25 +358,25 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     viewDU.f.f0 = 100;
     viewDU.f.f1 = 101;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.f.f0 = 100;
     viewDU.f.f1 = 101;
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify ContainerNodeStructType", () => {
     const viewDU = parentContainerType.toViewDU({...value, g: {g0: 99, g1: 999}});
     viewDU.batchHashTreeRoot();
     viewDU.g = childContainerStruct.toViewDU({g0: 100, g1: 101});
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.g = childContainerStruct.toViewDU({g0: 100, g1: 101});
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify partial ContainerNodeStructType", () => {
@@ -384,169 +384,169 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     viewDU.g.g0 = 100;
     viewDU.g.g1 = 101;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.g.g0 = 100;
     viewDU.g.g1 = 101;
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify ListBasicType", () => {
     const viewDU = parentContainerType.toViewDU({...value, h: []});
     viewDU.batchHashTreeRoot();
     viewDU.h = listBasicType.toViewDU([1, 2]);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.h = listBasicType.toViewDU([1, 2]);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then push 1 item to ListBasicType", () => {
     const viewDU = parentContainerType.toViewDU({...value, h: [1]});
     viewDU.batchHashTreeRoot();
     viewDU.h.push(2);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.h = listBasicType.toViewDU([1, 2]);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify 1 item of ListBasicType", () => {
     const viewDU = parentContainerType.toViewDU({...value, h: [1, 3]});
     viewDU.batchHashTreeRoot();
     viewDU.h.set(1, 2);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.h.set(1, 2);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify VectorBasicType", () => {
     const viewDU = parentContainerType.toViewDU({...value, i: []});
     viewDU.batchHashTreeRoot();
     viewDU.i = vectorBasicType.toViewDU([1, 2]);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.i = vectorBasicType.toViewDU([1, 2]);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify 1 item of VectorBasicType", () => {
     const viewDU = parentContainerType.toViewDU({...value, i: [1, 3]});
     viewDU.batchHashTreeRoot();
     viewDU.i.set(1, 2);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.i.set(1, 2);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify ListCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, j: []});
     viewDU.batchHashTreeRoot();
     viewDU.j = listCompositeType.toViewDU([{f0: 1, f1: 2}]);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.j = listCompositeType.toViewDU([{f0: 1, f1: 2}]);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then push 1 item to ListCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, j: []});
     viewDU.batchHashTreeRoot();
     viewDU.j.push(childContainerType.toViewDU({f0: 1, f1: 2}));
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.j = listCompositeType.toViewDU([{f0: 1, f1: 2}]);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify 1 item of ListCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, j: [{f0: 1, f1: 3}]});
     viewDU.batchHashTreeRoot();
     viewDU.j.set(0, childContainerType.toViewDU({f0: 1, f1: 2}));
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.j.set(0, childContainerType.toViewDU({f0: 1, f1: 2}));
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify 1 field of 1 item of ListCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, j: [{f0: 1, f1: 3}]});
     viewDU.batchHashTreeRoot();
     viewDU.j.get(0).f1 = 2;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.j.get(0).f1 = 2;
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify VectorCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, k: [{f0: 9, f1: 9}]});
     viewDU.batchHashTreeRoot();
     viewDU.k = vectorCompositeType.toViewDU([{f0: 1, f1: 2}]);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.k = vectorCompositeType.toViewDU([{f0: 1, f1: 2}]);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify 1 item of VectorCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, k: [{f0: 1, f1: 3}]});
     viewDU.batchHashTreeRoot();
     viewDU.k.set(0, childContainerType.toViewDU({f0: 1, f1: 2}));
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.k.set(0, childContainerType.toViewDU({f0: 1, f1: 2}));
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify 1 field 1 item of VectorCompositeType", () => {
     const viewDU = parentContainerType.toViewDU({...value, k: [{f0: 1, f1: 3}]});
     viewDU.batchHashTreeRoot();
     viewDU.k.get(0).f1 = 2;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.k.get(0).f1 = 2;
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify BitVectorType", () => {
     const viewDU = parentContainerType.toViewDU({...value, l: BitArray.fromSingleBit(64, 4)});
     viewDU.batchHashTreeRoot();
     viewDU.l = bitVectorType.toViewDU(BitArray.fromSingleBit(64, 5));
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.l = bitVectorType.toViewDU(BitArray.fromSingleBit(64, 5));
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify BitVectorType bit", () => {
@@ -554,25 +554,25 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     viewDU.l.set(4, false);
     viewDU.l.set(5, true);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.l.set(4, false);
     viewDU.l.set(5, true);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify BitListType", () => {
     const viewDU = parentContainerType.toViewDU({...value, m: BitArray.fromSingleBit(4, 0)});
     viewDU.batchHashTreeRoot();
     viewDU.m = bitListType.toViewDU(BitArray.fromSingleBit(4, 1));
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.m = bitListType.toViewDU(BitArray.fromSingleBit(4, 1));
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify BitListType bit", () => {
@@ -580,13 +580,13 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     viewDU.m.set(0, false);
     viewDU.m.set(1, true);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.m.set(0, false);
     viewDU.m.set(1, true);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 });
 
@@ -617,14 +617,14 @@ describe("ContainerNodeStruct batchHashTreeRoot", function () {
   const expectedRoot = containerType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(containerType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(containerType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify basic type", () => {
     const viewDU = containerType.toViewDU({...value, exitEpoch: 3});
     viewDU.batchHashTreeRoot();
     viewDU.exitEpoch *= 1_000_000;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("modify basic type", () => {
@@ -635,7 +635,7 @@ describe("ContainerNodeStruct batchHashTreeRoot", function () {
     });
     viewDU.exitEpoch -= 1;
     viewDU.withdrawableEpoch -= 1;
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 });
 
@@ -678,12 +678,12 @@ describe("upgradeToNewType utility", () => {
         }
         const expectedViewDU = newType.toViewDU(expectedValue);
 
-        expect(newView.toValue()).to.be.deep.equal(expectedValue);
-        expect(newView.hashTreeRoot()).to.be.deep.equal(expectedViewDU.hashTreeRoot());
-        expect(newView.serialize()).to.be.deep.equal(expectedViewDU.serialize());
-        expect(newViewDU.toValue()).to.be.deep.equal(expectedValue);
-        expect(newViewDU.hashTreeRoot()).to.be.deep.equal(expectedViewDU.hashTreeRoot());
-        expect(newViewDU.serialize()).to.be.deep.equal(expectedViewDU.serialize());
+        expect(newView.toValue()).toEqual(expectedValue);
+        expect(newView.hashTreeRoot()).toEqual(expectedViewDU.hashTreeRoot());
+        expect(newView.serialize()).toEqual(expectedViewDU.serialize());
+        expect(newViewDU.toValue()).toEqual(expectedValue);
+        expect(newViewDU.hashTreeRoot()).toEqual(expectedViewDU.hashTreeRoot());
+        expect(newViewDU.serialize()).toEqual(expectedViewDU.serialize());
       }
     });
   }

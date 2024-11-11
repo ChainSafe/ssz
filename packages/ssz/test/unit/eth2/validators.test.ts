@@ -1,5 +1,4 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect, vi} from "vitest";
 import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
 
@@ -15,8 +14,8 @@ const validator: Validator = {
   withdrawableEpoch: 4_000_000,
 };
 
-describe("Container with BranchNodeStruct", function () {
-  this.timeout(0);
+describe("Container with BranchNodeStruct", () => {
+  vi.setConfig({testTimeout: 10_000});
 
   const validatorViewDU = ValidatorContainer.toViewDU(validator);
   const validatorNodeStructViewDU = ValidatorNodeStruct.toViewDU(validator);

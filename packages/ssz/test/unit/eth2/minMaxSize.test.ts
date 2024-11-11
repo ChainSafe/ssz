@@ -1,6 +1,6 @@
 import {ssz} from "../../lodestarTypes";
 import {Type} from "../../../src";
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 
 enum ForkName {
   phase0 = "phase0",

@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {BitListType, BitArray, toHexString} from "../../../../src";
 import {runTypeTestValid} from "../runTypeTestValid";
 

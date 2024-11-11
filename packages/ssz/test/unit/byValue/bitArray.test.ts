@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray";
 import {BitVectorType} from "../../../src";
 import {linspace} from "../../utils/misc";
@@ -7,8 +7,8 @@ const BITS_PER_BYTE = 8;
 
 describe("aggregationBits", function () {
   it("getUint8ByteToBitBooleanArray", () => {
-    expect(getUint8ByteToBitBooleanArray(1)).to.be.deep.equal([true, false, false, false, false, false, false, false]);
-    expect(getUint8ByteToBitBooleanArray(5)).to.be.deep.equal([true, false, true, false, false, false, false, false]);
+    expect(getUint8ByteToBitBooleanArray(1)).toEqual([true, false, false, false, false, false, false, false]);
+    expect(getUint8ByteToBitBooleanArray(5)).toEqual([true, false, true, false, false, false, false, false]);
   });
 });
 
@@ -94,26 +94,26 @@ describe("BitArray.set() and BitArray.get()", () => {
 
 describe("BitArray errors", () => {
   it("Invalid uint8Array.length", () => {
-    expect(() => new BitArray(new Uint8Array(1), 2 * 8)).to.throw("BitArray uint8Array length does not match bitLen");
+    expect(() => new BitArray(new Uint8Array(1), 2 * 8)).toThrow("BitArray uint8Array length does not match bitLen");
   });
 
   it(".set() over bitLen", () => {
     const bitArray = BitArray.fromBitLen(8);
     // Max OK index is bitLen - 1
-    expect(() => bitArray.set(bitArray.bitLen, true)).to.throw();
-    expect(() => bitArray.set(bitArray.bitLen + 1, true)).to.throw();
+    expect(() => bitArray.set(bitArray.bitLen, true)).toThrow();
+    expect(() => bitArray.set(bitArray.bitLen + 1, true)).toThrow();
   });
 
   it(".mergeOrWith() wrong lengths", () => {
     const bitArray1 = BitArray.fromBitLen(8);
     const bitArray2 = BitArray.fromBitLen(bitArray1.bitLen + 1);
-    expect(() => bitArray1.mergeOrWith(bitArray2)).to.throw();
+    expect(() => bitArray1.mergeOrWith(bitArray2)).toThrow();
   });
 
   it(".intersectValues() wrong lengths", () => {
     const bitArray1 = BitArray.fromBitLen(8);
     const values = Array(bitArray1.bitLen + 1) as unknown[];
-    expect(() => bitArray1.intersectValues(values)).to.throw();
+    expect(() => bitArray1.intersectValues(values)).toThrow();
   });
 });
 

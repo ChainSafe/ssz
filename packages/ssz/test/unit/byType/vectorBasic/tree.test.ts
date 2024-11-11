@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {UintNumberType, VectorBasicType} from "../../../../src";
 import {runViewTestMutation} from "../runViewTestMutation";
 
@@ -42,7 +42,7 @@ describe("VectorBasicType batchHashTreeRoot", () => {
   const expectedRoot = vectorType.hashTreeRoot(value);
 
   it("fresh ViewDU", () => {
-    expect(vectorType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(vectorType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify", () => {
@@ -56,12 +56,12 @@ describe("VectorBasicType batchHashTreeRoot", () => {
     viewDU.set(5, 5);
     viewDU.set(6, 6);
     viewDU.set(7, 7);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign the same value again, commit() then batchHashTreeRoot()
     viewDU.set(0, 0);
     viewDU.set(7, 7);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 });
