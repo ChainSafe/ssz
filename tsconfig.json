@@ -3,5 +3,8 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "incremental": false,
+    "typeRoots": [
+      "node_modules/@types", "types"
+    ]
   }
 }
