@@ -49,8 +49,8 @@ describe("Container with BranchNodeStruct", () => {
       resLeafNodeStruct = op(validatorNodeStructViewDU, ValidatorNodeStruct);
     });
 
-    it(`${id} must equal`, function () {
-      if (res === undefined || resLeafNodeStruct === undefined) this.skip();
+    it(`${id} must equal`, ({skip}) => {
+      if (res === undefined || resLeafNodeStruct === undefined) return skip();
       expect(res).to.deep.equal(resLeafNodeStruct);
     });
   }

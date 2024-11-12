@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "lib",
     "target": "es2019",
     "module": "commonjs",
     "pretty": true,
@@ -27,6 +28,11 @@
     "declaration": true,
     "declarationMap": true,
     "incremental": true,
-    "preserveWatchOutput": true
+    "preserveWatchOutput": true,
+
+    "typeRoots": [
+      "node_modules/@types", "types"
+    ],
+    "skipLibCheck": true
   }
 }

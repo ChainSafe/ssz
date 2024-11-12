@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import jsyaml from "js-yaml";
-import {describe, it, expect} from "vitest";
+import {describe, it, expect, vi} from "vitest";
 import {ContainerType, ListCompositeType} from "../../../src";
 import {ssz} from "../../lodestarTypes";
 import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes";
@@ -21,8 +21,8 @@ const EIP4881TestDataArrayItem = new ContainerType(
 // test data contains 512 items
 const EIP4881TestDataArray = new ListCompositeType(EIP4881TestDataArrayItem, 1024);
 
-describe("EIP-4881", function () {
-  this.timeout(60 * 1000);
+describe("EIP-4881", () => {
+  vi.setConfig({testTimeout: 60 * 1000});
 
   const ymlStr = fs.readFileSync(path.join(__dirname, "test_data.yaml"), "utf8");
   const json = jsyaml.load(ymlStr) as unknown[];
