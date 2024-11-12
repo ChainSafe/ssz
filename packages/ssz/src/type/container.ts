@@ -551,7 +551,7 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
   if (casingMap) {
     const keyFromCaseMap = casingMap[fieldName];
     if (keyFromCaseMap === undefined) {
-      throw Error(`casingMap[${fieldName}] not defined`);
+      throw Error(`casingMap[${String(fieldName)}] not defined`);
     }
     return keyFromCaseMap as string;
   } else if (jsonCase) {
@@ -569,6 +569,6 @@ export function renderContainerTypeName<Fields extends Record<string, Type<unkno
   prefix = "Container"
 ): string {
   const fieldNames = Object.keys(fields) as (keyof Fields)[];
-  const fieldTypeNames = fieldNames.map((fieldName) => `${fieldName}: ${fields[fieldName].typeName}`).join(", ");
+  const fieldTypeNames = fieldNames.map((fieldName) => `${String(fieldName)}: ${fields[fieldName].typeName}`).join(", ");
   return `${prefix}({${fieldTypeNames}})`;
 }
