@@ -1581,18 +1581,18 @@
     yargs "17.7.2"
     yargs-parser "21.1.1"
 
-"@lodestar/params@1.23.0-rc.1":
-  version "1.23.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@lodestar/params/-/params-1.23.0-rc.1.tgz#38ca349571ee3b998fabef7e8ddb39dff70191e4"
-  integrity sha512-QCaImULUlF/GarNu8rH2W0ud+Y5EjDl6m46b3uAp6FY/qQoDBxQLTJqC4cLjL1R++LjT2l9GmPQjndI11/as3Q==
+"@lodestar/params@^1.23.0":
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/@lodestar/params/-/params-1.23.0.tgz#617122f6d593019fdf47fdf5f0ca84997a4ca656"
+  integrity sha512-NphFvYezC6RQg8xKUFQmEMm2YfntuirNSKo+EId1/LntXtzcZM1QTRNyuW9GJqA7mnMi+ZKs7NvE0kqU9Yocdg==
 
 "@lodestar/types@^1.23.0":
-  version "1.23.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@lodestar/types/-/types-1.23.0-rc.1.tgz#0a2586c95623e49ac8027edd88b63c270427e15b"
-  integrity sha512-mEfQS8t7xTXF5H0uZqW4Ims9skfKRDIw8eqi1l1I8gqIvqN81h/zPGXIJrYm5DDq2k/AJK86WMT9sNLoKLfOyw==
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/@lodestar/types/-/types-1.23.0.tgz#550b722832181a49ea31bc2cf7891c3feb3fe664"
+  integrity sha512-7bzS4ZaW5n+rKdErycxnP+oxzM+JaEolTaIjoUMWbuS6jADZsgh74kbJVgS2yNO6HV6a9o0igp11jUg1UcnSLw==
   dependencies:
     "@chainsafe/ssz" "^0.18.0"
-    "@lodestar/params" "1.23.0-rc.1"
+    "@lodestar/params" "^1.23.0"
     ethereum-cryptography "^2.0.0"
 
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
