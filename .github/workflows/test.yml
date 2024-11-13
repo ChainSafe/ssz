@@ -46,23 +46,23 @@ jobs:
       # Otherwise just doing `yarn test:spec` you can't tell which specific suite failed
       # many of the suites have identical names for minimal and mainnet
       - name: Spec tests general
-        run: yarn mocha test/spec/generic/index.test.ts
+        run: yarn vitest run test/spec/generic/index.test.ts
         working-directory: packages/ssz
       - name: Spec tests phase0-minimal
-        run: LODESTAR_PRESET=minimal LODESTAR_FORK=phase0 yarn mocha test/spec/ssz_static.test.ts
+        run: LODESTAR_PRESET=minimal LODESTAR_FORK=phase0 yarn vitest run test/spec/ssz_static.test.ts
         working-directory: packages/ssz
       - name: Spec tests phase0-mainnet
-        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=phase0 yarn mocha test/spec/ssz_static.test.ts
+        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=phase0 yarn vitest run test/spec/ssz_static.test.ts
         working-directory: packages/ssz
       - name: Spec tests altair-minimal
-        run: LODESTAR_PRESET=minimal LODESTAR_FORK=altair yarn mocha test/spec/ssz_static.test.ts
+        run: LODESTAR_PRESET=minimal LODESTAR_FORK=altair yarn vitest run test/spec/ssz_static.test.ts
         working-directory: packages/ssz
       - name: Spec tests altair-mainnet
-        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=altair yarn mocha test/spec/ssz_static.test.ts
+        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=altair yarn vitest run test/spec/ssz_static.test.ts
         working-directory: packages/ssz
       - name: Spec tests bellatrix-minimal
-        run: LODESTAR_PRESET=minimal LODESTAR_FORK=bellatrix yarn mocha test/spec/ssz_static.test.ts
+        run: LODESTAR_PRESET=minimal LODESTAR_FORK=bellatrix yarn vitest run test/spec/ssz_static.test.ts
         working-directory: packages/ssz
       - name: Spec tests bellatrix-mainnet
-        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=bellatrix yarn mocha test/spec/ssz_static.test.ts
+        run: LODESTAR_PRESET=mainnet LODESTAR_FORK=bellatrix yarn vitest run test/spec/ssz_static.test.ts
         working-directory: packages/ssz
