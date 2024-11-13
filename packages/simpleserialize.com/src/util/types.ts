@@ -16,11 +16,8 @@ let {
   bellatrix,
   capella,
   deneb,
-  allForks,
-  allForksBlinded,
-  allForksBlobs,
-  allForksExecution,
-  allForksLightClient,
+  electra,
+  sszTypesFor,
   ...primitive
 } = ssz;
 
@@ -29,6 +26,7 @@ altair = patchSszTypes(altair);
 bellatrix = patchSszTypes(bellatrix);
 capella = patchSszTypes(capella);
 deneb = patchSszTypes(deneb);
+electra = patchSszTypes(electra);
 primitive = patchSszTypes(primitive);
 
 export const forks = {
@@ -37,6 +35,7 @@ export const forks = {
   bellatrix: {...phase0, ...altair, ...bellatrix, ...primitive},
   capella: {...phase0, ...altair, ...bellatrix, ...capella, ...primitive},
   deneb: {...phase0, ...altair, ...bellatrix, ...capella, ...deneb, ...primitive},
+  electra: {...phase0, ...altair, ...bellatrix, ...capella, ...deneb, ...electra, ...primitive},
 } as Record<string, Record<string, Type<unknown>>>;
 
 export type ForkName = keyof typeof forks;

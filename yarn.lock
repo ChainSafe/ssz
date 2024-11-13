@@ -1244,7 +1244,7 @@
     "@babel/helper-validator-identifier" "^7.24.5"
     to-fast-properties "^2.0.0"
 
-"@chainsafe/as-sha256@^0.4.1", "@chainsafe/as-sha256@^0.4.2":
+"@chainsafe/as-sha256@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@chainsafe/as-sha256/-/as-sha256-0.4.2.tgz#21ad1371e2245e430c1a554a05f10d333c6f42cc"
   integrity sha512-HJ8GZBRjLeWtRsAXf3EbNsNzmTGpzTFjfpSf4yHkLYC+E52DhT6hwz+7qpj6I/EmFzSUm5tYYvT9K8GZokLQCQ==
@@ -1281,7 +1281,7 @@
     "@chainsafe/hashtree-linux-arm64-gnu" "1.0.1"
     "@chainsafe/hashtree-linux-x64-gnu" "1.0.1"
 
-"@chainsafe/persistent-merkle-tree@^0.7.1", "@chainsafe/persistent-merkle-tree@^0.7.2":
+"@chainsafe/persistent-merkle-tree@^0.7.2":
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/@chainsafe/persistent-merkle-tree/-/persistent-merkle-tree-0.7.2.tgz#f0ef91daf36752f827432333cbc965f4bf6e750e"
   integrity sha512-BUAqrmSUmy6bZhXxnhpR+aYoEDdCeS1dQvq/aje0CDEB14ZHF9UVN2mL9MolOD0ANUiP1OaPG3KfVBxvuW8aTg==
@@ -1296,14 +1296,6 @@
   dependencies:
     "@chainsafe/as-sha256" "^0.4.2"
     "@chainsafe/persistent-merkle-tree" "^0.7.2"
-
-"@chainsafe/ssz@^0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/ssz/-/ssz-0.15.1.tgz#008a711c3bcdc0d207cd4be15108870b0b1c60c0"
-  integrity sha512-f09UKTyYwWA1nr1BwrwsFpkXMspDDIZtwWXK1pM5mpPMnexmuPVstnN+P0M4YJ2aHcfqJXG7QOqnOwGj5Z7bUw==
-  dependencies:
-    "@chainsafe/as-sha256" "^0.4.1"
-    "@chainsafe/persistent-merkle-tree" "^0.7.1"
 
 "@colors/colors@1.5.0":
   version "1.5.0"
@@ -1589,18 +1581,18 @@
     yargs "17.7.2"
     yargs-parser "21.1.1"
 
-"@lodestar/params@^1.18.1":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@lodestar/params/-/params-1.18.1.tgz#9b801abeaa59633dcefaaed82a2021bacca32270"
-  integrity sha512-IB/7bsiAAMhUqauJPg8vuLPahFZ5Yk2Astu3MH8IUz6ZzX3rbzXLZoQeulInYdbH2mpleyw18lK7re7h0JYR1A==
+"@lodestar/params@^1.23.0":
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/@lodestar/params/-/params-1.23.0.tgz#617122f6d593019fdf47fdf5f0ca84997a4ca656"
+  integrity sha512-NphFvYezC6RQg8xKUFQmEMm2YfntuirNSKo+EId1/LntXtzcZM1QTRNyuW9GJqA7mnMi+ZKs7NvE0kqU9Yocdg==
 
-"@lodestar/types@^1.14.0":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@lodestar/types/-/types-1.18.1.tgz#36f297448e0649ec43e4e344de55b23136c63eca"
-  integrity sha512-P/tCHlvN9/u2N05qWK7Tto4EK+ONz1bbRROnzVdnqxZ/IBQqzfqBO5Cm3WO70+6dulrojp4dfcq9HKhBtmwLRA==
+"@lodestar/types@^1.23.0":
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/@lodestar/types/-/types-1.23.0.tgz#550b722832181a49ea31bc2cf7891c3feb3fe664"
+  integrity sha512-7bzS4ZaW5n+rKdErycxnP+oxzM+JaEolTaIjoUMWbuS6jADZsgh74kbJVgS2yNO6HV6a9o0igp11jUg1UcnSLw==
   dependencies:
-    "@chainsafe/ssz" "^0.15.1"
-    "@lodestar/params" "^1.18.1"
+    "@chainsafe/ssz" "^0.18.0"
+    "@lodestar/params" "^1.23.0"
     ethereum-cryptography "^2.0.0"
 
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
