@@ -728,7 +728,9 @@ export function renderContainerTypeName<Fields extends Record<string, Type<unkno
   prefix = "StableContainer"
 ): string {
   const fieldNames = Object.keys(fields) as (keyof Fields)[];
-  const fieldTypeNames = fieldNames.map((fieldName) => `${String(fieldName)}: ${fields[fieldName].typeName}`).join(", ");
+  const fieldTypeNames = fieldNames
+    .map((fieldName) => `${String(fieldName)}: ${fields[fieldName].typeName}`)
+    .join(", ");
   return `${prefix}({${fieldTypeNames}})`;
 }
 

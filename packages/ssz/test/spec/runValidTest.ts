@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {expect} from "vitest";
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
 import {Type} from "../../src/type/abstract";
 import {fromHexString, toHexString} from "../../src/util/byteArray";

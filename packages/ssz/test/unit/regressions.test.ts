@@ -58,9 +58,7 @@ describe("Regressions / known issues", () => {
     const invalidBytes = fromHexString("0xffffffffff");
     const CommitteeBitsVector2 = new BitVectorType(33);
     // all bits after length should be 0 so this should throw error
-    expect(() => CommitteeBitsVector2.deserializeToViewDU(invalidBytes)).toThrow(
-      "BitVector: nonzero bits past length"
-    );
+    expect(() => CommitteeBitsVector2.deserializeToViewDU(invalidBytes)).toThrow("BitVector: nonzero bits past length");
   });
 
   it("converts basic vector and list from json", function () {
