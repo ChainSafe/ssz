@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import {describe, it} from "vitest";
 import {isCompositeType, Type} from "../../src";
 import {ssz} from "../lodestarTypes";
 import {SPEC_TEST_LOCATION} from "../specTestVersioning";
