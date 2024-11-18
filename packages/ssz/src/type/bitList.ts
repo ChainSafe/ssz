@@ -1,15 +1,15 @@
 import {allocUnsafe} from "@chainsafe/as-sha256";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
 import {
   getNodesAtDepth,
   merkleizeBlocksBytes,
-  Node,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ByteViews} from "./composite";
+import type {ByteViews} from "./composite";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
 import {BitArrayType} from "./bitArray";

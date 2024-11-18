@@ -1,4 +1,4 @@
-import {Node} from "@chainsafe/persistent-merkle-tree";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
 
 /* eslint-disable @typescript-eslint/member-ordering  */
 

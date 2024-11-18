@@ -1,8 +1,10 @@
 import {expect} from "chai";
-import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "../../src/type/abstract";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode} from "@chainsafe/persistent-merkle-tree";
+import type {Type} from "../../src/type/abstract";
 import {fromHexString, toHexString} from "../../src/util/byteArray";
-import {CompositeType, isCompositeType} from "../../src/type/composite";
+import type {CompositeType} from "../../src/type/composite";
+import {isCompositeType} from "../../src/type/composite";
 import {isBasicType} from "../../src/type/basic";
 import {wrapErr} from "../utils/error";
 import {TreeViewDU} from "../../src";

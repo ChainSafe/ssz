@@ -1,8 +1,9 @@
-import {getNodesAtDepth, LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
-import {CompositeType} from "../type/composite";
-import {TreeViewDU} from "../viewDU/abstract";
+import type {LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "../type/abstract";
+import type {BasicType} from "../type/basic";
+import type {CompositeType} from "../type/composite";
+import type {TreeViewDU} from "../viewDU/abstract";
 import {TreeView} from "./abstract";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */

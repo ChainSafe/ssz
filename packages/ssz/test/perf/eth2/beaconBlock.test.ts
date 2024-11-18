@@ -1,6 +1,8 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {ValueWithCachedPermanentRoot, symbolCachedPermanentRoot} from "../../../src/util/merkleize";
-import {deneb, ssz} from "../../lodestarTypes";
+import type {ValueWithCachedPermanentRoot} from "../../../src/util/merkleize";
+import {symbolCachedPermanentRoot} from "../../../src/util/merkleize";
+import type {deneb} from "../../lodestarTypes";
+import {ssz} from "../../lodestarTypes";
 import {preset} from "../../lodestarTypes/params";
 import {BitArray, toHexString} from "../../../src";
 const {MAX_ATTESTATIONS, MAX_DEPOSITS, MAX_VOLUNTARY_EXITS, MAX_BLS_TO_EXECUTION_CHANGES} = preset;

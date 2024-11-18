@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {BeaconState} from "../../lodestarTypes/altair/types";
+import type {BeaconState} from "../../lodestarTypes/altair/types";
 import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes";
 import * as sszAltair from "../../lodestarTypes/altair/sszTypes";
 import {
@@ -11,7 +11,8 @@ import {
   getSignedContributionAndProof,
   getSignedBeaconBlockPhase0,
 } from "../../utils/generateEth2Objs";
-import {CompositeType, isCompositeType, TreeViewDU, ValueOf} from "../../../src";
+import type {CompositeType, TreeViewDU, ValueOf} from "../../../src";
+import {isCompositeType} from "../../../src";
 
 describe("Deserialize frequent eth2 objects", () => {
   itBenchDeserialize(sszPhase0.Attestation, getAttestation(0));

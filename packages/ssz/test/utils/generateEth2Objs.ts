@@ -1,6 +1,6 @@
 import * as sszAltair from "../lodestarTypes/altair/sszTypes";
-import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types";
-import {SignedContributionAndProof, BeaconState, SyncCommitteeMessage} from "../lodestarTypes/altair/types";
+import type {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types";
+import type {SignedContributionAndProof, BeaconState, SyncCommitteeMessage} from "../lodestarTypes/altair/types";
 import {BitArray} from "../../src";
 
 // Typical mainnet numbers

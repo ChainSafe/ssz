@@ -1,13 +1,15 @@
-import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type, ByteViews} from "./abstract";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import type {Type} from "./abstract";
+import type {ByteViews} from "./abstract";
 import {isCompositeType} from "./composite";
-import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container";
-import {Require} from "../util/types";
+import type {ContainerOptions} from "./container";
+import {ContainerType, renderContainerTypeName} from "./container";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
 import {BranchNodeStruct} from "../branchNodeStruct";
-import {ValueOfFields} from "../view/container";
+import type {ValueOfFields} from "../view/container";
 
 /**
  * ContainerNodeStruct: ordered heterogeneous collection of values.

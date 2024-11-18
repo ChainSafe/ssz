@@ -1,7 +1,8 @@
-import {HashComputationLevel, LeafNode, Node, Tree, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "./abstract";
-import {BasicType} from "./basic";
-import {ByteViews} from "./composite";
+import type {HashComputationLevel, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "./abstract";
+import type {BasicType} from "./basic";
+import type {ByteViews} from "./composite";
 import {
   value_deserializeFromBytesArrayBasic,
   value_serializeToBytesArrayBasic,
@@ -10,10 +11,11 @@ import {
   addLengthNode,
   setChunksNode,
 } from "./arrayBasic";
-import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ArrayBasicType} from "../view/arrayBasic";
+import type {ArrayBasicType} from "../view/arrayBasic";
 import {ListBasicTreeView} from "../view/listBasic";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic";
 import {ArrayType} from "./array";

@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import type {ValueOf} from "../../../../src";
 import {
   BitArray,
   BitListType,
@@ -14,7 +15,6 @@ import {
   toHexString,
   UintNumberType,
   UnionType,
-  ValueOf,
   VectorBasicType,
   VectorCompositeType,
 } from "../../../../src";

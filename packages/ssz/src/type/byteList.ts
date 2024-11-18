@@ -1,18 +1,19 @@
 import {allocUnsafe} from "@chainsafe/as-sha256";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
 import {
   getNodesAtDepth,
-  Node,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
   merkleizeBlocksBytes,
   merkleizeBlockArray,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic";
-import {ByteViews} from "./composite";
-import {ByteArrayType, ByteArray} from "./byteArray";
+import type {ByteViews} from "./composite";
+import type {ByteArray} from "./byteArray";
+import {ByteArrayType} from "./byteArray";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export interface ByteListOptions {

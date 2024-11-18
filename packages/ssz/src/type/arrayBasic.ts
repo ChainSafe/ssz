@@ -1,15 +1,15 @@
+import type {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {
   BranchNode,
   LeafNode,
-  Node,
   getNodesAtDepth,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  HashComputationLevel,
   levelAtIndex,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf, ByteViews} from "./abstract";
-import {BasicType} from "./basic";
+import type {Type, ValueOf} from "./abstract";
+import type {ByteViews} from "./abstract";
+import type {BasicType} from "./basic";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.

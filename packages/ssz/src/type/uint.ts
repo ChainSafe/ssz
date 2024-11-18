@@ -1,7 +1,8 @@
-import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {namedClass} from "../util/named";
-import {Require} from "../util/types";
-import {ByteViews} from "./abstract";
+import type {Require} from "../util/types";
+import type {ByteViews} from "./abstract";
 import {BasicType} from "./basic";
 
 /* eslint-disable @typescript-eslint/member-ordering */

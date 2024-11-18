@@ -1,4 +1,5 @@
-import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 import {itBench} from "@dapplion/benchmark";
 import {UintNumberType, ListBasicType} from "../../src";
 

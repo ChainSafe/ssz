@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src";
+import type {ValueOf, CompositeViewDU} from "../../../src";
+import {toHexString, ListCompositeType} from "../../../src";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
 
 type Validator = ValueOf<typeof ValidatorContainer>;

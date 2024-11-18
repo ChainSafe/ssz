@@ -1,5 +1,6 @@
-import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, CompositeType} from "../type/composite";
+import type {HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
+import type {ByteViews, CompositeType} from "../type/composite";
 import {TreeView} from "../view/abstract";
 
 /**

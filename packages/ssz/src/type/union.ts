@@ -1,16 +1,9 @@
-import {
-  concatGindices,
-  getNode,
-  Gindex,
-  Node,
-  Tree,
-  merkleizeBlocksBytes,
-  getHashComputations,
-  HashComputationLevel,
-} from "@chainsafe/persistent-merkle-tree";
-import {Require} from "../util/types";
+import type {Gindex, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, getNode, merkleizeBlocksBytes, getHashComputations} from "@chainsafe/persistent-merkle-tree";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {Type, ByteViews} from "./abstract";
+import type {Type} from "./abstract";
+import type {ByteViews} from "./abstract";
 import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 import {NoneType} from "./none";

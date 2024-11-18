@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {toHexString} from "../../../src/util/byteArray";
-import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src";
+import type {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src";
 
 export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = {
   id: string;

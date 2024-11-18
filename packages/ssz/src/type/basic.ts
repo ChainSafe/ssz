@@ -1,4 +1,4 @@
-import {LeafNode} from "@chainsafe/persistent-merkle-tree";
+import type {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {Type} from "./abstract";
 
 /* eslint-disable @typescript-eslint/member-ordering */

@@ -1,7 +1,8 @@
 import {assert} from "chai";
 import {describe, it} from "mocha";
 
-import {ContainerType, ListBasicType, ListCompositeType, Type} from "../../../src";
+import type {Type} from "../../../src";
+import {ContainerType, ListBasicType, ListCompositeType} from "../../../src";
 import {byteType} from "../../utils/primitiveTypes";
 
 const SimpleObject = new ContainerType({

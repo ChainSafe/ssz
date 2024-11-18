@@ -1,9 +1,7 @@
+import type {Node, Tree, Gindex} from "@chainsafe/persistent-merkle-tree";
 import {
-  Node,
   getNodesAtDepth,
   subtreeFillToContents,
-  Tree,
-  Gindex,
   toGindex,
   concatGindices,
   merkleizeBlocksBytes,
@@ -12,28 +10,22 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
-import {
-  getProfileTreeViewClass,
-  ValueOfFields,
-  FieldEntry,
-  ContainerTreeViewType,
-  ContainerTreeViewTypeConstructor,
-  computeSerdesData,
-} from "../view/profile";
-import {
-  getProfileTreeViewDUClass,
-  ContainerTreeViewDUType,
-  ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/profile";
+import type {Type, ValueOf} from "./abstract";
+import type {ByteViews, CompositeTypeAny} from "./composite";
+import {CompositeType} from "./composite";
+import type {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/profile";
+import {getProfileTreeViewClass, computeSerdesData} from "../view/profile";
+import type {ContainerTreeViewDUType, ContainerTreeViewDUTypeConstructor} from "../viewDU/profile";
+import {getProfileTreeViewDUClass} from "../viewDU/profile";
 import {Case} from "../util/strings";
 import {BitArray} from "../value/bitArray";
 import {mixInActiveFields, setActiveFields} from "./stableContainer";
-import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional";
+import type {NonOptionalFields} from "./optional";
+import {isOptionalType, toNonOptionalType} from "./optional";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};

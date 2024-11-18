@@ -1,5 +1,6 @@
 import {ListBasicType, ByteListType, fromHexString, UintNumberType} from "../../../../src";
-import {runTypeTestValid, TypeTestValid} from "../runTypeTestValid";
+import type {TypeTestValid} from "../runTypeTestValid";
+import {runTypeTestValid} from "../runTypeTestValid";
 
 runTypeTestValid({
   type: new ByteListType(256),

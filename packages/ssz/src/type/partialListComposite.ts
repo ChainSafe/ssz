@@ -1,8 +1,9 @@
 import {fromSnapshot, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
-import {ListCompositeOpts, ListCompositeType} from "./listComposite";
+import type {CompositeType, CompositeView, CompositeViewDU} from "./composite";
+import type {ListCompositeOpts} from "./listComposite";
+import {ListCompositeType} from "./listComposite";
 import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite";
-import {Snapshot} from "../util/types";
+import type {Snapshot} from "../util/types";
 import {byteArrayEquals} from "../util/byteArray";
 import {zeroSnapshot} from "../util/snapshot";
 import {addLengthNode} from "./arrayBasic";

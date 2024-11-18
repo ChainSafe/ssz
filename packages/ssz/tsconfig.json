@@ -1,5 +1,5 @@
 {
-  "include": ["src", "test"],
+  "include": ["src", "test", "beaconBlock2.test.ts"],
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "incremental": true,

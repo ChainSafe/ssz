@@ -1,8 +1,9 @@
-import {getNodesAtDepth, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "../type/abstract";
+import type {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
 import {TreeView} from "./abstract";
-import {ArrayType} from "./arrayBasic";
+import type {ArrayType} from "./arrayBasic";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayCompositeType<

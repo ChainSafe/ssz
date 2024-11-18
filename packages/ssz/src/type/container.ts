@@ -1,26 +1,26 @@
+import type {Node, Tree, Gindex, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {
-  Node,
   getNodesAtDepth,
   subtreeFillToContents,
-  Tree,
-  Gindex,
   toGindex,
   concatGindices,
   getNode,
-  HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
+import type {Type, ValueOf} from "./abstract";
+import type {ByteViews, CompositeTypeAny} from "./composite";
+import {CompositeType} from "./composite";
 import {getContainerTreeViewClass} from "../view/container";
-import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
-import {
-  getContainerTreeViewDUClass,
-  ContainerTreeViewDUType,
-  ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/container";
+import type {
+  ValueOfFields,
+  FieldEntry,
+  ContainerTreeViewType,
+  ContainerTreeViewTypeConstructor,
+} from "../view/container";
+import type {ContainerTreeViewDUType, ContainerTreeViewDUTypeConstructor} from "../viewDU/container";
+import {getContainerTreeViewDUClass} from "../viewDU/container";
 import {Case} from "../util/strings";
 /* eslint-disable @typescript-eslint/member-ordering */
 

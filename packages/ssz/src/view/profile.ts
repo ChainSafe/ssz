@@ -1,18 +1,13 @@
-import {
-  getNodeAtDepth,
-  Gindex,
-  zeroNode,
-  LeafNode,
-  Node,
-  toGindexBitstring,
-  Tree,
-} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract";
-import {isBasicType, BasicType} from "../type/basic";
-import {isCompositeType, CompositeType} from "../type/composite";
+import type {Gindex, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodeAtDepth, zeroNode, toGindexBitstring} from "@chainsafe/persistent-merkle-tree";
+import type {Type, ValueOf} from "../type/abstract";
+import type {BasicType} from "../type/basic";
+import {isBasicType} from "../type/basic";
+import type {CompositeType} from "../type/composite";
+import {isCompositeType} from "../type/composite";
 import {TreeView} from "./abstract";
-import {BitArray} from "../value/bitArray";
-import {NonOptionalFields} from "../type/optional";
+import type {BitArray} from "../value/bitArray";
+import type {NonOptionalFields} from "../type/optional";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;

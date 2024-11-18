@@ -25,11 +25,14 @@ export {BitArrayType} from "./type/bitArray";
 export {ByteArrayType} from "./type/byteArray";
 
 // Base type clases
-export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract";
+export {Type} from "./type/abstract";
+export type {ByteViews, ValueOf, JsonPath} from "./type/abstract";
 export {BasicType, isBasicType} from "./type/basic";
-export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite";
+export {CompositeType, isCompositeType} from "./type/composite";
+export type {CompositeTypeAny, CompositeView} from "./type/composite";
+export type {CompositeViewDU}  from "./type/composite";
 export {TreeView} from "./view/abstract";
-export {ValueOfFields} from "./view/container";
+export type {ValueOfFields} from "./view/container";
 export {TreeViewDU} from "./viewDU/abstract";
 
 // Values
@@ -37,6 +40,6 @@ export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
 
 // Utils
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
-export {Snapshot} from "./util/types";
+export type {Snapshot} from "./util/types";
 export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";
 export {upgradeToNewType} from "./util/upgrade";

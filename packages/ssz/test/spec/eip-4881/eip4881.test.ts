@@ -5,7 +5,7 @@ import {expect} from "chai";
 import {ContainerType, ListCompositeType} from "../../../src";
 import {ssz} from "../../lodestarTypes";
 import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes";
-import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite";
+import type {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite";
 
 const EIP4881TestDataArrayItem = new ContainerType(
   {

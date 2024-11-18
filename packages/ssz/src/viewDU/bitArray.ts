@@ -1,6 +1,7 @@
-import {HashComputationLevel, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray";
-import {CompositeType} from "../type/composite";
+import type {HashComputationLevel, Node} from "@chainsafe/persistent-merkle-tree";
+import {getHashComputations} from "@chainsafe/persistent-merkle-tree";
+import type {BitArray} from "../value/bitArray";
+import type {CompositeType} from "../type/composite";
 import {TreeViewDU} from "./abstract";
 
 /**

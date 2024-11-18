@@ -1,15 +1,16 @@
+import type {Node} from "@chainsafe/persistent-merkle-tree";
 import {
   LeafNode,
-  Node,
   getNodeAtDepth,
   setNodesAtDepth,
   treeZeroAfterIndex,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
-import {ListBasicType} from "../view/listBasic";
-import {ArrayBasicTreeViewDU, ArrayBasicTreeViewDUCache} from "./arrayBasic";
+import type {ByteViews, ValueOf} from "../type/abstract";
+import type {BasicType} from "../type/basic";
+import type {ListBasicType} from "../view/listBasic";
+import type {ArrayBasicTreeViewDUCache} from "./arrayBasic";
+import {ArrayBasicTreeViewDU} from "./arrayBasic";
 import {tree_serializeToBytesArrayBasic} from "../type/arrayBasic";
 
 export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends ArrayBasicTreeViewDU<ElementType> {

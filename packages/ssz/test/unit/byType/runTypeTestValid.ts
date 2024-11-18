@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {toHexString, TreeViewDU, UnionType} from "../../../src";
-import {Type} from "../../../src/type/abstract";
+import type {Type} from "../../../src/type/abstract";
 import {isCompositeType} from "../../../src/type/composite";
 import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest";
 import {runProofTestOnAllJsonPaths} from "./runTypeProofTest";

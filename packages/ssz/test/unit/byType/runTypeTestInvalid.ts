@@ -1,5 +1,6 @@
 import {expect} from "chai";
-import {CompositeType, fromHexString, Type} from "../../../src";
+import type {CompositeType, Type} from "../../../src";
+import {fromHexString} from "../../../src";
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 

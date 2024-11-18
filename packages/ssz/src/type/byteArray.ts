@@ -1,14 +1,7 @@
-import {
-  concatGindices,
-  Gindex,
-  Node,
-  toGindex,
-  Tree,
-  HashComputationLevel,
-  getHashComputations,
-} from "@chainsafe/persistent-merkle-tree";
+import type {Gindex, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, toGindex, getHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
-import {ByteViews} from "./abstract";
+import type {ByteViews} from "./abstract";
 import {CompositeType, LENGTH_GINDEX} from "./composite";
 
 export type ByteArray = Uint8Array;

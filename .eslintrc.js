@@ -24,6 +24,7 @@ module.exports = {
   ],
   rules: {
     "prettier/prettier": "error",
+    "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "type-imports" }],
     //doesnt work, it reports false errors
     "constructor-super": "off",
     "@typescript-eslint/await-thenable": "error",

@@ -1,4 +1,5 @@
-import {Type, ValueOf, TreeView, BasicType} from "../../../src";
+import type {Type, ValueOf, BasicType} from "../../../src";
+import {TreeView} from "../../../src";
 import {ContainerType, ListBasicType, ListCompositeType, VectorBasicType, VectorCompositeType} from "../../../src";
 import {runViewTestMutation} from "./runViewTestMutation";
 

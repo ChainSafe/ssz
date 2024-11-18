@@ -1,20 +1,20 @@
 import {allocUnsafe} from "@chainsafe/as-sha256";
+import type {Gindex, Node, Proof, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {
   concatGindices,
   createProof,
   getNode,
-  Gindex,
-  Node,
-  Proof,
   ProofType,
   Tree,
   merkleizeBlocksBytes,
-  HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray";
-import {cacheRoot, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
+import type {ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize";
 import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract";
+import {Type} from "./abstract";
+import type {ByteViews, JsonPath, JsonPathProp} from "./abstract";
+
 export {ByteViews};
 
 export const LENGTH_GINDEX = BigInt(3);

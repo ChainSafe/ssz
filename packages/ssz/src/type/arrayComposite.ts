@@ -1,6 +1,7 @@
-import {Node, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, ByteViews} from "./abstract";
-import {CompositeType} from "./composite";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf, ByteViews} from "./abstract";
+import type {CompositeType} from "./composite";
 import {addLengthNode, assertValidArrayLength} from "./arrayBasic";
 
 // There's a matrix of Array-ish types that require a combination of this functions.

@@ -1,15 +1,8 @@
-import {
-  getHashComputations,
-  getNodeAtDepth,
-  getNodesAtDepth,
-  HashComputationLevel,
-  LeafNode,
-  Node,
-  setNodesAtDepth,
-} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
-import {ArrayBasicType} from "../view/arrayBasic";
+import type {HashComputationLevel, LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {getHashComputations, getNodeAtDepth, getNodesAtDepth, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "../type/abstract";
+import type {BasicType} from "../type/basic";
+import type {ArrayBasicType} from "../view/arrayBasic";
 import {TreeViewDU} from "./abstract";
 
 export type ArrayBasicTreeViewDUCache = {

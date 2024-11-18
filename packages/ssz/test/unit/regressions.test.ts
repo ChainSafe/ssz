@@ -1,5 +1,6 @@
 import {expect} from "chai";
 import {uint32NumType, uint64NumType} from "../utils/primitiveTypes";
+import type {ValueOf} from "../../src";
 import {
   VectorBasicType,
   ListBasicType,
@@ -11,7 +12,6 @@ import {
   ContainerType,
   BooleanType,
   UintBigintType,
-  ValueOf,
 } from "../../src";
 
 // Compilation of various issues from SSZ and Lodestar libs

@@ -1,5 +1,5 @@
+import type {Type} from "../../../src";
 import {
-  Type,
   BooleanType,
   UintBigintType,
   UintNumberType,
@@ -10,7 +10,7 @@ import {
   VectorBasicType,
   VectorCompositeType,
 } from "../../../src";
-import {UintBigintByteLen} from "../../../src/type/uint";
+import type {UintBigintByteLen} from "../../../src/type/uint";
 
 const bool = new BooleanType();
 const byte = new UintNumberType(1);

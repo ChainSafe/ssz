@@ -1,15 +1,11 @@
-import {
-  HashComputationLevel,
-  Node,
-  Tree,
-  merkleizeBlocksBytes,
-  merkleizeBlockArray,
-} from "@chainsafe/persistent-merkle-tree";
-import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {merkleizeBlocksBytes, merkleizeBlockArray} from "@chainsafe/persistent-merkle-tree";
+import type {ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ValueOf, ByteViews} from "./abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
+import type {ValueOf, ByteViews} from "./abstract";
+import type {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic";
 import {
   value_deserializeFromBytesArrayComposite,
@@ -20,7 +16,7 @@ import {
   tree_serializeToBytesArrayComposite,
   maxSizeArrayComposite,
 } from "./arrayComposite";
-import {ArrayCompositeType} from "../view/arrayComposite";
+import type {ArrayCompositeType} from "../view/arrayComposite";
 import {ListCompositeTreeView} from "../view/listComposite";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite";
 import {ArrayType} from "./array";

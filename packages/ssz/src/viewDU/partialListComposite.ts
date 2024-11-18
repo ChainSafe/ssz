@@ -1,10 +1,11 @@
-import {Node, zeroNode, subtreeFillToContents, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
-import {ArrayCompositeTreeViewDUCache} from "./arrayComposite";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {zeroNode, subtreeFillToContents, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "../type/abstract";
+import type {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
+import type {ArrayCompositeTreeViewDUCache} from "./arrayComposite";
 import {ListCompositeTreeViewDU} from "./listComposite";
-import {PartialListCompositeType} from "../type/partialListComposite";
-import {Snapshot} from "../util/types";
+import type {PartialListCompositeType} from "../type/partialListComposite";
+import type {Snapshot} from "../util/types";
 import {zeroSnapshot} from "../util/snapshot";
 
 /**

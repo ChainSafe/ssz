@@ -1,4 +1,5 @@
-import {BranchNode, Node} from "@chainsafe/persistent-merkle-tree";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {BranchNode} from "@chainsafe/persistent-merkle-tree";
 
 type JsonPathProp = string | number;
 

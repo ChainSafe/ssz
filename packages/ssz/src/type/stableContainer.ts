@@ -1,11 +1,9 @@
+import type {Node, Tree, Gindex} from "@chainsafe/persistent-merkle-tree";
 import {
-  Node,
   BranchNode,
   LeafNode,
   getNodesAtDepth,
   subtreeFillToContents,
-  Tree,
-  Gindex,
   toGindex,
   concatGindices,
   getNode,
@@ -17,26 +15,25 @@ import {
   setNode,
   setNodeWithFn,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {ValueWithCachedPermanentRoot} from "../util/merkleize";
+import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {JsonPath, Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny, isCompositeType} from "./composite";
-import {
-  getContainerTreeViewClass,
+import type {JsonPath, Type, ValueOf} from "./abstract";
+import type {ByteViews, CompositeTypeAny} from "./composite";
+import {CompositeType, isCompositeType} from "./composite";
+import type {
   ValueOfFields,
   FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
-  computeSerdesData,
 } from "../view/stableContainer";
-import {
-  getContainerTreeViewDUClass,
-  ContainerTreeViewDUType,
-  ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/stableContainer";
+import {getContainerTreeViewClass, computeSerdesData} from "../view/stableContainer";
+import type {ContainerTreeViewDUType, ContainerTreeViewDUTypeConstructor} from "../viewDU/stableContainer";
+import {getContainerTreeViewDUClass} from "../viewDU/stableContainer";
 import {Case} from "../util/strings";
-import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional";
+import type {NonOptionalFields} from "./optional";
+import {isOptionalType, toNonOptionalType} from "./optional";
 import {BitArray} from "../value/bitArray";
 /* eslint-disable @typescript-eslint/member-ordering */
 

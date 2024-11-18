@@ -4,8 +4,8 @@
 // #######################################
 // # MUST NOT IMPORT FROM @chainsafe/ssz #
 // #######################################
+import type {Type} from "../../src";
 import {
-  Type,
   UintNumberType,
   UintBigintType,
   ContainerType,

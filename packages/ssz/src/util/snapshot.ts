@@ -1,6 +1,6 @@
 import {zeroHash} from "@chainsafe/persistent-merkle-tree";
 import {hash64} from "./merkleize";
-import {Snapshot} from "./types";
+import type {Snapshot} from "./types";
 
 /**
  * Create a zero snapshot with the given chunksDepth.

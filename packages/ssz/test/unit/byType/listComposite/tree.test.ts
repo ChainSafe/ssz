@@ -1,17 +1,10 @@
 import {expect} from "chai";
-import {
-  CompositeView,
-  ContainerNodeStructType,
-  ContainerType,
-  ListCompositeType,
-  toHexString,
-  UintNumberType,
-  ValueOf,
-} from "../../../../src";
+import type {CompositeView, ValueOf} from "../../../../src";
+import {ContainerNodeStructType, ContainerType, ListCompositeType, toHexString, UintNumberType} from "../../../../src";
 import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite";
 import {ssz} from "../../../lodestarTypes/primitive";
 import {runViewTestMutation} from "../runViewTestMutation";
-import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite";
+import type {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(

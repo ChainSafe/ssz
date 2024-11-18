@@ -1,5 +1,6 @@
 import {expect} from "chai";
-import {OptionalType, ContainerType, UintNumberType, ValueOf, toHexString} from "../../../../src";
+import type {ValueOf} from "../../../../src";
+import {OptionalType, ContainerType, UintNumberType, toHexString} from "../../../../src";
 
 const byteType = new UintNumberType(1);
 const SimpleObject = new ContainerType({

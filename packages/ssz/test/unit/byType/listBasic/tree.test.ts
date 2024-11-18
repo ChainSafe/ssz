@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {ListBasicType, toHexString, UintNumberType} from "../../../../src";
-import {runViewTestMutation, TreeMutation} from "../runViewTestMutation";
+import type {TreeMutation} from "../runViewTestMutation";
+import {runViewTestMutation} from "../runViewTestMutation";
 import {ListUintNum64Type} from "../../../../src/type/listUintNum64";
 
 const limit = 100;

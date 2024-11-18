@@ -1,5 +1,6 @@
 import {expect} from "chai";
-import {ContainerNodeStructType, ContainerType, UintNumberType, ValueOf, VectorCompositeType} from "../../../../src";
+import type {ValueOf} from "../../../../src";
+import {ContainerNodeStructType, ContainerType, UintNumberType, VectorCompositeType} from "../../../../src";
 import {runViewTestMutation} from "../runViewTestMutation";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});

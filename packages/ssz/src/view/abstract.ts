@@ -1,6 +1,7 @@
-import {Node, Tree, Proof} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, JsonPath} from "../type/abstract";
-import {CompositeType} from "../type/composite";
+import type {Node, Proof} from "@chainsafe/persistent-merkle-tree";
+import {Tree} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf, JsonPath} from "../type/abstract";
+import type {CompositeType} from "../type/composite";
 
 /**
  * A Tree View is a wrapper around a type and an SSZ Tree that contains:

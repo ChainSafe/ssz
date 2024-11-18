@@ -1,9 +1,9 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import type {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ValueOf, ByteViews} from "./abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
+import type {ValueOf, ByteViews} from "./abstract";
+import type {CompositeType, CompositeView, CompositeViewDU} from "./composite";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -15,7 +15,8 @@ import {
   minSizeArrayComposite,
   value_getBlocksBytesArrayComposite,
 } from "./arrayComposite";
-import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite";
+import type {ArrayCompositeType} from "../view/arrayComposite";
+import {ArrayCompositeTreeView} from "../view/arrayComposite";
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite";
 import {ArrayType} from "./array";
 

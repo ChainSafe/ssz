@@ -1,6 +1,6 @@
-import {Tree, Node} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray";
-import {CompositeType} from "../type/composite";
+import type {Tree, Node} from "@chainsafe/persistent-merkle-tree";
+import type {BitArray} from "../value/bitArray";
+import type {CompositeType} from "../type/composite";
 import {TreeView} from "./abstract";
 
 /**

@@ -1,8 +1,9 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
+import {getNodesAtDepth, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ByteViews} from "./composite";
+import type {ByteViews} from "./composite";
 import {ByteArrayType} from "./byteArray";
 
 export type ByteVector = Uint8Array;

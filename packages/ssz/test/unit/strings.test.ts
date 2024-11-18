@@ -1,7 +1,7 @@
 import {expect} from "chai";
 
 import {Case} from "../../src/util/strings";
-import {KeyCase} from "../../src/type/container";
+import type {KeyCase} from "../../src/type/container";
 const testCases = ["fooBar", "foo1Bar", "fooBarBaz", "foo1Bar2Baz", "fooBar1"];
 const expectedResults: {[key in KeyCase]: string[]} = {
   snake: ["foo_bar", "foo1_bar", "foo_bar_baz", "foo1_bar2_baz", "foo_bar1"],

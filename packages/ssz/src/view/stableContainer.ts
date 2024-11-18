@@ -1,18 +1,13 @@
-import {
-  getNodeAtDepth,
-  Gindex,
-  LeafNode,
-  Node,
-  toGindexBitstring,
-  Tree,
-  zeroNode,
-} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract";
-import {isBasicType, BasicType} from "../type/basic";
-import {isCompositeType, CompositeType} from "../type/composite";
+import type {Gindex, LeafNode, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {getNodeAtDepth, toGindexBitstring, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import type {Type, ValueOf} from "../type/abstract";
+import type {BasicType} from "../type/basic";
+import {isBasicType} from "../type/basic";
+import type {CompositeType} from "../type/composite";
+import {isCompositeType} from "../type/composite";
 import {TreeView} from "./abstract";
-import {NonOptionalFields, OptionalType} from "../type/optional";
-import {BitArray} from "../value/bitArray";
+import type {NonOptionalFields, OptionalType} from "../type/optional";
+import type {BitArray} from "../value/bitArray";
 
 // some code is here to break the circular dependency between type, view, and viewDU
 

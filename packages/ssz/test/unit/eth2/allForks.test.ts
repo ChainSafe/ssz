@@ -1,6 +1,7 @@
-import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src";
-import {allForks, altair, bellatrix, phase0, ssz} from "../../lodestarTypes";
+import type {Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import type {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src";
+import type {allForks, altair, bellatrix, phase0} from "../../lodestarTypes";
+import {ssz} from "../../lodestarTypes";
 import {ForkName} from "../../utils/fork";
 
 /** False variable to not run code but still compile with Typescript */

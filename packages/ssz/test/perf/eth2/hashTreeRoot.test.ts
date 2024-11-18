@@ -12,18 +12,10 @@ import {
   getSignedBeaconBlockPhase0,
   getValidator,
 } from "../../utils/generateEth2Objs";
-import {
-  CompositeType,
-  isCompositeType,
-  TreeView,
-  TreeViewDU,
-  ValueOf,
-  CompositeView,
-  CompositeViewDU,
-  hash64,
-} from "../../../src";
-import {CompositeTypeAny} from "../../../src/type/composite";
-import {HashObject} from "@chainsafe/as-sha256";
+import type {CompositeType, TreeView, TreeViewDU, ValueOf, CompositeView, CompositeViewDU} from "../../../src";
+import {isCompositeType, hash64} from "../../../src";
+import type {CompositeTypeAny} from "../../../src/type/composite";
+import type {HashObject} from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {
   itBenchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));

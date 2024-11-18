@@ -1,16 +1,17 @@
-import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import type {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
+import type {Require} from "../util/types";
 import {namedClass} from "../util/named";
-import {ValueOf, ByteViews} from "./abstract";
-import {BasicType} from "./basic";
+import type {ValueOf, ByteViews} from "./abstract";
+import type {BasicType} from "./basic";
 import {
   value_deserializeFromBytesArrayBasic,
   value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
 } from "./arrayBasic";
-import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic";
+import type {ArrayBasicType} from "../view/arrayBasic";
+import {ArrayBasicTreeView} from "../view/arrayBasic";
 import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic";
 import {ArrayType} from "./array";
 

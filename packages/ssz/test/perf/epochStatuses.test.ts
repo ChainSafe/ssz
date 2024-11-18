@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {CompositeViewDU} from "../../src";
+import type {CompositeViewDU} from "../../src";
 import {EpochParticipation} from "../lodestarTypes/altair/sszTypes";
 import {fillArray, linspace} from "../utils/misc";
 

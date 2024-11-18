@@ -1,15 +1,12 @@
 import {itBench} from "@dapplion/benchmark";
+import type {CompositeType, ValueOf, TreeView, TreeViewDU} from "../../src";
 import {
   UintBigintType,
   BitListType,
-  CompositeType,
   ContainerType,
   ListBasicType,
   ListCompositeType,
   VectorCompositeType,
-  ValueOf,
-  TreeView,
-  TreeViewDU,
   BitArray,
   UintNumberType,
   ByteVectorType,

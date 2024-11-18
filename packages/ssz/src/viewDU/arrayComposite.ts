@@ -1,14 +1,8 @@
-import {
-  getHashComputations,
-  getNodeAtDepth,
-  getNodesAtDepth,
-  HashComputationLevel,
-  Node,
-  setNodesAtDepth,
-} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
-import {ArrayCompositeType} from "../view/arrayComposite";
+import type {HashComputationLevel, Node} from "@chainsafe/persistent-merkle-tree";
+import {getHashComputations, getNodeAtDepth, getNodesAtDepth, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "../type/abstract";
+import type {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
+import type {ArrayCompositeType} from "../view/arrayComposite";
 import {TreeViewDU} from "./abstract";
 
 export type ArrayCompositeTreeViewDUCache = {

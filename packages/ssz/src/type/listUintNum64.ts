@@ -1,7 +1,9 @@
-import {LeafNode, Node, packedUintNum64sToLeafNodes, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
+import type {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
+import {packedUintNum64sToLeafNodes, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 
-import {ListBasicTreeViewDU} from "../viewDU/listBasic";
-import {ListBasicOpts, ListBasicType} from "./listBasic";
+import type {ListBasicTreeViewDU} from "../viewDU/listBasic";
+import type {ListBasicOpts} from "./listBasic";
+import {ListBasicType} from "./listBasic";
 import {UintNumberType} from "./uint";
 import {addLengthNode} from "./arrayBasic";
 

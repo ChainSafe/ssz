@@ -1,7 +1,9 @@
 import {expect} from "chai";
 import {UintNumberType, UintBigintType} from "../../../../src";
-import {UintNumberByteLen, uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint";
-import {runTypeTestInvalid, InvalidValue} from "../runTypeTestInvalid";
+import type {UintNumberByteLen} from "../../../../src/type/uint";
+import {uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint";
+import type {InvalidValue} from "../runTypeTestInvalid";
+import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
 for (const byteLen of uintNumberByteLens) {
   runTypeTestInvalid({

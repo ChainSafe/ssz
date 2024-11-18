@@ -1,5 +1,6 @@
 import {expect} from "chai";
 import {Tree} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf} from "../../../../src";
 import {
   BitArray,
   BitListType,
@@ -17,7 +18,6 @@ import {
   StableContainerType,
   toHexString,
   UnionType,
-  ValueOf,
   VectorBasicType,
   VectorCompositeType,
 } from "../../../../src";

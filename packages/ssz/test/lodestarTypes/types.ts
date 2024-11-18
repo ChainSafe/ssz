@@ -1,4 +1,4 @@
-import {Slot} from "./primitive/types";
+import type {Slot} from "./primitive/types";
 
 export * from "./primitive/types";
 export {ts as phase0} from "./phase0";

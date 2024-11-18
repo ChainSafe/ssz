@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import {BeaconState} from "../../lodestarTypes/deneb/sszTypes";
 import {ListUintNum64Type} from "../../../src/type/listUintNum64";
-import {altair, phase0, ssz} from "../../lodestarTypes";
+import type {altair, phase0} from "../../lodestarTypes";
+import {ssz} from "../../lodestarTypes";
 import {BitArray, fromHexString} from "../../../src";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;

@@ -1,13 +1,14 @@
-import {concatGindices, getNode, Gindex, Node, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, Type} from "./abstract";
+import type {Gindex, Node} from "@chainsafe/persistent-merkle-tree";
+import {concatGindices, getNode, toGindex} from "@chainsafe/persistent-merkle-tree";
+import type {ValueOf, Type} from "./abstract";
 import {CompositeType, isCompositeType, LENGTH_GINDEX} from "./composite";
+import type {ArrayProps} from "./arrayBasic";
 import {
   value_fromJsonArray,
   value_toJsonArray,
   value_cloneArray,
   value_equals,
   value_defaultValueArray,
-  ArrayProps,
 } from "./arrayBasic";
 
 /* eslint-disable @typescript-eslint/member-ordering */

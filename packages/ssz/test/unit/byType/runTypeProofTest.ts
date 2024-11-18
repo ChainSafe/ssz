@@ -1,18 +1,11 @@
-import {Node} from "@chainsafe/persistent-merkle-tree";
+import type {Node} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
-import {
-  BitArray,
-  ContainerType,
-  fromHexString,
-  JsonPath,
-  OptionalType,
-  ProfileType,
-  StableContainerType,
-  Type,
-} from "../../../src";
-import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite";
-import {ArrayBasicTreeView} from "../../../src/view/arrayBasic";
-import {RootHex} from "../../lodestarTypes";
+import type {JsonPath, Type} from "../../../src";
+import {BitArray, ContainerType, fromHexString, OptionalType, ProfileType, StableContainerType} from "../../../src";
+import type {CompositeTypeAny} from "../../../src/type/composite";
+import {isCompositeType} from "../../../src/type/composite";
+import type {ArrayBasicTreeView} from "../../../src/view/arrayBasic";
+import type {RootHex} from "../../lodestarTypes";
 import {wrapErr} from "../../utils/error";
 
 export function runProofTestOnAllJsonPaths({
