@@ -11,7 +11,6 @@
     "build": "yarn clean && lerna run build",
     "lint": "lerna run lint",
     "check-types": "lerna run check-types",
-    "coverage": "lerna run coverage",
     "test:unit": "lerna run test:unit",
     "test:browsers": "lerna run test:browsers",
     "test": "lerna run test",
