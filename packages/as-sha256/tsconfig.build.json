@@ -4,8 +4,9 @@
     "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
 
     "outDir": "lib",
-    "target": "esnext",
-    "module": "commonjs",
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
     "pretty": true,
 
     "strict": true,
