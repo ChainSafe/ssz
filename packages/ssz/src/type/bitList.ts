@@ -13,6 +13,7 @@ import type {ByteViews} from "./composite";
 import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic";
 import {BitArray} from "../value/bitArray";
 import {BitArrayType} from "./bitArray";
+import { writeUInt48LE } from "../util/buffer";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -37,11 +38,7 @@ export class BitListType extends BitArrayType {
   readonly maxChunkCount: number;
   readonly isList = true;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
-  readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthBlockBytes.buffer,
-    this.mixInLengthBlockBytes.byteOffset,
-    this.mixInLengthBlockBytes.byteLength
-  );
+  readonly mixInLengthDataView = new DataView(this.mixInLengthBlockBytes.buffer, this.mixInLengthBlockBytes.byteOffset, this.mixInLengthBlockBytes.byteLength);
 
   constructor(readonly limitBits: number, opts?: BitListOptions) {
     super();
@@ -122,7 +119,7 @@ export class BitListType extends BitArrayType {
   hashTreeRootInto(value: BitArray, output: Uint8Array, offset: number): void {
     super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
     // mixInLength
-    this.mixInLengthBuffer.writeUIntLE(value.bitLen, 32, 6);
+    writeUInt48LE(this.mixInLengthDataView, 32, value.bitLen);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);

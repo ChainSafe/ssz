@@ -14,6 +14,7 @@ import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from ".
 import type {ByteViews} from "./composite";
 import type {ByteArray} from "./byteArray";
 import {ByteArrayType} from "./byteArray";
+import { writeUInt48LE } from "../util/buffer";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export interface ByteListOptions {
@@ -45,11 +46,7 @@ export class ByteListType extends ByteArrayType {
   readonly blockArray: Uint8Array[] = [];
   private blockBytesLen = 0;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
-  readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthBlockBytes.buffer,
-    this.mixInLengthBlockBytes.byteOffset,
-    this.mixInLengthBlockBytes.byteLength
-  );
+  readonly mixInLengthDataView = new DataView(this.mixInLengthBlockBytes.buffer, this.mixInLengthBlockBytes.byteOffset, this.mixInLengthBlockBytes.byteLength);
 
   constructor(readonly limitBytes: number, opts?: ByteListOptions) {
     super();
@@ -144,7 +141,8 @@ export class ByteListType extends ByteArrayType {
     merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthBlockBytes, 0);
 
     // mixInLength
-    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    writeUInt48LE(this.mixInLengthDataView, 32, value.length);
+
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);

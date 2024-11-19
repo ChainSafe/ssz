@@ -8,6 +8,7 @@ import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 import {NoneType} from "./none";
 import {allocUnsafe} from "@chainsafe/as-sha256";
+import { writeUInt48LE } from "../util/buffer";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -43,11 +44,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   readonly isList = true;
   readonly isViewMutable = true;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
-  readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthBlockBytes.buffer,
-    this.mixInLengthBlockBytes.byteOffset,
-    this.mixInLengthBlockBytes.byteLength
-  );
+  readonly mixInLengthDataView = new DataView(this.mixInLengthBlockBytes.buffer, this.mixInLengthBlockBytes.byteOffset, this.mixInLengthBlockBytes.byteLength);
 
   protected readonly maxSelector: number;
 
@@ -179,7 +176,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
 
   hashTreeRootInto(value: ValueOfTypes<Types>, output: Uint8Array, offset: number): void {
     super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
-    this.mixInLengthBuffer.writeUIntLE(value.selector, 32, 6);
+    writeUInt48LE(this.mixInLengthDataView, 32, value.selector);
     const chunkCount = 2;
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }

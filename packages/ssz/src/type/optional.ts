@@ -7,6 +7,7 @@ import type {ByteViews} from "./abstract";
 import {CompositeType, isCompositeType} from "./composite";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic";
 import {allocUnsafe} from "@chainsafe/as-sha256";
+import { writeUInt48LE } from "../util/buffer";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
@@ -42,11 +43,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   readonly isList = true;
   readonly isViewMutable = true;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
-  readonly mixInLengthBuffer = Buffer.from(
-    this.mixInLengthBlockBytes.buffer,
-    this.mixInLengthBlockBytes.byteOffset,
-    this.mixInLengthBlockBytes.byteLength
-  );
+  readonly mixInLengthDataView = new DataView(this.mixInLengthBlockBytes.buffer, this.mixInLengthBlockBytes.byteOffset, this.mixInLengthBlockBytes.byteLength);
 
   constructor(readonly elementType: ElementType, opts?: OptionalOpts) {
     super();
@@ -181,7 +178,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   hashTreeRootInto(value: ValueOfType<ElementType>, output: Uint8Array, offset: number): void {
     super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
     const selector = value === null ? 0 : 1;
-    this.mixInLengthBuffer.writeUIntLE(selector, 32, 6);
+    writeUInt48LE(this.mixInLengthDataView, 32, selector);
     // one for hashTreeRoot(value), one for selector
     const chunkCount = 2;
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
