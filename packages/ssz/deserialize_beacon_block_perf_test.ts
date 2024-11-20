@@ -5,7 +5,7 @@ const {MAX_ATTESTATIONS, MAX_DEPOSITS, MAX_VOLUNTARY_EXITS, MAX_BLS_TO_EXECUTION
 
 // Bun: bun ./deserialize_beacon_block_perf_test.ts
 // BeaconBlock.deserialize() time 0.11 ms
-// NodeJS: npx ts-node ./deserialize_beacon_block_perf_test.ts
+// NodeJS: npm install -g tsx && tsx ./deserialize_beacon_block_perf_test.ts
 // BeaconBlock.deserialize() time 0.25 ms
 // deno --allow-env --unstable-sloppy-imports ./deserialize_beacon_block_perf_test.ts
 // BeaconBlock.deserialize() time 0.719 ms
