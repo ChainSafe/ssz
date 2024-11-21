@@ -1,5 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {NoneType, toHexString} from "../../../../src/index.js";
 
 describe("None type", () => {

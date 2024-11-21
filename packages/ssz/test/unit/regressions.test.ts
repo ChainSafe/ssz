@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
 import {
   VectorBasicType,
@@ -58,9 +58,7 @@ describe("Regressions / known issues", () => {
     const invalidBytes = fromHexString("0xffffffffff");
     const CommitteeBitsVector2 = new BitVectorType(33);
     // all bits after length should be 0 so this should throw error
-    expect(() => CommitteeBitsVector2.deserializeToViewDU(invalidBytes)).to.throw(
-      "BitVector: nonzero bits past length"
-    );
+    expect(() => CommitteeBitsVector2.deserializeToViewDU(invalidBytes)).toThrow("BitVector: nonzero bits past length");
   });
 
   it("converts basic vector and list from json", function () {
@@ -129,7 +127,7 @@ describe("@asanso - Lodestar SSZ vulnerability report", () => {
     serialized[5] -= 1;
 
     // NOK
-    expect(() => Example.deserialize(serialized)).to.throw("not multiple of");
+    expect(() => Example.deserialize(serialized)).toThrow("not multiple of");
   });
 
   it("POC not multiple not monomorhic", () => {
@@ -160,7 +158,7 @@ describe("@asanso - Lodestar SSZ vulnerability report", () => {
     // 05 - 0a000000 baz offset 10 - Invalid, bar size must be multiple of 8
     // 09 - 01 bar value 9:10
     // 10 - 070000000000000200000000000000 baz value 10:25
-    expect(() => Example.deserialize(serialized)).to.throw("not multiple of");
+    expect(() => Example.deserialize(serialized)).toThrow("not multiple of");
   });
 
   it("adding single byte at the end", () => {
@@ -190,6 +188,6 @@ describe("@asanso - Lodestar SSZ vulnerability report", () => {
 
     // NOK
     // THIS SHOULD FAIL ==> a single byte is added at the end when instead elementType: new BigIntUintType({byteLength: 2}),
-    expect(() => VarTestStruct.deserialize(serializedExtraByte)).to.throw("not multiple of");
+    expect(() => VarTestStruct.deserialize(serializedExtraByte)).toThrow("not multiple of");
   });
 });

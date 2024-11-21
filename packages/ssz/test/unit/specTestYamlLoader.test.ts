@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import jsyaml from "js-yaml";
 import {readYamlNumbersAsStrings} from "../spec/testRunner.js";
 import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.js";

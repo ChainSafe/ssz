@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ContainerType, ListCompositeType, UintNumberType} from "../../../../src/index.js";
 import {PartialListCompositeType} from "../../../../src/type/partialListComposite.js";
 

@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {toHexString} from "../../../src/util/byteArray.js";
 import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src/index.js";
 
@@ -51,7 +51,7 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
   }
 
   // eslint-disable-next-line no-only-tests/no-only-tests
-  const describeFn = (opts?.only ? describe.only : opts?.skip ? describe.skip : describe) as Mocha.SuiteFunction;
+  const describeFn = opts?.only ? describe.only : opts?.skip ? describe.skip : describe;
 
   describeFn(`${type.typeName} TreeView mutations`, () => {
     for (const testCase of ops) {

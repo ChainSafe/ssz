@@ -1,3 +1,4 @@
+import {describe, it} from "vitest";
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src/index.js";
 import {allForks, altair, bellatrix, phase0, ssz} from "../../lodestarTypes/index.js";

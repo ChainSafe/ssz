@@ -1,5 +1,4 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect, vi} from "vitest";
 import {
   computeDescriptor,
   createNodeFromProof,
@@ -22,14 +21,15 @@ describe("proof equivalence", () => {
         type: ProofType.compactMulti,
         descriptor: computeDescriptor([gindex]),
       });
-      expect(node.root).to.deep.equal(createNodeFromProof(singleProof).root);
-      expect(node.root).to.deep.equal(createNodeFromProof(treeOffsetProof).root);
-      expect(node.root).to.deep.equal(createNodeFromProof(multiProof).root);
-      expect(node.root).to.deep.equal(createNodeFromProof(compactMultiProof).root);
+      expect(node.root).toEqual(createNodeFromProof(singleProof).root);
+      expect(node.root).toEqual(createNodeFromProof(treeOffsetProof).root);
+      expect(node.root).toEqual(createNodeFromProof(multiProof).root);
+      expect(node.root).toEqual(createNodeFromProof(compactMultiProof).root);
     }
   });
-  it("should compute the same root from different proof types - multiple leaves", function () {
-    this.timeout(10_000);
+  it("should compute the same root from different proof types - multiple leaves", () => {
+    vi.setConfig({testTimeout: 10_000});
+
     const depth = 6;
     const maxIndex = 2 ** depth;
     const node = createTree(depth);
@@ -52,9 +52,9 @@ describe("proof equivalence", () => {
                 descriptor: computeDescriptor(gindices),
               });
 
-              expect(node.root).to.deep.equal(createNodeFromProof(treeOffsetProof).root);
-              expect(node.root).to.deep.equal(createNodeFromProof(multiProof).root);
-              expect(node.root).to.deep.equal(createNodeFromProof(compactMultiProof).root);
+              expect(node.root).toEqual(createNodeFromProof(treeOffsetProof).root);
+              expect(node.root).toEqual(createNodeFromProof(multiProof).root);
+              expect(node.root).toEqual(createNodeFromProof(compactMultiProof).root);
             }
           }
         }
@@ -68,6 +68,6 @@ describe("proof serialize/deserialize", () => {
     const node = createTree(6);
     const expected = createProof(node, {type: ProofType.treeOffset, gindices: [BigInt(7), BigInt(8), BigInt(15)]});
     const actual = deserializeProof(serializeProof(expected));
-    expect(actual).to.deep.equal(expected);
+    expect(actual).toEqual(expected);
   });
 });
