@@ -1,0 +1,3 @@
+{
+  "workspace": ["./packages/as-sha256", "./packages/persistent-merkle-tree", "./packages/persistent-ts", "./packages/simpleserialize.com", "./packages/ssz"]
+}
