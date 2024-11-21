@@ -19,7 +19,7 @@ jobs:
       - name: Bootstrap
         run: deno install
       - name: Generate
-        run: cd packages/as-sha256 && deno run -I scripts/codegen.ts
+        run: cd packages/as-sha256 && deno run -R -W -I scripts/codegen.ts
       - name: Unit Tests
         run: JS_RUNTIME=deno deno task --recursive --filter '' test:unit
 
