@@ -1,6 +1,29 @@
 import path from "node:path";
 import {defineConfig} from "vitest/config";
+import {BuiltinEnvironment} from "vitest/node";
+import {Environment} from "vitest/environments";
 const __dirname = new URL(".", import.meta.url).pathname;
+import denoEnvironment from "./vitest/environments/deno";
+
+function getTestEnvironment(
+  runtime?: string
+): BuiltinEnvironment | Environment {
+  switch (runtime) {
+    case "deno":
+      return denoEnvironment;
+    case "node":
+      return "node";
+    default: {
+      if (runtime) {
+        throw new Error(`Unsupported JS Runtime '${runtime}'`);
+      } else {
+        throw new Error(
+          "Please define `JS_RUNTIME` env variable to either node | deno"
+        );
+      }
+    }
+  }
+}
 
 export default defineConfig({
   test: {
@@ -23,5 +46,6 @@ export default defineConfig({
           "hanging-process",
         ],
     onConsoleLog: () => !process.env.TEST_QUIET_CONSOLE,
+    environment: getTestEnvironment(process.env.JS_RUNTIME),
   },
 });
