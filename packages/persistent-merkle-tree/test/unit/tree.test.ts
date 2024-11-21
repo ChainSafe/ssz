@@ -1,5 +1,5 @@
+import {describe, it, expect, beforeEach} from "vitest";
 import {byteArrayToHashObject} from "@chainsafe/as-sha256";
-import {expect} from "chai";
 
 import {
   Tree,
@@ -21,11 +21,11 @@ describe("fixed-depth tree iteration", () => {
     const zero = zeroNode(0).root;
     const tree = new Tree(zeroNode(4));
     for (const n of tree.iterateNodesAtDepth(depth, 0, 4)) {
-      expect(n.root).to.be.deep.equal(zero);
+      expect(n.root).toEqual(zero);
     }
     const one = zeroNode(1).root;
     for (const n of tree.iterateNodesAtDepth(depth - 1, 0, 4)) {
-      expect(n.root).to.be.deep.equal(one);
+      expect(n.root).toEqual(one);
     }
   });
 
@@ -42,7 +42,7 @@ describe("fixed-depth tree iteration", () => {
       for (let j = length - i - 1; j > 1; j--) {
         let k = i;
         for (const n of tree.iterateNodesAtDepth(depth, i, j)) {
-          expect(n.root).to.be.deep.equal(expectedLeaves[k].root);
+          expect(n.root).toEqual(expectedLeaves[k].root);
           k++;
         }
         expect(k - i, `startIx=${i} count=${j} currIx=${k}`).to.be.eql(j);
@@ -60,7 +60,7 @@ describe("batchHash() vs root getter", () => {
       const tree = new Tree(subtreeFillToContents([...leaves], depth));
       const tree2 = new Tree(subtreeFillToContents([...leaves], depth));
       batchHash(tree.rootNode);
-      expect(tree.root).to.be.deep.equal(tree2.root);
+      expect(tree.root).toEqual(tree2.root);
     });
   }
 });
@@ -166,7 +166,10 @@ describe("Tree batch setNodes", () => {
     const treeOk = new Tree(zeroNode(depth));
     // cache all roots
     treeOk.root;
-    const hashComputationsOk: Array<HashComputationLevel> = Array.from({length: depth}, () => new HashComputationLevel());
+    const hashComputationsOk: Array<HashComputationLevel> = Array.from(
+      {length: depth},
+      () => new HashComputationLevel()
+    );
     const tree = new Tree(zeroNode(depth));
     tree.root;
     const gindexesBigint = gindexes.map((gindex) => BigInt(gindex));
@@ -210,9 +213,9 @@ describe("Tree batch setNodes", () => {
         for (let j = 0; j < hcArr.length; j++) {
           const hcOk = hcOkArr[j];
           const hc = hcArr[j];
-          expect(hc.src0.root).to.be.deep.equal(hcOk.src0.root);
-          expect(hc.src1.root).to.be.deep.equal(hcOk.src1.root);
-          expect(hc.dest.root).to.be.deep.equal(hcOk.dest.root);
+          expect(hc.src0.root).toEqual(hcOk.src0.root);
+          expect(hc.src1.root).toEqual(hcOk.src1.root);
+          expect(hc.dest.root).toEqual(hcOk.dest.root);
         }
       }
       try {
@@ -291,4 +294,3 @@ function getTreeRoots(tree: Tree, maxGindex: number): string[] {
 function toHex(bytes: Buffer | Uint8Array): string {
   return Buffer.from(bytes).toString("hex");
 }
-

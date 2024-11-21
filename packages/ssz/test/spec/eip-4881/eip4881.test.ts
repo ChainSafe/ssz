@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import jsyaml from "js-yaml";
-import {expect} from "chai";
+import {describe, it, expect, vi} from "vitest";
 import {ContainerType, ListCompositeType} from "../../../src";
 import {ssz} from "../../lodestarTypes";
 import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes";
@@ -21,8 +21,8 @@ const EIP4881TestDataArrayItem = new ContainerType(
 // test data contains 512 items
 const EIP4881TestDataArray = new ListCompositeType(EIP4881TestDataArrayItem, 1024);
 
-describe("EIP-4881", function () {
-  this.timeout(60 * 1000);
+describe("EIP-4881", () => {
+  vi.setConfig({testTimeout: 60 * 1000});
 
   const ymlStr = fs.readFileSync(path.join(__dirname, "test_data.yaml"), "utf8");
   const json = jsyaml.load(ymlStr) as unknown[];
@@ -47,25 +47,25 @@ describe("EIP-4881", function () {
         const {depositData, eth1Data, blockHeight, snapshot, depositDataRoot} = testData[i];
 
         // validate depositDataRoot
-        expect(ssz.phase0.DepositData.hashTreeRoot(depositData)).to.be.deep.equal(depositDataRoot);
+        expect(ssz.phase0.DepositData.hashTreeRoot(depositData)).toEqual(depositDataRoot);
         depositRootTree.push(depositDataRoot);
 
         // validate eth1Data
-        expect(eth1Data.depositRoot).to.be.deep.equal(depositRootTree.hashTreeRoot());
+        expect(eth1Data.depositRoot).toEqual(depositRootTree.hashTreeRoot());
         expect(eth1Data.depositCount).to.be.equal(depositRootTree.length);
 
         const blockHash = eth1Data.blockHash;
         const {finalized, depositRoot, depositCount, executionBlockHash, executionBlockHeight} = snapshot;
 
         // validate snapshot data
-        expect(executionBlockHash).to.be.deep.equal(blockHash);
+        expect(executionBlockHash).toEqual(blockHash);
         expect(executionBlockHeight).to.be.equal(blockHeight);
-        expect(depositRoot).to.be.deep.equal(depositRootTree.hashTreeRoot());
+        expect(depositRoot).toEqual(depositRootTree.hashTreeRoot());
 
         // validate actual snapshot
         const actualSnapshot = depositRootTree.toSnapshot(i + 1);
-        expect(actualSnapshot.finalized).to.be.deep.equal(finalized);
-        expect(actualSnapshot.root).to.be.deep.equal(depositRoot);
+        expect(actualSnapshot.finalized).toEqual(finalized);
+        expect(actualSnapshot.root).toEqual(depositRoot);
         expect(actualSnapshot.count).to.be.equal(depositCount);
       }
     });
@@ -83,7 +83,7 @@ describe("EIP-4881", function () {
       });
 
       fullTree.push(depositDataRoot);
-      expect(partialTree.hashTreeRoot()).to.be.deep.equal(fullTree.hashTreeRoot());
+      expect(partialTree.hashTreeRoot()).toEqual(fullTree.hashTreeRoot());
 
       // grow the tree since then
       const newFullTree = fullTree.clone();
@@ -92,13 +92,13 @@ describe("EIP-4881", function () {
         partialTree.push(testData[j].depositDataRoot);
 
         // validate root
-        expect(partialTree.hashTreeRoot()).to.be.deep.equal(newFullTree.hashTreeRoot());
+        expect(partialTree.hashTreeRoot()).toEqual(newFullTree.hashTreeRoot());
 
         // validate snapshot
         const actualSnapshot = partialTree.toSnapshot(j + 1);
-        expect(actualSnapshot).to.be.deep.equal(newFullTree.toSnapshot(j + 1));
+        expect(actualSnapshot).toEqual(newFullTree.toSnapshot(j + 1));
         const expectedSnapshot = testData[j].snapshot;
-        expect(actualSnapshot).to.be.deep.equal({
+        expect(actualSnapshot).toEqual({
           finalized: expectedSnapshot.finalized,
           root: expectedSnapshot.depositRoot,
           count: expectedSnapshot.depositCount,

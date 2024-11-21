@@ -1,13 +1,13 @@
+import {describe, it, expect} from "vitest";
+
 import {expectEqualHex} from "../utils/expectHex";
 import {uint8ArrayToHashObject, hashObjectToUint8Array} from "../../src/hasher/util";
 import {hasher as nobleHasher} from "../../src/hasher/noble";
 import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
-import {linspace} from "../utils/misc";
 import {buildComparisonTrees} from "../utils/tree";
 import {HashComputationLevel, HashObject, LeafNode, getHashComputations, subtreeFillToContents} from "../../src";
-import { expect } from "chai";
-import { zeroHash } from "../../src/zeroHash";
+import {zeroHash} from "../../src/zeroHash";
 
 const hashers = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
@@ -45,10 +45,10 @@ describe("hashers", function () {
     const root2 = Buffer.alloc(32, 0xff);
     const hashObject2 = uint8ArrayToHashObject(root2);
     const ho1 = {} as HashObject;
-    nobleHasher.digest64HashObjects(hashObject1, hashObject2, ho1)
+    nobleHasher.digest64HashObjects(hashObject1, hashObject2, ho1);
     const hash1 = hashObjectToUint8Array(ho1);
     const ho2 = {} as HashObject;
-    asSha256Hasher.digest64HashObjects(hashObject1, hashObject2, ho2)
+    asSha256Hasher.digest64HashObjects(hashObject1, hashObject2, ho2);
     const hash2 = hashObjectToUint8Array(ho2);
     const ho3 = {} as HashObject;
     hashtreeHasher.digest64HashObjects(hashObject1, hashObject2, ho3);
@@ -75,8 +75,10 @@ describe("hasher.digestNLevel", function () {
   for (const hasher of hashers) {
     const numValidators = [1, 2, 3, 4];
     for (const numValidator of numValidators) {
-      it (`${hasher.name} digestNLevel ${numValidator} validators = ${8 * numValidator} chunk(s)`, () => {
-        const nodes = Array.from({length: 8 * numValidator}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i + numValidator)));
+      it(`${hasher.name} digestNLevel ${numValidator} validators = ${8 * numValidator} chunk(s)`, () => {
+        const nodes = Array.from({length: 8 * numValidator}, (_, i) =>
+          LeafNode.fromRoot(Buffer.alloc(32, i + numValidator))
+        );
         const hashInput = Buffer.concat(nodes.map((node) => node.root));
         const hashOutput = hasher.digestNLevel(hashInput, 3).slice();
         for (let i = 0; i < numValidator; i++) {
@@ -88,11 +90,10 @@ describe("hasher.digestNLevel", function () {
   }
 });
 
-
-describe("hasher.merkleizeBlocksBytes", function () {
+describe("hasher.merkleizeInto", function () {
   const numNodes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   for (const hasher of [nobleHasher, hashtreeHasher, asSha256Hasher]) {
-    it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
+    it(`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
       const data = Buffer.alloc(63, 0);
       const output = Buffer.alloc(32);
       expect(() => hasher.merkleizeBlocksBytes(data, 2, output, 0)).to.throw("Invalid input length");
@@ -100,7 +101,6 @@ describe("hasher.merkleizeBlocksBytes", function () {
 
     for (const numNode of numNodes) {
       it(`${hasher.name}.merkleizeBlocksBytes for ${numNode} nodes`, () => {
-
         const nodes = Array.from({length: numNode}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
         const data = Buffer.concat(nodes.map((node) => node.root));
         const output = Buffer.alloc(32);
@@ -120,30 +120,35 @@ describe("hasher.merkleizeBlocksBytes", function () {
  */
 describe("hasher.merkleizeBlockArray", function () {
   for (const hasher of [nobleHasher, hashtreeHasher, asSha256Hasher]) {
-    it (`${hasher.name} should throw error if invalid blockLimit`, () => {
+    it(`${hasher.name} should throw error if invalid blockLimit`, () => {
       const data = Buffer.alloc(64, 0);
       const output = Buffer.alloc(32);
-      expect(() => hasher.merkleizeBlockArray([data], 2, 2, output, 0)).to.throw("Invalid blockLimit, expect to be less than or equal blocks.length 1, got 2");
+      expect(() => hasher.merkleizeBlockArray([data], 2, 2, output, 0)).to.throw(
+        "Invalid blockLimit, expect to be less than or equal blocks.length 1, got 2"
+      );
     });
 
-    it (`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
+    it(`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
       const data = Buffer.alloc(63, 0);
       const output = Buffer.alloc(32);
-      expect(() => hasher.merkleizeBlockArray([data], 1, 2, output, 0)).to.throw("Invalid block length, expect to be 64 bytes, got 63");
+      expect(() => hasher.merkleizeBlockArray([data], 1, 2, output, 0)).to.throw(
+        "Invalid block length, expect to be 64 bytes, got 63"
+      );
     });
 
-    it (`${hasher.name} should throw error if chunkCount < 1`, () => {
+    it(`${hasher.name} should throw error if chunkCount < 1`, () => {
       const data = Buffer.alloc(64, 0);
       const output = Buffer.alloc(32);
       const chunkCount = 0;
-      expect(() => hasher.merkleizeBlockArray([data], 1, chunkCount, output, 0)).to.throw("Invalid padFor, expect to be at least 1, got 0");
+      expect(() => hasher.merkleizeBlockArray([data], 1, chunkCount, output, 0)).to.throw(
+        "Invalid padFor, expect to be at least 1, got 0"
+      );
     });
 
     // hashtree has a buffer of 16 * 64 bytes = 32 nodes
     const numNodes = [64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79];
     for (const numNode of numNodes) {
       it(`${hasher.name}.merkleizeBlockArray for ${numNode} nodes`, () => {
-
         const nodes = Array.from({length: numNode}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
         const data = Buffer.concat(nodes.map((node) => node.root));
         const output = Buffer.alloc(32);
@@ -167,4 +172,3 @@ describe("hasher.merkleizeBlockArray", function () {
     }
   }
 });
-

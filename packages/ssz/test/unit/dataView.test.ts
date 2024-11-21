@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 
 describe("DataView", () => {
   it("Test results of multiple sets", () => {

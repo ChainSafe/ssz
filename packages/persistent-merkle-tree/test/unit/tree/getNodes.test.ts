@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect, beforeAll} from "vitest";
 import {getNodesAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src";
 
 describe("tree / getNodes", () => {
@@ -10,7 +10,7 @@ describe("tree / getNodes", () => {
   const expectedNodes = new Array<Node>(length);
   const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
 
-  before("Get base tree and data", () => {
+  beforeAll(() => {
     // Create a second array since subtreeFillToContents mutates the array
     const nodes = new Array<Node>(length);
     for (let i = 0; i < length; i++) {
@@ -28,7 +28,7 @@ describe("tree / getNodes", () => {
 
   function assertValidNodes(nodes: Node[], expectedNodes: Node[]): void {
     for (let i = 0; i < expectedNodes.length; i++) {
-      expect(nodes[i]).to.equal(expectedNodes[i], `Wrong node index ${i}`);
+      expect(nodes[i]).toEqualWithMessage(expectedNodes[i], `Wrong node index ${i}`);
     }
   }
 });

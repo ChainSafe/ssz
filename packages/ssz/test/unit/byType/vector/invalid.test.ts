@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {VectorBasicType, VectorCompositeType} from "../../../../src";
 import {byteType, uint16NumType} from "../../../utils/primitiveTypes";
 import {runTypeTestInvalid} from "../runTypeTestInvalid";
@@ -20,15 +20,15 @@ describe("VectorType constructor errors", () => {
   const compositeType = new VectorBasicType(uint16NumType, 2);
 
   it("length must be > 0", () => {
-    expect(() => new VectorBasicType(uint16NumType, 0)).to.throw();
-    expect(() => new VectorCompositeType(compositeType, 0)).to.throw();
+    expect(() => new VectorBasicType(uint16NumType, 0)).toThrow();
+    expect(() => new VectorCompositeType(compositeType, 0)).toThrow();
   });
 
   it("ElementType must be basic", () => {
-    expect(() => new VectorBasicType(compositeType as unknown as typeof byteType, 2)).to.throw();
+    expect(() => new VectorBasicType(compositeType as unknown as typeof byteType, 2)).toThrow();
   });
 
   it("ElementType must be composite", () => {
-    expect(() => new VectorCompositeType(byteType as unknown as typeof compositeType, 2)).to.throw();
+    expect(() => new VectorCompositeType(byteType as unknown as typeof compositeType, 2)).toThrow();
   });
 });

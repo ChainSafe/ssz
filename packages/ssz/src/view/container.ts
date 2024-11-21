@@ -126,7 +126,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
     // Should never happen
     else {
       /* istanbul ignore next - unreachable code */
-      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${String(fieldName)}`);
     }
   }
 

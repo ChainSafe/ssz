@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import path from "path";
 import fs from "fs";
 import {SPEC_TEST_LOCATION} from "../../specTestVersioning";
@@ -22,7 +22,7 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
       it(invalidCase, () => {
         // TODO: Strong type errors and assert that the entire it() throws known errors
         if (invalidCase.endsWith("_0")) {
-          expect(() => getTestType(testType, invalidCase), "Must throw constructing type").to.throw();
+          expect(() => getTestType(testType, invalidCase), "Must throw constructing type").toThrow();
           return;
         }
 
@@ -38,7 +38,7 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         // should simply not be decoded without raising an error.
         // Note that for some type declarations in the invalid suite, the type itself may technically be invalid.
         // This is a valid way of detecting invalid data too. E.g. a 0-length basic vector.
-        expect(() => type.deserialize(testData.serialized), "Must throw on deserialize").to.throw();
+        expect(() => type.deserialize(testData.serialized), "Must throw on deserialize").toThrow();
       });
     }
   });

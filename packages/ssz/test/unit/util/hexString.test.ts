@@ -1,5 +1,4 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 import {fromHexString, toHexString} from "../../../src";
 
 describe("util / byteArray / toHexString + fromHexString", () => {
@@ -19,10 +18,10 @@ describe("util / byteArray / toHexString + fromHexString", () => {
   }
 
   it("fromHexString throw for non hex string", () => {
-    expect(() => fromHexString(new Uint8Array() as unknown as string)).to.throw();
+    expect(() => fromHexString(new Uint8Array() as unknown as string)).toThrow();
   });
 
   it("fromHexString throw for odd hex string", () => {
-    expect(() => fromHexString("0x1")).to.throw();
+    expect(() => fromHexString("0x1")).toThrow();
   });
 });

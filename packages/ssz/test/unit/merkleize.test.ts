@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {bitLength, maxChunksToDepth, nextPowerOf2} from "../../src/util/merkleize";
 
 describe("util / merkleize / bitLength", () => {

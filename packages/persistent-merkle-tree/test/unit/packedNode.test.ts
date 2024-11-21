@@ -1,5 +1,5 @@
+import {describe, it, expect} from "vitest";
 import {HashObject} from "@chainsafe/as-sha256";
-import {expect} from "chai";
 import {LeafNode, Node} from "../../src";
 import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes, packedUintNum64sToLeafNodes} from "../../src/packedNode";
 
@@ -191,7 +191,7 @@ describe("subtree / packedNode single node", () => {
       const uint8Array = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));
       const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
       const nodesRes = packedRootsBytesToLeafNodes(dataView, 0, size);
-      expect(onlyHashObject(nodesRes[0].rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
+      expect(onlyHashObject(nodesRes[0].rootHashObject)).toEqual(onlyHashObject(nodes[0].rootHashObject));
     });
 
     // 1 UintNum64 = 8 bytes
@@ -212,7 +212,7 @@ describe("subtree / packedNode single node", () => {
         }
 
         const nodesRes = packedUintNum64sToLeafNodes(values);
-        expect(onlyHashObject(nodesRes[0].rootHashObject)).to.deep.equal(onlyHashObject(nodes[0].rootHashObject));
+        expect(onlyHashObject(nodesRes[0].rootHashObject)).toEqual(onlyHashObject(nodes[0].rootHashObject));
       });
     }
   }

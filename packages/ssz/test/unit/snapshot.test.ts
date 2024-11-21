@@ -1,5 +1,4 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 import {ByteVectorType} from "../../src/type/byteVector";
 import {ListCompositeType} from "../../src";
 import {PartialListCompositeType} from "../../src/type/partialListComposite";

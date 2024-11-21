@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ByteListType} from "../../../../src";
 import {runTypeTestInvalid} from "../runTypeTestInvalid";
 
@@ -16,6 +16,6 @@ runTypeTestInvalid({
 
 describe("ByteListType constructor errors", () => {
   it("limit must be > 0", () => {
-    expect(() => new ByteListType(0)).to.throw();
+    expect(() => new ByteListType(0)).toThrow();
   });
 });

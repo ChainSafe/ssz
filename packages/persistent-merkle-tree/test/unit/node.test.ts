@@ -1,7 +1,7 @@
 import {HashObject} from "@chainsafe/as-sha256";
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src";
-import {HashComputation, HashComputationLevel, getHashComputations} from "../../src/hashComputation";
+import {HashComputationLevel, getHashComputations} from "../../src/hashComputation";
 
 describe("LeafNode uint", () => {
   const testCasesNode: {
@@ -46,9 +46,17 @@ describe("LeafNode uint", () => {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unsigned_right_shift
         const res = leafNode.getUint(bytes, offset) >>> 0;
         if (asHex) {
-          expect(res.toString(16)).to.equal(value.toString(16), `Wrong getUint(${bytes}, ${offset})`);
+          try {
+            expect(res.toString(16)).toEqual(value.toString(16));
+          } catch {
+            expect.fail(`Wrong getUint(${bytes}, ${offset})`);
+          }
         } else {
-          expect(res).to.equal(value, `Wrong getUint(${bytes}, ${offset})`);
+          try {
+            expect(res).toEqual(value);
+          } catch {
+            expect.fail(`Wrong getUint(${bytes}, ${offset})`);
+          }
         }
       });
     }
@@ -67,7 +75,10 @@ describe("LeafNode single bytes", () => {
     for (let i = 0; i < 32; i++) {
       leafNode.setUint(1, i, i + 1);
     }
-    expect(Buffer.from(leafNode.root).toString("hex")).to.equal(buf.toString("hex"), "Wrong leafNode.root value");
+    expect(Buffer.from(leafNode.root).toString("hex")).toEqualWithMessage(
+      buf.toString("hex"),
+      "Wrong leafNode.root value"
+    );
   });
 
   it("Write full root with setUintBigint", () => {
@@ -75,7 +86,10 @@ describe("LeafNode single bytes", () => {
     for (let i = 0; i < 32; i++) {
       leafNode.setUintBigint(1, i, BigInt(i + 1));
     }
-    expect(Buffer.from(leafNode.root).toString("hex")).to.equal(buf.toString("hex"), "Wrong leafNode.root value");
+    expect(Buffer.from(leafNode.root).toString("hex")).toEqualWithMessage(
+      buf.toString("hex"),
+      "Wrong leafNode.root value"
+    );
   });
 
   it("Get full root with getUint", () => {
@@ -84,7 +98,7 @@ describe("LeafNode single bytes", () => {
     for (let i = 0; i < 32; i++) {
       out[i] = leafNode.getUint(1, i);
     }
-    expect(out.toString("hex")).to.equal(buf.toString("hex"), "Wrong out value");
+    expect(out.toString("hex")).toEqualWithMessage(buf.toString("hex"), "Wrong out value");
   });
 
   it("Get full root with getUintBigint", () => {
@@ -93,7 +107,7 @@ describe("LeafNode single bytes", () => {
     for (let i = 0; i < 32; i++) {
       out[i] = Number(leafNode.getUintBigint(1, i));
     }
-    expect(out.toString("hex")).to.equal(buf.toString("hex"), "Wrong out value");
+    expect(out.toString("hex")).toEqualWithMessage(buf.toString("hex"), "Wrong out value");
   });
 });
 
@@ -105,7 +119,7 @@ describe("setUint getUint - all small values", () => {
       it(`setUint getUint bytes ${bytes} offset ${offset}`, () => {
         const value = 0x0f + offset;
         leafNode.setUint(bytes, offset, value);
-        expect(leafNode.getUint(bytes, offset)).to.equal(value);
+        expect(leafNode.getUint(bytes, offset)).toEqual(value);
       });
     }
   }
@@ -119,7 +133,7 @@ describe("setUintBigint getUintBigint - all small values", () => {
       it(`setUint getUint bytes ${bytes} offset ${offset}`, () => {
         const value = BigInt(0x0f + offset);
         leafNode.setUintBigint(bytes, offset, value);
-        expect(leafNode.getUintBigint(bytes, offset)).to.equal(value);
+        expect(leafNode.getUintBigint(bytes, offset)).toEqual(value);
       });
     }
   }
@@ -134,7 +148,7 @@ describe("setUint getUint - some big values", () => {
     for (let offset = 0; offset < 1; offset += bytes) {
       it(`setUint getUint value ${value} offset ${offset}`, () => {
         leafNode.setUint(bytes, offset, value);
-        expect(leafNode.getUint(bytes, offset)).to.equal(value);
+        expect(leafNode.getUint(bytes, offset)).toEqual(value);
       });
     }
   }
@@ -160,7 +174,7 @@ describe("setUintBigint getUintBigint - some big values", () => {
       for (let offset = 0; offset < 1; offset += bytes) {
         it(`setUint getUint value ${value} bytes ${bytes} offset ${offset}`, () => {
           leafNode.setUintBigint(bytes, offset, value);
-          expect(leafNode.getUintBigint(bytes, offset)).to.equal(value);
+          expect(leafNode.getUintBigint(bytes, offset)).toEqual(value);
         });
       }
     }
@@ -191,8 +205,8 @@ describe("getUint with correct sign", () => {
       h7: 0,
     });
 
-    expect(leafNodeUint.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeUint.getUintBigint");
-    expect(leafNodeInt.getUintBigint(8, 0)).to.equal(BigInt("288782042218268212"), "Wrong leafNodeInt.getUintBigint");
+    expect(leafNodeUint.getUintBigint(8, 0)).toEqual(BigInt("288782042218268212"), "Wrong leafNodeUint.getUintBigint");
+    expect(leafNodeInt.getUintBigint(8, 0)).toEqual(BigInt("288782042218268212"), "Wrong leafNodeInt.getUintBigint");
   });
 });
 
@@ -225,9 +239,9 @@ describe("getHashComputations", () => {
       const rootNode = subtreeFillToContents(nodes, depth);
       const hashComputations: HashComputationLevel[] = [];
       getHashComputations(rootNode, 0, hashComputations);
-      expect(hashComputations.length).to.equal(expectedLengths.length);
+      expect(hashComputations.length).toEqual(expectedLengths.length);
       for (let i = 0; i < hashComputations.length; i++) {
-        expect(hashComputations[i].length).to.equal(expectedLengths[i]);
+        expect(hashComputations[i].length).toEqual(expectedLengths[i]);
       }
     });
   }
@@ -255,9 +269,9 @@ describe("getHashComputations", () => {
       const rootNode = createList(numNode);
       const hashComputations: HashComputationLevel[] = [];
       getHashComputations(rootNode, 0, hashComputations);
-      expect(hashComputations.length).to.equal(expectedLengths.length);
+      expect(hashComputations.length).toEqual(expectedLengths.length);
       for (let i = 0; i < hashComputations.length; i++) {
-        expect(hashComputations[i].length).to.equal(expectedLengths[i]);
+        expect(hashComputations[i].length).toEqual(expectedLengths[i]);
       }
     });
   }

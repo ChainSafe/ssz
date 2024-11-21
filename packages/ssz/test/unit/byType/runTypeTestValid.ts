@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {toHexString, TreeViewDU, UnionType} from "../../../src";
 import {Type} from "../../../src/type/abstract";
 import {isCompositeType} from "../../../src/type/composite";

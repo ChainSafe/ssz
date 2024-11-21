@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {BitVectorType, BitListType, ContainerType} from "../../../src";
 
 /** Pick bitLen to fill 2 nodes */
@@ -19,6 +19,6 @@ describe("Proofs / Stop navigating into some types", () => {
 describe("Proofs / pass rootNode parameter for variable size", () => {
   it("BitListType", () => {
     const bitArrayType = new BitListType(bitLen2Nodes);
-    expect(() => bitArrayType.tree_getLeafGindices(0n), "Variable size types require rootNode").to.throw();
+    expect(() => bitArrayType.tree_getLeafGindices(0n), "Variable size types require rootNode").toThrow();
   });
 });

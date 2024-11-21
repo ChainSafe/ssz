@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 
 import {Case} from "../../src/util/strings";
 import {KeyCase} from "../../src/type/container";

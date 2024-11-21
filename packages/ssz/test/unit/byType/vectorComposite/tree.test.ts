@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ContainerNodeStructType, ContainerType, UintNumberType, ValueOf, VectorCompositeType} from "../../../../src";
 import {runViewTestMutation} from "../runViewTestMutation";
 
@@ -87,7 +87,7 @@ describe("VectorCompositeType batchHashTreeRoot", () => {
     const expectedRoot = vectorOfContainersType.toView(value).hashTreeRoot();
 
     it(`${typeName} - fresh ViewDU`, () => {
-      expect(vectorOfContainersType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(vectorOfContainersType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - modify 1 full element`, () => {
@@ -96,12 +96,12 @@ describe("VectorCompositeType batchHashTreeRoot", () => {
         {a: 0, b: 0},
       ]);
       viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign the same value again, commit() then batchHashTreeRoot();
       viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - modify 1 property of 1 element`, () => {
@@ -110,12 +110,12 @@ describe("VectorCompositeType batchHashTreeRoot", () => {
         {a: 3, b: 0},
       ]);
       viewDU.get(1).b = 4;
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign the same value again, commit() then batchHashTreeRoot();
       viewDU.get(1).b = 4;
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
   }
 });

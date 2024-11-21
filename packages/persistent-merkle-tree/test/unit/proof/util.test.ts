@@ -1,5 +1,4 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 import {
   computeProofGindices,
   computeProofBitstrings,
@@ -15,8 +14,8 @@ describe("computeProofGindices", () => {
     for (const gindex of gindices) {
       const simple = computeProofGindices(gindex);
       const bitstring = computeProofBitstrings(gindex.toString(2));
-      expect(new Set([...bitstring.branch].map((str) => BigInt("0b" + str)))).to.deep.equal(simple.branch);
-      expect(new Set([...bitstring.path].map((str) => BigInt("0b" + str)))).to.deep.equal(simple.path);
+      expect(new Set([...bitstring.branch].map((str) => BigInt("0b" + str)))).toEqual(simple.branch);
+      expect(new Set([...bitstring.path].map((str) => BigInt("0b" + str)))).toEqual(simple.path);
     }
   });
 
@@ -40,8 +39,8 @@ describe("computeProofGindices", () => {
     ];
     for (const {input, output} of testCases) {
       const actual = computeProofGindices(input);
-      expect(actual.branch).to.deep.equal(output.branch);
-      expect(actual.path).to.deep.equal(output.path);
+      expect(actual.branch).toEqual(output.branch);
+      expect(actual.path).toEqual(output.path);
     }
   });
 });
@@ -60,7 +59,7 @@ describe("sortInOrderBitstrings", () => {
         gindices.map((g) => g.toString(2)),
         bitLength
       ).map((str) => BigInt("0b" + str));
-      expect(actual).to.deep.equal(output);
+      expect(actual).toEqual(output);
     }
   });
 });
@@ -80,7 +79,7 @@ describe("filterParentBitstrings", () => {
     ];
     for (const {input, output} of testCases) {
       const actual = filterParentBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt("0b" + str));
-      expect(new Set(actual)).to.deep.equal(new Set(output));
+      expect(new Set(actual)).toEqual(new Set(output));
     }
   });
 });
@@ -101,7 +100,7 @@ describe("computeMultiProofBitstrings", () => {
     ];
     for (const {input, output} of testCases) {
       const actual = computeMultiProofBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt("0b" + str));
-      expect(actual).to.deep.equal(output);
+      expect(actual).toEqual(output);
     }
   });
 });

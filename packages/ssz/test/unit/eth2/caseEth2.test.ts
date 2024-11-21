@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {precomputeJsonKey} from "../../../src/type/container";
 
 describe("JSON case eth2", () => {

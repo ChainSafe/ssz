@@ -1,16 +1,15 @@
-import { expect } from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 import {fromSnapshot, indexToFinalizedGindices, toSnapshot} from "../../src/snapshot";
 import {subtreeFillToContents} from "../../src/subtree";
-import { LeafNode } from "../../src/node";
-import { Tree, setNodesAtDepth } from "../../src/tree";
-import { toGindex } from "../../src";
+import {LeafNode} from "../../src/node";
+import {Tree, setNodesAtDepth} from "../../src/tree";
+import {toGindex} from "../../src";
 
 describe("toSnapshot and fromSnapshot", () => {
   const depth = 4;
   const maxItems = Math.pow(2, depth);
 
-  for (let count = 0; count <= maxItems; count ++) {
+  for (let count = 0; count <= maxItems; count++) {
     it(`toSnapshot and fromSnapshot with count ${count}`, () => {
       const nodes = Array.from({length: count}, (_, i) => LeafNode.fromRoot(Buffer.alloc(32, i)));
       const fullListRootNode = subtreeFillToContents(nodes, depth);
@@ -18,7 +17,7 @@ describe("toSnapshot and fromSnapshot", () => {
       const partialListRootNode = fromSnapshot(snapshot, depth);
 
       // 1st step - check if the restored root node is the same
-      expect(partialListRootNode.root).to.deep.equal(fullListRootNode.root);
+      expect(partialListRootNode.root).toEqual(fullListRootNode.root);
 
       // 2nd step - make sure we can add more nodes to the restored tree
       const fullTree = new Tree(fullListRootNode);
@@ -27,12 +26,12 @@ describe("toSnapshot and fromSnapshot", () => {
         const gindex = toGindex(depth, BigInt(i));
         fullTree.setNode(gindex, LeafNode.fromRoot(Buffer.alloc(32, i)));
         partialTree.setNode(gindex, LeafNode.fromRoot(Buffer.alloc(32, i)));
-        expect(partialTree.root).to.deep.equal(fullTree.root);
+        expect(partialTree.root).toEqual(fullTree.root);
 
         // and snapshot created from 2 trees are the same
         const snapshot1 = toSnapshot(fullTree.rootNode, depth, i + 1);
         const snapshot2 = toSnapshot(partialTree.rootNode, depth, i + 1);
-        expect(snapshot2).to.deep.equal(snapshot1);
+        expect(snapshot2).toEqual(snapshot1);
       }
     });
 
@@ -44,7 +43,7 @@ describe("toSnapshot and fromSnapshot", () => {
       const partialListRootNode = fromSnapshot(snapshot, depth);
 
       // 1st step - check if the restored root node is the same
-      expect(partialListRootNode.root).to.deep.equal(fullListRootNode.root);
+      expect(partialListRootNode.root).toEqual(fullListRootNode.root);
 
       // 2nd step - grow the tree with setNodesAtDepth
       for (let i = count; i < maxItems; i++) {
@@ -52,12 +51,12 @@ describe("toSnapshot and fromSnapshot", () => {
         const indices = Array.from({length: i - count + 1}, (_, j) => j + count);
         const root1 = setNodesAtDepth(fullListRootNode, depth, indices, addedNodes);
         const root2 = setNodesAtDepth(partialListRootNode, depth, indices, addedNodes);
-        expect(root2.root).to.deep.equal(root1.root);
+        expect(root2.root).toEqual(root1.root);
 
         for (let j = count; j <= i; j++) {
           const snapshot1 = toSnapshot(root1, depth, j);
           const snapshot2 = toSnapshot(root2, depth, j);
-          expect(snapshot2).to.deep.equal(snapshot1);
+          expect(snapshot2).toEqual(snapshot1);
         }
       }
     });
@@ -69,13 +68,13 @@ describe("toSnapshot and fromSnapshot", () => {
       const partialListRootNode = fromSnapshot(snapshot, depth);
 
       // 1st step - check if the restored root node is the same
-      expect(partialListRootNode.root).to.deep.equal(fullListRootNode.root);
+      expect(partialListRootNode.root).toEqual(fullListRootNode.root);
 
       const snapshot2 = toSnapshot(partialListRootNode, depth, count);
       const restoredRootNode2 = fromSnapshot(snapshot2, depth);
 
       // 2nd step - check if the restored root node is the same
-      expect(restoredRootNode2.root).to.deep.equal(partialListRootNode.root);
+      expect(restoredRootNode2.root).toEqual(partialListRootNode.root);
     });
   }
 });
@@ -109,7 +108,7 @@ describe("indexToFinalizedGindices", () => {
   for (const [depth, index, finalizeGindices] of testCases) {
     it(`should correctly get finalized gindexes for index ${index} and depth ${depth}`, () => {
       const actual = indexToFinalizedGindices(depth, index);
-      expect(actual).to.deep.equal(finalizeGindices);
+      expect(actual).toEqual(finalizeGindices);
     });
   }
 });

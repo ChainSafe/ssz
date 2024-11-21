@@ -1,5 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {toHexString, fromHexString} from "../../../../src/util/byteArray";
 import {byteType, uint64NumInfType} from "../../../utils/primitiveTypes";
 
