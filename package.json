@@ -11,7 +11,6 @@
     "build": "yarn clean && lerna run build",
     "lint": "lerna run lint",
     "check-types": "lerna run check-types",
-    "test:unit": "lerna run test:unit",
     "test:browsers": "lerna run test:browsers",
     "test": "lerna run test",
     "benchmark:files": "NODE_OPTIONS=--max_old_space_size=4096 benchmark --config .benchrc.yaml",
