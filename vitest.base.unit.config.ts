@@ -26,6 +26,11 @@ function getTestEnvironment(
 }
 
 export default defineConfig({
+  resolve: {
+    // Adding `deno` field is just for testing purpose.
+    // Vite validates the package.json and could not find `lib/index.js` in deno runtime
+    mainFields: ["deno", "main"],
+  },
   test: {
     include: ["**/*.test.ts"],
     exclude: [
