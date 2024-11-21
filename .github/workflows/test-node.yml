@@ -1,10 +1,10 @@
-name: Tests
+name: Tests Node
 
 on: [pull_request, push]
 
 jobs:
   test:
-    name: Tests
+    name: Tests Node
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
