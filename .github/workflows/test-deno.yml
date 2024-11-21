@@ -6,6 +6,8 @@ jobs:
   test:
     name: Tests Deno
     runs-on: ubuntu-latest
+    env:
+      JS_RUNTIME: deno
     strategy:
       fail-fast: false
       matrix:
@@ -21,7 +23,7 @@ jobs:
       - name: Generate
         run: cd packages/as-sha256 && deno run -R -W -I scripts/codegen.ts
       - name: Unit Tests
-        run: JS_RUNTIME=deno deno task --recursive --filter '' test:unit
+        run: deno task --recursive --filter '' test:unit
 
       # Download spec tests with cache
       - name: Restore spec tests cache
