@@ -6,6 +6,8 @@ jobs:
   test:
     name: Tests Node
     runs-on: ubuntu-latest
+    env:
+      JS_RUNTIME: node
     strategy:
       fail-fast: false
       matrix:
