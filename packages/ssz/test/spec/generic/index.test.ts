@@ -1,6 +1,6 @@
 import {describe, it, expect} from "vitest";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 import {SPEC_TEST_LOCATION} from "../../specTestVersioning";
 import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase} from "../testRunner";
 import {runValidSszTest} from "../runValidTest";

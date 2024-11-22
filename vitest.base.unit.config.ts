@@ -3,6 +3,11 @@ import {defineConfig} from "vitest/config";
 const __dirname = new URL(".", import.meta.url).pathname;
 
 export default defineConfig({
+  resolve: {
+    // Adding `deno` field is just for testing purpose.
+    // Vite validates the package.json and could not find `lib/index.js` in deno runtime
+    mainFields: ["browser", "module", "jsnext:main", "jsnext", "deno", "main"],
+  },
   test: {
     include: ["**/*.test.ts"],
     exclude: [
@@ -23,5 +28,6 @@ export default defineConfig({
           "hanging-process",
         ],
     onConsoleLog: () => !process.env.TEST_QUIET_CONSOLE,
+    globalSetup: [`${__dirname}/vitest/globalSetup/runtime.ts`],
   },
 });

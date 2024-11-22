@@ -1,5 +1,4 @@
-import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
-import {zeroHash} from "@chainsafe/persistent-merkle-tree";
+import {zeroHash, digest64} from "@chainsafe/persistent-merkle-tree";
 
 /** Dedicated property to cache hashTreeRoot of immutable CompositeType values */
 export const symbolCachedPermanentRoot = Symbol("ssz_cached_permanent_root");
@@ -10,7 +9,7 @@ export type ValueWithCachedPermanentRoot = {
 };
 
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
-  return hasher.digest64(bytes32A, bytes32B);
+  return digest64(bytes32A, bytes32B);
 }
 
 export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
