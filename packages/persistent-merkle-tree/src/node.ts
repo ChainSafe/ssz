@@ -1,4 +1,4 @@
-import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
+import {HashObject} from "@chainsafe/as-sha256";
 import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
 
 const TWO_POWER_32 = 2 ** 32;
