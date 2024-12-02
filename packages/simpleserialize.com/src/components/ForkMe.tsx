@@ -1,10 +1,20 @@
 import * as React from "react";
+import DarkMode from "../util/darkMode";
 
 export default function ForkMe(): JSX.Element {
   return (
-    <a
+    <div   style={{
+      position: "absolute",
+      right: 0,
+      top: 0,
+      display: "flex",
+      gap: "10px", // Add spacing between elements
+    }}>
+      <div style={{ marginTop: "8px", marginRight: "-10px" }}>
+    <DarkMode/>  
+      </div>
+     <a
       href="https://github.com/ChainSafe/ssz/tree/master/packages/simpleserialize.com"
-      style={{position: "absolute", right: 0, top: 0}}
     >
       <img
         width="149"
@@ -14,6 +24,7 @@ export default function ForkMe(): JSX.Element {
         alt="Fork me on GitHub"
         data-recalc-dims="1"
       />
-    </a>
+     </a>
+    </div>
   );
 }

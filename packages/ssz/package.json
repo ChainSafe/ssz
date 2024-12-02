@@ -40,9 +40,9 @@
     "@chainsafe/persistent-merkle-tree": "0.8.0"
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.5",
-    "js-yaml": "^3.13.1",
-    "snappyjs": "^0.6.1"
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.0",
+    "snappyjs": "^0.7.0"
   },
   "keywords": [
     "ethereum",
