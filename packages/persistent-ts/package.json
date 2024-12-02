@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/cronokirby/persistent-ts#readme",
   "devDependencies": {
-    "fast-check": "^1.15.1"
+    "fast-check": "^3.23.1"
   },
   "jest": {
     "transform": {
