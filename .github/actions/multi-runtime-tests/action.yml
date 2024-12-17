@@ -9,19 +9,20 @@ runs:
   using: "composite"
   steps:
     - name: Select nodejs runtime
-      run: echo "TEST_COMMAND=yarn" >> $GITHUB_ENV
+      if: inputs.runtime == "nodejs"
+      run: echo "TEST_COMMAND=yarn" >> $GITHUB_ENV      
       shell: bash
-      if: ${{ inputs.runtime }} == "nodejs"
+
 
     - name: Select bun runtime
+      if: inputs.runtime == "bun"    
       run: echo "TEST_COMMAND=bun run --bun" >> $GITHUB_ENV
       shell: bash
-      if: ${{ inputs.runtime }} == "bun"
 
     - name: Select deno runtime
+      if: inputs.runtime == "deno"    
       run: echo "TEST_COMMAND=deno run -A" >> $GITHUB_ENV
       shell: bash
-      if: ${{ inputs.runtime }} == "deno"
 
     - name: Unit Tests
       run: ${{env.TEST_COMMAND}} test
