@@ -1,0 +1,80 @@
+name: "Run the tests with multi-runtime"
+description: "Run tests with multiple runtime"
+inputs:
+  runtime:
+    description: Select runtime
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Select nodejs runtime
+      run: echo "TEST_COMMAND=yarn" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.runtime }} == "nodejs"
+
+    - name: Select bun runtime
+      run: echo "TEST_COMMAND=bun run --bun" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.runtime }} == "bun"
+
+    - name: Select deno runtime
+      run: echo "TEST_COMMAND=deno run -A" >> $GITHUB_ENV
+      shell: bash
+      if: ${{ inputs.runtime }} == "deno"
+
+    - name: Unit Tests
+      run: ${{TEST_COMMAND}} test
+      shell: bash
+
+    - name: Browsers Tests
+      run: ${{TEST_COMMAND}} test:browsers
+      shell: bash
+      if: ${{ inputs.runtime }} == "nodejs"
+
+    # Download spec tests with cache
+    - name: Restore spec tests cache
+      uses: actions/cache@master
+      with:
+        path: packages/ssz/spec-tests
+        key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
+
+    - name: Download spec tests
+      run: ${{TEST_COMMAND}} download-spec-tests
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests general
+      run: ${{TEST_COMMAND}} test:spec-generic
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests phase0-minimal
+      run: LODESTAR_FORK=phase0 ${{TEST_COMMAND}} test:spec-static-minimal
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests phase0-mainnet
+      run: LODESTAR_FORK=phase0 ${{TEST_COMMAND}} test:spec-static-mainnet
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests altair-minimal
+      run: LODESTAR_FORK=altair ${{TEST_COMMAND}} test:spec-static-minimal
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests altair-mainnet
+      run: LODESTAR_FORK=altair ${{TEST_COMMAND}} test:spec-static-mainnet
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests bellatrix-minimal
+      run: LODESTAR_FORK=bellatrix ${{TEST_COMMAND}} test:spec-static-minimal
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Spec tests bellatrix-mainnet
+      run: LODESTAR_FORK=bellatrix ${{TEST_COMMAND}} test:spec-static-mainnet
+      working-directory: packages/ssz
+      shell: bash
