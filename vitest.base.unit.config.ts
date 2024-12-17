@@ -26,6 +26,9 @@ function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
 
   return {
     pool: "vitest-in-process-pool",
+    coverage: {
+      enabled: false,
+    },
   };
 }
 
