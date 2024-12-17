@@ -29,9 +29,9 @@ runs:
       shell: bash
 
     - name: Browsers Tests
+      if: inputs.runtime == 'nodejs'
       run: ${{env.TEST_COMMAND}} test:browsers
       shell: bash
-      if: ${{ inputs.runtime }} == "nodejs"
 
     # Download spec tests with cache
     - name: Restore spec tests cache
