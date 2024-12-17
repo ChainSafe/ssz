@@ -9,18 +9,18 @@ runs:
   using: "composite"
   steps:
     - name: Select nodejs runtime
-      if: inputs.runtime == "nodejs"
+      if: inputs.runtime == 'nodejs'
       run: echo "TEST_COMMAND=yarn" >> $GITHUB_ENV      
       shell: bash
 
 
     - name: Select bun runtime
-      if: inputs.runtime == "bun"    
+      if: inputs.runtime == 'bun'    
       run: echo "TEST_COMMAND=bun run --bun" >> $GITHUB_ENV
       shell: bash
 
     - name: Select deno runtime
-      if: inputs.runtime == "deno"    
+      if: inputs.runtime == 'deno'    
       run: echo "TEST_COMMAND=deno run -A" >> $GITHUB_ENV
       shell: bash
 
