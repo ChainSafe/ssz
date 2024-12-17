@@ -24,11 +24,11 @@ runs:
       if: ${{ inputs.runtime }} == "deno"
 
     - name: Unit Tests
-      run: ${{TEST_COMMAND}} test
+      run: ${{env.TEST_COMMAND}} test
       shell: bash
 
     - name: Browsers Tests
-      run: ${{TEST_COMMAND}} test:browsers
+      run: ${{env.TEST_COMMAND}} test:browsers
       shell: bash
       if: ${{ inputs.runtime }} == "nodejs"
 
@@ -40,41 +40,41 @@ runs:
         key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
 
     - name: Download spec tests
-      run: ${{TEST_COMMAND}} download-spec-tests
+      run: ${{env.TEST_COMMAND}} download-spec-tests
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests general
-      run: ${{TEST_COMMAND}} test:spec-generic
+      run: ${{env.TEST_COMMAND}} test:spec-generic
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests phase0-minimal
-      run: LODESTAR_FORK=phase0 ${{TEST_COMMAND}} test:spec-static-minimal
+      run: LODESTAR_FORK=phase0 ${{env.TEST_COMMAND}} test:spec-static-minimal
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests phase0-mainnet
-      run: LODESTAR_FORK=phase0 ${{TEST_COMMAND}} test:spec-static-mainnet
+      run: LODESTAR_FORK=phase0 ${{env.TEST_COMMAND}} test:spec-static-mainnet
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests altair-minimal
-      run: LODESTAR_FORK=altair ${{TEST_COMMAND}} test:spec-static-minimal
+      run: LODESTAR_FORK=altair ${{env.TEST_COMMAND}} test:spec-static-minimal
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests altair-mainnet
-      run: LODESTAR_FORK=altair ${{TEST_COMMAND}} test:spec-static-mainnet
+      run: LODESTAR_FORK=altair ${{env.TEST_COMMAND}} test:spec-static-mainnet
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests bellatrix-minimal
-      run: LODESTAR_FORK=bellatrix ${{TEST_COMMAND}} test:spec-static-minimal
+      run: LODESTAR_FORK=bellatrix ${{env.TEST_COMMAND}} test:spec-static-minimal
       working-directory: packages/ssz
       shell: bash
 
     - name: Spec tests bellatrix-mainnet
-      run: LODESTAR_FORK=bellatrix ${{TEST_COMMAND}} test:spec-static-mainnet
+      run: LODESTAR_FORK=bellatrix ${{env.TEST_COMMAND}} test:spec-static-mainnet
       working-directory: packages/ssz
       shell: bash
