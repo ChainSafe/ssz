@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
-import {execSync} from "child_process";
+import fs from "node:fs";
+import path from "node:path";
+import {execSync} from "node:child_process";
 import {SPEC_TEST_LOCATION, SPEC_TEST_VERSION, SPEC_TEST_REPO_URL} from "../specTestVersioning";
 
 /* eslint-disable no-console */

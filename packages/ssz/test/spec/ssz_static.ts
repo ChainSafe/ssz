@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import {describe, it, vi} from "vitest";
 import {isCompositeType, Type} from "../../src";
 import {ssz} from "../lodestarTypes";
