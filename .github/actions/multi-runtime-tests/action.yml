@@ -33,7 +33,6 @@ runs:
       run: ${{env.TEST_COMMAND}} test:browsers
       shell: bash
 
-    # Download spec tests with cache
     - name: Restore spec tests cache
       uses: actions/cache@master
       with:
@@ -41,8 +40,14 @@ runs:
         key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
 
     - name: Download spec tests
-      if: inputs.runtime != 'nodejs'
-      run: ${{env.TEST_COMMAND}} test/spec/downloadTests.ts
+      if: inputs.runtime == 'deno'
+      run: yarn download-spec-tests
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Download spec tests
+      if: inputs.runtime == 'bun'
+      run: bun run --bun test/spec/downloadTests.ts
       working-directory: packages/ssz
       shell: bash
 
