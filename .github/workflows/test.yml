@@ -39,10 +39,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install yarn 
-        run: bun install --global yarn
-      - name: Bootstrap
-        run: yarn --immutable
+      - name: Install Dependencies
+        run: bun install
       - name: Build
         run: bun run --bun build
       - name: Generate
@@ -59,10 +57,8 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Install yarn 
-        run: deno install --global --allow-read --allow-write --allow-env --allow-run --allow-sys --allow-scripts --node-modules-dir=auto npm:yarn
-      - name: Bootstrap
-        run: yarn --immutable
+      - name: Install Dependencies
+        run: deno install -A
       - name: Build
         run: deno run -A build
       - name: Generate
