@@ -62,7 +62,7 @@ jobs:
       - name: Install yarn 
         run: deno install --global npm:yarn
       - name: Bootstrap
-        run: deno run -A yarn --immutable
+        run: deno run -A `which yarn` --immutable
       - name: Build
         run: deno run -A build
       - name: Generate
