@@ -24,7 +24,7 @@
     "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
     "lint": "eslint --color --ext .ts src/",
     "lint:fix": "yarn run lint --fix",
-    "benchmark:files": "node --max-old-space-size=4096 --expose-gc -r ts-node/register ../../node_modules/.bin/benchmark",
+    "benchmark:files": "node --max-old-space-size=4096 --expose-gc --loader ts-node/esm ../../node_modules/.bin/benchmark",
     "benchmark": "yarn benchmark:files 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test": "mocha -r ts-node/register 'test/unit/**/*.test.ts'"

@@ -31,7 +31,7 @@
     "clean": "rm -rf ./dist",
     "lint": "echo 'no linting for this package'",
     "check-types": "echo 'no type check for this package'",
-    "generate": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
+    "generate": "rm -rf ./dist && node --loader ts-node/esm ./scripts/codegen.ts",
     "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:cjs && yarn build:esm",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug --enable simd",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert --enable simd",
@@ -42,7 +42,7 @@
     "test:unit": "yarn run test:unit:node && yarn run test:unit:browser",
     "test:unit:node": "mocha -r ts-node/register test/unit/*.test.ts",
     "test:unit:browser": "karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.js",
-    "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
+    "benchmark": "node --loader ts-node/esm ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:ci": "yarn test:as-ci"
   },
