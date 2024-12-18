@@ -60,9 +60,9 @@ jobs:
         with:
           deno-version: v2.x
       - name: Install yarn 
-        run: deno install --global npm:yarn
+        run: deno install --global --allow-read --allow-write --allow-env --allow-run  npm:yarn
       - name: Bootstrap
-        run: deno run -A `which yarn` --immutable
+        run: yarn --immutable
       - name: Build
         run: deno run -A build
       - name: Generate
