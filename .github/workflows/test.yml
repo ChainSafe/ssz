@@ -54,11 +54,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Install Dependencies
-        run: deno install -A
+      - name: Install yarn 
+        run: npm i -g yarn
+      - name: Bootstrap
+        run: yarn --immutable
       - name: Build
         run: deno run -A build
       - name: Generate
