@@ -2,14 +2,15 @@
   "name": "@chainsafe/persistent-merkle-tree",
   "version": "0.8.0",
   "description": "Merkle tree implemented as a persistent datastructure",
-  "main": "lib/index.js",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "*",
-        "lib/*",
-        "lib/*/index"
-      ]
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js"
+    },
+    "./hasher": {
+      "import": "./lib/esm/hasher/index.js",
+      "require": "./lib/cjs/hasher/index.js"
     }
   },
   "files": [
@@ -18,7 +19,9 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib",
-    "build": "tsc",
+    "build": "yarn build:cjs && yarn build:esm",
+    "build:esm": "tsc -p tsconfig.build.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
     "lint": "eslint --color --ext .ts src/",
     "lint:fix": "yarn run lint --fix",
     "benchmark:files": "node --max-old-space-size=4096 --expose-gc -r ts-node/register ../../node_modules/.bin/benchmark",

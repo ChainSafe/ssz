@@ -12,17 +12,17 @@
     "type": "git",
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
-  "main": "lib/index.js",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "*",
-        "lib/*",
-        "lib/*/index"
-      ]
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js"
+    },
+    "./hashObject": {
+      "import": "./lib/esm/hashObject.js",
+      "require": "./lib/cjs/hashObject.js"
     }
   },
-  "types": "lib/index.d.ts",
   "files": [
     "lib",
     "build"
@@ -32,10 +32,11 @@
     "lint": "echo 'no linting for this package'",
     "check-types": "echo 'no type check for this package'",
     "generate": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
-    "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
+    "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:cjs && yarn build:esm",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug --enable simd",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert --enable simd",
-    "build:lib": "tsc -p tsconfig.build.json",
+    "build:esm": "tsc -p tsconfig.build.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "yarn run test:unit",
     "test:unit": "yarn run test:unit:node && yarn run test:unit:browser",
