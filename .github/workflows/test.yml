@@ -60,7 +60,9 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Install yarn 
+      # There is an issue with Lerna+NX on Deno Runtime
+      # So we have to install dependencies with Node
+      - name: Install yarn
         run: npm i -g yarn
       - name: Bootstrap
         run: yarn --immutable
@@ -71,4 +73,3 @@ jobs:
       - uses: "./.github/actions/multi-runtime-tests"
         with:
           runtime: deno
-          
