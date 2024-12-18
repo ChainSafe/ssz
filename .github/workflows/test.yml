@@ -44,9 +44,9 @@ jobs:
       - name: Bootstrap
         run: yarn --immutable
       - name: Build
-        run: bun run build
+        run: bun run --bun build
       - name: Generate
-        run: bun run generate
+        run: bun run --bun generate
       - uses: "./.github/actions/multi-runtime-tests"
         with:
           runtime: bun
@@ -62,7 +62,7 @@ jobs:
       - name: Install yarn 
         run: deno install --global npm:yarn
       - name: Bootstrap
-        run: yarn --immutable
+        run: deno run -A yarn --immutable
       - name: Build
         run: deno run -A build
       - name: Generate
