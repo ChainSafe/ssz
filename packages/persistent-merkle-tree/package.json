@@ -3,7 +3,6 @@
   "version": "0.8.0",
   "description": "Merkle tree implemented as a persistent datastructure",
   "main": "lib/index.js",
-  "deno": "src/index.ts",
   "typesVersions": {
     "*": {
       "*": [

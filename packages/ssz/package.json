@@ -6,7 +6,6 @@
   "homepage": "https://github.com/chainsafe/ssz",
   "version": "0.18.0",
   "main": "lib/index.js",
-  "deno": "src/index.ts",
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
