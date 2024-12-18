@@ -13,6 +13,7 @@
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
   "main": "lib/index.js",
+  "deno": "src/index.ts",
   "typesVersions": {
     "*": {
       "*": [
