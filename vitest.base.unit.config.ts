@@ -1,16 +1,16 @@
 import path from "node:path";
 import { defineConfig, ViteUserConfig } from "vitest/config";
 
-type Runtime = "node" | "deno" | "bun";
+export type Runtime = "node" | "deno" | "bun";
 
-function getRuntime(): Runtime {
+export function getRuntime(): Runtime {
   if ("bun" in process.versions) return "bun";
   if ("deno" in process.versions) return "deno";
 
   return "node";
 }
 
-function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
+export function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
   if (runtime === "node") {
     return {
       pool: "threads",
