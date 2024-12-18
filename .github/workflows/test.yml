@@ -36,19 +36,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: yarn
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Install yarn 
+        run: bun install --global yarn
       - name: Bootstrap
         run: yarn --immutable
       - name: Build
-        run: yarn build
+        run: bun run build
       - name: Generate
-        run: yarn generate
+        run: bun run generate
       - uses: "./.github/actions/multi-runtime-tests"
         with:
           runtime: bun
@@ -58,19 +56,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: yarn
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+      - name: Install yarn 
+        run: deno install --global npm:yarn
       - name: Bootstrap
         run: yarn --immutable
       - name: Build
-        run: yarn build
+        run: deno run -A build
       - name: Generate
-        run: yarn generate
+        run: deno run -A generate
       - uses: "./.github/actions/multi-runtime-tests"
         with:
           runtime: deno
