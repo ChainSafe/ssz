@@ -1,5 +1,5 @@
-import {wasmCode} from "./wasmCode";
-import {wasmSimdCode} from "./wasmSimdCode";
+import {wasmCode} from "./wasmCode.js";
+import {wasmSimdCode} from "./wasmSimdCode.js";
 
 export interface WasmContext {
   readonly PARALLEL_FACTOR: number;

@@ -1,8 +1,8 @@
 import {simd} from "wasm-feature-detect";
-import {allocUnsafe} from "./alloc";
-import {newInstance, WasmSimdContext} from "./wasm";
-import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject";
-import SHA256 from "./sha256";
+import {allocUnsafe} from "./alloc.js";
+import {newInstance, WasmSimdContext} from "./wasm.js";
+import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
+import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
 const hasSimd = await simd();
