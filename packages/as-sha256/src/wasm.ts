@@ -1,10 +1,9 @@
-import {wasmCode} from "./wasmCode.js";
-
-const _module = new WebAssembly.Module(wasmCode);
+import {wasmCode} from "./wasmCode";
+import {wasmSimdCode} from "./wasmSimdCode";
 
 export interface WasmContext {
-  readonly INPUT_LENGTH: number;
   readonly PARALLEL_FACTOR: number;
+  readonly INPUT_LENGTH: number;
   memory: {
     buffer: ArrayBuffer;
   };
@@ -21,6 +20,9 @@ export interface WasmContext {
 
   digest(length: number): void;
   digest64(inPtr: number, outPtr: number): void;
+}
+
+export interface WasmSimdContext extends WasmContext {
   batchHash4UintArray64s(outPtr: number): void;
   batchHash4HashObjectInputs(outPtr: number): void;
 }
@@ -34,6 +36,10 @@ const importObj = {
   },
 };
 
-export function newInstance(): WasmContext {
-  return new WebAssembly.Instance(_module, importObj).exports as unknown as WasmContext;
+export function newInstance<T extends boolean>(haveSimd: T): T extends true ? WasmSimdContext : WasmContext {
+  return (haveSimd
+    ? new WebAssembly.Instance(new WebAssembly.Module(wasmSimdCode), importObj).exports
+    : new WebAssembly.Instance(new WebAssembly.Module(wasmCode), importObj).exports) as unknown as T extends true
+    ? WasmSimdContext
+    : WasmContext;
 }

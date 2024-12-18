@@ -1,11 +1,13 @@
+import {simd} from "wasm-feature-detect";
 import {allocUnsafe} from "./alloc.js";
-import {newInstance} from "./wasm.js";
+import {newInstance, WasmSimdContext} from "./wasm.js";
 import type {HashObject} from "./hashObject.js";
 import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
-const ctx = newInstance();
+const hasSimd = await simd();
+const ctx = newInstance(hasSimd);
 const wasmInputValue = ctx.input.value;
 const wasmOutputValue = ctx.output.value;
 const inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
@@ -119,20 +121,24 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
     }
   }
 
-  // set up input buffer for v128
-  inputUint8Array.set(inputs[0], 0);
-  inputUint8Array.set(inputs[1], 64);
-  inputUint8Array.set(inputs[2], 128);
-  inputUint8Array.set(inputs[3], 192);
+  if (hasSimd) {
+    // set up input buffer for v128
+    inputUint8Array.set(inputs[0], 0);
+    inputUint8Array.set(inputs[1], 64);
+    inputUint8Array.set(inputs[2], 128);
+    inputUint8Array.set(inputs[3], 192);
 
-  ctx.batchHash4UintArray64s(wasmOutputValue);
+    (ctx as WasmSimdContext).batchHash4UintArray64s(wasmOutputValue);
 
-  const output0 = allocDigest();
-  const output1 = allocDigestOffset(32);
-  const output2 = allocDigestOffset(64);
-  const output3 = allocDigestOffset(96);
+    const output0 = allocDigest();
+    const output1 = allocDigestOffset(32);
+    const output2 = allocDigestOffset(64);
+    const output3 = allocDigestOffset(96);
 
-  return [output0, output1, output2, output3];
+    return [output0, output1, output2, output3];
+  }
+
+  return inputs.map(digest64);
 }
 
 /**
@@ -148,6 +154,14 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
 export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
     throw new Error("Input length must be 8");
+  }
+
+  if (!hasSimd) {
+    const output: HashObject[] = new Array<HashObject>(4);
+    for (let i = 0; i < 4; i++) {
+      output[i] = digest64HashObjects(inputs[2 * i], inputs[2 * i + 1]);
+    }
+    return output;
   }
 
   // inputUint8Array is 256 bytes
@@ -248,7 +262,7 @@ export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   inputUint32Array[62] = inputs[5].h7;
   inputUint32Array[63] = inputs[7].h7;
 
-  ctx.batchHash4HashObjectInputs(wasmOutputValue);
+  (ctx as WasmSimdContext).batchHash4HashObjectInputs(wasmOutputValue);
 
   const output0 = byteArrayToHashObject(outputUint8Array, 0);
   const output1 = byteArrayToHashObject(outputUint8Array, 32);
@@ -268,19 +282,24 @@ export function hashInto(input: Uint8Array, output: Uint8Array): void {
   if (input.length !== output.length * 2) {
     throw new Error(`Invalid output length ${output.length}`);
   }
-  // for every 64 x 4 = 256 bytes, do the batch hash
-  const endBatch = Math.floor(input.length / 256);
-  for (let i = 0; i < endBatch; i++) {
-    inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
-    ctx.batchHash4UintArray64s(wasmOutputValue);
-    output.set(outputUint8Array.subarray(0, 128), i * 128);
+
+  let num64ByteChunksHashed = 0;
+  let num64ByteChunksRemaining = input.length / 64;
+  if (hasSimd) {
+    // for every 64 x 4 = 256 bytes, do the batch hash if SIMD is present
+    const num256ByteChunks = Math.floor(input.length / 256);
+    for (let i = 0; i < num256ByteChunks; i++) {
+      inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
+      (ctx as WasmSimdContext).batchHash4UintArray64s(wasmOutputValue);
+      output.set(outputUint8Array.subarray(0, 128), i * 128);
+    }
+    num64ByteChunksHashed = num256ByteChunks * 4;
+    num64ByteChunksRemaining -= num64ByteChunksHashed;
   }
 
-  const numHashed = endBatch * 4;
-  const remainingHash = Math.floor((input.length % 256) / 64);
-  const inputOffset = numHashed * 64;
-  const outputOffset = numHashed * 32;
-  for (let i = 0; i < remainingHash; i++) {
+  const inputOffset = num64ByteChunksHashed * 64;
+  const outputOffset = num64ByteChunksHashed * 32;
+  for (let i = 0; i < num64ByteChunksRemaining; i++) {
     inputUint8Array.set(input.subarray(inputOffset + i * 64, inputOffset + (i + 1) * 64), 0);
     ctx.digest64(wasmInputValue, wasmOutputValue);
     output.set(outputUint8Array.subarray(0, 32), outputOffset + i * 32);
