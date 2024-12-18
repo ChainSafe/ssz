@@ -21,7 +21,7 @@ runs:
 
     - name: Select deno runtime
       if: inputs.runtime == 'deno'    
-      run: echo "TEST_COMMAND=deno run -A" >> $GITHUB_ENV
+      run: echo "TEST_COMMAND=deno run -A --unstable-sloppy-imports" >> $GITHUB_ENV
       shell: bash
 
     - name: Unit Tests
