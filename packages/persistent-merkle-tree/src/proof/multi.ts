@@ -1,7 +1,7 @@
-import {Gindex} from "../gindex";
-import {BranchNode, LeafNode, Node} from "../node";
-import {Tree} from "../tree";
-import {computeMultiProofBitstrings, SortOrder} from "./util";
+import {Gindex} from "../gindex.js";
+import {BranchNode, LeafNode, Node} from "../node.js";
+import {Tree} from "../tree.js";
+import {computeMultiProofBitstrings, SortOrder} from "./util.js";
 
 /**
  * Create an multiproof

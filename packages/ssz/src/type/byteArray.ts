@@ -7,10 +7,10 @@ import {
   HashComputationLevel,
   getHashComputations,
 } from "@chainsafe/persistent-merkle-tree";
-import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray";
-import {splitIntoRootChunks} from "../util/merkleize";
-import {ByteViews} from "./abstract";
-import {CompositeType, LENGTH_GINDEX} from "./composite";
+import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.js";
+import {splitIntoRootChunks} from "../util/merkleize.js";
+import {ByteViews} from "./abstract.js";
+import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 
 export type ByteArray = Uint8Array;
 

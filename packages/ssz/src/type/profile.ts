@@ -11,11 +11,11 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
+import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {Type, ValueOf} from "./abstract.js";
+import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
 import {
   getProfileTreeViewClass,
   ValueOfFields,
@@ -23,16 +23,16 @@ import {
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
   computeSerdesData,
-} from "../view/profile";
+} from "../view/profile.js";
 import {
   getProfileTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/profile";
-import {Case} from "../util/strings";
-import {BitArray} from "../value/bitArray";
-import {mixInActiveFields, setActiveFields} from "./stableContainer";
-import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional";
+} from "../viewDU/profile.js";
+import {Case} from "../util/strings.js";
+import {BitArray} from "../value/bitArray.js";
+import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};

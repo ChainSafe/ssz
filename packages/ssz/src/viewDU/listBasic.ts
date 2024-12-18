@@ -6,11 +6,11 @@ import {
   treeZeroAfterIndex,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
-import {ListBasicType} from "../view/listBasic";
-import {ArrayBasicTreeViewDU, ArrayBasicTreeViewDUCache} from "./arrayBasic";
-import {tree_serializeToBytesArrayBasic} from "../type/arrayBasic";
+import {ByteViews, ValueOf} from "../type/abstract.js";
+import {BasicType} from "../type/basic.js";
+import {ListBasicType} from "../view/listBasic.js";
+import {ArrayBasicTreeViewDU, ArrayBasicTreeViewDUCache} from "./arrayBasic.js";
+import {tree_serializeToBytesArrayBasic} from "../type/arrayBasic.js";
 
 export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends ArrayBasicTreeViewDU<ElementType> {
   constructor(readonly type: ListBasicType<ElementType>, protected _rootNode: Node, cache?: ArrayBasicTreeViewDUCache) {

@@ -1,7 +1,7 @@
 import {HashComputationLevel, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray";
-import {CompositeType} from "../type/composite";
-import {TreeViewDU} from "./abstract";
+import {BitArray} from "../value/bitArray.js";
+import {CompositeType} from "../type/composite.js";
+import {TreeViewDU} from "./abstract.js";
 
 /**
  * Thin wrapper around BitArray to upstream changes after `this.commit()`

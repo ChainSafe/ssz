@@ -1,9 +1,9 @@
 import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {ValueOf, ByteViews} from "./abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite";
+import {maxChunksToDepth} from "../util/merkleize.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {ValueOf, ByteViews} from "./abstract.js";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -14,10 +14,10 @@ import {
   value_getRootsArrayComposite,
   maxSizeArrayComposite,
   minSizeArrayComposite,
-} from "./arrayComposite";
-import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite";
-import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite";
-import {ArrayType} from "./array";
+} from "./arrayComposite.js";
+import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite.js";
+import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
+import {ArrayType} from "./array.js";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

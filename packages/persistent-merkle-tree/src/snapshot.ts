@@ -1,7 +1,7 @@
-import {Tree, getNode} from "./tree";
-import {zeroNode} from "./zeroNode";
-import {Gindex, toGindex} from "./gindex";
-import {LeafNode, Node} from "./node";
+import {Tree, getNode} from "./tree.js";
+import {zeroNode} from "./zeroNode.js";
+import {Gindex, toGindex} from "./gindex.js";
+import {LeafNode, Node} from "./node.js";
 
 type Snapshot = {
   finalized: Uint8Array[];

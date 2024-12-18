@@ -1,5 +1,5 @@
-import type {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import type {HashComputationLevel} from "../hashComputation";
+import type {HashObject} from "@chainsafe/as-sha256/hashObject";
+import type {HashComputationLevel} from "../hashComputation.js";
 
 export type {HashObject};
 
