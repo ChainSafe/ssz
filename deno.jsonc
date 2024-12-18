@@ -1,4 +1,0 @@
-{
-  "$schema": "https://raw.githubusercontent.com/denoland/deno/refs/tags/v2.1.0/cli/schemas/config-file.v1.json",
-  "workspace": ["./packages/as-sha256", "./packages/persistent-merkle-tree", "./packages/persistent-ts", "./packages/simpleserialize.com", "./packages/ssz"]
-}
