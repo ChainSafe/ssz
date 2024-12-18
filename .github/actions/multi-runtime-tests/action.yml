@@ -41,6 +41,13 @@ runs:
         key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
 
     - name: Download spec tests
+      if: inputs.runtime != 'nodejs'
+      run: ${{env.TEST_COMMAND}} test/spec/downloadTests.ts
+      working-directory: packages/ssz
+      shell: bash
+
+    - name: Download spec tests
+      if: inputs.runtime == 'nodejs'
       run: ${{env.TEST_COMMAND}} download-spec-tests
       working-directory: packages/ssz
       shell: bash
