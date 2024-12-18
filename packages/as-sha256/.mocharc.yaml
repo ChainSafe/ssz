@@ -1,7 +1,7 @@
 colors: true
 require:
-- ts-node/register
-extension: 
+  - ts-node/register
+extension:
   - "ts"
-loader: 
+loader:
   - ts-node/esm
