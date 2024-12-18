@@ -12,6 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
+  "type": "module",
   "main": "lib/index.js",
   "typesVersions": {
     "*": {
@@ -31,7 +32,7 @@
     "clean": "rm -rf ./dist",
     "lint": "echo 'no linting for this package'",
     "check-types": "echo 'no type check for this package'",
-    "generate": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
+    "generate": "rm -rf ./dist && node --loader=ts-node/esm ./scripts/codegen.ts",
     "build": "yarn asbuild && yarn asbuild:simd && yarn generate && yarn build:lib",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert",
