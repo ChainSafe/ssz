@@ -1,4 +1,6 @@
 {
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
@@ -11,8 +13,5 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-  },
-  "include": [
-    "src",
-  ],
+  }
 }

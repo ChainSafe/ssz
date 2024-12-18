@@ -1,7 +1,8 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["src", "test"],
+  "extends": "../../tsconfig.build.cjs.json",
+  "include": ["src"],
   "compilerOptions": {
+    "outDir": "lib/cjs",
     "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
   }
 }

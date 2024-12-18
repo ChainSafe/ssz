@@ -1,8 +1,7 @@
 {
+  "extends": "../../tsconfig.json",
   "include": ["src", "test"],
-  "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "incremental": true,
-    "noEmit": true
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "../../types", "./types"],
   }
 }
