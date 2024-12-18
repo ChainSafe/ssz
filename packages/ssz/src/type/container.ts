@@ -9,19 +9,19 @@ import {
   getNode,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
-import {getContainerTreeViewClass} from "../view/container";
-import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
+import {maxChunksToDepth} from "../util/merkleize.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {Type, ValueOf} from "./abstract.js";
+import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
+import {getContainerTreeViewClass} from "../view/container.js";
+import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container.js";
 import {
   getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/container";
-import {Case} from "../util/strings";
+} from "../viewDU/container.js";
+import {Case} from "../util/strings.js";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};

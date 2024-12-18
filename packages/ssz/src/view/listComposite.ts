@@ -1,7 +1,7 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite";
-import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayComposite";
+import {ValueOf} from "../type/abstract.js";
+import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
+import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayComposite.js";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ListCompositeType<

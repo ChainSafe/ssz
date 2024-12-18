@@ -1,4 +1,4 @@
-import {newInstance, WasmContext} from "./wasm";
+import {newInstance, WasmContext} from "./wasm.js";
 
 /**
  * Class based SHA256

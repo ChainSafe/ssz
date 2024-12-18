@@ -1,9 +1,9 @@
-import {zeroNode} from "./zeroNode";
-import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex";
-import {Node, LeafNode, BranchNode} from "./node";
-import {HashComputationLevel, levelAtIndex} from "./hashComputation";
-import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof";
-import {createSingleProof} from "./proof/single";
+import {zeroNode} from "./zeroNode.js";
+import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex.js";
+import {Node, LeafNode, BranchNode} from "./node.js";
+import {HashComputationLevel, levelAtIndex} from "./hashComputation.js";
+import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof/index.js";
+import {createSingleProof} from "./proof/single.js";
 
 export type Hook = (newRootNode: Node) => void;
 

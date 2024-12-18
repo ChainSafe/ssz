@@ -1,5 +1,5 @@
 import {BranchNode, LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, isCompositeType} from "../../type/composite";
+import {CompositeType, isCompositeType} from "../../type/composite.js";
 
 type JsonPathProp = string | number;
 type JsonPath = JsonPathProp[];
