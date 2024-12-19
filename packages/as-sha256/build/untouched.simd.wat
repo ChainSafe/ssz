@@ -119,6 +119,7 @@
  (export "batchHash4UintArray64s" (func $assembly/index.simd/batchHash4UintArray64s))
  (export "batchHash4HashObjectInputs" (func $assembly/index.simd/batchHash4HashObjectInputs))
  (export "INPUT_LENGTH" (global $assembly/common/INPUT_LENGTH))
+ (export "PARALLEL_FACTOR" (global $assembly/common/PARALLEL_FACTOR))
  (export "input" (global $assembly/common/input))
  (export "output" (global $assembly/common/output))
  (export "init" (func $assembly/common/init))
