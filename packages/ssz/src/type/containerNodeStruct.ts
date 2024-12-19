@@ -47,7 +47,7 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     // because the ListBasicViewDU in view.a will never propagate the changes upwards to its ContainerNodeStructType.
     for (const {fieldName, fieldType} of this.fieldsEntries) {
       if (isCompositeType(fieldType) && fieldType.isViewMutable) {
-        throw Error(`ContainerNodeStructType field '${fieldName}' ${fieldType.typeName} view is mutable`);
+        throw Error(`ContainerNodeStructType field '${String(fieldName as Symbol)}' ${fieldType.typeName} view is mutable`);
       }
     }
   }

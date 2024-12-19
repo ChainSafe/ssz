@@ -2,7 +2,7 @@ import {hashInto} from "@chainsafe/hashtree";
 import {Hasher, HashObject} from "./types.js";
 import {Node} from "../node.js";
 import type {HashComputationLevel} from "../hashComputation.js";
-import {byteArrayIntoHashObject} from "@chainsafe/as-sha256/hashObject";
+import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import {doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
 
 /**
