@@ -6,22 +6,37 @@ import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} f
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
-let hasSimd = await simd();
-if (process.env.DISABLE_SIMD === "true") {
-  hasSimd = false;
+const hasSimd = await simd();
+
+let ctx: WasmSimdContext;
+let wasmInputValue: number;
+let wasmOutputValue: number;
+let inputUint8Array: Uint8Array;
+let outputUint8Array: Uint8Array;
+/** output uint8array, length 32, used to easily copy output data */
+let outputUint8Array32: Uint8Array;
+let inputUint32Array: Uint32Array;
+
+function initializeInstance(useSimd: boolean): void {
+  ctx = newInstance(useSimd) as WasmSimdContext;
+  wasmInputValue = ctx.input.value;
+  wasmOutputValue = ctx.output.value;
+  inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
+  outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.PARALLEL_FACTOR * 32);
+  /** output uint8array, length 32, used to easily copy output data */
+  outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
+  inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 }
 
-const ctx = newInstance(hasSimd);
-const wasmInputValue = ctx.input.value;
-const wasmOutputValue = ctx.output.value;
-const inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
-const outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.PARALLEL_FACTOR * 32);
-/** output uint8array, length 32, used to easily copy output data */
-const outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
-const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
+initializeInstance(hasSimd);
 
 export function simdEnabled(): boolean {
   return Boolean(ctx.HAS_SIMD.valueOf());
+}
+
+export function reinitializeInstance(useSimd: boolean): boolean {
+  initializeInstance(useSimd);
+  return simdEnabled();
 }
 
 export function digest(data: Uint8Array): Uint8Array {

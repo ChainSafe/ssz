@@ -3,6 +3,8 @@ import {Buffer} from "buffer";
 import {expect} from "chai";
 import * as sha256 from "../../src/index.js";
 
+sha256.reinitializeInstance(true);
+
 describe("as-sha256", function () {
   describe("digest()", function () {
     const digestTestCases = [
