@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {precomputeJsonKey} from "../../../src/type/container";
+import {precomputeJsonKey} from "../../../src/type/container.js";
 
 describe("JSON case eth2", () => {
   const fieldNameToJsonKeyCsv = getFieldNameToJsonKeyCsv();

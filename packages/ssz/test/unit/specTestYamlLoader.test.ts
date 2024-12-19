@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import jsyaml from "js-yaml";
-import {readYamlNumbersAsStrings} from "../spec/testRunner";
-import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes";
-import {toHexString} from "../../src";
+import {readYamlNumbersAsStrings} from "../spec/testRunner.js";
+import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.js";
+import {toHexString} from "../../src/index.js";
 
 /* eslint-disable quotes */
 

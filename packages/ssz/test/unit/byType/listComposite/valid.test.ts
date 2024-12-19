@@ -1,5 +1,5 @@
-import {ContainerType, ListCompositeType, UintNumberType, ByteVectorType, ListBasicType} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {ContainerType, ListCompositeType, UintNumberType, ByteVectorType, ListBasicType} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 const uint64Type = new UintNumberType(8);
 

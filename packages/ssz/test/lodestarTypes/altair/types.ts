@@ -1,5 +1,5 @@
-import {ValueOf} from "../../../src";
-import * as ssz from "./sszTypes";
+import {ValueOf} from "../../../src/index.js";
+import * as ssz from "./sszTypes.js";
 
 export type SyncSubnets = ValueOf<typeof ssz.SyncSubnets>;
 export type Metadata = ValueOf<typeof ssz.Metadata>;

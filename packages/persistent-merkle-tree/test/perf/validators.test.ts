@@ -6,7 +6,7 @@ import {
   countToDepth,
   zeroNode,
   getHashComputations,
-} from "../../src";
+} from "../../src/index.js";
 import {MemoryTracker} from "../utils/memTracker";
 import {batchHash} from "../utils/batchHash";
 

@@ -1,5 +1,5 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import * as sha256 from "../../src";
+import * as sha256 from "../../src/index.js";
 import {byteArrayToHashObject} from "../../src/hashObject";
 
 /**

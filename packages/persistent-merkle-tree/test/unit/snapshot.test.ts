@@ -4,7 +4,7 @@ import {fromSnapshot, indexToFinalizedGindices, toSnapshot} from "../../src/snap
 import {subtreeFillToContents} from "../../src/subtree";
 import { LeafNode } from "../../src/node";
 import { Tree, setNodesAtDepth } from "../../src/tree";
-import { toGindex } from "../../src";
+import { toGindex } from "../../src/index.js";
 
 describe("toSnapshot and fromSnapshot", () => {
   const depth = 4;

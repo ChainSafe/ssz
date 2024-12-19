@@ -1,6 +1,6 @@
 import {HashObject} from "@chainsafe/as-sha256";
 import {expect} from "chai";
-import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src";
+import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src/index.js";
 import {HashComputation, HashComputationLevel, getHashComputations} from "../../src/hashComputation";
 
 describe("LeafNode uint", () => {

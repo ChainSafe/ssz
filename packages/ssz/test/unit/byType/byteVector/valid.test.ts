@@ -1,5 +1,5 @@
-import {ByteVectorType} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {ByteVectorType} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({
   type: new ByteVectorType(4),

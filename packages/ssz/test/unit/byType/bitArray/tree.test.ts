@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {BitVectorType, BitListType, BitArray} from "../../../../src";
-import {runViewTestMutation} from "../runViewTestMutation";
+import {BitVectorType, BitListType, BitArray} from "../../../../src/index.js";
+import {runViewTestMutation} from "../runViewTestMutation.js";
 
 for (const type of [new BitVectorType(4), new BitListType(4)]) {
   runViewTestMutation({

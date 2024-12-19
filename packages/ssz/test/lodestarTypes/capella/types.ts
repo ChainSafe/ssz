@@ -1,5 +1,5 @@
-import {ValueOf} from "../../../src";
-import * as ssz from "./sszTypes";
+import {ValueOf} from "../../../src/index.js";
+import * as ssz from "./sszTypes.js";
 
 export type Withdrawal = ValueOf<typeof ssz.Withdrawal>;
 export type Withdrawals = ValueOf<typeof ssz.Withdrawals>;

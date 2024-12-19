@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "yarn build:cjs && yarn build:esm",
+    "build": "yarn build:cjs && yarn build:esm && yarn build:types",
     "build:esm": "tsc -p tsconfig.build.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
     "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
     "build:types": "tsc -p tsconfig.build.types.json",

@@ -1,9 +1,9 @@
-import {ContainerType, ContainerNodeStructType, ListBasicType, ByteVectorType} from "../../../../src";
-import {ssz} from "../../../lodestarTypes";
-import {SignedContributionAndProof} from "../../../lodestarTypes/altair/sszTypes";
-import {replaceUintTypeWithUintBigintType} from "../../../spec/replaceUintTypeWithUintBigintType";
-import {uint64NumInfType} from "../../../utils/primitiveTypes";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {ContainerType, ContainerNodeStructType, ListBasicType, ByteVectorType} from "../../../../src/index.js";
+import {ssz} from "../../../lodestarTypes/index.js";
+import {SignedContributionAndProof} from "../../../lodestarTypes/altair/sszTypes.js";
+import {replaceUintTypeWithUintBigintType} from "../../../spec/replaceUintTypeWithUintBigintType.js";
+import {uint64NumInfType} from "../../../utils/primitiveTypes.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 for (const ContainerTypeTest of [ContainerType, ContainerNodeStructType]) {
   runTypeTestValid({

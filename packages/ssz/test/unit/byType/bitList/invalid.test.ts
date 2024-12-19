@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {BitListType} from "../../../../src";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {BitListType} from "../../../../src/index.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new BitListType(8 * 8),

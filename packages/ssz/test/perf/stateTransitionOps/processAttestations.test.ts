@@ -1,6 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
-import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src";
+import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src/index.js";
 
 describe("processAttestations", () => {
   const vc = 250_000;

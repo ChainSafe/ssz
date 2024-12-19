@@ -1,6 +1,6 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {ListBasicType, UintNumberType} from "../../src";
-import {Validators} from "../lodestarTypes/phase0/sszTypes";
+import {ListBasicType, UintNumberType} from "../../src/index.js";
+import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
 
 describe("iterate", () => {
   setBenchOpts({noThreshold: true});

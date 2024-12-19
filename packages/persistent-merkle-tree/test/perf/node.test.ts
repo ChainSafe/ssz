@@ -1,6 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
 import {BranchNode, getNodeH, LeafNode} from "../../src/node";
-import {countToDepth, getHashComputations, HashComputation, subtreeFillToContents} from "../../src";
+import {countToDepth, getHashComputations, HashComputation, subtreeFillToContents} from "../../src/index.js";
 import {batchHash} from "../utils/batchHash";
 
 describe("HashObject LeafNode", () => {

@@ -1,6 +1,6 @@
 import {LeafNode, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {MutableVector} from "@chainsafe/persistent-ts";
-import {testRunnerMemory} from "./testRunnerMemory";
+import {testRunnerMemory} from "./testRunnerMemory.js";
 
 // Results in Linux Dec 2021
 //

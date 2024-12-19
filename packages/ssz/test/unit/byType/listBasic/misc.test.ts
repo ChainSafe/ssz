@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ListBasicType, UintNumberType} from "../../../../src";
+import {ListBasicType, UintNumberType} from "../../../../src/index.js";
 
 describe("To hit 100% coverage", () => {
   const listBasic = new ListBasicType(new UintNumberType(1), 4);

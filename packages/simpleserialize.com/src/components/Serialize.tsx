@@ -4,7 +4,7 @@ import Output from "./Output";
 import Input from "./Input";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
-import {ForkName} from "../util/types";
+import {ForkName} from "../util/types.js";
 import {ModuleThread, spawn, Thread, Worker} from "threads";
 import {SszWorker} from "./worker";
 

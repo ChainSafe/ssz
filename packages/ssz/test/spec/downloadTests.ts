@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import {execSync} from "child_process";
-import {SPEC_TEST_LOCATION, SPEC_TEST_VERSION, SPEC_TEST_REPO_URL} from "../specTestVersioning";
+import {SPEC_TEST_LOCATION, SPEC_TEST_VERSION, SPEC_TEST_REPO_URL} from "../specTestVersioning.js";
 
 /* eslint-disable no-console */
 

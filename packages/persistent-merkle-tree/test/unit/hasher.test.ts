@@ -5,7 +5,7 @@ import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {linspace} from "../utils/misc";
 import {buildComparisonTrees} from "../utils/tree";
-import {HashComputationLevel, HashObject, LeafNode, getHashComputations, subtreeFillToContents} from "../../src";
+import {HashComputationLevel, HashObject, LeafNode, getHashComputations, subtreeFillToContents} from "../../src/index.js";
 import { expect } from "chai";
 import { zeroHash } from "../../src/zeroHash";
 

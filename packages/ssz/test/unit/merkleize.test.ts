@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {bitLength, maxChunksToDepth, nextPowerOf2} from "../../src/util/merkleize";
+import {bitLength, maxChunksToDepth, nextPowerOf2} from "../../src/util/merkleize.js";
 
 describe("util / merkleize / bitLength", () => {
   const bitLengthByIndex = [0, 1, 2, 2, 3, 3, 3, 3, 4, 4];

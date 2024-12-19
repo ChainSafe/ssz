@@ -7,7 +7,7 @@ import {ChangeEvent} from "react";
 import {AlertManager, withAlert} from "react-alert";
 
 import {inputTypes} from "../util/input_types";
-import {ForkName, typeNames, forks} from "../util/types";
+import {ForkName, typeNames, forks} from "../util/types.js";
 import {SszWorker} from "./worker";
 
 const initialType = "BeaconBlock";
@@ -33,7 +33,7 @@ type State = {
   userHasEditedInput: boolean;
 };
 
-const DEFAULT_FORK = "deneb";
+const DEFAULT_FORK = "deneb/index.js";
 
 class Input extends React.Component<Props, State> {
   worker: Worker;

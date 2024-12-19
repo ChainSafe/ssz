@@ -4,7 +4,7 @@ import {hasher as asShaHasher} from "../../src/hasher/as-sha256";
 import {hasher as nobleHasher} from "../../src/hasher/noble";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
 import {buildComparisonTrees} from "../utils/tree";
-import {HashComputationLevel, getHashComputations} from "../../src";
+import {HashComputationLevel, getHashComputations} from "../../src/index.js";
 
 describe("hasher", function () {
   this.timeout(0);

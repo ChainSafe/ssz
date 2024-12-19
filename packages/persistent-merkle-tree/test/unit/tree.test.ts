@@ -12,7 +12,7 @@ import {
   findDiffDepthi,
   getHashComputations,
   HashComputationLevel,
-} from "../../src";
+} from "../../src/index.js";
 import {batchHash} from "../utils/batchHash";
 
 describe("fixed-depth tree iteration", () => {

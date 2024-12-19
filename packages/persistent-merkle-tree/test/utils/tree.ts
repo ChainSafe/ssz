@@ -1,4 +1,4 @@
-import {subtreeFillToContents} from "../../src";
+import {subtreeFillToContents} from "../../src/index.js";
 import {BranchNode, LeafNode, Node} from "../../src/node";
 import {linspace} from "./misc";
 

@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {ByteListType, ListBasicType, UintNumberType} from "../../src";
+import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.js";
 
 describe("ByteListType vs BasicListType<byte>", () => {
   const limit = 256 * 2;

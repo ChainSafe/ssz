@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray";
-import {BitVectorType} from "../../../src";
-import {linspace} from "../../utils/misc";
+import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray.js";
+import {BitVectorType} from "../../../src/index.js";
+import {linspace} from "../../utils/misc.js";
 
 const BITS_PER_BYTE = 8;
 

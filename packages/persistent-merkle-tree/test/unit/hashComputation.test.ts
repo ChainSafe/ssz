@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { zeroNode, Node } from "../../src";
+import { zeroNode, Node } from "../../src/index.js";
 import {HashComputationLevel} from "../../src/hashComputation";
 
 describe("HashComputationLevel", () => {

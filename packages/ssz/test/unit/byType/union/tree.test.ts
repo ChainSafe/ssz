@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {UnionType, UintNumberType, NoneType, ValueOf, toHexString} from "../../../../src";
+import {UnionType, UintNumberType, NoneType, ValueOf, toHexString} from "../../../../src/index.js";
 
 const byteType = new UintNumberType(1);
 const noneType = new NoneType();
