@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {Tree, iterateAtDepth, LeafNode, subtreeFillToDepth} from "../../src";
+import {Tree, iterateAtDepth, LeafNode, subtreeFillToDepth} from "../../src/index.js";
 
 describe("Tree", () => {
   for (const depth of [8, 16, 32]) {

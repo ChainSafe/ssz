@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ListBasicType, UintNumberType} from "../../../../src";
+import {ListBasicType, UintNumberType} from "../../../../src/index.js";
 
 describe("BasicList", () => {
   it("TreeView edit mutate and transfer", () => {

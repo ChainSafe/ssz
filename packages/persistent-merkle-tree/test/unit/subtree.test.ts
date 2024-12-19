@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel, zeroNode} from "../../src";
+import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel, zeroNode} from "../../src/index.js";
 
 describe("subtreeFillToContents", function () {
   // the hash computation takes time

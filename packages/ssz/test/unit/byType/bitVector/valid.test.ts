@@ -1,5 +1,5 @@
-import {BitVectorType, BitArray} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {BitVectorType, BitArray} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({
   type: new BitVectorType(128),

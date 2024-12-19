@@ -19,10 +19,10 @@ import {
   ValueOf,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../../src";
-import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes";
-import {runViewTestMutation} from "../runViewTestMutation";
-import {upgradeToNewType} from "../../../../src/util/upgrade";
+} from "../../../../src/index.js";
+import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
+import {runViewTestMutation} from "../runViewTestMutation.js";
+import {upgradeToNewType} from "../../../../src/util/upgrade.js";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable

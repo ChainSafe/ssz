@@ -18,9 +18,9 @@ import {
   ValueOf,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../../src";
-import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes";
-import {runViewTestMutation} from "../runViewTestMutation";
+} from "../../../../src/index.js";
+import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
+import {runViewTestMutation} from "../runViewTestMutation.js";
 import {getNodesAtDepth, Tree, zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 // Test both ContainerType, ContainerNodeStructType only if

@@ -1,5 +1,5 @@
 import {Buffer} from "buffer";
-import * as sha256 from "../../src";
+import * as sha256 from "../../src/index.js";
 import {expect} from "chai";
 
 describe("sha256", function () {

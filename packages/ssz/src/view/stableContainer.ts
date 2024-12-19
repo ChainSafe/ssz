@@ -7,12 +7,12 @@ import {
   Tree,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract";
-import {isBasicType, BasicType} from "../type/basic";
-import {isCompositeType, CompositeType} from "../type/composite";
-import {TreeView} from "./abstract";
-import {NonOptionalFields, OptionalType} from "../type/optional";
-import {BitArray} from "../value/bitArray";
+import {Type, ValueOf} from "../type/abstract.js";
+import {isBasicType, BasicType} from "../type/basic.js";
+import {isCompositeType, CompositeType} from "../type/composite.js";
+import {TreeView} from "./abstract.js";
+import {NonOptionalFields, OptionalType} from "../type/optional.js";
+import {BitArray} from "../value/bitArray.js";
 
 // some code is here to break the circular dependency between type, view, and viewDU
 
@@ -182,7 +182,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
     // Should never happen
     else {
       /* istanbul ignore next - unreachable code */
-      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${String(fieldName as symbol)}`);
     }
   }
 

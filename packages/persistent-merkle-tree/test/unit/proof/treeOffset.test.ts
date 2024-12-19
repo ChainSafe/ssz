@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset";
-import {zeroNode} from "../../../src/zeroNode";
+import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset.js";
+import {zeroNode} from "../../../src/zeroNode.js";
 
 describe("computeTreeOffsetProof", () => {
   it("should properly compute known testcases", () => {

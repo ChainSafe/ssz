@@ -1,5 +1,5 @@
-import {ForkName} from "../utils/fork";
-import {sszStatic} from "./ssz_static";
+import {ForkName} from "../utils/fork.js";
+import {sszStatic} from "./ssz_static.js";
 
 if (process.env.LODESTAR_FORK) {
   sszStatic(process.env.LODESTAR_FORK as ForkName);

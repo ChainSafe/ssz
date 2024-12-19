@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ListBasicType, toHexString, UintNumberType} from "../../../../src";
-import {runViewTestMutation, TreeMutation} from "../runViewTestMutation";
-import {ListUintNum64Type} from "../../../../src/type/listUintNum64";
+import {ListBasicType, toHexString, UintNumberType} from "../../../../src/index.js";
+import {runViewTestMutation, TreeMutation} from "../runViewTestMutation.js";
+import {ListUintNum64Type} from "../../../../src/type/listUintNum64.js";
 
 const limit = 100;
 const uint64NumInf = new UintNumberType(8, {clipInfinity: true});

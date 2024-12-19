@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {getNodesAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src";
+import {getNodesAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src/index.js";
 
 describe("tree / getNodes", () => {
   const depth = 40;

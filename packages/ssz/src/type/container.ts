@@ -9,19 +9,19 @@ import {
   getNode,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
-import {getContainerTreeViewClass} from "../view/container";
-import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container";
+import {maxChunksToDepth} from "../util/merkleize.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {Type, ValueOf} from "./abstract.js";
+import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
+import {getContainerTreeViewClass} from "../view/container.js";
+import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container.js";
 import {
   getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/container";
-import {Case} from "../util/strings";
+} from "../viewDU/container.js";
+import {Case} from "../util/strings.js";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
@@ -551,7 +551,7 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
   if (casingMap) {
     const keyFromCaseMap = casingMap[fieldName];
     if (keyFromCaseMap === undefined) {
-      throw Error(`casingMap[${fieldName}] not defined`);
+      throw Error(`casingMap[${String(fieldName as symbol)}] not defined`);
     }
     return keyFromCaseMap as string;
   } else if (jsonCase) {
@@ -569,6 +569,8 @@ export function renderContainerTypeName<Fields extends Record<string, Type<unkno
   prefix = "Container"
 ): string {
   const fieldNames = Object.keys(fields) as (keyof Fields)[];
-  const fieldTypeNames = fieldNames.map((fieldName) => `${fieldName}: ${fields[fieldName].typeName}`).join(", ");
+  const fieldTypeNames = fieldNames
+    .map((fieldName) => `${String(fieldName as symbol)}: ${fields[fieldName].typeName}`)
+    .join(", ");
   return `${prefix}({${fieldTypeNames}})`;
 }

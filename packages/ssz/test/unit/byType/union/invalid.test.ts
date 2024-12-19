@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {UintNumberType, UnionType, NoneType} from "../../../../src";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {UintNumberType, UnionType, NoneType} from "../../../../src/index.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 const byteType = new UintNumberType(1);
 const noneType = new NoneType();

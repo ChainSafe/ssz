@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src";
+import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.js";
 
 describe("gindices at depth", () => {
   const count = 100;

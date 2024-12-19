@@ -1,5 +1,5 @@
-import {BooleanType} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {BooleanType} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({
   type: new BooleanType(),

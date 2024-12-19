@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {ContainerType, UintNumberType, UintBigintType} from "../../src";
+import {ContainerType, UintNumberType, UintBigintType} from "../../src/index.js";
 
 describe("Uint64 types", () => {
   const ContainerNumber = new ContainerType({

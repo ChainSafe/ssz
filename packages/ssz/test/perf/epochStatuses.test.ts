@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
-import {CompositeViewDU} from "../../src";
-import {EpochParticipation} from "../lodestarTypes/altair/sszTypes";
-import {fillArray, linspace} from "../utils/misc";
+import {CompositeViewDU} from "../../src/index.js";
+import {EpochParticipation} from "../lodestarTypes/altair/sszTypes.js";
+import {fillArray, linspace} from "../utils/misc.js";
 
 describe("processAttestations() epochStatuses", () => {
   const len = 250_000;

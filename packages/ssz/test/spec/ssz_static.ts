@@ -1,14 +1,14 @@
 import fs from "fs";
 import path from "path";
-import {isCompositeType, Type} from "../../src";
-import {ssz} from "../lodestarTypes";
-import {SPEC_TEST_LOCATION} from "../specTestVersioning";
-import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType";
-import {parseSszStaticTestcase} from "./testRunner";
-import {runValidSszTest} from "./runValidTest";
-import {ForkName} from "../utils/fork";
-import {ACTIVE_PRESET} from "../lodestarTypes/params";
-import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest";
+import {isCompositeType, Type} from "../../src/index.js";
+import {ssz} from "../lodestarTypes/index.js";
+import {SPEC_TEST_LOCATION} from "../specTestVersioning.js";
+import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType.js";
+import {parseSszStaticTestcase} from "./testRunner.js";
+import {runValidSszTest} from "./runValidTest.js";
+import {ForkName} from "../utils/fork.js";
+import {ACTIVE_PRESET} from "../lodestarTypes/params.js";
+import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
 
 // ssz_static
 // | Attestation

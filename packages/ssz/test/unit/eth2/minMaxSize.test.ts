@@ -1,5 +1,5 @@
-import {ssz} from "../../lodestarTypes";
-import {Type} from "../../../src";
+import {ssz} from "../../lodestarTypes/index.js";
+import {Type} from "../../../src/index.js";
 import {expect} from "chai";
 
 enum ForkName {

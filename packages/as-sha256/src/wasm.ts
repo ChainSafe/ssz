@@ -1,4 +1,4 @@
-import {wasmCode} from "./wasmCode";
+import {wasmCode} from "./wasmCode.js";
 
 const _module = new WebAssembly.Module(wasmCode);
 

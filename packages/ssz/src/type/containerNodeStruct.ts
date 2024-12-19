@@ -1,13 +1,13 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type, ByteViews} from "./abstract";
-import {isCompositeType} from "./composite";
-import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {getContainerTreeViewClass} from "../view/containerNodeStruct";
-import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct";
-import {BranchNodeStruct} from "../branchNodeStruct";
-import {ValueOfFields} from "../view/container";
+import {Type, ByteViews} from "./abstract.js";
+import {isCompositeType} from "./composite.js";
+import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {getContainerTreeViewClass} from "../view/containerNodeStruct.js";
+import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.js";
+import {BranchNodeStruct} from "../branchNodeStruct.js";
+import {ValueOfFields} from "../view/container.js";
 
 /**
  * ContainerNodeStruct: ordered heterogeneous collection of values.
@@ -47,7 +47,9 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     // because the ListBasicViewDU in view.a will never propagate the changes upwards to its ContainerNodeStructType.
     for (const {fieldName, fieldType} of this.fieldsEntries) {
       if (isCompositeType(fieldType) && fieldType.isViewMutable) {
-        throw Error(`ContainerNodeStructType field '${fieldName}' ${fieldType.typeName} view is mutable`);
+        throw Error(
+          `ContainerNodeStructType field '${String(fieldName as symbol)}' ${fieldType.typeName} view is mutable`
+        );
       }
     }
   }

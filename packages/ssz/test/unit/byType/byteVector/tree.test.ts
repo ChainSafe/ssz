@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ByteVectorType, ContainerType} from "../../../../src";
+import {ByteVectorType, ContainerType} from "../../../../src/index.js";
 
 describe("ByteVectorType proofs", () => {
   const rootType = new ByteVectorType(32);

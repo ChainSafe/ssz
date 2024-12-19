@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {LeafNode, Node, toGindex, Tree, zeroNode, treeZeroAfterIndex, getNodesAtDepth} from "../../../src";
+import {LeafNode, Node, toGindex, Tree, zeroNode, treeZeroAfterIndex, getNodesAtDepth} from "../../../src/index.js";
 
 describe("tree / zeroAfterIndex", () => {
   // Test all possible zeroAfterIndex operations for any tree with 0 <= depth < 6

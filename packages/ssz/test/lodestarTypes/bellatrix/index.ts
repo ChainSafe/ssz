@@ -1,3 +1,3 @@
-export * from "./types";
-export * as ts from "./types";
-export * as ssz from "./sszTypes";
+export * from "./types.js";
+export * as ts from "./types.js";
+export * as ssz from "./sszTypes.js";

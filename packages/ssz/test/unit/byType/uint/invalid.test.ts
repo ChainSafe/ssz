@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {UintNumberType, UintBigintType} from "../../../../src";
-import {UintNumberByteLen, uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint";
-import {runTypeTestInvalid, InvalidValue} from "../runTypeTestInvalid";
+import {UintNumberType, UintBigintType} from "../../../../src/index.js";
+import {UintNumberByteLen, uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint.js";
+import {runTypeTestInvalid, InvalidValue} from "../runTypeTestInvalid.js";
 
 for (const byteLen of uintNumberByteLens) {
   runTypeTestInvalid({

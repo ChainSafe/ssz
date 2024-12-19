@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ListBasicType} from "../../../../src";
-import {byteType} from "../../../utils/primitiveTypes";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {ListBasicType} from "../../../../src/index.js";
+import {byteType} from "../../../utils/primitiveTypes.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new ListBasicType(byteType, 2),

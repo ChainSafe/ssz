@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {BitArray, BitListType} from "../../src";
+import {BitArray, BitListType} from "../../src/index.js";
 
 // running zipIndexesCommitteeBits() on `bitLen: 2048, bitsSet: 2048` takes 50.904 us/op
 // However deserializing a BitList to struct `len 2048, set 2048` takes 560.4670 us/op,

@@ -7,10 +7,10 @@ import {
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
-import {ArrayBasicType} from "../view/arrayBasic";
-import {TreeViewDU} from "./abstract";
+import {ValueOf} from "../type/abstract.js";
+import {BasicType} from "../type/basic.js";
+import {ArrayBasicType} from "../view/arrayBasic.js";
+import {TreeViewDU} from "./abstract.js";
 
 export type ArrayBasicTreeViewDUCache = {
   nodes: LeafNode[];

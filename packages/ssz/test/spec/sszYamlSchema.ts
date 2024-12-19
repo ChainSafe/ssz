@@ -4,19 +4,21 @@
 //
 // See https://github.com/ChainSafe/lodestar/pull/3623
 
-import {Schema} from "js-yaml";
+import jsYaml from "js-yaml";
+const {Schema} = jsYaml;
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import nullType from "js-yaml/lib/js-yaml/type/null";
+import nullType from "js-yaml/lib/js-yaml/type/null.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import boolType from "js-yaml/lib/js-yaml/type/bool";
+import boolType from "js-yaml/lib/js-yaml/type/bool.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import floatType from "js-yaml/lib/js-yaml/type/float";
+import floatType from "js-yaml/lib/js-yaml/type/float.js";
 // Forked from https://github.com/nodeca/js-yaml/blob/master/lib/js-yaml/type/int.js
 // Currently only supports loading ints
-import {Type} from "js-yaml";
+const {Type} = jsYaml;
 
 function isHexCode(c: number): boolean {
   return (

@@ -1,9 +1,9 @@
-import {ByteListType, ByteVectorType, ContainerType, ListCompositeType} from "../../../src";
-import {preset} from "../params";
-import {ssz as primitiveSsz} from "../primitive";
-import {ssz as phase0Ssz} from "../phase0";
-import {ssz as altairSsz} from "../altair";
-import {stringType} from "../utils/StringType";
+import {ByteListType, ByteVectorType, ContainerType, ListCompositeType} from "../../../src/index.js";
+import {preset} from "../params.js";
+import {ssz as primitiveSsz} from "../primitive/index.js";
+import {ssz as phase0Ssz} from "../phase0/index.js";
+import {ssz as altairSsz} from "../altair/index.js";
+import {stringType} from "../utils/StringType.js";
 const {
   BYTES_PER_LOGS_BLOOM,
   HISTORICAL_ROOTS_LIMIT,

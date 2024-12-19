@@ -1,0 +1,7 @@
+colors: true
+require:
+- ts-node/register
+extension: 
+  - "ts"
+loader: 
+  - ts-node/esm

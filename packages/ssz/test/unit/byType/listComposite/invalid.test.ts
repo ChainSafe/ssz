@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {ListCompositeType, UintNumberType, ContainerType, ListBasicType} from "../../../../src";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {ListCompositeType, UintNumberType, ContainerType, ListBasicType} from "../../../../src/index.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 const uint16 = new UintNumberType(2);
 

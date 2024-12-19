@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import * as sszAltair from "../lodestarTypes/altair/sszTypes";
-import {getRandomState} from "../utils/generateEth2Objs";
+import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
+import {getRandomState} from "../utils/generateEth2Objs.js";
 
 describe("Unchanged ViewDUs", () => {
   const state = sszAltair.BeaconState.toViewDU(getRandomState(100));

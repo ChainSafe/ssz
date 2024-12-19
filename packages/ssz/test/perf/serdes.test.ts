@@ -13,8 +13,8 @@ import {
   BitArray,
   UintNumberType,
   ByteVectorType,
-} from "../../src";
-import {ValidatorContainer, ValidatorNodeStruct} from "../lodestarTypes/phase0/sszTypes";
+} from "../../src/index.js";
+import {ValidatorContainer, ValidatorNodeStruct} from "../lodestarTypes/phase0/sszTypes.js";
 
 describe("SSZ (de)serialize", () => {
   const uint8 = new UintNumberType(1);

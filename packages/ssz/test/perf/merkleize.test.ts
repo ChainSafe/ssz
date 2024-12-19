@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {bitLength} from "../../src/util/merkleize";
+import {bitLength} from "../../src/util/merkleize.js";
 
 describe("merkleize / bitLength", () => {
   for (const n of [50, 8000, 250000]) {

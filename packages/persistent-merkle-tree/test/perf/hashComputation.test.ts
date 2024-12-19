@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import { HashComputation, HashComputationLevel, LeafNode, zeroHash } from "../../src";
+import { HashComputation, HashComputationLevel, LeafNode, zeroHash } from "../../src/index.js";
 
 /**
  * HashComputationLevel push then loop is faster than HashComputation[] push then loop

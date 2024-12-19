@@ -1,4 +1,4 @@
-import {hasher} from "@chainsafe/persistent-merkle-tree/lib/hasher/index";
+import {hasher} from "@chainsafe/persistent-merkle-tree";
 import {zeroHash} from "@chainsafe/persistent-merkle-tree";
 
 /** Dedicated property to cache hashTreeRoot of immutable CompositeType values */

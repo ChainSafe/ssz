@@ -1,5 +1,5 @@
-import {ListBasicType, UintNumberType} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {ListBasicType, UintNumberType} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({
   type: new ListBasicType(new UintNumberType(1), 128),

@@ -3,7 +3,7 @@
 import {sha256} from "@noble/hashes/sha256";
 
 // create array of "zero hashes", successively hashed zero chunks
-const zeroHashes = [new Uint8Array(32)];
+const zeroHashes: Array<Uint8Array> = [new Uint8Array(32)];
 
 export function zeroHash(depth: number): Uint8Array {
   if (depth >= zeroHashes.length) {

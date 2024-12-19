@@ -8,7 +8,7 @@ import {
   toGindex,
   uint8ArrayToHashObject,
   toGindexBitstring,
-} from "../../src";
+} from "../../src/index.js";
 
 describe("Track the performance of different Tree methods", () => {
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;

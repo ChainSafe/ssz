@@ -4,8 +4,8 @@ import {
   createCompactMultiProof,
   descriptorToBitlist,
   computeDescriptor,
-} from "../../../src/proof/compactMulti";
-import {createTree} from "../../utils/tree";
+} from "../../../src/proof/compactMulti.js";
+import {createTree} from "../../utils/tree.js";
 
 describe("CompactMultiProof", () => {
   const descriptorTestCases = [

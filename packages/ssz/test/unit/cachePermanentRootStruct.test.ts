@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ContainerType, UintNumberType} from "../../src";
+import {ContainerType, UintNumberType} from "../../src/index.js";
 
 describe("cachePermanentRootStruct", () => {
   it("should cache permanent root struct", () => {

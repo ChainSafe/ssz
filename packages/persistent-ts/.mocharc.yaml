@@ -1,2 +1,4 @@
 colors: true
 require: ts-node/register
+loader: 
+  - ts-node/esm

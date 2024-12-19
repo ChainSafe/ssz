@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {UintBigintType, toHexString, VectorBasicType} from "../../src";
+import {UintBigintType, toHexString, VectorBasicType} from "../../src/index.js";
 
 describe("uint packing", () => {
   const uint8 = new UintBigintType(1);

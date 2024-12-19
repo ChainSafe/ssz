@@ -1,6 +1,6 @@
-export * from "./types";
-export * as ssz from "./sszTypes";
+export * from "./types.js";
+export * as ssz from "./sszTypes.js";
 // Typeguards
-export * from "./utils/typeguards";
+export * from "./utils/typeguards.js";
 // String type
-export {StringType, stringType} from "./utils/StringType";
+export {StringType, stringType} from "./utils/StringType.js";

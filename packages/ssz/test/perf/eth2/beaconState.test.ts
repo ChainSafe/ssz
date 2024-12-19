@@ -1,8 +1,8 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
-import {BeaconState} from "../../lodestarTypes/altair/sszTypes";
-import {BitArray, CompositeViewDU, toHexString} from "../../../src";
-import {preset} from "../../lodestarTypes/params";
+import {BeaconState} from "../../lodestarTypes/altair/sszTypes.js";
+import {BitArray, CompositeViewDU, toHexString} from "../../../src/index.js";
+import {preset} from "../../lodestarTypes/params.js";
 const {SLOTS_PER_HISTORICAL_ROOT, EPOCHS_PER_ETH1_VOTING_PERIOD, SLOTS_PER_EPOCH} = preset;
 
 const vc = 200_000;

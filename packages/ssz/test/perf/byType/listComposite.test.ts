@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src";
+import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src/index.js";
 
 const byteType = new UintNumberType(1);
 

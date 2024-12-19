@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {subtreeFillToContents, Tree, Node, LeafNode, getNodesAtDepth, zeroNode, BranchNode} from "../../../src";
+import {subtreeFillToContents, Tree, Node, LeafNode, getNodesAtDepth, zeroNode, BranchNode} from "../../../src/index.js";
 
 // Results in Linux Dec 2021
 //

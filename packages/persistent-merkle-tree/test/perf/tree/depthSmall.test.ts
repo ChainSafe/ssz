@@ -1,6 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
-import {getNodeAtDepth, getNodesAtDepth, setNodeAtDepth, setNodesAtDepth, zeroNode} from "../../../src";
-import {linspace, fillArray} from "../../utils/misc";
+import {getNodeAtDepth, getNodesAtDepth, setNodeAtDepth, setNodesAtDepth, zeroNode} from "../../../src/index.js";
+import {linspace, fillArray} from "../../utils/misc.js";
 
 describe("Tree opts with low depth", () => {
   const runsFactor = 100_000;

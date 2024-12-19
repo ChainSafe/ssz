@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {BitListType, BitArray, toHexString} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {BitListType, BitArray, toHexString} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({
   type: new BitListType(2048),

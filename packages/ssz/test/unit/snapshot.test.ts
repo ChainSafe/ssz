@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {ByteVectorType} from "../../src/type/byteVector";
-import {ListCompositeType} from "../../src";
-import {PartialListCompositeType} from "../../src/type/partialListComposite";
+import {ByteVectorType} from "../../src/type/byteVector.js";
+import {ListCompositeType} from "../../src/index.js";
+import {PartialListCompositeType} from "../../src/type/partialListComposite.js";
 import {Tree, toGindex} from "@chainsafe/persistent-merkle-tree";
 
 describe("snapshot", () => {

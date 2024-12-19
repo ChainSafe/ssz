@@ -1,4 +1,4 @@
-import {ByteVectorType, UintNumberType, UintBigintType, BooleanType} from "../../../src";
+import {ByteVectorType, UintNumberType, UintBigintType, BooleanType} from "../../../src/index.js";
 
 export const Boolean = new BooleanType();
 export const Byte = new UintNumberType(1);

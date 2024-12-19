@@ -1,17 +1,17 @@
-import {Gindex} from "../gindex";
-import {Node} from "../node";
-import {createMultiProof, createNodeFromMultiProof} from "./multi";
-import {createNodeFromCompactMultiProof, createCompactMultiProof} from "./compactMulti";
-import {createNodeFromSingleProof, createSingleProof} from "./single";
+import {Gindex} from "../gindex.js";
+import {Node} from "../node.js";
+import {createMultiProof, createNodeFromMultiProof} from "./multi.js";
+import {createNodeFromCompactMultiProof, createCompactMultiProof} from "./compactMulti.js";
+import {createNodeFromSingleProof, createSingleProof} from "./single.js";
 import {
   computeTreeOffsetProofSerializedLength,
   createNodeFromTreeOffsetProof,
   createTreeOffsetProof,
   deserializeTreeOffsetProof,
   serializeTreeOffsetProof,
-} from "./treeOffset";
+} from "./treeOffset.js";
 
-export {computeDescriptor, descriptorToBitlist} from "./compactMulti";
+export {computeDescriptor, descriptorToBitlist} from "./compactMulti.js";
 
 export enum ProofType {
   single = "single",

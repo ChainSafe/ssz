@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ssz} from "../../lodestarTypes";
+import {ssz} from "../../lodestarTypes/index.js";
 
 describe("Various issues and regressions of Eth2 types", () => {
   it("Should push state.validators to ViewDU and update length", () => {

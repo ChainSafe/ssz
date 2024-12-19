@@ -1,4 +1,4 @@
-import {testRunnerMemory} from "./testRunnerMemory";
+import {testRunnerMemory} from "./testRunnerMemory.js";
 
 // Results in Linux Dec 2021
 //
