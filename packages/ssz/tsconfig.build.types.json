@@ -1,8 +1,14 @@
 {
   "extends": "../../tsconfig.build.types.json",
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "compilerOptions": {
     "outDir": "lib/types",
-    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
+    "typeRoots": [
+      "../../node_modules/@types",
+      "./node_modules/@types",
+      "./types"
+    ],
   }
 }
