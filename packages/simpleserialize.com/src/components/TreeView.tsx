@@ -19,7 +19,7 @@ import {
   isContainerType,
 } from "@chainsafe/ssz";
 import BN from "bn.js";
-import { ForkName, forks } from "../util/types.js";
+import { ForkName, forks } from "../util/types";
 
 function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>, name: string): string | undefined {
   if(isBooleanType(type)) return "bool";

@@ -7,7 +7,7 @@ import {ChangeEvent} from "react";
 import {AlertManager, withAlert} from "react-alert";
 
 import {inputTypes} from "../util/input_types";
-import {ForkName, typeNames, forks} from "../util/types.js";
+import {ForkName, typeNames, forks} from "../util/types";
 import {SszWorker} from "./worker";
 
 const initialType = "BeaconBlock";

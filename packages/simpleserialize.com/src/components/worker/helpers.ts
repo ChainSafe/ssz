@@ -1,5 +1,5 @@
 import {Type} from "@chainsafe/ssz";
-import {forks} from "../../util/types.js";
+import {forks} from "../../util/types";
 
 // type primitiveType = boolean | number | bigint | Uint8Array | Array<boolean> | object | undefined;
 
