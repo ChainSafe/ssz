@@ -1,3 +1,5 @@
+export const HAS_SIMD = false;
+
 export {
     INPUT_LENGTH,
     PARALLEL_FACTOR,

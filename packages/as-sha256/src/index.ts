@@ -6,7 +6,11 @@ import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} f
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
-const hasSimd = await simd();
+let hasSimd = await simd();
+if (`${process.env.DISABLE_SIMD}` === "true") {
+  hasSimd = false;
+}
+
 const ctx = newInstance(hasSimd);
 const wasmInputValue = ctx.input.value;
 const wasmOutputValue = ctx.output.value;
@@ -15,6 +19,10 @@ const outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.
 /** output uint8array, length 32, used to easily copy output data */
 const outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
 const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
+
+export function simdEnabled(): boolean {
+  return ctx.HAS_SIMD;
+}
 
 export function digest(data: Uint8Array): Uint8Array {
   if (data.length === 64) {

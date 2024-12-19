@@ -15,6 +15,8 @@ import {
   inputPtr
 } from "./common";
 
+export const HAS_SIMD = true;
+
 export {
   INPUT_LENGTH,
   PARALLEL_FACTOR,
