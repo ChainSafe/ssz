@@ -1,6 +1,6 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
 import * as sha256 from "../../src/index.js";
-import {byteArrayToHashObject} from "../../src/hashObject";
+import {byteArrayToHashObject} from "../../src/hashObject.js";
 
 /**
  * This really depends on cpu, on a test ubuntu node, batch*() is 2x faster than digest64

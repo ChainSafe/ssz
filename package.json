@@ -13,9 +13,9 @@
     "check-types": "lerna run check-types",
     "coverage": "lerna run coverage",
     "test": "lerna run test",
-    "benchmark:files": "NODE_OPTIONS=--max_old_space_size=4096 benchmark --config .benchrc.yaml",
+    "benchmark:files": "NODE_OPTIONS='--max_old_space_size=4096 --loader=ts-node/esm' benchmark --config .benchrc.yaml",
     "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
-    "benchmark:local": "yarn benchmark --local",
+    "benchmark:local": "NODE_OPTIONS='--loader=ts-node/esm' yarn benchmark --local",
     "check-readme": "lerna run check-readme"
   },
   "devDependencies": {
