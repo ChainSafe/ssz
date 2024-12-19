@@ -2,6 +2,7 @@ import {wasmCode} from "./wasmCode.js";
 import {wasmSimdCode} from "./wasmSimdCode.js";
 
 export interface WasmContext {
+  readonly HAS_SIMD: boolean;
   readonly PARALLEL_FACTOR: number;
   readonly INPUT_LENGTH: number;
   memory: {
