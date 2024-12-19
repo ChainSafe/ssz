@@ -17,6 +17,7 @@ import {
 
 export {
   INPUT_LENGTH,
+  PARALLEL_FACTOR,
   input,
   output,
   init,

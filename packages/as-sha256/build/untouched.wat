@@ -68,6 +68,7 @@
  (table $0 1 1 funcref)
  (elem $0 (i32.const 1))
  (export "INPUT_LENGTH" (global $assembly/common/INPUT_LENGTH))
+ (export "PARALLEL_FACTOR" (global $assembly/common/PARALLEL_FACTOR))
  (export "input" (global $assembly/common/input))
  (export "output" (global $assembly/common/output))
  (export "init" (func $assembly/common/init))
