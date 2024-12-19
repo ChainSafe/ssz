@@ -7,7 +7,7 @@ import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
 let hasSimd = await simd();
-if (`${process.env.DISABLE_SIMD}` === "true") {
+if (process.env.DISABLE_SIMD === "true") {
   hasSimd = false;
 }
 
@@ -21,7 +21,7 @@ const outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32
 const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
 
 export function simdEnabled(): boolean {
-  return ctx.HAS_SIMD;
+  return Boolean(ctx.HAS_SIMD.valueOf());
 }
 
 export function digest(data: Uint8Array): Uint8Array {
