@@ -2,10 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
 		"esModuleInterop": true,
-		"module": "es2020",
+		"module": "NodeNext",
     "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
     "sourceMap": true,
   }
 }

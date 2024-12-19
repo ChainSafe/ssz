@@ -2,9 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
 		"esModuleInterop": true,
-		"module": "commonjs",
+		"module": "NodeNext",
     "noEmit": false,
-    "declaration": false,
-    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
   }
 }
