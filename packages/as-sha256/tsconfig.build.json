@@ -1,13 +1,18 @@
 {
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "compilerOptions": {
-    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
-
+    "typeRoots": [
+      "../../node_modules/@types",
+      "./node_modules/@types",
+      "./types"
+    ],
     "outDir": "lib",
     "target": "esnext",
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "pretty": true,
-
     "strict": true,
     "sourceMap": true,
     "alwaysStrict": true,
@@ -18,7 +23,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
-
     "esModuleInterop": true,
     "declaration": true,
     "declarationMap": true,
