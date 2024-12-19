@@ -7,10 +7,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "lib": [
-      "es2022",
       "dom",
       "ESNext",
-      "es2020",
       "esnext.bigint",
       "es2020.string",
       "es2020.symbol.wellknown"

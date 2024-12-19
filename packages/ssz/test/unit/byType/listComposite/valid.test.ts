@@ -1,4 +1,10 @@
-import {ContainerType, ListCompositeType, UintNumberType, ByteVectorType, ListBasicType} from "../../../../src/index.js";
+import {
+  ContainerType,
+  ListCompositeType,
+  UintNumberType,
+  ByteVectorType,
+  ListBasicType,
+} from "../../../../src/index.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";
 
 const uint64Type = new UintNumberType(8);
