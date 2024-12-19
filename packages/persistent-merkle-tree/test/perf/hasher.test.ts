@@ -1,9 +1,9 @@
 import {itBench} from "@dapplion/benchmark";
-import {HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher";
-import {hasher as asShaHasher} from "../../src/hasher/as-sha256";
-import {hasher as nobleHasher} from "../../src/hasher/noble";
-import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
-import {buildComparisonTrees} from "../utils/tree";
+import {HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.js";
+import {hasher as asShaHasher} from "../../src/hasher/as-sha256.js";
+import {hasher as nobleHasher} from "../../src/hasher/noble.js";
+import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
+import {buildComparisonTrees} from "../utils/tree.js";
 import {HashComputationLevel, getHashComputations} from "../../src/index.js";
 
 describe("hasher", function () {

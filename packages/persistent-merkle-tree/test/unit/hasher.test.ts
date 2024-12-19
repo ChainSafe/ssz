@@ -1,13 +1,12 @@
-import {expectEqualHex} from "../utils/expectHex";
-import {uint8ArrayToHashObject, hashObjectToUint8Array} from "../../src/hasher/util";
-import {hasher as nobleHasher} from "../../src/hasher/noble";
-import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256";
-import {hasher as hashtreeHasher} from "../../src/hasher/hashtree";
-import {linspace} from "../utils/misc";
-import {buildComparisonTrees} from "../utils/tree";
+import {expectEqualHex} from "../utils/expectHex.js";
+import {uint8ArrayToHashObject, hashObjectToUint8Array} from "../../src/hasher/util.js";
+import {hasher as nobleHasher} from "../../src/hasher/noble.js";
+import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
+import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
+import {buildComparisonTrees} from "../utils/tree.js";
 import {HashComputationLevel, HashObject, LeafNode, getHashComputations, subtreeFillToContents} from "../../src/index.js";
 import { expect } from "chai";
-import { zeroHash } from "../../src/zeroHash";
+import { zeroHash } from "../../src/zeroHash.js";
 
 const hashers = [hashtreeHasher, asSha256Hasher, nobleHasher];
 

@@ -7,8 +7,8 @@ import {
   deserializeProof,
   ProofType,
   serializeProof,
-} from "../../../src/proof";
-import {createTree} from "../../utils/tree";
+} from "../../../src/proof/index.js";
+import {createTree} from "../../utils/tree.js";
 
 describe("proof equivalence", () => {
   it("should compute the same root from different proof types - single leaf", () => {

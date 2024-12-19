@@ -1,8 +1,8 @@
 import {itBench} from "@dapplion/benchmark";
-import {Node} from "../../src/node";
-import {packedRootsBytesToLeafNodes} from "../../src/packedNode";
-import {subtreeFillToContents} from "../../src/subtree";
-import {zeroNode} from "../../src/zeroNode";
+import {Node} from "../../src/node.js";
+import {packedRootsBytesToLeafNodes} from "../../src/packedNode.js";
+import {subtreeFillToContents} from "../../src/subtree.js";
+import {zeroNode} from "../../src/zeroNode.js";
 
 describe("packedRootsBytesToLeafNodes", () => {
   const bytes = 4 * 1000;

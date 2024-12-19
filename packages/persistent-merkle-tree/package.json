@@ -21,7 +21,7 @@
     "benchmark:files": "node --max-old-space-size=4096 --expose-gc --loader ts-node/esm ../../node_modules/.bin/benchmark",
     "benchmark": "yarn benchmark:files 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
-    "test": "mocha -r ts-node/register 'test/unit/**/*.test.ts'"
+    "test": "mocha 'test/unit/**/*.test.ts'"
   },
   "pre-push": [
     "lint"

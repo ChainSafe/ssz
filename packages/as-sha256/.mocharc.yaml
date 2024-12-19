@@ -1,9 +1,7 @@
 colors: true
 require:
 - ts-node/register
-- ../../setHasher.mjs
-# benchmark
-maxMs: 30_000
-threshold: 3
+extension: 
+  - "ts"
 loader: 
   - ts-node/esm

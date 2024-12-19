@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import {expect} from "chai";
-import {PersistentVector, TransientVector} from "../../src/Vector";
+import {PersistentVector, TransientVector} from "../../src/Vector.js";
 
 it("PersistentVector.empty has a length of 0", () => {
   const empty = PersistentVector.empty;

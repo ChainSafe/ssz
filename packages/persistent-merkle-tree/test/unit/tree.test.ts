@@ -13,7 +13,7 @@ import {
   getHashComputations,
   HashComputationLevel,
 } from "../../src/index.js";
-import {batchHash} from "../utils/batchHash";
+import {batchHash} from "../utils/batchHash.js";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {

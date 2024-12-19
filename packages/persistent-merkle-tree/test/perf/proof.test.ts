@@ -1,6 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
-import {computeDescriptor, createProof, ProofType} from "../../src/proof";
-import {createTree} from "../utils/tree";
+import {computeDescriptor, createProof, ProofType} from "../../src/proof/index.js";
+import {createTree} from "../utils/tree.js";
 
 describe("Proofs", () => {
   const depth = 15;

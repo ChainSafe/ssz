@@ -34,8 +34,8 @@
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "yarn run test:unit",
     "test:unit": "yarn run test:unit:node && yarn run test:unit:browser",
-    "test:unit:node": "mocha -r ts-node/register test/unit/*.test.ts",
-    "test:unit:browser": "karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.js",
+    "test:unit:node": "yarn mocha test/unit/*.test.ts",
+    "test:unit:browser": "karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.cjs",
     "benchmark": "node --loader ts-node/esm ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:ci": "yarn test:as-ci"

@@ -7,8 +7,8 @@ import {
   zeroNode,
   getHashComputations,
 } from "../../src/index.js";
-import {MemoryTracker} from "../utils/memTracker";
-import {batchHash} from "../utils/batchHash";
+import {MemoryTracker} from "../utils/memTracker.js";
+import {batchHash} from "../utils/batchHash.js";
 
 /**
  * Below is measured on Mac M1.

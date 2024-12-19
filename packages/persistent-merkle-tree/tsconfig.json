@@ -1,15 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"],
+  "include": ["src", "test"],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "lib": ["esnext", "dom"],
-    "outDir": "lib",
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "pretty": true,
-    "declaration": true
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
   }
 }

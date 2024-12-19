@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {PersistentVector, TransientVector} from "../../src/Vector";
+import {PersistentVector, TransientVector} from "../../src/Vector.js";
 
 // TODO: @tuyennhv re-write with common benchmark runner
 it.skip("PersistentVector - should be able to handle 10M elements", function () {
