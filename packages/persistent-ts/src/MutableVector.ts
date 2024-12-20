@@ -5,8 +5,13 @@ import {PersistentVector, TransientVector} from "./Vector.js";
  */
 export class MutableVector<T> implements Iterable<T> {
   public vector: PersistentVector<T> | TransientVector<T>;
+
   private constructor(vector: PersistentVector<T>) {
     this.vector = vector;
+  }
+
+  get length(): number {
+    return this.vector.length;
   }
 
   static empty<T>(): MutableVector<T> {
@@ -29,10 +34,6 @@ export class MutableVector<T> implements Iterable<T> {
       this.vector = (this.vector as TransientVector<T>).persistent();
     }
     return this;
-  }
-
-  get length(): number {
-    return this.vector.length;
   }
 
   get(index: number): T | undefined {

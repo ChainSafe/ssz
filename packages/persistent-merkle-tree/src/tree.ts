@@ -30,10 +30,10 @@ export class Tree {
   }
 
   /**
-   * Create a `Tree` from a `Proof` object
+   * The root hash of the tree
    */
-  static createFromProof(proof: Proof): Tree {
-    return new Tree(createNodeFromProof(proof));
+  get root(): Uint8Array {
+    return this.rootNode.root;
   }
 
   /**
@@ -68,10 +68,10 @@ export class Tree {
   }
 
   /**
-   * The root hash of the tree
+   * Create a `Tree` from a `Proof` object
    */
-  get root(): Uint8Array {
-    return this.rootNode.root;
+  static createFromProof(proof: Proof): Tree {
+    return new Tree(createNodeFromProof(proof));
   }
 
   /**

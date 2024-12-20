@@ -70,7 +70,7 @@ for (let i = 0; i < 1e8; i++) {
       const u = new Uint8Array(size);
 
       u.fill(4);
-      // @ts-ignore
+      // @ts-expect-error __proto__ is hidden and needs to be overridden
       u.__proto__ = null;
       refs.push(u);
       break;
@@ -211,6 +211,7 @@ for (let i = 0; i < 1e8; i++) {
     const heapUsedM = linearRegression(xs, heapUsed).m;
     const rssM = linearRegression(xs, rss).m;
 
+    // eslint-disable-next-line no-console
     console.log(i, {arrayBuffersM, externalM, heapTotalM, heapUsedM, rssM});
   }
 }
