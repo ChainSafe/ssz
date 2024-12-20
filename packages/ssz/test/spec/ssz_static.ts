@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import {isCompositeType, Type} from "../../src/index.js";
 import {ssz} from "../lodestarTypes/index.js";
-import {SPEC_TEST_LOCATION} from "../specTestVersioning.js";
+import {ethereumConsensusSpecsTests} from "../specTestVersioning.js";
 import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType.js";
 import {parseSszStaticTestcase} from "./testRunner.js";
 import {runValidSszTest} from "./runValidTest.js";
@@ -31,7 +31,7 @@ import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
 type Types = Record<string, Type<any>>;
 
 export function sszStatic(fork: ForkName): void {
-  const rootDir = path.join(SPEC_TEST_LOCATION, `tests/${ACTIVE_PRESET}/${fork}/ssz_static`);
+  const rootDir = path.join(ethereumConsensusSpecsTests.outputDir, `tests/${ACTIVE_PRESET}/${fork}/ssz_static`);
   for (const typeName of fs.readdirSync(rootDir)) {
     const type = (ssz[fork] as Types)[typeName] || (ssz.altair as Types)[typeName] || (ssz.phase0 as Types)[typeName];
     if (!type) {
@@ -43,7 +43,10 @@ export function sszStatic(fork: ForkName): void {
 }
 
 function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName, preset: string): void {
-  const typeDir = path.join(SPEC_TEST_LOCATION, `tests/${preset}/${forkName}/ssz_static/${typeName}`);
+  const typeDir = path.join(
+    ethereumConsensusSpecsTests.outputDir,
+    `tests/${preset}/${forkName}/ssz_static/${typeName}`
+  );
 
   for (const caseName of fs.readdirSync(typeDir)) {
     describe(`${preset}/${forkName}/ssz_static/${typeName}/${caseName}`, () => {
