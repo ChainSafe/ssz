@@ -1,5 +1,5 @@
-import {NoneType} from "../../../../src/type/none";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {NoneType} from "../../../../src/type/none.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new NoneType(),

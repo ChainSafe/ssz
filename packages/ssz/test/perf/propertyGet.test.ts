@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {UintNumberType, ContainerType, VectorBasicType} from "../../src";
+import {UintNumberType, ContainerType, VectorBasicType} from "../../src/index.js";
 
 describe("SSZ get property", () => {
   const Gwei = new UintNumberType(8);

@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
-import {BranchNode, getNodeH, LeafNode} from "../../src/node";
-import {countToDepth, getHashComputations, HashComputation, subtreeFillToContents} from "../../src";
-import {batchHash} from "../utils/batchHash";
+import {BranchNode, getNodeH, LeafNode} from "../../src/node.js";
+import {countToDepth, getHashComputations, subtreeFillToContents} from "../../src/index.js";
+import {batchHash} from "../utils/batchHash.js";
 
 describe("HashObject LeafNode", () => {
   // Number of new nodes created in processAttestations() on average

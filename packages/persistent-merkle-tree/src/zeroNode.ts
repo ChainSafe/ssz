@@ -1,4 +1,4 @@
-import {BranchNode, LeafNode, Node} from "./node";
+import {BranchNode, LeafNode, Node} from "./node.js";
 
 const zeroes: Node[] = [LeafNode.fromZero()];
 

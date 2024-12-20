@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {BeaconState} from "../../lodestarTypes/deneb/sszTypes";
-import {ListUintNum64Type} from "../../../src/type/listUintNum64";
-import {altair, phase0, ssz} from "../../lodestarTypes";
-import {BitArray, fromHexString} from "../../../src";
+import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.js";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
+import {altair, phase0, ssz} from "../../lodestarTypes/index.js";
+import {BitArray, fromHexString} from "../../../src/index.js";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);

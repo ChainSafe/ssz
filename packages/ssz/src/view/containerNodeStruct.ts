@@ -1,9 +1,9 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract";
-import {isCompositeType} from "../type/composite";
-import {BranchNodeStruct} from "../branchNodeStruct";
-import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container";
-import {TreeView} from "./abstract";
+import {Type, ValueOf} from "../type/abstract.js";
+import {isCompositeType} from "../type/composite.js";
+import {BranchNodeStruct} from "../branchNodeStruct.js";
+import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.js";
+import {TreeView} from "./abstract.js";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -94,7 +94,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
     // Should never happen
     else {
       /* istanbul ignore next - unreachable code */
-      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${String(fieldName as symbol)}`);
     }
   }
 

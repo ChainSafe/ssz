@@ -1,4 +1,4 @@
-import {Gindex, GindexBitstring, gindexParent, gindexSibling} from "../gindex";
+import {Gindex, GindexBitstring, gindexParent, gindexSibling} from "../gindex.js";
 
 // Not currently in use, but simpler implementation useful for testing
 /**

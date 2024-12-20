@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src";
-import {byteType, uint16NumType} from "../../../utils/primitiveTypes";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src/index.js";
+import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new ContainerType({a: uint16NumType}),

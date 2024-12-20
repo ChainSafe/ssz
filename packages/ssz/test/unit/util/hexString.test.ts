@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {fromHexString, toHexString} from "../../../src";
+import {fromHexString, toHexString} from "../../../src/index.js";
 
 describe("util / byteArray / toHexString + fromHexString", () => {
   const testCases: string[] = [

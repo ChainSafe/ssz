@@ -1,11 +1,11 @@
 import {expect} from "chai";
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "../../src/type/abstract";
-import {fromHexString, toHexString} from "../../src/util/byteArray";
-import {CompositeType, isCompositeType} from "../../src/type/composite";
-import {isBasicType} from "../../src/type/basic";
-import {wrapErr} from "../utils/error";
-import {TreeViewDU} from "../../src";
+import {Type} from "../../src/type/abstract.js";
+import {fromHexString, toHexString} from "../../src/util/byteArray.js";
+import {CompositeType, isCompositeType} from "../../src/type/composite.js";
+import {isBasicType} from "../../src/type/basic.js";
+import {wrapErr} from "../utils/error.js";
+import {TreeViewDU} from "../../src/index.js";
 
 type ValidTestCaseData = {
   root: string;

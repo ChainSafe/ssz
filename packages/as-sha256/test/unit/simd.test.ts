@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import crypto from "crypto";
-import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject";
-import * as sha256 from "../../src";
+import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
+import * as sha256 from "../../src/index.js";
 
 describe("Test SIMD implementation of as-sha256", () => {
   it("testHash4UintArray64s", () => {

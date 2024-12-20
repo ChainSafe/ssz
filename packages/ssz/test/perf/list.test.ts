@@ -1,6 +1,6 @@
 import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
 import {itBench} from "@dapplion/benchmark";
-import {UintNumberType, ListBasicType} from "../../src";
+import {UintNumberType, ListBasicType} from "../../src/index.js";
 
 describe("list", () => {
   const numBalances = 250_000;

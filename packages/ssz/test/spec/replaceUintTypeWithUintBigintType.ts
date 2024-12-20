@@ -14,7 +14,7 @@ import {
   VectorBasicType,
   VectorCompositeType,
   ContainerNodeStructType,
-} from "../../src";
+} from "../../src/index.js";
 
 /**
  * Transform the type to something that is safe to deserialize

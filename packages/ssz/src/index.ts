@@ -1,42 +1,42 @@
 // Types
-export {BitListType, deserializeUint8ArrayBitListFromBytes} from "./type/bitList";
-export {BitVectorType} from "./type/bitVector";
-export {BooleanType} from "./type/boolean";
-export {ByteListType} from "./type/byteList";
-export {ByteVectorType} from "./type/byteVector";
-export {ContainerType} from "./type/container";
-export {ContainerNodeStructType} from "./type/containerNodeStruct";
-export {ListBasicType} from "./type/listBasic";
-export {ListCompositeType} from "./type/listComposite";
-export {PartialListCompositeType} from "./type/partialListComposite";
-export {NoneType} from "./type/none";
-export {UintBigintType, UintNumberType} from "./type/uint";
-export {UnionType} from "./type/union";
-export {OptionalType} from "./type/optional";
-export {VectorBasicType} from "./type/vectorBasic";
-export {VectorCompositeType} from "./type/vectorComposite";
-export {ListUintNum64Type} from "./type/listUintNum64";
-export {StableContainerType} from "./type/stableContainer";
-export {ProfileType} from "./type/profile";
+export {BitListType, deserializeUint8ArrayBitListFromBytes} from "./type/bitList.js";
+export {BitVectorType} from "./type/bitVector.js";
+export {BooleanType} from "./type/boolean.js";
+export {ByteListType} from "./type/byteList.js";
+export {ByteVectorType} from "./type/byteVector.js";
+export {ContainerType} from "./type/container.js";
+export {ContainerNodeStructType} from "./type/containerNodeStruct.js";
+export {ListBasicType} from "./type/listBasic.js";
+export {ListCompositeType} from "./type/listComposite.js";
+export {PartialListCompositeType} from "./type/partialListComposite.js";
+export {NoneType} from "./type/none.js";
+export {UintBigintType, UintNumberType} from "./type/uint.js";
+export {UnionType} from "./type/union.js";
+export {OptionalType} from "./type/optional.js";
+export {VectorBasicType} from "./type/vectorBasic.js";
+export {VectorCompositeType} from "./type/vectorComposite.js";
+export {ListUintNum64Type} from "./type/listUintNum64.js";
+export {StableContainerType} from "./type/stableContainer.js";
+export {ProfileType} from "./type/profile.js";
 
 // Base types
-export {ArrayType} from "./type/array";
-export {BitArrayType} from "./type/bitArray";
-export {ByteArrayType} from "./type/byteArray";
+export {ArrayType} from "./type/array.js";
+export {BitArrayType} from "./type/bitArray.js";
+export {ByteArrayType} from "./type/byteArray.js";
 
 // Base type clases
-export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract";
-export {BasicType, isBasicType} from "./type/basic";
-export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite";
-export {TreeView} from "./view/abstract";
-export {ValueOfFields} from "./view/container";
-export {TreeViewDU} from "./viewDU/abstract";
+export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract.js";
+export {BasicType, isBasicType} from "./type/basic.js";
+export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite.js";
+export {TreeView} from "./view/abstract.js";
+export {ValueOfFields} from "./view/container.js";
+export {TreeViewDU} from "./viewDU/abstract.js";
 
 // Values
-export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray";
+export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray.js";
 
 // Utils
-export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray";
-export {Snapshot} from "./util/types";
-export {hash64, symbolCachedPermanentRoot} from "./util/merkleize";
-export {upgradeToNewType} from "./util/upgrade";
+export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray.js";
+export {Snapshot} from "./util/types.js";
+export {hash64, symbolCachedPermanentRoot} from "./util/merkleize.js";
+export {upgradeToNewType} from "./util/upgrade.js";

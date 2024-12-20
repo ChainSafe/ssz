@@ -1,5 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {testRunnerMemory} from "./testRunnerMemory";
+import {testRunnerMemory} from "./testRunnerMemory.js";
 
 /* eslint-disable no-console */
 

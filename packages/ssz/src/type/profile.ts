@@ -11,11 +11,11 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {Type, ValueOf} from "./abstract";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite";
+import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {Type, ValueOf} from "./abstract.js";
+import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
 import {
   getProfileTreeViewClass,
   ValueOfFields,
@@ -23,16 +23,16 @@ import {
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
   computeSerdesData,
-} from "../view/profile";
+} from "../view/profile.js";
 import {
   getProfileTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/profile";
-import {Case} from "../util/strings";
-import {BitArray} from "../value/bitArray";
-import {mixInActiveFields, setActiveFields} from "./stableContainer";
-import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional";
+} from "../viewDU/profile.js";
+import {Case} from "../util/strings.js";
+import {BitArray} from "../value/bitArray.js";
+import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};
@@ -647,7 +647,7 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
   if (casingMap) {
     const keyFromCaseMap = casingMap[fieldName];
     if (keyFromCaseMap === undefined) {
-      throw Error(`casingMap[${fieldName}] not defined`);
+      throw Error(`casingMap[${String(fieldName as symbol)}] not defined`);
     }
     return keyFromCaseMap as string;
   } else if (jsonCase) {
@@ -665,6 +665,8 @@ export function renderContainerTypeName<Fields extends Record<string, Type<unkno
   prefix = "Profile"
 ): string {
   const fieldNames = Object.keys(fields) as (keyof Fields)[];
-  const fieldTypeNames = fieldNames.map((fieldName) => `${fieldName}: ${fields[fieldName].typeName}`).join(", ");
+  const fieldTypeNames = fieldNames
+    .map((fieldName) => `${String(fieldName as symbol)}: ${fields[fieldName].typeName}`)
+    .join(", ");
   return `${prefix}({${fieldTypeNames}})`;
 }

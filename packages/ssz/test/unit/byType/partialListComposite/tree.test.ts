@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {ContainerType, ListCompositeType, UintNumberType} from "../../../../src";
-import {PartialListCompositeType} from "../../../../src/type/partialListComposite";
+import {ContainerType, ListCompositeType, UintNumberType} from "../../../../src/index.js";
+import {PartialListCompositeType} from "../../../../src/type/partialListComposite.js";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(

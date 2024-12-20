@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
-import {Validator} from "../../lodestarTypes/phase0/types";
-import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
-import {CompositeViewDU} from "../../../src";
+import {Validator} from "../../lodestarTypes/phase0/types.js";
+import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.js";
+import {CompositeViewDU} from "../../../src/index.js";
 
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),

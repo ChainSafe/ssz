@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {ByteListType} from "../../../../src";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {ByteListType} from "../../../../src/index.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new ByteListType(8),

@@ -7,7 +7,7 @@ import {
   filterParentBitstrings,
   computeMultiProofBitstrings,
   sortDecreasingBitstrings,
-} from "../../../src/proof/util";
+} from "../../../src/proof/util.js";
 
 describe("computeProofGindices", () => {
   it("simple implementation should match bitstring implementation", () => {

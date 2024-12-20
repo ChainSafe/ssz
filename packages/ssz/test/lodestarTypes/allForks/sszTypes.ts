@@ -1,8 +1,8 @@
-import {ssz as phase0} from "../phase0";
-import {ssz as altair} from "../altair";
-import {ssz as bellatrix} from "../bellatrix";
-import {ssz as capella} from "../capella";
-import {ssz as deneb} from "../deneb";
+import {ssz as phase0} from "../phase0/index.js";
+import {ssz as altair} from "../altair/index.js";
+import {ssz as bellatrix} from "../bellatrix/index.js";
+import {ssz as capella} from "../capella/index.js";
+import {ssz as deneb} from "../deneb/index.js";
 
 /**
  * Index the ssz types that differ by fork

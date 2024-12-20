@@ -1,12 +1,18 @@
 import {expect} from "chai";
 import path from "path";
 import fs from "fs";
-import {SPEC_TEST_LOCATION} from "../../specTestVersioning";
-import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase} from "../testRunner";
-import {runValidSszTest} from "../runValidTest";
-import {getTestType} from "./types";
+import {ethereumConsensusSpecsTests} from "../../specTestVersioning.js";
+import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase} from "../testRunner.js";
+import {runValidSszTest} from "../runValidTest.js";
+import {getTestType} from "./types.js";
 
-const rootGenericSszPath = path.join(SPEC_TEST_LOCATION, "tests", "general", "phase0", "ssz_generic");
+const rootGenericSszPath = path.join(
+  ethereumConsensusSpecsTests.outputDir,
+  "tests",
+  "general",
+  "phase0",
+  "ssz_generic"
+);
 
 for (const testType of fs.readdirSync(rootGenericSszPath)) {
   const testTypePath = path.join(rootGenericSszPath, testType);

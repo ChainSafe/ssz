@@ -1,5 +1,5 @@
-import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
-import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher";
+import {HashObject} from "@chainsafe/as-sha256";
+import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher/index.js";
 
 const TWO_POWER_32 = 2 ** 32;
 
@@ -81,10 +81,6 @@ export class BranchNode extends Node {
     return hashObjectToUint8Array(this.rootHashObject);
   }
 
-  isLeaf(): boolean {
-    return false;
-  }
-
   get left(): Node {
     return this._left;
   }
@@ -92,12 +88,32 @@ export class BranchNode extends Node {
   get right(): Node {
     return this._right;
   }
+
+  isLeaf(): boolean {
+    return false;
+  }
 }
 
 /**
  * An immutable binary merkle tree node that has no children
  */
 export class LeafNode extends Node {
+  get rootHashObject(): HashObject {
+    return this;
+  }
+
+  get root(): Uint8Array {
+    return hashObjectToUint8Array(this);
+  }
+
+  get left(): Node {
+    throw Error("LeafNode has no left node");
+  }
+
+  get right(): Node {
+    throw Error("LeafNode has no right node");
+  }
+
   static fromRoot(root: Uint8Array): LeafNode {
     return this.fromHashObject(uint8ArrayToHashObject(root));
   }
@@ -130,24 +146,8 @@ export class LeafNode extends Node {
     return LeafNode.fromHashObject(this);
   }
 
-  get rootHashObject(): HashObject {
-    return this;
-  }
-
-  get root(): Uint8Array {
-    return hashObjectToUint8Array(this);
-  }
-
   isLeaf(): boolean {
     return true;
-  }
-
-  get left(): Node {
-    throw Error("LeafNode has no left node");
-  }
-
-  get right(): Node {
-    throw Error("LeafNode has no right node");
   }
 
   writeToBytes(data: Uint8Array, start: number, size: number): void {

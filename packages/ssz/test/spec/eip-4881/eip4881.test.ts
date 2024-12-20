@@ -1,11 +1,12 @@
 import fs from "node:fs";
+import url from "node:url";
 import path from "node:path";
 import jsyaml from "js-yaml";
 import {expect} from "chai";
-import {ContainerType, ListCompositeType} from "../../../src";
-import {ssz} from "../../lodestarTypes";
-import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes";
-import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite";
+import {ContainerType, ListCompositeType} from "../../../src/index.js";
+import {ssz} from "../../lodestarTypes/index.js";
+import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes.js";
+import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite.js";
 
 const EIP4881TestDataArrayItem = new ContainerType(
   {
@@ -24,7 +25,7 @@ const EIP4881TestDataArray = new ListCompositeType(EIP4881TestDataArrayItem, 102
 describe("EIP-4881", function () {
   this.timeout(60 * 1000);
 
-  const ymlStr = fs.readFileSync(path.join(__dirname, "test_data.yaml"), "utf8");
+  const ymlStr = fs.readFileSync(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "test_data.yaml"), "utf8");
   const json = jsyaml.load(ymlStr) as unknown[];
   expect(json.length).to.be.equal(512);
   const testData = EIP4881TestDataArray.fromJson(json);

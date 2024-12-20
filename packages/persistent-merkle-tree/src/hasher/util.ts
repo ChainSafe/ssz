@@ -1,5 +1,5 @@
-import {byteArrayToHashObject, HashObject, hashObjectToByteArray} from "@chainsafe/as-sha256/lib/hashObject";
-import {zeroHash} from "../zeroHash";
+import {byteArrayToHashObject, HashObject, hashObjectToByteArray} from "@chainsafe/as-sha256";
+import {zeroHash} from "../zeroHash.js";
 
 export function hashObjectToUint8Array(obj: HashObject): Uint8Array {
   const byteArr = new Uint8Array(32);

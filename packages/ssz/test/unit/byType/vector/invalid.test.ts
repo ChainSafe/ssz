@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {VectorBasicType, VectorCompositeType} from "../../../../src";
-import {byteType, uint16NumType} from "../../../utils/primitiveTypes";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {VectorBasicType, VectorCompositeType} from "../../../../src/index.js";
+import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new VectorBasicType(uint16NumType, 2),

@@ -1,18 +1,18 @@
 import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize";
-import {Require} from "../util/types";
-import {namedClass} from "../util/named";
-import {ValueOf, ByteViews} from "./abstract";
-import {BasicType} from "./basic";
+import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize.js";
+import {Require} from "../util/types.js";
+import {namedClass} from "../util/named.js";
+import {ValueOf, ByteViews} from "./abstract.js";
+import {BasicType} from "./basic.js";
 import {
   value_deserializeFromBytesArrayBasic,
   value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
-} from "./arrayBasic";
-import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic";
-import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic";
-import {ArrayType} from "./array";
+} from "./arrayBasic.js";
+import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic.js";
+import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
+import {ArrayType} from "./array.js";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

@@ -1,15 +1,15 @@
-import {ContainerType, ListCompositeType, ByteVectorType, VectorCompositeType} from "../../../src";
+import {ContainerType, ListCompositeType, ByteVectorType, VectorCompositeType} from "../../../src/index.js";
 import {
   preset,
   BYTES_PER_FIELD_ELEMENT,
   BLOCK_BODY_EXECUTION_PAYLOAD_DEPTH as EXECUTION_PAYLOAD_DEPTH,
   MAX_REQUEST_BLOCKS_DENEB,
-} from "../params";
-import {ssz as primitiveSsz} from "../primitive";
-import {ssz as phase0Ssz} from "../phase0";
-import {ssz as altairSsz} from "../altair";
-import {ssz as bellatrixSsz} from "../bellatrix";
-import {ssz as capellaSsz} from "../capella";
+} from "../params.js";
+import {ssz as primitiveSsz} from "../primitive/index.js";
+import {ssz as phase0Ssz} from "../phase0/index.js";
+import {ssz as altairSsz} from "../altair/index.js";
+import {ssz as bellatrixSsz} from "../bellatrix/index.js";
+import {ssz as capellaSsz} from "../capella/index.js";
 const {
   HISTORICAL_ROOTS_LIMIT,
   MAX_BLOB_COMMITMENTS_PER_BLOCK,

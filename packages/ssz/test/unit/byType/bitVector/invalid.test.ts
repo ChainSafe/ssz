@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {BitVectorType} from "../../../../src";
-import {runTypeTestInvalid} from "../runTypeTestInvalid";
+import {BitVectorType} from "../../../../src/index.js";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 runTypeTestInvalid({
   type: new BitVectorType(8 * 8),

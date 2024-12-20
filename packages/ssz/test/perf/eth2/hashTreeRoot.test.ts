@@ -1,7 +1,7 @@
 import {itBench} from "@dapplion/benchmark";
 import {HashComputationGroup, hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
-import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes";
-import * as sszAltair from "../../lodestarTypes/altair/sszTypes";
+import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
+import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
 import {
   getAttestation,
   getOnce,
@@ -11,7 +11,7 @@ import {
   getSignedContributionAndProof,
   getSignedBeaconBlockPhase0,
   getValidator,
-} from "../../utils/generateEth2Objs";
+} from "../../utils/generateEth2Objs.js";
 import {
   CompositeType,
   isCompositeType,
@@ -21,8 +21,8 @@ import {
   CompositeView,
   CompositeViewDU,
   hash64,
-} from "../../../src";
-import {CompositeTypeAny} from "../../../src/type/composite";
+} from "../../../src/index.js";
+import {CompositeTypeAny} from "../../../src/type/composite.js";
 import {HashObject} from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {

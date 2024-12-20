@@ -1,6 +1,6 @@
-import {convertGindexToBitstring, Gindex, GindexBitstring} from "../gindex";
-import {BranchNode, LeafNode, Node} from "../node";
-import {computeProofBitstrings} from "./util";
+import {convertGindexToBitstring, Gindex, GindexBitstring} from "../gindex.js";
+import {BranchNode, LeafNode, Node} from "../node.js";
+import {computeProofBitstrings} from "./util.js";
 
 export function computeDescriptor(indices: Gindex[]): Uint8Array {
   // include all helper indices

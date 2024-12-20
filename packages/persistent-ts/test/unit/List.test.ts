@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import {expect} from "chai";
-import {List} from "../../src/List";
+import {List} from "../../src/List.js";
 
 it("List.empty isEmpty", () => {
   const empty = List.empty();

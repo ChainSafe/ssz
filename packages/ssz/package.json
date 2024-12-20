@@ -5,17 +5,23 @@
   "author": "ChainSafe Systems",
   "homepage": "https://github.com/chainsafe/ssz",
   "version": "0.18.0",
-  "main": "lib/index.js",
+  "type": "module",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
     "lib/**/*.js.map"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json",
-    "build-web": "webpack --mode production --entry ./lib/web.js --output ./dist/ssz.min.js",
+    "build": "yarn run build:cjs && yarn build:esm && yarn build:types",
+    "build:esm": "tsc -p tsconfig.build.esm.json",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
+    "build:types": "tsc -p tsconfig.build.types.json",
+    "build-web": "webpack --mode production --entry ./lib/esm/web.js --output ./dist/ssz.min.js",
     "build:docs": "typedoc --exclude src/index.ts,src/web.ts --out docs src",
-    "build:release": "yarn clean && yarn run build && yarn build-web && yarn run build:docs",
+    "build:release": "yarn clean && yarn build && yarn build-web && yarn run build:docs",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib && rm -rf dist && rm -f tsconfig.tsbuildinfo",
     "lint": "eslint --color --ext .ts src/ test/",
@@ -32,14 +38,14 @@
     "test:spec-static-minimal": "LODESTAR_PRESET=minimal  mocha test/spec/ssz_static.test.ts",
     "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet  mocha test/spec/ssz_static.test.ts",
     "test:spec-eip-4881": "mocha  \"test/spec/eip-4881/**/*.test.ts\"",
-    "download-spec-tests": "node -r ts-node/register test/spec/downloadTests.ts"
+    "download-spec-tests": "node --loader ts-node/esm test/spec/downloadTests.ts"
   },
-  "types": "lib/index.d.ts",
   "dependencies": {
     "@chainsafe/as-sha256": "0.5.0",
     "@chainsafe/persistent-merkle-tree": "0.8.0"
   },
   "devDependencies": {
+    "@lodestar/spec-test-util": "^1.23.1",
     "@types/js-yaml": "^4.0.5",
     "js-yaml": "^3.13.1",
     "snappyjs": "^0.6.1"

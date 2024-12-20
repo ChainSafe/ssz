@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {uint32NumType, uint64NumType} from "../utils/primitiveTypes";
+import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
 import {
   VectorBasicType,
   ListBasicType,
@@ -12,7 +12,7 @@ import {
   BooleanType,
   UintBigintType,
   ValueOf,
-} from "../../src";
+} from "../../src/index.js";
 
 // Compilation of various issues from SSZ and Lodestar libs
 

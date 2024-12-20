@@ -1,7 +1,7 @@
 import {Tree, Node} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray";
-import {CompositeType} from "../type/composite";
-import {TreeView} from "./abstract";
+import {BitArray} from "../value/bitArray.js";
+import {CompositeType} from "../type/composite.js";
+import {TreeView} from "./abstract.js";
 
 /**
  * Thin wrapper around BitArray to upstream changes to `tree` on every `this.set()`

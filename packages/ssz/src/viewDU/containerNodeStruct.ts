@@ -1,10 +1,10 @@
 import {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract";
-import {isCompositeType} from "../type/composite";
-import {BranchNodeStruct} from "../branchNodeStruct";
-import {ContainerTypeGeneric, ValueOfFields} from "../view/container";
-import {ContainerTreeViewDUTypeConstructor} from "./container";
-import {TreeViewDU} from "./abstract";
+import {Type, ValueOf} from "../type/abstract.js";
+import {isCompositeType} from "../type/composite.js";
+import {BranchNodeStruct} from "../branchNodeStruct.js";
+import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
+import {ContainerTreeViewDUTypeConstructor} from "./container.js";
+import {TreeViewDU} from "./abstract.js";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -117,7 +117,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
     // Should never happen
     else {
       /* istanbul ignore next - unreachable code */
-      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${fieldName}`);
+      throw Error(`Unknown fieldType ${fieldType.typeName} for fieldName ${String(fieldName as symbol)}`);
     }
   }
 

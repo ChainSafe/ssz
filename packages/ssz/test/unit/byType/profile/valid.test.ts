@@ -1,5 +1,5 @@
-import {BitArray, ProfileType, UintNumberType} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {BitArray, ProfileType, UintNumberType} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 // taken from eip spec tests
 

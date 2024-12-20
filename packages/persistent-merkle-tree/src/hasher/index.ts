@@ -1,9 +1,9 @@
-import {Hasher} from "./types";
-import {hasher as nobleHasher} from "./noble";
-import type {HashComputationLevel} from "../hashComputation";
+import {Hasher} from "./types.js";
+import {hasher as nobleHasher} from "./noble.js";
+import type {HashComputationLevel} from "../hashComputation.js";
 
-export * from "./types";
-export * from "./util";
+export * from "./types.js";
+export * from "./util.js";
 
 /**
  * Hasher used across the SSZ codebase, by default, this does not support batch hash.

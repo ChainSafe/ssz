@@ -1,5 +1,5 @@
-import {ListBasicType, OptionalType, StableContainerType, UintNumberType} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+import {ListBasicType, OptionalType, StableContainerType, UintNumberType} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 // taken from eip spec tests
 

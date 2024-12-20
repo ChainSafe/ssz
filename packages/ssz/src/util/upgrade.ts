@@ -1,5 +1,5 @@
 import {BranchNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {ContainerType} from "../type/container";
+import {ContainerType} from "../type/container.js";
 
 /** Upgrade the current View/ViewDU to a root node of new type */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -5,3 +5,5 @@ require:
 # benchmark
 maxMs: 30_000
 threshold: 3
+loader: 
+  - ts-node/esm

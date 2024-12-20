@@ -1,7 +1,7 @@
 import {HashComputationLevel, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray";
-import {CompositeType} from "../type/composite";
-import {TreeViewDU} from "./abstract";
+import {BitArray} from "../value/bitArray.js";
+import {CompositeType} from "../type/composite.js";
+import {TreeViewDU} from "./abstract.js";
 
 /**
  * Thin wrapper around BitArray to upstream changes after `this.commit()`
@@ -22,16 +22,6 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
     return;
   }
 
-  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
-    if (this._bitArray !== null) {
-      this._rootNode = this.type.value_toTree(this._bitArray);
-    }
-
-    if (hcByLevel !== null && this._rootNode.h0 === null) {
-      getHashComputations(this._rootNode, hcOffset, hcByLevel);
-    }
-  }
-
   // Wrapped API from BitArray
 
   /** @see BitArray.uint8Array */
@@ -42,6 +32,24 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   /** @see BitArray.bitLen */
   get bitLen(): number {
     return this.bitArray.bitLen;
+  }
+
+  /** Lazily computed bitArray instance */
+  private get bitArray(): BitArray {
+    if (this._bitArray === null) {
+      this._bitArray = this.type.tree_toValue(this._rootNode);
+    }
+    return this._bitArray;
+  }
+
+  commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
+    if (this._bitArray !== null) {
+      this._rootNode = this.type.value_toTree(this._bitArray);
+    }
+
+    if (hcByLevel !== null && this._rootNode.h0 === null) {
+      getHashComputations(this._rootNode, hcOffset, hcByLevel);
+    }
   }
 
   /** @see BitArray.get */
@@ -77,14 +85,6 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   /** @see BitArray.toBoolArray */
   toBoolArray(): boolean[] {
     return this.bitArray.toBoolArray();
-  }
-
-  /** Lazily computed bitArray instance */
-  private get bitArray(): BitArray {
-    if (this._bitArray === null) {
-      this._bitArray = this.type.tree_toValue(this._rootNode);
-    }
-    return this._bitArray;
   }
 
   protected clearCache(): void {

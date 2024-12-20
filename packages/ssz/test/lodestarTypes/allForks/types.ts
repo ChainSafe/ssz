@@ -1,15 +1,15 @@
-import {CompositeType, ContainerType, ValueOf, CompositeView, CompositeViewDU} from "../../../src";
-import {ts as phase0} from "../phase0";
-import {ts as altair} from "../altair";
-import {ts as bellatrix} from "../bellatrix";
-import {ts as capella} from "../capella";
-import {ts as deneb} from "../deneb";
+import {CompositeType, ContainerType, ValueOf, CompositeView, CompositeViewDU} from "../../../src/index.js";
+import {ts as phase0} from "../phase0/index.js";
+import {ts as altair} from "../altair/index.js";
+import {ts as bellatrix} from "../bellatrix/index.js";
+import {ts as capella} from "../capella/index.js";
+import {ts as deneb} from "../deneb/index.js";
 
-import {ssz as phase0Ssz} from "../phase0";
-import {ssz as altairSsz} from "../altair";
-import {ssz as bellatrixSsz} from "../bellatrix";
-import {ssz as capellaSsz} from "../capella";
-import {ssz as denebSsz} from "../deneb";
+import {ssz as phase0Ssz} from "../phase0/index.js";
+import {ssz as altairSsz} from "../altair/index.js";
+import {ssz as bellatrixSsz} from "../bellatrix/index.js";
+import {ssz as capellaSsz} from "../capella/index.js";
+import {ssz as denebSsz} from "../deneb/index.js";
 
 // Re-export union types for types that are _known_ to differ
 

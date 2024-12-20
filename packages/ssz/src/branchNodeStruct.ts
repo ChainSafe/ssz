@@ -1,4 +1,4 @@
-import {HashObject} from "@chainsafe/as-sha256/lib/hashObject";
+import {HashObject} from "@chainsafe/as-sha256";
 import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
 
 /**
@@ -26,15 +26,15 @@ export class BranchNodeStruct<T> extends Node {
     return hashObjectToUint8Array(this.rootHashObject);
   }
 
-  isLeaf(): boolean {
-    return false;
-  }
-
   get left(): Node {
     return this.valueToNode(this.value).left;
   }
 
   get right(): Node {
     return this.valueToNode(this.value).right;
+  }
+
+  isLeaf(): boolean {
+    return false;
   }
 }

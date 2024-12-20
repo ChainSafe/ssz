@@ -2,7 +2,10 @@
   "name": "@chainsafe/persistent-ts",
   "version": "0.19.1",
   "description": "Persistent data structures for TypeScript.",
-  "main": "lib/index.js",
+  "type": "module",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
@@ -10,7 +13,10 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "tsc",
+    "build": "yarn build:cjs && yarn build:esm && yarn build:types",
+    "build:esm": "tsc -p tsconfig.build.esm.json",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
+    "build:types": "tsc -p tsconfig.build.types.json",
     "lint": "eslint --color --ext .ts src/",
     "check-types": "tsc --noEmit",
     "test:unit": "mocha 'test/unit/**/*.test.ts'",

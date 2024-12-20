@@ -1,7 +1,7 @@
 import {LeafNode, Tree} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract";
-import {BasicType} from "../type/basic";
-import {ArrayBasicTreeView, ArrayBasicType} from "./arrayBasic";
+import {ValueOf} from "../type/abstract.js";
+import {BasicType} from "../type/basic.js";
+import {ArrayBasicTreeView, ArrayBasicType} from "./arrayBasic.js";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ListBasicType<ElementType extends BasicType<unknown>> = ArrayBasicType<ElementType> & {

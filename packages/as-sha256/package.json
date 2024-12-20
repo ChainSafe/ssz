@@ -12,17 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
-  "main": "lib/index.js",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "*",
-        "lib/*",
-        "lib/*/index"
-      ]
-    }
-  },
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib",
     "build"
@@ -31,17 +24,19 @@
     "clean": "rm -rf ./dist",
     "lint": "echo 'no linting for this package'",
     "check-types": "echo 'no type check for this package'",
-    "generate": "rm -rf ./dist && node -r ts-node/register ./scripts/codegen.ts",
-    "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:lib",
+    "generate": "rm -rf ./dist && node --loader ts-node/esm ./scripts/codegen.ts",
+    "build": "yarn asbuild:untouched && yarn asbuild:optimized && yarn build:cjs && yarn build:esm && yarn build:types",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug --enable simd",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert --enable simd",
-    "build:lib": "tsc -p tsconfig.build.json",
+    "build:esm": "tsc -p tsconfig.build.esm.json",
+    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
+    "build:types": "tsc -p tsconfig.build.types.json",
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "test": "yarn run test:unit",
-    "test:unit": "yarn run test:unit:node && yarn run test:unit:browser",
-    "test:unit:node": "mocha -r ts-node/register test/unit/*.test.ts",
-    "test:unit:browser": "karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.js",
-    "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
+    "test:unit": "yarn run test:unit:node",
+    "test:unit:node": "yarn mocha test/unit/*.test.ts",
+    "test:unit:browser": "karma start --single-run --browsers ChromeHeadless,FirefoxHeadless karma.config.cjs",
+    "benchmark": "node --loader ts-node/esm ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:ci": "yarn test:as-ci"
   },

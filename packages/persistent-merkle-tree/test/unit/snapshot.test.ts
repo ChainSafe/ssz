@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import {describe, it} from "mocha";
-import {fromSnapshot, indexToFinalizedGindices, toSnapshot} from "../../src/snapshot";
-import {subtreeFillToContents} from "../../src/subtree";
-import { LeafNode } from "../../src/node";
-import { Tree, setNodesAtDepth } from "../../src/tree";
-import { toGindex } from "../../src";
+import {fromSnapshot, indexToFinalizedGindices, toSnapshot} from "../../src/snapshot.js";
+import {subtreeFillToContents} from "../../src/subtree.js";
+import { LeafNode } from "../../src/node.js";
+import { Tree, setNodesAtDepth } from "../../src/tree.js";
+import { toGindex } from "../../src/index.js";
 
 describe("toSnapshot and fromSnapshot", () => {
   const depth = 4;

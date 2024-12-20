@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {describe, it} from "mocha";
-import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src";
-import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes";
+import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src/index.js";
+import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.js";
 
 type Validator = ValueOf<typeof ValidatorContainer>;
 const validator: Validator = {

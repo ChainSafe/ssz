@@ -1,7 +1,18 @@
 {
-  "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "incremental": false,
+    "module": "NodeNext",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "lib": [
+      "dom",
+      "ESNext",
+      "esnext.bigint",
+      "es2020.string",
+      "es2020.symbol.wellknown"
+    ],
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
   }
 }

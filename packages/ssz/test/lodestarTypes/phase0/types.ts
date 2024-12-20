@@ -1,5 +1,5 @@
-import {ValueOf} from "../../../src";
-import * as ssz from "./sszTypes";
+import {ValueOf} from "../../../src/index.js";
+import * as ssz from "./sszTypes.js";
 
 export type AttestationSubnets = ValueOf<typeof ssz.AttestationSubnets>;
 export type BeaconBlockHeader = ValueOf<typeof ssz.BeaconBlockHeader>;

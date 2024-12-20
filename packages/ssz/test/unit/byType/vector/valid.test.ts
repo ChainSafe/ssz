@@ -5,8 +5,8 @@ import {
   UintNumberType,
   ByteVectorType,
   ListBasicType,
-} from "../../../../src";
-import {runTypeTestValid} from "../runTypeTestValid";
+} from "../../../../src/index.js";
+import {runTypeTestValid} from "../runTypeTestValid.js";
 
 const rootType = new ByteVectorType(32);
 const uint64Type = new UintNumberType(8);

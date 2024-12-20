@@ -10,16 +10,7 @@ import {
 } from "@chainsafe/ssz";
 import {ssz} from "@lodestar/types";
 
-let {
-  phase0,
-  altair,
-  bellatrix,
-  capella,
-  deneb,
-  electra,
-  sszTypesFor,
-  ...primitive
-} = ssz;
+let {phase0, altair, bellatrix, capella, deneb, electra, sszTypesFor, ...primitive} = ssz;
 
 phase0 = patchSszTypes(phase0);
 altair = patchSszTypes(altair);

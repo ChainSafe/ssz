@@ -1,9 +1,9 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {expect} from "chai";
-import {ContainerNodeStructType, ContainerType, ListCompositeType} from "../../../src";
-import {bytes32Type, uint16NumType} from "../../utils/primitiveTypes";
-import {treePartialToJsonPaths, TreeDataTypeCode} from "../../../src/util/proof/treePartialToJsonPaths";
-import {treePostProcessFromProofNode} from "../../../src/util/proof/treePostProcessFromProofNode";
+import {ContainerNodeStructType, ContainerType, ListCompositeType} from "../../../src/index.js";
+import {bytes32Type, uint16NumType} from "../../utils/primitiveTypes.js";
+import {treePartialToJsonPaths, TreeDataTypeCode} from "../../../src/util/proof/treePartialToJsonPaths.js";
+import {treePostProcessFromProofNode} from "../../../src/util/proof/treePostProcessFromProofNode.js";
 
 describe("Create proof of Array of Objects", () => {
   const SimpleObject = new ContainerType({a: uint16NumType, b: uint16NumType}, {typeName: "SimpleObject"});

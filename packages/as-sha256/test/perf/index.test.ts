@@ -1,5 +1,5 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import * as sha256 from "../../src";
+import * as sha256 from "../../src/index.js";
 
 // Feb 2024 Mac M1
 // digestTwoHashObjects vs digest64 vs digest

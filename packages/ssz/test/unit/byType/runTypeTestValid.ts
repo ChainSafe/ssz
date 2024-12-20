@@ -1,9 +1,9 @@
 import {expect} from "chai";
-import {toHexString, TreeViewDU, UnionType} from "../../../src";
-import {Type} from "../../../src/type/abstract";
-import {isCompositeType} from "../../../src/type/composite";
-import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest";
-import {runProofTestOnAllJsonPaths} from "./runTypeProofTest";
+import {toHexString, TreeViewDU, UnionType} from "../../../src/index.js";
+import {Type} from "../../../src/type/abstract.js";
+import {isCompositeType} from "../../../src/type/composite.js";
+import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest.js";
+import {runProofTestOnAllJsonPaths} from "./runTypeProofTest.js";
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 

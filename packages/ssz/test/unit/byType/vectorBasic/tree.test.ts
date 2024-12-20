@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {UintNumberType, VectorBasicType} from "../../../../src";
-import {runViewTestMutation} from "../runViewTestMutation";
+import {UintNumberType, VectorBasicType} from "../../../../src/index.js";
+import {runViewTestMutation} from "../runViewTestMutation.js";
 
 const uint64NumInf = new UintNumberType(8, {clipInfinity: true});
 const vectorType = new VectorBasicType(uint64NumInf, 8);

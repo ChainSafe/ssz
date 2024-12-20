@@ -12,8 +12,8 @@ import {
   findDiffDepthi,
   getHashComputations,
   HashComputationLevel,
-} from "../../src";
-import {batchHash} from "../utils/batchHash";
+} from "../../src/index.js";
+import {batchHash} from "../utils/batchHash.js";
 
 describe("fixed-depth tree iteration", () => {
   it("should properly navigate the zero tree", () => {
