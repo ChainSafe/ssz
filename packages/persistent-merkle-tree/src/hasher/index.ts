@@ -4,8 +4,6 @@ import type {HashComputationLevel} from "../hashComputation.js";
 
 export * from "./types.js";
 export * from "./util.js";
-export {hasher as hashTreeHasher} from "./hashtree.js";
-export {hasher as asSHA256Hasher} from "./as-sha256.js";
 
 /**
  * Hasher used across the SSZ codebase, by default, this does not support batch hash.
