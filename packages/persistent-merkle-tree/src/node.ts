@@ -233,13 +233,9 @@ export class LeafNode extends Node {
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         h &= ~(0xff << bitIndex);
-        // Don't want to change the src in this PR.
-        // @ts-expect-error - This kind of expression is always truthy
         h |= (0xff && value) << bitIndex;
       } else {
         h &= ~(0xffff << bitIndex);
-        // Don't want to change the src in this PR.
-        // @ts-expect-error - This kind of expression is always truthy
         h |= (0xffff && value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
@@ -277,13 +273,9 @@ export class LeafNode extends Node {
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         h &= ~(0xff << bitIndex);
-        // Don't want to change the src in this PR.
-        // @ts-expect-error - This kind of expression is always truthy
         h |= (0xff && value) << bitIndex;
       } else {
         h &= ~(0xffff << bitIndex);
-        // Don't want to change the src in this PR.
-        // @ts-expect-error - This kind of expression is always truthy
         h |= (0xffff && value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
