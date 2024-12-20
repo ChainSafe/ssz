@@ -24,7 +24,7 @@ const EIP4881TestDataArray = new ListCompositeType(EIP4881TestDataArrayItem, 102
 describe("EIP-4881", function () {
   this.timeout(60 * 1000);
 
-  const ymlStr = fs.readFileSync(path.join(__dirname, "test_data.yaml"), "utf8");
+  const ymlStr = fs.readFileSync(path.join(path.dirname(import.meta.url), "test_data.yaml"), "utf8");
   const json = jsyaml.load(ymlStr) as unknown[];
   expect(json.length).to.be.equal(512);
   const testData = EIP4881TestDataArray.fromJson(json);

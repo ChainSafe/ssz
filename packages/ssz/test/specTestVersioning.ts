@@ -1,4 +1,5 @@
 import path from "path";
+import url from "url";
 
 // WARNING! Don't move or rename this file !!!
 //
@@ -9,4 +10,4 @@ import path from "path";
 
 export const SPEC_TEST_REPO_URL = "https://github.com/ethereum/consensus-spec-tests";
 export const SPEC_TEST_VERSION = "v1.4.0-beta.1";
-export const SPEC_TEST_LOCATION = path.join(__dirname, "../spec-tests");
+export const SPEC_TEST_LOCATION = path.join(path.dirname(import.meta.url), "../spec-tests");
