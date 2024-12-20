@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.build.esm.json",
   "include": ["src"],
   "compilerOptions": {
-    "outDir": "lib/esm",
+    "outDir": "lib",
     "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"],
   }
 }
