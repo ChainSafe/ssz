@@ -8,7 +8,3 @@ require:
 threshold: 3
 maxMs: 60_000
 minRuns: 10
-loader: 
-  - ts-node/esm
-extension: 
-  - ts
