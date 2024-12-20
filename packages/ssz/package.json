@@ -38,7 +38,7 @@
     "test:spec-static-minimal": "LODESTAR_PRESET=minimal vitest run --dir test/spec/ test/spec/ssz_static.test.ts",
     "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet vitest run --dir test/spec/ test/spec/ssz_static.test.ts",
     "test:spec-eip-4881": "vitest run --dir test/spec/ test/spec/eip-4881/**/*.test.ts",
-    "download-spec-tests": "node -r ts-node/register test/spec/downloadTests.ts"
+    "download-spec-tests": "node --loader ts-node/esm test/spec/downloadTests.ts"
   },
   "dependencies": {
     "@chainsafe/as-sha256": "0.5.0",
