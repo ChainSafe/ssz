@@ -7,10 +7,11 @@ import crypto from "crypto";
 import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function getSimdTests(sha256: any, hasSimd: boolean): void {
-  describe(`Test as-sha256 ${hasSimd ? "with SIMD" : "without SIMD"}`, () => {
+export function getSimdTests(sha256: any, useSimd: boolean): void {
+  describe(`Test as-sha256 ${useSimd ? "with SIMD" : "without SIMD"}`, () => {
     before(function () {
-      expect(sha256.simdEnabled()).to.equal(hasSimd);
+      sha256.reinitializeInstance(useSimd);
+      expect(sha256.simdEnabled()).to.equal(useSimd);
     });
     it("testHash4UintArray64s", () => {
       const input1 = "gajindergajindergajindergajinder";
