@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ListBasicType} from "../../../../src/index.js";
 import {byteType} from "../../../utils/primitiveTypes.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
@@ -18,11 +18,11 @@ runTypeTestInvalid({
 
 describe("Invalid ListBasicType at constructor", () => {
   it("limit must be > 0", () => {
-    expect(() => new ListBasicType(byteType, 0)).to.throw();
+    expect(() => new ListBasicType(byteType, 0)).toThrow();
   });
 
   it("ElementType must be basic", () => {
     const compositeType = new ListBasicType(byteType, 2);
-    expect(() => new ListBasicType(compositeType as unknown as typeof byteType, 2)).to.throw();
+    expect(() => new ListBasicType(compositeType as unknown as typeof byteType, 2)).toThrow();
   });
 });

@@ -1,5 +1,4 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset.js";
 import {zeroNode} from "../../../src/zeroNode.js";
 
@@ -16,7 +15,7 @@ describe("computeTreeOffsetProof", () => {
     ];
     for (const {input, output} of testCases) {
       const actual = createTreeOffsetProof(input.rootNode, input.gindices);
-      expect(actual).to.deep.equal(output);
+      expect(actual).toEqual(output);
     }
   });
 });
@@ -41,7 +40,7 @@ describe("computeNodeFromTreeOffsetProof", () => {
     ];
     for (const {input, output} of testCases) {
       const actual = createNodeFromTreeOffsetProof(input.offsets, input.leaves);
-      expect(actual.root).to.deep.equal(output.root);
+      expect(actual.root).toEqual(output.root);
     }
   });
 });

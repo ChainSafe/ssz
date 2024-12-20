@@ -1,5 +1,4 @@
-import {assert, expect} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 import {
   countToDepth,
   bitIndexBigInt,
@@ -28,7 +27,7 @@ describe("countToDepth", () => {
   for (const [count, depth] of testCases) {
     it(`should correctly get depth for ${count} elements`, () => {
       const actual = countToDepth(BigInt(count));
-      assert.equal(actual, depth);
+      expect(actual).toEqual(depth);
     });
   }
 });
@@ -49,7 +48,7 @@ describe("bigIndexBigInt", () => {
   for (const [gindex, depth] of testCases) {
     it(`should correctly get depth for gindex ${gindex}`, () => {
       const actual = bitIndexBigInt(BigInt(gindex));
-      assert.equal(actual, depth);
+      expect(actual).toEqual(depth);
     });
   }
 });
@@ -73,7 +72,7 @@ describe("iterateAtDepth", () => {
       const actual = Array.from(iterateAtDepth(input[0], input[1], input[2]));
       expect(actual).to.deep.equal(expected);
       const gindicesActual = getGindicesAtDepth(input[0], Number(input[1]), Number(input[2]));
-      expect(gindicesActual).to.deep.equal(expected);
+      expect(gindicesActual).toEqual(expected);
     });
   }
 });
@@ -91,7 +90,7 @@ describe("concatGindices", () => {
   for (const {input, expected} of testCases) {
     it("should correctly concatenate gindices", () => {
       const actual = concatGindices(input);
-      expect(actual).to.equal(expected);
+      expect(actual).toEqual(expected);
     });
   }
 });
@@ -111,7 +110,7 @@ describe("gindexIterator", () => {
       const actual = Array.from(gindexIterator(input));
       expect(actual).to.deep.equal(expected);
       const arrActual = getGindexBits(input);
-      expect(arrActual).to.deep.equal(expected);
+      expect(arrActual).toEqual(expected);
     });
   }
 });

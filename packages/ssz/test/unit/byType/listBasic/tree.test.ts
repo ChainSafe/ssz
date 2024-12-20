@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ListBasicType, toHexString, UintNumberType} from "../../../../src/index.js";
 import {runViewTestMutation, TreeMutation} from "../runViewTestMutation.js";
 import {ListUintNum64Type} from "../../../../src/type/listUintNum64.js";
@@ -190,8 +190,8 @@ describe("ListBasicType tree reads", () => {
         values.push(i);
       }
 
-      expect(() => view.push(0)).to.throw("Error pushing over limit");
-      expect(() => view.set(view.type.limit, 0)).to.throw("Error setting index over length");
+      expect(() => view.push(0)).toThrow("Error pushing over limit");
+      expect(() => view.set(view.type.limit, 0)).toThrow("Error setting index over length");
 
       for (let i = 0; i < view.type.limit; i++) {
         expect(view.get(i)).equals(values[i], `Wrong get(${i})`);
@@ -246,7 +246,7 @@ describe("ListBasicType batchHashTreeRoot", function () {
   const expectedRoot = ListN64Uint64NumberType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(ListN64Uint64NumberType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(ListN64Uint64NumberType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("push then batchHashTreeRoot()", () => {
@@ -255,7 +255,7 @@ describe("ListBasicType batchHashTreeRoot", function () {
     viewDU.push(2);
     viewDU.push(3);
     viewDU.push(4);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign the same value again, commit() then batchHashTreeRoot()
     viewDU.set(0, 1);
@@ -263,7 +263,7 @@ describe("ListBasicType batchHashTreeRoot", function () {
     viewDU.set(2, 3);
     viewDU.set(3, 4);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("push then modify then batchHashTreeRoot()", () => {
@@ -273,13 +273,13 @@ describe("ListBasicType batchHashTreeRoot", function () {
     viewDU.push(3);
     viewDU.push(44);
     viewDU.set(3, 4);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign the same value again, commit() then batchHashTreeRoot()
     viewDU.set(3, 44);
     viewDU.set(3, 4);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("full hash then modify", () => {
@@ -291,7 +291,7 @@ describe("ListBasicType batchHashTreeRoot", function () {
     viewDU.batchHashTreeRoot();
     viewDU.set(2, 3);
     viewDU.set(3, 4);
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
     // assign the same value again, commit() then batchHashTreeRoot()
     viewDU.set(2, 33);
@@ -300,7 +300,7 @@ describe("ListBasicType batchHashTreeRoot", function () {
     viewDU.set(2, 3);
     viewDU.set(3, 4);
     viewDU.commit();
-    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   // similar to a fresh ViewDU but it's good to test
@@ -312,6 +312,6 @@ describe("ListBasicType batchHashTreeRoot", function () {
     viewDU.push(4);
     viewDU.push(5);
     viewDU.batchHashTreeRoot();
-    expect(viewDU.sliceTo(3).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(viewDU.sliceTo(3).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 });

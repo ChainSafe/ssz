@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {LeafNode, Node, toGindex, Tree, zeroNode, treeZeroAfterIndex, getNodesAtDepth} from "../../../src/index.js";
 
 describe("tree / zeroAfterIndex", () => {
@@ -30,8 +30,8 @@ describe("tree / zeroAfterIndex", () => {
             printLeafTreeDiff(rootNodeNaive, rootNode, depth, 8);
           }
 
-          expect(rootHexNaive).to.equal(toHex(treeRootAtIndex[i]), `Wrong tree root at index ${i} - naive`);
-          expect(rootHex).to.equal(toHex(treeRootAtIndex[i]), `Wrong tree root at index ${i}`);
+          expect(rootHexNaive).toEqualWithMessage(toHex(treeRootAtIndex[i]), `Wrong tree root at index ${i} - naive`);
+          expect(rootHex).toEqualWithMessage(toHex(treeRootAtIndex[i]), `Wrong tree root at index ${i}`);
         }
       });
     }

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import {describe, it, vi} from "vitest";
 import {isCompositeType, Type} from "../../src/index.js";
 import {ssz} from "../lodestarTypes/index.js";
 import {ethereumConsensusSpecsTests} from "../specTestVersioning.js";
@@ -61,7 +62,7 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
         it(testId, function () {
           // Mainnet must deal with big full states and hash each one multiple times
           if (preset === "mainnet") {
-            this.timeout(30 * 1000);
+            vi.setConfig({testTimeout: 30 * 1000});
           }
 
           const testData = parseSszStaticTestcase(path.join(caseDir, testId));

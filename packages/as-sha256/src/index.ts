@@ -1,6 +1,7 @@
 import {allocUnsafe} from "./alloc.js";
 import {newInstance} from "./wasm.js";
-import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
+import type {HashObject} from "./hashObject.js";
+import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 

@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {
   createNodeFromCompactMultiProof,
   createCompactMultiProof,
@@ -29,7 +29,7 @@ describe("CompactMultiProof", () => {
   describe("descriptorToBitlist", () => {
     it("should convert valid descriptor to a bitlist", () => {
       for (const {input, output} of descriptorTestCases) {
-        expect(descriptorToBitlist(input)).to.deep.equal(output);
+        expect(descriptorToBitlist(input)).toEqual(output);
       }
     });
     it("should throw on invalid descriptors", () => {
@@ -48,7 +48,7 @@ describe("CompactMultiProof", () => {
     it("should convert gindices to a descriptor", () => {
       const index = 42n;
       const expected = Uint8Array.from([0x25, 0xe0]);
-      expect(computeDescriptor([index])).to.deep.equal(expected);
+      expect(computeDescriptor([index])).toEqual(expected);
     });
   });
 
@@ -57,7 +57,7 @@ describe("CompactMultiProof", () => {
     for (const {input} of descriptorTestCases) {
       const proof = createCompactMultiProof(tree, input);
       const newNode = createNodeFromCompactMultiProof(proof, input);
-      expect(newNode.root).to.deep.equal(tree.root);
+      expect(newNode.root).toEqual(tree.root);
     }
   });
 });

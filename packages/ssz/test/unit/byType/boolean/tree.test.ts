@@ -1,5 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {toHexString} from "../../../../src/util/byteArray.js";
 import {BooleanType} from "../../../../src/index.js";
 

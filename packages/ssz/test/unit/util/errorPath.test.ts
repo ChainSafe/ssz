@@ -1,5 +1,4 @@
-import {assert} from "chai";
-import {describe, it} from "mocha";
+import {describe, it, expect} from "vitest";
 
 import {ContainerType, ListBasicType, ListCompositeType, Type} from "../../../src/index.js";
 import {byteType} from "../../utils/primitiveTypes.js";
@@ -36,7 +35,7 @@ describe.skip("error path", () => {
   for (const {type, value} of testCases) {
     it(`should print the error path deserializing ${type.constructor.name}`, () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      assert.throw(() => type.deserialize(Buffer.from(value, "hex")), "v: Offset out of bounds");
+      expect(() => type.deserialize(Buffer.from(value, "hex"))).toThrow("v: Offset out of bounds");
     });
   }
 });

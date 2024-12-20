@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ByteVectorType} from "../../../../src/index.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
@@ -22,6 +22,6 @@ runTypeTestInvalid({
 
 describe("ByteVectorType constructor errors", () => {
   it("length must be > 0", () => {
-    expect(() => new ByteVectorType(0)).to.throw();
+    expect(() => new ByteVectorType(0)).toThrow();
   });
 });

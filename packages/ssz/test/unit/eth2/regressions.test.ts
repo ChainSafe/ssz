@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ssz} from "../../lodestarTypes/index.js";
 
 describe("Various issues and regressions of Eth2 types", () => {

@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {BitVectorType, BitArray} from "../../../../src/index.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
 
@@ -55,13 +55,13 @@ describe("BitVector batchHashTreeRoot", () => {
   const expectedRoot = sszType.toView(value).hashTreeRoot();
 
   it("fresh ViewDU", () => {
-    expect(sszType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(sszType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 
   it("set then batchHashTreeRoot", () => {
     const viewDU = sszType.toViewDU(fromNum(4, 0b0011));
     viewDU.set(0, false);
-    expect(sszType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+    expect(sszType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
   });
 });
 

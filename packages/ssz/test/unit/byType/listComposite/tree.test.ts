@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect, beforeEach} from "vitest";
 import {
   CompositeView,
   ContainerNodeStructType,
@@ -108,8 +108,8 @@ describe("ListCompositeType tree reads", () => {
         view.push(elementToView(values[i]) as any);
       }
 
-      expect(() => view.push(elementToView(values[0]) as any)).to.throw("Error pushing over limit");
-      expect(() => view.set(view.type.limit, elementToView(values[0]) as any)).to.throw(
+      expect(() => view.push(elementToView(values[0]) as any)).toThrow("Error pushing over limit");
+      expect(() => view.set(view.type.limit, elementToView(values[0]) as any)).toThrow(
         "Error setting index over length"
       );
 
@@ -120,7 +120,7 @@ describe("ListCompositeType tree reads", () => {
 
       // Only for viewDU
       if (view instanceof ArrayCompositeTreeViewDU) {
-        expect(() => view.getAllReadonly()).to.throw("Must commit changes before reading all nodes");
+        expect(() => view.getAllReadonly()).toThrow("Must commit changes before reading all nodes");
         view.commit();
       }
 
@@ -244,20 +244,20 @@ describe("ListCompositeType batchHashTreeRoot", () => {
     const expectedRoot = list.toView(value).hashTreeRoot();
 
     it(`${typeName} - fresh ViewDU`, () => {
-      expect(listOfContainersType.toViewDU(value).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(listOfContainersType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - push then batchHashTreeRoot()`, () => {
       const viewDU = listOfContainersType.defaultViewDU();
       viewDU.push(containerUintsType.toViewDU({a: 1, b: 2}));
       viewDU.push(containerUintsType.toViewDU({a: 3, b: 4}));
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign again, commit() then batchHashTreeRoot()
       viewDU.set(0, containerUintsType.toViewDU({a: 1, b: 2}));
       viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - full hash then modify full non-hashed child element`, () => {
@@ -266,12 +266,12 @@ describe("ListCompositeType batchHashTreeRoot", () => {
       viewDU.push(containerUintsType.toViewDU({a: 33, b: 44}));
       viewDU.batchHashTreeRoot();
       viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign the same value again, commit() then batchHashTreeRoot()
       viewDU.set(1, containerUintsType.toViewDU({a: 3, b: 4}));
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - full hash then modify partially hashed child element`, () => {
@@ -283,14 +283,14 @@ describe("ListCompositeType batchHashTreeRoot", () => {
       item1.batchHashTreeRoot();
       item1.b = 4;
       viewDU.set(1, item1);
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign the same value again, commit() then batchHashTreeRoot()
       const item2 = viewDU.get(1);
       item2.a = 3;
       item2.b = 4;
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - full hash then modify full hashed child element`, () => {
@@ -301,13 +301,13 @@ describe("ListCompositeType batchHashTreeRoot", () => {
       const item1 = containerUintsType.toViewDU({a: 3, b: 4});
       item1.batchHashTreeRoot();
       viewDU.set(1, item1);
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign the same value again, commit() then batchHashTreeRoot()
       const newItem = containerUintsType.toViewDU({a: 3, b: 4});
       viewDU.set(1, newItem);
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     it(`${typeName} - full hash then modify partial child element`, () => {
@@ -317,13 +317,13 @@ describe("ListCompositeType batchHashTreeRoot", () => {
       viewDU.batchHashTreeRoot();
       viewDU.get(1).a = 3;
       viewDU.get(1).b = 4;
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
 
       // assign the same value again, commit() then batchHashTreeRoot()
       viewDU.get(1).a = 3;
       viewDU.get(1).b = 4;
       viewDU.commit();
-      expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
 
     // similar to a fresh ViewDU but it's good to test
@@ -333,7 +333,7 @@ describe("ListCompositeType batchHashTreeRoot", () => {
       viewDU.push(containerUintsType.toViewDU({a: 3, b: 4}));
       viewDU.push(containerUintsType.toViewDU({a: 5, b: 6}));
       viewDU.batchHashTreeRoot();
-      expect(viewDU.sliceTo(1).batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
+      expect(viewDU.sliceTo(1).batchHashTreeRoot()).toEqual(expectedRoot);
     });
   }
 });

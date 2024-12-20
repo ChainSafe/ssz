@@ -1,5 +1,5 @@
-import { expect } from "chai";
-import { zeroNode, Node } from "../../src/index.js";
+import {describe, it, expect, beforeEach} from "vitest";
+import {zeroNode, Node} from "../../src/index.js";
 import {HashComputationLevel} from "../../src/hashComputation.js";
 
 describe("HashComputationLevel", () => {
@@ -23,9 +23,9 @@ describe("HashComputationLevel", () => {
     expect(hashComputationLevel.totalLength).to.be.equal(2);
     const arr = toArray(hashComputationLevel);
     expect(arr.length).to.be.equal(2);
-    expect(arr).to.be.deep.equal([
+    expect(arr).toEqual([
       {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)},
-      {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)}
+      {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)},
     ]);
   });
 
@@ -38,9 +38,9 @@ describe("HashComputationLevel", () => {
     expect(hashComputationLevel.length).to.be.equal(2);
     expect(hashComputationLevel.totalLength).to.be.equal(2);
     const arr = toArray(hashComputationLevel);
-    expect(arr).to.be.deep.equal([
+    expect(arr).toEqual([
       {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)},
-      {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)}
+      {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)},
     ]);
   });
 
@@ -53,9 +53,7 @@ describe("HashComputationLevel", () => {
     expect(hashComputationLevel.length).to.be.equal(1);
     expect(hashComputationLevel.totalLength).to.be.equal(2);
     const arr = toArray(hashComputationLevel);
-    expect(arr).to.be.deep.equal([
-      {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)},
-    ]);
+    expect(arr).toEqual([{src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)}]);
   });
 
   it("clean", () => {
@@ -66,16 +64,13 @@ describe("HashComputationLevel", () => {
     expect(hashComputationLevel.length).to.be.equal(1);
     expect(hashComputationLevel.totalLength).to.be.equal(2);
     const arr = toArray(hashComputationLevel);
-    expect(arr).to.be.deep.equal([
-      {src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)},
-    ]);
+    expect(arr).to.be.deep.equal([{src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)}]);
     const all = hashComputationLevel.dump();
     const last = all[all.length - 1];
-    expect(last.src0).to.be.null;
-    expect(last.src1).to.be.null;
-    expect(last.dest).to.be.null;
+    expect(last.src0).toBeNull();
+    expect(last.src1).toBeNull();
+    expect(last.dest).toBeNull();
   });
-
 });
 
 function toArray(hc: HashComputationLevel): {src0: Node; src1: Node; dest: Node}[] {

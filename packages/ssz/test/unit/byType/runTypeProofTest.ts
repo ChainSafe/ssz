@@ -1,5 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {expect} from "chai";
+import {expect} from "vitest";
 import {
   BitArray,
   ContainerType,

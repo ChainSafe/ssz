@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
 import {getRandomState} from "../utils/generateEth2Objs.js";
 
@@ -24,6 +24,6 @@ describe("Unchanged ViewDUs", () => {
     // batchHashTreeRoot() also does the commit()
     state3.latestBlockHeader.commit();
     const root3 = state3.batchHashTreeRoot();
-    expect(root3).to.be.deep.equal(root2);
+    expect(root3).toEqual(root2);
   });
 });
