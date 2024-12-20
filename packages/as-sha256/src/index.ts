@@ -5,7 +5,7 @@ import {HashObject, byteArrayIntoHashObject, byteArrayToHashObject, hashObjectTo
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
-const hasSimd = await simd();
+let hasSimd = await simd();
 
 let ctx: WasmSimdContext;
 let wasmInputValue: number;
@@ -17,6 +17,7 @@ let outputUint8Array32: Uint8Array;
 let inputUint32Array: Uint32Array;
 
 function initializeInstance(useSimd: boolean): void {
+  hasSimd = useSimd;
   ctx = newInstance(useSimd) as WasmSimdContext;
   wasmInputValue = ctx.input.value;
   wasmOutputValue = ctx.output.value;
