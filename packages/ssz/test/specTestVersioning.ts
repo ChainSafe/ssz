@@ -1,5 +1,5 @@
 import path from "path";
-import url from "url";
+import {DownloadTestsOptions} from "@lodestar/spec-test-util/downloadTests";
 
 // WARNING! Don't move or rename this file !!!
 //
@@ -8,6 +8,9 @@ import url from "url";
 //
 // The contents of this file MUST include the URL, version and target path, and nothing else.
 
-export const SPEC_TEST_REPO_URL = "https://github.com/ethereum/consensus-spec-tests";
-export const SPEC_TEST_VERSION = "v1.4.0-beta.1";
-export const SPEC_TEST_LOCATION = path.join(path.dirname(import.meta.url), "../spec-tests");
+export const ethereumConsensusSpecsTests: DownloadTestsOptions = {
+  specVersion: "v1.4.0-beta.1",
+  outputDir: path.join(import.meta.dirname, "../spec-tests"),
+  specTestsRepoUrl: "https://github.com/ethereum/consensus-spec-tests",
+  testsToDownload: ["general", "mainnet", "minimal"],
+};
