@@ -1,5 +1,6 @@
-import * as sha256 from "../../src/index.js";
+import {AssemblyScriptSha256Hasher} from "../../src/index.js";
 import {getSimdTests} from "./getSimdTests.js";
 
 const useSimd = true;
+const sha256 = await AssemblyScriptSha256Hasher.initialize(useSimd);
 getSimdTests(sha256, useSimd);
