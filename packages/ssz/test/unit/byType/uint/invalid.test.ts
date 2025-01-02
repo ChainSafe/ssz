@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {UintNumberType, UintBigintType} from "../../../../src/index.js";
 import {UintNumberByteLen, uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint.js";
 import {runTypeTestInvalid, InvalidValue} from "../runTypeTestInvalid.js";
@@ -50,15 +50,15 @@ runTypeTestInvalid({
 
 describe("Invalid UintType at constructor", () => {
   it("UintNumberType odd byteLen", () => {
-    expect(() => new UintNumberType(3 as UintNumberByteLen)).to.throw();
+    expect(() => new UintNumberType(3 as UintNumberByteLen)).toThrow();
   });
   it("UintNumberType byteLen > 8", () => {
-    expect(() => new UintNumberType(16 as UintNumberByteLen)).to.throw();
+    expect(() => new UintNumberType(16 as UintNumberByteLen)).toThrow();
   });
   it("UintBigintType odd byteLen", () => {
-    expect(() => new UintBigintType(3 as UintNumberByteLen)).to.throw();
+    expect(() => new UintBigintType(3 as UintNumberByteLen)).toThrow();
   });
   it("UintBigintType byteLen > 8", () => {
-    expect(() => new UintBigintType(64 as UintNumberByteLen)).to.throw();
+    expect(() => new UintBigintType(64 as UintNumberByteLen)).toThrow();
   });
 });

@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src/index.js";
 import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
@@ -75,7 +75,7 @@ runTypeTestInvalid({
 
 describe("Invalid ContainerType at constructor", () => {
   it("Must have > 0 fields", () => {
-    expect(() => new ContainerType({})).to.throw();
+    expect(() => new ContainerType({})).toThrow();
   });
 
   it("Incomplete casing map", () => {
@@ -86,10 +86,10 @@ describe("Invalid ContainerType at constructor", () => {
           // Set casing map to a value that does not include all fields
           {casingMap: {b: "b"} as unknown as {a: string}}
         )
-    ).to.throw();
+    ).toThrow();
   });
 
   it("ContainerNodeStructType of not immutable types", () => {
-    expect(() => new ContainerNodeStructType({list: new ListBasicType(byteType, 2)})).to.throw();
+    expect(() => new ContainerNodeStructType({list: new ListBasicType(byteType, 2)})).toThrow();
   });
 });

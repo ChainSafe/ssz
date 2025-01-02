@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 
 describe("Mutability Buffer, Uint8Array", () => {
   it("Ensure Uint8Array.slice copies memory", () => {

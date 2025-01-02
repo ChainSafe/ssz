@@ -19,7 +19,7 @@
     "build:types": "tsc -p tsconfig.build.types.json",
     "lint": "eslint --color --ext .ts src/",
     "check-types": "tsc --noEmit",
-    "test:unit": "mocha 'test/unit/**/*.test.ts'",
+    "test:unit": "vitest run --dir test/unit",
     "test:perf": "mocha 'test/perf/**/*.test.ts'"
   },
   "repository": {

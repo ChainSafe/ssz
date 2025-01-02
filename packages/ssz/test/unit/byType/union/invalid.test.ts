@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {describe, it, expect} from "vitest";
 import {UintNumberType, UnionType, NoneType} from "../../../../src/index.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
@@ -23,15 +23,15 @@ runTypeTestInvalid({
 
 describe("Invalid UnionType at constructor", () => {
   it("UnionType over 128 types", () => {
-    expect(() => new UnionType(new Array(128).fill(byteType))).to.throw();
+    expect(() => new UnionType(new Array(128).fill(byteType))).toThrow();
   });
   it("UnionType 0 types", () => {
-    expect(() => new UnionType([])).to.throw();
+    expect(() => new UnionType([])).toThrow();
   });
   it("UnionType only None", () => {
-    expect(() => new UnionType([noneType])).to.throw();
+    expect(() => new UnionType([noneType])).toThrow();
   });
   it("UnionType None second", () => {
-    expect(() => new UnionType([byteType, noneType])).to.throw();
+    expect(() => new UnionType([byteType, noneType])).toThrow();
   });
 });

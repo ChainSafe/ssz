@@ -1,6 +1,6 @@
+import {describe, it, expect} from "vitest";
 import {ssz} from "../../lodestarTypes/index.js";
 import {Type} from "../../../src/index.js";
-import {expect} from "chai";
 
 enum ForkName {
   phase0 = "phase0",
