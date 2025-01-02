@@ -33,6 +33,37 @@ export class AssemblyScriptSha256Hasher {
     return Boolean(this.ctx.HAS_SIMD.valueOf());
   }
 
+  /**
+   * Sha256 for data of any length
+   */
+  digest(data: Uint8Array): Uint8Array {
+    if (data.length === 64) {
+      return this.digest64(data);
+    }
+
+    if (data.length <= this.ctx.INPUT_LENGTH) {
+      this.inputUint8Array.set(data);
+      this.ctx.digest(data.length);
+      return this.allocDigest();
+    }
+
+    this.ctx.init();
+    this.update(data);
+    return this.final();
+  }
+
+  /**
+   * Sha256 for 64byte ArrayBuffer
+   */
+  digest64(data: Uint8Array): Uint8Array {
+    if (data.length === 64) {
+      this.inputUint8Array.set(data);
+      this.ctx.digest64(this.wasmInputValue, this.wasmOutputValue);
+      return this.allocDigest();
+    }
+    throw new Error("InvalidLengthForDigest64");
+  }
+
   digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Array {
     if (bytes1.length !== 32 || bytes2.length !== 32) {
       throw new Error("InvalidLengthForDigest64");
@@ -223,6 +254,47 @@ export class AssemblyScriptSha256Hasher {
   }
 
   /**
+   * Hash 4 Uint8Array objects in parallel, each 64 length as below
+   *
+   * Inputs: i0    i1    i2    i3    i4    i5    i6    i7
+   *          \    /      \    /      \   /       \   /
+   * Outputs:   o0          o1          o2          o3
+   */
+  batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
+    if (inputs.length !== 4) {
+      throw new Error("Input length must be 4");
+    }
+    for (let i = 0; i < 4; i++) {
+      const input = inputs[i];
+      if (input == null) {
+        throw new Error(`Input ${i} is null or undefined`);
+      }
+      if (input.length !== 64) {
+        throw new Error(`Invalid length ${input.length} at input ${i}`);
+      }
+    }
+
+    if (!this.hasSimd) {
+      return inputs.map(this.digest64.bind(this));
+    }
+
+    // set up input buffer for v128
+    this.inputUint8Array.set(inputs[1], 64);
+    this.inputUint8Array.set(inputs[0], 0);
+    this.inputUint8Array.set(inputs[2], 128);
+    this.inputUint8Array.set(inputs[3], 192);
+
+    (this.ctx as WasmSimdContext).batchHash4UintArray64s(this.wasmOutputValue);
+
+    const output0 = this.allocDigest();
+    const output1 = this.allocDigestOffset(32);
+    const output2 = this.allocDigestOffset(64);
+    const output3 = this.allocDigestOffset(96);
+
+    return [output0, output1, output2, output3];
+  }
+
+  /**
    * Hash an input into preallocated input using batch if possible.
    */
   hashInto(input: Uint8Array, output: Uint8Array): void {
@@ -296,90 +368,12 @@ export class AssemblyScriptSha256Hasher {
     return out;
   }
 
-  /** allocate memory and copy result at offset */
+  /**
+   * allocate memory and copy result at offset
+   */
   private allocDigestOffset(offset: number): Uint8Array {
     const out = allocUnsafe(32);
     out.set(this.outputUint8Array.subarray(offset, offset + 32));
     return out;
-  }
-
-  /**
-   * @deprecated methods that are not used by persistent-merkle-tree.
-   *
-   * To be removed in a future release
-   */
-
-  /**
-   * @deprecated
-   */
-  private digest(data: Uint8Array): Uint8Array {
-    if (data.length === 64) {
-      return this.digest64(data);
-    }
-
-    if (data.length <= this.ctx.INPUT_LENGTH) {
-      this.inputUint8Array.set(data);
-      this.ctx.digest(data.length);
-      return this.allocDigest();
-    }
-
-    this.ctx.init();
-    this.update(data);
-    return this.final();
-  }
-
-  /**
-   * @deprecated
-   */
-  private digest64(data: Uint8Array): Uint8Array {
-    if (data.length === 64) {
-      this.inputUint8Array.set(data);
-      this.ctx.digest64(this.wasmInputValue, this.wasmOutputValue);
-      return this.allocDigest();
-    }
-    throw new Error("InvalidLengthForDigest64");
-  }
-
-  /**
-   * @deprecated
-   *
-   * Hash 4 Uint8Array objects in parallel, each 64 length as below
-   *
-   * Inputs: i0    i1    i2    i3    i4    i5    i6    i7
-   *          \    /      \    /      \   /       \   /
-   * Outputs:   o0          o1          o2          o3
-   */
-  private batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
-    if (inputs.length !== 4) {
-      throw new Error("Input length must be 4");
-    }
-    for (let i = 0; i < 4; i++) {
-      const input = inputs[i];
-      if (input == null) {
-        throw new Error(`Input ${i} is null or undefined`);
-      }
-      if (input.length !== 64) {
-        throw new Error(`Invalid length ${input.length} at input ${i}`);
-      }
-    }
-
-    if (!this.hasSimd) {
-      return inputs.map(this.digest64);
-    }
-
-    // set up input buffer for v128
-    this.inputUint8Array.set(inputs[1], 64);
-    this.inputUint8Array.set(inputs[0], 0);
-    this.inputUint8Array.set(inputs[2], 128);
-    this.inputUint8Array.set(inputs[3], 192);
-
-    (this.ctx as WasmSimdContext).batchHash4UintArray64s(this.wasmOutputValue);
-
-    const output0 = this.allocDigest();
-    const output1 = this.allocDigestOffset(32);
-    const output2 = this.allocDigestOffset(64);
-    const output3 = this.allocDigestOffset(96);
-
-    return [output0, output1, output2, output3];
   }
 }
