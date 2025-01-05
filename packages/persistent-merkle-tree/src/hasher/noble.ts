@@ -55,7 +55,7 @@ export const hasher: Hasher = {
       }
 
       for (const hc of hcArr) {
-        hc.dest.applyHash(hasher.digest64HashObjects(hc.src0, hc.src1));
+        hasher.digest64HashObjects(hc.src0, hc.src1, hc.dest);
       }
     }
   },
