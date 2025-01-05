@@ -93,9 +93,9 @@ describe("hashtree", function () {
 
   itBench({
     id: `get root`,
-    beforeEach: () => {
+    beforeEach: async () => {
       const [tree] = buildComparisonTrees(16);
-      setHasher(hashtreeHasher);
+      await setHasher(hashtreeHasher);
       return tree;
     },
     fn: (tree) => {

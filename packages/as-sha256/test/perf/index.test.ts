@@ -16,6 +16,7 @@ describe("digestTwoHashObjects vs digest64 vs digest", () => {
     sha256 = await AssemblyScriptSha256Hasher.initialize();
   });
 
+  const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
   const input1 = "gajindergajindergajindergajinder";
   const input2 = "gajindergajindergajindergajinder";
   const buffer1 = Buffer.from(input1, "utf-8");
@@ -32,22 +33,27 @@ describe("digestTwoHashObjects vs digest64 vs digest", () => {
     for (let j = 0; j < iterations; j++) sha256.digest2Bytes32(buffer1, buffer2);
   });
 
-  // itBench(`digest ${iterations} times`, () => {
-  //   for (let j = 0; j < iterations; j++) sha256.digest(input);
-  // });
+  itBench(`digest ${iterations} times`, () => {
+    for (let j = 0; j < iterations; j++) sha256.digest(input);
+  });
 });
 
-// describe("digest different Buffers", () => {
-//   const randomBuffer = (length: number): Uint8Array =>
-//     Buffer.from(Array.from({length}, () => Math.round(Math.random() * 255)));
+describe("digest different Buffers", () => {
+  let sha256: AssemblyScriptSha256Hasher;
+  before(async function () {
+    sha256 = await AssemblyScriptSha256Hasher.initialize();
+  });
 
-//   for (const length of [32, 64, 128, 256, 512, 1024]) {
-//     const buffer = randomBuffer(length);
-//     itBench(`input length ${length}`, () => {
-//       sha256.digest(buffer);
-//     });
-//   }
-// });
+  const randomBuffer = (length: number): Uint8Array =>
+    Buffer.from(Array.from({length}, () => Math.round(Math.random() * 255)));
+
+  for (const length of [32, 64, 128, 256, 512, 1024]) {
+    const buffer = randomBuffer(length);
+    itBench(`input length ${length}`, () => {
+      sha256.digest(buffer);
+    });
+  }
+});
 
 /**
  * time java: 2968 336927.2237196765 hashes/sec
@@ -57,16 +63,21 @@ describe("digestTwoHashObjects vs digest64 vs digest", () => {
  * digest 1000000 times                                               0.8279731 ops/s    1.207769  s/op        -         82 runs    100 s
  * => we are at 8279731 hashes/sec
  */
-// describe("hash - compare to java", () => {
-//   // java statistic for same test: https://gist.github.com/scoroberts/a60d61a2cc3afba1e8813b338ecd1501
+describe("hash - compare to java", () => {
+  // java statistic for same test: https://gist.github.com/scoroberts/a60d61a2cc3afba1e8813b338ecd1501
 
-//   const iterations = 1000000;
-//   const input = Buffer.from("lwkjt23uy45pojsdf;lnwo45y23po5i;lknwe;lknasdflnqw3uo5", "utf8");
+  let sha256: AssemblyScriptSha256Hasher;
+  before(async function () {
+    sha256 = await AssemblyScriptSha256Hasher.initialize();
+  });
 
-//   itBench(`digest ${iterations} times`, () => {
-//     for (let i = 0; i < iterations; i++) sha256.digest(input);
-//   });
-// });
+  const iterations = 1000000;
+  const input = Buffer.from("lwkjt23uy45pojsdf;lnwo45y23po5i;lknwe;lknasdflnqw3uo5", "utf8");
+
+  itBench(`digest ${iterations} times`, () => {
+    for (let i = 0; i < iterations; i++) sha256.digest(input);
+  });
+});
 
 // Aug 10 2021
 // utils

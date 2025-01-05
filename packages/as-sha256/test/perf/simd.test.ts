@@ -23,19 +23,19 @@ describe("digest64 vs batchHash4UintArray64s vs digest64HashObjects vs batchHash
     sha256 = await AssemblyScriptSha256Hasher.initialize();
   });
 
-  // const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
+  const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
   // total number of time running hash for 200000 balances
   const iterations = 50023;
-  // itBench(`digest64 ${iterations * 4} times`, () => {
-  //   for (let j = 0; j < iterations * 4; j++) sha256.digest64(input);
-  // });
+  itBench(`digest64 ${iterations * 4} times`, () => {
+    for (let j = 0; j < iterations * 4; j++) sha256.digest64(input);
+  });
 
   // // batchHash4UintArray64s do 4 sha256 in parallel
-  // itBench(`hash ${iterations * 4} times using batchHash4UintArray64s`, () => {
-  //   for (let j = 0; j < iterations; j++) {
-  //     sha256.batchHash4UintArray64s([input, input, input, input]);
-  //   }
-  // });
+  itBench(`hash ${iterations * 4} times using batchHash4UintArray64s`, () => {
+    for (let j = 0; j < iterations; j++) {
+      sha256.batchHash4UintArray64s([input, input, input, input]);
+    }
+  });
 
   const hashObject = byteArrayToHashObject(Buffer.from("gajindergajindergajindergajinder", "utf8"), 0);
   itBench(`digest64HashObjects ${iterations * 4} times`, () => {
