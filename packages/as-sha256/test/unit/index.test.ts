@@ -1,7 +1,6 @@
 import {describe, it, expect} from "vitest";
 import {createHash, randomBytes} from "crypto";
 import {Buffer} from "buffer";
-import {expect} from "chai";
 import {AssemblyScriptSha256Hasher, byteArrayToHashObject, hashObjectToByteArray} from "../../src/index.js";
 
 describe("hashObjectToByteArray and byteArrayToHashObject", function () {
