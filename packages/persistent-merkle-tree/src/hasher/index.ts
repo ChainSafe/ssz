@@ -15,7 +15,10 @@ export let hasher: Hasher = nobleHasher;
  *
  * WARNING: This function is intended for power users and must be executed before any other SSZ code is imported
  */
-export function setHasher(newHasher: Hasher): void {
+export async function setHasher(newHasher: Hasher): Promise<void> {
+  if (typeof newHasher.initialize === "function") {
+    await newHasher.initialize();
+  }
   hasher = newHasher;
 }
 
