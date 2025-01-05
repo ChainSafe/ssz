@@ -30,7 +30,7 @@ describe("digest64 vs batchHash4UintArray64s vs digest64HashObjects vs batchHash
     for (let j = 0; j < iterations * 4; j++) sha256.digest64(input);
   });
 
-  // // batchHash4UintArray64s do 4 sha256 in parallel
+  // batchHash4UintArray64s do 4 sha256 in parallel
   itBench(`hash ${iterations * 4} times using batchHash4UintArray64s`, () => {
     for (let j = 0; j < iterations; j++) {
       sha256.batchHash4UintArray64s([input, input, input, input]);

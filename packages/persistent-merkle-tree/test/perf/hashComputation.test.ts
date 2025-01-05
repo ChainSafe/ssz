@@ -1,5 +1,5 @@
 import {itBench} from "@dapplion/benchmark";
-import {HashComputation, HashComputationLevel, LeafNode, zeroHash} from "../../src/index.js";
+import { HashComputation, HashComputationLevel, LeafNode, zeroHash } from "../../src/index.js";
 
 /**
  * HashComputationLevel push then loop is faster than HashComputation[] push then loop
@@ -30,7 +30,7 @@ describe("HashComputationLevel", function () {
       for (const hc of level) {
         const {src0, src1, dest} = hc;
       }
-    },
+    }
   });
 
   itBench({
@@ -43,6 +43,6 @@ describe("HashComputationLevel", function () {
       for (const hc of level) {
         const {src0, src1, dest} = hc;
       }
-    },
-  });
+    }
+  })
 });
