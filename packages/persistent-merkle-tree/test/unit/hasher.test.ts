@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, it, expect, beforeAll} from "vitest";
 
 import {expectEqualHex} from "../utils/expectHex.js";
 import {uint8ArrayToHashObject, hashObjectToUint8Array} from "../../src/hasher/util.js";
@@ -19,7 +19,7 @@ import {zeroHash} from "../../src/zeroHash.js";
 describe("hashers", function () {
   const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
-  before(async function () {
+  beforeAll(async function () {
     for (const hasher of hashers) {
       if (typeof hasher.initialize === "function") {
         await hasher.initialize();

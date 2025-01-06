@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, it, expect, beforeAll} from "vitest";
 import {createHash, randomBytes} from "crypto";
 import {Buffer} from "buffer";
 import {AssemblyScriptSha256Hasher, byteArrayToHashObject, hashObjectToByteArray} from "../../src/index.js";
@@ -27,7 +27,7 @@ describe("hashObjectToByteArray and byteArrayToHashObject", function () {
 
 describe("as-sha256 non-SIMD enabled methods", function () {
   let sha256: AssemblyScriptSha256Hasher;
-  before(async function () {
+  beforeAll(async function () {
     sha256 = await AssemblyScriptSha256Hasher.initialize();
   });
 

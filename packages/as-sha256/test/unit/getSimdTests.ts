@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {expect} from "chai";
+import {describe, beforeAll, expect, it} from "vitest";
 import crypto from "crypto";
 import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function getSimdTests(sha256: any, useSimd: boolean): void {
   describe(`as-sha256 SIMD enabled methods ${useSimd ? "with SIMD" : "without SIMD"}`, () => {
-    before(function () {
+    beforeAll(function () {
       sha256.reinitializeInstance(useSimd);
       expect(sha256.simdEnabled()).to.equal(useSimd);
     });
