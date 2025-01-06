@@ -22,7 +22,7 @@ describe("hasher", function () {
 
   const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
-  beforeAll(async function () {
+  before(async function () {
     for (const hasher of hashers) {
       if (typeof hasher.initialize === "function") {
         await hasher.initialize();
