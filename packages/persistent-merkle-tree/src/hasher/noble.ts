@@ -1,5 +1,5 @@
 import {sha256} from "@noble/hashes/sha256";
-import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
+import {digest64HashObjects, byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types.js";
 import {
   BLOCK_SIZE,
@@ -55,7 +55,7 @@ export const hasher: Hasher = {
       }
 
       for (const hc of hcArr) {
-        hasher.digest64HashObjects(hc.src0, hc.src1, hc.dest);
+        hc.dest.applyHash(digest64HashObjects(hc.src0, hc.src1));
       }
     }
   },
