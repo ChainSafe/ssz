@@ -148,13 +148,14 @@ class BaseAssemblyScriptSha256Hasher {
   }
 }
 
-const baseHasher = new BaseAssemblyScriptSha256Hasher(false);
-
-const digest = baseHasher.digest.bind(baseHasher);
-const digest64 = baseHasher.digest64.bind(baseHasher);
-const digest2Bytes32 = baseHasher.digest2Bytes32.bind(baseHasher);
-const digest64HashObjects = baseHasher.digest64HashObjects.bind(baseHasher);
-const digest64HashObjectsInto = baseHasher.digest64HashObjectsInto.bind(baseHasher);
+// If an instance of AssemblyScriptSha256Hasher is created it will overwrite this instance and the
+// exported free functions. These are here for consumers that do not use the batch hashing methods
+let baseHasher = new BaseAssemblyScriptSha256Hasher(false);
+let digest = baseHasher.digest.bind(baseHasher);
+let digest64 = baseHasher.digest64.bind(baseHasher);
+let digest2Bytes32 = baseHasher.digest2Bytes32.bind(baseHasher);
+let digest64HashObjects = baseHasher.digest64HashObjects.bind(baseHasher);
+let digest64HashObjectsInto = baseHasher.digest64HashObjectsInto.bind(baseHasher);
 
 export {digest, digest64, digest2Bytes32, digest64HashObjects, digest64HashObjectsInto};
 
@@ -389,6 +390,13 @@ export class AssemblyScriptSha256Hasher extends BaseAssemblyScriptSha256Hasher {
   protected initializeInstance(): void {
     this.hasSimd = this.simdEnabled();
     super.initializeInstance();
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    baseHasher = this;
+    digest = this.digest.bind(this);
+    digest64 = this.digest64.bind(this);
+    digest2Bytes32 = this.digest2Bytes32.bind(this);
+    digest64HashObjects = this.digest64HashObjects.bind(this);
+    digest64HashObjectsInto = this.digest64HashObjectsInto.bind(this);
   }
 
   /**
