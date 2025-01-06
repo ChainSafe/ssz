@@ -6,6 +6,89 @@ import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} f
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
+class BaseAssemblyScriptSha256Hasher {
+  private ctx: WasmSimdContext | WasmContext;
+  private wasmInputValue!: number;
+  private wasmOutputValue!: number;
+  private inputUint8Array!: Uint8Array;
+  private outputUint8Array32!: Uint8Array;
+
+  constructor() {
+    this.ctx = newInstance(false);
+    this.wasmInputValue = this.ctx.input.value;
+    this.wasmOutputValue = this.ctx.output.value;
+    this.inputUint8Array = new Uint8Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
+    /** output uint8array, length 32, used to easily copy output data */
+    this.outputUint8Array32 = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
+  }
+
+  /**
+   * Sha256 for data of any length
+   */
+  digest(data: Uint8Array): Uint8Array {
+    if (data.length === 64) {
+      return this.digest64(data);
+    }
+
+    if (data.length <= this.ctx.INPUT_LENGTH) {
+      this.inputUint8Array.set(data);
+      this.ctx.digest(data.length);
+      return this.allocDigest();
+    }
+
+    this.ctx.init();
+    this.update(data);
+    return this.final();
+  }
+
+  /**
+   * Sha256 for 64byte ArrayBuffer
+   */
+  digest64(data: Uint8Array): Uint8Array {
+    if (data.length === 64) {
+      this.inputUint8Array.set(data);
+      this.ctx.digest64(this.wasmInputValue, this.wasmOutputValue);
+      return this.allocDigest();
+    }
+    throw new Error("InvalidLengthForDigest64");
+  }
+
+  protected update(data: Uint8Array): void {
+    const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
+    if (data.length > INPUT_LENGTH) {
+      for (let i = 0; i < data.length; i += INPUT_LENGTH) {
+        const sliced = data.subarray(i, i + INPUT_LENGTH);
+        this.inputUint8Array.set(sliced);
+        this.ctx.update(this.wasmInputValue, sliced.length);
+      }
+    } else {
+      this.inputUint8Array.set(data);
+      this.ctx.update(this.wasmInputValue, data.length);
+    }
+  }
+
+  protected final(): Uint8Array {
+    this.ctx.final(this.wasmOutputValue);
+    return this.allocDigest();
+  }
+
+  /**
+   * allocate memory and copy result
+   */
+  protected allocDigest(): Uint8Array {
+    const out = allocUnsafe(32);
+    out.set(this.outputUint8Array32);
+    return out;
+  }
+}
+
+const baseHasher = new BaseAssemblyScriptSha256Hasher();
+
+const digest = baseHasher.digest.bind(baseHasher);
+const digest64 = baseHasher.digest64.bind(baseHasher);
+
+export {digest, digest64};
+
 export class AssemblyScriptSha256Hasher {
   private ctx!: WasmSimdContext | WasmContext;
   private hasSimd!: boolean;
