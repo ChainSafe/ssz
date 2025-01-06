@@ -11,15 +11,13 @@ class BaseAssemblyScriptSha256Hasher {
   protected wasmInputValue!: number;
   protected wasmOutputValue!: number;
   protected inputUint8Array!: Uint8Array;
+  protected inputUint32Array!: Uint32Array;
+  protected outputUint8Array!: Uint8Array;
   protected outputUint8Array32!: Uint8Array;
 
   constructor(useSimd: boolean) {
     this.ctx = newInstance(useSimd);
-    this.wasmInputValue = this.ctx.input.value;
-    this.wasmOutputValue = this.ctx.output.value;
-    this.inputUint8Array = new Uint8Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
-    /** output uint8array, length 32, used to easily copy output data */
-    this.outputUint8Array32 = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
+    this.initializeInstance();
   }
 
   /**
@@ -51,66 +49,6 @@ class BaseAssemblyScriptSha256Hasher {
       return this.allocDigest();
     }
     throw new Error("InvalidLengthForDigest64");
-  }
-
-  protected update(data: Uint8Array): void {
-    const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
-    if (data.length > INPUT_LENGTH) {
-      for (let i = 0; i < data.length; i += INPUT_LENGTH) {
-        const sliced = data.subarray(i, i + INPUT_LENGTH);
-        this.inputUint8Array.set(sliced);
-        this.ctx.update(this.wasmInputValue, sliced.length);
-      }
-    } else {
-      this.inputUint8Array.set(data);
-      this.ctx.update(this.wasmInputValue, data.length);
-    }
-  }
-
-  protected final(): Uint8Array {
-    this.ctx.final(this.wasmOutputValue);
-    return this.allocDigest();
-  }
-
-  /**
-   * allocate memory and copy result
-   */
-  protected allocDigest(): Uint8Array {
-    const out = allocUnsafe(32);
-    out.set(this.outputUint8Array32);
-    return out;
-  }
-}
-
-const baseHasher = new BaseAssemblyScriptSha256Hasher(false);
-
-const digest = baseHasher.digest.bind(baseHasher);
-const digest64 = baseHasher.digest64.bind(baseHasher);
-
-export {digest, digest64};
-
-export class AssemblyScriptSha256Hasher extends BaseAssemblyScriptSha256Hasher {
-  private hasSimd!: boolean;
-  private outputUint8Array!: Uint8Array;
-  private inputUint32Array!: Uint32Array;
-  constructor(useSimd: boolean) {
-    super(useSimd);
-    this.initializeInstance(useSimd);
-  }
-
-  static async initialize(shouldUseSimd?: boolean): Promise<AssemblyScriptSha256Hasher> {
-    const useSimd = shouldUseSimd !== undefined ? shouldUseSimd : await simd();
-    return new AssemblyScriptSha256Hasher(useSimd);
-  }
-
-  reinitializeInstance(useSimd: boolean): boolean {
-    this.ctx = newInstance(useSimd);
-    this.initializeInstance(useSimd);
-    return this.simdEnabled();
-  }
-
-  simdEnabled(): boolean {
-    return Boolean(this.ctx.HAS_SIMD.valueOf());
   }
 
   digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Array {
@@ -169,6 +107,77 @@ export class AssemblyScriptSha256Hasher extends BaseAssemblyScriptSha256Hasher {
 
     // extracting numbers from Uint32Array causes more memory
     byteArrayIntoHashObject(this.outputUint8Array, 0, output);
+  }
+
+  protected initializeInstance(): void {
+    this.wasmInputValue = this.ctx.input.value;
+    this.wasmOutputValue = this.ctx.output.value;
+    this.inputUint8Array = new Uint8Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
+    this.outputUint8Array = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, this.ctx.PARALLEL_FACTOR * 32);
+    /** output uint8array, length 32, used to easily copy output data */
+    this.outputUint8Array32 = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
+    this.inputUint32Array = new Uint32Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
+  }
+
+  protected update(data: Uint8Array): void {
+    const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
+    if (data.length > INPUT_LENGTH) {
+      for (let i = 0; i < data.length; i += INPUT_LENGTH) {
+        const sliced = data.subarray(i, i + INPUT_LENGTH);
+        this.inputUint8Array.set(sliced);
+        this.ctx.update(this.wasmInputValue, sliced.length);
+      }
+    } else {
+      this.inputUint8Array.set(data);
+      this.ctx.update(this.wasmInputValue, data.length);
+    }
+  }
+
+  protected final(): Uint8Array {
+    this.ctx.final(this.wasmOutputValue);
+    return this.allocDigest();
+  }
+
+  /**
+   * allocate memory and copy result
+   */
+  protected allocDigest(): Uint8Array {
+    const out = allocUnsafe(32);
+    out.set(this.outputUint8Array32);
+    return out;
+  }
+}
+
+const baseHasher = new BaseAssemblyScriptSha256Hasher(false);
+
+const digest = baseHasher.digest.bind(baseHasher);
+const digest64 = baseHasher.digest64.bind(baseHasher);
+const digest2Bytes32 = baseHasher.digest2Bytes32.bind(baseHasher);
+const digest64HashObjects = baseHasher.digest64HashObjects.bind(baseHasher);
+const digest64HashObjectsInto = baseHasher.digest64HashObjectsInto.bind(baseHasher);
+
+export {digest, digest64, digest2Bytes32, digest64HashObjects, digest64HashObjectsInto};
+
+export class AssemblyScriptSha256Hasher extends BaseAssemblyScriptSha256Hasher {
+  private hasSimd!: boolean;
+  constructor(useSimd: boolean) {
+    super(useSimd);
+    this.initializeInstance();
+  }
+
+  static async initialize(shouldUseSimd?: boolean): Promise<AssemblyScriptSha256Hasher> {
+    const useSimd = shouldUseSimd !== undefined ? shouldUseSimd : await simd();
+    return new AssemblyScriptSha256Hasher(useSimd);
+  }
+
+  reinitializeInstance(useSimd: boolean): boolean {
+    this.ctx = newInstance(useSimd);
+    this.initializeInstance();
+    return this.simdEnabled();
+  }
+
+  simdEnabled(): boolean {
+    return Boolean(this.ctx.HAS_SIMD.valueOf());
   }
 
   /**
@@ -377,15 +386,9 @@ export class AssemblyScriptSha256Hasher extends BaseAssemblyScriptSha256Hasher {
     }
   }
 
-  private initializeInstance(useSimd: boolean): void {
+  protected initializeInstance(): void {
     this.hasSimd = this.simdEnabled();
-    this.wasmInputValue = this.ctx.input.value;
-    this.wasmOutputValue = this.ctx.output.value;
-    this.inputUint8Array = new Uint8Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
-    this.outputUint8Array = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, this.ctx.PARALLEL_FACTOR * 32);
-    /** output uint8array, length 32, used to easily copy output data */
-    this.outputUint8Array32 = new Uint8Array(this.ctx.memory.buffer, this.wasmOutputValue, 32);
-    this.inputUint32Array = new Uint32Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);
+    super.initializeInstance();
   }
 
   /**
