@@ -1,10 +1,15 @@
-import {HashObject, AssemblyScriptSha256Hasher} from "@chainsafe/as-sha256";
+import {
+  digest2Bytes32,
+  digest64HashObjectsInto,
+  digest64HashObjects,
+  batchHash4HashObjectInputs,
+  hashInto,
+} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types.js";
 import {Node} from "../node.js";
 import type {HashComputationLevel} from "../hashComputation.js";
 import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
 
-let sha256: undefined | AssemblyScriptSha256Hasher;
 /**
  * hashInto() function of as-sha256 loop through every 256 bytes
  * This is the same to hashInto() function of as-sha256 https://github.com/ChainSafe/ssz/blob/cf3e1f038c8bf7cba1bb27c38540e50b0391d0e6/packages/as-sha256/src/index.ts#L270
@@ -13,43 +18,18 @@ const buffer = new Uint8Array(4 * BLOCK_SIZE);
 
 export const hasher: Hasher = {
   name: "as-sha256",
-  async initialize() {
-    sha256 = await AssemblyScriptSha256Hasher.initialize();
-  },
-  digest64(a32Bytes: Uint8Array, b32Bytes: Uint8Array): Uint8Array {
-    if (!sha256) {
-      throw new Error("Must initialize AssemblyScriptSha256Hasher before use");
-    }
-    return sha256.digest2Bytes32(a32Bytes, b32Bytes);
-  },
-  digest64HashObjects(left: HashObject, right: HashObject, parent: HashObject): void {
-    if (!sha256) {
-      throw new Error("Must initialize AssemblyScriptSha256Hasher before use");
-    }
-    return sha256.digest64HashObjectsInto(left, right, parent);
-  },
+  digest64: digest2Bytes32,
+  digest64HashObjects: digest64HashObjectsInto,
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    if (!sha256) {
-      throw new Error("Must initialize AssemblyScriptSha256Hasher before use");
-    }
-    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, sha256.hashInto.bind(sha256));
+    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
-    if (!sha256) {
-      throw new Error("Must initialize AssemblyScriptSha256Hasher before use");
-    }
-    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, sha256.hashInto.bind(sha256), buffer);
+    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
-    if (!sha256) {
-      throw new Error("Must initialize AssemblyScriptSha256Hasher before use");
-    }
-    return doDigestNLevel(data, nLevel, sha256.hashInto.bind(sha256));
+    return doDigestNLevel(data, nLevel, hashInto);
   },
   executeHashComputations: (hashComputations: HashComputationLevel[]) => {
-    if (!sha256) {
-      throw new Error("Must initialize AssemblyScriptSha256Hasher before use");
-    }
     for (let level = hashComputations.length - 1; level >= 0; level--) {
       const hcArr = hashComputations[level];
       if (!hcArr) {
@@ -116,7 +96,7 @@ export const hasher: Hasher = {
               dest3 !== null
             ) {
               // TODO - batch: find a way not allocate here
-              const [o0, o1, o2, o3] = sha256.batchHash4HashObjectInputs([
+              const [o0, o1, o2, o3] = batchHash4HashObjectInputs([
                 src0_0,
                 src1_0,
                 src0_1,
@@ -157,16 +137,16 @@ export const hasher: Hasher = {
 
       // remaining
       if (src0_0 !== null && src1_0 !== null && dest0 !== null) {
-        dest0.applyHash(sha256.digest64HashObjects(src0_0, src1_0));
+        dest0.applyHash(digest64HashObjects(src0_0, src1_0));
       }
       if (src0_1 !== null && src1_1 !== null && dest1 !== null) {
-        dest1.applyHash(sha256.digest64HashObjects(src0_1, src1_1));
+        dest1.applyHash(digest64HashObjects(src0_1, src1_1));
       }
       if (src0_2 !== null && src1_2 !== null && dest2 !== null) {
-        dest2.applyHash(sha256.digest64HashObjects(src0_2, src1_2));
+        dest2.applyHash(digest64HashObjects(src0_2, src1_2));
       }
       if (src0_3 !== null && src1_3 !== null && dest3 !== null) {
-        dest3.applyHash(sha256.digest64HashObjects(src0_3, src1_3));
+        dest3.applyHash(digest64HashObjects(src0_3, src1_3));
       }
     }
   },

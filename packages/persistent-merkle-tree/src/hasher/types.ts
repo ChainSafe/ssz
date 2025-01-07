@@ -6,8 +6,6 @@ export type {HashObject};
 export type Hasher = {
   // name of the hashing library
   name: string;
-  // as-sha256 has an async initialization. must run this to detect correct bindings
-  initialize?: () => Promise<void>;
   /**
    * Hash two 32-byte Uint8Arrays
    */
