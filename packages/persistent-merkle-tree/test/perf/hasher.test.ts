@@ -97,7 +97,7 @@ describe("hashtree", function () {
     id: "get root",
     beforeEach: async () => {
       const [tree] = buildComparisonTrees(16);
-      await setHasher(hashtreeHasher);
+      setHasher(hashtreeHasher);
       return tree;
     },
     fn: (tree) => {
