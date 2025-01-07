@@ -45,9 +45,6 @@
     "benchmark:local": "yarn benchmark --local",
     "test:ci": "yarn test:as-ci"
   },
-  "dependencies": {
-    "wasm-feature-detect": "^1.8.0"
-  },
   "devDependencies": {
     "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",
     "assemblyscript": "^0.27.24",
