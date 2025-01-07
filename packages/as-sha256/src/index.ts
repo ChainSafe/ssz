@@ -233,7 +233,7 @@ export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   inputUint32Array[62] = inputs[5].h7;
   inputUint32Array[63] = inputs[7].h7;
 
-  (ctx as WasmSimdContext).batchHash4HashObjectInputs(wasmOutputValue);
+  ctx.batchHash4HashObjectInputs(wasmOutputValue);
 
   const output0 = byteArrayToHashObject(outputUint8Array, 0);
   const output1 = byteArrayToHashObject(outputUint8Array, 32);
@@ -274,7 +274,7 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
   inputUint8Array.set(inputs[2], 128);
   inputUint8Array.set(inputs[3], 192);
 
-  (ctx as WasmSimdContext).batchHash4UintArray64s(wasmOutputValue);
+  ctx.batchHash4UintArray64s(wasmOutputValue);
 
   const output0 = allocDigest();
   const output1 = allocDigestOffset(32);
@@ -302,7 +302,7 @@ export function hashInto(input: Uint8Array, output: Uint8Array): void {
     const num256ByteChunks = Math.floor(input.length / 256);
     for (let i = 0; i < num256ByteChunks; i++) {
       inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
-      (ctx as WasmSimdContext).batchHash4UintArray64s(wasmOutputValue);
+      ctx.batchHash4UintArray64s(wasmOutputValue);
       output.set(outputUint8Array.subarray(0, 128), i * 128);
     }
     num64ByteChunksHashed = num256ByteChunks * 4;
