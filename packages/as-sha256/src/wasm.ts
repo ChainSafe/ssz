@@ -37,10 +37,9 @@ const importObj = {
   },
 };
 
-export function newInstance<T extends boolean>(haveSimd: T): T extends true ? WasmSimdContext : WasmContext {
-  return (haveSimd
-    ? new WebAssembly.Instance(new WebAssembly.Module(wasmSimdCode), importObj).exports
-    : new WebAssembly.Instance(new WebAssembly.Module(wasmCode), importObj).exports) as unknown as T extends true
-    ? WasmSimdContext
-    : WasmContext;
+export function newInstance(useSimd?: boolean): WasmSimdContext | WasmContext {
+  const enableSimd = useSimd !== undefined ? useSimd : WebAssembly.validate(wasmSimdCode);
+  return enableSimd
+    ? (new WebAssembly.Instance(new WebAssembly.Module(wasmSimdCode), importObj).exports as unknown as WasmSimdContext)
+    : (new WebAssembly.Instance(new WebAssembly.Module(wasmCode), importObj).exports as unknown as WasmContext);
 }

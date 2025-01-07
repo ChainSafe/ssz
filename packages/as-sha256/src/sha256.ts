@@ -11,7 +11,7 @@ export default class SHA256 {
   private uint8OutputArray: Uint8Array;
 
   constructor() {
-    this.ctx = newInstance(false);
+    this.ctx = newInstance();
     this.wasmInputValue = this.ctx.input.value;
     this.wasmOutputValue = this.ctx.output.value;
     this.uint8InputArray = new Uint8Array(this.ctx.memory.buffer, this.wasmInputValue, this.ctx.INPUT_LENGTH);

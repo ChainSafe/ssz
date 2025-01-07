@@ -11,7 +11,7 @@ export function getSimdTests(sha256: any, useSimd: boolean): void {
   describe(`as-sha256 SIMD enabled methods ${useSimd ? "with SIMD" : "without SIMD"}`, () => {
     beforeAll(function () {
       sha256.reinitializeInstance(useSimd);
-      expect(sha256.simdEnabled()).to.equal(useSimd);
+      expect(sha256.simdEnabled).to.equal(useSimd);
     });
     it("testHash4UintArray64s()", () => {
       const input1 = "gajindergajindergajindergajinder";
