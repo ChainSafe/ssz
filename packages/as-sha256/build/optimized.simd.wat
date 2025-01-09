@@ -4,8 +4,9 @@
  (type $2 (func (param i32 i32) (result i32)))
  (type $3 (func (param i32)))
  (type $4 (func))
- (type $5 (func (param i32 i32 i32 i32)))
- (type $6 (func (param i32 i32 i64)))
+ (type $5 (func (param i32 i32 i32)))
+ (type $6 (func (param i32 i32 i32 i32)))
+ (type $7 (func (param i32 i32 i64)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (global $assembly/simd/H0V128 (mut v128) (v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000))
  (global $assembly/simd/H1V128 (mut v128) (v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000))
@@ -5635,8 +5636,8 @@
   i32.const 0
   global.set $assembly/common/bytesHashed
  )
- (func $assembly/common/hashBlocks (param $0 i32) (param $1 i32)
-  (local $2 i32)
+ (func $assembly/common/hashBlocks (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
   global.get $assembly/common/H0
   global.set $assembly/common/a
   global.get $assembly/common/H1
@@ -5664,22 +5665,26 @@
     global.get $assembly/common/i
     i32.const 2
     i32.shl
-    local.tee $2
     i32.add
     local.get $1
+    global.get $assembly/common/i
     local.get $2
+    i32.mul
+    i32.const 2
+    i32.shl
+    local.tee $3
     i32.const 3
     i32.add
     i32.add
     i32.load8_u
     local.get $1
-    local.get $2
+    local.get $3
     i32.add
     i32.load8_u
     i32.const 24
     i32.shl
     local.get $1
-    local.get $2
+    local.get $3
     i32.const 1
     i32.add
     i32.add
@@ -5688,7 +5693,7 @@
     i32.shl
     i32.or
     local.get $1
-    local.get $2
+    local.get $3
     i32.const 2
     i32.add
     i32.add
@@ -5954,6 +5959,7 @@
     local.set $1
     global.get $assembly/common/wPtr
     global.get $assembly/common/mPtr
+    i32.const 1
     call $assembly/common/hashBlocks
     i32.const 0
     global.set $assembly/common/mLength
@@ -5982,6 +5988,7 @@
     local.get $0
     local.get $2
     i32.add
+    i32.const 1
     call $assembly/common/hashBlocks
     local.get $3
     i32.const 1
@@ -6064,6 +6071,7 @@
    end
    global.get $assembly/common/wPtr
    global.get $assembly/common/mPtr
+   i32.const 1
    call $assembly/common/hashBlocks
    i32.const 0
    global.set $assembly/common/mLength
@@ -6122,6 +6130,7 @@
   i32.store offset=60
   global.get $assembly/common/wPtr
   global.get $assembly/common/mPtr
+  i32.const 1
   call $assembly/common/hashBlocks
   local.get $0
   global.get $assembly/common/H0
@@ -6311,10 +6320,11 @@
   i32.add
   global.set $assembly/common/H7
  )
- (func $assembly/common/digest64 (param $0 i32) (param $1 i32)
+ (func $assembly/common/digest64 (param $0 i32) (param $1 i32) (param $2 i32)
   call $assembly/common/init
   global.get $assembly/common/wPtr
   local.get $0
+  local.get $2
   call $assembly/common/hashBlocks
   global.get $assembly/common/w64Ptr
   call $assembly/common/hashPreCompW

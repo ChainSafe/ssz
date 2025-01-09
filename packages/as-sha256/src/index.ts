@@ -1,11 +1,11 @@
 import {allocUnsafe} from "./alloc.js";
-import {newInstance, WasmSimdContext} from "./wasm.js";
+import {newInstance, WasmContext} from "./wasm.js";
 import type {HashObject} from "./hashObject.js";
 import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
-let ctx: WasmSimdContext;
+let ctx: WasmContext;
 export let simdEnabled: boolean;
 let wasmInputValue: number;
 let wasmOutputValue: number;
@@ -16,7 +16,7 @@ let outputUint8Array32: Uint8Array;
 let inputUint32Array: Uint32Array;
 
 export function reinitializeInstance(useSimd?: boolean): void {
-  ctx = newInstance(useSimd) as WasmSimdContext;
+  ctx = newInstance(useSimd);
   simdEnabled = Boolean(ctx.HAS_SIMD.valueOf());
   wasmInputValue = ctx.input.value;
   wasmOutputValue = ctx.output.value;
@@ -47,7 +47,7 @@ export function digest(data: Uint8Array): Uint8Array {
 export function digest64(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
     inputUint8Array.set(data);
-    ctx.digest64(wasmInputValue, wasmOutputValue);
+    ctx.digest64(wasmInputValue, wasmOutputValue, 1);
     return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
@@ -57,7 +57,7 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
   if (bytes1.length === 32 && bytes2.length === 32) {
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2, 32);
-    ctx.digest64(wasmInputValue, wasmOutputValue);
+    ctx.digest64(wasmInputValue, wasmOutputValue, 1);
     return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
@@ -106,7 +106,7 @@ export function digest64HashObjectsInto(obj1: HashObject, obj2: HashObject, outp
   inputUint32Array[14] = obj2.h6;
   inputUint32Array[15] = obj2.h7;
 
-  ctx.digest64(wasmInputValue, wasmOutputValue);
+  ctx.digest64(wasmInputValue, wasmOutputValue, 1);
 
   // extracting numbers from Uint32Array causes more memory
   byteArrayIntoHashObject(outputUint8Array, 0, output);
@@ -162,14 +162,6 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
 export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   if (inputs.length !== 8) {
     throw new Error("Input length must be 8");
-  }
-
-  if (!simdEnabled) {
-    const output: HashObject[] = new Array<HashObject>(4);
-    for (let i = 0; i < 4; i++) {
-      output[i] = digest64HashObjects(inputs[2 * i], inputs[2 * i + 1]);
-    }
-    return output;
   }
 
   // inputUint8Array is 256 bytes
@@ -304,7 +296,7 @@ export function hashInto(input: Uint8Array, output: Uint8Array): void {
   const outputOffset = numHashed * 32;
   for (let i = 0; i < remainingHash; i++) {
     inputUint8Array.set(input.subarray(inputOffset + i * 64, inputOffset + (i + 1) * 64), 0);
-    ctx.digest64(wasmInputValue, wasmOutputValue);
+    ctx.digest64(wasmInputValue, wasmOutputValue, 1);
     output.set(outputUint8Array.subarray(0, 32), outputOffset + i * 32);
   }
 }

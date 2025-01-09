@@ -20,11 +20,8 @@ export interface WasmContext {
   final(outPtr: number): void;
 
   digest(length: number): void;
-  digest64(inPtr: number, outPtr: number): void;
+  digest64(inPtr: number, outPtr: number, step: number): void;
   batchHash4UintArray64s(outPtr: number): void;
-}
-
-export interface WasmSimdContext extends WasmContext {
   batchHash4HashObjectInputs(outPtr: number): void;
 }
 
@@ -37,9 +34,9 @@ const importObj = {
   },
 };
 
-export function newInstance(useSimd?: boolean): WasmSimdContext | WasmContext {
+export function newInstance(useSimd?: boolean): WasmContext {
   const enableSimd = useSimd !== undefined ? useSimd : WebAssembly.validate(wasmSimdCode);
   return enableSimd
-    ? (new WebAssembly.Instance(new WebAssembly.Module(wasmSimdCode), importObj).exports as unknown as WasmSimdContext)
+    ? (new WebAssembly.Instance(new WebAssembly.Module(wasmSimdCode), importObj).exports as unknown as WasmContext)
     : (new WebAssembly.Instance(new WebAssembly.Module(wasmCode), importObj).exports as unknown as WasmContext);
 }

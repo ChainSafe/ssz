@@ -119,8 +119,10 @@ function SIG1(x: u32): u32 {
  * Update intermediate hash values
  * @param wPtr pointer to expanded message block memory
  * @param mPtr pointer to message block memory, pass 0 if wPtr is precomputed for e.g. in digest64
+ * @param step increment for how many bytes to step through when loading data. allows for sparse
+ *             input to accommodate non-simd batchHash4HashObjectInputs without an extra copy
  */
-function hashBlocks(wPtr: usize, mPtr: usize): void {
+function hashBlocks(wPtr: usize, mPtr: usize, step: i32): void {
   a = H0;
   b = H1;
   c = H2;
@@ -133,7 +135,7 @@ function hashBlocks(wPtr: usize, mPtr: usize): void {
   // Load message blocks into first 16 expanded message blocks
   for (i = 0; i < 16; i++) {
     store32(wPtr, i,
-      load32be(mPtr, i)
+      load32be(mPtr, i * step)
     );
   }
   // Expand message blocks 17-64
@@ -229,7 +231,7 @@ export function update(dataPtr: usize, dataLength: i32): void {
       mLength += 64 - mLength;
       dataPos += 64 - mLength;
       dataLength -= 64 - mLength;
-      hashBlocks(wPtr, mPtr);
+      hashBlocks(wPtr, mPtr, 1);
       mLength = 0;
     } else {
       // we can't fully fill the buffer but we exhaust the whole data buffer
@@ -242,7 +244,7 @@ export function update(dataPtr: usize, dataLength: i32): void {
   }
   // If input has remaining 64-byte chunks, hash those
   for (let i = 0; i < dataLength / 64; i++, dataPos += 64) {
-    hashBlocks(wPtr, dataPtr + dataPos);
+    hashBlocks(wPtr, dataPtr + dataPos, 1);
   }
   // If any additional bytes remain, copy into message blocks buffer
   if (dataLength & 63) {
@@ -260,7 +262,7 @@ export function final(outPtr: usize): void {
   }
   if ((bytesHashed & 63) >= 56) {
     fill(mPtr + mLength, 0, 64 - mLength);
-    hashBlocks(wPtr, mPtr);
+    hashBlocks(wPtr, mPtr, 1);
     mLength = 0;
   }
   if ((bytesHashed & 63) >= 63) {
@@ -273,7 +275,7 @@ export function final(outPtr: usize): void {
   store<u32>(mPtr + 64 - 4, bswap(bytesHashed << 3)); // length -- low bits
 
   // hash round for padding
-  hashBlocks(wPtr, mPtr);
+  hashBlocks(wPtr, mPtr, 1);
 
   store32(outPtr, 0, bswap(H0));
   store32(outPtr, 1, bswap(H1));
@@ -291,9 +293,9 @@ export function digest(length: i32): void {
   final(outputPtr);
 }
 
-export function digest64(inPtr: usize, outPtr: usize): void {
+export function digest64(inPtr: usize, outPtr: usize, step: i32): void {
   init();
-  hashBlocks(wPtr,inPtr);
+  hashBlocks(wPtr, inPtr, step);
   hashPreCompW(w64Ptr);
   store32(outPtr, 0, bswap(H0));
   store32(outPtr, 1, bswap(H1));

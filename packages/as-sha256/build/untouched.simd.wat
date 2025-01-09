@@ -3,8 +3,8 @@
  (type $1 (func (param i32 i32)))
  (type $2 (func))
  (type $3 (func (param i32 i32) (result i32)))
- (type $4 (func (param i32)))
- (type $5 (func (param i32 i32 i32)))
+ (type $4 (func (param i32 i32 i32)))
+ (type $5 (func (param i32)))
  (type $6 (func (param i32 i32 i32 i32)))
  (type $7 (func (param i32 i32 i64) (result i32)))
  (type $8 (func (param i32 i64 i32)))
@@ -10742,8 +10742,7 @@
   i32.const 0
   global.set $assembly/common/bytesHashed
  )
- (func $assembly/common/hashBlocks (param $0 i32) (param $1 i32)
-  (local $2 i32)
+ (func $assembly/common/hashBlocks (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -10782,6 +10781,7 @@
   (local $38 i32)
   (local $39 i32)
   (local $40 i32)
+  (local $41 i32)
   global.get $assembly/common/H0
   global.set $assembly/common/a
   global.get $assembly/common/H1
@@ -10806,27 +10806,29 @@
    i32.lt_u
    if
     local.get $0
-    local.set $13
-    global.get $assembly/common/i
     local.set $14
+    global.get $assembly/common/i
+    local.set $15
     block $assembly/common/load32be|inlined.5 (result i32)
      local.get $1
-     local.set $2
-     global.get $assembly/common/i
      local.set $3
-     local.get $3
+     global.get $assembly/common/i
+     local.get $2
+     i32.mul
+     local.set $4
+     local.get $4
      i32.const 2
      i32.shl
-     local.set $4
+     local.set $5
      block $assembly/common/load8|inlined.20 (result i32)
-      local.get $2
-      local.set $5
-      local.get $4
-      i32.const 0
-      i32.add
+      local.get $3
       local.set $6
       local.get $5
+      i32.const 0
+      i32.add
+      local.set $7
       local.get $6
+      local.get $7
       i32.add
       i32.load8_u
       br $assembly/common/load8|inlined.20
@@ -10836,14 +10838,14 @@
      i32.const 24
      i32.shl
      block $assembly/common/load8|inlined.21 (result i32)
-      local.get $2
-      local.set $7
-      local.get $4
+      local.get $3
+      local.set $8
+      local.get $5
       i32.const 1
       i32.add
-      local.set $8
-      local.get $7
+      local.set $9
       local.get $8
+      local.get $9
       i32.add
       i32.load8_u
       br $assembly/common/load8|inlined.21
@@ -10854,14 +10856,14 @@
      i32.shl
      i32.or
      block $assembly/common/load8|inlined.22 (result i32)
-      local.get $2
-      local.set $9
-      local.get $4
+      local.get $3
+      local.set $10
+      local.get $5
       i32.const 2
       i32.add
-      local.set $10
-      local.get $9
+      local.set $11
       local.get $10
+      local.get $11
       i32.add
       i32.load8_u
       br $assembly/common/load8|inlined.22
@@ -10872,14 +10874,14 @@
      i32.shl
      i32.or
      block $assembly/common/load8|inlined.23 (result i32)
-      local.get $2
-      local.set $11
-      local.get $4
+      local.get $3
+      local.set $12
+      local.get $5
       i32.const 3
       i32.add
-      local.set $12
-      local.get $11
+      local.set $13
       local.get $12
+      local.get $13
       i32.add
       i32.load8_u
       br $assembly/common/load8|inlined.23
@@ -10891,13 +10893,13 @@
      i32.or
      br $assembly/common/load32be|inlined.5
     end
-    local.set $15
-    local.get $13
+    local.set $16
     local.get $14
+    local.get $15
     i32.const 2
     i32.shl
     i32.add
-    local.get $15
+    local.get $16
     i32.store
     global.get $assembly/common/i
     i32.const 1
@@ -10914,34 +10916,34 @@
    i32.lt_u
    if
     local.get $0
-    local.set $26
-    global.get $assembly/common/i
     local.set $27
+    global.get $assembly/common/i
+    local.set $28
     block $assembly/common/SIG1|inlined.0 (result i32)
      block $assembly/common/load32|inlined.0 (result i32)
       local.get $0
-      local.set $16
+      local.set $17
       global.get $assembly/common/i
       i32.const 2
       i32.sub
-      local.set $17
-      local.get $16
+      local.set $18
       local.get $17
+      local.get $18
       i32.const 2
       i32.shl
       i32.add
       i32.load
       br $assembly/common/load32|inlined.0
      end
-     local.set $18
-     local.get $18
+     local.set $19
+     local.get $19
      i32.const 17
      i32.rotr
-     local.get $18
+     local.get $19
      i32.const 19
      i32.rotr
      i32.xor
-     local.get $18
+     local.get $19
      i32.const 10
      i32.shr_u
      i32.xor
@@ -10949,13 +10951,13 @@
     end
     block $assembly/common/load32|inlined.1 (result i32)
      local.get $0
-     local.set $19
+     local.set $20
      global.get $assembly/common/i
      i32.const 7
      i32.sub
-     local.set $20
-     local.get $19
+     local.set $21
      local.get $20
+     local.get $21
      i32.const 2
      i32.shl
      i32.add
@@ -10966,28 +10968,28 @@
     block $assembly/common/SIG0|inlined.0 (result i32)
      block $assembly/common/load32|inlined.2 (result i32)
       local.get $0
-      local.set $21
+      local.set $22
       global.get $assembly/common/i
       i32.const 15
       i32.sub
-      local.set $22
-      local.get $21
+      local.set $23
       local.get $22
+      local.get $23
       i32.const 2
       i32.shl
       i32.add
       i32.load
       br $assembly/common/load32|inlined.2
      end
-     local.set $23
-     local.get $23
+     local.set $24
+     local.get $24
      i32.const 7
      i32.rotr
-     local.get $23
+     local.get $24
      i32.const 18
      i32.rotr
      i32.xor
-     local.get $23
+     local.get $24
      i32.const 3
      i32.shr_u
      i32.xor
@@ -10996,13 +10998,13 @@
     i32.add
     block $assembly/common/load32|inlined.3 (result i32)
      local.get $0
-     local.set $24
+     local.set $25
      global.get $assembly/common/i
      i32.const 16
      i32.sub
-     local.set $25
-     local.get $24
+     local.set $26
      local.get $25
+     local.get $26
      i32.const 2
      i32.shl
      i32.add
@@ -11010,13 +11012,13 @@
      br $assembly/common/load32|inlined.3
     end
     i32.add
-    local.set $28
-    local.get $26
+    local.set $29
     local.get $27
+    local.get $28
     i32.const 2
     i32.shl
     i32.add
-    local.get $28
+    local.get $29
     i32.store
     global.get $assembly/common/i
     i32.const 1
@@ -11035,15 +11037,15 @@
     global.get $assembly/common/h
     block $assembly/common/EP1|inlined.0 (result i32)
      global.get $assembly/common/e
-     local.set $29
-     local.get $29
+     local.set $30
+     local.get $30
      i32.const 6
      i32.rotr
-     local.get $29
+     local.get $30
      i32.const 11
      i32.rotr
      i32.xor
-     local.get $29
+     local.get $30
      i32.const 25
      i32.rotr
      i32.xor
@@ -11052,18 +11054,18 @@
     i32.add
     block $assembly/common/CH|inlined.0 (result i32)
      global.get $assembly/common/e
-     local.set $30
-     global.get $assembly/common/f
      local.set $31
-     global.get $assembly/common/g
+     global.get $assembly/common/f
      local.set $32
-     local.get $30
+     global.get $assembly/common/g
+     local.set $33
      local.get $31
+     local.get $32
      i32.and
-     local.get $30
+     local.get $31
      i32.const -1
      i32.xor
-     local.get $32
+     local.get $33
      i32.and
      i32.xor
      br $assembly/common/CH|inlined.0
@@ -11071,11 +11073,11 @@
     i32.add
     block $assembly/common/load32|inlined.4 (result i32)
      global.get $assembly/common/kPtr
-     local.set $33
-     global.get $assembly/common/i
      local.set $34
-     local.get $33
+     global.get $assembly/common/i
+     local.set $35
      local.get $34
+     local.get $35
      i32.const 2
      i32.shl
      i32.add
@@ -11085,11 +11087,11 @@
     i32.add
     block $assembly/common/load32|inlined.5 (result i32)
      local.get $0
-     local.set $35
-     global.get $assembly/common/i
      local.set $36
-     local.get $35
+     global.get $assembly/common/i
+     local.set $37
      local.get $36
+     local.get $37
      i32.const 2
      i32.shl
      i32.add
@@ -11100,15 +11102,15 @@
     global.set $assembly/common/t1
     block $assembly/common/EP0|inlined.0 (result i32)
      global.get $assembly/common/a
-     local.set $37
-     local.get $37
+     local.set $38
+     local.get $38
      i32.const 2
      i32.rotr
-     local.get $37
+     local.get $38
      i32.const 13
      i32.rotr
      i32.xor
-     local.get $37
+     local.get $38
      i32.const 22
      i32.rotr
      i32.xor
@@ -11116,20 +11118,20 @@
     end
     block $assembly/common/MAJ|inlined.0 (result i32)
      global.get $assembly/common/a
-     local.set $38
-     global.get $assembly/common/b
      local.set $39
-     global.get $assembly/common/c
+     global.get $assembly/common/b
      local.set $40
-     local.get $38
+     global.get $assembly/common/c
+     local.set $41
      local.get $39
-     i32.and
-     local.get $38
      local.get $40
+     i32.and
+     local.get $39
+     local.get $41
      i32.and
      i32.xor
-     local.get $39
      local.get $40
+     local.get $41
      i32.and
      i32.xor
      br $assembly/common/MAJ|inlined.0
@@ -11241,6 +11243,7 @@
     local.set $1
     global.get $assembly/common/wPtr
     global.get $assembly/common/mPtr
+    i32.const 1
     call $assembly/common/hashBlocks
     i32.const 0
     global.set $assembly/common/mLength
@@ -11279,6 +11282,7 @@
     local.get $0
     local.get $2
     i32.add
+    i32.const 1
     call $assembly/common/hashBlocks
     local.get $3
     i32.const 1
@@ -11439,6 +11443,7 @@
    end
    global.get $assembly/common/wPtr
    global.get $assembly/common/mPtr
+   i32.const 1
    call $assembly/common/hashBlocks
    i32.const 0
    global.set $assembly/common/mLength
@@ -11518,6 +11523,7 @@
   i32.store
   global.get $assembly/common/wPtr
   global.get $assembly/common/mPtr
+  i32.const 1
   call $assembly/common/hashBlocks
   local.get $0
   local.set $15
@@ -11824,8 +11830,7 @@
   i32.add
   global.set $assembly/common/H7
  )
- (func $assembly/common/digest64 (param $0 i32) (param $1 i32)
-  (local $2 i32)
+ (func $assembly/common/digest64 (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -11849,123 +11854,125 @@
   (local $23 i32)
   (local $24 i32)
   (local $25 i32)
+  (local $26 i32)
   call $assembly/common/init
   global.get $assembly/common/wPtr
   local.get $0
+  local.get $2
   call $assembly/common/hashBlocks
   global.get $assembly/common/w64Ptr
   call $assembly/common/hashPreCompW
   local.get $1
-  local.set $2
-  i32.const 0
   local.set $3
+  i32.const 0
+  local.set $4
   global.get $assembly/common/H0
   call $~lib/polyfills/bswap<u32>
-  local.set $4
-  local.get $2
+  local.set $5
   local.get $3
+  local.get $4
   i32.const 2
   i32.shl
   i32.add
-  local.get $4
+  local.get $5
   i32.store
   local.get $1
-  local.set $5
-  i32.const 1
   local.set $6
+  i32.const 1
+  local.set $7
   global.get $assembly/common/H1
   call $~lib/polyfills/bswap<u32>
-  local.set $7
-  local.get $5
+  local.set $8
   local.get $6
+  local.get $7
   i32.const 2
   i32.shl
   i32.add
-  local.get $7
+  local.get $8
   i32.store
   local.get $1
-  local.set $8
-  i32.const 2
   local.set $9
+  i32.const 2
+  local.set $10
   global.get $assembly/common/H2
   call $~lib/polyfills/bswap<u32>
-  local.set $10
-  local.get $8
+  local.set $11
   local.get $9
+  local.get $10
   i32.const 2
   i32.shl
   i32.add
-  local.get $10
+  local.get $11
   i32.store
   local.get $1
-  local.set $11
-  i32.const 3
   local.set $12
+  i32.const 3
+  local.set $13
   global.get $assembly/common/H3
   call $~lib/polyfills/bswap<u32>
-  local.set $13
-  local.get $11
+  local.set $14
   local.get $12
+  local.get $13
   i32.const 2
   i32.shl
   i32.add
-  local.get $13
+  local.get $14
   i32.store
   local.get $1
-  local.set $14
-  i32.const 4
   local.set $15
+  i32.const 4
+  local.set $16
   global.get $assembly/common/H4
   call $~lib/polyfills/bswap<u32>
-  local.set $16
-  local.get $14
+  local.set $17
   local.get $15
+  local.get $16
   i32.const 2
   i32.shl
   i32.add
-  local.get $16
+  local.get $17
   i32.store
   local.get $1
-  local.set $17
-  i32.const 5
   local.set $18
+  i32.const 5
+  local.set $19
   global.get $assembly/common/H5
   call $~lib/polyfills/bswap<u32>
-  local.set $19
-  local.get $17
+  local.set $20
   local.get $18
+  local.get $19
   i32.const 2
   i32.shl
   i32.add
-  local.get $19
+  local.get $20
   i32.store
   local.get $1
-  local.set $20
-  i32.const 6
   local.set $21
+  i32.const 6
+  local.set $22
   global.get $assembly/common/H6
   call $~lib/polyfills/bswap<u32>
-  local.set $22
-  local.get $20
+  local.set $23
   local.get $21
+  local.get $22
   i32.const 2
   i32.shl
   i32.add
-  local.get $22
+  local.get $23
   i32.store
   local.get $1
-  local.set $23
-  i32.const 7
   local.set $24
+  i32.const 7
+  local.set $25
   global.get $assembly/common/H7
   call $~lib/polyfills/bswap<u32>
-  local.set $25
-  local.get $23
+  local.set $26
   local.get $24
+  local.get $25
   i32.const 2
   i32.shl
   i32.add
-  local.get $25
+  local.get $26
   i32.store
  )
  (func $~start
