@@ -113,6 +113,43 @@ export function digest64HashObjectsInto(obj1: HashObject, obj2: HashObject, outp
 }
 
 /**
+ * Hash 4 Uint8Array objects in parallel, each 64 length as below
+ *
+ * Inputs: i0    i1    i2    i3    i4    i5    i6    i7
+ *          \    /      \    /      \   /       \   /
+ * Outputs:   o0          o1          o2          o3
+ */
+export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
+  if (inputs.length !== 4) {
+    throw new Error("Input length must be 4");
+  }
+  for (let i = 0; i < 4; i++) {
+    const input = inputs[i];
+    if (input == null) {
+      throw new Error(`Input ${i} is null or undefined`);
+    }
+    if (input.length !== 64) {
+      throw new Error(`Invalid length ${input.length} at input ${i}`);
+    }
+  }
+
+  // set up input buffer for v128
+  inputUint8Array.set(inputs[0], 0);
+  inputUint8Array.set(inputs[1], 64);
+  inputUint8Array.set(inputs[2], 128);
+  inputUint8Array.set(inputs[3], 192);
+
+  ctx.batchHash4UintArray64s(wasmOutputValue);
+
+  const output0 = allocDigest();
+  const output1 = allocDigestOffset(32);
+  const output2 = allocDigestOffset(64);
+  const output3 = allocDigestOffset(96);
+
+  return [output0, output1, output2, output3];
+}
+
+/**
  * Hash 4 HashObject inputs in parallel
  *   - Each input (inputs{i}) is 4 bytes which make it 32 bytes
  *   - Each HashObject input contains 2 HashObjects which is 64 bytes similar to batchHash4UintArray64s
@@ -239,43 +276,6 @@ export function batchHash4HashObjectInputs(inputs: HashObject[]): HashObject[] {
   const output1 = byteArrayToHashObject(outputUint8Array, 32);
   const output2 = byteArrayToHashObject(outputUint8Array, 64);
   const output3 = byteArrayToHashObject(outputUint8Array, 96);
-
-  return [output0, output1, output2, output3];
-}
-
-/**
- * Hash 4 Uint8Array objects in parallel, each 64 length as below
- *
- * Inputs: i0    i1    i2    i3    i4    i5    i6    i7
- *          \    /      \    /      \   /       \   /
- * Outputs:   o0          o1          o2          o3
- */
-export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
-  if (inputs.length !== 4) {
-    throw new Error("Input length must be 4");
-  }
-  for (let i = 0; i < 4; i++) {
-    const input = inputs[i];
-    if (input == null) {
-      throw new Error(`Input ${i} is null or undefined`);
-    }
-    if (input.length !== 64) {
-      throw new Error(`Invalid length ${input.length} at input ${i}`);
-    }
-  }
-
-  // set up input buffer for v128
-  inputUint8Array.set(inputs[0], 0);
-  inputUint8Array.set(inputs[1], 64);
-  inputUint8Array.set(inputs[2], 128);
-  inputUint8Array.set(inputs[3], 192);
-
-  ctx.batchHash4UintArray64s(wasmOutputValue);
-
-  const output0 = allocDigest();
-  const output1 = allocDigestOffset(32);
-  const output2 = allocDigestOffset(64);
-  const output3 = allocDigestOffset(96);
 
   return [output0, output1, output2, output3];
 }
