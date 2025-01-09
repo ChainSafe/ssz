@@ -21,10 +21,10 @@ export interface WasmContext {
 
   digest(length: number): void;
   digest64(inPtr: number, outPtr: number): void;
+  batchHash4UintArray64s(outPtr: number): void;
 }
 
 export interface WasmSimdContext extends WasmContext {
-  batchHash4UintArray64s(outPtr: number): void;
   batchHash4HashObjectInputs(outPtr: number): void;
 }
 

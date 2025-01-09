@@ -264,13 +264,9 @@ export function batchHash4UintArray64s(inputs: Uint8Array[]): Uint8Array[] {
     }
   }
 
-  if (!simdEnabled) {
-    return inputs.map(digest64);
-  }
-
   // set up input buffer for v128
-  inputUint8Array.set(inputs[1], 64);
   inputUint8Array.set(inputs[0], 0);
+  inputUint8Array.set(inputs[1], 64);
   inputUint8Array.set(inputs[2], 128);
   inputUint8Array.set(inputs[3], 192);
 
@@ -294,24 +290,19 @@ export function hashInto(input: Uint8Array, output: Uint8Array): void {
   if (input.length !== output.length * 2) {
     throw new Error(`Invalid output length ${output.length}`);
   }
-
-  let num64ByteChunksHashed = 0;
-  let num64ByteChunksRemaining = input.length / 64;
-  if (simdEnabled) {
-    // for every 64 x 4 = 256 bytes, do the batch hash if SIMD is present
-    const num256ByteChunks = Math.floor(input.length / 256);
-    for (let i = 0; i < num256ByteChunks; i++) {
-      inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
-      ctx.batchHash4UintArray64s(wasmOutputValue);
-      output.set(outputUint8Array.subarray(0, 128), i * 128);
-    }
-    num64ByteChunksHashed = num256ByteChunks * 4;
-    num64ByteChunksRemaining -= num64ByteChunksHashed;
+  // for every 64 x 4 = 256 bytes, do the batch hash
+  const endBatch = Math.floor(input.length / 256);
+  for (let i = 0; i < endBatch; i++) {
+    inputUint8Array.set(input.subarray(i * 256, (i + 1) * 256), 0);
+    ctx.batchHash4UintArray64s(wasmOutputValue);
+    output.set(outputUint8Array.subarray(0, 128), i * 128);
   }
 
-  const inputOffset = num64ByteChunksHashed * 64;
-  const outputOffset = num64ByteChunksHashed * 32;
-  for (let i = 0; i < num64ByteChunksRemaining; i++) {
+  const numHashed = endBatch * 4;
+  const remainingHash = Math.floor((input.length % 256) / 64);
+  const inputOffset = numHashed * 64;
+  const outputOffset = numHashed * 32;
+  for (let i = 0; i < remainingHash; i++) {
     inputUint8Array.set(input.subarray(inputOffset + i * 64, inputOffset + (i + 1) * 64), 0);
     ctx.digest64(wasmInputValue, wasmOutputValue);
     output.set(outputUint8Array.subarray(0, 32), outputOffset + i * 32);

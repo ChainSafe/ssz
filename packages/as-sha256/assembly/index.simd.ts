@@ -12,22 +12,12 @@ import {
   store32,
   load32be,
   wPtr,
-  inputPtr
+  inputPtr,
 } from "./common";
 
 export const HAS_SIMD = true;
 
-export {
-  INPUT_LENGTH,
-  PARALLEL_FACTOR,
-  input,
-  output,
-  init,
-  update,
-  final,
-  digest,
-  digest64
-};
+export {INPUT_LENGTH, PARALLEL_FACTOR, input, output, init, update, final, digest, digest64};
 
 /**
  * Hash 4 inputs of exactly 64 bytes each
