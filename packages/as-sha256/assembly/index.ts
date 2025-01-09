@@ -1,4 +1,16 @@
-import {INPUT_LENGTH, PARALLEL_FACTOR, input, output, init, update, final, digest, digest64, inputPtr} from "./common";
+import {
+  INPUT_LENGTH,
+  PARALLEL_FACTOR,
+  input,
+  output,
+  init,
+  update,
+  final,
+  digest,
+  digest64,
+  digest64WithStep,
+  inputPtr,
+} from "./common";
 
 export const HAS_SIMD = false;
 
@@ -11,7 +23,7 @@ export function batchHash4UintArray64s(outPtr: usize): void {
   for (let i = 0; i < 4; i++) {
     const inOffset = changetype<usize>(i * 64);
     const outOffset = changetype<usize>(i * 32);
-    digest64(inputPtr + inOffset, outPtr + outOffset, 1);
+    digest64(inputPtr + inOffset, outPtr + outOffset);
   }
 }
 
@@ -22,6 +34,6 @@ export function batchHash4HashObjectInputs(outPtr: usize): void {
   for (let i = 0; i < 4; i++) {
     const inOffset = changetype<usize>(i * 4);
     const outOffset = changetype<usize>(i * 32);
-    digest64(inputPtr + inOffset, outPtr + outOffset, 4);
+    digest64WithStep(inputPtr + inOffset, outPtr + outOffset, 4);
   }
 }

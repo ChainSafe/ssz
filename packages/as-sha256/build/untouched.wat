@@ -2437,7 +2437,7 @@
   i32.or
   return
  )
- (func $assembly/common/digest64 (param $0 i32) (param $1 i32) (param $2 i32)
+ (func $assembly/common/digest64WithStep (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 i32)
@@ -2582,6 +2582,12 @@
   local.get $26
   i32.store
  )
+ (func $assembly/common/digest64 (param $0 i32) (param $1 i32)
+  local.get $0
+  local.get $1
+  i32.const 1
+  call $assembly/common/digest64WithStep
+ )
  (func $assembly/index/batchHash4UintArray64s (param $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -2607,7 +2613,6 @@
     local.get $0
     local.get $3
     i32.add
-    i32.const 1
     call $assembly/common/digest64
     local.get $1
     i32.const 1
@@ -2643,7 +2648,7 @@
     local.get $3
     i32.add
     i32.const 4
-    call $assembly/common/digest64
+    call $assembly/common/digest64WithStep
     local.get $1
     i32.const 1
     i32.add

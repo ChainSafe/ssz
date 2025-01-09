@@ -293,7 +293,7 @@ export function digest(length: i32): void {
   final(outputPtr);
 }
 
-export function digest64(inPtr: usize, outPtr: usize, step: i32): void {
+export function digest64WithStep(inPtr: usize, outPtr: usize, step: i32): void {
   init();
   hashBlocks(wPtr, inPtr, step);
   hashPreCompW(w64Ptr);
@@ -305,4 +305,8 @@ export function digest64(inPtr: usize, outPtr: usize, step: i32): void {
   store32(outPtr, 5, bswap(H5));
   store32(outPtr, 6, bswap(H6));
   store32(outPtr, 7, bswap(H7));
+}
+
+export function digest64(inPtr: usize, outPtr: usize): void {
+  digest64WithStep(inPtr, outPtr, 1);
 }

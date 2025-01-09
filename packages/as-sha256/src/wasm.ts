@@ -20,7 +20,7 @@ export interface WasmContext {
   final(outPtr: number): void;
 
   digest(length: number): void;
-  digest64(inPtr: number, outPtr: number, step: number): void;
+  digest64(inPtr: number, outPtr: number): void;
   batchHash4UintArray64s(outPtr: number): void;
   batchHash4HashObjectInputs(outPtr: number): void;
 }

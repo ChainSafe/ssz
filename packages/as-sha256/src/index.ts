@@ -47,7 +47,7 @@ export function digest(data: Uint8Array): Uint8Array {
 export function digest64(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
     inputUint8Array.set(data);
-    ctx.digest64(wasmInputValue, wasmOutputValue, 1);
+    ctx.digest64(wasmInputValue, wasmOutputValue);
     return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
@@ -57,7 +57,7 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
   if (bytes1.length === 32 && bytes2.length === 32) {
     inputUint8Array.set(bytes1);
     inputUint8Array.set(bytes2, 32);
-    ctx.digest64(wasmInputValue, wasmOutputValue, 1);
+    ctx.digest64(wasmInputValue, wasmOutputValue);
     return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
@@ -106,7 +106,7 @@ export function digest64HashObjectsInto(obj1: HashObject, obj2: HashObject, outp
   inputUint32Array[14] = obj2.h6;
   inputUint32Array[15] = obj2.h7;
 
-  ctx.digest64(wasmInputValue, wasmOutputValue, 1);
+  ctx.digest64(wasmInputValue, wasmOutputValue);
 
   // extracting numbers from Uint32Array causes more memory
   byteArrayIntoHashObject(outputUint8Array, 0, output);
@@ -296,7 +296,7 @@ export function hashInto(input: Uint8Array, output: Uint8Array): void {
   const outputOffset = numHashed * 32;
   for (let i = 0; i < remainingHash; i++) {
     inputUint8Array.set(input.subarray(inputOffset + i * 64, inputOffset + (i + 1) * 64), 0);
-    ctx.digest64(wasmInputValue, wasmOutputValue, 1);
+    ctx.digest64(wasmInputValue, wasmOutputValue);
     output.set(outputUint8Array.subarray(0, 32), outputOffset + i * 32);
   }
 }
