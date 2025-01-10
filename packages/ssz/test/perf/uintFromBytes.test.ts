@@ -77,8 +77,7 @@ describe("Uint64 deserialize", () => {
       const values: number[] = [];
 
       // Single leafNode
-
-      beforeAll( () => {
+      beforeAll(() => {
         const firstValue = byteLength >= 8 ? 30e9 : 2 ** (bitLength - 1);
         const maxValue = byteLength >= 8 ? Number.MAX_SAFE_INTEGER : 2 ** bitLength;
 
@@ -134,7 +133,7 @@ describe("Uint64 deserialize", () => {
       let dataView: DataView;
       const values: bigint[] = [];
 
-      beforeAll( () => {
+      beforeAll(() => {
         const firstValue = BigInt(2) ** BigInt(bitLength - 1);
         const maxValue = BigInt(2) ** BigInt(bitLength);
 
