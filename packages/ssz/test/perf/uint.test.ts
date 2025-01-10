@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {ContainerType, UintNumberType, UintBigintType} from "../../src/index.js";
 
 describe("Uint64 types", () => {
@@ -16,7 +16,7 @@ describe("Uint64 types", () => {
 
   const numLoop = 1_000_000;
 
-  itBench(`struct - increase slot to ${numLoop}`, () => {
+  bench(`struct - increase slot to ${numLoop}`, () => {
     const state: IBeaconState = {
       slot: 0,
     };
@@ -25,14 +25,14 @@ describe("Uint64 types", () => {
     }
   });
 
-  itBench(`UintNumberType - increase slot to ${numLoop}`, () => {
+  bench(`UintNumberType - increase slot to ${numLoop}`, () => {
     const tbState = ContainerNumber.toViewDU({slot: 0});
     for (let i = 0; i < numLoop; i++) {
       tbState.slot++;
     }
   });
 
-  itBench(`UintBigintType - increase slot to ${numLoop}`, () => {
+  bench(`UintBigintType - increase slot to ${numLoop}`, () => {
     const tbState = ContainerBigint.toViewDU({slot: BigInt(0)});
     for (let i = 0; i < numLoop; i++) {
       tbState.slot++;

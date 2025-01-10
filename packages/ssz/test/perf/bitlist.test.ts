@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {BitArray, BitListType} from "../../src/index.js";
 
 // running zipIndexesCommitteeBits() on `bitLen: 2048, bitsSet: 2048` takes 50.904 us/op
@@ -20,11 +20,11 @@ describe("BitListType types", () => {
     const bitlistStruct = getBitsMany(bitLen, bitsSet);
     const bytes = CommitteeBits.serialize(bitlistStruct);
 
-    itBench(`bitlist bytes to struct (${bitLen},${bitsSet})`, () => {
+    bench(`bitlist bytes to struct (${bitLen},${bitsSet})`, () => {
       CommitteeBits.deserialize(bytes);
     });
 
-    itBench(`bitlist bytes to tree (${bitLen},${bitsSet})`, () => {
+    bench(`bitlist bytes to tree (${bitLen},${bitsSet})`, () => {
       CommitteeBits.deserializeToView(bytes);
     });
   }

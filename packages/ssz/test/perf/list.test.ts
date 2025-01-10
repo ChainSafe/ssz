@@ -1,5 +1,5 @@
 import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {UintNumberType, ListBasicType} from "../../src/index.js";
 
 describe("list", () => {
@@ -8,20 +8,20 @@ describe("list", () => {
   const tbBalances = createBalanceList(numBalances);
 
   // using Number64UintType gives 20% improvement
-  itBench("Number64UintType - get balances list", () => {
+  bench("Number64UintType - get balances list", () => {
     for (let i = 0; i < numBalances; i++) {
       tbBalances.get(i);
     }
   });
 
   // using Number64UintType gives 2% - 10% improvement
-  itBench("Number64UintType - set balances list", () => {
+  bench("Number64UintType - set balances list", () => {
     for (let i = 0; i < numBalances; i++) {
       tbBalances.set(i, 31217089836);
     }
   });
 
-  itBench("Number64UintType - get and increase 10 then set", () => {
+  bench("Number64UintType - get and increase 10 then set", () => {
     const tbBalance = tbBalances.clone();
     for (let i = 0; i < numBalances; i++) {
       tbBalance.set(i, 10 + tbBalances.get(i));
@@ -30,7 +30,7 @@ describe("list", () => {
 
   // using applyDelta gives 4x improvement to get and set
   // 2.7x improvement compared to set only
-  itBench("Number64UintType - increase 10 using applyDelta", () => {
+  bench("Number64UintType - increase 10 using applyDelta", () => {
     for (let i = 0; i < numBalances; i++) {
       tbBalances.set(i, 10 + tbBalances.get(i));
     }
@@ -43,7 +43,7 @@ describe("list", () => {
 
   // same performance to tree_applyUint64Delta, should be a little faster
   // if it operates on a subtree with hook
-  itBench("Number64UintType - increase 10 using applyDeltaInBatch", () => {
+  bench("Number64UintType - increase 10 using applyDeltaInBatch", () => {
     for (let i = 0; i < numBalances; i++) {
       tbBalances.set(i, 10 + tbBalances.get(i));
     }
@@ -59,7 +59,7 @@ describe("subtreeFillToContents", function () {
 
   /** tree_newTreeFromUint64Deltas is 17% faster than unsafeUint8ArrayToTree */
   /** ✓ tree_newTreeFromUint64Deltas    28.72705 ops/s    34.81040 ms/op        -       1149 runs   40.0 s */
-  itBench("tree_newTreeFromUint64Deltas", () => {
+  bench("tree_newTreeFromUint64Deltas", () => {
     const balances = tbBalances64.getAll();
     for (let i = 0, len = deltas.length; i < len; i++) {
       balances[i] += deltas[i];
@@ -71,7 +71,7 @@ describe("subtreeFillToContents", function () {
   const cachedBalances64 = tbBalances64.getAll();
 
   /** ✓ unsafeUint8ArrayToTree    24.51560 ops/s    40.79035 ms/op        -        981 runs   40.0 s */
-  itBench("unsafeUint8ArrayToTree", () => {
+  bench("unsafeUint8ArrayToTree", () => {
     for (let i = 0; i < numBalances; i++) {
       newBalances[i] = BigInt(cachedBalances64[i] + deltas[i]);
     }

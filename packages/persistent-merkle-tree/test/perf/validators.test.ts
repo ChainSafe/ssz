@@ -1,12 +1,5 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {
-  LeafNode,
-  subtreeFillToContents,
-  Node,
-  countToDepth,
-  zeroNode,
-  getHashComputations,
-} from "../../src/index.js";
+import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
+import {LeafNode, subtreeFillToContents, Node, countToDepth, zeroNode, getHashComputations} from "../../src/index.js";
 import {MemoryTracker} from "../utils/memTracker.js";
 import {batchHash} from "../utils/batchHash.js";
 
@@ -46,7 +39,7 @@ describe("Track the performance of validators", () => {
   node.root;
   tracker.logDiff("Calculate tree root");
 
-  itBench({
+  bench({
     id: `${vc} validators root getter`,
     beforeEach: () => {
       resetNodes(node, depth);
@@ -57,7 +50,7 @@ describe("Track the performance of validators", () => {
     },
   });
 
-  itBench({
+  bench({
     id: `${vc} validators batchHash()`,
     beforeEach: () => {
       resetNodes(node, depth);
@@ -68,7 +61,7 @@ describe("Track the performance of validators", () => {
     },
   });
 
-  itBench({
+  bench({
     id: `${vc} validators hashComputations`,
     beforeEach: () => {
       resetNodes(node, depth);

@@ -4,7 +4,6 @@ module.exports = {
     browser: true,
     es6: true,
     node: true,
-    mocha: true,
   },
   globals: {
     BigInt: true,
@@ -78,9 +77,6 @@ module.exports = {
     "prefer-const": "error",
     quotes: ["error", "double"],
     semi: "off",
-
-    // Prevents accidentally pushing a commit with .only in Mocha tests
-    "no-only-tests/no-only-tests": "error",
 
     // TEMP Disabled while eslint-plugin-import support ESM (Typescript does support it) https://github.com/import-js/eslint-plugin-import/issues/2170
     "import/no-unresolved": "off",

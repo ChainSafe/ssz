@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {BitVectorType, ContainerType, UintBigintType, ValueOf} from "../../src/index.js";
 
 describe("cachePermanentRootStruct", () => {
@@ -20,7 +20,7 @@ describe("cachePermanentRootStruct", () => {
     {cachePermanentRootStruct: true}
   );
 
-  itBench<ValueOf<typeof TestStruct>, ValueOf<typeof TestStruct>>({
+  bench<ValueOf<typeof TestStruct>, ValueOf<typeof TestStruct>>({
     id: "cachePermanentRootStruct no cache",
     before: () => TestStruct.defaultValue(),
     beforeEach: (value) => value,
@@ -29,7 +29,7 @@ describe("cachePermanentRootStruct", () => {
     },
   });
 
-  itBench<ValueOf<typeof TestStruct>, ValueOf<typeof TestStruct>>({
+  bench<ValueOf<typeof TestStruct>, ValueOf<typeof TestStruct>>({
     id: "cachePermanentRootStruct with cache",
     before: () => TestStructCache.defaultValue(),
     beforeEach: (value) => value,

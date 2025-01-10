@@ -1,5 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench, beforeAll} from "@chainsafe/benchmark";
 import {UintNumberType, UintBigintType, uintNumberByteLens, uintBigintByteLens} from "../../src/type/uint.js";
 
 const POW_32 = 2 ** 32;
@@ -20,7 +20,7 @@ describe("Uint64 deserialize", () => {
 
       // Single leafNode
 
-      before("Create random bytes", () => {
+      beforeAll(() => {
         const firstValue = byteLength >= 8 ? 30e9 : 2 ** (bitLength - 1);
         const maxValue = byteLength >= 8 ? Number.MAX_SAFE_INTEGER : 2 ** bitLength;
 
@@ -47,13 +47,13 @@ describe("Uint64 deserialize", () => {
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} tree_deserialize`, () => {
+      bench(`UintBigint${bitLength} x ${numElements} tree_deserialize`, () => {
         for (let i = 0; i < numElements; i++) {
           uintNumberType.tree_deserializeFromBytes({uint8Array, dataView}, i * byteLength, (i + 1) * byteLength);
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} tree_serialize`, () => {
+      bench(`UintBigint${bitLength} x ${numElements} tree_serialize`, () => {
         const arrayBuf = new ArrayBuffer(arrayBuffer.byteLength);
         const dataView = new DataView(arrayBuf);
         const uint8Array = new Uint8Array(arrayBuf);
@@ -78,7 +78,7 @@ describe("Uint64 deserialize", () => {
 
       // Single leafNode
 
-      before("Create random bytes", () => {
+      beforeAll( () => {
         const firstValue = byteLength >= 8 ? 30e9 : 2 ** (bitLength - 1);
         const maxValue = byteLength >= 8 ? Number.MAX_SAFE_INTEGER : 2 ** bitLength;
 
@@ -106,13 +106,13 @@ describe("Uint64 deserialize", () => {
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} value_deserialize`, () => {
+      bench(`UintBigint${bitLength} x ${numElements} value_deserialize`, () => {
         for (let i = 0; i < numElements; i++) {
           uintNumberType.value_deserializeFromBytes({uint8Array, dataView}, i * byteLength, (i + 1) * byteLength);
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} value_serialize`, () => {
+      bench(`UintBigint${bitLength} x ${numElements} value_serialize`, () => {
         const arrayBuf = new ArrayBuffer(arrayBuffer.byteLength);
         const dataView = new DataView(arrayBuf);
         for (let i = 0; i < numElements; i++) {
@@ -134,7 +134,7 @@ describe("Uint64 deserialize", () => {
       let dataView: DataView;
       const values: bigint[] = [];
 
-      before("Create random bytes", () => {
+      beforeAll( () => {
         const firstValue = BigInt(2) ** BigInt(bitLength - 1);
         const maxValue = BigInt(2) ** BigInt(bitLength);
 
@@ -162,7 +162,7 @@ describe("Uint64 deserialize", () => {
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} deserialize`, () => {
+      bench(`UintBigint${bitLength} x ${numElements} deserialize`, () => {
         const output: bigint[] = [];
         for (let i = 0; i < numElements; i++) {
           const value = uintBigintType.value_deserializeFromBytes(
@@ -174,7 +174,7 @@ describe("Uint64 deserialize", () => {
         }
       });
 
-      itBench(`UintBigint${bitLength} x ${numElements} serialize`, () => {
+      bench(`UintBigint${bitLength} x ${numElements} serialize`, () => {
         const arrayBuf = new ArrayBuffer(arrayBuffer.byteLength);
         const dataView = new DataView(arrayBuf);
         for (let i = 0; i < numElements; i++) {
@@ -196,7 +196,7 @@ describe("Uint64 deserialize", () => {
     let dataView: DataView;
     let buffer: Buffer;
 
-    before("Create random bytes", () => {
+    beforeAll(() => {
       arrayBuffer = new ArrayBuffer(bytesTotal);
       uint8Array = new Uint8Array(arrayBuffer);
       uint32Array = new Uint32Array(arrayBuffer);
@@ -207,25 +207,25 @@ describe("Uint64 deserialize", () => {
       }
     });
 
-    itBench(`Slice from Uint8Array x${bytes32Elements}`, () => {
+    bench(`Slice from Uint8Array x${bytes32Elements}`, () => {
       for (let i = 0; i < bytesTotal; i += 32) {
         uint8Array.slice(i, i + 32);
       }
     });
 
-    itBench(`Slice from ArrayBuffer x${bytes32Elements}`, () => {
+    bench(`Slice from ArrayBuffer x${bytes32Elements}`, () => {
       for (let i = 0; i < bytesTotal; i += 32) {
         arrayBuffer.slice(i, i + 32);
       }
     });
 
-    itBench(`Slice from ArrayBuffer x${bytes32Elements} + new Uint8Array`, () => {
+    bench(`Slice from ArrayBuffer x${bytes32Elements} + new Uint8Array`, () => {
       for (let i = 0; i < bytesTotal; i += 32) {
         new Uint8Array(dataView.buffer.slice(i, i + 32));
       }
     });
 
-    itBench(`Copy Uint8Array ${numElements} iterate`, () => {
+    bench(`Copy Uint8Array ${numElements} iterate`, () => {
       const byteLen = uint8Array.length;
       const uint8ArrayB = new Uint8Array(byteLen);
       for (let i = 0; i < uint8Array.length; i++) {
@@ -233,50 +233,50 @@ describe("Uint64 deserialize", () => {
       }
     });
 
-    itBench(`Copy Uint8Array ${numElements} slice`, () => {
+    bench(`Copy Uint8Array ${numElements} slice`, () => {
       uint8Array.slice(0, uint8Array.length);
     });
 
-    itBench(`Copy Uint8Array ${numElements} Uint8Array.prototype.slice.call`, () => {
+    bench(`Copy Uint8Array ${numElements} Uint8Array.prototype.slice.call`, () => {
       Uint8Array.prototype.slice.call(uint8Array, 0, uint8Array.length);
     });
 
-    itBench(`Copy Buffer ${numElements} Uint8Array.prototype.slice.call`, () => {
+    bench(`Copy Buffer ${numElements} Uint8Array.prototype.slice.call`, () => {
       Uint8Array.prototype.slice.call(buffer, 0, uint8Array.length);
     });
 
-    itBench(`Copy Uint8Array ${numElements} slice + set`, () => {
+    bench(`Copy Uint8Array ${numElements} slice + set`, () => {
       const byteLen = uint8Array.length;
       const uint8ArrayNew = new Uint8Array(byteLen);
       uint8ArrayNew.set(uint8Array.slice(0, byteLen));
     });
 
-    itBench(`Copy Uint8Array ${numElements} subarray + set`, () => {
+    bench(`Copy Uint8Array ${numElements} subarray + set`, () => {
       const byteLen = uint8Array.length;
       const uint8ArrayNew = new Uint8Array(byteLen);
       uint8ArrayNew.set(uint8Array.subarray(0, byteLen));
     });
 
-    itBench(`Copy Uint8Array ${numElements} slice arrayBuffer`, () => {
+    bench(`Copy Uint8Array ${numElements} slice arrayBuffer`, () => {
       const byteLen = uint8Array.length;
       new Uint8Array(arrayBuffer.slice(0, byteLen));
     });
 
-    itBench(`Uint64 deserialize ${numElements} - iterate Uint8Array`, () => {
+    bench(`Uint64 deserialize ${numElements} - iterate Uint8Array`, () => {
       const values: number[] = [];
       for (let i = 0; i < numElements; i++) {
         values.push(uint8Array[i]);
       }
     });
 
-    itBench(`Uint64 deserialize ${numElements} - by Uint32A`, () => {
+    bench(`Uint64 deserialize ${numElements} - by Uint32A`, () => {
       const values: number[] = [];
       for (let i = 0; i < numElements; i++) {
         values.push(uint32Array[i * 2]);
       }
     });
 
-    itBench(`Uint64 deserialize ${numElements} - by DataView.getUint32 x2`, () => {
+    bench(`Uint64 deserialize ${numElements} - by DataView.getUint32 x2`, () => {
       const values: number[] = [];
       for (let i = 0; i < numElements; i++) {
         const lo = dataView.getUint32(i * 8, true);
@@ -285,7 +285,7 @@ describe("Uint64 deserialize", () => {
       }
     });
 
-    itBench(`Uint64 deserialize ${numElements} - by DataView.getBigUint64`, () => {
+    bench(`Uint64 deserialize ${numElements} - by DataView.getBigUint64`, () => {
       const values: number[] = [];
       for (let i = 0; i < numElements; i++) {
         const bn = dataView.getBigUint64(i * 8, true);
@@ -293,7 +293,7 @@ describe("Uint64 deserialize", () => {
       }
     });
 
-    itBench(`Uint64 deserialize ${numElements} - by byte`, () => {
+    bench(`Uint64 deserialize ${numElements} - by byte`, () => {
       const byteLength = 8;
       const values: number[] = [];
 

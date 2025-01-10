@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.js";
 
 describe("ByteListType vs BasicListType<byte>", () => {
@@ -18,29 +18,29 @@ describe("ByteListType vs BasicListType<byte>", () => {
 
   const ROUNDS = 10000;
 
-  itBench("ByteListType - deserialize", () => {
+  bench("ByteListType - deserialize", () => {
     for (let i = 0; i < ROUNDS; i++) {
       byteLs.deserialize(tbByteLsSerialized);
     }
   });
-  itBench("BasicListType<byte> - deserialize", () => {
+  bench("BasicListType<byte> - deserialize", () => {
     for (let i = 0; i < ROUNDS; i++) {
       basicLs.deserialize(tbBasicLsSerialized);
     }
   });
 
-  itBench("ByteListType - serialize", () => {
+  bench("ByteListType - serialize", () => {
     for (let i = 0; i < ROUNDS; i++) {
       byteLs.serialize(tbByteLs);
     }
   });
-  itBench("BasicListType<byte> - serialize", () => {
+  bench("BasicListType<byte> - serialize", () => {
     for (let i = 0; i < ROUNDS; i++) {
       tbBasicLs.serialize();
     }
   });
 
-  itBench("BasicListType<byte> - tree_convertToStruct", () => {
+  bench("BasicListType<byte> - tree_convertToStruct", () => {
     for (let i = 0; i < ROUNDS; i++) {
       tbBasicLs.toValue();
     }

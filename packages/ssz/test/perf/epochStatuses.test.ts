@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {CompositeViewDU} from "../../src/index.js";
 import {EpochParticipation} from "../lodestarTypes/altair/sszTypes.js";
 import {fillArray, linspace} from "../utils/misc.js";
@@ -8,7 +8,7 @@ describe("processAttestations() epochStatuses", () => {
   const readWrites = Math.round(len / 32);
   const indexes = shuffle(linspace(len));
 
-  itBench<CompositeViewDU<typeof EpochParticipation>, CompositeViewDU<typeof EpochParticipation>>({
+  bench<CompositeViewDU<typeof EpochParticipation>, CompositeViewDU<typeof EpochParticipation>>({
     id: `epochParticipation len ${len} rws ${readWrites}`,
     before: () => {
       const epochParticipation = fillArray(len, 3);

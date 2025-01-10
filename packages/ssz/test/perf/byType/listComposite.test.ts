@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src/index.js";
 
 const byteType = new UintNumberType(1);
@@ -13,7 +13,7 @@ describe("ListCompositeType types", () => {
       const node = type.commitViewDU(viewDU);
       const cache = type.cacheOfViewDU(viewDU);
 
-      itBench(`${type.typeName} getViewDU x${len}`, () => {
+      bench(`${type.typeName} getViewDU x${len}`, () => {
         for (let i = 0; i < len; i++) {
           type.getViewDU(node, cache);
         }
@@ -26,27 +26,27 @@ describe("ListCompositeType types", () => {
     ]) {
       const viewDU = type.toViewDU(newFilledArray(len, {a: 1, b: 2}));
 
-      itBench(`${type.typeName} len ${len} ViewDU.getAllReadonly() + iterate`, () => {
+      bench(`${type.typeName} len ${len} ViewDU.getAllReadonly() + iterate`, () => {
         const values = viewDU.getAllReadonly();
         for (let i = 0; i < len; i++) {
           values[i];
         }
       });
 
-      itBench(`${type.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
+      bench(`${type.typeName} len ${len} ViewDU.getAllReadonlyValues() + iterate`, () => {
         const values = viewDU.getAllReadonlyValues();
         for (let i = 0; i < len; i++) {
           values[i];
         }
       });
 
-      itBench(`${type.typeName} len ${len} ViewDU.get(i)`, () => {
+      bench(`${type.typeName} len ${len} ViewDU.get(i)`, () => {
         for (let i = 0; i < len; i++) {
           viewDU.get(i);
         }
       });
 
-      itBench(`${type.typeName} len ${len} ViewDU.getReadonly(i)`, () => {
+      bench(`${type.typeName} len ${len} ViewDU.getReadonly(i)`, () => {
         for (let i = 0; i < len; i++) {
           viewDU.getReadonly(i);
         }
@@ -55,17 +55,17 @@ describe("ListCompositeType types", () => {
 
     const sampleObj = {a: 1, b: []};
 
-    itBench(`Array.push len ${len} empty Array - object`, () => {
+    bench(`Array.push len ${len} empty Array - object`, () => {
       const array: unknown[] = [];
       for (let i = 0; i < len; i++) array.push(sampleObj);
     });
 
-    itBench(`Array.set len ${len} from new Array - object`, () => {
+    bench(`Array.set len ${len} from new Array - object`, () => {
       const array = new Array<unknown>(len);
       for (let i = 0; i < len; i++) array[i] = sampleObj;
     });
 
-    itBench(`Array.set len ${len} - object`, () => {
+    bench(`Array.set len ${len} - object`, () => {
       const array: unknown[] = [];
       for (let i = 0; i < len; i++) array[i] = sampleObj;
     });

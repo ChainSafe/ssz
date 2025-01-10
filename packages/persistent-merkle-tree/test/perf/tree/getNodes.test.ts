@@ -1,5 +1,13 @@
-import {itBench} from "@dapplion/benchmark";
-import {subtreeFillToContents, Tree, Node, LeafNode, getNodesAtDepth, zeroNode, BranchNode} from "../../../src/index.js";
+import {describe, bench, beforeAll} from "@chainsafe/benchmark";
+import {
+  subtreeFillToContents,
+  Tree,
+  Node,
+  LeafNode,
+  getNodesAtDepth,
+  zeroNode,
+  BranchNode,
+} from "../../../src/index.js";
 
 // Results in Linux Dec 2021
 //
@@ -16,7 +24,7 @@ describe("tree / getNodesAtDepth", () => {
   let tree: Tree;
   const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
 
-  before("Get base tree and data", () => {
+  beforeAll(() => {
     const initialNodes = new Array<Node>(length);
     for (let i = 0; i < length; i++) {
       initialNodes[i] = initialNode;
@@ -25,14 +33,14 @@ describe("tree / getNodesAtDepth", () => {
     tree = new Tree(subtreeFillToContents(initialNodes, depth));
   });
 
-  itBench({
+  bench({
     id: "tree.getNodesAtDepth - gindexes",
     fn: () => {
       getNodesAtDepth(tree.rootNode, depth, 0, length);
     },
   });
 
-  itBench({
+  bench({
     id: "tree.getNodesAtDepth - push all nodes",
     fn: () => {
       const nodes = new Array<Node>(length);
@@ -42,7 +50,7 @@ describe("tree / getNodesAtDepth", () => {
     },
   });
 
-  itBench({
+  bench({
     id: "tree.getNodesAtDepth - navigation",
     fn: () => {
       const branchNode = new BranchNode(zeroNode(0), zeroNode(0));

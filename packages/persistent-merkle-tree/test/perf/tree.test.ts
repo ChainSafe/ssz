@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {
   LeafNode,
   subtreeFillToContents,
@@ -27,32 +27,32 @@ describe("Track the performance of different Tree methods", () => {
   /** May need to run these tests separately to compare the performance */
   const tree = new Tree(createBalanceList(numBalance, depth));
   /** Using gindexBitstring is 5% faster than using gindex */
-  itBench("setRoot - gindexBitstring", () => {
+  bench("setRoot - gindexBitstring", () => {
     for (let i = 0; i < numLoop; i++) {
       tree.setRoot(gindexBitstring, newRoot);
     }
   });
 
-  itBench("setRoot - gindex", () => {
+  bench("setRoot - gindex", () => {
     for (let i = 0; i < numLoop; i++) {
       tree.setRoot(gindex, newRoot);
     }
   });
 
   /** Using gindexBitstring is 10% faster than using gindex */
-  itBench("getRoot - gindexBitstring", () => {
+  bench("getRoot - gindexBitstring", () => {
     for (let i = 0; i < numLoop; i++) {
       tree.getRoot(gindexBitstring);
     }
   });
 
-  itBench("getRoot - gindex", () => {
+  bench("getRoot - gindex", () => {
     for (let i = 0; i < numLoop; i++) {
       tree.getRoot(gindex);
     }
   });
 
-  itBench("getHashObject then setHashObject", () => {
+  bench("getHashObject then setHashObject", () => {
     for (let i = 0; i < numLoop; i++) {
       tree.getNode(gindex);
       tree.setNode(gindex, newNode);
@@ -60,7 +60,7 @@ describe("Track the performance of different Tree methods", () => {
   });
 
   /* Double the speed compared to get then set */
-  itBench("setNodeWithFn", () => {
+  bench("setNodeWithFn", () => {
     const getNewNodeFn = (): Node => newNode;
     for (let i = 0; i < numLoop; i++) {
       tree.setNodeWithFn(gindex, getNewNodeFn);

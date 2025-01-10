@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {computeDescriptor, createProof, ProofType} from "../../src/proof/index.js";
 import {createTree} from "../utils/tree.js";
 
@@ -13,21 +13,21 @@ describe("Proofs", () => {
   for (let numLeaves = 1; numLeaves < 5; numLeaves++) {
     const leafIndices = allLeafIndices.slice(0, numLeaves);
 
-    itBench({
+    bench({
       id: `multiproof - depth ${depth}, ${numLeaves} requested leaves`,
       fn: () => {
         createProof(tree, {type: ProofType.multi, gindices: leafIndices});
       },
     });
 
-    itBench({
+    bench({
       id: `tree offset multiproof - depth ${depth}, ${numLeaves} requested leaves`,
       fn: () => {
         createProof(tree, {type: ProofType.treeOffset, gindices: leafIndices});
       },
     });
 
-    itBench({
+    bench({
       id: `compact multiproof - depth ${depth}, ${numLeaves} requested leaves`,
       beforeEach: () => {
         return computeDescriptor(leafIndices);

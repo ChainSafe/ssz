@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench, beforeAll} from "@chainsafe/benchmark";
 import {subtreeFillToContents, Tree, Node, LeafNode, toGindex, setNodesAtDepth} from "../../../src/index.js";
 
 // Results in Linux Dec 2021
@@ -23,7 +23,7 @@ describe("tree / setNodes", () => {
   const initialNode = LeafNode.fromRoot(Buffer.alloc(32, 0xaa));
   const changedNode = LeafNode.fromRoot(Buffer.alloc(32, 0xbb));
 
-  before("Get base tree and data", () => {
+  beforeAll(() => {
     const length = Math.ceil(vc / itemsPerChunk);
     const initialNodes = new Array<Node>(length);
     for (let i = 0; i < length; i++) {
@@ -43,7 +43,7 @@ describe("tree / setNodes", () => {
     }
   });
 
-  itBench({
+  bench({
     id: "tree.setNodesAtDepth - indexes",
     beforeEach: () => tree.clone(),
     fn: (tree) => {

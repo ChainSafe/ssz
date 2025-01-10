@@ -1,13 +1,13 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {bitLength} from "../../src/util/merkleize.js";
 
 describe("merkleize / bitLength", () => {
   for (const n of [50, 8000, 250000]) {
-    itBench(`bitLength(${n})`, () => {
+    bench(`bitLength(${n})`, () => {
       bitLength(n);
     });
 
-    itBench(`bitLengthStr(${n})`, () => {
+    bench(`bitLengthStr(${n})`, () => {
       bitLengthStr(n);
     });
   }

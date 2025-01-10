@@ -1,9 +1,3 @@
-# Mocha opts
-colors: true
-require:
-  - ts-node/register
-  - setHasher.mjs
-
 # benchmark opts
 threshold: 3
 maxMs: 60_000

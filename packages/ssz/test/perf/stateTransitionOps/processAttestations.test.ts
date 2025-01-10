@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench, beforeAll} from "@chainsafe/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
 import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src/index.js";
 
@@ -16,7 +16,7 @@ describe("processAttestations", () => {
   type Statuses = typeof epochStatusesType;
   type StatusesViewDU = CompositeViewDU<Statuses>;
 
-  before("Compute attesterIndices", () => {
+  beforeAll(() => {
     for (let i = 0; i < vc; i += Math.floor(2 * attesterShare * Math.random())) {
       attesterIndices.push(i);
     }
@@ -25,7 +25,7 @@ describe("processAttestations", () => {
     }
   });
 
-  itBench<MutableVector<number>, MutableVector<number>>({
+  bench<MutableVector<number>, MutableVector<number>>({
     id: "get epochStatuses - MutableVector",
     before: () => MutableVector.from(statusArr),
     beforeEach: (epochStatuses) => epochStatuses,
@@ -36,7 +36,7 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<StatusesViewDU, StatusesViewDU>({
+  bench<StatusesViewDU, StatusesViewDU>({
     id: "get epochStatuses - ViewDU",
     before: () => {
       const epochStatuses = epochStatusesType.toViewDU(statusArr);
@@ -59,7 +59,7 @@ describe("processAttestations", () => {
   //   maybe the instantiation of so many BranchNode classes? Initializing all the h values to 0?
   //   consider not setting them at constructor time and doing it latter. Does it increase performance? Memory?
   //   - Creating 250_000 / 32 `new LeafNode(leafNode)` takes 0.175 ms, so no.
-  itBench<StatusesViewDU, StatusesViewDU>({
+  bench<StatusesViewDU, StatusesViewDU>({
     id: "set epochStatuses - ListTreeView",
     before: () => {
       const epochStatuses = epochStatusesType.deserializeToViewDU(epochStatusesType.serialize(statusArr));
@@ -76,7 +76,7 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<StatusesViewDU, StatusesViewDU>({
+  bench<StatusesViewDU, StatusesViewDU>({
     id: "set epochStatuses - ListTreeView - set()",
     before: () => {
       const epochStatuses = epochStatusesType.deserializeToViewDU(epochStatusesType.serialize(statusArr));
@@ -92,7 +92,7 @@ describe("processAttestations", () => {
     },
   });
 
-  itBench<StatusesViewDU, StatusesViewDU>({
+  bench<StatusesViewDU, StatusesViewDU>({
     id: "set epochStatuses - ListTreeView - commit()",
     before: () => {
       const epochStatuses = epochStatusesType.deserializeToViewDU(epochStatusesType.serialize(statusArr));

@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import { HashComputation, HashComputationLevel, LeafNode, zeroHash } from "../../src/index.js";
 
 /**
@@ -15,7 +15,7 @@ describe("HashComputationLevel", function () {
 
   const length = 2_000_000;
 
-  itBench({
+  bench({
     id: "HashComputationLevel.push then loop",
     before: () => new HashComputationLevel(),
     beforeEach: (level) => {
@@ -33,7 +33,7 @@ describe("HashComputationLevel", function () {
     }
   });
 
-  itBench({
+  bench({
     id: "HashComputation[] push then loop",
     fn: () => {
       const level: HashComputation[] = [];

@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {HashComputationGroup, hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
 import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
 import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
@@ -26,18 +26,18 @@ import {CompositeTypeAny} from "../../../src/type/composite.js";
 import {HashObject} from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {
-  itBenchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));
-  itBenchHashTreeRoot(sszPhase0.SignedAggregateAndProof, getSignedAggregateAndProof(0));
-  itBenchHashTreeRoot(sszAltair.SyncCommitteeMessage, getSyncCommitteeMessage(0));
-  itBenchHashTreeRoot(sszAltair.SignedContributionAndProof, getSignedContributionAndProof(0));
-  itBenchHashTreeRoot(sszPhase0.SignedBeaconBlock, getSignedBeaconBlockPhase0(0));
-  itBenchHashTreeRoot(sszPhase0.Validator, getValidator(0));
+  benchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));
+  benchHashTreeRoot(sszPhase0.SignedAggregateAndProof, getSignedAggregateAndProof(0));
+  benchHashTreeRoot(sszAltair.SyncCommitteeMessage, getSyncCommitteeMessage(0));
+  benchHashTreeRoot(sszAltair.SignedContributionAndProof, getSignedContributionAndProof(0));
+  benchHashTreeRoot(sszPhase0.SignedBeaconBlock, getSignedBeaconBlockPhase0(0));
+  benchHashTreeRoot(sszPhase0.Validator, getValidator(0));
 
-  function itBenchHashTreeRoot<T extends CompositeType<unknown, TreeView<CompositeTypeAny>, unknown>>(
+  function benchHashTreeRoot<T extends CompositeType<unknown, TreeView<CompositeTypeAny>, unknown>>(
     type: T,
     value: ValueOf<T>
   ): void {
-    itBench({
+    bench({
       id: `hashTreeRoot ${type.typeName} - struct`,
       beforeEach: () => type.clone(value),
       fn: (value) => {
@@ -45,7 +45,7 @@ describe("HashTreeRoot frequent eth2 objects", () => {
       },
     });
 
-    itBench({
+    bench({
       id: `hashTreeRoot ${type.typeName} - tree`,
       beforeEach: () => type.toView(value) as CompositeView<T>,
       fn: (view) => {
@@ -59,7 +59,7 @@ describe("HashTreeRoot frequent eth2 objects", () => {
     const getStateVc = getOnce(() => getRandomState(validatorCount));
     const getStateViewDU = getOnce(() => sszAltair.BeaconState.toViewDU(getStateVc()));
 
-    itBench<CompositeViewDU<typeof sszAltair.BeaconState>, Uint8Array>({
+    bench<CompositeViewDU<typeof sszAltair.BeaconState>, Uint8Array>({
       id: `BeaconState vc ${validatorCount} - hashTreeRoot tree`,
       before: () => getStateViewDU().serialize(),
       beforeEach: (bytes) => sszAltair.BeaconState.deserializeToViewDU(bytes),
@@ -69,7 +69,7 @@ describe("HashTreeRoot frequent eth2 objects", () => {
     });
 
     const hc = new HashComputationGroup();
-    itBench<CompositeViewDU<typeof sszAltair.BeaconState>, Uint8Array>({
+    bench<CompositeViewDU<typeof sszAltair.BeaconState>, Uint8Array>({
       id: `BeaconState vc ${validatorCount} - batchHashTreeRoot tree`,
       before: () => getStateViewDU().serialize(),
       beforeEach: (bytes) => sszAltair.BeaconState.deserializeToViewDU(bytes),
@@ -84,7 +84,7 @@ describe("HashTreeRoot frequent eth2 objects", () => {
         continue;
       }
 
-      itBench<TreeViewDU<CompositeTypeAny>, Uint8Array>({
+      bench<TreeViewDU<CompositeTypeAny>, Uint8Array>({
         id: `BeaconState.${fieldName} vc ${validatorCount} - hashTreeRoot tree`,
         before: () => (getStateViewDU()[fieldName] as TreeViewDU<any>).serialize(),
         beforeEach: (bytes) => fieldType.deserializeToViewDU(bytes) as TreeViewDU<CompositeTypeAny>,
@@ -136,12 +136,12 @@ describe("HashTreeRoot individual components", () => {
     const buf = Buffer.alloc(32, 0xaa);
     const ho = uint8ArrayToHashObject(buf);
 
-    itBench(`hash64 x${count}`, () => {
+    bench(`hash64 x${count}`, () => {
       for (let i = 0; i < count; i++) hash64(buf, buf);
     });
 
     const hashResult = {} as HashObject;
-    itBench(`hashTwoObjects x${count}`, () => {
+    bench(`hashTwoObjects x${count}`, () => {
       for (let i = 0; i < count; i++) hasher.digest64HashObjects(ho, ho, hashResult);
     });
   }

@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 
 describe("Access object properties in generated objects", () => {
   const rawObject = {
@@ -25,21 +25,21 @@ describe("Access object properties in generated objects", () => {
 
   const times = 1e6;
 
-  itBench(`get 2 props x${times} - rawObject`, () => {
+  bench(`get 2 props x${times} - rawObject`, () => {
     for (let i = 0; i < times; i++) {
       rawObject.a;
       rawObject.b;
     }
   });
 
-  itBench(`get 2 props x${times} - proxy`, () => {
+  bench(`get 2 props x${times} - proxy`, () => {
     for (let i = 0; i < times; i++) {
       proxy.a;
       proxy.b;
     }
   });
 
-  itBench(`get 2 props x${times} - customObj`, () => {
+  bench(`get 2 props x${times} - customObj`, () => {
     for (let i = 0; i < times; i++) {
       customObj.a;
       customObj.b;

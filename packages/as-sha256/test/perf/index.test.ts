@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
 import {
   digest,
   digest2Bytes32,
@@ -26,15 +26,15 @@ describe("digestTwoHashObjects vs digest64 vs digest", () => {
   const obj2 = byteArrayToHashObject(buffer2, 0);
   // total number of time running hash for 200000 balances
   const iterations = 50023;
-  itBench(`digestTwoHashObjects ${iterations} times`, () => {
+  bench(`digestTwoHashObjects ${iterations} times`, () => {
     for (let j = 0; j < iterations; j++) digest64HashObjects(obj1, obj2);
   });
 
-  itBench(`digest2Bytes32 ${iterations} times`, () => {
+  bench(`digest2Bytes32 ${iterations} times`, () => {
     for (let j = 0; j < iterations; j++) digest2Bytes32(buffer1, buffer2);
   });
 
-  itBench(`digest ${iterations} times`, () => {
+  bench(`digest ${iterations} times`, () => {
     for (let j = 0; j < iterations; j++) digest(input);
   });
 });
@@ -45,7 +45,7 @@ describe("digest different Buffers", () => {
 
   for (const length of [32, 64, 128, 256, 512, 1024]) {
     const buffer = randomBuffer(length);
-    itBench(`input length ${length}`, () => {
+    bench(`input length ${length}`, () => {
       digest(buffer);
     });
   }
@@ -64,7 +64,7 @@ describe("hash - compare to java", () => {
   const iterations = 1000000;
   const input = Buffer.from("lwkjt23uy45pojsdf;lnwo45y23po5i;lknwe;lknasdflnqw3uo5", "utf8");
 
-  itBench(`digest ${iterations} times`, () => {
+  bench(`digest ${iterations} times`, () => {
     for (let i = 0; i < iterations; i++) digest(input);
   });
 });
@@ -81,12 +81,12 @@ describe("utils", () => {
   // total number of time running hash for 200000 balances
   const iterations = 50023;
 
-  itBench(`hashObjectToByteArray ${iterations} times`, () => {
+  bench(`hashObjectToByteArray ${iterations} times`, () => {
     const byteArr = new Uint8Array(32);
     for (let j = 0; j < iterations; j++) hashObjectToByteArray(obj1, byteArr, 0);
   });
 
-  itBench(`byteArrayToHashObject ${iterations} times`, () => {
+  bench(`byteArrayToHashObject ${iterations} times`, () => {
     for (let j = 0; j < iterations; j++) byteArrayToHashObject(buffer1, 0);
   });
 });

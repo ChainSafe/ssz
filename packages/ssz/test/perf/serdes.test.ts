@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {
   UintBigintType,
   BitListType,
@@ -101,27 +101,27 @@ describe("SSZ (de)serialize", () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const view = type.toView(struct);
 
-    itBench(`${id} binary -> struct`, () => {
+    bench(`${id} binary -> struct`, () => {
       type.deserialize(bytes);
     });
 
-    itBench(`${id} binary -> tree_backed`, () => {
+    bench(`${id} binary -> tree_backed`, () => {
       type.deserializeToView(bytes);
     });
 
     // Don't track struct <-> tree_backed conversions since they are not required to be fast
-    itBench({id: `${id} struct -> tree_backed`, noThreshold: true}, () => {
+    bench({id: `${id} struct -> tree_backed`, noThreshold: true}, () => {
       type.toView(struct);
     });
-    itBench({id: `${id} tree_backed -> struct`, noThreshold: true}, () => {
+    bench({id: `${id} tree_backed -> struct`, noThreshold: true}, () => {
       view.toValue();
     });
 
-    itBench(`${id} struct -> binary`, () => {
+    bench(`${id} struct -> binary`, () => {
       type.serialize(struct);
     });
 
-    itBench(`${id} tree_backed -> binary`, () => {
+    bench(`${id} tree_backed -> binary`, () => {
       view.serialize();
     });
   }
