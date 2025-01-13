@@ -1381,10 +1381,10 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
-"@chainsafe/benchmark@^1.1.0-rc.1":
-  version "1.1.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@chainsafe/benchmark/-/benchmark-1.1.0-rc.1.tgz#eceda8196816f2f5ff79a85e8c17ec2f5991e5e3"
-  integrity sha512-TCAn1bSYXKmAZyXTxepyJVadBv9FFgyM3AczoDI1mQnl97UdlTjRUPo5pIPWzTdzlzbI58Twho88RhWw7etxeg==
+"@chainsafe/benchmark@^1.1.0-rc.2":
+  version "1.1.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@chainsafe/benchmark/-/benchmark-1.1.0-rc.2.tgz#699832c38ec1d29bfddb8b5f0880f2afb79f8545"
+  integrity sha512-02DA3hU73CIH2jeeF/xmM5baSr8kpEGlD/7E/VVeDSpFQQIEndeRAkiRxslkHm9yo4FUv8PwjMsBC1fAUgwdaw==
   dependencies:
     "@actions/cache" "^4.0.0"
     "@actions/github" "^6.0.0"
@@ -1396,6 +1396,7 @@
     csv-stringify "^6.5.2"
     glob "^10.4.5"
     log-symbols "^7.0.0"
+    yaml "^2.7.0"
     yargs "^17.7.2"
 
 "@chainsafe/hashtree-darwin-arm64@1.0.1":
@@ -14472,6 +14473,11 @@ yaml@^1.10.2, yaml@^1.7.2:
   version "1.10.2"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
+
+yaml@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.7.0.tgz#aef9bb617a64c937a9a748803786ad8d3ffe1e98"
+  integrity sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==
 
 yargs-parser@21.1.1, yargs-parser@^21.1.1:
   version "21.1.1"
