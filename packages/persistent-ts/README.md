@@ -3,7 +3,7 @@
 Persistent data structures for TypeScript.
 
 Persistent data structures are entirely immutable, but efficiently share elements between
-each other. For example, prepending to a persisistent list only creates a new node that
+each other. For example, prepending to a persistent list only creates a new node that
 references the old list. Prepending to an array, however, requires copying an entire array.
 Persistent data structures are thus better suited for use in immutable environments.
 
@@ -12,7 +12,7 @@ This library isn't as developed as others, such as
 However, it can provide alternative data structures, and hopefully more readable implementations.
 Unlike _immutable js_ specifically, this implementation is also Typescript first, whereas
 that library adds type annotations after the fact. This makes for an api centered around
-generics, and not necessarily acccomadating JS' indiosyncracies.
+generics, and not necessarily accommodating JS' indiosyncracies.
 
 ## Data Structures Implemented
 
