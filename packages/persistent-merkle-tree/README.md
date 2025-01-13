@@ -108,7 +108,7 @@ A `BranchNode` has a `left` and `right` child `Node`, and a `root`, 32 byte `Uin
 A `LeafNode` has a `root`.
 The `root` of a `Node` is not computed until requested, and cached thereafter.
 
-#### Shared data betwen common subtrees
+#### Shared data between common subtrees
 
 Any update to a tree (either to a leaf or intermediate node) is performed as a rebinding that yields a new, updated tree that maximally shares data between versions. Garbage collection allows memory from unused nodes to be eventually reclaimed.
 
