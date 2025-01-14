@@ -1,4 +1,4 @@
-import {HashObject} from "@chainsafe/as-sha256";
+import type {HashObject} from "@chainsafe/as-sha256";
 import {describe, it, expect} from "vitest";
 import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src/index.js";
 import {HashComputation, HashComputationLevel, getHashComputations} from "../../src/hashComputation.js";

@@ -1,10 +1,10 @@
 import {wasmCode} from "./wasmCode.js";
-
-const _module = new WebAssembly.Module(wasmCode);
+import {wasmSimdCode} from "./wasmSimdCode.js";
 
 export interface WasmContext {
-  readonly INPUT_LENGTH: number;
+  readonly HAS_SIMD: boolean;
   readonly PARALLEL_FACTOR: number;
+  readonly INPUT_LENGTH: number;
   memory: {
     buffer: ArrayBuffer;
   };
@@ -34,6 +34,9 @@ const importObj = {
   },
 };
 
-export function newInstance(): WasmContext {
-  return new WebAssembly.Instance(_module, importObj).exports as unknown as WasmContext;
+export function newInstance(useSimd?: boolean): WasmContext {
+  const enableSimd = useSimd !== undefined ? useSimd : WebAssembly.validate(wasmSimdCode);
+  return enableSimd
+    ? (new WebAssembly.Instance(new WebAssembly.Module(wasmSimdCode), importObj).exports as unknown as WasmContext)
+    : (new WebAssembly.Instance(new WebAssembly.Module(wasmCode), importObj).exports as unknown as WasmContext);
 }

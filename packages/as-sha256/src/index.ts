@@ -1,18 +1,32 @@
 import {allocUnsafe} from "./alloc.js";
-import {newInstance} from "./wasm.js";
+import {newInstance, WasmContext} from "./wasm.js";
 import type {HashObject} from "./hashObject.js";
 import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
 import SHA256 from "./sha256.js";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 
-const ctx = newInstance();
-const wasmInputValue = ctx.input.value;
-const wasmOutputValue = ctx.output.value;
-const inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
-const outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.PARALLEL_FACTOR * 32);
+let ctx: WasmContext;
+export let simdEnabled: boolean;
+let wasmInputValue: number;
+let wasmOutputValue: number;
+let inputUint8Array: Uint8Array;
+let outputUint8Array: Uint8Array;
 /** output uint8array, length 32, used to easily copy output data */
-const outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
-const inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
+let outputUint8Array32: Uint8Array;
+let inputUint32Array: Uint32Array;
+
+export function reinitializeInstance(useSimd?: boolean): void {
+  ctx = newInstance(useSimd);
+  simdEnabled = Boolean(ctx.HAS_SIMD.valueOf());
+  wasmInputValue = ctx.input.value;
+  wasmOutputValue = ctx.output.value;
+  inputUint8Array = new Uint8Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
+  outputUint8Array = new Uint8Array(ctx.memory.buffer, wasmOutputValue, ctx.PARALLEL_FACTOR * 32);
+  outputUint8Array32 = new Uint8Array(ctx.memory.buffer, wasmOutputValue, 32);
+  inputUint32Array = new Uint32Array(ctx.memory.buffer, wasmInputValue, ctx.INPUT_LENGTH);
+}
+
+reinitializeInstance();
 
 export function digest(data: Uint8Array): Uint8Array {
   if (data.length === 64) {
@@ -306,14 +320,18 @@ function final(): Uint8Array {
   return allocDigest();
 }
 
-/** allocate memory and copy result */
+/**
+ * allocate memory and copy result
+ */
 function allocDigest(): Uint8Array {
   const out = allocUnsafe(32);
   out.set(outputUint8Array32);
   return out;
 }
 
-/** allocate memory and copy result at offset */
+/**
+ * allocate memory and copy result at offset
+ */
 function allocDigestOffset(offset: number): Uint8Array {
   const out = allocUnsafe(32);
   out.set(outputUint8Array.subarray(offset, offset + 32));

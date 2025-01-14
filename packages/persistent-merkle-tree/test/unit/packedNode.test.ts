@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {HashObject} from "@chainsafe/as-sha256";
+import type {HashObject} from "@chainsafe/as-sha256";
 import {LeafNode, Node} from "../../src/index.js";
 import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes, packedUintNum64sToLeafNodes} from "../../src/packedNode.js";
 

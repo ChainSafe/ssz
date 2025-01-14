@@ -1,6 +1,6 @@
 import {itBench} from "@dapplion/benchmark";
-import {HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.js";
-import {hasher as asShaHasher} from "../../src/hasher/as-sha256.js";
+import {Hasher, HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.js";
+import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
 import {hasher as nobleHasher} from "../../src/hasher/noble.js";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
 import {buildComparisonTrees} from "../utils/tree.js";
@@ -20,8 +20,10 @@ describe("hasher", function () {
     root2[i] = 2;
   }
 
+  const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];
+
   const runsFactor = 10;
-  for (const hasher of [asShaHasher, nobleHasher, hashtreeHasher]) {
+  for (const hasher of hashers) {
     describe(hasher.name, () => {
       itBench({
         id: `hash 2 Uint8Array ${iterations} times - ${hasher.name}`,
@@ -67,7 +69,7 @@ describe("hasher", function () {
 
 describe("hashtree", function () {
   itBench({
-    id: `getHashComputations`,
+    id: "getHashComputations",
     beforeEach: () => {
       const [tree] = buildComparisonTrees(16);
       return tree;
@@ -79,7 +81,7 @@ describe("hashtree", function () {
   });
 
   itBench({
-    id: `executeHashComputations`,
+    id: "executeHashComputations",
     beforeEach: () => {
       const [tree] = buildComparisonTrees(16);
       return tree;
@@ -92,14 +94,14 @@ describe("hashtree", function () {
   });
 
   itBench({
-    id: `get root`,
-    beforeEach: () => {
+    id: "get root",
+    beforeEach: async () => {
       const [tree] = buildComparisonTrees(16);
       setHasher(hashtreeHasher);
       return tree;
     },
     fn: (tree) => {
-     tree.root;
+      tree.root;
     },
   });
 });

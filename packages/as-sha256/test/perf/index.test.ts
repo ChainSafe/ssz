@@ -1,5 +1,11 @@
 import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import * as sha256 from "../../src/index.js";
+import {
+  digest,
+  digest2Bytes32,
+  digest64HashObjects,
+  byteArrayToHashObject,
+  hashObjectToByteArray,
+} from "../../src/index.js";
 
 // Feb 2024 Mac M1
 // digestTwoHashObjects vs digest64 vs digest
@@ -16,20 +22,20 @@ describe("digestTwoHashObjects vs digest64 vs digest", () => {
   const input2 = "gajindergajindergajindergajinder";
   const buffer1 = Buffer.from(input1, "utf-8");
   const buffer2 = Buffer.from(input2, "utf-8");
-  const obj1 = sha256.byteArrayToHashObject(buffer1, 0);
-  const obj2 = sha256.byteArrayToHashObject(buffer2, 0);
+  const obj1 = byteArrayToHashObject(buffer1, 0);
+  const obj2 = byteArrayToHashObject(buffer2, 0);
   // total number of time running hash for 200000 balances
   const iterations = 50023;
   itBench(`digestTwoHashObjects ${iterations} times`, () => {
-    for (let j = 0; j < iterations; j++) sha256.digest64HashObjects(obj1, obj2);
+    for (let j = 0; j < iterations; j++) digest64HashObjects(obj1, obj2);
   });
 
-  itBench(`digest64 ${iterations} times`, () => {
-    for (let j = 0; j < iterations; j++) sha256.digest64(input);
+  itBench(`digest2Bytes32 ${iterations} times`, () => {
+    for (let j = 0; j < iterations; j++) digest2Bytes32(buffer1, buffer2);
   });
 
   itBench(`digest ${iterations} times`, () => {
-    for (let j = 0; j < iterations; j++) sha256.digest(input);
+    for (let j = 0; j < iterations; j++) digest(input);
   });
 });
 
@@ -40,7 +46,7 @@ describe("digest different Buffers", () => {
   for (const length of [32, 64, 128, 256, 512, 1024]) {
     const buffer = randomBuffer(length);
     itBench(`input length ${length}`, () => {
-      sha256.digest(buffer);
+      digest(buffer);
     });
   }
 });
@@ -55,12 +61,11 @@ describe("digest different Buffers", () => {
  */
 describe("hash - compare to java", () => {
   // java statistic for same test: https://gist.github.com/scoroberts/a60d61a2cc3afba1e8813b338ecd1501
-
   const iterations = 1000000;
   const input = Buffer.from("lwkjt23uy45pojsdf;lnwo45y23po5i;lknwe;lknasdflnqw3uo5", "utf8");
 
   itBench(`digest ${iterations} times`, () => {
-    for (let i = 0; i < iterations; i++) sha256.digest(input);
+    for (let i = 0; i < iterations; i++) digest(input);
   });
 });
 
@@ -71,17 +76,17 @@ describe("hash - compare to java", () => {
 describe("utils", () => {
   const input1 = "gajindergajindergajindergajinder";
   const buffer1 = Buffer.from(input1, "utf-8");
-  const obj1 = sha256.byteArrayToHashObject(buffer1, 0);
+  const obj1 = byteArrayToHashObject(buffer1, 0);
 
   // total number of time running hash for 200000 balances
   const iterations = 50023;
 
   itBench(`hashObjectToByteArray ${iterations} times`, () => {
     const byteArr = new Uint8Array(32);
-    for (let j = 0; j < iterations; j++) sha256.hashObjectToByteArray(obj1, byteArr, 0);
+    for (let j = 0; j < iterations; j++) hashObjectToByteArray(obj1, byteArr, 0);
   });
 
   itBench(`byteArrayToHashObject ${iterations} times`, () => {
-    for (let j = 0; j < iterations; j++) sha256.byteArrayToHashObject(buffer1, 0);
+    for (let j = 0; j < iterations; j++) byteArrayToHashObject(buffer1, 0);
   });
 });

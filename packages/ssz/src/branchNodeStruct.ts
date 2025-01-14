@@ -1,4 +1,4 @@
-import {HashObject} from "@chainsafe/as-sha256";
+import type {HashObject} from "@chainsafe/as-sha256";
 import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
 
 /**
