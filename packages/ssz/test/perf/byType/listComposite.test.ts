@@ -1,5 +1,9 @@
 import {describe, bench} from "@chainsafe/benchmark";
+import {hasher} from "@chainsafe/persistent-merkle-tree";
 import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src/index.js";
+
+console.log("%%%%%%%%%%%%%% INSIDE TEST FILE %%%%%%%%%%%%%%");
+console.log(hasher);
 
 const byteType = new UintNumberType(1);
 
