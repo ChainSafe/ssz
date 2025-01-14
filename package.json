@@ -15,7 +15,7 @@
     "test:browsers": "lerna run test:browsers",
     "test": "lerna run test",
     "benchmark:files": "NODE_OPTIONS='--max_old_space_size=4096 --loader=ts-node/esm' benchmark --config .benchrc.yaml",
-    "benchmark": "yarn benchmark:files 'packages/ssz/test/perf/byType/listComposite.test.ts'",
+    "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "check-readme": "lerna run check-readme"
   },
