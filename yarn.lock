@@ -1381,10 +1381,10 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
-"@chainsafe/benchmark@^1.1.0-rc.4":
-  version "1.1.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@chainsafe/benchmark/-/benchmark-1.1.0-rc.4.tgz#e791fd938044bdc81ff09643df069fdb768c6356"
-  integrity sha512-ekDBTaG2OjgOuvwK28NXgBA/68SvovPMMwvvqfggN27/xpBZ3PDE7Id8tg2RgskGV49qUAIOMg2FjUd5Pk43dQ==
+"@chainsafe/benchmark@^1.1.0-rc.5":
+  version "1.1.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@chainsafe/benchmark/-/benchmark-1.1.0-rc.5.tgz#bb9b311bcd20c875c366428f07aef7e0cc14cd5f"
+  integrity sha512-d09Z35Hc4SkkzJ0ugNIiLMldC7AIa6KavO5l1dZxSGb0pSm/DMNHliztmwVZfG3p+iO8/xmRjwvqNiLDsW1ETg==
   dependencies:
     "@actions/cache" "^4.0.0"
     "@actions/github" "^6.0.0"
