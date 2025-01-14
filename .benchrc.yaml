@@ -3,5 +3,6 @@ threshold: 3
 maxMs: 60_000
 minRuns: 10
 triggerGC: true
+sort: true
 setupFiles: 
   - ./setHasher.mjs
