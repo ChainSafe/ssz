@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.0](https://github.com/chainsafe/ssz/compare/ssz-v0.18.0...ssz-v0.19.0) (2025-01-15)
+
+
+### Features
+
+* non simd sha256 for incompatible systems ([#427](https://github.com/chainsafe/ssz/issues/427)) ([9729005](https://github.com/chainsafe/ssz/commit/9729005ab0fd401c30e999b20133c4bb6373ded6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.5.0 to 0.6.0
+    * @chainsafe/persistent-merkle-tree bumped from 0.8.0 to 0.9.0
+
 ## [0.18.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.17.1...ssz-v0.18.0) (2024-10-15)
 
 
