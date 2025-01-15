@@ -1,8 +1,8 @@
 # benchmark opts
 threshold: 3
-maxMs: 60_000
+maxMs: 60000
 minRuns: 10
-triggerGC: true
+triggerGC: false
 sort: true
 setupFiles: 
   - ./setHasher.mjs
