@@ -9,6 +9,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [0.9.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.8.0...persistent-merkle-tree-v0.9.0) (2025-01-15)
+
+
+### Features
+
+* implement merkleizeBlockArray ([#421](https://github.com/ChainSafe/ssz/issues/421)) ([e58781f](https://github.com/ChainSafe/ssz/commit/e58781feb7c9a956b66f1109fc639bdb86326293))
+* implement ViewDU.batchHashTreeRoot() ([#392](https://github.com/ChainSafe/ssz/issues/392)) ([8dd6600](https://github.com/ChainSafe/ssz/commit/8dd6600ad41e9a0d25182ca50f0ffd9be7fc5b8c))
+* non simd sha256 for incompatible systems ([#427](https://github.com/ChainSafe/ssz/issues/427)) ([9729005](https://github.com/ChainSafe/ssz/commit/9729005ab0fd401c30e999b20133c4bb6373ded6))
+* snapshot apis for EIP-4881 ([#400](https://github.com/ChainSafe/ssz/issues/400)) ([32fb35a](https://github.com/ChainSafe/ssz/commit/32fb35ad3dcb67465c04dcaf5d7afd93af5219e8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.5.0 to 0.6.0
+
 ## [0.8.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.8.0...persistent-merkle-tree-v0.8.0) (2024-10-15)
 
 
