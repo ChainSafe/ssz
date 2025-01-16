@@ -6,7 +6,6 @@ import {hasher} from "@chainsafe/persistent-merkle-tree/lib/cjs/hasher/hashtree.
 setHasher(hasher);
 
 beforeEach(() => {
-  console.log("-----------------------------------");
   const memory = process.memoryUsage();
   console.log(
     `HT: ${(memory.heapTotal / 1024 / 1024).toFixed(2)}MB, HU: ${(
