@@ -12,7 +12,8 @@
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
-    "lib/**/*.js.map"
+    "lib/**/*.js.map",
+    "lib/**/package.json"
   ],
   "scripts": {
     "build": "yarn run build:cjs && yarn build:esm && yarn build:types",
