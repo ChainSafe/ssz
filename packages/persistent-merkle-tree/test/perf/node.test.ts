@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {BranchNode, getNodeH, LeafNode} from "../../src/node.js";
 import {countToDepth, getHashComputations, subtreeFillToContents} from "../../src/index.js";
 import {batchHash} from "../utils/batchHash.js";
@@ -9,19 +9,19 @@ describe("HashObject LeafNode", () => {
 
   const zeroLeafNode = LeafNode.fromZero();
 
-  itBench(`getNodeH() x${nodesPerSlot} avg hindex`, () => {
+  bench(`getNodeH() x${nodesPerSlot} avg hindex`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
       getNodeH(zeroLeafNode, i % 8);
     }
   });
 
-  itBench(`getNodeH() x${nodesPerSlot} index 0`, () => {
+  bench(`getNodeH() x${nodesPerSlot} index 0`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
       getNodeH(zeroLeafNode, 0);
     }
   });
 
-  itBench(`getNodeH() x${nodesPerSlot} index 7`, () => {
+  bench(`getNodeH() x${nodesPerSlot} index 7`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
       getNodeH(zeroLeafNode, 7);
     }
@@ -30,13 +30,13 @@ describe("HashObject LeafNode", () => {
   // As fast as previous methods
   const keys: (keyof LeafNode)[] = ["h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7"];
 
-  itBench(`getNodeH() x${nodesPerSlot} index 7 with key array`, () => {
+  bench(`getNodeH() x${nodesPerSlot} index 7 with key array`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
       zeroLeafNode[keys[7]];
     }
   });
 
-  itBench(`new LeafNode() x${nodesPerSlot}`, () => {
+  bench(`new LeafNode() x${nodesPerSlot}`, () => {
     for (let i = 0; i < nodesPerSlot; i++) {
       LeafNode.fromHashObject(zeroLeafNode);
     }
@@ -47,7 +47,7 @@ describe("Node batchHash", () => {
   const numNodes = [250_000, 500_000, 1_000_000];
 
   for (const numNode of numNodes) {
-    itBench({
+    bench({
       id: `getHashComputations ${numNode} nodes`,
       beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {
@@ -55,7 +55,7 @@ describe("Node batchHash", () => {
       },
     });
 
-    itBench({
+    bench({
       id: `batchHash ${numNode} nodes`,
       beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {
@@ -63,7 +63,7 @@ describe("Node batchHash", () => {
       },
     });
 
-    itBench({
+    bench({
       id: `get root ${numNode} nodes`,
       beforeEach: () => createList(numNode),
       fn: (rootNode: BranchNode) => {

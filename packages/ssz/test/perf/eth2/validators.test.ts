@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {Validator} from "../../lodestarTypes/phase0/types.js";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.js";
 import {CompositeViewDU} from "../../../src/index.js";
@@ -43,7 +43,7 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
 
   for (const [opId, op] of Object.entries(ops)) {
     for (const {id: valueId, value, type} of values) {
-      itBench(`${opId} - ${valueId}`, () => {
+      bench(`${opId} - ${valueId}`, () => {
         op(value, type);
       });
     }

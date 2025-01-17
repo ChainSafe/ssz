@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {UintNumberType, ContainerType, VectorBasicType} from "../../src/index.js";
 
 describe("SSZ get property", () => {
@@ -24,13 +24,13 @@ describe("SSZ get property", () => {
     stateStruct.b = 1400;
     const stateTree = type.toViewDU(stateStruct);
 
-    itBench(`${id} - as struct x${times}`, () => {
+    bench(`${id} - as struct x${times}`, () => {
       for (let i = 0; i < times; i++) {
         stateStruct.b;
       }
     });
 
-    itBench(`${id} - as tree x${times}`, () => {
+    bench(`${id} - as tree x${times}`, () => {
       for (let i = 0; i < times; i++) {
         stateTree.b;
       }

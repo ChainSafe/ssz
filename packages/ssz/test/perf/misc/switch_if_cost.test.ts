@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {bench, setBenchOpts, describe} from "@chainsafe/benchmark";
 
 describe("big if vs obj", () => {
   setBenchOpts({noThreshold: true});
@@ -70,16 +70,16 @@ describe("big if vs obj", () => {
   const runsFactor = 1e6;
 
   for (const n of [0, 4, 9]) {
-    itBench({id: `fnIf(${n})`, runsFactor}, () => {
+    bench({id: `fnIf(${n})`, runsFactor}, () => {
       for (let i = 0; i < runsFactor; i++) fnIf(n);
     });
-    itBench({id: `fnSwitch(${n})`, runsFactor}, () => {
+    bench({id: `fnSwitch(${n})`, runsFactor}, () => {
       for (let i = 0; i < runsFactor; i++) fnSwitch(n);
     });
-    itBench({id: `fnObj(${n})`, runsFactor}, () => {
+    bench({id: `fnObj(${n})`, runsFactor}, () => {
       for (let i = 0; i < runsFactor; i++) fnObj(n);
     });
-    itBench({id: `fnArr(${n})`, runsFactor}, () => {
+    bench({id: `fnArr(${n})`, runsFactor}, () => {
       for (let i = 0; i < runsFactor; i++) fnArr(n);
     });
   }

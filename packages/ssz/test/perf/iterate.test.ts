@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {bench, setBenchOpts, describe} from "@chainsafe/benchmark";
 import {ListBasicType, UintNumberType} from "../../src/index.js";
 import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
 
@@ -11,13 +11,13 @@ describe("iterate", () => {
   // ✓ Array - for of      100150.2 ops/s    9.985000 us/op        -     971778 runs   10.0 s
   // ✓ Array - for(;;)     166805.7 ops/s    5.995000 us/op        -    1589379 runs   10.1 s
 
-  itBench("Array - for of", () => {
+  bench("Array - for of", () => {
     for (const a of arr) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const x = a.foo;
     }
   });
-  itBench("Array - for(;;)", () => {
+  bench("Array - for(;;)", () => {
     for (let i = 0; i < arr.length; i++) {
       const a = arr[i];
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,11 +30,11 @@ describe("readonly values - iterator vs array", () => {
   const length = 250_000;
   const balances = createBalanceList(length);
 
-  itBench("basicListValue.readonlyValuesArray()", () => {
+  bench("basicListValue.readonlyValuesArray()", () => {
     balances.getAll();
   });
 
-  itBench("basicListValue.readonlyValuesArray() + loop all", () => {
+  bench("basicListValue.readonlyValuesArray() + loop all", () => {
     const balancesArray = balances.getAll();
     for (let i = 0; i < balancesArray.length; i++) {
       balancesArray[i] + 1;
@@ -43,11 +43,11 @@ describe("readonly values - iterator vs array", () => {
 
   const validators = createValidatorList(length);
 
-  itBench("compositeListValue.readonlyValuesArray()", () => {
+  bench("compositeListValue.readonlyValuesArray()", () => {
     validators.getAllReadonly();
   });
 
-  itBench("compositeListValue.readonlyValuesArray() + loop all", () => {
+  bench("compositeListValue.readonlyValuesArray() + loop all", () => {
     const validatorsArray = validators.getAllReadonly();
     for (let i = 0; i < validatorsArray.length; i++) {
       validatorsArray[i];

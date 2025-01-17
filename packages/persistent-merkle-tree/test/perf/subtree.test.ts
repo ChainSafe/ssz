@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {Node} from "../../src/node.js";
 import {packedRootsBytesToLeafNodes} from "../../src/packedNode.js";
 import {subtreeFillToContents} from "../../src/subtree.js";
@@ -15,7 +15,7 @@ describe("packedRootsBytesToLeafNodes", () => {
     const dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
     data.set(Buffer.alloc(bytes, 0xdd));
 
-    itBench(`packedRootsBytesToLeafNodes bytes ${bytes} offset ${offset} `, () => {
+    bench(`packedRootsBytesToLeafNodes bytes ${bytes} offset ${offset} `, () => {
       packedRootsBytesToLeafNodes(dataView, start, end);
     });
   }
@@ -25,7 +25,7 @@ describe("subtreeFillToContents", () => {
   const depth = 40;
   const nodesCount = 250_000;
 
-  itBench({
+  bench({
     id: `subtreeFillToContents depth ${depth} count ${nodesCount}`,
     beforeEach: () => getNodesArray(nodesCount),
     fn: (nodes) => {

@@ -1,4 +1,4 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
+import {describe, bench, setBenchOpts} from "@chainsafe/benchmark";
 import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes.js";
 import {BitArray, CompositeViewDU, toHexString} from "../../../src/index.js";
@@ -22,7 +22,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
     minMs: 20_000,
   });
 
-  itBench({
+  bench({
     id: `BeaconState ViewDU hashTreeRoot() vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
@@ -33,7 +33,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
     },
   });
 
-  itBench({
+  bench({
     id: `BeaconState ViewDU recursive hash - commit step vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
@@ -41,7 +41,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
     },
   });
 
-  itBench({
+  bench({
     id: `BeaconState ViewDU validator tree creation vc=${numModified}`,
     beforeEach: () => {
       const state = createPartiallyModifiedDenebState();
@@ -57,7 +57,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   const hc = new HashComputationGroup();
-  itBench({
+  bench({
     id: `BeaconState ViewDU batchHashTreeRoot vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
@@ -69,7 +69,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
     },
   });
 
-  itBench({
+  bench({
     id: `BeaconState ViewDU hashTreeRoot - commit step vc=${vc}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
@@ -77,7 +77,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
     },
   });
 
-  itBench({
+  bench({
     id: `BeaconState ViewDU hashTreeRoot - hash step vc=${vc}`,
     beforeEach: () => {
       const state = createPartiallyModifiedDenebState();

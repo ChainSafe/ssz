@@ -1,4 +1,4 @@
-import {itBench} from "@dapplion/benchmark";
+import {describe, bench} from "@chainsafe/benchmark";
 import {getNodeAtDepth, getNodesAtDepth, setNodeAtDepth, setNodesAtDepth, zeroNode} from "../../../src/index.js";
 import {linspace, fillArray} from "../../utils/misc.js";
 
@@ -15,7 +15,7 @@ describe("Tree opts with low depth", () => {
     const indexes = linspace(maxIndex);
     const nodesChanged = fillArray(maxIndex, zeroNode(0));
 
-    itBench({
+    bench({
       id: `getNodeAtDepth depth ${depth} x${runsFactor}`,
       fn: () => {
         for (let i = 0; i < runsFactor; i++) {
@@ -24,7 +24,7 @@ describe("Tree opts with low depth", () => {
       },
     });
 
-    itBench({
+    bench({
       id: `setNodeAtDepth depth ${depth} x${runsFactor}`,
       fn: () => {
         for (let i = 0; i < runsFactor; i++) {
@@ -33,7 +33,7 @@ describe("Tree opts with low depth", () => {
       },
     });
 
-    itBench({
+    bench({
       id: `getNodesAtDepth depth ${depth} x${runsFactor}`,
       fn: () => {
         for (let i = 0; i < runsFactor; i++) {
@@ -42,7 +42,7 @@ describe("Tree opts with low depth", () => {
       },
     });
 
-    itBench({
+    bench({
       id: `setNodesAtDepth depth ${depth} x${runsFactor}`,
       fn: () => {
         for (let i = 0; i < runsFactor; i++) {
