@@ -39,8 +39,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install Dependencies
-        run: bun install
+      - name: Install Yarn 
+        run: bun --bun x yarn
+      - name: Bootstrap
+        run: yarn --immutable   
       - name: Build
         run: bun run --bun build
       - name: Generate
@@ -54,16 +56,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
       # There is an issue with Lerna+NX on Deno Runtime
       # So we have to install dependencies with Node
       - name: Install yarn
-        run: npm i -g yarn
+        run: deno install --global yarn
       - name: Bootstrap
         run: yarn --immutable
       - name: Build
@@ -72,4 +71,5 @@ jobs:
         run: deno run -A generate
       - uses: "./.github/actions/multi-runtime-tests"
         with:
-          runtime: deno          
+          runtime: deno
+          
