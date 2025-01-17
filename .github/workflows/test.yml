@@ -62,7 +62,7 @@ jobs:
       # There is an issue with Lerna+NX on Deno Runtime
       # So we have to install dependencies with Node
       - name: Install yarn
-        run: deno install --global npm:yarn
+        run: deno install --global -A npm:yarn
       - name: Bootstrap
         run: yarn --immutable
       - name: Build
