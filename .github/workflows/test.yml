@@ -40,9 +40,9 @@ jobs:
         with:
           bun-version: latest
       - name: Install Yarn 
-        run: bun --bun x yarn
+        run: bun install -g npm:yarn
       - name: Bootstrap
-        run: yarn --immutable   
+        run: bun ~/.bun/bin/yarn --immutable   
       - name: Build
         run: bun run --bun build
       - name: Generate
