@@ -39,10 +39,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install Yarn 
+      - name: Install Yarn
         run: bun install -g npm:yarn
       - name: Bootstrap
-        run: bun ~/.bun/bin/yarn --immutable   
+        run: bun --bun ~/.bun/bin/yarn --immutable
       - name: Build
         run: bun run --bun build
       - name: Generate
