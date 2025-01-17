@@ -9,6 +9,40 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [1.0.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.9.1...persistent-merkle-tree-v1.0.0) (2025-01-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382))
+
+### Features
+
+* add swappable hasher, default to noble-hashes ([#314](https://github.com/ChainSafe/ssz/issues/314)) ([4b44614](https://github.com/ChainSafe/ssz/commit/4b44614003619b2c5477363a3c85287e2f2987bd))
+* compact multiproof ([#292](https://github.com/ChainSafe/ssz/issues/292)) ([5f1ea99](https://github.com/ChainSafe/ssz/commit/5f1ea9914d0796cf0c9a8c2f9622fc5e459a12f2))
+* implement batch hash utils ([#384](https://github.com/ChainSafe/ssz/issues/384)) ([1578883](https://github.com/ChainSafe/ssz/commit/15788839b71287e2ff22254bfcabba8221b08a00))
+* implement HashComputationLevel using LinkedList ([#389](https://github.com/ChainSafe/ssz/issues/389)) ([e2c8329](https://github.com/ChainSafe/ssz/commit/e2c83298f9cdb29de407737df85da9292c8eb754))
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382)) ([ccadf43](https://github.com/ChainSafe/ssz/commit/ccadf431cea6164822e72771304192b2728d7bb2))
+* implement merkleizeBlockArray ([#421](https://github.com/ChainSafe/ssz/issues/421)) ([e58781f](https://github.com/ChainSafe/ssz/commit/e58781feb7c9a956b66f1109fc639bdb86326293))
+* implement ViewDU.batchHashTreeRoot() ([#392](https://github.com/ChainSafe/ssz/issues/392)) ([8dd6600](https://github.com/ChainSafe/ssz/commit/8dd6600ad41e9a0d25182ca50f0ffd9be7fc5b8c))
+* new type for list of uint64 ([#352](https://github.com/ChainSafe/ssz/issues/352)) ([e131b5a](https://github.com/ChainSafe/ssz/commit/e131b5a9080f8719d624df97d8a4462081a65807))
+* non simd sha256 for incompatible systems ([#427](https://github.com/ChainSafe/ssz/issues/427)) ([9729005](https://github.com/ChainSafe/ssz/commit/9729005ab0fd401c30e999b20133c4bb6373ded6))
+* snapshot apis for EIP-4881 ([#400](https://github.com/ChainSafe/ssz/issues/400)) ([32fb35a](https://github.com/ChainSafe/ssz/commit/32fb35ad3dcb67465c04dcaf5d7afd93af5219e8))
+
+
+### Bug Fixes
+
+* export ListUintNum64Type ([#353](https://github.com/ChainSafe/ssz/issues/353)) ([30e3deb](https://github.com/ChainSafe/ssz/commit/30e3debbaf7346711eb201740c072aab645d3b14))
+* findDiffDepthi to support more than 31 bytes ([#371](https://github.com/ChainSafe/ssz/issues/371)) ([3a1c8dc](https://github.com/ChainSafe/ssz/commit/3a1c8dc54a571dfed4cc426810472627b334e9b9))
+* Use file path imports ([#318](https://github.com/ChainSafe/ssz/issues/318)) ([f459e92](https://github.com/ChainSafe/ssz/commit/f459e92fbafc5d9388bfa630291855ec32a09566))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.6.1 to 1.0.0
+
 ## [0.9.1](https://github.com/chainsafe/ssz/compare/persistent-merkle-tree-v0.9.0...persistent-merkle-tree-v0.9.1) (2025-01-17)
 
 

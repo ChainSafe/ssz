@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.19.1...ssz-v0.20.0) (2025-01-17)
+
+
+### Features
+
+* add `sliceFrom` to `ListCompositeTreeViewDU` ([#366](https://github.com/ChainSafe/ssz/issues/366)) ([b3fa4f1](https://github.com/ChainSafe/ssz/commit/b3fa4f1335e893f514afdf735b0da34b50b15b6f))
+* add capability to cache merkle roots for lists ([#349](https://github.com/ChainSafe/ssz/issues/349)) ([14c4457](https://github.com/ChainSafe/ssz/commit/14c4457026a9fbea5bfe5c66580f7c8a8bee790a))
+* add optional ssz type ([#329](https://github.com/ChainSafe/ssz/issues/329)) ([3b714a2](https://github.com/ChainSafe/ssz/commit/3b714a29f8e69524ee5133ef3a28029d1d9f6669))
+* add StableContainer ([#373](https://github.com/ChainSafe/ssz/issues/373)) ([78a0291](https://github.com/ChainSafe/ssz/commit/78a029128878685248806ec71100fcedf3cb77ec))
+* add swappable hasher, default to noble-hashes ([#314](https://github.com/ChainSafe/ssz/issues/314)) ([4b44614](https://github.com/ChainSafe/ssz/commit/4b44614003619b2c5477363a3c85287e2f2987bd))
+* implement batch hash utils ([#384](https://github.com/ChainSafe/ssz/issues/384)) ([1578883](https://github.com/ChainSafe/ssz/commit/15788839b71287e2ff22254bfcabba8221b08a00))
+* implement sliceTo() for ListBasicTreeViewDU ([#336](https://github.com/ChainSafe/ssz/issues/336)) ([e84686b](https://github.com/ChainSafe/ssz/commit/e84686b2192fee9e5d9413d55a57cf40af6fd3ef))
+* implement ViewDU.batchHashTreeRoot() ([#392](https://github.com/ChainSafe/ssz/issues/392)) ([8dd6600](https://github.com/ChainSafe/ssz/commit/8dd6600ad41e9a0d25182ca50f0ffd9be7fc5b8c))
+* improve ViewDU.serialize() ([#350](https://github.com/ChainSafe/ssz/issues/350)) ([4ba45d3](https://github.com/ChainSafe/ssz/commit/4ba45d3afec08a8aaf853237c3cd8439ca62bca5))
+* new type for list of uint64 ([#352](https://github.com/ChainSafe/ssz/issues/352)) ([e131b5a](https://github.com/ChainSafe/ssz/commit/e131b5a9080f8719d624df97d8a4462081a65807))
+* non simd sha256 for incompatible systems ([#427](https://github.com/ChainSafe/ssz/issues/427)) ([9729005](https://github.com/ChainSafe/ssz/commit/9729005ab0fd401c30e999b20133c4bb6373ded6))
+* publish more methods ([#334](https://github.com/ChainSafe/ssz/issues/334)) ([947c3e2](https://github.com/ChainSafe/ssz/commit/947c3e278230c9e9db54c4ce20bef76c63040970))
+* snapshot apis for EIP-4881 ([#400](https://github.com/ChainSafe/ssz/issues/400)) ([32fb35a](https://github.com/ChainSafe/ssz/commit/32fb35ad3dcb67465c04dcaf5d7afd93af5219e8))
+
+
+### Bug Fixes
+
+* export ListUintNum64Type ([#353](https://github.com/ChainSafe/ssz/issues/353)) ([30e3deb](https://github.com/ChainSafe/ssz/commit/30e3debbaf7346711eb201740c072aab645d3b14))
+* handle setBitOr in ListBasicTreeViewDU.sliceTo() ([#338](https://github.com/ChainSafe/ssz/issues/338)) ([5c5242a](https://github.com/ChainSafe/ssz/commit/5c5242a3bb5d89f8c51d5cb14112dd36edc91868))
+* relax BitArray#intersectValues types ([#339](https://github.com/ChainSafe/ssz/issues/339)) ([9ba2456](https://github.com/ChainSafe/ssz/commit/9ba2456eff8b224248826be482a776f7c721aece))
+* relax other instances of intersectValues ([#344](https://github.com/ChainSafe/ssz/issues/344)) ([e000351](https://github.com/ChainSafe/ssz/commit/e0003516dd4e50005182b55ab954baab81d9cc12))
+* Remove replaceAll with replace(/.../g,... for ES2019 compatibility ([#309](https://github.com/ChainSafe/ssz/issues/309)) ([3c0a2c5](https://github.com/ChainSafe/ssz/commit/3c0a2c5dfe678925cd1b35b486b66738cdb12e99))
+* sliceFrom api ([#394](https://github.com/ChainSafe/ssz/issues/394)) ([4ca1d6f](https://github.com/ChainSafe/ssz/commit/4ca1d6f789428c52d012e0e2d8fa5809849e581e))
+* update changelog ordering ([#342](https://github.com/ChainSafe/ssz/issues/342)) ([698ad13](https://github.com/ChainSafe/ssz/commit/698ad13f8828a237650136ff90f3793b09357ddc))
+* Use file path imports ([#318](https://github.com/ChainSafe/ssz/issues/318)) ([f459e92](https://github.com/ChainSafe/ssz/commit/f459e92fbafc5d9388bfa630291855ec32a09566))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.6.1 to 1.0.0
+    * @chainsafe/persistent-merkle-tree bumped from 0.9.1 to 1.0.0
+
 ## [0.19.1](https://github.com/chainsafe/ssz/compare/ssz-v0.19.0...ssz-v0.19.1) (2025-01-17)
 
 

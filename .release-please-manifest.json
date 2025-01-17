@@ -1,6 +1,6 @@
 {
-    "packages/as-sha256": "0.6.1",
-    "packages/persistent-merkle-tree": "0.9.1",
+    "packages/as-sha256": "1.0.0",
+    "packages/persistent-merkle-tree": "1.0.0",
     "packages/persistent-ts": "0.19.2",
-    "packages/ssz": "0.19.1"
+    "packages/ssz": "0.20.0"
 }

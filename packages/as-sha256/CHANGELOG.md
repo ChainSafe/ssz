@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.6.1...as-sha256-v1.0.0) (2025-01-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382))
+
+### Features
+
+* add swappable hasher, default to noble-hashes ([#314](https://github.com/ChainSafe/ssz/issues/314)) ([4b44614](https://github.com/ChainSafe/ssz/commit/4b44614003619b2c5477363a3c85287e2f2987bd))
+* implement hashInto() api for as-sha256 ([#382](https://github.com/ChainSafe/ssz/issues/382)) ([ccadf43](https://github.com/ChainSafe/ssz/commit/ccadf431cea6164822e72771304192b2728d7bb2))
+* non simd sha256 for incompatible systems ([#427](https://github.com/ChainSafe/ssz/issues/427)) ([9729005](https://github.com/ChainSafe/ssz/commit/9729005ab0fd401c30e999b20133c4bb6373ded6))
+* SIMD implementation for as-sha256 ([#367](https://github.com/ChainSafe/ssz/issues/367)) ([ec123ec](https://github.com/ChainSafe/ssz/commit/ec123ec3cfcc37ff82635da7a57ad9c74cc9accb))
+* use allocUnsafe to allocate hash digests ([#391](https://github.com/ChainSafe/ssz/issues/391)) ([8ea1bb4](https://github.com/ChainSafe/ssz/commit/8ea1bb4809592691e568238520cb3c2aa9257c25))
+
+
+### Bug Fixes
+
+* add homepage/repo etc to as-sha256 package.json ([#401](https://github.com/ChainSafe/ssz/issues/401)) ([1dc50ef](https://github.com/ChainSafe/ssz/commit/1dc50ef2985a03c315bbce44165cd271a4a6e2df))
+* migrate to the latest assemblyscript ([#348](https://github.com/ChainSafe/ssz/issues/348)) ([9cf6991](https://github.com/ChainSafe/ssz/commit/9cf6991e7ece4e4002668f601ecb43bb8bd53f4e))
+* Use file path imports ([#318](https://github.com/ChainSafe/ssz/issues/318)) ([f459e92](https://github.com/ChainSafe/ssz/commit/f459e92fbafc5d9388bfa630291855ec32a09566))
+
 ## [0.6.1](https://github.com/chainsafe/ssz/compare/as-sha256-v0.6.0...as-sha256-v0.6.1) (2025-01-17)
 
 
