@@ -19,3 +19,6 @@ node_modules
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+
+# Deno
+deno.lock

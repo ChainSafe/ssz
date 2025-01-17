@@ -2,7 +2,7 @@
 // we preprocess the binary data into valid javascript code, a single exportable object.
 // which can be statically imported.
 
-import fs from "fs";
+import fs from "node:fs";
 
 interface BinaryMeta {
   input: string;
