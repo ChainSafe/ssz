@@ -3,6 +3,7 @@
     "plugins": ["node-workspace"],
     "packages": {
       "packages/as-sha256": {
+        "package-name": "as-sha256",
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
@@ -12,6 +13,7 @@
         "versioning": "default"
       },
       "packages/persistent-merkle-tree": {
+        "package-name": "persistent-merkle-tree",
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
@@ -21,6 +23,7 @@
         "versioning": "default"
       },
       "packages/persistent-ts": {
+        "package-name": "persistent-ts",
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
@@ -30,6 +33,7 @@
         "versioning": "default"
       },
       "packages/ssz": {
+        "package-name": "ssz",
         "releaseType": "node",
         "draft": false,
         "prerelease": false,
