@@ -50,10 +50,10 @@ jobs:
         if: ${{ steps.release.outputs.releases_created }}
 
       - env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ steps.release.outputs.releases_created }}
         run: |
-          echo npmAuthToken: "$NODE_AUTH_TOKEN" >> ./.yarnrc.yml
+          echo "registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=$NPM_TOKEN\n" >> ./.npmrc
           
       - run: yarn lerna exec --ignore root --ignore simpleserialize.com --no-private "npm publish --access public"
         if: ${{ steps.release.outputs.releases_created }}
