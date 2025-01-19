@@ -13,8 +13,7 @@
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
   "type": "module",
-  "main": "./lib/cjs/index.js",
-  "module": "./lib/index.js",
+  "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "files": [
     "lib",
@@ -31,11 +30,9 @@
     "asbuild:simd:untouched": "asc assembly/index.simd.ts -o build/untouched.simd.wasm -t build/untouched.simd.wat --runtime minimal --target debug --enable simd",
     "asbuild:simd:optimized": "asc assembly/index.simd.ts -o build/optimized.simd.wasm -t build/optimized.simd.wat --runtime minimal --target release -O3z --noAssert --enable simd",
     "asbuild:simd": "yarn asbuild:simd:untouched && yarn asbuild:simd:optimized",
-    "build:esm": "tsc -p tsconfig.build.esm.json",
-    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
-    "build:types": "tsc -p tsconfig.build.types.json",
+    "build:lib": "tsc -p tsconfig.build.json",
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
-    "build": "yarn asbuild && yarn asbuild:simd && yarn generate && yarn build:cjs && yarn build:esm && yarn build:types",
+    "build": "yarn asbuild && yarn asbuild:simd && yarn generate && yarn build:lib",
     "test": "yarn run test:unit",
     "test:unit": "vitest run --dir test/unit/",
     "test:browsers": "yarn test:browsers:chrome && yarn test:browsers:firefox",

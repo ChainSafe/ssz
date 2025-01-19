@@ -3,21 +3,16 @@
   "version": "0.19.2",
   "description": "Persistent data structures for TypeScript.",
   "type": "module",
-  "main": "./lib/cjs/index.js",
-  "module": "./lib/index.js",
+  "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
-    "lib/**/*.js.map",
-    "lib/**/package.json"
+    "lib/**/*.js.map"
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "yarn build:cjs && yarn build:esm && yarn build:types",
-    "build:esm": "tsc -p tsconfig.build.esm.json",
-    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
-    "build:types": "tsc -p tsconfig.build.types.json",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint --color --ext .ts src/",
     "check-types": "tsc --noEmit",
     "test:unit": "vitest run --dir test/unit",
