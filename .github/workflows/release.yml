@@ -52,10 +52,12 @@ jobs:
       - env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ steps.release.outputs.releases_created }}
-        run: |
-          echo "registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=$NPM_TOKEN\n" >> ./.npmrc
+        run: npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+      
+      - name: Check npm config
+        run: npm config list
           
-      - run: yarn lerna exec --ignore root --ignore simpleserialize.com --no-private "npm publish --access public"
+      - run: node_modules/.bin/lerna exec --ignore root --ignore simpleserialize.com --no-private "npm publish --access public"
         if: ${{ steps.release.outputs.releases_created }}
 
 
