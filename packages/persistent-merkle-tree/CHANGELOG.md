@@ -9,6 +9,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [0.9.2](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.9.1...persistent-merkle-tree-v0.9.2) (2025-01-20)
+
+
+### Bug Fixes
+
+* **as-sha256:** empty commit to trigger release ([#449](https://github.com/ChainSafe/ssz/issues/449)) ([2fa4a06](https://github.com/ChainSafe/ssz/commit/2fa4a0683805d8ecc1cda8a81a88f78136520d70))
+* **persistent-merkle-tree:** empty commit to trigger release ([#451](https://github.com/ChainSafe/ssz/issues/451)) ([e9bfcc0](https://github.com/ChainSafe/ssz/commit/e9bfcc05cc3f6c5f829627b8eaeb42fa5ef33fc5))
+* **persistent-ts:** empty commit to trigger release ([#450](https://github.com/ChainSafe/ssz/issues/450)) ([e439fc5](https://github.com/ChainSafe/ssz/commit/e439fc53e6fdb20958dc497c6f9d7d101e033806))
+* **ssz:** empty commit to trigger release ([#452](https://github.com/ChainSafe/ssz/issues/452)) ([06280ba](https://github.com/ChainSafe/ssz/commit/06280ba4cf73eac77dfddd7b44426899f079cc1e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.6.1 to 0.6.2
+
 ## [0.9.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.9.0...persistent-merkle-tree-v0.9.1) (2025-01-18)
 
 
