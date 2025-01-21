@@ -145,14 +145,16 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * Returns all elements at every index, if an index is modified it will return the modified view.
+   * No need to commit() before calling this function.
    */
   getAllReadonly(): CompositeViewDU<ElementType>[] {
-    this.populateAllNodes();
+    this.populateAllOldNodes();
 
     const views = new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
-      views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
+      // this will get pending change first, if not it will get from the `this.nodes` array
+      views[i] = this.getReadonly(i);
     }
     return views;
   }
@@ -253,6 +255,18 @@ export class ArrayCompositeTreeViewDU<
 
     if (!this.nodesPopulated) {
       this.nodes = getNodesAtDepth(this._rootNode, this.type.depth, 0, this.length);
+      this.nodesPopulated = true;
+    }
+  }
+
+  /**
+   * Similar to `populateAllNodes` but this does not require a commit() before reading all nodes.
+   * If there are pendingChanges, they will NOT be included in the `nodes` array.
+   */
+  protected populateAllOldNodes(): void {
+    if (!this.nodesPopulated) {
+      const originalLength = this.dirtyLength ? this.type.tree_getLength(this._rootNode) : this._length;
+      this.nodes = getNodesAtDepth(this._rootNode, this.type.depth, 0, originalLength);
       this.nodesPopulated = true;
     }
   }
