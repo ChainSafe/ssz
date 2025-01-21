@@ -344,8 +344,7 @@ describe("ListCompositeType getAllReadOnly - no commit", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listLength = 2;
     const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
-    let listView: ListCompositeTreeViewDU<typeof ssz.Root>;
-    listView = listType.toViewDU(list);
+    const listView = listType.toViewDU(list);
     expect(listView.getAllReadonly()).to.deep.equal(list);
 
     // modify
