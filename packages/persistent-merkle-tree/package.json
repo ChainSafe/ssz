@@ -3,8 +3,29 @@
   "version": "0.9.1",
   "description": "Merkle tree implemented as a persistent datastructure",
   "type": "module",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js"
+    },
+    "./hashtree": {
+      "import": "./lib/hasher/hashtree.js"
+    },
+    "./nobel": {
+      "import": "./lib/hasher/nobel.js"
+    },
+    "./as-sha256": {
+      "import": "./lib/hasher/as-sha256.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "*",
+        "lib/*",
+        "lib/*/index"
+      ]
+    }
+  },
   "files": [
     "lib"
   ],
