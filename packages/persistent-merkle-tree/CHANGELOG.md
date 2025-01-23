@@ -9,6 +9,26 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [1.0.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.9.1...persistent-merkle-tree-v1.0.0) (2025-01-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* use named exports to expose different hashers ([#459](https://github.com/ChainSafe/ssz/issues/459))
+* remove support for CJS ([#440](https://github.com/ChainSafe/ssz/issues/440))
+
+### Features
+
+* remove support for CJS ([#440](https://github.com/ChainSafe/ssz/issues/440)) ([57d14f1](https://github.com/ChainSafe/ssz/commit/57d14f19cd71a483e7108570c5c295d4f8a9a85d))
+* use named exports to expose different hashers ([#459](https://github.com/ChainSafe/ssz/issues/459)) ([f763c8a](https://github.com/ChainSafe/ssz/commit/f763c8ad01fa1375b977b1deaa7545cbd4eff5d9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 0.6.1 to 1.0.0
+
 ## [0.9.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v0.9.0...persistent-merkle-tree-v0.9.1) (2025-01-18)
 
 

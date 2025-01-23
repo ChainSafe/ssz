@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/ChainSafe/ssz/compare/persistent-ts-v0.19.2...persistent-ts-v1.0.0) (2025-01-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove support for CJS ([#440](https://github.com/ChainSafe/ssz/issues/440))
+
+### Features
+
+* remove support for CJS ([#440](https://github.com/ChainSafe/ssz/issues/440)) ([57d14f1](https://github.com/ChainSafe/ssz/commit/57d14f19cd71a483e7108570c5c295d4f8a9a85d))
+
 ## [0.19.2](https://github.com/ChainSafe/ssz/compare/persistent-ts-v0.19.1...persistent-ts-v0.19.2) (2025-01-18)
 
 
