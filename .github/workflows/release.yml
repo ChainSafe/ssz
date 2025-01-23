@@ -57,7 +57,7 @@ jobs:
       - name: Check npm config
         run: npm config list
           
-      - run: node_modules/.bin/lerna exec --ignore root --ignore simpleserialize.com --no-private "npm publish --access public"
+      - run: node_modules/.bin/lerna publish from-package --no-verify-access
         if: ${{ steps.release.outputs.releases_created }}
 
 
