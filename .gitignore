@@ -12,6 +12,7 @@ packages/ssz/spec-tests
 benchmark_data/
 .failedTest.txt
 *.tsbuildinfo
+*.tgz
 
 node_modules
 .yarn/*
