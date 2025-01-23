@@ -5,16 +5,20 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./lib/index.js"
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
     },
     "./hashtree": {
-      "import": "./lib/hasher/hashtree.js"
+      "import": "./lib/hasher/hashtree.js",
+      "types": "./lib/hasher/hashtree.d.ts"
     },
-    "./nobel": {
-      "import": "./lib/hasher/nobel.js"
+    "./noble": {
+      "import": "./lib/hasher/noble.js",
+      "types": "./lib/hasher/noble.d.ts"
     },
     "./as-sha256": {
-      "import": "./lib/hasher/as-sha256.js"
+      "import": "./lib/hasher/as-sha256.js",
+      "types": "./lib/hasher/as-sha256.d.ts"
     }
   },
   "typesVersions": {
