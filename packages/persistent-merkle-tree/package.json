@@ -8,15 +8,15 @@
       "import": "./lib/index.js",
       "types": "./lib/index.d.ts"
     },
-    "./hashtree": {
+    "./hasher/hashtree": {
       "import": "./lib/hasher/hashtree.js",
       "types": "./lib/hasher/hashtree.d.ts"
     },
-    "./noble": {
+    "./hasher/noble": {
       "import": "./lib/hasher/noble.js",
       "types": "./lib/hasher/noble.d.ts"
     },
-    "./as-sha256": {
+    "./hasher/as-sha256": {
       "import": "./lib/hasher/as-sha256.js",
       "types": "./lib/hasher/as-sha256.d.ts"
     }
