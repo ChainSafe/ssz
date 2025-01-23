@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/persistent-merkle-tree bumped from 1.0.0 to 1.0.1
+
 ## [1.0.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.19.1...ssz-v1.0.0) (2025-01-23)
 
 
