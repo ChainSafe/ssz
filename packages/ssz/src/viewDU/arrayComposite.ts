@@ -146,11 +146,15 @@ export class ArrayCompositeTreeViewDU<
 
   /**
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * @param views optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonly(): CompositeViewDU<ElementType>[] {
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    if (views && views.length !== this._length) {
+      throw Error(`Expected ${this._length} views, got ${views.length}`);
+    }
     this.populateAllNodes();
 
-    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       views[i] = this.type.elementType.getViewDU(this.nodes[i], this.caches[i]);
     }
@@ -158,16 +162,40 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * Apply `fn` to each ViewDU in the array
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  forEach(fn: (viewDU: CompositeViewDU<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.type.elementType.getViewDU(this.nodes[i], this.caches[i]), i);
+    }
+  }
+
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
+   */
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     this.populateAllNodes();
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }
     return values;
+  }
+
+  /**
+   * Apply `fn` to each value in the array
+   */
+  forEachValue(fn: (value: ValueOf<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.type.elementType.tree_toValue(this.nodes[i]), i);
+    }
   }
 
   /**
@@ -193,9 +221,12 @@ export class ArrayCompositeTreeViewDU<
 
     for (const [index, view] of this.viewsChanged) {
       const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
-      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-      this.nodes[index] = node;
-      nodesChanged.push({index, node});
+      // there's a chance the view is not changed, no need to rebind nodes in that case
+      if (this.nodes[index] !== node) {
+        // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+        this.nodes[index] = node;
+        nodesChanged.push({index, node});
+      }
 
       // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
       const cache = this.type.elementType.cacheOfViewDU(view);
