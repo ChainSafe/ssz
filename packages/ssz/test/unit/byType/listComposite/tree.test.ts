@@ -120,7 +120,8 @@ describe("ListCompositeType tree reads", () => {
 
       // Only for viewDU
       if (view instanceof ArrayCompositeTreeViewDU) {
-        expect(() => view.getAllReadonly()).toThrow("Must commit changes before reading all nodes");
+        expect(() => view.getAllReadonly()).not.toThrow();
+        expect(() => view.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
         view.commit();
       }
 
@@ -336,4 +337,25 @@ describe("ListCompositeType batchHashTreeRoot", () => {
       expect(viewDU.sliceTo(1).batchHashTreeRoot()).toEqual(expectedRoot);
     });
   }
+});
+
+describe("ListCompositeType getAllReadOnly - no commit", () => {
+  it("getAllReadOnly() without commit", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+    const listLength = 2;
+    const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+    const listView = listType.toViewDU(list);
+    expect(listView.getAllReadonly()).to.deep.equal(list);
+
+    // modify
+    listView.set(0, Buffer.alloc(32, 1));
+    // push
+    listView.push(Buffer.alloc(32, 1));
+
+    // getAllReadOnly() without commit, now all items should be the same
+    expect(listView.getAllReadonly()).to.deep.equal(Array.from({length: 3}, () => Buffer.alloc(32, 1)));
+
+    // getAllReadOnlyValues() will throw
+    expect(() => listView.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
+  });
 });
