@@ -57,7 +57,7 @@ jobs:
       - name: Check npm config
         run: npm config list
           
-      - run: node_modules/.bin/lerna publish from-package --no-verify-access
+      - run: node_modules/.bin/lerna publish from-package --no-verify-access --yes
         if: ${{ steps.release.outputs.releases_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
