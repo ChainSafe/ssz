@@ -9,6 +9,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from 1.0.0 to 1.0.1
 
+## [1.0.2](https://github.com/ChainSafe/ssz/compare/ssz-v1.0.1...ssz-v1.0.2) (2025-01-30)
+
+
+### Bug Fixes
+
+* ListCompositeTreeViewDU to getAllReadonly() without commit ([#456](https://github.com/ChainSafe/ssz/issues/456)) ([94510c9](https://github.com/ChainSafe/ssz/commit/94510c9b2f1f907c72e0e2b79edf1891a3394c41))
+
 ## [1.0.0](https://github.com/ChainSafe/ssz/compare/ssz-v0.19.1...ssz-v1.0.0) (2025-01-23)
 
 
