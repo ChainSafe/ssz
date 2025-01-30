@@ -59,7 +59,8 @@ jobs:
           
       - run: node_modules/.bin/lerna publish from-package --no-verify-access
         if: ${{ steps.release.outputs.releases_created }}
-
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to Cloudflare Pages
         if: ${{ steps.release.outputs.releases_created }}
