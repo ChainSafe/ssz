@@ -2,5 +2,5 @@
     "packages/as-sha256": "1.0.0",
     "packages/persistent-merkle-tree": "1.0.1",
     "packages/persistent-ts": "1.0.0",
-    "packages/ssz": "1.0.1"
+    "packages/ssz": "1.0.2"
 }
