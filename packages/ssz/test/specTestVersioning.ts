@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import url from "url";
 import {DownloadTestsOptions} from "@lodestar/spec-test-util/downloadTests";
 
