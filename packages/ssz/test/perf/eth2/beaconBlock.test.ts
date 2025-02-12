@@ -1,8 +1,8 @@
-import {itBench, setBenchOpts} from "@dapplion/benchmark";
-import {ValueWithCachedPermanentRoot, symbolCachedPermanentRoot} from "../../../src/util/merkleize";
-import {deneb, ssz} from "../../lodestarTypes";
-import {preset} from "../../lodestarTypes/params";
-import {BitArray, toHexString} from "../../../src";
+import {describe, bench, setBenchOpts} from "@chainsafe/benchmark";
+import {ValueWithCachedPermanentRoot, symbolCachedPermanentRoot} from "../../../src/util/merkleize.js";
+import {deneb, ssz} from "../../lodestarTypes/index.js";
+import {preset} from "../../lodestarTypes/params.js";
+import {BitArray, toHexString} from "../../../src/index.js";
 const {MAX_ATTESTATIONS, MAX_DEPOSITS, MAX_VOLUNTARY_EXITS, MAX_BLS_TO_EXECUTION_CHANGES} = preset;
 
 describe("Benchmark BeaconBlock.hashTreeRoot()", function () {
@@ -69,7 +69,7 @@ describe("Benchmark BeaconBlock.hashTreeRoot()", function () {
 
   const root = ssz.deneb.BeaconBlock.hashTreeRoot(block);
   console.log("BeaconBlock.hashTreeRoot() root", toHexString(root));
-  itBench({
+  bench({
     id: `Deneb BeaconBlock.hashTreeRoot(), numTransaction=${numTransaction}`,
     beforeEach: () => {
       clearCachedRoots(block);
