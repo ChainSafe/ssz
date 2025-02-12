@@ -1,5 +1,12 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode, merkleizeBlocksBytes, merkleizeBlockArray} from "@chainsafe/persistent-merkle-tree";
-import { allocUnsafe } from "@chainsafe/as-sha256";
+import {
+  getNodesAtDepth,
+  Node,
+  packedNodeRootsToBytes,
+  packedRootsBytesToNode,
+  merkleizeBlocksBytes,
+  merkleizeBlockArray,
+} from "@chainsafe/persistent-merkle-tree";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {maxChunksToDepth} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";

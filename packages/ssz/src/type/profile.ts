@@ -12,7 +12,12 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize.js";
+import {
+  ValueWithCachedPermanentRoot,
+  cacheRoot,
+  maxChunksToDepth,
+  symbolCachedPermanentRoot,
+} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {Type, ValueOf} from "./abstract.js";

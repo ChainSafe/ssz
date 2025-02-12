@@ -1,5 +1,4 @@
 import {describe, it, expect} from "vitest";
-import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {
   BitArray,
   BitListType,
@@ -21,7 +20,6 @@ import {
 } from "../../../../src/index.js";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
-import {upgradeToNewType} from "../../../../src/util/upgrade.js";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable

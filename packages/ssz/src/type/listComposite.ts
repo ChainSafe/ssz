@@ -1,6 +1,17 @@
-import {Node, Tree, HashComputationLevel, merkleizeBlocksBytes, merkleizeBlockArray} from "@chainsafe/persistent-merkle-tree";
-import { allocUnsafe } from "@chainsafe/as-sha256";
-import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
+import {
+  Node,
+  Tree,
+  HashComputationLevel,
+  merkleizeBlocksBytes,
+  merkleizeBlockArray,
+} from "@chainsafe/persistent-merkle-tree";
+import {allocUnsafe} from "@chainsafe/as-sha256";
+import {
+  cacheRoot,
+  maxChunksToDepth,
+  symbolCachedPermanentRoot,
+  ValueWithCachedPermanentRoot,
+} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {ValueOf, ByteViews} from "./abstract.js";

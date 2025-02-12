@@ -68,7 +68,6 @@ describe("Benchmark BeaconBlock.hashTreeRoot()", function () {
   }
 
   const root = ssz.deneb.BeaconBlock.hashTreeRoot(block);
-  console.log("BeaconBlock.hashTreeRoot() root", toHexString(root));
   bench({
     id: `Deneb BeaconBlock.hashTreeRoot(), numTransaction=${numTransaction}`,
     beforeEach: () => {

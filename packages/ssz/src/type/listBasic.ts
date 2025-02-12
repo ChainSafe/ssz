@@ -1,5 +1,5 @@
 import {LeafNode, Node, Tree, HashComputationLevel, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
-import { allocUnsafe } from "@chainsafe/as-sha256";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {ValueOf} from "./abstract.js";
 import {BasicType} from "./basic.js";
 import {ByteViews} from "./composite.js";
@@ -11,7 +11,12 @@ import {
   addLengthNode,
   setChunksNode,
 } from "./arrayBasic.js";
-import {cacheRoot, maxChunksToDepth, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
+import {
+  cacheRoot,
+  maxChunksToDepth,
+  symbolCachedPermanentRoot,
+  ValueWithCachedPermanentRoot,
+} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {ArrayBasicType} from "../view/arrayBasic.js";

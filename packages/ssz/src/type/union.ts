@@ -8,7 +8,7 @@ import {
   getHashComputations,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
-import { allocUnsafe } from "@chainsafe/as-sha256";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {Type, ByteViews} from "./abstract.js";

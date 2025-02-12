@@ -4,7 +4,7 @@ import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 import {BitArray} from "../value/bitArray.js";
 import {BitArrayTreeView} from "../view/bitArray.js";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray.js";
-import { getBlocksBytes } from "./byteArray.js";
+import {getBlocksBytes} from "./byteArray.js";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
