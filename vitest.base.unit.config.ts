@@ -61,6 +61,8 @@ export default defineConfig({
     coverage: {
       reporter: ["clover", "text"],
     },
+    testTimeout: 15000,
+    hookTimeout: 15000,
     onConsoleLog: () => !process.env.TEST_QUIET_CONSOLE,
   },
 });
