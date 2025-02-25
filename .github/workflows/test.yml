@@ -35,14 +35,20 @@ jobs:
     name: Tests Bun
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2      
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - name: Install Yarn
         run: bun install -g npm:yarn
-      - name: Bootstrap
-        run: bun --bun ~/.bun/bin/yarn --immutable
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install
+        run: yarn install --frozen-lockfile
       - name: Build
         run: bun run --bun build
       - name: Generate
@@ -50,25 +56,27 @@ jobs:
       - uses: "./.github/actions/multi-runtime-tests"
         with:
           runtime: bun
-          
+
   test-deno:
-    name: Tests Deno
+    name: Test Deno
     runs-on: ubuntu-latest
     steps:
+      # <common-build> - Uses YAML anchors in the future
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "22"
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      # There is an issue with Lerna+NX on Deno Runtime
-      # So we have to install dependencies with Node
-      - name: Install yarn
-        run: deno install --global -A npm:yarn
-      - name: Bootstrap
-        run: yarn --immutable
+      - name: Install
+        run: yarn install --frozen-lockfile
       - name: Build
         run: deno run -A build
       - name: Generate
-        run: deno run -A generate
+        run: deno run -A generate        
+      - name: Unit tests
+        run: deno run -A test:unit
       - uses: "./.github/actions/multi-runtime-tests"
         with:
           runtime: deno

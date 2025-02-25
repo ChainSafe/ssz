@@ -27,6 +27,7 @@ export function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
 
   return {
     pool: "vitest-in-process-pool",
+    reporters: [["default", { summary: false }]],
     coverage: {
       enabled: false,
     },
