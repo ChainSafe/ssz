@@ -27,10 +27,44 @@ jobs:
         run: yarn check-types
       - name: Lint
         run: yarn lint
-      - uses: "./.github/actions/multi-runtime-tests"
+      - name: Unit Tests
+        run: yarn test:unit
+      - name: Browsers Tests
+        run: yarn test:browsers
+      # Download spec tests with cache
+      - name: Restore spec tests cache
+        uses: actions/cache@master
         with:
-          runtime: nodejs
-
+          path: packages/ssz/spec-tests
+          key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
+      - name: Download spec tests
+        run: yarn download-spec-tests
+        working-directory: packages/ssz
+      # Run them in different steps to quickly identifying which command failed
+      # Otherwise just doing `yarn test:spec` you can't tell which specific suite failed
+      # many of the suites have identical names for minimal and mainnet
+      - name: Spec tests general
+        run: yarn test:spec-generic
+        working-directory: packages/ssz
+      - name: Spec tests phase0-minimal
+        run: LODESTAR_FORK=phase0 yarn test:spec-static-minimal
+        working-directory: packages/ssz
+      - name: Spec tests phase0-mainnet
+        run: LODESTAR_FORK=phase0 yarn test:spec-static-mainnet
+        working-directory: packages/ssz
+      - name: Spec tests altair-minimal
+        run: LODESTAR_FORK=altair yarn test:spec-static-minimal
+        working-directory: packages/ssz
+      - name: Spec tests altair-mainnet
+        run: LODESTAR_FORK=altair yarn test:spec-static-mainnet
+        working-directory: packages/ssz
+      - name: Spec tests bellatrix-minimal
+        run: LODESTAR_FORK=bellatrix yarn test:spec-static-minimal
+        working-directory: packages/ssz
+      - name: Spec tests bellatrix-mainnet
+        run: LODESTAR_FORK=bellatrix yarn test:spec-static-mainnet
+        working-directory: packages/ssz
+  
   test-bun:
     name: Tests Bun
     runs-on: ubuntu-latest
@@ -50,33 +84,9 @@ jobs:
       - name: Install
         run: yarn install --frozen-lockfile
       - name: Build
-        run: bun run --bun build
+        run: bun run --filter '*' build
       - name: Generate
-        run: bun run --bun generate
-      - uses: "./.github/actions/multi-runtime-tests"
-        with:
-          runtime: bun
+        run: bun run --filter '*' generate
+      - name: Unit Tests
+        run: bun run --bun --filter '*' test:unit
 
-  test-deno:
-    name: Test Deno
-    runs-on: ubuntu-latest
-    steps:
-      # <common-build> - Uses YAML anchors in the future
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2-beta
-        with:
-          node-version: "22"
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-      - name: Install
-        run: yarn install --frozen-lockfile
-      - name: Build
-        run: deno run -A build
-      - name: Generate
-        run: deno run -A generate        
-      - name: Unit tests
-        run: deno run -A test:unit
-      - uses: "./.github/actions/multi-runtime-tests"
-        with:
-          runtime: deno
