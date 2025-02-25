@@ -84,9 +84,8 @@ jobs:
       - name: Install
         run: yarn install --frozen-lockfile
       - name: Build
-        run: bun run --filter '*' build
+        run: yarn build
       - name: Generate
         run: bun run --filter '*' generate
       - name: Unit Tests
         run: bun run --bun --filter '*' test:unit
-
