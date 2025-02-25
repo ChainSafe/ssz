@@ -22,6 +22,15 @@ export function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
           maxThreads: 10,
         },
       },
+      coverage: {
+        enabled: true,
+      },
+      reporters: process.env.GITHUB_ACTIONS
+        ? ["verbose", "hanging-process", "github-actions"]
+        : [
+            process.env.TEST_COMPACT_OUTPUT ? "basic" : "verbose",
+            "hanging-process",
+          ],
     };
   }
 
@@ -49,12 +58,9 @@ export default defineConfig({
       "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
     ],
     setupFiles: [path.join(__dirname, "./vitest/setupFiles/customMatchers.ts")],
-    reporters: process.env.GITHUB_ACTIONS
-      ? ["verbose", "hanging-process", "github-actions"]
-      : [
-          process.env.TEST_COMPACT_OUTPUT ? "basic" : "verbose",
-          "hanging-process",
-        ],
+    coverage: {
+      reporter: ["clover", "text"],
+    },
     onConsoleLog: () => !process.env.TEST_QUIET_CONSOLE,
   },
 });

@@ -12,7 +12,7 @@
     "lint": "lerna run lint",
     "check-types": "lerna run check-types",
     "test:browsers": "lerna run test:browsers",
-    "test": "lerna run test",
+    "test:unit": "lerna run test:unit",
     "benchmark:files": "NODE_OPTIONS='--max_old_space_size=4096 --loader=ts-node/esm' benchmark --config .benchrc.yaml",
     "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
