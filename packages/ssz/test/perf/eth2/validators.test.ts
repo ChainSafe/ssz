@@ -1,7 +1,7 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {Validator} from "../../lodestarTypes/phase0/types.js";
-import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.js";
-import {CompositeViewDU} from "../../../src/index.js";
+import {Validator} from "../../lodestarTypes/phase0/types.ts";
+import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.ts";
+import {CompositeViewDU} from "../../../src/index.ts";
 
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),

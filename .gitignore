@@ -23,3 +23,5 @@ node_modules
 
 # Deno
 deno.lock
+# Dnt generate npm package
+packages/*/npm/

@@ -1,5 +1,5 @@
-import {ValueOf} from "../../../src/index.js";
-import * as ssz from "./sszTypes.js";
+import {ValueOf} from "../../../src/index.ts";
+import * as ssz from "./sszTypes.ts";
 
 export type KZGProof = ValueOf<typeof ssz.KZGProof>;
 export type KZGCommitment = ValueOf<typeof ssz.KZGCommitment>;

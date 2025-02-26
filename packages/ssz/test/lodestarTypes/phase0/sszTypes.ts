@@ -7,17 +7,17 @@ import {
   ListCompositeType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../src/index.js";
-import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
-import {PartialListCompositeType} from "../../../src/type/partialListComposite.js";
+} from "../../../src/index.ts";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64.ts";
+import {PartialListCompositeType} from "../../../src/type/partialListComposite.ts";
 import {
   preset,
   MAX_REQUEST_BLOCKS,
   DEPOSIT_CONTRACT_TREE_DEPTH,
   JUSTIFICATION_BITS_LENGTH,
   ATTESTATION_SUBNET_COUNT,
-} from "../params.js";
-import * as primitiveSsz from "../primitive/sszTypes.js";
+} from "../params.ts";
+import * as primitiveSsz from "../primitive/sszTypes.ts";
 
 const {
   EPOCHS_PER_ETH1_VOTING_PERIOD,

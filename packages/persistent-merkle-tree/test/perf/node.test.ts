@@ -1,7 +1,7 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {BranchNode, getNodeH, LeafNode} from "../../src/node.js";
-import {countToDepth, getHashComputations, subtreeFillToContents} from "../../src/index.js";
-import {batchHash} from "../utils/batchHash.js";
+import {BranchNode, getNodeH, LeafNode} from "../../src/node.ts";
+import {countToDepth, getHashComputations, subtreeFillToContents} from "../../src/index.ts";
+import {batchHash} from "../utils/batchHash.ts";
 
 describe("HashObject LeafNode", () => {
   // Number of new nodes created in processAttestations() on average

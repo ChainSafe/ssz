@@ -13,10 +13,8 @@
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
   "type": "module",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "src/index.ts",
   "files": [
-    "lib",
     "build"
   ],
   "scripts": {
@@ -32,7 +30,7 @@
     "asbuild:simd": "yarn asbuild:simd:untouched && yarn asbuild:simd:optimized",
     "build:lib": "tsc -p tsconfig.build.json",
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
-    "build": "yarn asbuild && yarn asbuild:simd && yarn generate && yarn build:lib",
+    "build": "yarn asbuild && yarn asbuild:simd && yarn generate",
     "test:unit": "vitest run --dir test/unit/",
     "test:browsers": "vitest run --config ./vitest.browser.config.ts --dir test/unit",
     "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",

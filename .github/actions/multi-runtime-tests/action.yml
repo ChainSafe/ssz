@@ -13,14 +13,13 @@ runs:
       run: echo "TEST_COMMAND=yarn" >> $GITHUB_ENV      
       shell: bash
 
-
     - name: Select bun runtime
       if: inputs.runtime == 'bun'    
       run: echo "TEST_COMMAND=bun run --bun" >> $GITHUB_ENV
       shell: bash
 
     - name: Select deno runtime
-      if: inputs.runtime == 'deno'    
+      if: inputs.runtime == 'deno'
       run: echo "TEST_COMMAND=deno run -A --unstable-sloppy-imports" >> $GITHUB_ENV
       shell: bash
 

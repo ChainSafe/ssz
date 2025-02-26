@@ -1,7 +1,7 @@
 import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
-import {LeafNode, subtreeFillToContents, Node, countToDepth, zeroNode, getHashComputations} from "../../src/index.js";
-import {MemoryTracker} from "../utils/memTracker.js";
-import {batchHash} from "../utils/batchHash.js";
+import {LeafNode, subtreeFillToContents, Node, countToDepth, zeroNode, getHashComputations} from "../../src/index.ts";
+import {MemoryTracker} from "../utils/memTracker.ts";
+import {batchHash} from "../utils/batchHash.ts";
 
 /**
  * Below is measured on Mac M1.

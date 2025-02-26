@@ -1,6 +1,6 @@
 import {describe, bench, beforeAll} from "@chainsafe/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
-import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src/index.js";
+import {ListBasicType, UintNumberType, CompositeViewDU} from "../../../src/index.ts";
 
 describe("processAttestations", () => {
   const vc = 250_000;

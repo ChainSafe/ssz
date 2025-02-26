@@ -1,6 +1,6 @@
 import {concatGindices, getNode, Gindex, Node, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, Type} from "./abstract.js";
-import {CompositeType, isCompositeType, LENGTH_GINDEX} from "./composite.js";
+import {ValueOf, Type} from "./abstract.ts";
+import {CompositeType, isCompositeType, LENGTH_GINDEX} from "./composite.ts";
 import {
   value_fromJsonArray,
   value_toJsonArray,
@@ -8,7 +8,7 @@ import {
   value_equals,
   value_defaultValueArray,
   ArrayProps,
-} from "./arrayBasic.js";
+} from "./arrayBasic.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {CompositeType, fromHexString, Type} from "../../../src/index.js";
+import {CompositeType, fromHexString, Type} from "../../../src/index.ts";
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 

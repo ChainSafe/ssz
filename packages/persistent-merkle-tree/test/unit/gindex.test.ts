@@ -9,7 +9,7 @@ import {
   Bit,
   getGindicesAtDepth,
   getGindexBits,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 describe("countToDepth", () => {
   const testCases = [

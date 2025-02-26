@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {UnionType, UintNumberType, NoneType, ValueOf, toHexString} from "../../../../src/index.js";
+import {UnionType, UintNumberType, NoneType, ValueOf, toHexString} from "../../../../src/index.ts";
 
 const byteType = new UintNumberType(1);
 const noneType = new NoneType();

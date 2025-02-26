@@ -89,3 +89,27 @@ jobs:
         run: bun run --filter '*' generate
       - name: Unit Tests
         run: bun run --bun --filter '*' test:unit
+
+  test-deno:
+    name: Test Deno
+    runs-on: ubuntu-latest
+    steps:
+      # <common-build> - Uses YAML anchors in the future
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "22"
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: deno run -A build
+      - name: Generate
+        run: deno run -A generate        
+      - name: Unit tests
+        run: deno run -A test:unit
+      - uses: "./.github/actions/multi-runtime-tests"
+        with:
+          runtime: deno

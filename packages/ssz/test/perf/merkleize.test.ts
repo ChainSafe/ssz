@@ -1,5 +1,5 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {bitLength} from "../../src/util/merkleize.js";
+import {bitLength} from "../../src/util/merkleize.ts";
 
 describe("merkleize / bitLength", () => {
   for (const n of [50, 8000, 250000]) {

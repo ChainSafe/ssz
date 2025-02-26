@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {ContainerType, UintNumberType} from "../../src/index.js";
+import {ContainerType, UintNumberType} from "../../src/index.ts";
 
 describe("cachePermanentRootStruct", () => {
   it("should cache permanent root struct", () => {

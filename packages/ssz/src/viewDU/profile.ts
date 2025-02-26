@@ -1,12 +1,12 @@
 import {getNodeAtDepth, LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type} from "../type/abstract.js";
-import {BasicType, isBasicType} from "../type/basic.js";
-import {CompositeType, isCompositeType} from "../type/composite.js";
-import {computeSerdesData, ContainerTypeGeneric} from "../view/profile.js";
-import {TreeViewDU} from "./abstract.js";
-import {BasicContainerTreeViewDU, ChangedNode} from "./container.js";
-import {OptionalType} from "../type/optional.js";
-import {BitArray} from "../value/bitArray.js";
+import {ByteViews, Type} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, isCompositeType} from "../type/composite.ts";
+import {computeSerdesData, ContainerTypeGeneric} from "../view/profile.ts";
+import {TreeViewDU} from "./abstract.ts";
+import {BasicContainerTreeViewDU, ChangedNode} from "./container.ts";
+import {OptionalType} from "../type/optional.ts";
+import {BitArray} from "../value/bitArray.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

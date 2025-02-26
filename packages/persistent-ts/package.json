@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Persistent data structures for TypeScript.",
   "type": "module",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./src/index.ts",
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",
@@ -12,7 +11,6 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint --color --ext .ts src/",
     "check-types": "tsc --noEmit",
     "test:unit": "vitest run --dir test/unit",

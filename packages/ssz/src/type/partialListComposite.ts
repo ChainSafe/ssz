@@ -1,11 +1,11 @@
 import {fromSnapshot, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
-import {ListCompositeOpts, ListCompositeType} from "./listComposite.js";
-import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite.js";
-import {Snapshot} from "../util/types.js";
-import {byteArrayEquals} from "../util/byteArray.js";
-import {zeroSnapshot} from "../util/snapshot.js";
-import {addLengthNode} from "./arrayBasic.js";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
+import {ListCompositeOpts, ListCompositeType} from "./listComposite.ts";
+import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite.ts";
+import {Snapshot} from "../util/types.ts";
+import {byteArrayEquals} from "../util/byteArray.ts";
+import {zeroSnapshot} from "../util/snapshot.ts";
+import {addLengthNode} from "./arrayBasic.ts";
 
 /**
  * Similar to ListCompositeType, this is mainly used to create a PartialListCompositeTreeViewDU from a snapshot.

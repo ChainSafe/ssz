@@ -1,5 +1,5 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {ListBasicType, UintNumberType} from "../../../src/index.js";
+import {ListBasicType, UintNumberType} from "../../../src/index.ts";
 
 const byteType = new UintNumberType(1);
 

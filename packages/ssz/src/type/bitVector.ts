@@ -1,10 +1,10 @@
 import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ByteViews} from "./composite.js";
-import {BitArray} from "../value/bitArray.js";
-import {BitArrayType} from "./bitArray.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {ByteViews} from "./composite.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {BitArrayType} from "./bitArray.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
