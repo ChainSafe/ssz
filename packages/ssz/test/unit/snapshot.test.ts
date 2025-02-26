@@ -1,7 +1,7 @@
 import {describe, it, expect} from "vitest";
-import {ByteVectorType} from "../../src/type/byteVector.js";
-import {ListCompositeType} from "../../src/index.js";
-import {PartialListCompositeType} from "../../src/type/partialListComposite.js";
+import {ByteVectorType} from "../../src/type/byteVector.ts";
+import {ListCompositeType} from "../../src/index.ts";
+import {PartialListCompositeType} from "../../src/type/partialListComposite.ts";
 import {Tree, toGindex} from "@chainsafe/persistent-merkle-tree";
 
 describe("snapshot", () => {

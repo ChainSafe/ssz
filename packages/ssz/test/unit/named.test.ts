@@ -14,7 +14,7 @@ import {
   UnionType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 describe("Customize object name for all types", () => {
   const typeName = "CustomType1234";

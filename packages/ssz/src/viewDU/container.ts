@@ -6,11 +6,11 @@ import {
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type} from "../type/abstract.js";
-import {BasicType, isBasicType} from "../type/basic.js";
-import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite.js";
-import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.js";
-import {TreeViewDU} from "./abstract.js";
+import {ByteViews, Type} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite.ts";
+import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.ts";
+import {TreeViewDU} from "./abstract.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

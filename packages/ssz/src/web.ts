@@ -1,5 +1,5 @@
 /** @module ssz */
-import * as ssz from "./index.js";
+import * as ssz from "./index.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (function (window: any) {

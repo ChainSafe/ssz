@@ -1,12 +1,12 @@
-import {Type, ValueOf, TreeView, BasicType} from "../../../src/index.js";
+import {Type, ValueOf, TreeView, BasicType} from "../../../src/index.ts";
 import {
   ContainerType,
   ListBasicType,
   ListCompositeType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../src/index.js";
-import {runViewTestMutation} from "./runViewTestMutation.js";
+} from "../../../src/index.ts";
+import {runViewTestMutation} from "./runViewTestMutation.ts";
 
 const runViewTestCompositeSwapFn = function runViewTestCompositeSwap<T extends Type<unknown>>(
   propertyType: T,

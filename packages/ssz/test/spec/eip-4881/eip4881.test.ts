@@ -3,10 +3,10 @@ import url from "node:url";
 import path from "node:path";
 import jsyaml from "js-yaml";
 import {describe, it, expect, vi} from "vitest";
-import {ContainerType, ListCompositeType} from "../../../src/index.js";
-import {ssz} from "../../lodestarTypes/index.js";
-import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes.js";
-import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite.js";
+import {ContainerType, ListCompositeType} from "../../../src/index.ts";
+import {ssz} from "../../lodestarTypes/index.ts";
+import {DepositDataRootFullList, DepositDataRootPartialList} from "../../lodestarTypes/phase0/sszTypes.ts";
+import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite.ts";
 
 const EIP4881TestDataArrayItem = new ContainerType(
   {

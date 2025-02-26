@@ -1,5 +1,5 @@
 import {describe, it, expect, vi} from "vitest";
-import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel, zeroNode} from "../../src/index.js";
+import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel, zeroNode} from "../../src/index.ts";
 
 describe("subtreeFillToContents", () => {
   // the hash computation takes time

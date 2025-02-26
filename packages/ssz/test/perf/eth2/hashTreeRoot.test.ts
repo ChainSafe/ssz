@@ -1,7 +1,7 @@
 import {describe, bench} from "@chainsafe/benchmark";
 import {HashComputationGroup, hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
-import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
-import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
+import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.ts";
+import * as sszAltair from "../../lodestarTypes/altair/sszTypes.ts";
 import {
   getAttestation,
   getOnce,
@@ -11,7 +11,7 @@ import {
   getSignedContributionAndProof,
   getSignedBeaconBlockPhase0,
   getValidator,
-} from "../../utils/generateEth2Objs.js";
+} from "../../utils/generateEth2Objs.ts";
 import {
   CompositeType,
   isCompositeType,
@@ -21,8 +21,8 @@ import {
   CompositeView,
   CompositeViewDU,
   hash64,
-} from "../../../src/index.js";
-import {CompositeTypeAny} from "../../../src/type/composite.js";
+} from "../../../src/index.ts";
+import {CompositeTypeAny} from "../../../src/type/composite.ts";
 import {HashObject} from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {

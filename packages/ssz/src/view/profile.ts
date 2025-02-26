@@ -7,12 +7,12 @@ import {
   toGindexBitstring,
   Tree,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isBasicType, BasicType} from "../type/basic.js";
-import {isCompositeType, CompositeType} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
-import {BitArray} from "../value/bitArray.js";
-import {NonOptionalFields} from "../type/optional.js";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {isBasicType, BasicType} from "../type/basic.ts";
+import {isCompositeType, CompositeType} from "../type/composite.ts";
+import {TreeView} from "./abstract.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {NonOptionalFields} from "../type/optional.ts";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;

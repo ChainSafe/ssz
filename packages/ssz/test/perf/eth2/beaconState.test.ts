@@ -1,8 +1,8 @@
 import {describe, bench, setBenchOpts} from "@chainsafe/benchmark";
 import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
-import {BeaconState} from "../../lodestarTypes/altair/sszTypes.js";
-import {BitArray, CompositeViewDU, toHexString} from "../../../src/index.js";
-import {preset} from "../../lodestarTypes/params.js";
+import {BeaconState} from "../../lodestarTypes/altair/sszTypes.ts";
+import {BitArray, CompositeViewDU, toHexString} from "../../../src/index.ts";
+import {preset} from "../../lodestarTypes/params.ts";
 const {SLOTS_PER_HISTORICAL_ROOT, EPOCHS_PER_ETH1_VOTING_PERIOD, SLOTS_PER_EPOCH} = preset;
 
 const vc = 200_000;

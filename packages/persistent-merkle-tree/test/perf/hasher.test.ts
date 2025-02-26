@@ -1,10 +1,10 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {Hasher, HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.js";
-import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
-import {hasher as nobleHasher} from "../../src/hasher/noble.js";
-import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
-import {buildComparisonTrees} from "../utils/tree.js";
-import {HashComputationLevel, getHashComputations} from "../../src/index.js";
+import {Hasher, HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.ts";
+import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.ts";
+import {hasher as nobleHasher} from "../../src/hasher/noble.ts";
+import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.ts";
+import {buildComparisonTrees} from "../utils/tree.ts";
+import {HashComputationLevel, getHashComputations} from "../../src/index.ts";
 
 describe("hasher", function () {
   const iterations = 500_000;

@@ -1,7 +1,7 @@
 import type {HashObject} from "@chainsafe/as-sha256";
 import {describe, it, expect} from "vitest";
-import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src/index.js";
-import {HashComputation, HashComputationLevel, getHashComputations} from "../../src/hashComputation.js";
+import {BranchNode, LeafNode, countToDepth, subtreeFillToContents} from "../../src/index.ts";
+import {HashComputation, HashComputationLevel, getHashComputations} from "../../src/hashComputation.ts";
 
 describe("LeafNode uint", () => {
   const testCasesNode: {

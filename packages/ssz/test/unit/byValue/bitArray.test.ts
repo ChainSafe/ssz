@@ -1,7 +1,7 @@
 import {describe, it, expect} from "vitest";
-import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray.js";
-import {BitVectorType} from "../../../src/index.js";
-import {linspace} from "../../utils/misc.js";
+import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray.ts";
+import {BitVectorType} from "../../../src/index.ts";
+import {linspace} from "../../utils/misc.ts";
 
 const BITS_PER_BYTE = 8;
 

@@ -1,5 +1,5 @@
 import {describe, it, expect, beforeAll} from "vitest";
-import {getNodesAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src/index.js";
+import {getNodesAtDepth, LeafNode, Node, subtreeFillToContents, Tree} from "../../../src/index.ts";
 
 describe("tree / getNodes", () => {
   const depth = 40;

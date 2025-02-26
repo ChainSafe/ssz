@@ -1,15 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 import {describe, it, vi} from "vitest";
-import {isCompositeType, Type} from "../../src/index.js";
-import {ssz} from "../lodestarTypes/index.js";
-import {ethereumConsensusSpecsTests} from "../specTestVersioning.js";
-import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType.js";
-import {parseSszStaticTestcase} from "./testRunner.js";
-import {runValidSszTest} from "./runValidTest.js";
-import {ForkName} from "../utils/fork.js";
-import {ACTIVE_PRESET} from "../lodestarTypes/params.js";
-import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
+import {isCompositeType, Type} from "../../src/index.ts";
+import {ssz} from "../lodestarTypes/index.ts";
+import {ethereumConsensusSpecsTests} from "../specTestVersioning.ts";
+import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType.ts";
+import {parseSszStaticTestcase} from "./testRunner.ts";
+import {runValidSszTest} from "./runValidTest.ts";
+import {ForkName} from "../utils/fork.ts";
+import {ACTIVE_PRESET} from "../lodestarTypes/params.ts";
+import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.ts";
 
 // ssz_static
 // | Attestation

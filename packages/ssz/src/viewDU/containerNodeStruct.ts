@@ -1,10 +1,10 @@
 import {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isCompositeType} from "../type/composite.js";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
-import {ContainerTreeViewDUTypeConstructor} from "./container.js";
-import {TreeViewDU} from "./abstract.js";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {isCompositeType} from "../type/composite.ts";
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {ContainerTypeGeneric, ValueOfFields} from "../view/container.ts";
+import {ContainerTreeViewDUTypeConstructor} from "./container.ts";
+import {TreeViewDU} from "./abstract.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

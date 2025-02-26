@@ -1,13 +1,13 @@
-import {Slot} from "./primitive/types.js";
+import {Slot} from "./primitive/types.ts";
 
-export * from "./primitive/types.js";
-export {ts as phase0} from "./phase0/index.js";
-export {ts as altair} from "./altair/index.js";
-export {ts as bellatrix} from "./bellatrix/index.js";
-export {ts as capella} from "./capella/index.js";
-export {ts as deneb} from "./deneb/index.js";
+export * from "./primitive/types.ts";
+export {ts as phase0} from "./phase0/index.ts";
+export {ts as altair} from "./altair/index.ts";
+export {ts as bellatrix} from "./bellatrix/index.ts";
+export {ts as capella} from "./capella/index.ts";
+export {ts as deneb} from "./deneb/index.ts";
 
-export {ts as allForks} from "./allForks/index.js";
+export {ts as allForks} from "./allForks/index.ts";
 
 /** Common non-spec type to represent roots as strings */
 export type RootHex = string;

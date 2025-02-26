@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
+import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.ts";
 import {
   VectorBasicType,
   ListBasicType,
@@ -12,7 +12,7 @@ import {
   BooleanType,
   UintBigintType,
   ValueOf,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 // Compilation of various issues from SSZ and Lodestar libs
 

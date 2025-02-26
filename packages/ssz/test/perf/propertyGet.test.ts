@@ -1,5 +1,5 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {UintNumberType, ContainerType, VectorBasicType} from "../../src/index.js";
+import {UintNumberType, ContainerType, VectorBasicType} from "../../src/index.ts";
 
 describe("SSZ get property", () => {
   const Gwei = new UintNumberType(8);

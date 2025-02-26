@@ -1,5 +1,5 @@
-import {UintBigintType, UintNumberType} from "../../../../src/type/uint.js";
-import {runTypeTestValid} from "../runTypeTestValid.js";
+import {UintBigintType, UintNumberType} from "../../../../src/type/uint.ts";
+import {runTypeTestValid} from "../runTypeTestValid.ts";
 
 runTypeTestValid({
   type: new UintNumberType(1),

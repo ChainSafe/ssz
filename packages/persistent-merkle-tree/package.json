@@ -4,31 +4,10 @@
   "description": "Merkle tree implemented as a persistent datastructure",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./lib/index.js",
-      "types": "./lib/index.d.ts"
-    },
-    "./hasher/hashtree": {
-      "import": "./lib/hasher/hashtree.js",
-      "types": "./lib/hasher/hashtree.d.ts"
-    },
-    "./hasher/noble": {
-      "import": "./lib/hasher/noble.js",
-      "types": "./lib/hasher/noble.d.ts"
-    },
-    "./hasher/as-sha256": {
-      "import": "./lib/hasher/as-sha256.js",
-      "types": "./lib/hasher/as-sha256.d.ts"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "*",
-        "lib/*",
-        "lib/*/index"
-      ]
-    }
+    ".": "./src/index.ts",
+    "./hasher/hashtree": "./src/hasher/hashtree.ts",
+    "./hasher/noble": "./src/hasher/noble.ts",
+    "./hasher/as-sha256": "./src/hasher/as-sha256.ts"
   },
   "files": [
     "lib"
@@ -36,7 +15,6 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib",
-    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint --color --ext .ts src/",
     "lint:fix": "yarn run lint --fix",
     "benchmark:files": "node --max-old-space-size=4096 --expose-gc --loader ts-node/esm ../../node_modules/.bin/benchmark",

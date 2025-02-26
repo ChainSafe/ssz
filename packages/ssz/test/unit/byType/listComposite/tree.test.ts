@@ -7,11 +7,11 @@ import {
   toHexString,
   UintNumberType,
   ValueOf,
-} from "../../../../src/index.js";
-import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite.js";
-import {ssz} from "../../../lodestarTypes/primitive/index.js";
-import {runViewTestMutation} from "../runViewTestMutation.js";
-import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
+} from "../../../../src/index.ts";
+import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite.ts";
+import {ssz} from "../../../lodestarTypes/primitive/index.ts";
+import {runViewTestMutation} from "../runViewTestMutation.ts";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.ts";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(

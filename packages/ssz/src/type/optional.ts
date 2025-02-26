@@ -7,12 +7,12 @@ import {
   HashComputationLevel,
   getHashComputations,
 } from "@chainsafe/persistent-merkle-tree";
-import {mixInLength} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
-import {CompositeType, isCompositeType} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
+import {mixInLength} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.ts";
+import {CompositeType, isCompositeType} from "./composite.ts";
+import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.ts";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;

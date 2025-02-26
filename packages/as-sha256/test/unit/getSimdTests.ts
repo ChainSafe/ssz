@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {describe, beforeAll, expect, it} from "vitest";
 import crypto from "crypto";
-import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
+import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.ts";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function getSimdTests(sha256: any, useSimd: boolean): void {

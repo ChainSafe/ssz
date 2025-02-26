@@ -1,5 +1,5 @@
 import {downloadTests} from "@lodestar/spec-test-util/downloadTests";
-import {ethereumConsensusSpecsTests} from "../specTestVersioning.js";
+import {ethereumConsensusSpecsTests} from "../specTestVersioning.ts";
 
 /* eslint-disable no-console */
 

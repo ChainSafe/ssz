@@ -1,3 +1,16 @@
 {
-  "nodeModulesDir": "auto"
+  "nodeModulesDir": "auto",
+  "workspace": [
+    "./packages/as-sha256", 
+    "./packages/persistent-merkle-tree", 
+    "./packages/persistent-ts", 
+    "./packages/simpleserialize.com", 
+    "./packages/ssz"
+  ],
+  "tasks": {
+    "test": "deno task --filter ssz test:unit"
+  },
+  "imports": {
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.3"
+  }
 }
