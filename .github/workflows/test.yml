@@ -107,7 +107,7 @@ jobs:
         run: yarn build
       # Deno does not run task in workspaces if same task exists on root package.json
       - name: Clean root scripts 
-        run: jq 'del( .scripts )' package.json > package.json'
+        run: jq 'del( .scripts )' package.json > package.json
       - name: Generate
         run: deno task --recursive generate
       - name: Unit Tests
