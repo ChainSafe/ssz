@@ -1,10 +1,10 @@
 import {concatGindices, Gindex, Node, toGindex, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
 import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.js";
-import {splitIntoRootChunks} from "../util/merkleize.js";
 import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 import {BitArray} from "../value/bitArray.js";
 import {BitArrayTreeView} from "../view/bitArray.js";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray.js";
+import {getBlocksBytes} from "./byteArray.js";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 
@@ -40,8 +40,13 @@ export abstract class BitArrayType extends CompositeType<BitArray, BitArrayTreeV
 
   // Merkleization
 
-  protected getRoots(value: BitArray): Uint8Array[] {
-    return splitIntoRootChunks(value.uint8Array);
+  protected getBlocksBytes(value: BitArray): Uint8Array {
+    // reallocate this.blocksBuffer if needed
+    if (value.uint8Array.length > this.blocksBuffer.length) {
+      const chunkCount = Math.ceil(value.bitLen / 8 / 32);
+      this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
+    }
+    return getBlocksBytes(value.uint8Array, this.blocksBuffer);
   }
 
   // Proofs

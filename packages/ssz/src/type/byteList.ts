@@ -1,11 +1,18 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
-import {mixInLength, maxChunksToDepth} from "../util/merkleize.js";
+import {
+  getNodesAtDepth,
+  Node,
+  packedNodeRootsToBytes,
+  packedRootsBytesToNode,
+  merkleizeBlocksBytes,
+  merkleizeBlockArray,
+} from "@chainsafe/persistent-merkle-tree";
+import {allocUnsafe} from "@chainsafe/as-sha256";
+import {maxChunksToDepth} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {ByteViews} from "./composite.js";
 import {ByteArrayType, ByteArray} from "./byteArray.js";
-
 /* eslint-disable @typescript-eslint/member-ordering */
 
 export interface ByteListOptions {
@@ -34,6 +41,14 @@ export class ByteListType extends ByteArrayType {
   readonly maxSize: number;
   readonly maxChunkCount: number;
   readonly isList = true;
+  readonly blockArray: Uint8Array[] = [];
+  private blockBytesLen = 0;
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
+  );
 
   constructor(readonly limitBytes: number, opts?: ByteListOptions) {
     super();
@@ -89,7 +104,49 @@ export class ByteListType extends ByteArrayType {
   // Merkleization: inherited from ByteArrayType
 
   hashTreeRoot(value: ByteArray): Uint8Array {
-    return mixInLength(super.hashTreeRoot(value), value.length);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
+  }
+
+  /**
+   * Use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation
+   */
+  hashTreeRootInto(value: Uint8Array, output: Uint8Array, offset: number): void {
+    // should not call super.hashTreeRoot() here
+    // use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation
+    // reallocate this.blockArray if needed
+    if (value.length > this.blockBytesLen) {
+      const newBlockCount = Math.ceil(value.length / 64);
+      // this.blockBytesLen should be a multiple of 64
+      const oldBlockCount = Math.ceil(this.blockBytesLen / 64);
+      const blockDiff = newBlockCount - oldBlockCount;
+      const newBlocksBytes = new Uint8Array(blockDiff * 64);
+      for (let i = 0; i < blockDiff; i++) {
+        this.blockArray.push(newBlocksBytes.subarray(i * 64, (i + 1) * 64));
+        this.blockBytesLen += 64;
+      }
+    }
+
+    // populate this.blockArray
+    for (let i = 0; i < value.length; i += 64) {
+      const block = this.blockArray[i / 64];
+      // zero out the last block if it's over value.length
+      if (i + 64 > value.length) {
+        block.fill(0);
+      }
+      block.set(value.subarray(i, Math.min(i + 64, value.length)));
+    }
+
+    // compute hashTreeRoot
+    const blockLimit = Math.ceil(value.length / 64);
+    merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthBlockBytes, 0);
+
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType

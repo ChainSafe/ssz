@@ -227,7 +227,21 @@ describe("ListCompositeType.sliceFrom", () => {
   }
 });
 
-describe("ListCompositeType batchHashTreeRoot", () => {
+describe("ListCompositeType hashTreeRoot", () => {
+  it("shouldzero out the last sha256 block", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+    const value0 = Array.from({length: 65}, (_, i) => Buffer.alloc(32, i));
+    const value1 = Array.from({length: 120}, (_, i) => Buffer.alloc(32, i));
+    const expectedRoot0 = listType.hashTreeRoot(value0);
+    const expectedRoot1 = listType.hashTreeRoot(value1);
+    // now increase block array size
+    listType.hashTreeRoot(Array.from({length: 1024}, () => Buffer.alloc(32, 3)));
+    expect(listType.hashTreeRoot(value0)).to.deep.equal(expectedRoot0);
+    expect(listType.hashTreeRoot(value1)).to.deep.equal(expectedRoot1);
+  });
+});
+
+describe("ListCompositeType ViewDU batchHashTreeRoot", () => {
   const value = [
     {a: 1, b: 2},
     {a: 3, b: 4},
@@ -243,6 +257,7 @@ describe("ListCompositeType batchHashTreeRoot", () => {
   for (const list of [listOfContainersType, listOfContainersType2]) {
     const typeName = list.typeName;
     const expectedRoot = list.toView(value).hashTreeRoot();
+    expect(listOfContainersType2.hashTreeRoot(value)).to.be.deep.equal(expectedRoot);
 
     it(`${typeName} - fresh ViewDU`, () => {
       expect(listOfContainersType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
