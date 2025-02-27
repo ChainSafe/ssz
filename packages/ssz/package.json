@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "author": "ChainSafe Systems",
   "homepage": "https://github.com/chainsafe/ssz",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -36,8 +36,8 @@
     "download-spec-tests": "node --loader ts-node/esm test/spec/downloadTests.ts"
   },
   "dependencies": {
-    "@chainsafe/as-sha256": "1.0.0",
-    "@chainsafe/persistent-merkle-tree": "1.0.1"
+    "@chainsafe/as-sha256": "1.1.0",
+    "@chainsafe/persistent-merkle-tree": "1.1.0"
   },
   "devDependencies": {
     "@lodestar/spec-test-util": "^1.23.1",
