@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json",
+  "name": "@chainsafe/ssz",
+  "version": "1.0.2",
+  "exclude": [
+    "test"
+  ]
+}
