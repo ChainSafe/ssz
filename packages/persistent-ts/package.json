@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Persistent data structures for TypeScript.",
   "type": "module",
-  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
   "engines": {
     "node": ">= 18",
     "deno": ">= 2.2",

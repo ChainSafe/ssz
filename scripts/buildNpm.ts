@@ -1,3 +1,30 @@
+export function npmExportsToDntEntrypoints(
+  exportNames: Record<string, string | Record<"import" | "default", "string">>
+): { name: string; path: string }[] {
+  const entryPoints: { name: string; path: string }[] = [];
+
+  for (const name of Object.keys(exportNames)) {
+    let path = "";
+
+    if (typeof exportNames[name] === "string") {
+      path = exportNames[name];
+    } else if (exportNames[name]["import"]) {
+      path = exportNames[name]["import"] as string;
+    } else if (exportNames[name]["default"]) {
+      path = exportNames[name]["default"] as string;
+    } else {
+      throw new Error(`No export found as import or default for key ${name}`);
+    }
+
+    entryPoints.push({
+      name,
+      path,
+    });
+  }
+
+  return entryPoints;
+}
+
 export function getBuildOptions(
   packageJSON: Record<string, unknown>
 ): Record<string, unknown> {
@@ -11,6 +38,7 @@ export function getBuildOptions(
     homepage,
     repository,
     dependencies,
+    exports,
   } = packageJSON;
 
   return {
@@ -35,6 +63,7 @@ export function getBuildOptions(
       repository,
       dependencies,
     },
+    entryPoints: npmExportsToDntEntrypoints(exports),
     filterDiagnostic(diagnostic) {
       if (diagnostic.messageText?.endsWith("Cannot find name 'WebAssembly'.")) {
         return false;

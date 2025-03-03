@@ -13,7 +13,11 @@
     "url": "git+https://github.com/chainsafe/ssz.git"
   },
   "type": "module",
-  "main": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
   "engines": {
     "node": ">= 18",
     "deno": ">= 2.2",

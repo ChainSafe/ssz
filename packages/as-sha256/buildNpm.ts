@@ -1,10 +1,7 @@
 import {build, emptyDir} from "@deno/dnt";
 import packageJSON from "./package.json" with {type: "json"};
-import {getBuildOptions} from "../../scripts/build_npm.ts";
+import {getBuildOptions} from "../../scripts/buildNpm.ts";
 
 await emptyDir("./npm");
 
-await build({
-  ...getBuildOptions(packageJSON),  
-  entryPoints: ["./src/index.ts"],
-});
+await build(getBuildOptions(packageJSON));
