@@ -37,7 +37,9 @@
     "test:spec-eip-4881": "vitest run --dir test/spec/ test/spec/eip-4881/**/*.test.ts",
     "download-spec-tests": "node --loader ts-node/esm test/spec/downloadTests.ts",
     "build:jsr": "deno run -A ../../scripts/buildJsr.ts",
-    "build:npm": "deno run -A ../../scripts/buildNpm.ts"
+    "build:npm": "deno run -A ../../scripts/buildNpm.ts",
+    "publish:jsr": "deno publish",
+    "publish:npm": "cd npm && npm publish"
   },
   "dependencies": {
     "@chainsafe/as-sha256": "1.0.0",

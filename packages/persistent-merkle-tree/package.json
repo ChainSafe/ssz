@@ -24,7 +24,9 @@
     "benchmark:local": "yarn benchmark --local",
     "test:unit": "vitest run --dir test/unit",
     "build:jsr": "deno run -A ../../scripts/buildJsr.ts",
-    "build:npm": "deno run -A ../../scripts/buildNpm.ts"
+    "build:npm": "deno run -A ../../scripts/buildNpm.ts",
+    "publish:jsr": "deno publish",
+    "publish:npm": "cd npm && npm publish"
   },
   "pre-push": [
     "lint"

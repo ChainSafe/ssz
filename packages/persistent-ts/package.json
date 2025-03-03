@@ -20,7 +20,9 @@
     "test:unit": "vitest run --dir test/unit",
     "test:perf": "node --loader=ts-node/esm' benchmark 'test/perf/**/*.test.ts'",
     "build:jsr": "deno run -A ../../scripts/buildJsr.ts",
-    "build:npm": "deno run -A ../../scripts/buildNpm.ts"
+    "build:npm": "deno run -A ../../scripts/buildNpm.ts",
+    "publish:jsr": "deno publish",
+    "publish:npm": "cd npm && npm publish"
   },
   "repository": {
     "type": "git",
