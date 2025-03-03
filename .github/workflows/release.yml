@@ -38,6 +38,11 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.releases_created }}
 
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+        if: ${{ steps.release.outputs.releases_created }}
+
       - run: yarn install --immutable
         if: ${{ steps.release.outputs.releases_created }}
 
