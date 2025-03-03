@@ -233,11 +233,9 @@ export class LeafNode extends Node {
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         h &= ~(0xff << bitIndex);
-        // @ts-expect-error - We need to mask `value`
         h |= (0xff && value) << bitIndex;
       } else {
         h &= ~(0xffff << bitIndex);
-        // @ts-expect-error - We need to mask `value`
         h |= (0xffff && value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
@@ -275,11 +273,9 @@ export class LeafNode extends Node {
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         h &= ~(0xff << bitIndex);
-        // @ts-expect-error - We need to mask `value`
         h |= (0xff && value) << bitIndex;
       } else {
         h &= ~(0xffff << bitIndex);
-        // @ts-expect-error - We need to mask `value`
         h |= (0xffff && value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
