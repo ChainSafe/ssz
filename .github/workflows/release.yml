@@ -46,7 +46,13 @@ jobs:
       - run: git config user.name $(git --no-pager show -s --format='%an' HEAD)
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: yarn build
+
+      - name: Build JSR
+        run: lerna run build:jsr
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Build NPM
+        run: lerna run build:npm
         if: ${{ steps.release.outputs.releases_created }}
 
       - env:
@@ -56,12 +62,20 @@ jobs:
       
       - name: Check npm config
         run: npm config list
-          
-      - run: node_modules/.bin/lerna publish from-package --no-verify-access --yes
+
+      - name: Publish NPM
+        run: lerna run publish:npm
         if: ${{ steps.release.outputs.releases_created }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}        
+        
+      - name: Publish JSR
+        run: lerna run publish:jsr
+        if: ${{ steps.release.outputs.releases_created }}
+        env:
+          JSR_AUTH_TOKEN: ${{ secrets.JSR_TOKEN }}
 
+            
       - name: Publish to Cloudflare Pages
         if: ${{ steps.release.outputs.releases_created }}
         uses: cloudflare/pages-action@1
