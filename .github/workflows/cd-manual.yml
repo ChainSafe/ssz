@@ -17,8 +17,6 @@ jobs:
               node-version: '20'
           - name: Bootstrap
             run: yarn --immutable
-          - name: Build
-            run: yarn build
           - name: Publish to Cloudflare Pages
             uses: cloudflare/pages-action@1
             with:
