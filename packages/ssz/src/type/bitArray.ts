@@ -1,10 +1,10 @@
 import {concatGindices, Gindex, Node, toGindex, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.js";
-import {splitIntoRootChunks} from "../util/merkleize.js";
-import {CompositeType, LENGTH_GINDEX} from "./composite.js";
-import {BitArray} from "../value/bitArray.js";
-import {BitArrayTreeView} from "../view/bitArray.js";
-import {BitArrayTreeViewDU} from "../viewDU/bitArray.js";
+import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.ts";
+import {splitIntoRootChunks} from "../util/merkleize.ts";
+import {CompositeType, LENGTH_GINDEX} from "./composite.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {BitArrayTreeView} from "../view/bitArray.ts";
+import {BitArrayTreeViewDU} from "../viewDU/bitArray.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

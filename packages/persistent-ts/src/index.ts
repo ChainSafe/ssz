@@ -1,3 +1,3 @@
-export * from "./List.js";
-export * from "./Vector.js";
-export * from "./MutableVector.js";
+export * from "./List.ts";
+export * from "./Vector.ts";
+export * from "./MutableVector.ts";

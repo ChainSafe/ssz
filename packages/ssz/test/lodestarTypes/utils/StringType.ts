@@ -1,4 +1,4 @@
-import {BasicType} from "../../../src/index.js";
+import {BasicType} from "../../../src/index.ts";
 
 export class StringType<T extends string = string> extends BasicType<T> {
   readonly typeName = "string";

@@ -7,13 +7,13 @@ import {
   HashComputationLevel,
   getHashComputations,
 } from "@chainsafe/persistent-merkle-tree";
-import {mixInLength} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {Type, ByteViews} from "./abstract.js";
-import {CompositeType, isCompositeType} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
-import {NoneType} from "./none.js";
+import {mixInLength} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {Type, ByteViews} from "./abstract.ts";
+import {CompositeType, isCompositeType} from "./composite.ts";
+import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.ts";
+import {NoneType} from "./none.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

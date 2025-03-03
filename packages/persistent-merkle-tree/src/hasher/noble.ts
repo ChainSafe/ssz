@@ -1,13 +1,13 @@
 import {sha256} from "@noble/hashes/sha256";
 import {digest64HashObjects, byteArrayIntoHashObject} from "@chainsafe/as-sha256";
-import type {Hasher} from "./types.js";
+import type {Hasher} from "./types.ts";
 import {
   BLOCK_SIZE,
   doDigestNLevel,
   doMerkleizeBlockArray,
   doMerkleizeBlocksBytes,
   hashObjectToUint8Array,
-} from "./util.js";
+} from "./util.ts";
 
 const digest64 = (a: Uint8Array, b: Uint8Array): Uint8Array => sha256.create().update(a).update(b).digest();
 const hashInto = (input: Uint8Array, output: Uint8Array): void => {

@@ -1,8 +1,8 @@
 import {describe, it, expect} from "vitest";
 import jsyaml from "js-yaml";
-import {readYamlNumbersAsStrings} from "../spec/testRunner.js";
-import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.js";
-import {toHexString} from "../../src/index.js";
+import {readYamlNumbersAsStrings} from "../spec/testRunner.ts";
+import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.ts";
+import {toHexString} from "../../src/index.ts";
 
 /* eslint-disable quotes */
 

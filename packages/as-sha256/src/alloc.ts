@@ -1,3 +1,6 @@
+import process from "node:process";
+import {Buffer} from "node:buffer";
+
 const isNode = typeof process !== "undefined" && process.versions != null && process.versions.node != null;
 
 /**

@@ -1,7 +1,7 @@
 import {LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "./abstract.js";
-import {BasicType} from "./basic.js";
-import {ByteViews} from "./composite.js";
+import {ValueOf} from "./abstract.ts";
+import {BasicType} from "./basic.ts";
+import {ByteViews} from "./composite.ts";
 import {
   value_deserializeFromBytesArrayBasic,
   value_serializeToBytesArrayBasic,
@@ -9,20 +9,20 @@ import {
   tree_serializeToBytesArrayBasic,
   addLengthNode,
   setChunksNode,
-} from "./arrayBasic.js";
+} from "./arrayBasic.ts";
 import {
   mixInLength,
   maxChunksToDepth,
   splitIntoRootChunks,
   symbolCachedPermanentRoot,
   ValueWithCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ArrayBasicType} from "../view/arrayBasic.js";
-import {ListBasicTreeView} from "../view/listBasic.js";
-import {ListBasicTreeViewDU} from "../viewDU/listBasic.js";
-import {ArrayType} from "./array.js";
+} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {ArrayBasicType} from "../view/arrayBasic.ts";
+import {ListBasicTreeView} from "../view/listBasic.ts";
+import {ListBasicTreeViewDU} from "../viewDU/listBasic.ts";
+import {ArrayType} from "./array.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

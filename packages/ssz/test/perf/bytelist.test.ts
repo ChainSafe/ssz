@@ -1,5 +1,5 @@
 import {describe, bench} from "@chainsafe/benchmark";
-import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.js";
+import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.ts";
 
 describe("ByteListType vs BasicListType<byte>", () => {
   const limit = 256 * 2;

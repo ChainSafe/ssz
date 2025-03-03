@@ -4,12 +4,12 @@ import {
   maxChunksToDepth,
   symbolCachedPermanentRoot,
   ValueWithCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.js";
+} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {ValueOf, ByteViews} from "./abstract.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
+import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.ts";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -19,11 +19,11 @@ import {
   tree_serializeToBytesArrayComposite,
   value_getRootsArrayComposite,
   maxSizeArrayComposite,
-} from "./arrayComposite.js";
-import {ArrayCompositeType} from "../view/arrayComposite.js";
-import {ListCompositeTreeView} from "../view/listComposite.js";
-import {ListCompositeTreeViewDU} from "../viewDU/listComposite.js";
-import {ArrayType} from "./array.js";
+} from "./arrayComposite.ts";
+import {ArrayCompositeType} from "../view/arrayComposite.ts";
+import {ListCompositeTreeView} from "../view/listComposite.ts";
+import {ListCompositeTreeViewDU} from "../viewDU/listComposite.ts";
+import {ArrayType} from "./array.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

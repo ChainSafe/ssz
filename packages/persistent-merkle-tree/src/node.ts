@@ -1,5 +1,5 @@
 import type {HashObject} from "@chainsafe/as-sha256";
-import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher/index.js";
+import {hashObjectToUint8Array, hasher, uint8ArrayToHashObject} from "./hasher/index.ts";
 
 const TWO_POWER_32 = 2 ** 32;
 

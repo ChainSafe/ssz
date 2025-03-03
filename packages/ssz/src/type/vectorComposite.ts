@@ -1,9 +1,9 @@
 import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {ValueOf, ByteViews} from "./abstract.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
 import {
   value_deserializeFromBytesArrayComposite,
   value_serializedSizeArrayComposite,
@@ -14,10 +14,10 @@ import {
   value_getRootsArrayComposite,
   maxSizeArrayComposite,
   minSizeArrayComposite,
-} from "./arrayComposite.js";
-import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite.js";
-import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
-import {ArrayType} from "./array.js";
+} from "./arrayComposite.ts";
+import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite.ts";
+import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.ts";
+import {ArrayType} from "./array.ts";
 
 /* eslint-disable @typescript-eslint/member-ordering */
 

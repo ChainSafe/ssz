@@ -6,10 +6,10 @@ import {
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
-import {ArrayCompositeType} from "../view/arrayComposite.js";
-import {TreeViewDU} from "./abstract.js";
+import {ValueOf} from "../type/abstract.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.ts";
+import {ArrayCompositeType} from "../view/arrayComposite.ts";
+import {TreeViewDU} from "./abstract.ts";
 
 export type ArrayCompositeTreeViewDUCache = {
   nodes: Node[];
@@ -23,7 +23,10 @@ export class ArrayCompositeTreeViewDU<
 > extends TreeViewDU<ArrayCompositeType<ElementType>> {
   protected nodes: Node[];
   protected caches: unknown[];
-  protected readonly viewsChanged = new Map<number, CompositeViewDU<ElementType>>();
+  protected readonly viewsChanged: Map<number, CompositeViewDU<ElementType>> = new Map<
+    number,
+    CompositeViewDU<ElementType>
+  >();
   protected _length: number;
   // TODO: Consider these properties are not accessible in the cache object persisted in the parent's cache.
   // nodes, caches, _length, and nodesPopulated are mutated. Consider having them in a _cache object such that

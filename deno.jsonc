@@ -1,3 +1,18 @@
 {
-  "nodeModulesDir": "auto"
+  "$schema": "https://raw.githubusercontent.com/denoland/deno/refs/heads/main/cli/schemas/config-file.v1.json",
+  "nodeModulesDir": "auto",
+  "workspace": [
+    "./packages/as-sha256", 
+    "./packages/persistent-merkle-tree", 
+    "./packages/persistent-ts", 
+    "./packages/simpleserialize.com", 
+    "./packages/ssz"
+  ],
+  "compilerOptions": {
+    "noImplicitOverride": false,
+    "types": ["node"]
+  },
+  "imports": {
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.3"
+  }
 }

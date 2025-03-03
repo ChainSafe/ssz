@@ -1,7 +1,7 @@
 import {describe, it, expect} from "vitest";
-import {ListBasicType, toHexString, UintNumberType} from "../../../../src/index.js";
-import {runViewTestMutation, TreeMutation} from "../runViewTestMutation.js";
-import {ListUintNum64Type} from "../../../../src/type/listUintNum64.js";
+import {ListBasicType, toHexString, UintNumberType} from "../../../../src/index.ts";
+import {runViewTestMutation, TreeMutation} from "../runViewTestMutation.ts";
+import {ListUintNum64Type} from "../../../../src/type/listUintNum64.ts";
 
 const limit = 100;
 const uint64NumInf = new UintNumberType(8, {clipInfinity: true});

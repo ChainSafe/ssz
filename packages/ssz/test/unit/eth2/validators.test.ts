@@ -1,6 +1,6 @@
 import {describe, it, expect, vi} from "vitest";
-import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src/index.js";
-import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.js";
+import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src/index.ts";
+import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.ts";
 
 type Validator = ValueOf<typeof ValidatorContainer>;
 const validator: Validator = {

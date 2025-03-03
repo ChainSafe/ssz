@@ -8,9 +8,9 @@ import {
   FullOrBlindedSignedBlobSidecar,
   BlindedBeaconBlockBody,
   BlindedBeaconBlock,
-} from "../allForks/types.js";
-import {ts as bellatrix} from "../bellatrix/index.js";
-import {ts as deneb} from "../deneb/index.js";
+} from "../allForks/types.ts";
+import {ts as bellatrix} from "../bellatrix/index.ts";
+import {ts as deneb} from "../deneb/index.ts";
 
 export function isBlindedExecution(payload: FullOrBlindedExecutionPayload): payload is ExecutionPayloadHeader {
   // we just check transactionsRoot for determinging as it the base field

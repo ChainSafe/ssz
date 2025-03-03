@@ -8,7 +8,6 @@
   "scripts": {
     "clean": "lerna run clean",
     "generate": "lerna run generate",
-    "build": "yarn clean && lerna run build",
     "lint": "lerna run lint",
     "check-types": "lerna run check-types",
     "test:browsers": "lerna run test:browsers",

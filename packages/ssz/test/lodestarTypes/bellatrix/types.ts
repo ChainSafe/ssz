@@ -1,5 +1,5 @@
-import {ValueOf} from "../../../src/index.js";
-import * as ssz from "./sszTypes.js";
+import {ValueOf} from "../../../src/index.ts";
+import * as ssz from "./sszTypes.ts";
 
 export type Transaction = ValueOf<typeof ssz.Transaction>;
 export type Transactions = ValueOf<typeof ssz.Transactions>;

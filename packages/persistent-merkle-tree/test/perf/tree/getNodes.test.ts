@@ -7,7 +7,7 @@ import {
   getNodesAtDepth,
   zeroNode,
   BranchNode,
-} from "../../../src/index.js";
+} from "../../../src/index.ts";
 
 // Results in Linux Dec 2021
 //

@@ -6,23 +6,21 @@
   "homepage": "https://github.com/chainsafe/ssz",
   "version": "1.0.2",
   "type": "module",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
-  "files": [
-    "lib/**/*.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.js.map"
-  ],
+  "engines": {
+    "node": ">= 18",
+    "deno": ">= 2.2",
+    "bun": ">= 1.1"
+  },
+  "exports": {
+    ".": {
+      "import": "./sc/index.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "build-web": "webpack --mode production --entry ./lib/esm/web.js --output ./dist/ssz.min.js",
-    "build:docs": "typedoc --exclude src/index.ts,src/web.ts --out docs src",
-    "build:release": "yarn clean && yarn build && yarn build-web && yarn run build:docs",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib && rm -rf dist && rm -f tsconfig.tsbuildinfo",
     "lint": "eslint --color --ext .ts src/ test/",
     "lint:fix": "yarn run lint --fix",
-    "prepublishOnly": "yarn build",
     "benchmark": "node --max-old-space-size=4096 --expose-gc ../../node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:perf": "node --loader=ts-node/esm' benchmark 'test/perf/**/*.test.ts'",
@@ -33,7 +31,13 @@
     "test:spec-static-minimal": "LODESTAR_PRESET=minimal vitest run --dir test/spec/ test/spec/ssz_static.test.ts",
     "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet vitest run --dir test/spec/ test/spec/ssz_static.test.ts",
     "test:spec-eip-4881": "vitest run --dir test/spec/ test/spec/eip-4881/**/*.test.ts",
-    "download-spec-tests": "node --loader ts-node/esm test/spec/downloadTests.ts"
+    "download-spec-tests": "node --loader ts-node/esm test/spec/downloadTests.ts",
+    "build:docs": "typedoc --exclude src/index.ts,src/web.ts --out docs src",
+    "build:web": "webpack --mode production --entry ./lib/esm/web.js --output ./dist/ssz.min.js",
+    "build:jsr": "deno run -A ../../scripts/buildJsr.ts",
+    "build:npm": "deno run -A ../../scripts/buildNpm.ts",
+    "publish:jsr": "deno publish",
+    "publish:npm": "cd npm && npm publish"
   },
   "dependencies": {
     "@chainsafe/as-sha256": "1.0.0",

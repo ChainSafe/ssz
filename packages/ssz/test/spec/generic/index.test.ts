@@ -1,10 +1,10 @@
 import {describe, it, expect} from "vitest";
 import path from "node:path";
 import fs from "node:fs";
-import {ethereumConsensusSpecsTests} from "../../specTestVersioning.js";
-import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase} from "../testRunner.js";
-import {runValidSszTest} from "../runValidTest.js";
-import {getTestType} from "./types.js";
+import {ethereumConsensusSpecsTests} from "../../specTestVersioning.ts";
+import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase} from "../testRunner.ts";
+import {runValidSszTest} from "../runValidTest.ts";
+import {getTestType} from "./types.ts";
 
 const rootGenericSszPath = path.join(
   ethereumConsensusSpecsTests.outputDir,

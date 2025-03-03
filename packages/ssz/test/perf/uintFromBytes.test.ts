@@ -1,6 +1,6 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {describe, bench, beforeAll} from "@chainsafe/benchmark";
-import {UintNumberType, UintBigintType, uintNumberByteLens, uintBigintByteLens} from "../../src/type/uint.js";
+import {UintNumberType, UintBigintType, uintNumberByteLens, uintBigintByteLens} from "../../src/type/uint.ts";
 
 const POW_32 = 2 ** 32;
 

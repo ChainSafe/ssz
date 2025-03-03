@@ -2,7 +2,7 @@ import path from "node:path";
 import fs from "node:fs";
 import {uncompress} from "snappyjs";
 import jsyaml from "js-yaml";
-import {schema} from "./sszYamlSchema.js";
+import {schema} from "./sszYamlSchema.ts";
 
 /* eslint-disable
   @typescript-eslint/explicit-module-boundary-types,

@@ -23,11 +23,11 @@ import {
   merkleize,
   splitIntoRootChunks,
   symbolCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {JsonPath, Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny, isCompositeType} from "./composite.js";
+} from "../util/merkleize.ts";
+import {Require} from "../util/types.ts";
+import {namedClass} from "../util/named.ts";
+import {JsonPath, Type, ValueOf} from "./abstract.ts";
+import {CompositeType, ByteViews, CompositeTypeAny, isCompositeType} from "./composite.ts";
 import {
   getContainerTreeViewClass,
   ValueOfFields,
@@ -35,15 +35,15 @@ import {
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
   computeSerdesData,
-} from "../view/stableContainer.js";
+} from "../view/stableContainer.ts";
 import {
   getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/stableContainer.js";
-import {Case} from "../util/strings.js";
-import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional.js";
-import {BitArray} from "../value/bitArray.js";
+} from "../viewDU/stableContainer.ts";
+import {Case} from "../util/strings.ts";
+import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional.ts";
+import {BitArray} from "../value/bitArray.ts";
 /* eslint-disable @typescript-eslint/member-ordering */
 
 type BytesRange = {start: number; end: number};

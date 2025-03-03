@@ -3,20 +3,26 @@
   "version": "1.0.0",
   "description": "Persistent data structures for TypeScript.",
   "type": "module",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
-  "files": [
-    "lib/**/*.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.js.map"
-  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "engines": {
+    "node": ">= 18",
+    "deno": ">= 2.2",
+    "bun": ">= 1.1"
+  },
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint --color --ext .ts src/",
     "check-types": "tsc --noEmit",
     "test:unit": "vitest run --dir test/unit",
-    "test:perf": "node --loader=ts-node/esm' benchmark 'test/perf/**/*.test.ts'"
+    "test:perf": "node --loader=ts-node/esm' benchmark 'test/perf/**/*.test.ts'",
+    "build:jsr": "deno run -A ../../scripts/buildJsr.ts",
+    "build:npm": "deno run -A ../../scripts/buildNpm.ts",
+    "publish:jsr": "deno publish",
+    "publish:npm": "cd npm && npm publish"
   },
   "repository": {
     "type": "git",

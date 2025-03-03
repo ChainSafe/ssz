@@ -1,5 +1,5 @@
-import {OptionalType, UintNumberType, ListBasicType, ContainerType, ListCompositeType} from "../../../../src/index.js";
-import {runTypeTestValid} from "../runTypeTestValid.js";
+import {OptionalType, UintNumberType, ListBasicType, ContainerType, ListCompositeType} from "../../../../src/index.ts";
+import {runTypeTestValid} from "../runTypeTestValid.ts";
 
 const number8Type = new UintNumberType(1);
 const SimpleObject = new ContainerType({

@@ -1,6 +1,6 @@
 import {describe, it, expect} from "vitest";
-import {UintNumberType, UnionType, NoneType} from "../../../../src/index.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {UintNumberType, UnionType, NoneType} from "../../../../src/index.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 const byteType = new UintNumberType(1);
 const noneType = new NoneType();

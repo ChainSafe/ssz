@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import {bitLength, maxChunksToDepth, nextPowerOf2} from "../../src/util/merkleize.js";
+import {bitLength, maxChunksToDepth, nextPowerOf2} from "../../src/util/merkleize.ts";
 
 describe("util / merkleize / bitLength", () => {
   const bitLengthByIndex = [0, 1, 2, 2, 3, 3, 3, 3, 4, 4];

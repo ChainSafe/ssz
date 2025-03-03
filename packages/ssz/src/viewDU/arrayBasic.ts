@@ -7,10 +7,10 @@ import {
   Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract.js";
-import {BasicType} from "../type/basic.js";
-import {ArrayBasicType} from "../view/arrayBasic.js";
-import {TreeViewDU} from "./abstract.js";
+import {ValueOf} from "../type/abstract.ts";
+import {BasicType} from "../type/basic.ts";
+import {ArrayBasicType} from "../view/arrayBasic.ts";
+import {TreeViewDU} from "./abstract.ts";
 
 export type ArrayBasicTreeViewDUCache = {
   nodes: LeafNode[];
@@ -22,7 +22,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   ArrayBasicType<ElementType>
 > {
   protected nodes: LeafNode[];
-  protected readonly nodesChanged = new Set<number>();
+  protected readonly nodesChanged: Set<number> = new Set<number>();
   protected _length: number;
   protected dirtyLength = false;
   private nodesPopulated: boolean;

@@ -9,11 +9,11 @@ import {
   Tree,
   HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
-import {byteArrayEquals} from "../util/byteArray.js";
-import {merkleize, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
-import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
-export {ByteViews};
+import {byteArrayEquals} from "../util/byteArray.ts";
+import {merkleize, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.ts";
+import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.ts";
+import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.ts";
+export {type ByteViews};
 
 export const LENGTH_GINDEX = BigInt(3);
 
