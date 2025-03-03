@@ -4,11 +4,11 @@
   "description": "Persistent data structures for TypeScript.",
   "type": "module",
   "main": "./src/index.ts",
-  "files": [
-    "lib/**/*.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.js.map"
-  ],
+  "engines": {
+    "node": ">= 18",
+    "deno": ">= 2.2",
+    "bun": ">= 1.1"
+  },
   "scripts": {
     "clean": "rm -rf lib",
     "lint": "eslint --color --ext .ts src/",

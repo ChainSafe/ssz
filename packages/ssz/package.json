@@ -6,7 +6,16 @@
   "homepage": "https://github.com/chainsafe/ssz",
   "version": "1.0.2",
   "type": "module",
-  "main": "./src/index.ts",
+  "engines": {
+    "node": ">= 18",
+    "deno": ">= 2.2",
+    "bun": ">= 1.1"
+  },
+  "exports": {
+    ".": {
+      "import": "./sc/index.ts"
+    }
+  },
   "files": [
     "lib/**/*.d.ts",
     "lib/**/*.js",

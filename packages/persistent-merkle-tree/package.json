@@ -9,9 +9,11 @@
     "./hasher/noble": "./src/hasher/noble.ts",
     "./hasher/as-sha256": "./src/hasher/as-sha256.ts"
   },
-  "files": [
-    "lib"
-  ],
+  "engines": {
+    "node": ">= 18",
+    "deno": ">= 2.2",
+    "bun": ">= 1.1"
+  },
   "scripts": {
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib",

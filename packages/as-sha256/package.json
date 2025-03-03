@@ -14,9 +14,11 @@
   },
   "type": "module",
   "main": "src/index.ts",
-  "files": [
-    "build"
-  ],
+  "engines": {
+    "node": ">= 18",
+    "deno": ">= 2.2",
+    "bun": ">= 1.1"
+  },
   "scripts": {
     "clean": "rm -rf ./dist",
     "lint": "echo 'no linting for this package'",
