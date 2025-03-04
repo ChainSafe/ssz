@@ -355,7 +355,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       }
     }
 
-    const blockBytes = this.getPaddedBytes64(value);
+    const blockBytes = this.getBlocksBytes(value);
     merkleizeBlocksBytes(blockBytes, this.maxChunkCount, this.tempRoot, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
@@ -369,7 +369,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     }
   }
 
-  protected getPaddedBytes64(struct: ValueOfFields<Fields>): Uint8Array {
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
     this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
@@ -823,7 +823,7 @@ export function setActiveField(rootNode: Node, bitLen: number, fieldIndex: numbe
   return new BranchNode(rootNode.left, newActiveFieldsNode);
 }
 
-// This is a global buffer to avoid creating a new one for each call to getPaddedBytes64
+// This is a global buffer to avoid creating a new one for each call to getBlocksBytes
 const mixInActiveFieldsBlockBytes = new Uint8Array(64);
 const activeFieldsSingleChunk = mixInActiveFieldsBlockBytes.subarray(32);
 

@@ -191,7 +191,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
-  protected getPaddedBytes64(value: ValueOfTypes<Types>): Uint8Array {
+  protected getBlocksBytes(value: ValueOfTypes<Types>): Uint8Array {
     this.types[value.selector].hashTreeRootInto(value.value, this.blocksBuffer, 0);
     return this.blocksBuffer;
   }

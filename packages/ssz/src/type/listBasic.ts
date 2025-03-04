@@ -210,7 +210,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
     }
   }
 
-  protected getPaddedBytes64(value: ValueOf<ElementType>[]): Uint8Array {
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
     const byteLen = this.value_serializedSize(value);
     const blockByteLen = Math.ceil(byteLen / 64) * 64;
     // reallocate this.blocksBuffer if needed

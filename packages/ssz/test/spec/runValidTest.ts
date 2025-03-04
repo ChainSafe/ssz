@@ -103,7 +103,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     if (type.isBasic) {
       console.log("Chunk Bytes Basic", toHexString(type.serialize(testDataValue)));
     } else {
-      const blocksBytes = (type as CompositeType<unknown, unknown, unknown>)["getPaddedBytes64"](testDataValue);
+      const blocksBytes = (type as CompositeType<unknown, unknown, unknown>)["getBlocksBytes"](testDataValue);
       console.log("Blocks Bytes Composite", toHexString(blocksBytes));
     }
   }
