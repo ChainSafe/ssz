@@ -147,7 +147,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   // Merkleization
 
-  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+  protected getPaddedBytes64(value: ValueOf<ElementType>[]): Uint8Array {
     const uint8Array = this.blocksBuffer.subarray(0, this.fixedSize);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);

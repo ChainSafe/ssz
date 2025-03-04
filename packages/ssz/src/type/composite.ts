@@ -238,7 +238,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
       }
     }
 
-    const blocksBuffer = this.getBlocksBytes(value);
+    const blocksBuffer = this.getPaddedBytes64(value);
     merkleizeBlocksBytes(blocksBuffer, this.maxChunkCount, output, offset);
     if (this.cachePermanentRootStruct) {
       cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
@@ -261,7 +261,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    * Get multiple SHA256 blocks, each is 64 bytes long.
    * If chunk count is not even, need to append zeroHash(0)
    */
-  protected abstract getBlocksBytes(value: V): Uint8Array;
+  protected abstract getPaddedBytes64(value: V): Uint8Array;
 
   // Proofs API
 

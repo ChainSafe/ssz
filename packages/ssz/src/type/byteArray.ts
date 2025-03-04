@@ -89,13 +89,13 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
 
   // Merkleization
 
-  protected getBlocksBytes(value: ByteArray): Uint8Array {
+  protected getPaddedBytes64(value: ByteArray): Uint8Array {
     // reallocate this.blocksBuffer if needed
     if (value.length > this.blocksBuffer.length) {
       const chunkCount = Math.ceil(value.length / 32);
       this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
     }
-    return getBlocksBytes(value, this.blocksBuffer);
+    return getPaddedBytes64(value, this.blocksBuffer);
   }
 
   // Proofs
@@ -160,7 +160,7 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   protected abstract assertValidSize(size: number): void;
 }
 
-export function getBlocksBytes(value: Uint8Array, blocksBuffer: Uint8Array): Uint8Array {
+export function getPaddedBytes64(value: Uint8Array, blocksBuffer: Uint8Array): Uint8Array {
   if (value.length > blocksBuffer.length) {
     throw new Error(`data length ${value.length} exceeds blocksBuffer length ${blocksBuffer.length}`);
   }

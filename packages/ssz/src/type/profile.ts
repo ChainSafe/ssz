@@ -382,7 +382,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
       }
     }
 
-    const blocksBytes = this.getBlocksBytes(value);
+    const blocksBytes = this.getPaddedBytes64(value);
     merkleizeBlocksBytes(blocksBytes, this.maxChunkCount, this.tempRoot, 0);
     mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
@@ -391,7 +391,7 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     }
   }
 
-  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+  protected getPaddedBytes64(struct: ValueOfFields<Fields>): Uint8Array {
     this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, chunkIndex, optional} = this.fieldsEntries[i];

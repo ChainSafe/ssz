@@ -274,7 +274,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // Merkleization
 
-  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+  protected getPaddedBytes64(struct: ValueOfFields<Fields>): Uint8Array {
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);

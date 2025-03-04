@@ -211,7 +211,7 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   }
 }
 
-export function value_getBlocksBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
+export function value_getPaddedBytes64ArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
   value: ValueOf<ElementType>[],

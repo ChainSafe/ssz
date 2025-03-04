@@ -250,7 +250,7 @@ export class ListCompositeType<
     }
   }
 
-  protected getBlocksBytes(): Uint8Array {
+  protected getPaddedBytes64(): Uint8Array {
     // we use merkleizeBlockArray for hashTreeRoot() computation
     throw Error("getBlockBytes should not be called for ListCompositeType");
   }

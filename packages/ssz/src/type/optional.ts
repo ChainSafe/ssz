@@ -194,7 +194,7 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
-  protected getBlocksBytes(value: ValueOfType<ElementType>): Uint8Array {
+  protected getPaddedBytes64(value: ValueOfType<ElementType>): Uint8Array {
     if (value === null) {
       this.blocksBuffer.fill(0);
     } else {
