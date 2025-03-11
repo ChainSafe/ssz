@@ -108,7 +108,6 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
-  // TODO: Optimize conversion
   private valueToTree(value: ValueOfFields<Fields>): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);

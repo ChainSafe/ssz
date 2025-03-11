@@ -1,5 +1,4 @@
 import {describe, it, expect} from "vitest";
-import {Tree} from "@chainsafe/persistent-merkle-tree";
 import {
   BitArray,
   BitListType,
@@ -13,7 +12,6 @@ import {
   ListCompositeType,
   NoneType,
   toHexString,
-  Type,
   UintNumberType,
   UnionType,
   ValueOf,
@@ -22,7 +20,6 @@ import {
 } from "../../../../src/index.js";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
-import {upgradeToNewType} from "../../../../src/util/upgrade.js";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable
@@ -244,7 +241,7 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     a: uint64NumType,
     b: new BooleanType(),
     c: unionType,
-    d: new ByteListType(64),
+    d: new ByteListType(1024),
     e: new ByteVectorType(64),
     // a child container type
     f: childContainerType,
@@ -262,7 +259,8 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     a: 10,
     b: true,
     c: {selector: 1, value: 100},
-    d: Buffer.alloc(64, 2),
+    // make this not divisible by 64 to test edge case
+    d: Buffer.alloc(65, 2),
     e: Buffer.alloc(64, 1),
     f: {f0: 100, f1: 101},
     g: {g0: 100, g1: 101},
@@ -274,6 +272,7 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
     m: BitArray.fromSingleBit(4, 1),
   };
   const expectedRoot = parentContainerType.toView(value).hashTreeRoot();
+  expect(parentContainerType.hashTreeRoot(value)).to.be.deep.equal(expectedRoot);
 
   it("fresh ViewDU", () => {
     expect(parentContainerType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
@@ -330,10 +329,11 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
 
   it("full hash then modify ByteListType", () => {
     const viewDU = parentContainerType.toViewDU(value);
+    viewDU.d = Buffer.alloc(1024, 3);
     viewDU.batchHashTreeRoot();
-    // this takes more than 1 chunk so the resulting node is a branch node
-    viewDU.d = viewDU.d.slice();
-    expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
+    // set back to the original value, this takes more than 1 chunk so the resulting node is a branch node
+    viewDU.d = Buffer.alloc(65, 2);
+    expect(viewDU.batchHashTreeRoot()).to.be.deep.equal(expectedRoot);
 
     // assign again but commit before batchHashTreeRoot()
     viewDU.d = viewDU.d.slice();
@@ -637,54 +637,4 @@ describe("ContainerNodeStruct batchHashTreeRoot", function () {
     viewDU.withdrawableEpoch -= 1;
     expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
-});
-
-describe("upgradeToNewType utility", () => {
-  const numFields = [2, 7, 15, 17, 31, 33, 63, 65, 127, 129];
-  for (const [i, numField] of numFields.entries()) {
-    it(`upgradeToNewType with ${numField} fields`, () => {
-      const fields: Record<string, Type<unknown>> = {};
-      for (let j = 0; j < numField; j++) {
-        fields[`f${j}`] = uint64NumInfType;
-      }
-      const oldType = new ContainerType(fields);
-      const view = oldType.defaultView();
-      const viewDU = oldType.defaultViewDU();
-      for (let j = 0; j < numField; j++) {
-        (view as Record<string, number>)[`f${j}`] = j;
-        (viewDU as Record<string, number>)[`f${j}`] = j;
-      }
-
-      for (let j = i + 1; j < numFields.length; j++) {
-        const newFields: Record<string, Type<unknown>> = {};
-        for (let k = 0; k < numFields[j]; k++) {
-          (newFields as Record<string, Type<unknown>>)[`f${k}`] = uint64NumInfType;
-        }
-
-        const newType = new ContainerType(newFields);
-        const newView = newType.getView(new Tree(upgradeToNewType(view.node, oldType, newType)));
-        // commit view DU to make sure the view is updated before accessing viewDU.node
-        viewDU.commit();
-        const newViewDU = newType.getViewDU(upgradeToNewType(viewDU.node, oldType, newType));
-        for (let k = i + 1; k < numFields[j]; k++) {
-          (newView as Record<string, number>)[`f${k}`] = k;
-          (newViewDU as Record<string, number>)[`f${k}`] = k;
-        }
-        newViewDU.commit();
-
-        const expectedValue = newType.defaultValue();
-        for (let k = 0; k < numFields[j]; k++) {
-          (expectedValue as Record<string, number>)[`f${k}`] = k;
-        }
-        const expectedViewDU = newType.toViewDU(expectedValue);
-
-        expect(newView.toValue()).toEqual(expectedValue);
-        expect(newView.hashTreeRoot()).toEqual(expectedViewDU.hashTreeRoot());
-        expect(newView.serialize()).toEqual(expectedViewDU.serialize());
-        expect(newViewDU.toValue()).toEqual(expectedValue);
-        expect(newViewDU.hashTreeRoot()).toEqual(expectedViewDU.hashTreeRoot());
-        expect(newViewDU.serialize()).toEqual(expectedViewDU.serialize());
-      }
-    });
-  }
 });

@@ -1,5 +1,5 @@
 import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize.js";
+import {maxChunksToDepth} from "../util/merkleize.js";
 import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
 import {ValueOf, ByteViews} from "./abstract.js";
@@ -59,6 +59,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     this.minSize = this.fixedSize;
     this.maxSize = this.fixedSize;
     this.defaultLen = length;
+    this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
   static named<ElementType extends BasicType<unknown>>(
@@ -146,11 +147,13 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   // Merkleization
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    const uint8Array = new Uint8Array(this.fixedSize);
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const uint8Array = this.blocksBuffer.subarray(0, this.fixedSize);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
-    return splitIntoRootChunks(uint8Array);
+
+    // remaining bytes from this.fixedSize to this.blocksBuffer.length must be zeroed
+    return this.blocksBuffer;
   }
 
   // JSON: inherited from ArrayType
