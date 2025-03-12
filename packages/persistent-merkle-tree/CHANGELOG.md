@@ -9,6 +9,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [1.1.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v1.0.1...persistent-merkle-tree-v1.1.0) (2025-03-12)
+
+
+### Features
+
+* add tests workflow for bun and deno ([#423](https://github.com/ChainSafe/ssz/issues/423)) ([089daed](https://github.com/ChainSafe/ssz/commit/089daeda999ca9887327ef06efa5bdf6507ae0e3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 1.0.0 to 1.1.0
+
 ## [1.0.1](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v1.0.0...persistent-merkle-tree-v1.0.1) (2025-01-23)
 
 
