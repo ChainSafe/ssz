@@ -1,5 +1,6 @@
 import {describe, it, expect, beforeEach} from "vitest";
 import {
+  ByteVectorType,
   CompositeView,
   ContainerNodeStructType,
   ContainerType,
@@ -354,23 +355,53 @@ describe("ListCompositeType ViewDU batchHashTreeRoot", () => {
   }
 });
 
-describe("ListCompositeType getAllReadOnly - no commit", () => {
-  it("getAllReadOnly() without commit", () => {
+describe("ListCompositeType", () => {
+  let listView: ListCompositeTreeViewDU<ByteVectorType>;
+
+  beforeEach(() => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listLength = 2;
     const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
-    const listView = listType.toViewDU(list);
+    listView = listType.toViewDU(list);
     expect(listView.getAllReadonly()).to.deep.equal(list);
+  });
 
+  it("getAllReadOnly()", () => {
     // modify
     listView.set(0, Buffer.alloc(32, 1));
     // push
     listView.push(Buffer.alloc(32, 1));
 
     // getAllReadOnly() without commit, now all items should be the same
-    expect(listView.getAllReadonly()).to.deep.equal(Array.from({length: 3}, () => Buffer.alloc(32, 1)));
+    const all = listView.getAllReadonly();
+    expect(all).to.deep.equal(Array.from({length: 3}, () => Buffer.alloc(32, 1)));
+
+    const out = new Array<Buffer>(3).fill(Buffer.alloc(32, 0));
+    // getAllReadonly() with "out" parameter of the same length
+    const all2 = listView.getAllReadonly(out);
+    expect(all2 === out).to.be.true;
+    expect(out).to.deep.equal(all);
 
     // getAllReadOnlyValues() will throw
     expect(() => listView.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
+  });
+
+  it("forEach()", () => {
+    listView.forEach((item, i) => expect(item).to.deep.equal(Buffer.alloc(32, i)));
+  });
+
+  it("getAllReadonlyValues()", () => {
+    // no param
+    expect(listView.getAllReadonlyValues()).to.deep.equal(Array.from({length: 2}, (_, i) => Buffer.alloc(32, i)));
+    const out = new Array<Buffer>(2).fill(Buffer.alloc(32, 0));
+
+    // with "out" param
+    const all = listView.getAllReadonlyValues(out);
+    expect(all === out).to.be.true;
+    expect(out).to.be.deep.equal(Array.from({length: 2}, (_, i) => Buffer.alloc(32, i)));
+  });
+
+  it("forEachValue()", () => {
+    listView.forEachValue((item, i) => expect(item).to.deep.equal(Buffer.alloc(32, i)));
   });
 });

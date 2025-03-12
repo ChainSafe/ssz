@@ -109,8 +109,12 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
 
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAll(): ValueOf<ElementType>[] {
+  getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     if (!this.nodesPopulated) {
       const nodesPrev = this.nodes;
       const chunksNode = this.type.tree_getChunksNode(this.node);
@@ -125,7 +129,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
       this.nodesPopulated = true;
     }
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(this._length / itemsPerChunk);
     const remainder = this._length % itemsPerChunk;

@@ -147,11 +147,15 @@ export class ArrayCompositeTreeViewDU<
   /**
    * Returns all elements at every index, if an index is modified it will return the modified view.
    * No need to commit() before calling this function.
+   * @param views optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonly(): CompositeViewDU<ElementType>[] {
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    if (views && views.length !== this._length) {
+      throw Error(`Expected ${this._length} views, got ${views.length}`);
+    }
     this.populateAllOldNodes();
 
-    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       // this will get pending change first, if not it will get from the `this.nodes` array
       views[i] = this.getReadonly(i);
@@ -160,16 +164,42 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * Apply `fn` to each ViewDU in the array.
+   * Similar to getAllReadOnly(), no need to commit() before calling this function.
+   * if an item is modified it will return the modified view.
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  forEach(fn: (viewDU: CompositeViewDU<ElementType>, index: number) => void): void {
+    this.populateAllOldNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.getReadonly(i), i);
+    }
+  }
+
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
+   */
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     this.populateAllNodes();
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }
     return values;
+  }
+
+  /**
+   * Apply `fn` to each value in the array
+   */
+  forEachValue(fn: (value: ValueOf<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.type.elementType.tree_toValue(this.nodes[i]), i);
+    }
   }
 
   /**
