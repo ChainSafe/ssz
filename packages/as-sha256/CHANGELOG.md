@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.0.0...as-sha256-v1.1.0) (2025-03-12)
+
+
+### Features
+
+* add tests workflow for bun and deno ([#423](https://github.com/ChainSafe/ssz/issues/423)) ([089daed](https://github.com/ChainSafe/ssz/commit/089daeda999ca9887327ef06efa5bdf6507ae0e3))
+* improve type.hashTreeRoot() using batch ([#409](https://github.com/ChainSafe/ssz/issues/409)) ([66742f0](https://github.com/ChainSafe/ssz/commit/66742f0faf617f713744048609408365d6185780))
+
 ## [1.0.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v0.6.1...as-sha256-v1.0.0) (2025-01-23)
 
 
