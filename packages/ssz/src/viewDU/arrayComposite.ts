@@ -187,13 +187,14 @@ export class ArrayCompositeTreeViewDU<
 
     const originalLength = this.dirtyLength ? this.type.tree_getLength(this._rootNode) : this._length;
     if (startIndex >= originalLength) {
-      return [];
+      throw Error(`Error getting by range, startIndex >= length: ${startIndex} >= ${originalLength}`);
     }
+
     count = Math.min(count, originalLength - startIndex);
 
     let dataAvailable = true;
     for (let i = startIndex; i < startIndex + count; i++) {
-      if (this.nodes[i] === undefined) {
+      if (this.nodes[i] == null) {
         dataAvailable = false;
         break;
       }
