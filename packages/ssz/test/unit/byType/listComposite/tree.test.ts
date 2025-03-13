@@ -363,7 +363,7 @@ describe("ListCompositeType", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
 
     for (const loadNodes of [false, true]) {
-      for (const listLength of [5, 10, 15, 20]) {
+      for (const listLength of [5, 10, 15, 20, 21, 22, 23, 24, 25]) {
         const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
         const listView = listType.toViewDU(list);
 
