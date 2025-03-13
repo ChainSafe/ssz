@@ -9,6 +9,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from 1.0.0 to 1.0.1
 
+## [1.2.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.1.0...ssz-v1.2.0) (2025-03-13)
+
+
+### Features
+
+* get list composite by range ([#472](https://github.com/ChainSafe/ssz/issues/472)) ([#473](https://github.com/ChainSafe/ssz/issues/473)) ([867273f](https://github.com/ChainSafe/ssz/commit/867273fc88a8c9e50662ebf491caf2a584fcc48a))
+* model ListValidator ssz type ([#471](https://github.com/ChainSafe/ssz/issues/471)) ([9432799](https://github.com/ChainSafe/ssz/commit/9432799856f4f3e6cf3c43066715662313392f43))
+
 ## [1.1.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.0.2...ssz-v1.1.0) (2025-03-12)
 
 
