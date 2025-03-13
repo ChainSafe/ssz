@@ -31,12 +31,20 @@ export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompo
 export {TreeView} from "./view/abstract.js";
 export {ValueOfFields} from "./view/container.js";
 export {TreeViewDU} from "./viewDU/abstract.js";
+export {ListCompositeTreeViewDU} from "./viewDU/listComposite.js";
+export {ListBasicTreeViewDU} from "./viewDU/listBasic.js";
+export {ArrayCompositeTreeViewDUCache} from "./viewDU/arrayComposite.js";
+export {ContainerNodeStructTreeViewDU} from "./viewDU/containerNodeStruct.js";
 
 // Values
 export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray.js";
 
 // Utils
 export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray.js";
+
 export {Snapshot} from "./util/types.js";
 export {hash64, symbolCachedPermanentRoot} from "./util/merkleize.js";
 export {upgradeToNewType} from "./util/upgrade.js";
+
+// others
+export {BranchNodeStruct} from "./branchNodeStruct.js";

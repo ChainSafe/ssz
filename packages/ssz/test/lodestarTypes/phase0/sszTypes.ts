@@ -2,7 +2,6 @@ import {
   BitListType,
   BitVectorType,
   ContainerType,
-  ContainerNodeStructType,
   ListBasicType,
   ListCompositeType,
   VectorBasicType,
@@ -18,6 +17,10 @@ import {
   ATTESTATION_SUBNET_COUNT,
 } from "../params.js";
 import * as primitiveSsz from "../primitive/sszTypes.js";
+import {ListValidatorType} from "./listValidator.js";
+import {ValidatorNodeStruct} from "./validator.js";
+
+export {ValidatorNodeStruct};
 
 const {
   EPOCHS_PER_ETH1_VOTING_PERIOD,
@@ -261,12 +264,14 @@ export const ValidatorContainer = new ContainerType(
   {typeName: "Validator", jsonCase: "eth2"}
 );
 
-export const ValidatorNodeStruct = new ContainerNodeStructType(ValidatorContainer.fields, ValidatorContainer.opts);
 // The main Validator type is the 'ContainerNodeStructType' version
 export const Validator = ValidatorNodeStruct;
 
 // Export as stand-alone for direct tree optimizations
-export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
+// since Mar 2025 instead of using ListCompositeType
+// export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
+// we switch to ListValidatorType which support batch hash
+export const Validators = new ListValidatorType(VALIDATOR_REGISTRY_LIMIT);
 export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 export const RandaoMixes = new VectorCompositeType(Bytes32, EPOCHS_PER_HISTORICAL_VECTOR);
 export const Slashings = new VectorBasicType(Gwei, EPOCHS_PER_SLASHINGS_VECTOR);
