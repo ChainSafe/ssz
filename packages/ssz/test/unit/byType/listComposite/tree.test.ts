@@ -361,22 +361,29 @@ describe("ListCompositeType", () => {
 
   it("getReadonlyByRange", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
-    for (const listLength of [5, 10, 15, 20]) {
-      const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
-      const listView = listType.toViewDU(list);
 
-      const total: Buffer[] = [];
-      let start = 0;
-      const count = 10;
-      // this is equivalent to getAllReadonly()
-      // but consumer can break in the middle to improve performance
-      while (start < listLength) {
-        listView.getReadonlyByRange(start, count).forEach((item) => total.push(item as Buffer));
-        start += count;
+    for (const loadNodes of [false, true]) {
+      for (const listLength of [5, 10, 15, 20]) {
+        const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+        const listView = listType.toViewDU(list);
+
+        if (loadNodes) {
+          listView.getAllReadonly();
+        }
+
+        const total: Buffer[] = [];
+        let start = 0;
+        const count = 10;
+        // this is equivalent to getAllReadonly()
+        // but consumer can break in the middle to improve performance
+        while (start < listLength) {
+          listView.getReadonlyByRange(start, count).forEach((item) => total.push(item as Buffer));
+          start += count;
+        }
+
+        expect(total.length).to.equal(listLength);
+        expect(total).to.deep.equal(list);
       }
-
-      expect(total.length).to.equal(listLength);
-      expect(total).to.deep.equal(list);
     }
   });
 });

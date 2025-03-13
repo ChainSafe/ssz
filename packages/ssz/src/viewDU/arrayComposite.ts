@@ -189,6 +189,7 @@ export class ArrayCompositeTreeViewDU<
     if (startIndex >= originalLength) {
       return [];
     }
+    count = Math.min(count, originalLength - startIndex);
 
     let dataAvailable = true;
     for (let i = startIndex; i < startIndex + count; i++) {
@@ -198,7 +199,7 @@ export class ArrayCompositeTreeViewDU<
       }
     }
 
-    count = Math.min(count, originalLength - startIndex);
+    // if one of nodes is not available, get all nodes at depth
     if (!dataAvailable) {
       const nodes = getNodesAtDepth(this._rootNode, this.type.depth, startIndex, count);
       for (const [i, node] of nodes.entries()) {
