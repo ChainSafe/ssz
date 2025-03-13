@@ -385,5 +385,13 @@ describe("ListCompositeType", () => {
         expect(total).to.deep.equal(list);
       }
     }
+
+    // test the bound of "count" parameter
+    const list = Array.from({length: 10}, (_, i) => Buffer.alloc(32, i));
+    const listView = listType.toViewDU(list);
+    for (let start = 5; start < 10; start++) {
+      const items = listView.getReadonlyByRange(start, list.length);
+      expect(items.length).to.equal(list.length - start);
+    }
   });
 });
