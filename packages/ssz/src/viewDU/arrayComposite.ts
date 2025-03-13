@@ -173,6 +173,50 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
+   * Get by range of indexes. Returns an array of views of the Composite element type.
+   * This is similar to getAllReadonly() where we dont have to commit() before calling this function.
+   */
+  getReadonlyByRange(startIndex: number, count: number): CompositeViewDU<ElementType>[] {
+    if (startIndex < 0) {
+      throw Error(`Error getting by range, startIndex < 0: ${startIndex}`);
+    }
+
+    if (count <= 0) {
+      throw Error(`Error getting by range, count <= 0: ${count}`);
+    }
+
+    const originalLength = this.dirtyLength ? this.type.tree_getLength(this._rootNode) : this._length;
+    if (startIndex >= originalLength) {
+      throw Error(`Error getting by range, startIndex >= length: ${startIndex} >= ${originalLength}`);
+    }
+
+    count = Math.min(count, originalLength - startIndex);
+
+    let dataAvailable = true;
+    for (let i = startIndex; i < startIndex + count; i++) {
+      if (this.nodes[i] == null) {
+        dataAvailable = false;
+        break;
+      }
+    }
+
+    // if one of nodes is not available, get all nodes at depth
+    if (!dataAvailable) {
+      const nodes = getNodesAtDepth(this._rootNode, this.type.depth, startIndex, count);
+      for (const [i, node] of nodes.entries()) {
+        this.nodes[startIndex + i] = node;
+      }
+    }
+
+    const result = new Array<CompositeViewDU<ElementType>>(count);
+    for (let i = 0; i < count; i++) {
+      result[i] = this.getReadonly(startIndex + i);
+    }
+
+    return result;
+  }
+
+  /**
    * When we need to compute HashComputations (hcByLevel != null):
    *   - if old _rootNode is hashed, then only need to put pending changes to hcByLevel
    *   - if old _rootNode is not hashed, need to traverse and put to hcByLevel

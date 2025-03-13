@@ -339,7 +339,7 @@ describe("ListCompositeType batchHashTreeRoot", () => {
   }
 });
 
-describe("ListCompositeType getAllReadOnly - no commit", () => {
+describe("ListCompositeType", () => {
   it("getAllReadOnly() without commit", () => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listLength = 2;
@@ -357,5 +357,41 @@ describe("ListCompositeType getAllReadOnly - no commit", () => {
 
     // getAllReadOnlyValues() will throw
     expect(() => listView.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
+  });
+
+  it("getReadonlyByRange", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+
+    for (const loadNodes of [false, true]) {
+      for (const listLength of [5, 10, 15, 20, 21, 22, 23, 24, 25]) {
+        const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+        const listView = listType.toViewDU(list);
+
+        if (loadNodes) {
+          listView.getAllReadonly();
+        }
+
+        const total: Buffer[] = [];
+        let start = 0;
+        const count = 10;
+        // this is equivalent to getAllReadonly()
+        // but consumer can break in the middle to improve performance
+        while (start < listLength) {
+          listView.getReadonlyByRange(start, count).forEach((item) => total.push(item as Buffer));
+          start += count;
+        }
+
+        expect(total.length).to.equal(listLength);
+        expect(total).to.deep.equal(list);
+      }
+    }
+
+    // test the bound of "count" parameter
+    const list = Array.from({length: 10}, (_, i) => Buffer.alloc(32, i));
+    const listView = listType.toViewDU(list);
+    for (let start = 5; start < 10; start++) {
+      const items = listView.getReadonlyByRange(start, list.length);
+      expect(items.length).to.equal(list.length - start);
+    }
   });
 });
