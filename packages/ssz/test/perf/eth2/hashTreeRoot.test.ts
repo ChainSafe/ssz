@@ -74,6 +74,8 @@ describe("HashTreeRoot frequent eth2 objects", () => {
       before: () => getStateViewDU().serialize(),
       beforeEach: (bytes) => sszAltair.BeaconState.deserializeToViewDU(bytes),
       fn: (state) => {
+        // performance is not great due to memory allocation of BranchNodeStruct left, right access
+        // it's good to have an idea on batchHashTreeRoot() at the 1st time
         state.batchHashTreeRoot(hc);
       },
     });

@@ -24,7 +24,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
 
   const hc = new HashComputationGroup();
   bench({
-    id: `BeaconState ViewDU batchHashTreeRoot vc=${vc}`,
+    id: `BeaconState ViewDU batchHashTreeRoot vc=${vc} mod=${numModified}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       // commit() step is inside hashTreeRoot(), reuse HashComputationGroup
@@ -38,7 +38,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   bench({
-    id: `BeaconState ViewDU batchHashTreeRoot - commit step vc=${vc}`,
+    id: `BeaconState ViewDU batchHashTreeRoot - commit step vc=${vc} mod=${numModified}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       state.commit(0, []);
@@ -46,7 +46,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   bench({
-    id: `BeaconState ViewDU batchHashTreeRoot - hash step vc=${vc}`,
+    id: `BeaconState ViewDU batchHashTreeRoot - hash step vc=${vc} mod=${numModified}`,
     beforeEach: () => {
       const state = createPartiallyModifiedDenebState();
       const hcByLevel: HashComputationLevel[] = [];
@@ -59,7 +59,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   bench({
-    id: `BeaconState ViewDU hashTreeRoot() vc=${vc}`,
+    id: `BeaconState ViewDU hashTreeRoot() vc=${vc} mod=${numModified}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       state.hashTreeRoot();
@@ -70,7 +70,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   bench({
-    id: `BeaconState ViewDU hashTreeRoot - commit step vc=${vc}`,
+    id: `BeaconState ViewDU hashTreeRoot - commit step vc=${vc} mod=${numModified}`,
     beforeEach: () => createPartiallyModifiedDenebState(),
     fn: (state: CompositeViewDU<typeof BeaconState>) => {
       state.commit();
@@ -78,7 +78,7 @@ describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numM
   });
 
   bench({
-    id: `BeaconState ViewDU hashTreeRoot - validator tree creation vc=${numModified}`,
+    id: `BeaconState ViewDU hashTreeRoot - validator tree creation vc=${numModified} mod=${numModified}`,
     beforeEach: () => {
       const state = createPartiallyModifiedDenebState();
       state.commit();
