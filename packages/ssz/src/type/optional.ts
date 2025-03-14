@@ -163,8 +163,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    let valueNode;
-    let selector;
+    let valueNode: Node;
+    let selector: number;
     if (start === end) {
       selector = 0;
       valueNode = zeroNode(0);

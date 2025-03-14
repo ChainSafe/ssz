@@ -89,7 +89,7 @@ export class PersistentVector<T> implements Iterable<T> {
   get(index: number): T | undefined {
     if (index < 0 || index >= this.length) return undefined;
 
-    let array;
+    let array: T[] | (INode<T> | undefined)[];
     if (index >= this.getTailOffset()) {
       array = this.tail;
     } else {
@@ -354,7 +354,7 @@ export class TransientVector<T> implements Iterable<T> {
   get(index: number): T | undefined {
     if (index < 0 || index >= this.length) return undefined;
 
-    let array;
+    let array: T[] | (INode<T> | undefined)[];
     if (index >= this.getTailOffset()) {
       array = this.tail;
     } else {

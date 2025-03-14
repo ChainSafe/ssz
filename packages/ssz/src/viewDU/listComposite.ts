@@ -94,8 +94,8 @@ export class ListCompositeTreeViewDU<
       return this;
     }
 
-    let newChunksNode;
-    let newLength;
+    let newChunksNode: Node;
+    let newLength: number;
 
     if (index >= this.nodes.length) {
       newChunksNode = zeroNode(this.type.chunkDepth);

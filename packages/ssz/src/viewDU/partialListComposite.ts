@@ -115,8 +115,8 @@ export class PartialListCompositeTreeViewDU<
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
 
-    let newChunksNode;
-    let newLength;
+    let newChunksNode: Node;
+    let newLength: number;
 
     if (index >= this.length) {
       newChunksNode = zeroNode(this.type.chunkDepth);
