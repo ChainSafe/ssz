@@ -227,8 +227,8 @@ export function gatherLeafNodes(node: Node, nodes = new Map<string, string>(), g
   if (node.isLeaf()) {
     nodes.set(gindex, toHexString(node.root));
   } else {
-    gatherLeafNodes(node.left, nodes, gindex + "0");
-    gatherLeafNodes(node.right, nodes, gindex + "1");
+    gatherLeafNodes(node.left, nodes, `${gindex}0`);
+    gatherLeafNodes(node.right, nodes, `${gindex}1`);
   }
   return nodes;
 }

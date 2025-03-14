@@ -87,8 +87,8 @@ export function treePartialToJsonPaths(
 
     // BranchNode at not type depth, keep navigating
     else {
-      const leftRes = treePartialToJsonPaths(node.left, type, bitstring + "0", currentDepth + 1);
-      const rightRes = treePartialToJsonPaths(node.right, type, bitstring + "1", currentDepth + 1);
+      const leftRes = treePartialToJsonPaths(node.left, type, `${bitstring}0`, currentDepth + 1);
+      const rightRes = treePartialToJsonPaths(node.right, type, `${bitstring}1`, currentDepth + 1);
 
       // Upstream status that all data is there
       if (leftRes.type === TreeDataTypeCode.complete && rightRes.type === TreeDataTypeCode.complete) {

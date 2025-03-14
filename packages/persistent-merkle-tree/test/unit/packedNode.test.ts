@@ -188,7 +188,7 @@ describe("subtree / packedNode single node", () => {
       const uint8Array = new Uint8Array(size);
       const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
       packedNodeRootsToBytes(dataView, 0, size, nodes);
-      expect("0x" + Buffer.from(uint8Array).toString("hex")).to.equal(outStr);
+      expect(`0x${Buffer.from(uint8Array).toString("hex")}`).to.equal(outStr);
     });
 
     it(`${id} - packedRootsBytesToLeafNodes`, () => {

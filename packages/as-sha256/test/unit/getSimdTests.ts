@@ -19,7 +19,7 @@ export function getSimdTests(sha256: any, useSimd: boolean): void {
         131, 72, 178, 215, 235, 20, 207, 110,
       ]);
       for (let i = 0; i < 4; i++) {
-        expect(outputs[i]).to.be.deep.equal(expectedOutput, "incorrect batchHash4UintArray64s result " + i);
+        expect(outputs[i]).to.be.deep.equal(expectedOutput, `incorrect batchHash4UintArray64s result ${i}`);
       }
     });
 
@@ -46,7 +46,7 @@ export function getSimdTests(sha256: any, useSimd: boolean): void {
       for (let i = 0; i < 4; i++) {
         const output = new Uint8Array(32);
         hashObjectToByteArray(outputs[i], output, 0);
-        expect(output).to.be.deep.equal(expectedOutput, "incorrect batchHash4UintArray64s result " + i);
+        expect(output).to.be.deep.equal(expectedOutput, `incorrect batchHash4UintArray64s result ${i}`);
       }
     });
 

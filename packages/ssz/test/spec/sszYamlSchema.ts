@@ -146,7 +146,7 @@ function constructYamlInteger(data: string): bigint {
 
   if (ch === "0") {
     if (value[1] === "b" || value[1] === "x") return BigInt(value) * BigInt(sign);
-    return BigInt("0o" + value) * BigInt(sign);
+    return BigInt(`0o${value}`) * BigInt(sign);
   }
 
   if (value.indexOf(":") !== -1) {
@@ -182,12 +182,12 @@ const intType = new Type("tag:yaml.org,2002:int", {
   represent: {
     // @ts-ignore
     binary: function binary(obj: number) {
-      return obj >= 0 ? "0b" + obj.toString(2) : "-0b" + obj.toString(2).slice(1);
+      return obj >= 0 ? `0b${obj.toString(2)}` : `-0b${obj.toString(2).slice(1)}`;
     },
 
     // @ts-ignore
     octal: function octal(obj: number) {
-      return obj >= 0 ? "0" + obj.toString(8) : "-0" + obj.toString(8).slice(1);
+      return obj >= 0 ? `0${obj.toString(8)}` : `-0${obj.toString(8).slice(1)}`;
     },
 
     // @ts-ignore
@@ -197,7 +197,7 @@ const intType = new Type("tag:yaml.org,2002:int", {
 
     // @ts-ignore
     hexadecimal: function hexadecimal(obj: number) {
-      return obj >= 0 ? "0x" + obj.toString(16).toUpperCase() : "-0x" + obj.toString(16).toUpperCase().slice(1);
+      return obj >= 0 ? `0x${obj.toString(16).toUpperCase()}` : `-0x${obj.toString(16).toUpperCase().slice(1)}`;
     },
   },
   defaultStyle: "decimal",

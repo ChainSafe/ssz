@@ -47,7 +47,7 @@ export function computeDescriptor(indices: Gindex[]): Uint8Array {
   // convert descriptor bitstring to bytes
   const descriptor = new Uint8Array(descriptorBitstring.length / 8);
   for (let i = 0; i < descriptor.length; i++) {
-    descriptor[i] = Number("0b" + descriptorBitstring.substring(i * 8, (i + 1) * 8));
+    descriptor[i] = Number(`0b${descriptorBitstring.substring(i * 8, (i + 1) * 8)}`);
   }
   return descriptor;
 }

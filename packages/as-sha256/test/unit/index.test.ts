@@ -23,11 +23,11 @@ describe("hashObjectToByteArray and byteArrayToHashObject", () => {
     new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
   ];
   for (const [i, byteArr] of tcs.entries()) {
-    it("test case " + i, () => {
+    it(`test case ${i}`, () => {
       const obj = byteArrayToHashObject(byteArr, 0);
       const newByteArr = new Uint8Array(32);
       hashObjectToByteArray(obj, newByteArr, 0);
-      expect(newByteArr).to.be.deep.equal(byteArr, "failed test case" + i);
+      expect(newByteArr).to.be.deep.equal(byteArr, `failed test case ${i}`);
     });
   }
 });
