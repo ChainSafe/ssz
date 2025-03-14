@@ -150,7 +150,7 @@ export class VectorCompositeType<
     return 0;
   }
 
-  tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
+  tree_setChunksNode(_rootNode: Node, chunksNode: Node): Node {
     return chunksNode;
   }
 

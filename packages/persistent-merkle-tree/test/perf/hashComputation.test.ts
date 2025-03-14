@@ -28,6 +28,7 @@ describe("HashComputationLevel", () => {
       }
       level.clean();
       for (const hc of level) {
+        // biome-ignore lint/correctness/noUnusedVariables: We need to extract values for performance tests
         const {src0, src1, dest} = hc;
       }
     },
@@ -41,6 +42,7 @@ describe("HashComputationLevel", () => {
         level.push(hashComp);
       }
       for (const hc of level) {
+        // biome-ignore lint/correctness/noUnusedVariables: We need to extract values for performance tests
         const {src0, src1, dest} = hc;
       }
     },

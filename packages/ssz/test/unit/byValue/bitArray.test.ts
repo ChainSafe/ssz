@@ -3,8 +3,6 @@ import {BitVectorType} from "../../../src/index.js";
 import {BitArray, getUint8ByteToBitBooleanArray} from "../../../src/value/bitArray.js";
 import {linspace} from "../../utils/misc.js";
 
-const BITS_PER_BYTE = 8;
-
 describe("aggregationBits", () => {
   it("getUint8ByteToBitBooleanArray", () => {
     expect(getUint8ByteToBitBooleanArray(1)).toEqual([true, false, false, false, false, false, false, false]);

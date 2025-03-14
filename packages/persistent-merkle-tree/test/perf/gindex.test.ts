@@ -17,8 +17,8 @@ describe("gindices at depth", () => {
   });
 
   bench("iterateAtDepth", () => {
-    for (let gindex of iterateAtDepth(depth, BigInt(startIx), BigInt(count))) {
-      gindex++;
+    for (let _gindex of iterateAtDepth(depth, BigInt(startIx), BigInt(count))) {
+      _gindex++;
     }
   });
 });

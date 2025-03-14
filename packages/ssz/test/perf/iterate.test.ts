@@ -13,14 +13,14 @@ describe("iterate", () => {
 
   bench("Array - for of", () => {
     for (const a of arr) {
-      const x = a.foo;
+      const _x = a.foo;
     }
   });
   bench("Array - for(;;)", () => {
     for (let i = 0; i < arr.length; i++) {
       const a = arr[i];
 
-      const x = a.foo;
+      const _x = a.foo;
     }
   });
 });
