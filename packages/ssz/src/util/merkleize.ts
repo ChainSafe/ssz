@@ -37,7 +37,7 @@ export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
 
 export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
   const layerCount = bitLength(nextPowerOf2(padFor) - 1);
-  if (chunks.length == 0) {
+  if (chunks.length === 0) {
     return zeroHash(layerCount);
   }
 

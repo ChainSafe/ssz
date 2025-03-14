@@ -37,7 +37,7 @@ export function computeDescriptor(indices: Gindex[]): Uint8Array {
   }
 
   // append zero bits to byte-alignt
-  if (descriptorBitstring.length % 8 != 0) {
+  if (descriptorBitstring.length % 8 !== 0) {
     descriptorBitstring = descriptorBitstring.padEnd(
       8 - (descriptorBitstring.length % 8) + descriptorBitstring.length,
       "0"
