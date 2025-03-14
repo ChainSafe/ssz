@@ -63,7 +63,7 @@ export class PartialListCompositeTreeViewDU<
       throw new Error(`Cannot set index ${index} less than existing snapshot count ${this.snapshot.count}`);
     }
 
-    return super.set(index, view);
+    super.set(index, view);
   }
 
   getAllReadonly(): CompositeViewDU<ElementType>[] {

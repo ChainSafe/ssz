@@ -41,7 +41,7 @@ export const hasher: Hasher = {
     byteArrayIntoHashObject(hash64Output, 0, parent);
   },
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
+    doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
     return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, uint8Input);

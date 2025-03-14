@@ -58,7 +58,8 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
   commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     if (hcByLevel === null) {
       // this is not from batchHashTreeRoot() call, go with regular flow
-      return super.commit();
+      super.commit();
+      return;
     }
 
     const isOldRootHashed = this._rootNode.h0 !== null;
