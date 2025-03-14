@@ -192,7 +192,7 @@ export class UintNumberType extends BasicType<number> {
         return Infinity;
       } else {
         const num = parseInt(json, 10);
-        if (isNaN(num)) {
+        if (Number.isNaN(num)) {
           throw Error("JSON invalid number isNaN");
         } else if (num > Number.MAX_SAFE_INTEGER) {
           // Throw to prevent decimal precision errors downstream
