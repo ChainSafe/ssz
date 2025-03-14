@@ -1,5 +1,6 @@
 // @ts-nocheck
 import {
+  ArrayType,
   ListType,
   Type,
   isBitListType,
