@@ -1,9 +1,9 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 
 import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
 import {hasher as nobleHasher} from "../../src/hasher/noble.js";
-import {hashObjectToUint8Array, uint8ArrayToHashObject } from "../../src/hasher/util.js";
+import {hashObjectToUint8Array, uint8ArrayToHashObject} from "../../src/hasher/util.js";
 import {
   HashComputationLevel,
   HashObject,

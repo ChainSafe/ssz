@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {BitArray, fromHexString} from "../../../src/index.js";
 import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
 import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.js";

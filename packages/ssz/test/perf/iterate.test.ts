@@ -1,4 +1,4 @@
-import {bench, describe, setBenchOpts } from "@chainsafe/benchmark";
+import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
 import {ListBasicType, UintNumberType} from "../../src/index.js";
 import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
 
@@ -13,14 +13,13 @@ describe("iterate", () => {
 
   bench("Array - for of", () => {
     for (const a of arr) {
-      
       const x = a.foo;
     }
   });
   bench("Array - for(;;)", () => {
     for (let i = 0; i < arr.length; i++) {
       const a = arr[i];
-      
+
       const x = a.foo;
     }
   });
@@ -55,7 +54,6 @@ describe("readonly values - iterator vs array", () => {
   });
 });
 
-
 function createBalanceList(count: number) {
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
@@ -63,7 +61,6 @@ function createBalanceList(count: number) {
   const balancesStruct = Array.from({length: count}, () => 31217089836);
   return balancesList.toViewDU(balancesStruct);
 }
-
 
 function createValidatorList(count: number) {
   const validatorsStruct = Array.from({length: count}, () => ({

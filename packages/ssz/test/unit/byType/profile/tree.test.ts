@@ -1,5 +1,5 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {
   BitArray,
   BitListType,

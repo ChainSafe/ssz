@@ -25,7 +25,6 @@ export type BitVector = Vector<boolean>;
 export type BitList = List<boolean>;
 
 export interface ObjectLike {
-  
   [fieldName: string]: any;
 }
 
@@ -33,7 +32,6 @@ export interface Union<T> {
   readonly selector: number;
   value: T;
 }
-
 
 export type CompositeValue = Record<string, any> | ArrayLike<unknown> | Union<unknown> | Record<string, never>;
 

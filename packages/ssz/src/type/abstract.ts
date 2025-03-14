@@ -1,7 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 
-
-
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
 
 /**

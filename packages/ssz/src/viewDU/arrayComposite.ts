@@ -19,7 +19,7 @@ export type ArrayCompositeTreeViewDUCache = {
 };
 
 export class ArrayCompositeTreeViewDU<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends TreeViewDU<ArrayCompositeType<ElementType>> {
   protected nodes: Node[];
   protected caches: unknown[];

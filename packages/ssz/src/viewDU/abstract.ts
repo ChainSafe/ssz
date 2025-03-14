@@ -1,4 +1,4 @@
-import {HashComputationGroup, HashComputationLevel, executeHashComputations } from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, HashComputationLevel, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite.js";
 import {TreeView} from "../view/abstract.js";
 
@@ -11,8 +11,6 @@ const symbolCachedTreeRoot = Symbol("ssz_cached_tree_root");
 export type NodeWithCachedTreeRoot = {
   [symbolCachedTreeRoot]?: Uint8Array;
 };
-
-
 
 /**
  * A Deferred Update Tree View (`ViewDU`) is a wrapper around a type and

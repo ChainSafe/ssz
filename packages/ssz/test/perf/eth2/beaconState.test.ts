@@ -1,5 +1,5 @@
 import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
-import {HashComputationGroup, HashComputationLevel, executeHashComputations } from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, HashComputationLevel, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {BitArray, CompositeViewDU, toHexString} from "../../../src/index.js";
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes.js";
 import {preset} from "../../lodestarTypes/params.js";

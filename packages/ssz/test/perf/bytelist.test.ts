@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.js";
 
 describe("ByteListType vs BasicListType<byte>", () => {

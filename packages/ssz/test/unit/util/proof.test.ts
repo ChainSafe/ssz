@@ -1,7 +1,7 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ContainerNodeStructType, ContainerType, ListCompositeType} from "../../../src/index.js";
-import {TreeDataTypeCode, treePartialToJsonPaths } from "../../../src/util/proof/treePartialToJsonPaths.js";
+import {TreeDataTypeCode, treePartialToJsonPaths} from "../../../src/util/proof/treePartialToJsonPaths.js";
 import {treePostProcessFromProofNode} from "../../../src/util/proof/treePostProcessFromProofNode.js";
 import {bytes32Type, uint16NumType} from "../../utils/primitiveTypes.js";
 

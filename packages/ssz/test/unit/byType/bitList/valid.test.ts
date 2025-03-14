@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {BitArray, BitListType, toHexString} from "../../../../src/index.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";
 

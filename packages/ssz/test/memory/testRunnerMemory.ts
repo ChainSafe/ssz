@@ -57,7 +57,7 @@ export async function testRunnerMemoryGc<T>(opts: TestRunnerMemoryOpts<T>): Prom
     usedMemoryArr.push(totalUsedMemoryDiff);
 
     const usedMemoryReg = linearRegression(xs, usedMemoryArr);
-    
+
     console.log("totalUsedMemoryDiff", totalUsedMemoryDiff, usedMemoryReg);
   }
 }
@@ -141,7 +141,6 @@ export function testRunnerMemory<T>(opts: TestRunnerMemoryOpts<T>): number {
         }
 
         if (logEachSample) {
-          
           console.log(i, memoryUsage.rss / maxRssBytes, {m});
         }
 

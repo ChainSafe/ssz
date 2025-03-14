@@ -1,5 +1,5 @@
 import {HashObject} from "@chainsafe/as-sha256";
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {HashComputationGroup, hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
 import {
   CompositeType,

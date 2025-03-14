@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {fromHexString, toHexString} from "../../../src/index.js";
 
 describe("util / byteArray / toHexString + fromHexString", () => {

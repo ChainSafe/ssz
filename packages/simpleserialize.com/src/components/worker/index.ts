@@ -1,7 +1,7 @@
-// 
+//
 
 import {expose} from "threads/worker";
-import {createRandomValue, getSSZType } from "./helpers";
+import {createRandomValue, getSSZType} from "./helpers";
 
 const worker = {
   createRandomValue(sszTypeName: string, forkName: string) {
@@ -14,9 +14,9 @@ const worker = {
     const serialized = type.serialize(input);
     const root = type.hashTreeRoot(input);
     return {serialized, root};
-  }
-}
+  },
+};
 
 export type SszWorker = typeof worker;
 
-expose(worker)
+expose(worker);

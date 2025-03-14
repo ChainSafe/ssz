@@ -1,10 +1,10 @@
-import {HashComputationLevel, Node, Tree } from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
 import {namedClass} from "../util/named.js";
 import {Require} from "../util/types.js";
-import {ArrayBasicTreeView, ArrayBasicType } from "../view/arrayBasic.js";
+import {ArrayBasicTreeView, ArrayBasicType} from "../view/arrayBasic.js";
 import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
-import {ByteViews, ValueOf } from "./abstract.js";
+import {ByteViews, ValueOf} from "./abstract.js";
 import {ArrayType} from "./array.js";
 import {
   tree_deserializeFromBytesArrayBasic,
@@ -13,8 +13,6 @@ import {
   value_serializeToBytesArrayBasic,
 } from "./arrayBasic.js";
 import {BasicType} from "./basic.js";
-
-
 
 export type VectorBasicOpts = {
   typeName?: string;
@@ -43,7 +41,11 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorBasicOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly length: number,
+    opts?: VectorBasicOpts
+  ) {
     super(elementType);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -76,7 +78,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    
+
     return new ArrayBasicTreeViewDU(this, node, cache as any);
   }
 

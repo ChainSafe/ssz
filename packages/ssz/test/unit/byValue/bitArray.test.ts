@@ -1,6 +1,6 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {BitVectorType} from "../../../src/index.js";
-import {BitArray, getUint8ByteToBitBooleanArray } from "../../../src/value/bitArray.js";
+import {BitArray, getUint8ByteToBitBooleanArray} from "../../../src/value/bitArray.js";
 import {linspace} from "../../utils/misc.js";
 
 const BITS_PER_BYTE = 8;

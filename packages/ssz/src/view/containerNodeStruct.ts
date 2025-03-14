@@ -5,8 +5,6 @@ import {isCompositeType} from "../type/composite.js";
 import {TreeView} from "./abstract.js";
 import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.js";
 
-
-
 /**
  * Intented usage:
  *
@@ -23,7 +21,10 @@ import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} f
  *
  */
 class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    readonly tree: Tree
+  ) {
     super();
   }
 

@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ListBasicType, UintNumberType} from "../../../../src/index.js";
 
 describe("To hit 100% coverage", () => {

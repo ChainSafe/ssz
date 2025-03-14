@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {UintNumberType, VectorBasicType} from "../../../../src/index.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
 

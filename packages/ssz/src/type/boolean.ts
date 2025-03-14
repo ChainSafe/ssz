@@ -4,8 +4,6 @@ import {Require} from "../util/types.js";
 import {ByteViews} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
-
-
 export interface BooleanOpts {
   typeName?: string;
 }

@@ -14,7 +14,7 @@ import {namedClass} from "../util/named.js";
 import {Case} from "../util/strings.js";
 import {Require} from "../util/types.js";
 import {getContainerTreeViewClass} from "../view/container.js";
-import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields } from "../view/container.js";
+import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields} from "../view/container.js";
 import {
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
@@ -22,7 +22,6 @@ import {
 } from "../viewDU/container.js";
 import {Type, ValueOf} from "./abstract.js";
 import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.js";
-
 
 type BytesRange = {start: number; end: number};
 
@@ -79,7 +78,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, readonly opts?: ContainerOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    readonly opts?: ContainerOptions<Fields>
+  ) {
     super(opts?.cachePermanentRootStruct);
 
     // Render detailed typeName. Consumers should overwrite since it can get long

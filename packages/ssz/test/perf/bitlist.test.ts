@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {BitArray, BitListType} from "../../src/index.js";
 
 // running zipIndexesCommitteeBits() on `bitLen: 2048, bitsSet: 2048` takes 50.904 us/op

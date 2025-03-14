@@ -34,30 +34,33 @@ export function runProofTestOnAllJsonPaths({
       continue;
     }
 
-    wrapErr(() => {
-      if (type.tree_createProofGindexes(node, [jsonPath]).length === 0) {
-        return;
-      }
+    wrapErr(
+      () => {
+        if (type.tree_createProofGindexes(node, [jsonPath]).length === 0) {
+          return;
+        }
 
-      const proof = type.tree_createProof(node, [jsonPath]);
-      const viewFromProof = type.createFromProof(proof, root);
+        const proof = type.tree_createProof(node, [jsonPath]);
+        const viewFromProof = type.createFromProof(proof, root);
 
-      const typeLeaf = getJsonPathType(type, jsonPath);
-      const viewLeafFromProof = getJsonPathView(type, viewFromProof, jsonPath);
-      const jsonLeaf = getJsonPathValue(type, json, jsonPath);
+        const typeLeaf = getJsonPathType(type, jsonPath);
+        const viewLeafFromProof = getJsonPathView(type, viewFromProof, jsonPath);
+        const jsonLeaf = getJsonPathValue(type, json, jsonPath);
 
-      const jsonLeafFromProof =
-        viewLeafFromProof == null
-          ? viewLeafFromProof
-          : typeLeaf.toJson(
-              isCompositeType(typeLeaf) ? typeLeaf.toValueFromView(viewLeafFromProof) : viewLeafFromProof
-            );
+        const jsonLeafFromProof =
+          viewLeafFromProof == null
+            ? viewLeafFromProof
+            : typeLeaf.toJson(
+                isCompositeType(typeLeaf) ? typeLeaf.toValueFromView(viewLeafFromProof) : viewLeafFromProof
+              );
 
-      expect(jsonLeafFromProof).to.deep.equal(jsonLeaf, "Wrong value fromProof");
+        expect(jsonLeafFromProof).to.deep.equal(jsonLeaf, "Wrong value fromProof");
 
-      // TODO: Ensure the value is the same
-      viewFromProof;
-    }, `Proof JSON path ${JSON.stringify(jsonPath)}`);
+        // TODO: Ensure the value is the same
+        viewFromProof;
+      },
+      `Proof JSON path ${JSON.stringify(jsonPath)}`
+    );
   }
 }
 
@@ -114,7 +117,6 @@ function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unkno
 function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
-      
       type = type.elementType;
     }
     if (typeof jsonProp === "number") {
@@ -146,7 +148,6 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
 function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
-      
       type = type.elementType;
     }
     if (typeof jsonProp === "number") {

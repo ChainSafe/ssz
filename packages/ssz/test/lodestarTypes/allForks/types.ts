@@ -1,4 +1,4 @@
-import {CompositeType, CompositeView, CompositeViewDU, ContainerType, ValueOf } from "../../../src/index.js";
+import {CompositeType, CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src/index.js";
 import {ts as altair} from "../altair/index.js";
 import {ts as bellatrix} from "../bellatrix/index.js";
 import {ts as capella} from "../capella/index.js";

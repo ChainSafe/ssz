@@ -40,7 +40,6 @@ import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.js";
 import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
 import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
 
-
 type BytesRange = {start: number; end: number};
 
 export type ProfileOptions<Fields extends Record<string, unknown>> = {
@@ -96,7 +95,11 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   // temporary root to avoid memory allocation
   private tempRoot = new Uint8Array(32);
 
-  constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    activeFields: BitArray,
+    readonly opts?: ProfileOptions<Fields>
+  ) {
     super();
 
     // Render detailed typeName. Consumers should overwrite since it can get long

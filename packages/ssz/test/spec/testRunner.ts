@@ -4,11 +4,6 @@ import jsyaml from "js-yaml";
 import {uncompress} from "snappyjs";
 import {schema} from "./sszYamlSchema.js";
 
-
-  @typescript-eslint/explicit-module-boundary-types,
-  @typescript-eslint/explicit-function-return-type
-*/
-
 export type ValidTestCaseData = {
   root: string;
   serialized: Uint8Array;

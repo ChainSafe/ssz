@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {ContainerType, UintNumberType, VectorBasicType} from "../../src/index.js";
 
 describe("SSZ get property", () => {

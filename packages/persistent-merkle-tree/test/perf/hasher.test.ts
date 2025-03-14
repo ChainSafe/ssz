@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
 import {HashObject, Hasher, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.js";

@@ -1,4 +1,4 @@
-import {BitArray, BitVectorType } from "../../../../src/index.js";
+import {BitArray, BitVectorType} from "../../../../src/index.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({

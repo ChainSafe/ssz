@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src/index.js";
 import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";

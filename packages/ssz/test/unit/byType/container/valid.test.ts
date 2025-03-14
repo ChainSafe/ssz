@@ -1,4 +1,4 @@
-import {ByteVectorType, ContainerNodeStructType, ContainerType, ListBasicType } from "../../../../src/index.js";
+import {ByteVectorType, ContainerNodeStructType, ContainerType, ListBasicType} from "../../../../src/index.js";
 import {SignedContributionAndProof} from "../../../lodestarTypes/altair/sszTypes.js";
 import {ssz} from "../../../lodestarTypes/index.js";
 import {replaceUintTypeWithUintBigintType} from "../../../spec/replaceUintTypeWithUintBigintType.js";

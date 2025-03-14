@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {BitListType, BitVectorType, ContainerType} from "../../../src/index.js";
 
 /** Pick bitLen to fill 2 nodes */

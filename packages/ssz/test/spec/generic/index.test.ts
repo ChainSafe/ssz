@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ethereumConsensusSpecsTests} from "../../specTestVersioning.js";
 import {runValidSszTest} from "../runValidTest.js";
-import {parseSszGenericInvalidTestcase, parseSszGenericValidTestcase } from "../testRunner.js";
+import {parseSszGenericInvalidTestcase, parseSszGenericValidTestcase} from "../testRunner.js";
 import {getTestType} from "./types.js";
 
 const rootGenericSszPath = path.join(
@@ -35,7 +35,6 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         const type = getTestType(testType, invalidCase);
         const testData = parseSszGenericInvalidTestcase(path.join(invalidCasesPath, invalidCase));
 
-        
         if (process.env.DEBUG) {
           console.log({serialized: Buffer.from(testData.serialized).toString("hex")});
         }

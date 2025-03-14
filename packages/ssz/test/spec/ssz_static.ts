@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {describe, it, vi} from "vitest";
-import {Type, isCompositeType } from "../../src/index.js";
+import {Type, isCompositeType} from "../../src/index.js";
 import {ssz} from "../lodestarTypes/index.js";
 import {ACTIVE_PRESET} from "../lodestarTypes/params.js";
 import {ethereumConsensusSpecsTests} from "../specTestVersioning.js";
@@ -19,15 +19,6 @@ import {parseSszStaticTestcase} from "./testRunner.js";
 //     | value.yaml
 //
 // Docs: https://github.com/ethereum/consensus-specs/blob/master/tests/formats/ssz_static/core.md
-
-
-  @typescript-eslint/naming-convention,
-  @typescript-eslint/no-unsafe-assignment,
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access,
-  no-console
-*/
-
 
 type Types = Record<string, Type<any>>;
 

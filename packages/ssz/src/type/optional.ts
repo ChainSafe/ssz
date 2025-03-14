@@ -11,10 +11,9 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {namedClass} from "../util/named.js";
 import {Require} from "../util/types.js";
-import {ByteViews, JsonPath, JsonPathProp, Type } from "./abstract.js";
+import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.js";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {CompositeType, isCompositeType} from "./composite.js";
-
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
 export type NonOptionalFields<Fields extends Record<string, Type<unknown>>> = {
@@ -55,7 +54,10 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.mixInLengthBlockBytes.byteLength
   );
 
-  constructor(readonly elementType: ElementType, opts?: OptionalOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    opts?: OptionalOpts
+  ) {
     super();
 
     this.typeName = opts?.typeName ?? `Optional[${elementType.typeName}]`;

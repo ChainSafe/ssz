@@ -1,10 +1,10 @@
-import {HashComputationLevel, Node, Tree } from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
 import {namedClass} from "../util/named.js";
 import {Require} from "../util/types.js";
-import {ArrayCompositeTreeView, ArrayCompositeType } from "../view/arrayComposite.js";
+import {ArrayCompositeTreeView, ArrayCompositeType} from "../view/arrayComposite.js";
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
-import {ByteViews, ValueOf } from "./abstract.js";
+import {ByteViews, ValueOf} from "./abstract.js";
 import {ArrayType} from "./array.js";
 import {
   maxSizeArrayComposite,
@@ -19,8 +19,6 @@ import {
 } from "./arrayComposite.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
 
-
-
 export type VectorCompositeOpts = {
   typeName?: string;
 };
@@ -33,8 +31,7 @@ export type VectorCompositeOpts = {
  * - Composite types are always returned as views
  */
 export class VectorCompositeType<
-    
-    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
   >
   extends ArrayType<ElementType, ArrayCompositeTreeView<ElementType>, ArrayCompositeTreeViewDU<ElementType>>
   implements ArrayCompositeType<ElementType>
@@ -51,7 +48,11 @@ export class VectorCompositeType<
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorCompositeOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly length: number,
+    opts?: VectorCompositeOpts
+  ) {
     super(elementType);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
@@ -68,7 +69,6 @@ export class VectorCompositeType<
     this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
-  
   static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
@@ -83,7 +83,7 @@ export class VectorCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ArrayCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    
+
     return new ArrayCompositeTreeViewDU(this, node, cache as any);
   }
 

@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {NoneType, UintNumberType, UnionType, ValueOf, toHexString} from "../../../../src/index.js";
 
 const byteType = new UintNumberType(1);

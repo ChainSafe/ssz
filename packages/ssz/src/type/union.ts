@@ -11,12 +11,10 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {namedClass} from "../util/named.js";
 import {Require} from "../util/types.js";
-import {ByteViews, Type } from "./abstract.js";
+import {ByteViews, Type} from "./abstract.js";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {CompositeType, isCompositeType} from "./composite.js";
 import {NoneType} from "./none.js";
-
-
 
 type Union<T> = {
   readonly selector: number;
@@ -58,7 +56,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
 
   protected readonly maxSelector: number;
 
-  constructor(readonly types: Types, opts?: UnionOpts) {
+  constructor(
+    readonly types: Types,
+    opts?: UnionOpts
+  ) {
     super();
 
     if (types.length >= 128) {

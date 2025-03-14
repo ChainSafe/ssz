@@ -42,8 +42,7 @@ import {
 } from "../viewDU/stableContainer.js";
 import {JsonPath, Type, ValueOf} from "./abstract.js";
 import {ByteViews, CompositeType, CompositeTypeAny, isCompositeType} from "./composite.js";
-import {NonOptionalFields, isOptionalType, toNonOptionalType } from "./optional.js";
-
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
 
 type BytesRange = {start: number; end: number};
 
@@ -101,7 +100,11 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   // temporary root to avoid memory allocation
   private tempRoot = new Uint8Array(32);
 
-  constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
+  constructor(
+    fields: Fields,
+    readonly maxFields: number,
+    readonly opts?: StableContainerOptions<Fields>
+  ) {
     super();
 
     this.fields = fields;

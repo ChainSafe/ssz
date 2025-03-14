@@ -1,4 +1,4 @@
-import {Node, getNodesAtDepth, subtreeFillToContents, zeroNode } from "@chainsafe/persistent-merkle-tree";
+import {Node, getNodesAtDepth, subtreeFillToContents, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
 import {PartialListCompositeType} from "../type/partialListComposite.js";
@@ -13,7 +13,7 @@ import {ListCompositeTreeViewDU} from "./listComposite.js";
  * Note that the backed tree is not a full tree, but a partial tree created from a snapshot.
  */
 export class PartialListCompositeTreeViewDU<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends ListCompositeTreeViewDU<ElementType> {
   private snapshot: Snapshot;
 

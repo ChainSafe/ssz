@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ContainerType} from "../../../../src/type/container.js";
 import {ListCompositeType} from "../../../../src/type/listComposite.js";
 import {ssz} from "../../../lodestarTypes/index.js";

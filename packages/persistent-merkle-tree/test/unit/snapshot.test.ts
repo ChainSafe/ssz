@@ -1,9 +1,9 @@
-import {describe, expect, it } from "vitest";
-import { toGindex } from "../../src/index.js";
-import { LeafNode } from "../../src/node.js";
+import {describe, expect, it} from "vitest";
+import {toGindex} from "../../src/index.js";
+import {LeafNode} from "../../src/node.js";
 import {fromSnapshot, indexToFinalizedGindices, toSnapshot} from "../../src/snapshot.js";
 import {subtreeFillToContents} from "../../src/subtree.js";
-import { Tree, setNodesAtDepth } from "../../src/tree.js";
+import {Tree, setNodesAtDepth} from "../../src/tree.js";
 
 describe("toSnapshot and fromSnapshot", () => {
   const depth = 4;

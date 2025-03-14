@@ -1,7 +1,7 @@
 import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex.js";
 import {HashComputationLevel, levelAtIndex} from "./hashComputation.js";
-import {BranchNode, LeafNode, Node } from "./node.js";
-import {Proof, ProofInput, createNodeFromProof, createProof } from "./proof/index.js";
+import {BranchNode, LeafNode, Node} from "./node.js";
+import {Proof, ProofInput, createNodeFromProof, createProof} from "./proof/index.js";
 import {createSingleProof} from "./proof/single.js";
 import {zeroNode} from "./zeroNode.js";
 

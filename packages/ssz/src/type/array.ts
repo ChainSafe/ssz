@@ -1,5 +1,5 @@
 import {Gindex, Node, concatGindices, getNode, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf } from "./abstract.js";
+import {Type, ValueOf} from "./abstract.js";
 import {
   ArrayProps,
   value_cloneArray,
@@ -8,9 +8,7 @@ import {
   value_fromJsonArray,
   value_toJsonArray,
 } from "./arrayBasic.js";
-import {CompositeType, LENGTH_GINDEX, isCompositeType } from "./composite.js";
-
-
+import {CompositeType, LENGTH_GINDEX, isCompositeType} from "./composite.js";
 
 /**
  * Array: ordered homogeneous collection
@@ -23,7 +21,10 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
   abstract readonly itemsPerChunk: number;
   protected abstract readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, cachePermanentRootStruct?: boolean) {
+  constructor(
+    readonly elementType: ElementType,
+    cachePermanentRootStruct?: boolean
+  ) {
     super(cachePermanentRootStruct);
   }
 

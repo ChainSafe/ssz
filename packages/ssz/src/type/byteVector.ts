@@ -11,8 +11,6 @@ export interface ByteVectorOptions {
   typeName?: string;
 }
 
-
-
 /**
  * ByteVector: Immutable alias of Vector[byte, N]
  * - Notation: `ByteVector[N]`
@@ -36,7 +34,10 @@ export class ByteVectorType extends ByteArrayType {
   readonly maxChunkCount: number;
   readonly isList = false;
 
-  constructor(readonly lengthBytes: number, opts?: ByteVectorOptions) {
+  constructor(
+    readonly lengthBytes: number,
+    opts?: ByteVectorOptions
+  ) {
     super();
 
     if (lengthBytes === 0) throw Error("Vector length must be > 0");

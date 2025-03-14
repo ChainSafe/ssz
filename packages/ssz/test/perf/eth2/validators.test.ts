@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {BranchNodeStruct, CompositeViewDU, ContainerNodeStructTreeViewDU} from "../../../src/index.js";
 import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes.js";
 import {Validator} from "../../lodestarTypes/phase0/types.js";

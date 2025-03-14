@@ -4,8 +4,6 @@ import {Require} from "../util/types.js";
 import {ByteViews} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
-
-
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
 const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);
 const BIGINT_2_POW_128 = BigInt(2) ** BigInt(128);
@@ -51,7 +49,10 @@ export class UintNumberType extends BasicType<number> {
   private readonly clipInfinity: boolean;
   private readonly setBitwiseOR: boolean;
 
-  constructor(readonly byteLength: UintNumberByteLen, opts?: UintNumberOpts) {
+  constructor(
+    readonly byteLength: UintNumberByteLen,
+    opts?: UintNumberOpts
+  ) {
     super();
 
     if (byteLength > 8) {
@@ -245,7 +246,10 @@ export class UintBigintType extends BasicType<bigint> {
   readonly minSize: number;
   readonly maxSize: number;
 
-  constructor(readonly byteLength: UintBigintByteLen, opts?: UintBigintOpts) {
+  constructor(
+    readonly byteLength: UintBigintByteLen,
+    opts?: UintBigintOpts
+  ) {
     super();
 
     if (byteLength > 32) {

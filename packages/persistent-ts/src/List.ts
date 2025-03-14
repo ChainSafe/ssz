@@ -14,7 +14,6 @@ const EMPTY_NODE = {next: null};
  * Because a List is Iterable, you can loop over it using `for of` and use the spread operator.
  */
 export class List<T> implements Iterable<T> {
-  
   private constructor(private readonly _node: Node<T>) {}
 
   /**
@@ -126,7 +125,6 @@ export class List<T> implements Iterable<T> {
    * @param amount the number of elements to drop
    */
   drop(amount: number): List<T> {
-    
     let list: List<T> = this;
     for (let i = 0; i < amount; ++i) {
       if (list.isEmpty()) break;

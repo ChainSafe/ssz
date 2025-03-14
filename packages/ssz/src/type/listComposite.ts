@@ -17,7 +17,7 @@ import {Require} from "../util/types.js";
 import {ArrayCompositeType} from "../view/arrayComposite.js";
 import {ListCompositeTreeView} from "../view/listComposite.js";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite.js";
-import {ByteViews, ValueOf } from "./abstract.js";
+import {ByteViews, ValueOf} from "./abstract.js";
 import {ArrayType} from "./array.js";
 import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.js";
 import {
@@ -30,8 +30,6 @@ import {
   value_serializedSizeArrayComposite,
 } from "./arrayComposite.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
-
-
 
 export interface ListCompositeOpts {
   typeName?: string;
@@ -46,8 +44,7 @@ export interface ListCompositeOpts {
  * - Composite types are always returned as views
  */
 export class ListCompositeType<
-    
-    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
   >
   extends ArrayType<ElementType, ListCompositeTreeView<ElementType>, ListCompositeTreeViewDU<ElementType>>
   implements ArrayCompositeType<ElementType>
@@ -71,7 +68,11 @@ export class ListCompositeType<
   );
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListCompositeOpts
+  ) {
     super(elementType, opts?.cachePermanentRootStruct);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
@@ -87,7 +88,6 @@ export class ListCompositeType<
     this.maxSize = maxSizeArrayComposite(elementType, this.limit);
   }
 
-  
   static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
@@ -102,7 +102,7 @@ export class ListCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ListCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    
+
     return new ListCompositeTreeViewDU(this, node, cache as any);
   }
 

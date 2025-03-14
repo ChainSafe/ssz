@@ -1,6 +1,6 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {countToDepth, getHashComputations, subtreeFillToContents} from "../../src/index.js";
-import {BranchNode, LeafNode, getNodeH } from "../../src/node.js";
+import {BranchNode, LeafNode, getNodeH} from "../../src/node.js";
 import {batchHash} from "../utils/batchHash.js";
 
 describe("HashObject LeafNode", () => {

@@ -1,4 +1,4 @@
-import {byteArrayIntoHashObject, digest64HashObjects } from "@chainsafe/as-sha256";
+import {byteArrayIntoHashObject, digest64HashObjects} from "@chainsafe/as-sha256";
 import {sha256} from "@noble/hashes/sha256";
 import type {Hasher} from "./types.js";
 import {

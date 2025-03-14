@@ -5,7 +5,7 @@ import {
   ListCompositeType,
   VectorCompositeType,
 } from "../../../src/index.js";
-import {FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT, preset } from "../params.js";
+import {FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT, preset} from "../params.js";
 const {
   SYNC_COMMITTEE_SIZE,
   HISTORICAL_ROOTS_LIMIT,

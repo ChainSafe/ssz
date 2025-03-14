@@ -10,7 +10,10 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   /** Cached BitArray instance computed only on demand */
   private _bitArray: BitArray | null = null;
 
-  constructor(readonly type: CompositeType<BitArray, unknown, unknown>, protected _rootNode: Node) {
+  constructor(
+    readonly type: CompositeType<BitArray, unknown, unknown>,
+    protected _rootNode: Node
+  ) {
     super();
   }
 

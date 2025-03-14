@@ -1,5 +1,5 @@
 import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
-import {LeafNode, Node, countToDepth, getHashComputations, subtreeFillToContents, zeroNode } from "../../src/index.js";
+import {LeafNode, Node, countToDepth, getHashComputations, subtreeFillToContents, zeroNode} from "../../src/index.js";
 import {batchHash} from "../utils/batchHash.js";
 import {MemoryTracker} from "../utils/memTracker.js";
 

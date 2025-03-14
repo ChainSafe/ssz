@@ -1,4 +1,4 @@
-import {HashComputationLevel, LeafNode, Node, Tree, getNodesAtDepth } from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, LeafNode, Node, Tree, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {BasicType} from "../type/basic.js";
 import {CompositeType} from "../type/composite.js";
@@ -38,7 +38,10 @@ export type ArrayType = {
 };
 
 export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends TreeView<ArrayBasicType<ElementType>> {
-  constructor(readonly type: ArrayBasicType<ElementType>, protected tree: Tree) {
+  constructor(
+    readonly type: ArrayBasicType<ElementType>,
+    protected tree: Tree
+  ) {
     super();
   }
 
@@ -61,7 +64,6 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     const leafNode = this.tree.getNodeAtDepth(this.type.depth, chunkIndex) as LeafNode;
 
-    
     return this.type.elementType.tree_getFromPackedNode(leafNode, index) as ValueOf<ElementType>;
   }
 

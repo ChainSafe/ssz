@@ -1,5 +1,5 @@
 import {digestNLevel} from "@chainsafe/persistent-merkle-tree";
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ContainerType} from "../../../../../ssz/src/type/container.js";
 import {ssz} from "../../../lodestarTypes/index.js";
 import {Validator} from "../../../lodestarTypes/phase0/sszTypes.js";

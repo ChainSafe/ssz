@@ -1,4 +1,4 @@
-import {HashComputationLevel, Node } from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node} from "@chainsafe/persistent-merkle-tree";
 import {BranchNodeStruct} from "../branchNodeStruct.js";
 import {Type, ValueOf} from "../type/abstract.js";
 import {isCompositeType} from "../type/composite.js";
@@ -6,15 +6,16 @@ import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
 import {TreeViewDU} from "./abstract.js";
 import {ContainerTreeViewDUTypeConstructor} from "./container.js";
 
-
-
 export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>
 > {
   protected valueChanged: ValueOfFields<Fields> | null = null;
   protected _rootNode: BranchNodeStruct<ValueOfFields<Fields>>;
 
-  constructor(readonly type: ContainerTypeGeneric<Fields>, node: Node) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    node: Node
+  ) {
     super();
     this._rootNode = node as BranchNodeStruct<ValueOfFields<Fields>>;
   }
@@ -74,7 +75,6 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeViewDU): ValueOf<Fields[keyof Fields]> {
-          
           return (this.valueChanged || this._rootNode.value)[fieldName];
         },
 

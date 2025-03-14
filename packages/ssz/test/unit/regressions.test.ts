@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {
   BitArray,
   BitListType,
@@ -15,8 +15,6 @@ import {
 import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
 
 // Compilation of various issues from SSZ and Lodestar libs
-
-
 
 describe("Regressions / known issues", () => {
   it("SyncCommitteeBits hashTreeRoot consistency", function () {

@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {LeafNode, Tree, iterateAtDepth, subtreeFillToDepth} from "../../src/index.js";
 
 describe("Tree", () => {

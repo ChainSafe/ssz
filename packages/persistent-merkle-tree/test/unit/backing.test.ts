@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {LeafNode, Tree, subtreeFillToDepth} from "../../src/index.js";
 
 describe("get", () => {

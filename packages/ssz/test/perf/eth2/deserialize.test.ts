@@ -1,5 +1,5 @@
-import {bench, describe } from "@chainsafe/benchmark";
-import {CompositeType, TreeViewDU, ValueOf, isCompositeType } from "../../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {CompositeType, TreeViewDU, ValueOf, isCompositeType} from "../../../src/index.js";
 import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
 import {BeaconState} from "../../lodestarTypes/altair/types.js";
 import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";

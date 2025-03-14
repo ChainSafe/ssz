@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ByteVectorType, ContainerType} from "../../../../src/index.js";
 
 describe("ByteVectorType proofs", () => {

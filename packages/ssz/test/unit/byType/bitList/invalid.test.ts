@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {BitListType} from "../../../../src/index.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 

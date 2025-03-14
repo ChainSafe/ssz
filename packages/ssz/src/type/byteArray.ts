@@ -7,13 +7,11 @@ import {
   getHashComputations,
   toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {byteArrayEquals, fromHexString, toHexString } from "../util/byteArray.js";
+import {byteArrayEquals, fromHexString, toHexString} from "../util/byteArray.js";
 import {ByteViews} from "./abstract.js";
 import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 
 export type ByteArray = Uint8Array;
-
-
 
 /**
  * ByteArray: ordered array collection of byte values

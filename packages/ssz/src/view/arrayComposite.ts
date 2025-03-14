@@ -1,4 +1,4 @@
-import {Node, Tree, getNodesAtDepth, toGindexBitstring } from "@chainsafe/persistent-merkle-tree";
+import {Node, Tree, getNodesAtDepth, toGindexBitstring} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
 import {TreeView} from "./abstract.js";
@@ -6,7 +6,7 @@ import {ArrayType} from "./arrayBasic.js";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayCompositeType<
-  ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > = CompositeType<ValueOf<ElementType>[], unknown, unknown> &
   ArrayType & {
     readonly elementType: ElementType;
@@ -14,9 +14,12 @@ export type ArrayCompositeType<
   };
 
 export class ArrayCompositeTreeView<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends TreeView<ArrayCompositeType<ElementType>> {
-  constructor(readonly type: ArrayCompositeType<ElementType>, protected tree: Tree) {
+  constructor(
+    readonly type: ArrayCompositeType<ElementType>,
+    protected tree: Tree
+  ) {
     super();
   }
 

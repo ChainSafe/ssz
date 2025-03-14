@@ -1,6 +1,6 @@
-import {beforeEach, describe, expect, it } from "vitest";
+import {beforeEach, describe, expect, it} from "vitest";
 import {HashComputationLevel} from "../../src/hashComputation.js";
-import {Node, zeroNode } from "../../src/index.js";
+import {Node, zeroNode} from "../../src/index.js";
 
 describe("HashComputationLevel", () => {
   let hashComputationLevel: HashComputationLevel;

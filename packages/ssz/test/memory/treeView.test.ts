@@ -81,7 +81,6 @@ function testRunnerMemoryBpi(testCases: TestCase[]): void {
       convergeFactor: 0.2 / 100,
     });
 
-    
     console.log(`${id.padEnd(longestId)} - ${bpi.toFixed(1)} bytes / instance`);
   }
 }

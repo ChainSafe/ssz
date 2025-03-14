@@ -13,7 +13,11 @@ import {ListBasicType} from "../view/listBasic.js";
 import {ArrayBasicTreeViewDU, ArrayBasicTreeViewDUCache} from "./arrayBasic.js";
 
 export class ListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends ArrayBasicTreeViewDU<ElementType> {
-  constructor(readonly type: ListBasicType<ElementType>, protected _rootNode: Node, cache?: ArrayBasicTreeViewDUCache) {
+  constructor(
+    readonly type: ListBasicType<ElementType>,
+    protected _rootNode: Node,
+    cache?: ArrayBasicTreeViewDUCache
+  ) {
     super(type, _rootNode, cache);
   }
 

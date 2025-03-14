@@ -1,5 +1,5 @@
 import {Tree, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {ListCompositeType} from "../../src/index.js";
 import {ByteVectorType} from "../../src/type/byteVector.js";
 import {PartialListCompositeType} from "../../src/type/partialListComposite.js";

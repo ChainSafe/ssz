@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 
 describe("Access object properties in generated objects", () => {
   const rawObject = {

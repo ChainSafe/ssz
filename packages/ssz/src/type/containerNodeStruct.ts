@@ -5,7 +5,7 @@ import {Require} from "../util/types.js";
 import {ValueOfFields} from "../view/container.js";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct.js";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.js";
-import {ByteViews, Type } from "./abstract.js";
+import {ByteViews, Type} from "./abstract.js";
 import {isCompositeType} from "./composite.js";
 import {ContainerOptions, ContainerType, renderContainerTypeName} from "./container.js";
 
@@ -24,7 +24,10 @@ import {ContainerOptions, ContainerType, renderContainerTypeName} from "./contai
  * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
  */
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
-  constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    opts?: ContainerOptions<Fields>
+  ) {
     super(fields, {
       // Overwrite default "Container" typeName
       // Render detailed typeName. Consumers should overwrite since it can get long

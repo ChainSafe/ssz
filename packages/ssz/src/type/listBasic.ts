@@ -24,8 +24,6 @@ import {
 import {BasicType} from "./basic.js";
 import {ByteViews} from "./composite.js";
 
-
-
 export interface ListBasicOpts {
   typeName?: string;
   cachePermanentRootStruct?: boolean;
@@ -60,7 +58,11 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   );
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListBasicOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListBasicOpts
+  ) {
     super(elementType, opts?.cachePermanentRootStruct);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -91,7 +93,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ListBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    
+
     return new ListBasicTreeViewDU(this, node, cache as any);
   }
 

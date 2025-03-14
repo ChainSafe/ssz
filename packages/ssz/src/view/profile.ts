@@ -8,8 +8,8 @@ import {
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract.js";
-import {BasicType, isBasicType } from "../type/basic.js";
-import {CompositeType, isCompositeType } from "../type/composite.js";
+import {BasicType, isBasicType} from "../type/basic.js";
+import {CompositeType, isCompositeType} from "../type/composite.js";
 import {NonOptionalFields} from "../type/optional.js";
 import {BitArray} from "../value/bitArray.js";
 import {TreeView} from "./abstract.js";
@@ -42,9 +42,9 @@ export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
     ? // If composite, return view. MAY propagate changes updwards
       TV
     : // If basic, return struct value. Will NOT propagate changes upwards
-    Fields[K] extends BasicType<infer V>
-    ? V
-    : never;
+      Fields[K] extends BasicType<infer V>
+      ? V
+      : never;
 };
 
 export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
@@ -69,7 +69,10 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *
  */
 class ProfileTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    readonly tree: Tree
+  ) {
     super();
   }
 

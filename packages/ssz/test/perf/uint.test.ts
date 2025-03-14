@@ -1,5 +1,5 @@
-import {bench, describe } from "@chainsafe/benchmark";
-import {ContainerType, UintBigintType, UintNumberType } from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {ContainerType, UintBigintType, UintNumberType} from "../../src/index.js";
 
 describe("Uint64 types", () => {
   const ContainerNumber = new ContainerType({

@@ -1,6 +1,6 @@
 import {Gindex} from "../gindex.js";
 import {Node} from "../node.js";
-import {createCompactMultiProof, createNodeFromCompactMultiProof } from "./compactMulti.js";
+import {createCompactMultiProof, createNodeFromCompactMultiProof} from "./compactMulti.js";
 import {createMultiProof, createNodeFromMultiProof} from "./multi.js";
 import {createNodeFromSingleProof, createSingleProof} from "./single.js";
 import {

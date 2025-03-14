@@ -1,6 +1,3 @@
-
-, @typescript-eslint/no-explicit-any */
-
 // #######################################
 // # MUST NOT IMPORT FROM @chainsafe/ssz #
 // #######################################

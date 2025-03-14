@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset.js";
 import {zeroNode} from "../../../src/zeroNode.js";
 

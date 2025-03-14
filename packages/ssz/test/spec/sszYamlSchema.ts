@@ -7,7 +7,6 @@
 import jsYaml from "js-yaml";
 const {Schema} = jsYaml;
 
-
 // @ts-ignore
 import nullType from "js-yaml/lib/js-yaml/type/null.js";
 
@@ -178,25 +177,24 @@ const intType = new Type("tag:yaml.org,2002:int", {
   construct: constructYamlInteger,
   predicate: isInteger,
   instanceOf: BigInt,
-  
+
   // @ts-ignore
   represent: {
-    
     // @ts-ignore
     binary: function binary(obj: number) {
       return obj >= 0 ? "0b" + obj.toString(2) : "-0b" + obj.toString(2).slice(1);
     },
-    
+
     // @ts-ignore
     octal: function octal(obj: number) {
       return obj >= 0 ? "0" + obj.toString(8) : "-0" + obj.toString(8).slice(1);
     },
-    
+
     // @ts-ignore
     decimal: function decimal(obj: number) {
       return obj.toString(10);
     },
-    
+
     // @ts-ignore
     hexadecimal: function hexadecimal(obj: number) {
       return obj >= 0 ? "0x" + obj.toString(16).toUpperCase() : "-0x" + obj.toString(16).toUpperCase().slice(1);

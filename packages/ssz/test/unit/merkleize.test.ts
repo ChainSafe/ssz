@@ -1,5 +1,5 @@
-import {LeafNode, merkleizeBlockArray, merkleizeBlocksBytes, zeroHash } from "@chainsafe/persistent-merkle-tree";
-import {describe, expect, it } from "vitest";
+import {LeafNode, merkleizeBlockArray, merkleizeBlocksBytes, zeroHash} from "@chainsafe/persistent-merkle-tree";
+import {describe, expect, it} from "vitest";
 import {bitLength, maxChunksToDepth, merkleize, mixInLength, nextPowerOf2} from "../../src/util/merkleize.js";
 
 describe("util / merkleize / bitLength", () => {

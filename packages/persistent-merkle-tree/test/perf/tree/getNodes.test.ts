@@ -1,4 +1,4 @@
-import {beforeAll, bench, describe } from "@chainsafe/benchmark";
+import {beforeAll, bench, describe} from "@chainsafe/benchmark";
 import {
   BranchNode,
   LeafNode,

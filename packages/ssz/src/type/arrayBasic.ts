@@ -8,7 +8,7 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type, ValueOf } from "./abstract.js";
+import {ByteViews, Type, ValueOf} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
 // There's a matrix of Array-ish types that require a combination of this functions.

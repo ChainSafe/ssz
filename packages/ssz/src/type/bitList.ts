@@ -10,11 +10,9 @@ import {maxChunksToDepth} from "../util/merkleize.js";
 import {namedClass} from "../util/named.js";
 import {Require} from "../util/types.js";
 import {BitArray} from "../value/bitArray.js";
-import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode } from "./arrayBasic.js";
+import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {BitArrayType} from "./bitArray.js";
 import {ByteViews} from "./composite.js";
-
-
 
 export interface BitListOptions {
   typeName?: string;
@@ -43,7 +41,10 @@ export class BitListType extends BitArrayType {
     this.mixInLengthBlockBytes.byteLength
   );
 
-  constructor(readonly limitBits: number, opts?: BitListOptions) {
+  constructor(
+    readonly limitBits: number,
+    opts?: BitListOptions
+  ) {
     super();
 
     if (limitBits === 0) throw Error("List limit must be > 0");
@@ -196,7 +197,7 @@ function applyPaddingBit(output: Uint8Array, offset: number, bitLen: number): nu
     output[newOffset] = 1;
     return newOffset + 1;
   } else {
-    output[newOffset - 1] |= 1 << bitLen % 8;
+    output[newOffset - 1] |= 1 << (bitLen % 8);
     return newOffset;
   }
 }

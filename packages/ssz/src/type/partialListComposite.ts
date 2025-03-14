@@ -14,10 +14,13 @@ import {ListCompositeOpts, ListCompositeType} from "./listComposite.js";
  * It'll throw errors for all other methods, most of the usage is in the ViewDU class.
  */
 export class PartialListCompositeType<
-  
-  ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends ListCompositeType<ElementType> {
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListCompositeOpts
+  ) {
     super(elementType, limit, opts);
 
     // only inherit methods in ArrayType of ../view/arrayBasic.ts

@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 
 import {KeyCase} from "../../src/type/container.js";
 import {Case} from "../../src/util/strings.js";

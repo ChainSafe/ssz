@@ -1,5 +1,5 @@
-import {describe, expect, it } from "vitest";
-import {BitArray, BitListType, BitVectorType } from "../../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {BitArray, BitListType, BitVectorType} from "../../../../src/index.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
 
 for (const type of [new BitVectorType(4), new BitListType(4)]) {

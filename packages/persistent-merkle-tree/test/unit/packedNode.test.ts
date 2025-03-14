@@ -1,7 +1,11 @@
 import type {HashObject} from "@chainsafe/as-sha256";
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {LeafNode, Node} from "../../src/index.js";
-import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes, packedUintNum64sToLeafNodes} from "../../src/packedNode.js";
+import {
+  packedNodeRootsToBytes,
+  packedRootsBytesToLeafNodes,
+  packedUintNum64sToLeafNodes,
+} from "../../src/packedNode.js";
 
 describe("subtree / packedNode single node", () => {
   const testCases: {

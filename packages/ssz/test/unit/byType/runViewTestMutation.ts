@@ -1,5 +1,5 @@
-import {describe, expect, it } from "vitest";
-import {CompositeType, CompositeViewDU, TreeViewDU, ValueOf } from "../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {CompositeType, CompositeViewDU, TreeViewDU, ValueOf} from "../../../src/index.js";
 import {toHexString} from "../../../src/util/byteArray.js";
 
 export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = {
@@ -50,7 +50,6 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
     }
   }
 
-  
   const describeFn = opts?.only ? describe.only : opts?.skip ? describe.skip : describe;
 
   describeFn(`${type.typeName} TreeView mutations`, () => {

@@ -1,5 +1,5 @@
 import {Node, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, ValueOf } from "./abstract.js";
+import {ByteViews, ValueOf} from "./abstract.js";
 import {addLengthNode, assertValidArrayLength} from "./arrayBasic.js";
 import {CompositeType} from "./composite.js";
 
@@ -92,7 +92,7 @@ export function value_serializeToBytesArrayComposite<ElementType extends Composi
 }
 
 export function value_deserializeFromBytesArrayComposite<
-  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>
+  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>,
 >(
   elementType: ElementType,
   data: ByteViews,

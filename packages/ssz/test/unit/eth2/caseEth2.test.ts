@@ -1,4 +1,4 @@
-import {describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 import {precomputeJsonKey} from "../../../src/type/container.js";
 
 describe("JSON case eth2", () => {

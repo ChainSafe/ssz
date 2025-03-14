@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {
   BitArray,
   BitListType,
@@ -95,10 +95,9 @@ describe("SSZ (de)serialize", () => {
     type: T,
     getValue?: () => ValueOf<T>
   ): void {
-    
     const struct = getValue ? getValue() : type.defaultValue();
     const bytes = type.serialize(struct);
-    
+
     const view = type.toView(struct);
 
     bench(`${id} binary -> struct`, () => {

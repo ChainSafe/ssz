@@ -1,4 +1,4 @@
-import {bench, describe } from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.js";
 
 describe("gindices at depth", () => {
@@ -18,7 +18,6 @@ describe("gindices at depth", () => {
 
   bench("iterateAtDepth", () => {
     for (let gindex of iterateAtDepth(depth, BigInt(startIx), BigInt(count))) {
-      
       gindex++;
     }
   });

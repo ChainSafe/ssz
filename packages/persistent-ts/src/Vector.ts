@@ -48,7 +48,7 @@ export class PersistentVector<T> implements Iterable<T> {
   /**
    * The empty vector
    */
-  
+
   static empty: PersistentVector<any> = new PersistentVector<any>(
     emptyNode(),
     DEFAULT_LEVEL_SHIFT,
@@ -304,12 +304,17 @@ export class PersistentVector<T> implements Iterable<T> {
  * TransientVectors support access to items by index in log32N hops.
  */
 export class TransientVector<T> implements Iterable<T> {
-  constructor(private root: INode<T>, private shift: number, private tail: T[], readonly length: number) {}
+  constructor(
+    private root: INode<T>,
+    private shift: number,
+    private tail: T[],
+    readonly length: number
+  ) {}
 
   /**
    * The empty vector
    */
-  
+
   static empty<T>(): TransientVector<T> {
     return new TransientVector<T>(emptyNode({ref: true}), DEFAULT_LEVEL_SHIFT, Array(BRANCH_SIZE).fill(undefined), 0);
   }
@@ -404,7 +409,7 @@ export class TransientVector<T> implements Iterable<T> {
     if (this.getTailLength() < BRANCH_SIZE) {
       // has space in tail
       this.tail[this.length % BRANCH_SIZE] = value;
-      
+
       // @ts-ignore
       this.length += 1;
       // The element is added to the tail
@@ -436,7 +441,7 @@ export class TransientVector<T> implements Iterable<T> {
     // it's safe to update cursor bc "next" is a new instance anyway
     cursor.array = this.tail;
     this.tail = [value, ...(Array(BRANCH_SIZE - 1).fill(undefined) as T[])];
-    
+
     // @ts-ignore
     this.length += 1;
     return this;
@@ -454,7 +459,7 @@ export class TransientVector<T> implements Iterable<T> {
     const tailLength = this.getTailLength();
     if (tailLength >= 2) {
       delete this.tail[tailLength - 1];
-      
+
       // @ts-ignore
       this.length -= 1;
       return this;
@@ -484,7 +489,7 @@ export class TransientVector<T> implements Iterable<T> {
       this.root = this.root.array[0] as IBranch<T>;
       this.shift -= BIT_WIDTH;
     }
-    
+
     // @ts-ignore
     this.length -= 1;
     return this;
