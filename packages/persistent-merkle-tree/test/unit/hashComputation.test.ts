@@ -66,10 +66,10 @@ describe("HashComputationLevel", () => {
     const arr = toArray(hashComputationLevel);
     expect(arr).to.be.deep.equal([{src0: zeroNode(0), src1: zeroNode(0), dest: zeroNode(1)}]);
     const all = hashComputationLevel.dump();
-    const last = all[all.length - 1];
-    expect(last.src0).toBeNull();
-    expect(last.src1).toBeNull();
-    expect(last.dest).toBeNull();
+    const last = all.at(-1);
+    expect(last?.src0).toBeNull();
+    expect(last?.src1).toBeNull();
+    expect(last?.dest).toBeNull();
   });
 });
 

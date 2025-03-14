@@ -29,7 +29,7 @@ export function computeDescriptor(indices: Gindex[]): Uint8Array {
   let descriptorBitstring = "";
   for (const gindexBitstring of allBitstringsSorted) {
     for (let i = 0; i < gindexBitstring.length; i++) {
-      if (gindexBitstring[gindexBitstring.length - 1 - i] === "1") {
+      if (gindexBitstring.at(-1 - i) === "1") {
         descriptorBitstring += "1".padStart(i + 1, "0");
         break;
       }

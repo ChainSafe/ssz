@@ -34,7 +34,7 @@ export function computeProofBitstrings(gindex: GindexBitstring): {
   let g = gindex;
   while (g.length > 1) {
     path.add(g);
-    const lastBit = g[g.length - 1];
+    const lastBit = g.at(-1);
     const parent = g.substring(0, g.length - 1);
     branch.add(parent + (Number(lastBit) ^ 1));
     g = parent;

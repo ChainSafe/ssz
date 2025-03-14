@@ -237,8 +237,9 @@ export function setNodeWithFn(
   // Pre-compute entire bitstring instead of using an iterator (25% faster)
   const gindexBitstring = convertGindexToBitstring(gindex);
   const parentNodes = getParentNodes(rootNode, gindexBitstring);
-  const lastParentNode = parentNodes[parentNodes.length - 1];
-  const lastBit = gindexBitstring[gindexBitstring.length - 1];
+  const lastParentNode = parentNodes.at(-1);
+  if (!lastParentNode) throw new Error("Invalid tree - can not find last parent");
+  const lastBit = gindexBitstring.at(-1);
   const oldNode = lastBit === "1" ? lastParentNode.right : lastParentNode.left;
   const newNode = getNewNode(oldNode);
 
