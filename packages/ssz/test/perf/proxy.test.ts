@@ -16,6 +16,7 @@ describe("Access object properties in generated objects", () => {
 
   class CustomObj {}
   for (const key in rawObject) {
+    if (!Object.hasOwn(rawObject, key)) continue;
     Object.defineProperty(CustomObj.prototype, key, {
       value: rawObject[key as keyof typeof rawObject] as unknown,
       writable: true,
