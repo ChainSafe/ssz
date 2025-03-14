@@ -39,6 +39,7 @@ const {
 } = preset;
 
 const {
+  // biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
   Boolean,
   Bytes32,
   UintNum64,

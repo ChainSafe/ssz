@@ -1,5 +1,6 @@
 import {BooleanType, ByteVectorType, UintBigintType, UintNumberType} from "../../../src/index.js";
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
 export const Boolean = new BooleanType();
 export const Byte = new UintNumberType(1);
 export const Bytes4 = new ByteVectorType(4);

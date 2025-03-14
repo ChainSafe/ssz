@@ -3,6 +3,7 @@ import {ContainerNodeStructType} from "../../../src/type/containerNodeStruct.js"
 import {ValueOfFields} from "../../../src/view/container.js";
 import * as primitiveSsz from "../primitive/sszTypes.js";
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
 const {Boolean, Bytes32, UintNum64, BLSPubkey, EpochInf} = primitiveSsz;
 
 // this is to work with uint32, see https://github.com/ChainSafe/ssz/blob/ssz-v0.15.1/packages/ssz/src/type/uint.ts
