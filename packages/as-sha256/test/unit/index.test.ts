@@ -1,5 +1,5 @@
-import {Buffer} from "buffer";
-import {createHash, randomBytes} from "crypto";
+import {Buffer} from "node:buffer";
+import {createHash, randomBytes} from "node:crypto";
 import {describe, expect, it} from "vitest";
 import {
   byteArrayToHashObject,

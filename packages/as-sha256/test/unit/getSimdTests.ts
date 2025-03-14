@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import {beforeAll, describe, expect, it} from "vitest";
 import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
 

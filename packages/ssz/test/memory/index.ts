@@ -1,4 +1,4 @@
-import {StringDecoder} from "string_decoder";
+import {StringDecoder} from "node:string_decoder";
 
 const refs: any[] = [];
 const xs: number[] = [];
