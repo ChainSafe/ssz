@@ -6,7 +6,7 @@ import {ByteViews} from "./composite.js";
 import {BitArray} from "../value/bitArray.js";
 import {BitArrayType} from "./bitArray.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export interface BitVectorOptions {
   typeName?: string;

@@ -35,7 +35,7 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         const type = getTestType(testType, invalidCase);
         const testData = parseSszGenericInvalidTestcase(path.join(invalidCasesPath, invalidCase));
 
-        /* eslint-disable no-console */
+        
         if (process.env.DEBUG) {
           console.log({serialized: Buffer.from(testData.serialized).toString("hex")});
         }

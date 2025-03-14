@@ -82,7 +82,7 @@ describe("subtreeFillToContents", function () {
   });
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
 function createBalanceList(count: number) {
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 

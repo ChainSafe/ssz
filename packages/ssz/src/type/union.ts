@@ -16,7 +16,7 @@ import {CompositeType, isCompositeType} from "./composite.js";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {NoneType} from "./none.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 type Union<T> = {
   readonly selector: number;

@@ -5,7 +5,7 @@ import {isCompositeType} from "../../../src/type/composite.js";
 import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest.js";
 import {runProofTestOnAllJsonPaths} from "./runTypeProofTest.js";
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 
 export type TypeTestValid = {
   id?: string;

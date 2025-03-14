@@ -61,7 +61,7 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     const leafNode = this.tree.getNodeAtDepth(this.type.depth, chunkIndex) as LeafNode;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    
     return this.type.elementType.tree_getFromPackedNode(leafNode, index) as ValueOf<ElementType>;
   }
 

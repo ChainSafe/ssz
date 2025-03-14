@@ -10,7 +10,7 @@ import {
   ArrayProps,
 } from "./arrayBasic.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 /**
  * Array: ordered homogeneous collection

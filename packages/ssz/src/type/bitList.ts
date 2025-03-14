@@ -14,7 +14,7 @@ import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from ".
 import {BitArray} from "../value/bitArray.js";
 import {BitArrayType} from "./bitArray.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export interface BitListOptions {
   typeName?: string;

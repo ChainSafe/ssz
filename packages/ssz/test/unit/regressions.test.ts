@@ -16,7 +16,7 @@ import {
 
 // Compilation of various issues from SSZ and Lodestar libs
 
-/* eslint-disable max-len */
+
 
 describe("Regressions / known issues", () => {
   it("SyncCommitteeBits hashTreeRoot consistency", function () {

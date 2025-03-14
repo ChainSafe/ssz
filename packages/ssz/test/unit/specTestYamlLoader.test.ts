@@ -4,7 +4,7 @@ import {readYamlNumbersAsStrings} from "../spec/testRunner.js";
 import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.js";
 import {toHexString} from "../../src/index.js";
 
-/* eslint-disable quotes */
+
 
 describe("Spec test YAML loader", () => {
   it("Load YAML string number", () => {

@@ -12,7 +12,7 @@ import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composit
 import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.js";
 import {TreeViewDU} from "./abstract.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<unknown, unknown, infer TVDU>
@@ -268,7 +268,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
         get: function (this: CustomContainerTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            
             return viewChanged;
           }
 
@@ -287,7 +287,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
           // No need to persist the child's view cache since a second get returns this view instance.
           // The cache is only persisted on commit where the viewsChanged map is dropped.
 
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          
           return view;
         },
 

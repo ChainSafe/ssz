@@ -21,7 +21,7 @@ const uint64 = new UintBigintType(8);
 const uint128 = new UintBigintType(16);
 const uint256 = new UintBigintType(32);
 
-/* eslint-disable @typescript-eslint/naming-convention */
+
 
 // class SingleFieldTestStruct(Container):
 //     A: byte

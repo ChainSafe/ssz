@@ -20,7 +20,7 @@ import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
 //
 // Docs: https://github.com/ethereum/consensus-specs/blob/master/tests/formats/ssz_static/core.md
 
-/* eslint-disable
+
   @typescript-eslint/naming-convention,
   @typescript-eslint/no-unsafe-assignment,
   @typescript-eslint/no-unsafe-call,
@@ -28,7 +28,7 @@ import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
   no-console
 */
 
-// eslint-disable-next-line
+
 type Types = Record<string, Type<any>>;
 
 export function sszStatic(fork: ForkName): void {

@@ -5,7 +5,7 @@ import {BranchNodeStruct} from "../branchNodeStruct.js";
 import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.js";
 import {TreeView} from "./abstract.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 /**
  * Intented usage:

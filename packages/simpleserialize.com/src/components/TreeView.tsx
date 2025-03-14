@@ -1,7 +1,7 @@
 // ignoring this file since we don't use it currently
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-nocheck
-/* eslint-disable */
+
 
 import * as React from "react";
 // @ts-ignore

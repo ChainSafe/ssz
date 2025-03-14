@@ -71,7 +71,7 @@ export function sortDecreasingBitstrings(gindices: GindexBitstring[]): GindexBit
     }
     let aPos0 = a.indexOf("0");
     let bPos0 = b.indexOf("0");
-    // eslint-disable-next-line no-constant-condition
+    
     while (true) {
       if (aPos0 === -1) {
         return -1;

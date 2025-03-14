@@ -6,7 +6,7 @@ import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
 import {ContainerTreeViewDUTypeConstructor} from "./container.js";
 import {TreeViewDU} from "./abstract.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>
@@ -74,7 +74,7 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeViewDU): ValueOf<Fields[keyof Fields]> {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          
           return (this.valueChanged || this._rootNode.value)[fieldName];
         },
 

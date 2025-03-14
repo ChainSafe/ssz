@@ -6,7 +6,7 @@ import {BitArrayTreeView} from "../view/bitArray.js";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray.js";
 import {getBlocksBytes} from "./byteArray.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 /**
  * BitArray: ordered array collection of boolean values

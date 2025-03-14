@@ -13,14 +13,14 @@ describe("iterate", () => {
 
   bench("Array - for of", () => {
     for (const a of arr) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      
       const x = a.foo;
     }
   });
   bench("Array - for(;;)", () => {
     for (let i = 0; i < arr.length; i++) {
       const a = arr[i];
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      
       const x = a.foo;
     }
   });
@@ -55,7 +55,7 @@ describe("readonly values - iterator vs array", () => {
   });
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
 function createBalanceList(count: number) {
   const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
@@ -64,7 +64,7 @@ function createBalanceList(count: number) {
   return balancesList.toViewDU(balancesStruct);
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
 function createValidatorList(count: number) {
   const validatorsStruct = Array.from({length: count}, () => ({
     pubkey: new Uint8Array(48),

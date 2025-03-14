@@ -4,7 +4,7 @@ import {Require} from "../util/types.js";
 import {ByteViews} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
 const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);

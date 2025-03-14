@@ -14,7 +14,7 @@ import {addLengthNode} from "./arrayBasic.js";
  * It'll throw errors for all other methods, most of the usage is in the ViewDU class.
  */
 export class PartialListCompositeType<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
 > extends ListCompositeType<ElementType> {
   constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {

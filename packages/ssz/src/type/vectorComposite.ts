@@ -19,7 +19,7 @@ import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
 import {ArrayType} from "./array.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export type VectorCompositeOpts = {
   typeName?: string;
@@ -33,7 +33,7 @@ export type VectorCompositeOpts = {
  * - Composite types are always returned as views
  */
 export class VectorCompositeType<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
     ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
   >
   extends ArrayType<ElementType, ArrayCompositeTreeView<ElementType>, ArrayCompositeTreeViewDU<ElementType>>
@@ -68,7 +68,7 @@ export class VectorCompositeType<
     this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
@@ -83,7 +83,7 @@ export class VectorCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ArrayCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
     return new ArrayCompositeTreeViewDU(this, node, cache as any);
   }
 

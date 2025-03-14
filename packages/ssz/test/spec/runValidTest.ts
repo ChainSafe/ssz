@@ -13,7 +13,7 @@ type ValidTestCaseData = {
   jsonValue: unknown;
 };
 
-/* eslint-disable no-console */
+
 
 export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData): {node: Node; json: unknown} {
   const testDataRootHex = testData.root;

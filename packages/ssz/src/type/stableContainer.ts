@@ -43,7 +43,7 @@ import {
 import {Case} from "../util/strings.js";
 import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional.js";
 import {BitArray} from "../value/bitArray.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 type BytesRange = {start: number; end: number};
 

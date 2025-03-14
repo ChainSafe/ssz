@@ -12,7 +12,7 @@ export type NodeWithCachedTreeRoot = {
   [symbolCachedTreeRoot]?: Uint8Array;
 };
 
-/* eslint-disable @typescript-eslint/member-ordering  */
+
 
 /**
  * A Deferred Update Tree View (`ViewDU`) is a wrapper around a type and

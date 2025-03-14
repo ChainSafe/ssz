@@ -8,7 +8,7 @@ import {BasicContainerTreeViewDU, ChangedNode} from "./container.js";
 import {OptionalType} from "../type/optional.js";
 import {BitArray} from "../value/bitArray.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export type ViewDUValue<T extends Type<unknown>> = T extends CompositeType<unknown, unknown, infer TVDU>
   ? // If composite, return view. MAY propagate changes updwards
@@ -194,7 +194,7 @@ export function getProfileTreeViewDUClass<Fields extends Record<string, Type<unk
         get: function (this: CustomProfileTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            
             return viewChanged;
           }
 
@@ -217,7 +217,7 @@ export function getProfileTreeViewDUClass<Fields extends Record<string, Type<unk
           // No need to persist the child's view cache since a second get returns this view instance.
           // The cache is only persisted on commit where the viewsChanged map is dropped.
 
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          
           return view;
         },
 

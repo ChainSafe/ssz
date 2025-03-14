@@ -13,7 +13,7 @@ import {namedClass} from "../util/named.js";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.js";
 import {ByteViews} from "./composite.js";
 import {ByteArrayType, ByteArray} from "./byteArray.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export interface ByteListOptions {
   typeName?: string;

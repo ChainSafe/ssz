@@ -11,7 +11,7 @@ export interface ByteVectorOptions {
   typeName?: string;
 }
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 /**
  * ByteVector: Immutable alias of Vector[byte, N]

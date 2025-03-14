@@ -95,10 +95,10 @@ describe("SSZ (de)serialize", () => {
     type: T,
     getValue?: () => ValueOf<T>
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    
     const struct = getValue ? getValue() : type.defaultValue();
     const bytes = type.serialize(struct);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    
     const view = type.toView(struct);
 
     bench(`${id} binary -> struct`, () => {

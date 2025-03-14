@@ -31,7 +31,7 @@ import {ListCompositeTreeView} from "../view/listComposite.js";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite.js";
 import {ArrayType} from "./array.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export interface ListCompositeOpts {
   typeName?: string;
@@ -46,7 +46,7 @@ export interface ListCompositeOpts {
  * - Composite types are always returned as views
  */
 export class ListCompositeType<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
     ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
   >
   extends ArrayType<ElementType, ListCompositeTreeView<ElementType>, ListCompositeTreeViewDU<ElementType>>
@@ -87,7 +87,7 @@ export class ListCompositeType<
     this.maxSize = maxSizeArrayComposite(elementType, this.limit);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
@@ -102,7 +102,7 @@ export class ListCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ListCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
     return new ListCompositeTreeViewDU(this, node, cache as any);
   }
 

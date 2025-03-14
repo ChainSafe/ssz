@@ -22,7 +22,7 @@ import {
   ContainerTreeViewDUTypeConstructor,
 } from "../viewDU/container.js";
 import {Case} from "../util/strings.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 type BytesRange = {start: number; end: number};
 

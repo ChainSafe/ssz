@@ -1,4 +1,4 @@
-// /* eslint-disable @typescript-eslint/ban-types */
+// 
 
 import {expose} from "threads/worker";
 import {getSSZType, createRandomValue} from "./helpers";

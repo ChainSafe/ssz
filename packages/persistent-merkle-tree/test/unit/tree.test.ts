@@ -222,7 +222,7 @@ describe("Tree batch setNodes", () => {
         expect(roots).to.deep.equal(rootsOk);
       } catch (e) {
         if (process.env.DEBUG) {
-          /* eslint-disable no-console */
+          
           // On error print all roots for easier debugging
           console.log(" ", " ", "rootsOk".padEnd(64), "roots");
           for (let i = 1; i < rootsOk.length; i++) {

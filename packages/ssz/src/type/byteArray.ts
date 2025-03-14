@@ -13,7 +13,7 @@ import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 
 export type ByteArray = Uint8Array;
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 /**
  * ByteArray: ordered array collection of byte values

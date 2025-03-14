@@ -4,7 +4,7 @@ import {uncompress} from "snappyjs";
 import jsyaml from "js-yaml";
 import {schema} from "./sszYamlSchema.js";
 
-/* eslint-disable
+
   @typescript-eslint/explicit-module-boundary-types,
   @typescript-eslint/explicit-function-return-type
 */

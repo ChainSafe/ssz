@@ -149,7 +149,7 @@ export type AllForksExecution = {
  * phase0.BeaconState | altair.BeaconState | bellatrix.BeaconState
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type AllForksTypeOf<UnionOfForkTypes extends ContainerType<any>> = CompositeType<
   ValueOf<UnionOfForkTypes>,
   CompositeView<UnionOfForkTypes>,

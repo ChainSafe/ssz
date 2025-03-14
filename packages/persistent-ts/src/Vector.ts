@@ -48,7 +48,7 @@ export class PersistentVector<T> implements Iterable<T> {
   /**
    * The empty vector
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   static empty: PersistentVector<any> = new PersistentVector<any>(
     emptyNode(),
     DEFAULT_LEVEL_SHIFT,
@@ -309,7 +309,7 @@ export class TransientVector<T> implements Iterable<T> {
   /**
    * The empty vector
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   static empty<T>(): TransientVector<T> {
     return new TransientVector<T>(emptyNode({ref: true}), DEFAULT_LEVEL_SHIFT, Array(BRANCH_SIZE).fill(undefined), 0);
   }
@@ -404,7 +404,7 @@ export class TransientVector<T> implements Iterable<T> {
     if (this.getTailLength() < BRANCH_SIZE) {
       // has space in tail
       this.tail[this.length % BRANCH_SIZE] = value;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      
       // @ts-ignore
       this.length += 1;
       // The element is added to the tail
@@ -436,7 +436,7 @@ export class TransientVector<T> implements Iterable<T> {
     // it's safe to update cursor bc "next" is a new instance anyway
     cursor.array = this.tail;
     this.tail = [value, ...(Array(BRANCH_SIZE - 1).fill(undefined) as T[])];
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    
     // @ts-ignore
     this.length += 1;
     return this;
@@ -454,7 +454,7 @@ export class TransientVector<T> implements Iterable<T> {
     const tailLength = this.getTailLength();
     if (tailLength >= 2) {
       delete this.tail[tailLength - 1];
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      
       // @ts-ignore
       this.length -= 1;
       return this;
@@ -484,7 +484,7 @@ export class TransientVector<T> implements Iterable<T> {
       this.root = this.root.array[0] as IBranch<T>;
       this.shift -= BIT_WIDTH;
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    
     // @ts-ignore
     this.length -= 1;
     return this;

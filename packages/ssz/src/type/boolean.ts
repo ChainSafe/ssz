@@ -4,7 +4,7 @@ import {namedClass} from "../util/named.js";
 import {ByteViews} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export interface BooleanOpts {
   typeName?: string;

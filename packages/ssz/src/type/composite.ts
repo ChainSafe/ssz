@@ -40,7 +40,7 @@ export type CompositeViewDU<T extends CompositeType<unknown, unknown, unknown>> 
 /** Any CompositeType without any generic arguments */
 export type CompositeTypeAny = CompositeType<unknown, unknown, unknown>;
 
-/* eslint-disable @typescript-eslint/member-ordering  */
+
 
 /**
  * Represents a composite type as defined in the spec:

@@ -43,10 +43,10 @@ function printLeafTreeDiff(nodeA: Node, nodeB: Node, depth: number, length: numb
     const nodesA = getNodesAtDepth(nodeA, d, 0, length);
     const nodesB = getNodesAtDepth(nodeB, d, 0, length);
     const toIndex = Math.ceil(length / 2 ** (depth - d));
-    // eslint-disable-next-line no-console
+    
     console.log(`Depth ${d}`);
     for (let i = 0; i < toIndex; i++) {
-      // eslint-disable-next-line no-console
+      
       console.log(`${d} ${i} A ${toHex(nodesA[i].root)} B ${toHex(nodesB[i].root)}`);
     }
   }

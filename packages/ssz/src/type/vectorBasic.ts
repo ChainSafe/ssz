@@ -14,7 +14,7 @@ import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic.js";
 import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
 import {ArrayType} from "./array.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
+
 
 export type VectorBasicOpts = {
   typeName?: string;
@@ -76,7 +76,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    
     return new ArrayBasicTreeViewDU(this, node, cache as any);
   }
 

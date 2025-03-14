@@ -114,7 +114,7 @@ function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unkno
 function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      
       type = type.elementType;
     }
     if (typeof jsonProp === "number") {
@@ -146,7 +146,7 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
 function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      
       type = type.elementType;
     }
     if (typeof jsonProp === "number") {

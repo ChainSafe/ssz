@@ -18,7 +18,7 @@ describe("gindices at depth", () => {
 
   bench("iterateAtDepth", () => {
     for (let gindex of iterateAtDepth(depth, BigInt(startIx), BigInt(count))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      
       gindex++;
     }
   });
