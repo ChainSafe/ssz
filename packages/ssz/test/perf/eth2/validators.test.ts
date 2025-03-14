@@ -33,7 +33,9 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
     (treeBacked: CompositeViewDU<typeof ValidatorContainer>, type: typeof ValidatorContainer) => unknown
   > = {
     get_exitEpoch: (tb) => tb.exitEpoch,
-    set_exitEpoch: (tb) => (tb.exitEpoch = 6435),
+    set_exitEpoch: (tb) => {
+      tb.exitEpoch = 6435;
+    },
     get_pubkey: (tb) => tb.pubkey,
     hashTreeRoot: (tb) => tb.hashTreeRoot(),
     createProof: (tb) => tb.createProof([["exitEpoch"]]),
