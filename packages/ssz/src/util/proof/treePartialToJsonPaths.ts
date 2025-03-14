@@ -52,10 +52,8 @@ export function treePartialToJsonPaths(
     // - length / selector nodes
     // - witness
     else {
-      if (currentDepth === 1 && bitstringToIndex(bitstring) === 1 && isCompositeType(type)) {
-        if (type.isList) {
-          return {type: TreeDataTypeCode.complete, jsonPathProps: []};
-        }
+      if (currentDepth === 1 && bitstringToIndex(bitstring) === 1 && isCompositeType(type) && type.isList) {
+        return {type: TreeDataTypeCode.complete, jsonPathProps: []};
       }
       return {type: TreeDataTypeCode.witness};
     }

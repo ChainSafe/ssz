@@ -196,10 +196,8 @@ export function computeSerdesData<Fields extends Record<string, Type<unknown>>>(
 
   let optionalIndex = 0;
   for (const {optional, fieldType} of fields) {
-    if (optional) {
-      if (!optionalFields.get(optionalIndex++)) {
-        continue;
-      }
+    if (optional && !optionalFields.get(optionalIndex++)) {
+      continue;
     }
 
     isFixedLen.push(fieldType.fixedSize !== null);
