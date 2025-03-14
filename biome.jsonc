@@ -1,0 +1,190 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "defaultBranch": "master"
+  },
+  "extends": ["@chainsafe/biomejs-config", "@chainsafe/biomejs-config/recommended", "@chainsafe/biomejs-config/esm"],
+  "files": {
+    "include": ["packages/*/src/**/*.ts", "packages/*/test/**/*.ts"]
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noConsoleLog": "off"
+      },
+      "style": {
+        // TODO: There are two many usages, will fix in separate PR
+        "noUselessElse": "off",
+        // TODO: There are two many usages, will fix in separate PR
+        "noParameterAssign": "off",
+        // We use to export types and object without differentiating
+        "useExportType": "off",
+        // We use to import types and object without differentiating
+        "useImportType": "off",
+        // We have a lot of enum members in camelCase, so we have to update
+        // the base naming convention to allow camelCase in addition to PascalCase
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "requireAscii": true,
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "enumMember"
+                },
+                "formats": ["camelCase", "PascalCase"]
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "include": ["packages/ssz/src/**/*.ts", "packages/ssz/test/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": {
+              "level": "error",
+              "options": {
+                "requireAscii": true,
+                "strictCase": false,
+                "conventions": [
+                  // We have a lot of functions containing `_` e.g. value_toTree, tree_deserializeFromBytes,
+                  // which could not be considered as some standard case
+                  {
+                    "selector": {
+                      "kind": "classMethod"
+                    },
+                    "match": "[a-z][a-zA-Z0-9_]*"
+                  },
+                  // We have a lot of functions containing `_` e.g. value_getBlocksBytesArrayComposite
+                  // which could not be considered as some standard case
+                  {
+                    "selector": {
+                      "kind": "function"
+                    },
+                    "match": "[a-z][a-zA-Z0-9_]*"
+                  },
+                  // We have a lot of functions containing `_` e.g. tree_setChunksNode
+                  // which could not be considered as some standard case
+                  {
+                    "selector": {
+                      "kind": "typeMethod"
+                    },
+                    "match": "[a-z][a-zA-Z0-9_]*"
+                  },
+                  // A lof of types are PascalCase and few mixing up _ in those
+                  // e.g. TreeViewDU, TreeView_DU, Metadata: Metadata
+                  {
+                    "selector": {
+                      "kind": "typeProperty"
+                    },
+                    "match": "[a-zA-Z0-9_]*"
+                  },
+                  // We have a lot enum declarations with camelCase members
+                  {
+                    "selector": {
+                      "kind": "enumMember"
+                    },
+                    "formats": ["camelCase", "PascalCase"]
+                  },
+                  // We have a lot of type parameters with capital cases
+                  // e.g. CompositeType<V, TV, TVDU>
+                  {
+                    "selector": {
+                      "kind": "typeParameter"
+                    },
+                    "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+                  },
+                  // We declare properties as class instances matching names
+                  // e.g. protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
+                  {
+                    "selector": {
+                      "kind": "classProperty"
+                    },
+                    // name can start with `_` and rest of the name
+                    // should mach the formats given below
+                    "match": "(?:_?)(.*)",
+                    "formats": ["camelCase", "PascalCase"]
+                  },
+                  // All our SSZ Type declarations are defined as PascalCase e.g. BeaconBlockBody: altair.BeaconBlockBody,
+                  // some are even constant case e.g. HYSTERESIS_QUOTIENT: 4,
+                  // Some are mix of all e.g. set_exitEpoch_and_hashTreeRoot: (tb) => {
+                  {
+                    "selector": {
+                      "kind": "objectLiteralProperty"
+                    },
+                    "match": "[a-zA-Z0-9_]*"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "include": ["packages/ssz/test/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            // We use `any` a lot often during tests
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["packages/as-sha256/src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": {
+              "level": "off",
+              "options": {
+                "requireAscii": true,
+                "strictCase": false,
+                "conventions": [
+                  {
+                    "selector": {
+                      "kind": "objectLiteralProperty"
+                    },
+                    "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "include": ["packages/ssz/test/unit/specTestYamlLoader.test.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": {
+              "level": "error",
+              "options": {
+                "requireAscii": true,
+                "strictCase": false,
+                "conventions": [
+                  {
+                    "selector": {
+                      "kind": "objectLiteralProperty"
+                    },
+                    "formats": ["camelCase", "snake_case"]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
