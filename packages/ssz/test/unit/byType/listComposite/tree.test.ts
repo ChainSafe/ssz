@@ -423,7 +423,9 @@ describe("ListCompositeType", () => {
         // this is equivalent to getAllReadonly()
         // but consumer can break in the middle to improve performance
         while (start < listLength) {
-          listView.getReadonlyByRange(start, count).forEach((item) => total.push(item as Buffer));
+          for (const item of listView.getReadonlyByRange(start, count)) {
+            total.push(item as Buffer);
+          }
           start += count;
         }
 

@@ -138,14 +138,22 @@ export function computeMultiProofBitstrings(
   for (const gindex of leaves) {
     if (gindex.length > maxBitLength) maxBitLength = gindex.length;
     const {path, branch} = computeProofBitstrings(gindex);
-    path.forEach((g) => paths.add(g));
-    branch.forEach((g) => branches.add(g));
+    for (const p of path) {
+      paths.add(p);
+    }
+    for (const b of branch) {
+      branches.add(b);
+    }
   }
 
   // Remove all branches that are included in the paths
-  paths.forEach((g) => branches.delete(g));
+  for (const p of paths) {
+    branches.delete(p);
+  }
   // Add all remaining branches to the leaves
-  branches.forEach((g) => proof.add(g));
+  for (const b of branches) {
+    proof.add(b);
+  }
 
   switch (sortOrder) {
     case SortOrder.InOrder:
