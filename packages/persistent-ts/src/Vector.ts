@@ -223,6 +223,7 @@ export class PersistentVector<T> implements Iterable<T> {
       cursor = next;
     }
     const newTail = [...cursor.array] as T[];
+    // biome-ignore lint/style/noNonNullAssertion: Fixing this will require more refactoring, leaving it for now
     parent!.array[subIndex!] = emptyNode<T>();
     let newLevelShift = this.shift;
     let newRoot: INode<T> = base;
@@ -484,6 +485,7 @@ export class TransientVector<T> implements Iterable<T> {
       cursor = next;
     }
     this.tail = cursor.array as T[];
+    // biome-ignore lint/style/noNonNullAssertion: Fixing this will require more refactoring, leaving it for now
     parent!.array[subIndex!] = emptyNode<T>(this.root.edit);
 
     if (isFullBranch(this.length - 1 - BRANCH_SIZE)) {

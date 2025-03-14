@@ -109,7 +109,9 @@ describe("Vector", () => {
       newVector = newVector.set(i, i * 4);
     }
     for (let i = 0; i < times; i++) {
-      expect(newVector!.get(i)).toEqual(originalVector.get(i)! * 2);
+      const val = originalVector.get(i);
+      expect(val).toBeDefined();
+      expect(newVector?.get(i)).toEqual((val as number) * 2);
     }
     expect([...newVector]).toEqual(originalArr.map((item) => item * 2));
     expect([...newVector].length).toEqual(1025);
