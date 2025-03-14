@@ -146,9 +146,8 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
 
   if (arrayProps.isList) {
     return addLengthNode(chunksNode, length);
-  } else {
-    return chunksNode;
   }
+  return chunksNode;
 }
 
 /**
