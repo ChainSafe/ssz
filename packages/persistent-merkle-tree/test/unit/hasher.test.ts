@@ -16,7 +16,7 @@ import {zeroHash} from "../../src/zeroHash.js";
 import {expectEqualHex} from "../utils/expectHex.js";
 import {buildComparisonTrees} from "../utils/tree.js";
 
-describe("hashers", function () {
+describe("hashers", () => {
   const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
   describe("digest64 vs digest64HashObjects methods should be the same", () => {
@@ -76,7 +76,7 @@ describe("hashers", function () {
     }
   });
 
-  describe("hasher.digestNLevel", function () {
+  describe("hasher.digestNLevel", () => {
     for (const hasher of hashers) {
       const numValidators = [1, 2, 3, 4];
       for (const numValidator of numValidators) {
@@ -95,7 +95,7 @@ describe("hashers", function () {
     }
   });
 
-  describe("hasher.merkleizeBlocksBytes", function () {
+  describe("hasher.merkleizeBlocksBytes", () => {
     const numNodes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     for (const hasher of hashers) {
       it(`${hasher.name} should throw error if not multiple of 64 bytes`, () => {
@@ -123,7 +123,7 @@ describe("hashers", function () {
   /**
    * The same to the previous test, but using the merkleizeBlockArray method
    */
-  describe("hasher.merkleizeBlockArray", function () {
+  describe("hasher.merkleizeBlockArray", () => {
     for (const hasher of hashers) {
       it(`${hasher.name} should throw error if invalid blockLimit`, () => {
         const data = Buffer.alloc(64, 0);

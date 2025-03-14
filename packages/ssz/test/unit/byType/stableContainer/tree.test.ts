@@ -232,7 +232,7 @@ runViewTestMutation({
   ],
 });
 
-describe("StableContainerViewDU batchHashTreeRoot", function () {
+describe("StableContainerViewDU batchHashTreeRoot", () => {
   const childContainerType = new ContainerType({f0: uint64NumInfType, f1: uint64NumInfType});
   const unionType = new UnionType([new NoneType(), uint64NumType]);
   const listBasicType = new ListBasicType(uint64NumType, 10);

@@ -241,7 +241,7 @@ describe("ListBasicType.sliceTo", () => {
   }
 });
 
-describe("ListBasicType batchHashTreeRoot", function () {
+describe("ListBasicType batchHashTreeRoot", () => {
   const value = [1, 2, 3, 4];
   const expectedRoot = ListN64Uint64NumberType.toView(value).hashTreeRoot();
 

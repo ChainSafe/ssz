@@ -6,7 +6,7 @@ import {hasher as nobleHasher} from "../../src/hasher/noble.js";
 import {HashComputationLevel, getHashComputations} from "../../src/index.js";
 import {buildComparisonTrees} from "../utils/tree.js";
 
-describe("hasher", function () {
+describe("hasher", () => {
   const iterations = 500_000;
 
   const root1 = new Uint8Array(32);
@@ -65,7 +65,7 @@ describe("hasher", function () {
   }
 });
 
-describe("hashtree", function () {
+describe("hashtree", () => {
   bench({
     id: "getHashComputations",
     beforeEach: () => {

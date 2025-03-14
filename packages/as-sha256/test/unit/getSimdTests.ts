@@ -5,7 +5,7 @@ import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject
 // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
 export function getSimdTests(sha256: any, useSimd: boolean): void {
   describe(`as-sha256 SIMD enabled methods ${useSimd ? "with SIMD" : "without SIMD"}`, () => {
-    beforeAll(function () {
+    beforeAll(() => {
       sha256.reinitializeInstance(useSimd);
       expect(sha256.simdEnabled).to.equal(useSimd);
     });

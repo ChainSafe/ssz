@@ -50,7 +50,7 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
           continue;
         }
 
-        it(testId, function () {
+        it(testId, () => {
           // Mainnet must deal with big full states and hash each one multiple times
           if (preset === "mainnet") {
             vi.setConfig({testTimeout: 30 * 1000});

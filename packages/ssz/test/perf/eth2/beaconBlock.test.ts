@@ -5,7 +5,7 @@ import {deneb, ssz} from "../../lodestarTypes/index.js";
 import {preset} from "../../lodestarTypes/params.js";
 const {MAX_ATTESTATIONS, MAX_DEPOSITS, MAX_VOLUNTARY_EXITS, MAX_BLS_TO_EXECUTION_CHANGES} = preset;
 
-describe("Benchmark BeaconBlock.hashTreeRoot()", function () {
+describe("Benchmark BeaconBlock.hashTreeRoot()", () => {
   setBenchOpts({
     minMs: 10_000,
   });

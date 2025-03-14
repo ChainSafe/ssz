@@ -11,7 +11,7 @@ import {batchHash4HashObjectInputs, batchHash4UintArray64s, digest64, digest64Ha
     ✓ digest64HashObjects 200092 times                                    7.095494 ops/s    140.9345 ms/op        -         68 runs   10.2 s
     ✓ hash 200092 times using batchHash4HashObjectInputs                  9.211751 ops/s    108.5570 ms/op        -         88 runs   10.1 s
  */
-describe("digest64 vs batchHash4UintArray64s vs digest64HashObjects vs batchHash4HashObjectInputs", function () {
+describe("digest64 vs batchHash4UintArray64s vs digest64HashObjects vs batchHash4HashObjectInputs", () => {
   setBenchOpts({
     minMs: 10_000,
   });

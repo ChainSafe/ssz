@@ -17,7 +17,7 @@ const expectedRoot = "0xb0780ec0d44bff1ae8a351e98e37a9d8c3e28edb38c9d5a6312656e0
  * cannot compute HashComputationGroup again.
  * Increasing number of validators could be OOM since we have to create BeaconState every time
  */
-describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numModified}`, function () {
+describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numModified}`, () => {
   setBenchOpts({
     minMs: 20_000,
   });

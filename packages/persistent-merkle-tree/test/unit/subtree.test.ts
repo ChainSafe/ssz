@@ -67,7 +67,7 @@ describe("subtreeFillToContents", () => {
   }
 });
 
-describe("subtreeFillToContents with hcByLevel", function () {
+describe("subtreeFillToContents with hcByLevel", () => {
   it("depth = 0", () => {
     // return zeroNode, no hash computations
     const nodes = [LeafNode.fromZero()];

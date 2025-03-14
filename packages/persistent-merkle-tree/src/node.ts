@@ -333,9 +333,7 @@ export function identity(n: Node): Node {
 }
 
 export function compose(inner: Link, outer: Link): Link {
-  return function (n: Node): Node {
-    return outer(inner(n));
-  };
+  return (n: Node): Node => outer(inner(n));
 }
 
 export function getNodeH(node: Node, hIndex: number): number {

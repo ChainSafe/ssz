@@ -50,7 +50,7 @@ describe("list", () => {
   });
 });
 
-describe("subtreeFillToContents", function () {
+describe("subtreeFillToContents", () => {
   const numBalances = 250_000;
 
   const tbBalances64 = createBalanceList(numBalances);

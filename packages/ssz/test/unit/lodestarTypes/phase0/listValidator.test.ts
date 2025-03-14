@@ -7,7 +7,7 @@ import {Validator} from "../../../lodestarTypes/phase0/index.js";
 import {ValidatorType} from "../../../lodestarTypes/phase0/validator.js";
 const {VALIDATOR_REGISTRY_LIMIT} = preset;
 
-describe("ListValidator ssz type", function () {
+describe("ListValidator ssz type", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,

@@ -227,7 +227,7 @@ runViewTestMutation({
   ],
 });
 
-describe("ContainerViewDU batchHashTreeRoot", function () {
+describe("ContainerViewDU batchHashTreeRoot", () => {
   const childContainerType = new ContainerType({f0: uint64NumInfType, f1: uint64NumInfType});
   const unionType = new UnionType([new NoneType(), uint64NumType]);
   const listBasicType = new ListBasicType(uint64NumType, 10);
@@ -590,7 +590,7 @@ describe("ContainerViewDU batchHashTreeRoot", function () {
   });
 });
 
-describe("ContainerNodeStruct batchHashTreeRoot", function () {
+describe("ContainerNodeStruct batchHashTreeRoot", () => {
   const EpochInf = new UintNumberType(8, {clipInfinity: true});
 
   // Ethereum consensus validator type

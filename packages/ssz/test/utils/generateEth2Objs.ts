@@ -155,7 +155,7 @@ function randomBytes(bytes: number): Uint8Array {
 
 export function getOnce<T>(fn: () => T): () => T {
   let value: T | null = null;
-  return function () {
+  return () => {
     if (value === null) {
       value = fn();
     }

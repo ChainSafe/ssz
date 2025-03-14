@@ -17,7 +17,7 @@ import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
 // Compilation of various issues from SSZ and Lodestar libs
 
 describe("Regressions / known issues", () => {
-  it("SyncCommitteeBits hashTreeRoot consistency", function () {
+  it("SyncCommitteeBits hashTreeRoot consistency", () => {
     const SyncCommitteeBits = new BitVectorType(512);
     const bitStr =
       "00001110011100101010100110111001111011110111001110110010101000010010011110000110001101111100100100011011001001010000111010010011100100111010111101110110001000000011011001011000011101010111111011000110000101100111111000110011110010010110101011111110111010101111110010011111101001011110001101111110111001100110110001100010100010101110110010100100001011000101101000011010111010111000100100101000101100001100011001110100100111110011100111001100101001011011111001111010111011000100100000010000000111010010100000000111";
@@ -34,7 +34,7 @@ describe("Regressions / known issues", () => {
     expect(toHexString(rootByStruct)).to.be.equal(toHexString(rootByBatch), "Inconsistent hashTreeRoot");
   });
 
-  it("converts bit arrays to tree", function () {
+  it("converts bit arrays to tree", () => {
     const CommitteeBits = new BitListType(2048);
     const CommitteeBitsVector = new BitVectorType(2048);
 
@@ -45,7 +45,7 @@ describe("Regressions / known issues", () => {
     expect(() => CommitteeBitsVector.toViewDU(bitArray)).to.not.throw();
   });
 
-  it("converts Uint8Array to tree", function () {
+  it("converts Uint8Array to tree", () => {
     const CommitteeBits = new BitListType(32);
     const CommitteeBitsVector = new BitVectorType(32);
     const validBytes = fromHexString("0xffffffff");
@@ -59,7 +59,7 @@ describe("Regressions / known issues", () => {
     expect(() => CommitteeBitsVector2.deserializeToViewDU(invalidBytes)).toThrow("BitVector: nonzero bits past length");
   });
 
-  it("converts basic vector and list from json", function () {
+  it("converts basic vector and list from json", () => {
     const Vec = new VectorBasicType(uint32NumType, 4);
     const Lis = new ListBasicType(uint32NumType, 4);
     const arr = [1, 2, 3, 4];

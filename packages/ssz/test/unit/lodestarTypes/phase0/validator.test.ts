@@ -7,7 +7,7 @@ import {ValidatorNodeStruct, ValidatorType, validatorToChunkBytes} from "../../.
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 
-describe("Validator ssz types", function () {
+describe("Validator ssz types", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
@@ -43,7 +43,7 @@ describe("Validator ssz types", function () {
   });
 });
 
-describe("validatorToChunkBytes", function () {
+describe("validatorToChunkBytes", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,

@@ -5,7 +5,7 @@ import {linspace} from "../../utils/misc.js";
 
 const BITS_PER_BYTE = 8;
 
-describe("aggregationBits", function () {
+describe("aggregationBits", () => {
   it("getUint8ByteToBitBooleanArray", () => {
     expect(getUint8ByteToBitBooleanArray(1)).toEqual([true, false, false, false, false, false, false, false]);
     expect(getUint8ByteToBitBooleanArray(5)).toEqual([true, false, true, false, false, false, false, false]);

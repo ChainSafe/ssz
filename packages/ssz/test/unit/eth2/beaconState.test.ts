@@ -7,7 +7,7 @@ import {altair, phase0, ssz} from "../../lodestarTypes/index.js";
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 
-describe("BeaconState ViewDU batchHashTreeRoot", function () {
+describe("BeaconState ViewDU batchHashTreeRoot", () => {
   const view = BeaconState.defaultView();
   const viewDU = BeaconState.defaultViewDU();
 
