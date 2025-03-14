@@ -49,6 +49,7 @@ export class PersistentVector<T> implements Iterable<T> {
    * The empty vector
    */
 
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   static empty: PersistentVector<any> = new PersistentVector<any>(
     emptyNode(),
     DEFAULT_LEVEL_SHIFT,

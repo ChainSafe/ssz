@@ -93,7 +93,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ListBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ListBasicTreeViewDU(this, node, cache as any);
   }
 

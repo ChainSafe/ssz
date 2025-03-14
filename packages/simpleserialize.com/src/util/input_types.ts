@@ -5,6 +5,7 @@ type InputTypeRecord = Record<string, InputType>;
 
 type InputType = {
   parse: <T>(raw: string, type: Type<T>) => T;
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   dump: <T>(value: any, type: Type<T>) => string;
 };
 

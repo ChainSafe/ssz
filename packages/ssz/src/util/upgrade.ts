@@ -3,6 +3,7 @@ import {ContainerType} from "../type/container.js";
 
 /** Upgrade the current View/ViewDU to a root node of new type */
 
+// biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
 export function upgradeToNewType(rootNode: Node, oldType: ContainerType<any>, newType: ContainerType<any>): Node {
   const newFieldsCount = newType.fieldsEntries.length;
   const currentFieldsCount = oldType.fieldsEntries.length;

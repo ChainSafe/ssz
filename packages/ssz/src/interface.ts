@@ -25,7 +25,7 @@ export type BitVector = Vector<boolean>;
 export type BitList = List<boolean>;
 
 export interface ObjectLike {
-  [fieldName: string]: any;
+  [fieldName: string]: unknown;
 }
 
 export interface Union<T> {
@@ -33,7 +33,7 @@ export interface Union<T> {
   value: T;
 }
 
-export type CompositeValue = Record<string, any> | ArrayLike<unknown> | Union<unknown> | Record<string, never>;
+export type CompositeValue = Record<string, unknown> | ArrayLike<unknown> | Union<unknown> | Record<string, never>;
 
 /**
  * The Json interface is used for json-serializable input

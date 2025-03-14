@@ -17,7 +17,7 @@ type GenIndex = string;
 
 export type Node<T> = {
   type: Type<T>;
-  data: any;
+  data: unknown;
   key: string | number;
   genIndex: GenIndex;
 };
@@ -28,7 +28,7 @@ export function isBottomType<T>(type: Type<T>) {
   );
 }
 
-export function getRootNode<T>(data: any, type: Type<T>): Node<T> {
+export function getRootNode<T>(data: unknown, type: Type<T>): Node<T> {
   return {
     type: {_typeSymbols: type._typeSymbols, fields: type.fields, depth: type.tree.depth()},
     data: data,
@@ -63,7 +63,7 @@ export function getChildNodes<T>(node: Node<T>): Array<Node<T>> {
       elementsPerChunk = 32;
     }
     return data.map(
-      (e: any, i: number): Node<T> => ({
+      (e: unknown, i: number): Node<T> => ({
         type: (type as ArrayType).elementType,
         data: e,
         key: i,

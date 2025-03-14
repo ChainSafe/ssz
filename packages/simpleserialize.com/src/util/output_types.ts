@@ -19,6 +19,7 @@ type SerializeOutputType = {
 type DeserializeOutputTypeRecord = Record<string, DeserializeOutputType>;
 
 type DeserializeOutputType = {
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   dump: <T>(value: any, type: Type<T>) => string;
 };
 

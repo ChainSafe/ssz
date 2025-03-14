@@ -14,6 +14,7 @@ import {ListCompositeOpts, ListCompositeType} from "./listComposite.js";
  * It'll throw errors for all other methods, most of the usage is in the ViewDU class.
  */
 export class PartialListCompositeType<
+// biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends ListCompositeType<ElementType> {
   constructor(

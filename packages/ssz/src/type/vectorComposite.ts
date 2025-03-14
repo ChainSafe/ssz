@@ -31,6 +31,7 @@ export type VectorCompositeOpts = {
  * - Composite types are always returned as views
  */
 export class VectorCompositeType<
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
   >
   extends ArrayType<ElementType, ArrayCompositeTreeView<ElementType>, ArrayCompositeTreeViewDU<ElementType>>
@@ -69,7 +70,7 @@ export class VectorCompositeType<
     this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
-  static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
+  static named<ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
     opts: Require<VectorCompositeOpts, "typeName">
@@ -84,6 +85,7 @@ export class VectorCompositeType<
   getViewDU(node: Node, cache?: unknown): ArrayCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
 
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ArrayCompositeTreeViewDU(this, node, cache as any);
   }
 

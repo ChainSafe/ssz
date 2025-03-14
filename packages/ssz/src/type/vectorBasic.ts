@@ -79,6 +79,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
 
+    // biome-ignore lint/suspicious/noExplicitAny: We explicity need to use `any` here
     return new ArrayBasicTreeViewDU(this, node, cache as any);
   }
 

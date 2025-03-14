@@ -44,6 +44,7 @@ export interface ListCompositeOpts {
  * - Composite types are always returned as views
  */
 export class ListCompositeType<
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
   >
   extends ArrayType<ElementType, ListCompositeTreeView<ElementType>, ListCompositeTreeViewDU<ElementType>>
@@ -88,6 +89,7 @@ export class ListCompositeType<
     this.maxSize = maxSizeArrayComposite(elementType, this.limit);
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
@@ -102,7 +104,7 @@ export class ListCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ListCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ListCompositeTreeViewDU(this, node, cache as any);
   }
 

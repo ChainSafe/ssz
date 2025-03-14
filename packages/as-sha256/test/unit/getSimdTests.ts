@@ -2,6 +2,7 @@ import crypto from "crypto";
 import {beforeAll, describe, expect, it} from "vitest";
 import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
 export function getSimdTests(sha256: any, useSimd: boolean): void {
   describe(`as-sha256 SIMD enabled methods ${useSimd ? "with SIMD" : "without SIMD"}`, () => {
     beforeAll(function () {
