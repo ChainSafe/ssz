@@ -8,9 +8,9 @@ describe("processAttestations", () => {
   const attesterIndices: number[] = [];
   const statusArr: number[] = [];
 
-  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+  const validatorRegistryLimit = 1099511627776;
   const uint8Type = new UintNumberType(1);
-  const epochStatusesType = new ListBasicType(uint8Type, VALIDATOR_REGISTRY_LIMIT);
+  const epochStatusesType = new ListBasicType(uint8Type, validatorRegistryLimit);
 
   // Helper types
   type Statuses = typeof epochStatusesType;

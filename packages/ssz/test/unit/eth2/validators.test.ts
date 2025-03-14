@@ -56,8 +56,8 @@ describe("Container with BranchNodeStruct", () => {
   }
 
   describe("ValidatorNodeStruct in List", () => {
-    const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
-    const ValidatorsListType = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
+    const validatorRegistryLimit = 1099511627776;
+    const ValidatorsListType = new ListCompositeType(ValidatorNodeStruct, validatorRegistryLimit);
 
     it("edit then read", () => {
       const validatorListTB = ValidatorsListType.defaultViewDU();

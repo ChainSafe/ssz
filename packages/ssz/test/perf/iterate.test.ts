@@ -55,9 +55,9 @@ describe("readonly values - iterator vs array", () => {
 });
 
 function createBalanceList(count: number) {
-  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+  const validatorRegistryLimit = 1099511627776;
 
-  const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
+  const balancesList = new ListBasicType(new UintNumberType(8), validatorRegistryLimit);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
   return balancesList.toViewDU(balancesStruct);
 }

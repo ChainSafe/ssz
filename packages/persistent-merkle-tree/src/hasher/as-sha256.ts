@@ -43,17 +43,17 @@ export const hasher: Hasher = {
       }
 
       // HashComputations of the same level are safe to batch
-      let src0_0: Node | null = null;
-      let src1_0: Node | null = null;
+      let src00: Node | null = null;
+      let src10: Node | null = null;
       let dest0: Node | null = null;
-      let src0_1: Node | null = null;
-      let src1_1: Node | null = null;
+      let src01: Node | null = null;
+      let src11: Node | null = null;
       let dest1: Node | null = null;
-      let src0_2: Node | null = null;
-      let src1_2: Node | null = null;
+      let src02: Node | null = null;
+      let src12: Node | null = null;
       let dest2: Node | null = null;
-      let src0_3: Node | null = null;
-      let src1_3: Node | null = null;
+      let src03: Node | null = null;
+      let src13: Node | null = null;
       let dest3: Node | null = null;
 
       let i = 0;
@@ -62,49 +62,49 @@ export const hasher: Hasher = {
 
         switch (indexInBatch) {
           case 0:
-            src0_0 = hc.src0;
-            src1_0 = hc.src1;
+            src00 = hc.src0;
+            src10 = hc.src1;
             dest0 = hc.dest;
             break;
           case 1:
-            src0_1 = hc.src0;
-            src1_1 = hc.src1;
+            src01 = hc.src0;
+            src11 = hc.src1;
             dest1 = hc.dest;
             break;
           case 2:
-            src0_2 = hc.src0;
-            src1_2 = hc.src1;
+            src02 = hc.src0;
+            src12 = hc.src1;
             dest2 = hc.dest;
             break;
           case 3:
-            src0_3 = hc.src0;
-            src1_3 = hc.src1;
+            src03 = hc.src0;
+            src13 = hc.src1;
             dest3 = hc.dest;
 
             if (
-              src0_0 !== null &&
-              src1_0 !== null &&
+              src00 !== null &&
+              src10 !== null &&
               dest0 !== null &&
-              src0_1 !== null &&
-              src1_1 !== null &&
+              src01 !== null &&
+              src11 !== null &&
               dest1 !== null &&
-              src0_2 !== null &&
-              src1_2 !== null &&
+              src02 !== null &&
+              src12 !== null &&
               dest2 !== null &&
-              src0_3 !== null &&
-              src1_3 !== null &&
+              src03 !== null &&
+              src13 !== null &&
               dest3 !== null
             ) {
               // TODO - batch: find a way not allocate here
               const [o0, o1, o2, o3] = batchHash4HashObjectInputs([
-                src0_0,
-                src1_0,
-                src0_1,
-                src1_1,
-                src0_2,
-                src1_2,
-                src0_3,
-                src1_3,
+                src00,
+                src10,
+                src01,
+                src11,
+                src02,
+                src12,
+                src03,
+                src13,
               ]);
               if (o0 == null || o1 == null || o2 == null || o3 == null) {
                 throw Error(`batchHash4HashObjectInputs return null or undefined at batch ${i} level ${level}`);
@@ -115,17 +115,17 @@ export const hasher: Hasher = {
               dest3.applyHash(o3);
 
               // reset for next batch
-              src0_0 = null;
-              src1_0 = null;
+              src00 = null;
+              src10 = null;
               dest0 = null;
-              src0_1 = null;
-              src1_1 = null;
+              src01 = null;
+              src11 = null;
               dest1 = null;
-              src0_2 = null;
-              src1_2 = null;
+              src02 = null;
+              src12 = null;
               dest2 = null;
-              src0_3 = null;
-              src1_3 = null;
+              src03 = null;
+              src13 = null;
               dest3 = null;
             }
             break;
@@ -136,17 +136,17 @@ export const hasher: Hasher = {
       }
 
       // remaining
-      if (src0_0 !== null && src1_0 !== null && dest0 !== null) {
-        dest0.applyHash(digest64HashObjects(src0_0, src1_0));
+      if (src00 !== null && src10 !== null && dest0 !== null) {
+        dest0.applyHash(digest64HashObjects(src00, src10));
       }
-      if (src0_1 !== null && src1_1 !== null && dest1 !== null) {
-        dest1.applyHash(digest64HashObjects(src0_1, src1_1));
+      if (src01 !== null && src11 !== null && dest1 !== null) {
+        dest1.applyHash(digest64HashObjects(src01, src11));
       }
-      if (src0_2 !== null && src1_2 !== null && dest2 !== null) {
-        dest2.applyHash(digest64HashObjects(src0_2, src1_2));
+      if (src02 !== null && src12 !== null && dest2 !== null) {
+        dest2.applyHash(digest64HashObjects(src02, src12));
       }
-      if (src0_3 !== null && src1_3 !== null && dest3 !== null) {
-        dest3.applyHash(digest64HashObjects(src0_3, src1_3));
+      if (src03 !== null && src13 !== null && dest3 !== null) {
+        dest3.applyHash(digest64HashObjects(src03, src13));
       }
     }
   },
