@@ -25,6 +25,7 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
   }
 
   get cache(): void {
+    // biome-ignore lint/suspicious/useGetterReturn: There is no cache to return
     return;
   }
 

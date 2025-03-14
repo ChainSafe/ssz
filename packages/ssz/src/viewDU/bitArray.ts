@@ -22,6 +22,7 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   }
 
   get cache(): unknown {
+    // biome-ignore lint/suspicious/useGetterReturn: There is no cache to return
     return;
   }
 
