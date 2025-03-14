@@ -118,7 +118,7 @@ export class LeafNode extends Node {
   }
 
   static fromRoot(root: Uint8Array): LeafNode {
-    return this.fromHashObject(uint8ArrayToHashObject(root));
+    return LeafNode.fromHashObject(uint8ArrayToHashObject(root));
   }
 
   /**
