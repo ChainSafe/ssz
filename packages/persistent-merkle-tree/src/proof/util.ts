@@ -111,9 +111,9 @@ export function filterParentBitstrings(gindices: GindexBitstring[]): GindexBitst
 }
 
 export enum SortOrder {
-  InOrder,
-  Decreasing,
-  Unsorted,
+  InOrder = 0,
+  Decreasing = 1,
+  Unsorted = 2,
 }
 
 /**
