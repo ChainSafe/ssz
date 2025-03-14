@@ -1,6 +1,6 @@
 import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
-import {batchHash4HashObjectInputs, batchHash4UintArray64s, digest64, digest64HashObjects} from "../../src/index.js";
 import {byteArrayToHashObject} from "../../src/hashObject.js";
+import {batchHash4HashObjectInputs, batchHash4UintArray64s, digest64, digest64HashObjects} from "../../src/index.js";
 
 /**
  * This really depends on cpu, on a test ubuntu node, batch*() is 2x faster than digest64

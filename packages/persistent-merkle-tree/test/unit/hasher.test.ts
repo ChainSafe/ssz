@@ -1,11 +1,9 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 
-import {expectEqualHex} from "../utils/expectHex.js";
-import {uint8ArrayToHashObject, hashObjectToUint8Array} from "../../src/hasher/util.js";
-import {hasher as nobleHasher} from "../../src/hasher/noble.js";
 import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
 import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
-import {buildComparisonTrees} from "../utils/tree.js";
+import {hasher as nobleHasher} from "../../src/hasher/noble.js";
+import {hashObjectToUint8Array, uint8ArrayToHashObject } from "../../src/hasher/util.js";
 import {
   HashComputationLevel,
   HashObject,
@@ -15,6 +13,8 @@ import {
   subtreeFillToContents,
 } from "../../src/index.js";
 import {zeroHash} from "../../src/zeroHash.js";
+import {expectEqualHex} from "../utils/expectHex.js";
+import {buildComparisonTrees} from "../utils/tree.js";
 
 describe("hashers", function () {
   const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];

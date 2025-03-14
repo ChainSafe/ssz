@@ -1,9 +1,9 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 import {
-  createNodeFromCompactMultiProof,
-  createCompactMultiProof,
-  descriptorToBitlist,
   computeDescriptor,
+  createCompactMultiProof,
+  createNodeFromCompactMultiProof,
+  descriptorToBitlist,
 } from "../../../src/proof/compactMulti.js";
 import {createTree} from "../../utils/tree.js";
 

@@ -1,9 +1,9 @@
 import {
+  HashComputationLevel,
+  Node,
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationLevel,
-  Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";

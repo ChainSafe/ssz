@@ -1,13 +1,13 @@
 import {
-  FullOrBlindedBeaconBlock,
-  FullOrBlindedSignedBeaconBlock,
-  FullOrBlindedBeaconBlockBody,
-  FullOrBlindedExecutionPayload,
-  ExecutionPayloadHeader,
-  FullOrBlindedBlobSidecar,
-  FullOrBlindedSignedBlobSidecar,
-  BlindedBeaconBlockBody,
   BlindedBeaconBlock,
+  BlindedBeaconBlockBody,
+  ExecutionPayloadHeader,
+  FullOrBlindedBeaconBlock,
+  FullOrBlindedBeaconBlockBody,
+  FullOrBlindedBlobSidecar,
+  FullOrBlindedExecutionPayload,
+  FullOrBlindedSignedBeaconBlock,
+  FullOrBlindedSignedBlobSidecar,
 } from "../allForks/types.js";
 import {ts as bellatrix} from "../bellatrix/index.js";
 import {ts as deneb} from "../deneb/index.js";

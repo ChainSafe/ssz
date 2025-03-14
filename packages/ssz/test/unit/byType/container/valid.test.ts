@@ -1,6 +1,6 @@
-import {ContainerType, ContainerNodeStructType, ListBasicType, ByteVectorType} from "../../../../src/index.js";
-import {ssz} from "../../../lodestarTypes/index.js";
+import {ByteVectorType, ContainerNodeStructType, ContainerType, ListBasicType } from "../../../../src/index.js";
 import {SignedContributionAndProof} from "../../../lodestarTypes/altair/sszTypes.js";
+import {ssz} from "../../../lodestarTypes/index.js";
 import {replaceUintTypeWithUintBigintType} from "../../../spec/replaceUintTypeWithUintBigintType.js";
 import {uint64NumInfType} from "../../../utils/primitiveTypes.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";

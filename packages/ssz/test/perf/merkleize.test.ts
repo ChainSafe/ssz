@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {merkleizeBlockArray, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {bitLength, merkleize} from "../../src/util/merkleize.js";
 

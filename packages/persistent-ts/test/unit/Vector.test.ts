@@ -1,5 +1,5 @@
 import fc from "fast-check";
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 import {PersistentVector, TransientVector} from "../../src/Vector.js";
 
 describe("Vector", () => {

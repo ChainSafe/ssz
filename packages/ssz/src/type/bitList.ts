@@ -1,18 +1,18 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  getNodesAtDepth,
   Node,
+  getNodesAtDepth,
+  merkleizeBlocksBytes,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
-import {allocUnsafe} from "@chainsafe/as-sha256";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {ByteViews} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic.js";
+import {Require} from "../util/types.js";
 import {BitArray} from "../value/bitArray.js";
+import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode } from "./arrayBasic.js";
 import {BitArrayType} from "./bitArray.js";
+import {ByteViews} from "./composite.js";
 
 
 

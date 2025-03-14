@@ -1,9 +1,9 @@
-import {getNodeAtDepth, Gindex, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Gindex, LeafNode, Node, Tree, getNodeAtDepth, toGindexBitstring } from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract.js";
-import {isBasicType, BasicType} from "../type/basic.js";
-import {isCompositeType, CompositeType} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
+import {BasicType, isBasicType } from "../type/basic.js";
+import {CompositeType, isCompositeType } from "../type/composite.js";
 import {NonOptionalFields} from "../type/optional.js";
+import {TreeView} from "./abstract.js";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;

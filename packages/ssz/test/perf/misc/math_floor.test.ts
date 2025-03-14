@@ -1,4 +1,4 @@
-import {bench, setBenchOpts, describe} from "@chainsafe/benchmark";
+import {bench, describe, setBenchOpts } from "@chainsafe/benchmark";
 
 describe("Math.floor hacks", () => {
   setBenchOpts({noThreshold: true});

@@ -1,4 +1,4 @@
-import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationGroup, HashComputationLevel, executeHashComputations } from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, CompositeType} from "../type/composite.js";
 import {TreeView} from "../view/abstract.js";
 

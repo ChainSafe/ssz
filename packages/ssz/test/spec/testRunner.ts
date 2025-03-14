@@ -1,7 +1,7 @@
-import path from "node:path";
 import fs from "node:fs";
-import {uncompress} from "snappyjs";
+import path from "node:path";
 import jsyaml from "js-yaml";
+import {uncompress} from "snappyjs";
 import {schema} from "./sszYamlSchema.js";
 
 

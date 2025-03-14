@@ -1,4 +1,4 @@
-import {getNodesAtDepth, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
+import {Node, Tree, getNodesAtDepth, toGindexBitstring } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
 import {TreeView} from "./abstract.js";

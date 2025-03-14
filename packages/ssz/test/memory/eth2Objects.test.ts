@@ -1,11 +1,11 @@
-import {testRunnerMemory} from "./testRunnerMemory.js";
 import {ssz} from "../lodestarTypes/phase0/index.js";
 import {
   getAttestation,
-  getSignedAggregateAndProof,
   getBitsSingle,
+  getSignedAggregateAndProof,
   getSignedBeaconBlockPhase0,
 } from "../utils/generateEth2Objs.js";
+import {testRunnerMemory} from "./testRunnerMemory.js";
 
 // Results in Linux Dec 2021
 //

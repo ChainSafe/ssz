@@ -1,4 +1,4 @@
-import {convertGindexToBitstring, Gindex, GindexBitstring} from "../gindex.js";
+import {Gindex, GindexBitstring, convertGindexToBitstring } from "../gindex.js";
 import {BranchNode, LeafNode, Node} from "../node.js";
 import {computeProofBitstrings} from "./util.js";
 

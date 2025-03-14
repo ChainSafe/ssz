@@ -1,28 +1,28 @@
-import {LeafNode, Node, Tree, HashComputationLevel, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {allocUnsafe} from "@chainsafe/as-sha256";
-import {ValueOf} from "./abstract.js";
-import {BasicType} from "./basic.js";
-import {ByteViews} from "./composite.js";
+import {HashComputationLevel, LeafNode, Node, Tree, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {
-  value_deserializeFromBytesArrayBasic,
-  value_serializeToBytesArrayBasic,
-  tree_deserializeFromBytesArrayBasic,
-  tree_serializeToBytesArrayBasic,
-  addLengthNode,
-  setChunksNode,
-} from "./arrayBasic.js";
-import {
+  ValueWithCachedPermanentRoot,
   cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
 } from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
+import {Require} from "../util/types.js";
 import {ArrayBasicType} from "../view/arrayBasic.js";
 import {ListBasicTreeView} from "../view/listBasic.js";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic.js";
+import {ValueOf} from "./abstract.js";
 import {ArrayType} from "./array.js";
+import {
+  addLengthNode,
+  setChunksNode,
+  tree_deserializeFromBytesArrayBasic,
+  tree_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_serializeToBytesArrayBasic,
+} from "./arrayBasic.js";
+import {BasicType} from "./basic.js";
+import {ByteViews} from "./composite.js";
 
 
 

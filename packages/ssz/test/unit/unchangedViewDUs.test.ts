@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
 import {getRandomState} from "../utils/generateEth2Objs.js";
 

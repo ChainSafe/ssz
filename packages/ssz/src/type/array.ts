@@ -1,14 +1,14 @@
-import {concatGindices, getNode, Gindex, Node, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, Type} from "./abstract.js";
-import {CompositeType, isCompositeType, LENGTH_GINDEX} from "./composite.js";
+import {Gindex, Node, concatGindices, getNode, toGindex} from "@chainsafe/persistent-merkle-tree";
+import {Type, ValueOf } from "./abstract.js";
 import {
+  ArrayProps,
+  value_cloneArray,
+  value_defaultValueArray,
+  value_equals,
   value_fromJsonArray,
   value_toJsonArray,
-  value_cloneArray,
-  value_equals,
-  value_defaultValueArray,
-  ArrayProps,
 } from "./arrayBasic.js";
+import {CompositeType, LENGTH_GINDEX, isCompositeType } from "./composite.js";
 
 
 

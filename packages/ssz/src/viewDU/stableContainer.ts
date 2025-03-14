@@ -1,11 +1,11 @@
-import {getNodeAtDepth, LeafNode, Node, zeroNode, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, LeafNode, Node, getNodeAtDepth, zeroNode } from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract.js";
 import {BasicType, isBasicType} from "../type/basic.js";
 import {CompositeType, isCompositeType} from "../type/composite.js";
-import {computeSerdesData, StableContainerTypeGeneric} from "../view/stableContainer.js";
-import {TreeViewDU} from "./abstract.js";
 import {OptionalType} from "../type/optional.js";
 import {BitArray} from "../value/bitArray.js";
+import {StableContainerTypeGeneric, computeSerdesData } from "../view/stableContainer.js";
+import {TreeViewDU} from "./abstract.js";
 import {BasicContainerTreeViewDU} from "./container.js";
 
 

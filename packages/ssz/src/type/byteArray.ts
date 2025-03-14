@@ -1,13 +1,13 @@
 import {
-  concatGindices,
   Gindex,
-  Node,
-  toGindex,
-  Tree,
   HashComputationLevel,
+  Node,
+  Tree,
+  concatGindices,
   getHashComputations,
+  toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.js";
+import {byteArrayEquals, fromHexString, toHexString } from "../util/byteArray.js";
 import {ByteViews} from "./abstract.js";
 import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 

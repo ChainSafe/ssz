@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.js";
 
 describe("gindices at depth", () => {

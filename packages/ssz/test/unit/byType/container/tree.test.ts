@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 import {
   BitArray,
   BitListType,
@@ -11,12 +11,12 @@ import {
   ListBasicType,
   ListCompositeType,
   NoneType,
-  toHexString,
   UintNumberType,
   UnionType,
   ValueOf,
   VectorBasicType,
   VectorCompositeType,
+  toHexString,
 } from "../../../../src/index.js";
 import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";

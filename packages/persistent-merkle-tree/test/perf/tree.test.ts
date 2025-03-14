@@ -1,13 +1,13 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {
   LeafNode,
-  subtreeFillToContents,
   Node,
-  countToDepth,
   Tree,
+  countToDepth,
+  subtreeFillToContents,
   toGindex,
-  uint8ArrayToHashObject,
   toGindexBitstring,
+  uint8ArrayToHashObject,
 } from "../../src/index.js";
 
 describe("Track the performance of different Tree methods", () => {

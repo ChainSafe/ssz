@@ -1,11 +1,11 @@
-import {Node, zeroNode, subtreeFillToContents, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {Node, getNodesAtDepth, subtreeFillToContents, zeroNode } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
+import {PartialListCompositeType} from "../type/partialListComposite.js";
+import {zeroSnapshot} from "../util/snapshot.js";
+import {Snapshot} from "../util/types.js";
 import {ArrayCompositeTreeViewDUCache} from "./arrayComposite.js";
 import {ListCompositeTreeViewDU} from "./listComposite.js";
-import {PartialListCompositeType} from "../type/partialListComposite.js";
-import {Snapshot} from "../util/types.js";
-import {zeroSnapshot} from "../util/snapshot.js";
 
 /**
  * Similar to ListCompositeTreeViewDU but this is created from a snapshot so some methods are not supported

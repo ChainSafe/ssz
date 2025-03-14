@@ -1,18 +1,18 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {Require} from "../util/types.js";
+import {ArrayBasicTreeView, ArrayBasicType } from "../view/arrayBasic.js";
+import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
+import {ByteViews, ValueOf } from "./abstract.js";
+import {ArrayType} from "./array.js";
 import {
-  value_deserializeFromBytesArrayBasic,
-  value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_serializeToBytesArrayBasic,
 } from "./arrayBasic.js";
-import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic.js";
-import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
-import {ArrayType} from "./array.js";
+import {BasicType} from "./basic.js";
 
 
 

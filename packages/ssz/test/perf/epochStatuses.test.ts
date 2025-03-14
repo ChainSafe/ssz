@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {CompositeViewDU} from "../../src/index.js";
 import {EpochParticipation} from "../lodestarTypes/altair/sszTypes.js";
 import {fillArray, linspace} from "../utils/misc.js";

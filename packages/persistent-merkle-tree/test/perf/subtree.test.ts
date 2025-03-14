@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {Node} from "../../src/node.js";
 import {packedRootsBytesToLeafNodes} from "../../src/packedNode.js";
 import {subtreeFillToContents} from "../../src/subtree.js";

@@ -2,8 +2,8 @@
 
 
 
-import {describe, beforeAll, expect, it} from "vitest";
 import crypto from "crypto";
+import {beforeAll, describe, expect, it} from "vitest";
 import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
 
 

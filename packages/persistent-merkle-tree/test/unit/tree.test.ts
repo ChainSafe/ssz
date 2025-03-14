@@ -1,17 +1,17 @@
-import {describe, it, expect, beforeEach} from "vitest";
 import {byteArrayToHashObject} from "@chainsafe/as-sha256";
+import {beforeEach, describe, expect, it } from "vitest";
 
 import {
-  Tree,
-  Node,
-  zeroNode,
+  HashComputationLevel,
   LeafNode,
-  subtreeFillToContents,
-  uint8ArrayToHashObject,
-  setNodesAtDepth,
+  Node,
+  Tree,
   findDiffDepthi,
   getHashComputations,
-  HashComputationLevel,
+  setNodesAtDepth,
+  subtreeFillToContents,
+  uint8ArrayToHashObject,
+  zeroNode,
 } from "../../src/index.js";
 import {batchHash} from "../utils/batchHash.js";
 

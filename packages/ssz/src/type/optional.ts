@@ -1,19 +1,19 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  concatGindices,
   Gindex,
-  merkleizeBlocksBytes,
+  HashComputationLevel,
   Node,
   Tree,
-  zeroNode,
+  concatGindices,
   getHashComputations,
-  HashComputationLevel,
+  merkleizeBlocksBytes,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {allocUnsafe} from "@chainsafe/as-sha256";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
-import {CompositeType, isCompositeType} from "./composite.js";
+import {Require} from "../util/types.js";
+import {ByteViews, JsonPath, JsonPathProp, Type } from "./abstract.js";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
+import {CompositeType, isCompositeType} from "./composite.js";
 
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;

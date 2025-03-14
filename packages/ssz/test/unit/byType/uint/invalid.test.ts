@@ -1,7 +1,7 @@
-import {describe, it, expect} from "vitest";
-import {UintNumberType, UintBigintType} from "../../../../src/index.js";
-import {UintNumberByteLen, uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint.js";
-import {runTypeTestInvalid, InvalidValue} from "../runTypeTestInvalid.js";
+import {describe, expect, it } from "vitest";
+import {UintBigintType, UintNumberType } from "../../../../src/index.js";
+import {UintNumberByteLen, uintBigintByteLens, uintNumberByteLens } from "../../../../src/type/uint.js";
+import {InvalidValue, runTypeTestInvalid } from "../runTypeTestInvalid.js";
 
 for (const byteLen of uintNumberByteLens) {
   runTypeTestInvalid({

@@ -1,4 +1,4 @@
-import {ContainerType, UintNumberType, UnionType, NoneType} from "../../../../src/index.js";
+import {ContainerType, NoneType, UintNumberType, UnionType } from "../../../../src/index.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";
 
 const number16Type = new UintNumberType(2);

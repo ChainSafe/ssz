@@ -1,18 +1,18 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {
-  UintBigintType,
+  BitArray,
   BitListType,
+  ByteVectorType,
   CompositeType,
   ContainerType,
   ListBasicType,
   ListCompositeType,
-  VectorCompositeType,
-  ValueOf,
   TreeView,
   TreeViewDU,
-  BitArray,
+  UintBigintType,
   UintNumberType,
-  ByteVectorType,
+  ValueOf,
+  VectorCompositeType,
 } from "../../src/index.js";
 import {ValidatorContainer, ValidatorNodeStruct} from "../lodestarTypes/phase0/sszTypes.js";
 

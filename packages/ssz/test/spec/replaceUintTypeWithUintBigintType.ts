@@ -5,15 +5,15 @@
 // # MUST NOT IMPORT FROM @chainsafe/ssz #
 // #######################################
 import {
-  Type,
-  UintNumberType,
-  UintBigintType,
+  ContainerNodeStructType,
   ContainerType,
   ListBasicType,
   ListCompositeType,
+  Type,
+  UintBigintType,
+  UintNumberType,
   VectorBasicType,
   VectorCompositeType,
-  ContainerNodeStructType,
 } from "../../src/index.js";
 
 /**

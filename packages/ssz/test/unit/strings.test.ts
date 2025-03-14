@@ -1,7 +1,7 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 
-import {Case} from "../../src/util/strings.js";
 import {KeyCase} from "../../src/type/container.js";
+import {Case} from "../../src/util/strings.js";
 const testCases = ["fooBar", "foo1Bar", "fooBarBaz", "foo1Bar2Baz", "fooBar1"];
 const expectedResults: {[key in KeyCase]: string[]} = {
   snake: ["foo_bar", "foo1_bar", "foo_bar_baz", "foo1_bar2_baz", "foo_bar1"],

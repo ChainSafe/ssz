@@ -1,16 +1,16 @@
 import {
-  BooleanType,
-  ContainerType,
-  UintNumberType,
-  UintBigintType,
-  ListBasicType,
-  ByteVectorType,
-  UnionType,
-  NoneType,
-  BitVectorType,
   BitArray,
+  BitVectorType,
+  BooleanType,
+  ByteVectorType,
+  ContainerType,
+  ListBasicType,
+  NoneType,
+  UintBigintType,
+  UintNumberType,
+  UnionType,
 } from "../../../../src/index.js";
-import {uintNumberByteLens, uintBigintByteLens} from "../../../../src/type/uint.js";
+import {uintBigintByteLens, uintNumberByteLens } from "../../../../src/type/uint.js";
 import {runViewTestCompositeSwap} from "../runViewTestCompositeSwap.js";
 
 // Swap properties tests. Because swaping uses the same property names you can write many more tests

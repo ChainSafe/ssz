@@ -1,29 +1,29 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {HashObject} from "@chainsafe/as-sha256";
+import {bench, describe } from "@chainsafe/benchmark";
 import {HashComputationGroup, hasher, uint8ArrayToHashObject} from "@chainsafe/persistent-merkle-tree";
-import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
+import {
+  CompositeType,
+  CompositeView,
+  CompositeViewDU,
+  TreeView,
+  TreeViewDU,
+  ValueOf,
+  hash64,
+  isCompositeType,
+} from "../../../src/index.js";
+import {CompositeTypeAny} from "../../../src/type/composite.js";
 import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
+import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
 import {
   getAttestation,
   getOnce,
   getRandomState,
   getSignedAggregateAndProof,
-  getSyncCommitteeMessage,
-  getSignedContributionAndProof,
   getSignedBeaconBlockPhase0,
+  getSignedContributionAndProof,
+  getSyncCommitteeMessage,
   getValidator,
 } from "../../utils/generateEth2Objs.js";
-import {
-  CompositeType,
-  isCompositeType,
-  TreeView,
-  TreeViewDU,
-  ValueOf,
-  CompositeView,
-  CompositeViewDU,
-  hash64,
-} from "../../../src/index.js";
-import {CompositeTypeAny} from "../../../src/type/composite.js";
-import {HashObject} from "@chainsafe/as-sha256";
 
 describe("HashTreeRoot frequent eth2 objects", () => {
   benchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));

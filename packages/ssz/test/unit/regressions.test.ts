@@ -1,18 +1,18 @@
-import {describe, it, expect} from "vitest";
-import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
+import {describe, expect, it } from "vitest";
 import {
-  VectorBasicType,
-  ListBasicType,
+  BitArray,
   BitListType,
   BitVectorType,
-  fromHexString,
-  toHexString,
-  BitArray,
-  ContainerType,
   BooleanType,
+  ContainerType,
+  ListBasicType,
   UintBigintType,
   ValueOf,
+  VectorBasicType,
+  fromHexString,
+  toHexString,
 } from "../../src/index.js";
+import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
 
 // Compilation of various issues from SSZ and Lodestar libs
 

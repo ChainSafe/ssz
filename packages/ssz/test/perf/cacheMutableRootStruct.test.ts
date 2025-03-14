@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {BitVectorType, ContainerType, UintBigintType, ValueOf} from "../../src/index.js";
 
 describe("cachePermanentRootStruct", () => {

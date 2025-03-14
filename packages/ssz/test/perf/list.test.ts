@@ -1,6 +1,6 @@
-import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
-import {describe, bench} from "@chainsafe/benchmark";
-import {UintNumberType, ListBasicType} from "../../src/index.js";
+import {bench, describe } from "@chainsafe/benchmark";
+import {LeafNode, Node, subtreeFillToContents } from "@chainsafe/persistent-merkle-tree";
+import {ListBasicType, UintNumberType } from "../../src/index.js";
 
 describe("list", () => {
   const numBalances = 250_000;

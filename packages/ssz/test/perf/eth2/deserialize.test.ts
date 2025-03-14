@@ -1,17 +1,17 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
+import {CompositeType, TreeViewDU, ValueOf, isCompositeType } from "../../../src/index.js";
+import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
 import {BeaconState} from "../../lodestarTypes/altair/types.js";
 import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
-import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
 import {
   getAttestation,
   getOnce,
   getRandomState,
   getSignedAggregateAndProof,
-  getSyncCommitteeMessage,
-  getSignedContributionAndProof,
   getSignedBeaconBlockPhase0,
+  getSignedContributionAndProof,
+  getSyncCommitteeMessage,
 } from "../../utils/generateEth2Objs.js";
-import {CompositeType, isCompositeType, TreeViewDU, ValueOf} from "../../../src/index.js";
 
 describe("Deserialize frequent eth2 objects", () => {
   benchDeserialize(sszPhase0.Attestation, getAttestation(0));

@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {CompositeType, fromHexString, Type} from "../../../src/index.js";
+import {describe, expect, it } from "vitest";
+import {CompositeType, Type, fromHexString } from "../../../src/index.js";
 
 
 

@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {toHexString, TreeViewDU, UnionType} from "../../../src/index.js";
+import {describe, expect, it } from "vitest";
+import {TreeViewDU, UnionType, toHexString } from "../../../src/index.js";
 import {Type} from "../../../src/type/abstract.js";
 import {isCompositeType} from "../../../src/type/composite.js";
 import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest.js";

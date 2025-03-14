@@ -1,11 +1,11 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it } from "vitest";
 import {
-  computeProofGindices,
-  computeProofBitstrings,
-  sortInOrderBitstrings,
-  filterParentBitstrings,
   computeMultiProofBitstrings,
+  computeProofBitstrings,
+  computeProofGindices,
+  filterParentBitstrings,
   sortDecreasingBitstrings,
+  sortInOrderBitstrings,
 } from "../../../src/proof/util.js";
 
 describe("computeProofGindices", () => {

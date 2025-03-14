@@ -1,13 +1,13 @@
 import {
-  digest2Bytes32,
-  digest64HashObjectsInto,
-  digest64HashObjects,
   batchHash4HashObjectInputs,
+  digest2Bytes32,
+  digest64HashObjects,
+  digest64HashObjectsInto,
   hashInto,
 } from "@chainsafe/as-sha256";
-import type {Hasher} from "./types.js";
-import {Node} from "../node.js";
 import type {HashComputationLevel} from "../hashComputation.js";
+import {Node} from "../node.js";
+import type {Hasher} from "./types.js";
 import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
 
 /**

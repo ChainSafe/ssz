@@ -1,10 +1,10 @@
-import {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node } from "@chainsafe/persistent-merkle-tree";
+import {BranchNodeStruct} from "../branchNodeStruct.js";
 import {Type, ValueOf} from "../type/abstract.js";
 import {isCompositeType} from "../type/composite.js";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
 import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
-import {ContainerTreeViewDUTypeConstructor} from "./container.js";
 import {TreeViewDU} from "./abstract.js";
+import {ContainerTreeViewDUTypeConstructor} from "./container.js";
 
 
 

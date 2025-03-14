@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {ListCompositeType, UintNumberType, ContainerType, ListBasicType} from "../../../../src/index.js";
+import {describe, expect, it } from "vitest";
+import {ContainerType, ListBasicType, ListCompositeType, UintNumberType } from "../../../../src/index.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
 
 const uint16 = new UintNumberType(2);

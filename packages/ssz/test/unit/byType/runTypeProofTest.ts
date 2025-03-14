@@ -3,12 +3,12 @@ import {expect} from "vitest";
 import {
   BitArray,
   ContainerType,
-  fromHexString,
   JsonPath,
   OptionalType,
   ProfileType,
   StableContainerType,
   Type,
+  fromHexString,
 } from "../../../src/index.js";
 import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite.js";
 import {ArrayBasicTreeView} from "../../../src/view/arrayBasic.js";

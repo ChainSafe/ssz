@@ -1,4 +1,4 @@
-import {bench, setBenchOpts, describe} from "@chainsafe/benchmark";
+import {bench, describe, setBenchOpts } from "@chainsafe/benchmark";
 import {ListBasicType, UintNumberType} from "../../src/index.js";
 import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
 

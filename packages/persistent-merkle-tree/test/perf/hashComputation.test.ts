@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe } from "@chainsafe/benchmark";
 import {HashComputation, HashComputationLevel, LeafNode, zeroHash} from "../../src/index.js";
 
 /**

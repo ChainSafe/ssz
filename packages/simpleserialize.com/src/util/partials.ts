@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {ListType, Type, isBooleanType, isUintType, isBitListType, isBitVectorType, isContainerType, isVectorType, isByteVectorType, isListType} from "@chainsafe/ssz";
+import {ListType, Type, isBitListType, isBitVectorType, isBooleanType, isByteVectorType, isContainerType, isListType, isUintType, isVectorType } from "@chainsafe/ssz";
 
 // binary string
 type GenIndex = string

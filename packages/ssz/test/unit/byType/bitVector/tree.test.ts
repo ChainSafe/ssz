@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {BitVectorType, BitArray} from "../../../../src/index.js";
+import {describe, expect, it } from "vitest";
+import {BitArray, BitVectorType } from "../../../../src/index.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
 
 runViewTestMutation({

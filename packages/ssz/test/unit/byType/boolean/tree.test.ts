@@ -1,7 +1,7 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {describe, it, expect} from "vitest";
-import {toHexString} from "../../../../src/util/byteArray.js";
+import {describe, expect, it } from "vitest";
 import {BooleanType} from "../../../../src/index.js";
+import {toHexString} from "../../../../src/util/byteArray.js";
 
 describe("BooleanType / tree", () => {
   const booleanType = new BooleanType();

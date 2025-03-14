@@ -1,4 +1,4 @@
-import { toHexString, Type } from "@chainsafe/ssz";
+import { Type, toHexString } from "@chainsafe/ssz";
 import {dumpYaml} from "./yaml";
 
 function toBase64(data: Uint8Array) {

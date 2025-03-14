@@ -1,7 +1,7 @@
 // 
 
 import {expose} from "threads/worker";
-import {getSSZType, createRandomValue} from "./helpers";
+import {createRandomValue, getSSZType } from "./helpers";
 
 const worker = {
   createRandomValue(sszTypeName: string, forkName: string) {

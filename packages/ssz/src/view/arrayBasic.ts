@@ -1,4 +1,4 @@
-import {getNodesAtDepth, LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, LeafNode, Node, Tree, getNodesAtDepth } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {BasicType} from "../type/basic.js";
 import {CompositeType} from "../type/composite.js";

@@ -1,5 +1,5 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {computeDescriptor, createProof, ProofType} from "../../src/proof/index.js";
+import {bench, describe } from "@chainsafe/benchmark";
+import {ProofType, computeDescriptor, createProof } from "../../src/proof/index.js";
 import {createTree} from "../utils/tree.js";
 
 describe("Proofs", () => {

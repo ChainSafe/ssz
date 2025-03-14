@@ -1,35 +1,35 @@
-import {
-  Node,
-  Tree,
-  HashComputationLevel,
-  merkleizeBlocksBytes,
-  merkleizeBlockArray,
-} from "@chainsafe/persistent-merkle-tree";
 import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
+  HashComputationLevel,
+  Node,
+  Tree,
+  merkleizeBlockArray,
+  merkleizeBlocksBytes,
+} from "@chainsafe/persistent-merkle-tree";
+import {
+  ValueWithCachedPermanentRoot,
   cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
 } from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.js";
-import {
-  value_deserializeFromBytesArrayComposite,
-  value_serializedSizeArrayComposite,
-  value_serializeToBytesArrayComposite,
-  tree_serializedSizeArrayComposite,
-  tree_deserializeFromBytesArrayComposite,
-  tree_serializeToBytesArrayComposite,
-  maxSizeArrayComposite,
-} from "./arrayComposite.js";
+import {Require} from "../util/types.js";
 import {ArrayCompositeType} from "../view/arrayComposite.js";
 import {ListCompositeTreeView} from "../view/listComposite.js";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite.js";
+import {ByteViews, ValueOf } from "./abstract.js";
 import {ArrayType} from "./array.js";
+import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.js";
+import {
+  maxSizeArrayComposite,
+  tree_deserializeFromBytesArrayComposite,
+  tree_serializeToBytesArrayComposite,
+  tree_serializedSizeArrayComposite,
+  value_deserializeFromBytesArrayComposite,
+  value_serializeToBytesArrayComposite,
+  value_serializedSizeArrayComposite,
+} from "./arrayComposite.js";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
 
 
 

@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {LeafNode, Node, toGindex, Tree, zeroNode, treeZeroAfterIndex, getNodesAtDepth} from "../../../src/index.js";
+import {describe, expect, it } from "vitest";
+import {LeafNode, Node, Tree, getNodesAtDepth, toGindex, treeZeroAfterIndex, zeroNode } from "../../../src/index.js";
 
 describe("tree / zeroAfterIndex", () => {
   // Test all possible zeroAfterIndex operations for any tree with 0 <= depth < 6

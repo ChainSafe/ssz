@@ -1,5 +1,5 @@
 import type {HashObject} from "@chainsafe/as-sha256";
-import {hashObjectToUint8Array, Node} from "@chainsafe/persistent-merkle-tree";
+import {Node, hashObjectToUint8Array } from "@chainsafe/persistent-merkle-tree";
 
 /**
  * BranchNode whose children's data is represented as a struct, not a tree.

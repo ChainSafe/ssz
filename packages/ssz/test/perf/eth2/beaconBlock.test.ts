@@ -1,8 +1,8 @@
-import {describe, bench, setBenchOpts} from "@chainsafe/benchmark";
+import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
+import {BitArray, toHexString} from "../../../src/index.js";
 import {ValueWithCachedPermanentRoot, symbolCachedPermanentRoot} from "../../../src/util/merkleize.js";
 import {deneb, ssz} from "../../lodestarTypes/index.js";
 import {preset} from "../../lodestarTypes/params.js";
-import {BitArray, toHexString} from "../../../src/index.js";
 const {MAX_ATTESTATIONS, MAX_DEPOSITS, MAX_VOLUNTARY_EXITS, MAX_BLS_TO_EXECUTION_CHANGES} = preset;
 
 describe("Benchmark BeaconBlock.hashTreeRoot()", function () {

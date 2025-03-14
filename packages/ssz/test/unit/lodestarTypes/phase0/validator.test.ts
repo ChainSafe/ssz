@@ -1,9 +1,9 @@
 import {digestNLevel} from "@chainsafe/persistent-merkle-tree";
+import {describe, expect, it } from "vitest";
 import {ContainerType} from "../../../../../ssz/src/type/container.js";
 import {ssz} from "../../../lodestarTypes/index.js";
-import {ValidatorNodeStruct, ValidatorType, validatorToChunkBytes} from "../../../lodestarTypes/phase0/validator.js";
-import {describe, it, expect} from "vitest";
 import {Validator} from "../../../lodestarTypes/phase0/sszTypes.js";
+import {ValidatorNodeStruct, ValidatorType, validatorToChunkBytes} from "../../../lodestarTypes/phase0/validator.js";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 

@@ -1,14 +1,14 @@
 import {
   BranchNode,
+  HashComputationLevel,
   LeafNode,
   Node,
   getNodesAtDepth,
+  levelAtIndex,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  HashComputationLevel,
-  levelAtIndex,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf, ByteViews} from "./abstract.js";
+import {ByteViews, Type, ValueOf } from "./abstract.js";
 import {BasicType} from "./basic.js";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
