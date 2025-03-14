@@ -53,9 +53,8 @@ const childIndex = (parentIndex: GenIndex, listIndex: number, depth: number, ele
 
 export function getChildNodes<T>(node: Node<T>): Array<Node<T>> {
   const {type, data, genIndex, depth} = node;
-  if (isBottomType(type)) {
-    return [];
-  } else if (isListType(type) || isVectorType(type)) {
+  if (isBottomType(type)) return [];
+  if (isListType(type) || isVectorType(type)) {
     let elementsPerChunk = 1;
     const elemType = (type as ListType).elementType;
     if (isUintType(elemType)) {
@@ -83,7 +82,6 @@ export function getChildNodes<T>(node: Node<T>): Array<Node<T>> {
         // genIndex: childIndex(genIndex, i, depth, 1),
       })
     );
-  } else {
-    return [];
   }
+  return [];
 }
