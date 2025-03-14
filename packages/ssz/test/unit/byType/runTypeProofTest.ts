@@ -125,6 +125,7 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
       if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
         // Coerce jsonProp to a fieldName. JSON paths may be in JSON notation or fieldName notation
         const fieldName =
+          // biome-ignore lint/complexity/useLiteralKeys: The key `jsonKeyToFieldName` is protected field
           (type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] ?? jsonProp;
         view = (view as Record<string, unknown>)[fieldName as string];
       } else {
@@ -154,6 +155,7 @@ function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath
       json = (json as unknown[])[jsonProp];
     } else if (typeof jsonProp === "string") {
       if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
+        // biome-ignore lint/complexity/useLiteralKeys: The key `jsonKeyToFieldName` is protected field
         if ((type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] === undefined) {
           throw Error(`Unknown jsonProp ${jsonProp} for type ${type.typeName}`);
         }

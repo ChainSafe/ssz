@@ -61,6 +61,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
 
           // TODO: Should this check for valid field name? Benchmark the cost
           newNodeValue[fieldName] = value as ValueOf<Fields[keyof Fields]>;
+          // biome-ignore lint/complexity/useLiteralKeys: The key `valueToNode` is private field
           this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
         },
       });
@@ -87,6 +88,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
 
           // TODO: Should this check for valid field name? Benchmark the cost
           newNodeValue[fieldName] = fieldType.toValueFromView(view) as ValueOf<Fields[keyof Fields]>;
+          // biome-ignore lint/complexity/useLiteralKeys: The key `valueToNode` is private field
           this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
         },
       });
