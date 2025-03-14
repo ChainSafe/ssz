@@ -11,7 +11,7 @@ describe("ListValidator ssz type", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
-    exitEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
     slashed: false,
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),

@@ -116,7 +116,7 @@ export function validatorToChunkBytes(
 }
 
 function writeEpochInf(dataView: DataView, offset: number, value: number): number {
-  if (value === Infinity) {
+  if (value === Number.POSITIVE_INFINITY) {
     dataView.setUint32(offset, 0xffffffff, true);
     offset += UINT32_SIZE;
     dataView.setUint32(offset, 0xffffffff, true);

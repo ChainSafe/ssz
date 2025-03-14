@@ -11,7 +11,7 @@ describe("Validator ssz types", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
-    exitEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
     slashed: false,
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),
@@ -47,7 +47,7 @@ describe("validatorToChunkBytes", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
-    exitEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
     slashed: false,
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),

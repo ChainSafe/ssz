@@ -28,7 +28,7 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
     const hIndex = 2 * vIndex;
     const value = values[i];
     // same logic to UintNumberType.value_serializeToBytes() for 8 bytes
-    if (value === Infinity) {
+    if (value === Number.POSITIVE_INFINITY) {
       setNodeH(leafNode, hIndex, 0xffffffff);
       setNodeH(leafNode, hIndex + 1, 0xffffffff);
     } else {

@@ -21,8 +21,8 @@ export function getRandomState(validatorCount: number): BeaconState {
       slashed: false,
       activationEligibilityEpoch: i,
       activationEpoch: i,
-      exitEpoch: Infinity,
-      withdrawableEpoch: Infinity,
+      exitEpoch: Number.POSITIVE_INFINITY,
+      withdrawableEpoch: Number.POSITIVE_INFINITY,
     });
   }
   return state;
@@ -122,8 +122,8 @@ export function getValidator(i: number): Validator {
     slashed: false,
     activationEligibilityEpoch: 1e6 + i,
     activationEpoch: 1e6 + i,
-    exitEpoch: Infinity,
-    withdrawableEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
+    withdrawableEpoch: Number.POSITIVE_INFINITY,
   };
 }
 

@@ -30,7 +30,7 @@ export function fromHexString(hex: string): Uint8Array {
   const byteLen = hex.length / 2;
   const bytes = new Uint8Array(byteLen);
   for (let i = 0; i < byteLen; i++) {
-    const byte = parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
+    const byte = Number.parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
     bytes[i] = byte;
   }
   return bytes;

@@ -116,7 +116,7 @@ export function getTestType(testType: string, testCase: string): Type<unknown> {
       const [, elementTypeStr, lengthStr] = match || [];
       const elementType = vecElementTypes[elementTypeStr as keyof typeof vecElementTypes];
       if (elementType === undefined) throw Error(`No vecElementType for ${elementTypeStr}: '${testCase}'`);
-      const length = parseInt(lengthStr);
+      const length = Number.parseInt(lengthStr);
       if (Number.isNaN(length)) throw Error(`Bad length ${length}: '${testCase}'`);
       return new VectorBasicType(elementType, length);
     }
@@ -168,7 +168,7 @@ export function getTestType(testType: string, testCase: string): Type<unknown> {
  */
 function parseSecondNum(str: string, id: string): number {
   const match = str.match(/[^\W_]+_([0-9]+)/);
-  const num = parseInt((match || [])[1]);
+  const num = Number.parseInt((match || [])[1]);
   if (Number.isNaN(num)) throw Error(`Bad ${id} ${str}`);
   return num;
 }

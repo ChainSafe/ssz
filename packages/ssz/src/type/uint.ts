@@ -98,7 +98,7 @@ export class UintNumberType extends BasicType<number> {
         dataView.setUint32(offset, value, true);
         break;
       case 8:
-        if (value === Infinity) {
+        if (value === Number.POSITIVE_INFINITY) {
           // TODO: Benchmark if it's faster to set BIGINT_64_MAX once
           dataView.setUint32(offset, 0xffffffff);
           dataView.setUint32(offset + 4, 0xffffffff);
@@ -126,7 +126,7 @@ export class UintNumberType extends BasicType<number> {
         const a = dataView.getUint32(start, true);
         const b = dataView.getUint32(start + 4, true);
         if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
-          return Infinity;
+          return Number.POSITIVE_INFINITY;
         } else {
           return b * NUMBER_2_POW_32 + a;
         }
@@ -189,9 +189,9 @@ export class UintNumberType extends BasicType<number> {
     } else if (typeof json === "string") {
       if (this.clipInfinity && json === this.maxDecimalStr) {
         // Allow to handle max possible number
-        return Infinity;
+        return Number.POSITIVE_INFINITY;
       } else {
-        const num = parseInt(json, 10);
+        const num = Number.parseInt(json, 10);
         if (Number.isNaN(num)) {
           throw Error("JSON invalid number isNaN");
         } else if (num > Number.MAX_SAFE_INTEGER) {
@@ -214,7 +214,7 @@ export class UintNumberType extends BasicType<number> {
   }
 
   toJson(value: number): unknown {
-    if (value === Infinity) {
+    if (value === Number.POSITIVE_INFINITY) {
       return this.maxDecimalStr;
     } else {
       return value.toString(10);

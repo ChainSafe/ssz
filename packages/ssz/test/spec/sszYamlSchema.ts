@@ -151,7 +151,7 @@ function constructYamlInteger(data: string): bigint {
 
   if (value.indexOf(":") !== -1) {
     for (const v of value.split(":")) {
-      digits.unshift(parseInt(v, 10));
+      digits.unshift(Number.parseInt(v, 10));
     }
     value = BigInt(0);
     base = BigInt(1);
