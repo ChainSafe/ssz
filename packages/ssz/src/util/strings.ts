@@ -4,11 +4,11 @@ export const Case = {
   snake: (field: string): string =>
     field
       .replace(/[^0-z]/g, "")
-      .replace(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => substr[0] + "_" + substr[1].toLowerCase()),
+      .replace(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => `${substr[0]}_${substr[1].toLowerCase()}`),
   constant: (field: string): string =>
     field
       .replace(/[^0-z]/g, "")
-      .replace(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => substr[0] + "_" + substr[1])
+      .replace(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => `${substr[0]}_${substr[1]}`)
       .toUpperCase(),
   pascal: (field: string): string => {
     const first = field[0].toUpperCase();
@@ -24,7 +24,7 @@ export const Case = {
       field
         .slice(1)
         .replace(/[^0-z]/g, "")
-        .replace(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => substr[0] + "-" + substr[1])
+        .replace(/[a-z][A-Z]|[0-9][A-Z]/g, (substr) => `${substr[0]}-${substr[1]}`)
     );
   },
   eth2: (field: string): string => Case.snake(field).replace(/(\d)$/, "_$1"),

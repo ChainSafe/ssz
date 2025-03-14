@@ -12,7 +12,7 @@ export function toHexString(bytes: BufferLike): string {
 export function toHex(bytes: BufferLike): string {
   const hex = toHexString(bytes);
   if (hex.startsWith("0x")) return hex;
-  return "0x" + hex;
+  return `0x${hex}`;
 }
 
 export function expectEqualHex(value: BufferLike, expected: BufferLike): void {

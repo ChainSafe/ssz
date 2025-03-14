@@ -1,6 +1,6 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {describe, it, expect} from "vitest";
-import {toHexString, fromHexString} from "../../../../src/util/byteArray.js";
+import {describe, expect, it} from "vitest";
+import {fromHexString, toHexString} from "../../../../src/util/byteArray.js";
 import {byteType, uint64NumInfType} from "../../../utils/primitiveTypes.js";
 
 describe("UintNumberType / tree", () => {
@@ -34,23 +34,23 @@ describe("UintType - Infinity with clipInfinity", () => {
 
   it("Infinity getFromNode", () => {
     const node = LeafNode.fromRoot(fromHexString(hexOffset0));
-    expect(uint64NumInfType.tree_getFromNode(node)).to.equal(Infinity);
+    expect(uint64NumInfType.tree_getFromNode(node)).to.equal(Number.POSITIVE_INFINITY);
   });
 
   it("Infinity getFromPackedNode", () => {
     const node = LeafNode.fromRoot(fromHexString(hexOffset2));
-    expect(uint64NumInfType.tree_getFromPackedNode(node, 2)).to.equal(Infinity);
+    expect(uint64NumInfType.tree_getFromPackedNode(node, 2)).to.equal(Number.POSITIVE_INFINITY);
   });
 
   it("Infinity setToNode", () => {
     const node = LeafNode.fromRoot(Buffer.alloc(32, 0));
-    uint64NumInfType.tree_setToNode(node, Infinity);
+    uint64NumInfType.tree_setToNode(node, Number.POSITIVE_INFINITY);
     expect(toHexString(node.root)).to.equal(hexOffset0);
   });
 
   it("Infinity setToPackedNode", () => {
     const node = LeafNode.fromRoot(Buffer.alloc(32, 0));
-    uint64NumInfType.tree_setToPackedNode(node, 2, Infinity);
+    uint64NumInfType.tree_setToPackedNode(node, 2, Number.POSITIVE_INFINITY);
     expect(toHexString(node.root)).to.equal(hexOffset2);
   });
 });

@@ -98,8 +98,8 @@ export function treePostProcessFromProofNode(node: Node, type: CompositeType, bi
 
     // BranchNode at not type depth, keep navigating
     else {
-      const leftNode = treePostProcessFromProofNode(node.left, type, bitstring + "0", currentDepth + 1);
-      const rightNode = treePostProcessFromProofNode(node.right, type, bitstring + "1", currentDepth + 1);
+      const leftNode = treePostProcessFromProofNode(node.left, type, `${bitstring}0`, currentDepth + 1);
+      const rightNode = treePostProcessFromProofNode(node.right, type, `${bitstring}1`, currentDepth + 1);
 
       if (leftNode === node.left && rightNode === node.right) {
         return node;
@@ -113,5 +113,5 @@ export function treePostProcessFromProofNode(node: Node, type: CompositeType, bi
 /** Return the node horizontal index given a bitstring without the leading "1" */
 function bitstringToIndex(bitstring: string): number {
   if (bitstring === "") return 0;
-  return parseInt(bitstring, 2);
+  return Number.parseInt(bitstring, 2);
 }

@@ -7,7 +7,7 @@ export function toHexString(bytes: Uint8Array | ByteVector): string {
   let hex = "0x";
   for (const byte of bytes) {
     if (!hexByByte[byte]) {
-      hexByByte[byte] = byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
+      hexByByte[byte] = byte < 16 ? `0${byte.toString(16)}` : byte.toString(16);
     }
     hex += hexByByte[byte];
   }
@@ -30,7 +30,7 @@ export function fromHexString(hex: string): Uint8Array {
   const byteLen = hex.length / 2;
   const bytes = new Uint8Array(byteLen);
   for (let i = 0; i < byteLen; i++) {
-    const byte = parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
+    const byte = Number.parseInt(hex.slice(i * 2, (i + 1) * 2), 16);
     bytes[i] = byte;
   }
   return bytes;

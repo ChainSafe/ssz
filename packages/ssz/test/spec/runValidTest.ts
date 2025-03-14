@@ -1,19 +1,17 @@
-import {expect} from "vitest";
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "../../src/type/abstract.js";
-import {fromHexString, toHexString} from "../../src/util/byteArray.js";
-import {CompositeType, isCompositeType} from "../../src/type/composite.js";
-import {isBasicType} from "../../src/type/basic.js";
-import {wrapErr} from "../utils/error.js";
+import {expect} from "vitest";
 import {TreeViewDU} from "../../src/index.js";
+import {Type} from "../../src/type/abstract.js";
+import {isBasicType} from "../../src/type/basic.js";
+import {CompositeType, isCompositeType} from "../../src/type/composite.js";
+import {fromHexString, toHexString} from "../../src/util/byteArray.js";
+import {wrapErr} from "../utils/error.js";
 
 type ValidTestCaseData = {
   root: string;
   serialized: string | Uint8Array;
   jsonValue: unknown;
 };
-
-/* eslint-disable no-console */
 
 export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData): {node: Node; json: unknown} {
   const testDataRootHex = testData.root;
@@ -26,7 +24,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     console.log(
       JSON.stringify(
         testData.jsonValue,
-        (key, value: unknown) => (typeof value === "bigint" ? value.toString() : value),
+        (_key, value: unknown) => (typeof value === "bigint" ? value.toString() : value),
         2
       )
     );
@@ -103,6 +101,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     if (type.isBasic) {
       console.log("Chunk Bytes Basic", toHexString(type.serialize(testDataValue)));
     } else {
+      // biome-ignore lint/complexity/useLiteralKeys: The function `getBlocksBytes` is private
       const blocksBytes = (type as CompositeType<unknown, unknown, unknown>)["getBlocksBytes"](testDataValue);
       console.log("Blocks Bytes Composite", toHexString(blocksBytes));
     }
@@ -228,8 +227,8 @@ export function gatherLeafNodes(node: Node, nodes = new Map<string, string>(), g
   if (node.isLeaf()) {
     nodes.set(gindex, toHexString(node.root));
   } else {
-    gatherLeafNodes(node.left, nodes, gindex + "0");
-    gatherLeafNodes(node.right, nodes, gindex + "1");
+    gatherLeafNodes(node.left, nodes, `${gindex}0`);
+    gatherLeafNodes(node.right, nodes, `${gindex}1`);
   }
   return nodes;
 }

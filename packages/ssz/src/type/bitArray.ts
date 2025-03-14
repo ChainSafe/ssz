@@ -1,12 +1,10 @@
-import {concatGindices, Gindex, Node, toGindex, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.js";
-import {CompositeType, LENGTH_GINDEX} from "./composite.js";
+import {Gindex, HashComputationLevel, Node, Tree, concatGindices, toGindex} from "@chainsafe/persistent-merkle-tree";
+import {byteArrayEquals, fromHexString, toHexString} from "../util/byteArray.js";
 import {BitArray} from "../value/bitArray.js";
 import {BitArrayTreeView} from "../view/bitArray.js";
 import {BitArrayTreeViewDU} from "../viewDU/bitArray.js";
 import {getBlocksBytes} from "./byteArray.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {CompositeType, LENGTH_GINDEX} from "./composite.js";
 
 /**
  * BitArray: ordered array collection of boolean values

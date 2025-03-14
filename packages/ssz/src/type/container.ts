@@ -1,28 +1,27 @@
 import {
-  Node,
-  getNodesAtDepth,
-  subtreeFillToContents,
-  Tree,
   Gindex,
-  toGindex,
+  HashComputationLevel,
+  Node,
+  Tree,
   concatGindices,
   getNode,
-  HashComputationLevel,
+  getNodesAtDepth,
+  subtreeFillToContents,
+  toGindex,
 } from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
+import {Case} from "../util/strings.js";
+import {Require} from "../util/types.js";
 import {getContainerTreeViewClass} from "../view/container.js";
-import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container.js";
+import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields} from "../view/container.js";
 import {
-  getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
+  getContainerTreeViewDUClass,
 } from "../viewDU/container.js";
-import {Case} from "../util/strings.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+import {Type, ValueOf} from "./abstract.js";
+import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.js";
 
 type BytesRange = {start: number; end: number};
 
@@ -79,7 +78,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, readonly opts?: ContainerOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    readonly opts?: ContainerOptions<Fields>
+  ) {
     super(opts?.cachePermanentRootStruct);
 
     // Render detailed typeName. Consumers should overwrite since it can get long

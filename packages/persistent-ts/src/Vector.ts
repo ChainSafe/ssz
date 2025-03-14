@@ -48,7 +48,8 @@ export class PersistentVector<T> implements Iterable<T> {
   /**
    * The empty vector
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   static empty: PersistentVector<any> = new PersistentVector<any>(
     emptyNode(),
     DEFAULT_LEVEL_SHIFT,
@@ -88,7 +89,7 @@ export class PersistentVector<T> implements Iterable<T> {
   get(index: number): T | undefined {
     if (index < 0 || index >= this.length) return undefined;
 
-    let array;
+    let array: T[] | (INode<T> | undefined)[];
     if (index >= this.getTailOffset()) {
       array = this.tail;
     } else {
@@ -222,6 +223,7 @@ export class PersistentVector<T> implements Iterable<T> {
       cursor = next;
     }
     const newTail = [...cursor.array] as T[];
+    // biome-ignore lint/style/noNonNullAssertion: Fixing this will require more refactoring, leaving it for now
     parent!.array[subIndex!] = emptyNode<T>();
     let newLevelShift = this.shift;
     let newRoot: INode<T> = base;
@@ -304,12 +306,17 @@ export class PersistentVector<T> implements Iterable<T> {
  * TransientVectors support access to items by index in log32N hops.
  */
 export class TransientVector<T> implements Iterable<T> {
-  constructor(private root: INode<T>, private shift: number, private tail: T[], readonly length: number) {}
+  constructor(
+    private root: INode<T>,
+    private shift: number,
+    private tail: T[],
+    readonly length: number
+  ) {}
 
   /**
    * The empty vector
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   static empty<T>(): TransientVector<T> {
     return new TransientVector<T>(emptyNode({ref: true}), DEFAULT_LEVEL_SHIFT, Array(BRANCH_SIZE).fill(undefined), 0);
   }
@@ -348,7 +355,7 @@ export class TransientVector<T> implements Iterable<T> {
   get(index: number): T | undefined {
     if (index < 0 || index >= this.length) return undefined;
 
-    let array;
+    let array: T[] | (INode<T> | undefined)[];
     if (index >= this.getTailOffset()) {
       array = this.tail;
     } else {
@@ -404,7 +411,7 @@ export class TransientVector<T> implements Iterable<T> {
     if (this.getTailLength() < BRANCH_SIZE) {
       // has space in tail
       this.tail[this.length % BRANCH_SIZE] = value;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       this.length += 1;
       // The element is added to the tail
@@ -436,7 +443,7 @@ export class TransientVector<T> implements Iterable<T> {
     // it's safe to update cursor bc "next" is a new instance anyway
     cursor.array = this.tail;
     this.tail = [value, ...(Array(BRANCH_SIZE - 1).fill(undefined) as T[])];
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
     // @ts-ignore
     this.length += 1;
     return this;
@@ -454,7 +461,7 @@ export class TransientVector<T> implements Iterable<T> {
     const tailLength = this.getTailLength();
     if (tailLength >= 2) {
       delete this.tail[tailLength - 1];
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       this.length -= 1;
       return this;
@@ -478,13 +485,14 @@ export class TransientVector<T> implements Iterable<T> {
       cursor = next;
     }
     this.tail = cursor.array as T[];
+    // biome-ignore lint/style/noNonNullAssertion: Fixing this will require more refactoring, leaving it for now
     parent!.array[subIndex!] = emptyNode<T>(this.root.edit);
 
     if (isFullBranch(this.length - 1 - BRANCH_SIZE)) {
       this.root = this.root.array[0] as IBranch<T>;
       this.shift -= BIT_WIDTH;
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
     // @ts-ignore
     this.length -= 1;
     return this;

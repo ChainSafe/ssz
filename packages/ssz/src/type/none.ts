@@ -2,9 +2,6 @@ import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 export class NoneType extends BasicType<null> {
   readonly typeName = "none";
   readonly byteLength = 0;
@@ -19,37 +16,37 @@ export class NoneType extends BasicType<null> {
 
   // bytes serdes
 
-  value_serializeToBytes(output: ByteViews, offset: number, value: null): number {
+  value_serializeToBytes(_output: ByteViews, offset: number, _value: null): number {
     return offset;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number): null {
+  value_deserializeFromBytes(_data: ByteViews, _start: number): null {
     return null;
   }
 
-  tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
+  tree_serializeToBytes(_output: ByteViews, offset: number, _node: Node): number {
     return offset;
   }
 
-  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+  tree_deserializeFromBytes(_data: ByteViews, _start: number, _end: number): Node {
     return zeroNode(0);
   }
 
   // Fast tree opts
 
-  tree_getFromNode(leafNode: LeafNode): null {
+  tree_getFromNode(_leafNode: LeafNode): null {
     return null;
   }
 
-  tree_setToNode(leafNode: LeafNode, value: null): void {
+  tree_setToNode(_leafNode: LeafNode, _value: null): void {
     return;
   }
 
-  tree_getFromPackedNode(leafNode: LeafNode, index: number): null {
+  tree_getFromPackedNode(_leafNode: LeafNode, _index: number): null {
     return null;
   }
 
-  tree_setToPackedNode(leafNode: LeafNode, index: number, value: null): void {
+  tree_setToPackedNode(_leafNode: LeafNode, _index: number, _value: null): void {
     return;
   }
 
@@ -62,7 +59,7 @@ export class NoneType extends BasicType<null> {
     return null;
   }
 
-  toJson(value: null): unknown {
+  toJson(_value: null): unknown {
     return null;
   }
 }

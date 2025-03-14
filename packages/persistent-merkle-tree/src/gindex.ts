@@ -18,7 +18,7 @@ export function toGindexBitstring(depth: number, index: number): GindexBitstring
   if (str.length > depth) {
     throw new Error("index too large for depth");
   } else {
-    return "1" + str.padStart(depth, "0");
+    return `1${str.padStart(depth, "0")}`;
   }
 }
 

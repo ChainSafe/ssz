@@ -2,7 +2,8 @@ import {BranchNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ContainerType} from "../type/container.js";
 
 /** Upgrade the current View/ViewDU to a root node of new type */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+// biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
 export function upgradeToNewType(rootNode: Node, oldType: ContainerType<any>, newType: ContainerType<any>): Node {
   const newFieldsCount = newType.fieldsEntries.length;
   const currentFieldsCount = oldType.fieldsEntries.length;

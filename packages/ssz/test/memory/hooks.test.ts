@@ -11,8 +11,6 @@ import {testRunnerMemory} from "./testRunnerMemory.js";
 // SignedBeaconBlockPhase0 struct - 210580.6 bytes / instance
 // SignedBeaconBlockPhase0 tree   - 278512.7 bytes / instance
 
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 const map = new Map<number, unknown>();
 
 function getClosureWithMap(i: number) {
@@ -50,7 +48,6 @@ function testRunnerMemoryBpi(testCases: {getInstance: (bytes: number) => unknown
       convergeFactor: 0.2 / 100,
     });
 
-    // eslint-disable-next-line no-console
     console.log(`${id.padEnd(longestId)} - ${bpi.toFixed(1)} bytes / instance`);
   }
 }

@@ -1,17 +1,17 @@
 import {digestNLevel} from "@chainsafe/persistent-merkle-tree";
+import {describe, expect, it} from "vitest";
 import {ContainerType} from "../../../../../ssz/src/type/container.js";
 import {ssz} from "../../../lodestarTypes/index.js";
-import {ValidatorNodeStruct, ValidatorType, validatorToChunkBytes} from "../../../lodestarTypes/phase0/validator.js";
-import {describe, it, expect} from "vitest";
 import {Validator} from "../../../lodestarTypes/phase0/sszTypes.js";
+import {ValidatorNodeStruct, ValidatorType, validatorToChunkBytes} from "../../../lodestarTypes/phase0/validator.js";
 
 const ValidatorContainer = new ContainerType(ValidatorType, {typeName: "Validator", jsonCase: "eth2"});
 
-describe("Validator ssz types", function () {
+describe("Validator ssz types", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
-    exitEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
     slashed: false,
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),
@@ -43,11 +43,11 @@ describe("Validator ssz types", function () {
   });
 });
 
-describe("validatorToChunkBytes", function () {
+describe("validatorToChunkBytes", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
-    exitEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
     slashed: false,
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),

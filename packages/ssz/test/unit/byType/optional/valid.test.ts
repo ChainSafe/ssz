@@ -1,4 +1,4 @@
-import {OptionalType, UintNumberType, ListBasicType, ContainerType, ListCompositeType} from "../../../../src/index.js";
+import {ContainerType, ListBasicType, ListCompositeType, OptionalType, UintNumberType} from "../../../../src/index.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";
 
 const number8Type = new UintNumberType(1);

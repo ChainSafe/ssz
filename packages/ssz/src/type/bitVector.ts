@@ -1,12 +1,10 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
+import {Node, getNodesAtDepth, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {ByteViews} from "./composite.js";
+import {Require} from "../util/types.js";
 import {BitArray} from "../value/bitArray.js";
 import {BitArrayType} from "./bitArray.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {ByteViews} from "./composite.js";
 
 export interface BitVectorOptions {
   typeName?: string;
@@ -40,7 +38,10 @@ export class BitVectorType extends BitArrayType {
    */
   private readonly zeroBitsMask: number;
 
-  constructor(readonly lengthBits: number, opts?: BitVectorOptions) {
+  constructor(
+    readonly lengthBits: number,
+    opts?: BitVectorOptions
+  ) {
     super();
 
     if (lengthBits === 0) throw Error("Vector length must be > 0");
@@ -53,7 +54,7 @@ export class BitVectorType extends BitArrayType {
     this.minSize = this.fixedSize;
     this.maxSize = this.fixedSize;
     // To cache mask for trailing zero bits validation
-    this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << lengthBits % 8);
+    this.zeroBitsMask = lengthBits % 8 === 0 ? 0 : 0xff & (0xff << (lengthBits % 8));
   }
 
   static named(limitBits: number, opts: Require<BitVectorOptions, "typeName">): BitVectorType {

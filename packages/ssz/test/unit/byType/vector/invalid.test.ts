@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {VectorBasicType, VectorCompositeType} from "../../../../src/index.js";
 import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.js";

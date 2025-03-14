@@ -1,30 +1,28 @@
-import {LeafNode, Node, Tree, HashComputationLevel, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {allocUnsafe} from "@chainsafe/as-sha256";
-import {ValueOf} from "./abstract.js";
-import {BasicType} from "./basic.js";
-import {ByteViews} from "./composite.js";
+import {HashComputationLevel, LeafNode, Node, Tree, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {
-  value_deserializeFromBytesArrayBasic,
-  value_serializeToBytesArrayBasic,
-  tree_deserializeFromBytesArrayBasic,
-  tree_serializeToBytesArrayBasic,
-  addLengthNode,
-  setChunksNode,
-} from "./arrayBasic.js";
-import {
+  ValueWithCachedPermanentRoot,
   cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
 } from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
+import {Require} from "../util/types.js";
 import {ArrayBasicType} from "../view/arrayBasic.js";
 import {ListBasicTreeView} from "../view/listBasic.js";
 import {ListBasicTreeViewDU} from "../viewDU/listBasic.js";
+import {ValueOf} from "./abstract.js";
 import {ArrayType} from "./array.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {
+  addLengthNode,
+  setChunksNode,
+  tree_deserializeFromBytesArrayBasic,
+  tree_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_serializeToBytesArrayBasic,
+} from "./arrayBasic.js";
+import {BasicType} from "./basic.js";
+import {ByteViews} from "./composite.js";
 
 export interface ListBasicOpts {
   typeName?: string;
@@ -60,7 +58,11 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   );
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListBasicOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListBasicOpts
+  ) {
     super(elementType, opts?.cachePermanentRootStruct);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -91,7 +93,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ListBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ListBasicTreeViewDU(this, node, cache as any);
   }
 

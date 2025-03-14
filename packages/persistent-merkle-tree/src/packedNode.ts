@@ -1,5 +1,5 @@
+import {LeafNode, Node, getNodeH, setNodeH} from "./node.js";
 import {subtreeFillToContents} from "./subtree.js";
-import {Node, LeafNode, getNodeH, setNodeH} from "./node.js";
 
 const NUMBER_2_POW_32 = 2 ** 32;
 
@@ -28,7 +28,7 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
     const hIndex = 2 * vIndex;
     const value = values[i];
     // same logic to UintNumberType.value_serializeToBytes() for 8 bytes
-    if (value === Infinity) {
+    if (value === Number.POSITIVE_INFINITY) {
       setNodeH(leafNode, hIndex, 0xffffffff);
       setNodeH(leafNode, hIndex + 1, 0xffffffff);
     } else {

@@ -1,9 +1,9 @@
 import {
+  ByteVectorType,
   ContainerType,
+  ListBasicType,
   ListCompositeType,
   UintNumberType,
-  ByteVectorType,
-  ListBasicType,
 } from "../../../../src/index.js";
 import {runTypeTestValid} from "../runTypeTestValid.js";
 

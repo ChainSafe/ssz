@@ -1,4 +1,4 @@
-import {Type, ValueOf, TreeView, BasicType} from "../../../src/index.js";
+import {BasicType, TreeView, Type, ValueOf} from "../../../src/index.js";
 import {
   ContainerType,
   ListBasicType,

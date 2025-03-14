@@ -4,8 +4,6 @@ import {Require} from "../util/types.js";
 import {ByteViews} from "./abstract.js";
 import {BasicType} from "./basic.js";
 
-/* eslint-disable @typescript-eslint/member-ordering */
-
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
 const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);
 const BIGINT_2_POW_128 = BigInt(2) ** BigInt(128);
@@ -51,7 +49,10 @@ export class UintNumberType extends BasicType<number> {
   private readonly clipInfinity: boolean;
   private readonly setBitwiseOR: boolean;
 
-  constructor(readonly byteLength: UintNumberByteLen, opts?: UintNumberOpts) {
+  constructor(
+    readonly byteLength: UintNumberByteLen,
+    opts?: UintNumberOpts
+  ) {
     super();
 
     if (byteLength > 8) {
@@ -97,7 +98,7 @@ export class UintNumberType extends BasicType<number> {
         dataView.setUint32(offset, value, true);
         break;
       case 8:
-        if (value === Infinity) {
+        if (value === Number.POSITIVE_INFINITY) {
           // TODO: Benchmark if it's faster to set BIGINT_64_MAX once
           dataView.setUint32(offset, 0xffffffff);
           dataView.setUint32(offset + 4, 0xffffffff);
@@ -125,7 +126,7 @@ export class UintNumberType extends BasicType<number> {
         const a = dataView.getUint32(start, true);
         const b = dataView.getUint32(start + 4, true);
         if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
-          return Infinity;
+          return Number.POSITIVE_INFINITY;
         } else {
           return b * NUMBER_2_POW_32 + a;
         }
@@ -188,10 +189,10 @@ export class UintNumberType extends BasicType<number> {
     } else if (typeof json === "string") {
       if (this.clipInfinity && json === this.maxDecimalStr) {
         // Allow to handle max possible number
-        return Infinity;
+        return Number.POSITIVE_INFINITY;
       } else {
-        const num = parseInt(json, 10);
-        if (isNaN(num)) {
+        const num = Number.parseInt(json, 10);
+        if (Number.isNaN(num)) {
           throw Error("JSON invalid number isNaN");
         } else if (num > Number.MAX_SAFE_INTEGER) {
           // Throw to prevent decimal precision errors downstream
@@ -213,7 +214,7 @@ export class UintNumberType extends BasicType<number> {
   }
 
   toJson(value: number): unknown {
-    if (value === Infinity) {
+    if (value === Number.POSITIVE_INFINITY) {
       return this.maxDecimalStr;
     } else {
       return value.toString(10);
@@ -245,7 +246,10 @@ export class UintBigintType extends BasicType<bigint> {
   readonly minSize: number;
   readonly maxSize: number;
 
-  constructor(readonly byteLength: UintBigintByteLen, opts?: UintBigintOpts) {
+  constructor(
+    readonly byteLength: UintBigintByteLen,
+    opts?: UintBigintOpts
+  ) {
     super();
 
     if (byteLength > 32) {

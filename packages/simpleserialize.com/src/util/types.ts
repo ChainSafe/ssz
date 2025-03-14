@@ -1,10 +1,10 @@
 import {
-  Type,
-  UintNumberType,
-  UintBigintType,
   ContainerType,
   ListBasicType,
   ListCompositeType,
+  Type,
+  UintBigintType,
+  UintNumberType,
   VectorBasicType,
   VectorCompositeType,
 } from "@chainsafe/ssz";

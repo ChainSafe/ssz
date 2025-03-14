@@ -1,7 +1,7 @@
 import {Gindex} from "../gindex.js";
 import {BranchNode, LeafNode, Node} from "../node.js";
 import {Tree} from "../tree.js";
-import {computeMultiProofBitstrings, SortOrder} from "./util.js";
+import {SortOrder, computeMultiProofBitstrings} from "./util.js";
 
 /**
  * Create an multiproof
@@ -80,7 +80,7 @@ export function createNodeFromMultiProof(leaves: Uint8Array[], witnesses: Uint8A
         continue;
       }
 
-      const isLeft = bitstring[bitstring.length - 1] === "0";
+      const isLeft = bitstring.at(-1) === "0";
       const parentBitstring = bitstring.substring(0, bitstring.length - 1);
       const siblingBitstring = parentBitstring + (isLeft ? "1" : "0");
 

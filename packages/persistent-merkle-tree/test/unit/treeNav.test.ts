@@ -1,4 +1,4 @@
-import {expect, describe, it} from "vitest";
+import {describe, expect, it} from "vitest";
 
 describe("commonDepth", () => {
   const testCases: {from: number; to: number; d: number}[] = [

@@ -1,6 +1,6 @@
-import {Tree, Node} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray.js";
+import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {CompositeType} from "../type/composite.js";
+import {BitArray} from "../value/bitArray.js";
 import {TreeView} from "./abstract.js";
 
 /**
@@ -9,7 +9,10 @@ import {TreeView} from "./abstract.js";
 export class BitArrayTreeView extends TreeView<CompositeType<BitArray, unknown, unknown>> implements BitArray {
   private readonly bitArray: BitArray;
 
-  constructor(readonly type: CompositeType<BitArray, unknown, unknown>, protected tree: Tree) {
+  constructor(
+    readonly type: CompositeType<BitArray, unknown, unknown>,
+    protected tree: Tree
+  ) {
     super();
 
     this.bitArray = type.tree_toValue(tree.rootNode);

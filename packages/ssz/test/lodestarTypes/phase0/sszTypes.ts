@@ -10,11 +10,11 @@ import {
 import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
 import {PartialListCompositeType} from "../../../src/type/partialListComposite.js";
 import {
-  preset,
-  MAX_REQUEST_BLOCKS,
+  ATTESTATION_SUBNET_COUNT,
   DEPOSIT_CONTRACT_TREE_DEPTH,
   JUSTIFICATION_BITS_LENGTH,
-  ATTESTATION_SUBNET_COUNT,
+  MAX_REQUEST_BLOCKS,
+  preset,
 } from "../params.js";
 import * as primitiveSsz from "../primitive/sszTypes.js";
 import {ListValidatorType} from "./listValidator.js";
@@ -39,6 +39,7 @@ const {
 } = preset;
 
 const {
+  // biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
   Boolean,
   Bytes32,
   UintNum64,

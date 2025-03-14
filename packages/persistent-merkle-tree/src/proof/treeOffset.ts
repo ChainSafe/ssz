@@ -26,8 +26,8 @@ export function nodeToTreeOffsetProof(
     return [[], [node.root]];
   } else {
     // recursively compute offsets, leaves for the left and right subtree
-    const [leftOffsets, leftLeaves] = nodeToTreeOffsetProof(node.left, gindex + "0", proofGindices);
-    const [rightOffsets, rightLeaves] = nodeToTreeOffsetProof(node.right, gindex + "1", proofGindices);
+    const [leftOffsets, leftLeaves] = nodeToTreeOffsetProof(node.left, `${gindex}0`, proofGindices);
+    const [rightOffsets, rightLeaves] = nodeToTreeOffsetProof(node.right, `${gindex}1`, proofGindices);
     // the offset prepended to the list is # of leaves in the left subtree
     const pivot = leftLeaves.length;
     return [[pivot].concat(leftOffsets, rightOffsets), leftLeaves.concat(rightLeaves)];

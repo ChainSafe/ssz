@@ -1,7 +1,7 @@
 import {Gindex} from "../gindex.js";
 import {Node} from "../node.js";
+import {createCompactMultiProof, createNodeFromCompactMultiProof} from "./compactMulti.js";
 import {createMultiProof, createNodeFromMultiProof} from "./multi.js";
-import {createNodeFromCompactMultiProof, createCompactMultiProof} from "./compactMulti.js";
 import {createNodeFromSingleProof, createSingleProof} from "./single.js";
 import {
   computeTreeOffsetProofSerializedLength,

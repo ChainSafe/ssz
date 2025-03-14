@@ -1,6 +1,6 @@
-import {Hasher} from "./types.js";
-import {hasher as nobleHasher} from "./noble.js";
 import type {HashComputationLevel} from "../hashComputation.js";
+import {hasher as nobleHasher} from "./noble.js";
+import {Hasher} from "./types.js";
 
 export * from "./types.js";
 export * from "./util.js";

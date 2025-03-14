@@ -1,20 +1,19 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  concatGindices,
   Gindex,
-  merkleizeBlocksBytes,
+  HashComputationLevel,
   Node,
   Tree,
-  zeroNode,
+  concatGindices,
   getHashComputations,
-  HashComputationLevel,
+  merkleizeBlocksBytes,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {allocUnsafe} from "@chainsafe/as-sha256";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
-import {CompositeType, isCompositeType} from "./composite.js";
+import {Require} from "../util/types.js";
+import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.js";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+import {CompositeType, isCompositeType} from "./composite.js";
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
 export type NonOptionalFields<Fields extends Record<string, Type<unknown>>> = {
@@ -55,7 +54,10 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.mixInLengthBlockBytes.byteLength
   );
 
-  constructor(readonly elementType: ElementType, opts?: OptionalOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    opts?: OptionalOpts
+  ) {
     super();
 
     this.typeName = opts?.typeName ?? `Optional[${elementType.typeName}]`;
@@ -161,8 +163,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    let valueNode;
-    let selector;
+    let valueNode: Node;
+    let selector: number;
     if (start === end) {
       selector = 0;
       valueNode = zeroNode(0);

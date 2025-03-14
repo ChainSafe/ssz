@@ -21,7 +21,6 @@
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "lint": "echo 'no linting for this package'",
     "check-types": "tsc --noEmit",
     "generate": "rm -rf ./dist && node --loader ts-node/esm ./scripts/codegen.ts",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",

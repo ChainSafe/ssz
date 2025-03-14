@@ -1,7 +1,7 @@
-import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
-import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types.js";
-import {SignedContributionAndProof, BeaconState, SyncCommitteeMessage} from "../lodestarTypes/altair/types.js";
 import {BitArray} from "../../src/index.js";
+import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
+import {BeaconState, SignedContributionAndProof, SyncCommitteeMessage} from "../lodestarTypes/altair/types.js";
+import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types.js";
 
 // Typical mainnet numbers
 const BITS_PER_ATTESTATION = 90;
@@ -21,8 +21,8 @@ export function getRandomState(validatorCount: number): BeaconState {
       slashed: false,
       activationEligibilityEpoch: i,
       activationEpoch: i,
-      exitEpoch: Infinity,
-      withdrawableEpoch: Infinity,
+      exitEpoch: Number.POSITIVE_INFINITY,
+      withdrawableEpoch: Number.POSITIVE_INFINITY,
     });
   }
   return state;
@@ -122,8 +122,8 @@ export function getValidator(i: number): Validator {
     slashed: false,
     activationEligibilityEpoch: 1e6 + i,
     activationEpoch: 1e6 + i,
-    exitEpoch: Infinity,
-    withdrawableEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
+    withdrawableEpoch: Number.POSITIVE_INFINITY,
   };
 }
 
@@ -155,7 +155,7 @@ function randomBytes(bytes: number): Uint8Array {
 
 export function getOnce<T>(fn: () => T): () => T {
   let value: T | null = null;
-  return function () {
+  return () => {
     if (value === null) {
       value = fn();
     }

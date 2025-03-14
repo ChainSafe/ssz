@@ -1,18 +1,18 @@
-import {describe, it, expect, beforeEach} from "vitest";
+import {beforeEach, describe, expect, it} from "vitest";
 import {
   ByteVectorType,
   CompositeView,
   ContainerNodeStructType,
   ContainerType,
   ListCompositeType,
-  toHexString,
   UintNumberType,
   ValueOf,
+  toHexString,
 } from "../../../../src/index.js";
 import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite.js";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
 import {ssz} from "../../../lodestarTypes/primitive/index.js";
 import {runViewTestMutation} from "../runViewTestMutation.js";
-import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(
@@ -423,7 +423,9 @@ describe("ListCompositeType", () => {
         // this is equivalent to getAllReadonly()
         // but consumer can break in the middle to improve performance
         while (start < listLength) {
-          listView.getReadonlyByRange(start, count).forEach((item) => total.push(item as Buffer));
+          for (const item of listView.getReadonlyByRange(start, count)) {
+            total.push(item as Buffer);
+          }
           start += count;
         }
 

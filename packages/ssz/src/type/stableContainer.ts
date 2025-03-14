@@ -1,21 +1,21 @@
 import {
-  Node,
   BranchNode,
-  LeafNode,
-  getNodesAtDepth,
-  subtreeFillToContents,
-  Tree,
   Gindex,
-  toGindex,
+  LeafNode,
+  Node,
+  Tree,
   concatGindices,
-  getNode,
-  zeroNode,
-  zeroHash,
-  merkleizeBlocksBytes,
   countToDepth,
+  getNode,
   getNodeH,
+  getNodesAtDepth,
+  merkleizeBlocksBytes,
   setNode,
   setNodeWithFn,
+  subtreeFillToContents,
+  toGindex,
+  zeroHash,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {
   ValueWithCachedPermanentRoot,
@@ -23,27 +23,26 @@ import {
   maxChunksToDepth,
   symbolCachedPermanentRoot,
 } from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {JsonPath, Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny, isCompositeType} from "./composite.js";
+import {Case} from "../util/strings.js";
+import {Require} from "../util/types.js";
+import {BitArray} from "../value/bitArray.js";
 import {
-  getContainerTreeViewClass,
-  ValueOfFields,
-  FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
+  FieldEntry,
+  ValueOfFields,
   computeSerdesData,
+  getContainerTreeViewClass,
 } from "../view/stableContainer.js";
 import {
-  getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
+  getContainerTreeViewDUClass,
 } from "../viewDU/stableContainer.js";
-import {Case} from "../util/strings.js";
-import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional.js";
-import {BitArray} from "../value/bitArray.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+import {JsonPath, Type, ValueOf} from "./abstract.js";
+import {ByteViews, CompositeType, CompositeTypeAny, isCompositeType} from "./composite.js";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
 
 type BytesRange = {start: number; end: number};
 
@@ -101,7 +100,11 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   // temporary root to avoid memory allocation
   private tempRoot = new Uint8Array(32);
 
-  constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
+  constructor(
+    fields: Fields,
+    readonly maxFields: number,
+    readonly opts?: StableContainerOptions<Fields>
+  ) {
     super();
 
     this.fields = fields;

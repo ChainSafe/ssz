@@ -1,6 +1,6 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
+import {CompositeType, CompositeViewDU, TreeViewDU, ValueOf} from "../../../src/index.js";
 import {toHexString} from "../../../src/util/byteArray.js";
-import {CompositeType, ValueOf, TreeViewDU, CompositeViewDU} from "../../../src/index.js";
 
 export type TreeMutation<CT extends CompositeType<unknown, unknown, unknown>> = {
   id: string;
@@ -50,7 +50,6 @@ const runViewTestMutationFn = function runViewTestMutation<CT extends CompositeT
     }
   }
 
-  // eslint-disable-next-line no-only-tests/no-only-tests
   const describeFn = opts?.only ? describe.only : opts?.skip ? describe.skip : describe;
 
   describeFn(`${type.typeName} TreeView mutations`, () => {

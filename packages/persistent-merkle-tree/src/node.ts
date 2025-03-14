@@ -58,7 +58,10 @@ export abstract class Node implements HashObject {
  * An immutable binary merkle tree node that has a `left` and `right` child
  */
 export class BranchNode extends Node {
-  constructor(private _left: Node, private _right: Node) {
+  constructor(
+    private _left: Node,
+    private _right: Node
+  ) {
     // First null value is to save an extra variable to check if a node has a root or not
     super(null as unknown as number, 0, 0, 0, 0, 0, 0, 0);
 
@@ -115,7 +118,7 @@ export class LeafNode extends Node {
   }
 
   static fromRoot(root: Uint8Array): LeafNode {
-    return this.fromHashObject(uint8ArrayToHashObject(root));
+    return LeafNode.fromHashObject(uint8ArrayToHashObject(root));
   }
 
   /**
@@ -182,7 +185,7 @@ export class LeafNode extends Node {
         return low >>> 0;
       } else if (high === -1 && low === -1 && clipInfinity) {
         // Limit uint returns
-        return Infinity;
+        return Number.POSITIVE_INFINITY;
       } else {
         return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
       }
@@ -248,7 +251,7 @@ export class LeafNode extends Node {
 
     // number spans 2 h values
     else if (uintBytes === 8) {
-      if (value === Infinity && clipInfinity) {
+      if (value === Number.POSITIVE_INFINITY && clipInfinity) {
         setNodeH(this, hIndex, -1);
         setNodeH(this, hIndex + 1, -1);
       } else {
@@ -330,9 +333,7 @@ export function identity(n: Node): Node {
 }
 
 export function compose(inner: Link, outer: Link): Link {
-  return function (n: Node): Node {
-    return outer(inner(n));
-  };
+  return (n: Node): Node => outer(inner(n));
 }
 
 export function getNodeH(node: Node, hIndex: number): number {

@@ -161,7 +161,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
     binary:      function (obj) { return obj >= 0 ? '0b' + obj.toString(2) : '-0b' + obj.toString(2).slice(1); },
     octal:       function (obj) { return obj >= 0 ? '0'  + obj.toString(8) : '-0'  + obj.toString(8).slice(1); },
     decimal:     function (obj) { return obj.toString(10); },
-    /* eslint-disable max-len */
+    
     hexadecimal: function (obj) { return obj >= 0 ? '0x' + obj.toString(16).toUpperCase() :  '-0x' + obj.toString(16).toUpperCase().slice(1); }
   },
   defaultStyle: 'decimal',

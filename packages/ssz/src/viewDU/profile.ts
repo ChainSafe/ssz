@@ -1,30 +1,28 @@
-import {getNodeAtDepth, LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
+import {LeafNode, Node, getNodeAtDepth, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract.js";
 import {BasicType, isBasicType} from "../type/basic.js";
 import {CompositeType, isCompositeType} from "../type/composite.js";
-import {computeSerdesData, ContainerTypeGeneric} from "../view/profile.js";
-import {TreeViewDU} from "./abstract.js";
-import {BasicContainerTreeViewDU, ChangedNode} from "./container.js";
 import {OptionalType} from "../type/optional.js";
 import {BitArray} from "../value/bitArray.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {ContainerTypeGeneric, computeSerdesData} from "../view/profile.js";
+import {TreeViewDU} from "./abstract.js";
+import {BasicContainerTreeViewDU, ChangedNode} from "./container.js";
 
 export type ViewDUValue<T extends Type<unknown>> = T extends CompositeType<unknown, unknown, infer TVDU>
   ? // If composite, return view. MAY propagate changes updwards
     TVDU
   : // If basic, return struct value. Will NOT propagate changes upwards
-  T extends BasicType<infer V>
-  ? V
-  : never;
+    T extends BasicType<infer V>
+    ? V
+    : never;
 
 export type OptionalViewDUValue<T extends Type<unknown>> = T extends CompositeType<unknown, unknown, infer TVDU>
   ? // If composite, return view. MAY propagate changes updwards
     TVDU | null | undefined
   : // If basic, return struct value. Will NOT propagate changes upwards
-  T extends BasicType<infer V>
-  ? V | null | undefined
-  : never;
+    T extends BasicType<infer V>
+    ? V | null | undefined
+    : never;
 
 export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends OptionalType<infer U> ? OptionalViewDUValue<U> : ViewDUValue<Fields[K]>;
@@ -194,7 +192,6 @@ export function getProfileTreeViewDUClass<Fields extends Record<string, Type<unk
         get: function (this: CustomProfileTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return viewChanged;
           }
 
@@ -217,7 +214,6 @@ export function getProfileTreeViewDUClass<Fields extends Record<string, Type<unk
           // No need to persist the child's view cache since a second get returns this view instance.
           // The cache is only persisted on commit where the viewsChanged map is dropped.
 
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return view;
         },
 

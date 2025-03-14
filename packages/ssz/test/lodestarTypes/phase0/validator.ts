@@ -3,6 +3,7 @@ import {ContainerNodeStructType} from "../../../src/type/containerNodeStruct.js"
 import {ValueOfFields} from "../../../src/view/container.js";
 import * as primitiveSsz from "../primitive/sszTypes.js";
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
 const {Boolean, Bytes32, UintNum64, BLSPubkey, EpochInf} = primitiveSsz;
 
 // this is to work with uint32, see https://github.com/ChainSafe/ssz/blob/ssz-v0.15.1/packages/ssz/src/type/uint.ts
@@ -115,7 +116,7 @@ export function validatorToChunkBytes(
 }
 
 function writeEpochInf(dataView: DataView, offset: number, value: number): number {
-  if (value === Infinity) {
+  if (value === Number.POSITIVE_INFINITY) {
     dataView.setUint32(offset, 0xffffffff, true);
     offset += UINT32_SIZE;
     dataView.setUint32(offset, 0xffffffff, true);

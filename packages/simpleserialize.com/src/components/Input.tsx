@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+
 
 import * as React from "react";
 import {Type, toHexString} from "@chainsafe/ssz";
@@ -329,5 +329,5 @@ class Input extends React.Component<Props, State> {
 }
 
 // @TODO: not sure what to put here instead of any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export default withAlert<any>()(Input);

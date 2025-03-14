@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {HashComputation, HashComputationLevel, LeafNode, zeroHash} from "../../src/index.js";
 
 /**
@@ -8,7 +8,7 @@ import {HashComputation, HashComputationLevel, LeafNode, zeroHash} from "../../s
     ✓ HashComputationLevel.push then loop                                 58.75361 ops/s    17.02023 ms/op        -         19 runs  0.835 s
     ✓ HashComputation[] push then loop                                    36.51973 ops/s    27.38246 ms/op        -        150 runs   4.63 s
  */
-describe("HashComputationLevel", function () {
+describe("HashComputationLevel", () => {
   const src = LeafNode.fromRoot(zeroHash(0));
   const dest = LeafNode.fromRoot(zeroHash(1));
   const hashComp: HashComputation = {src0: src, src1: src, dest, next: null};
@@ -28,6 +28,7 @@ describe("HashComputationLevel", function () {
       }
       level.clean();
       for (const hc of level) {
+        // biome-ignore lint/correctness/noUnusedVariables: We need to extract values for performance tests
         const {src0, src1, dest} = hc;
       }
     },
@@ -41,6 +42,7 @@ describe("HashComputationLevel", function () {
         level.push(hashComp);
       }
       for (const hc of level) {
+        // biome-ignore lint/correctness/noUnusedVariables: We need to extract values for performance tests
         const {src0, src1, dest} = hc;
       }
     },

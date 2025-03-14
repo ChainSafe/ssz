@@ -1,22 +1,20 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  concatGindices,
-  getNode,
   Gindex,
+  HashComputationLevel,
   Node,
   Tree,
-  merkleizeBlocksBytes,
+  concatGindices,
   getHashComputations,
-  HashComputationLevel,
+  getNode,
+  merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
-import {allocUnsafe} from "@chainsafe/as-sha256";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {Type, ByteViews} from "./abstract.js";
-import {CompositeType, isCompositeType} from "./composite.js";
+import {Require} from "../util/types.js";
+import {ByteViews, Type} from "./abstract.js";
 import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
+import {CompositeType, isCompositeType} from "./composite.js";
 import {NoneType} from "./none.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
 
 type Union<T> = {
   readonly selector: number;
@@ -58,7 +56,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
 
   protected readonly maxSelector: number;
 
-  constructor(readonly types: Types, opts?: UnionOpts) {
+  constructor(
+    readonly types: Types,
+    opts?: UnionOpts
+  ) {
     super();
 
     if (types.length >= 128) {

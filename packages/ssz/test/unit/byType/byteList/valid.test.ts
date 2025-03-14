@@ -1,5 +1,5 @@
-import {ListBasicType, ByteListType, fromHexString, UintNumberType} from "../../../../src/index.js";
-import {runTypeTestValid, TypeTestValid} from "../runTypeTestValid.js";
+import {ByteListType, ListBasicType, UintNumberType, fromHexString} from "../../../../src/index.js";
+import {TypeTestValid, runTypeTestValid} from "../runTypeTestValid.js";
 
 runTypeTestValid({
   type: new ByteListType(256),

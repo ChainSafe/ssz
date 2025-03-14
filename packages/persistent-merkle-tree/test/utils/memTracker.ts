@@ -17,5 +17,5 @@ export class MemoryTracker {
 }
 
 function formatBytes(numBytes: number): string {
-  return numBytes / 1000000 + "MB";
+  return `${numBytes / 1000000}MB`;
 }

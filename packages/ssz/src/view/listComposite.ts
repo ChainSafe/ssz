@@ -5,15 +5,18 @@ import {ArrayCompositeTreeView, ArrayCompositeType} from "./arrayComposite.js";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ListCompositeType<
-  ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > = ArrayCompositeType<ElementType> & {
   readonly limit: number;
 };
 
 export class ListCompositeTreeView<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends ArrayCompositeTreeView<ElementType> {
-  constructor(readonly type: ListCompositeType<ElementType>, protected tree: Tree) {
+  constructor(
+    readonly type: ListCompositeType<ElementType>,
+    protected tree: Tree
+  ) {
     super(type, tree);
   }
 

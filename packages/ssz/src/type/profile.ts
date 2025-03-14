@@ -1,14 +1,14 @@
 import {
-  Node,
-  getNodesAtDepth,
-  subtreeFillToContents,
-  Tree,
-  Gindex,
-  toGindex,
-  concatGindices,
-  merkleizeBlocksBytes,
-  getNode,
   BranchNode,
+  Gindex,
+  Node,
+  Tree,
+  concatGindices,
+  getNode,
+  getNodesAtDepth,
+  merkleizeBlocksBytes,
+  subtreeFillToContents,
+  toGindex,
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
@@ -18,28 +18,27 @@ import {
   maxChunksToDepth,
   symbolCachedPermanentRoot,
 } from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
+import {Case} from "../util/strings.js";
+import {Require} from "../util/types.js";
+import {BitArray} from "../value/bitArray.js";
 import {
-  getProfileTreeViewClass,
-  ValueOfFields,
-  FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
+  FieldEntry,
+  ValueOfFields,
   computeSerdesData,
+  getProfileTreeViewClass,
 } from "../view/profile.js";
 import {
-  getProfileTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
+  getProfileTreeViewDUClass,
 } from "../viewDU/profile.js";
-import {Case} from "../util/strings.js";
-import {BitArray} from "../value/bitArray.js";
-import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
+import {Type, ValueOf} from "./abstract.js";
+import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.js";
 import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
 
 type BytesRange = {start: number; end: number};
 
@@ -96,7 +95,11 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   // temporary root to avoid memory allocation
   private tempRoot = new Uint8Array(32);
 
-  constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    activeFields: BitArray,
+    readonly opts?: ProfileOptions<Fields>
+  ) {
     super();
 
     // Render detailed typeName. Consumers should overwrite since it can get long

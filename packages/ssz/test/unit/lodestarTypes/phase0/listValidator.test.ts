@@ -1,17 +1,17 @@
-import {ListCompositeType} from "../../../../src/type/listComposite.js";
-import {ValidatorType} from "../../../lodestarTypes/phase0/validator.js";
-import {preset} from "../../../lodestarTypes/params.js";
-import {ssz} from "../../../lodestarTypes/index.js";
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {ContainerType} from "../../../../src/type/container.js";
+import {ListCompositeType} from "../../../../src/type/listComposite.js";
+import {ssz} from "../../../lodestarTypes/index.js";
+import {preset} from "../../../lodestarTypes/params.js";
 import {Validator} from "../../../lodestarTypes/phase0/index.js";
+import {ValidatorType} from "../../../lodestarTypes/phase0/validator.js";
 const {VALIDATOR_REGISTRY_LIMIT} = preset;
 
-describe("ListValidator ssz type", function () {
+describe("ListValidator ssz type", () => {
   const seedValidator = {
     activationEligibilityEpoch: 10,
     activationEpoch: 11,
-    exitEpoch: Infinity,
+    exitEpoch: Number.POSITIVE_INFINITY,
     slashed: false,
     withdrawableEpoch: 13,
     pubkey: Buffer.alloc(48, 100),
