@@ -2,7 +2,7 @@ import {Type, toHexString} from "@chainsafe/ssz";
 import {dumpYaml} from "./yaml";
 
 function toBase64(data: Uint8Array) {
-  var binstr = Array.prototype.map.call(data, (ch) => String.fromCharCode(ch)).join("");
+  const binstr = Array.prototype.map.call(data, (ch) => String.fromCharCode(ch)).join("");
   return btoa(binstr);
 }
 
