@@ -5,7 +5,7 @@ import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.js";
 import {altair, phase0, ssz} from "../../lodestarTypes/index.js";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
-export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
+const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 
 describe("BeaconState ViewDU batchHashTreeRoot", function () {
   const view = BeaconState.defaultView();
