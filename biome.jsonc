@@ -144,7 +144,7 @@
         "rules": {
           "style": {
             "useNamingConvention": {
-              "level": "off",
+              "level": "error",
               "options": {
                 "requireAscii": true,
                 "strictCase": false,
@@ -162,6 +162,20 @@
         }
       }
     },
+    {
+      /// We want to preserve variable names in this file
+      "include": ["packages/persistent-merkle-tree/src/hasher/as-sha256.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": {
+              "level": "off"
+            }
+          }
+        }
+      }
+    },
+
     {
       "include": ["packages/ssz/test/unit/specTestYamlLoader.test.ts"],
       "linter": {
