@@ -1,5 +1,3 @@
-//
-
 import {expose} from "threads/worker";
 import {createRandomValue, getSSZType} from "./helpers";
 
