@@ -45,7 +45,7 @@ export const hasher: Hasher = {
       // HashComputations of the same level are safe to batch
       let src0_0: Node | null = null;
       let src1_0: Node | null = null;
-      let dest_0: Node | null = null;
+      let dest0: Node | null = null;
       let src0_1: Node | null = null;
       let src1_1: Node | null = null;
       let dest1: Node | null = null;
@@ -64,7 +64,7 @@ export const hasher: Hasher = {
           case 0:
             src0_0 = hc.src0;
             src1_0 = hc.src1;
-            dest_0 = hc.dest;
+            dest0 = hc.dest;
             break;
           case 1:
             src0_1 = hc.src0;
@@ -84,7 +84,7 @@ export const hasher: Hasher = {
             if (
               src0_0 !== null &&
               src1_0 !== null &&
-              dest_0 !== null &&
+              dest0 !== null &&
               src0_1 !== null &&
               src1_1 !== null &&
               dest1 !== null &&
@@ -109,7 +109,7 @@ export const hasher: Hasher = {
               if (o0 == null || o1 == null || o2 == null || o3 == null) {
                 throw Error(`batchHash4HashObjectInputs return null or undefined at batch ${i} level ${level}`);
               }
-              dest_0.applyHash(o0);
+              dest0.applyHash(o0);
               dest1.applyHash(o1);
               dest2.applyHash(o2);
               dest3.applyHash(o3);
@@ -117,7 +117,7 @@ export const hasher: Hasher = {
               // reset for next batch
               src0_0 = null;
               src1_0 = null;
-              dest_0 = null;
+              dest0 = null;
               src0_1 = null;
               src1_1 = null;
               dest1 = null;
@@ -136,8 +136,8 @@ export const hasher: Hasher = {
       }
 
       // remaining
-      if (src0_0 !== null && src1_0 !== null && dest_0 !== null) {
-        dest_0.applyHash(digest64HashObjects(src0_0, src1_0));
+      if (src0_0 !== null && src1_0 !== null && dest0 !== null) {
+        dest0.applyHash(digest64HashObjects(src0_0, src1_0));
       }
       if (src0_1 !== null && src1_1 !== null && dest1 !== null) {
         dest1.applyHash(digest64HashObjects(src0_1, src1_1));
