@@ -44,7 +44,7 @@ export const hasher: Hasher = {
     doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
-    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, uint8Input);
+    doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, uint8Input);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);
