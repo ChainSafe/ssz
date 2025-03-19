@@ -1,18 +1,18 @@
 import {
-  getNodeAtDepth,
   Gindex,
   LeafNode,
   Node,
-  toGindexBitstring,
   Tree,
+  getNodeAtDepth,
+  toGindexBitstring,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {Type, ValueOf} from "../type/abstract.js";
-import {isBasicType, BasicType} from "../type/basic.js";
-import {isCompositeType, CompositeType} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
+import {BasicType, isBasicType} from "../type/basic.js";
+import {CompositeType, isCompositeType} from "../type/composite.js";
 import {NonOptionalFields, OptionalType} from "../type/optional.js";
 import {BitArray} from "../value/bitArray.js";
+import {TreeView} from "./abstract.js";
 
 // some code is here to break the circular dependency between type, view, and viewDU
 
@@ -45,17 +45,17 @@ export type ViewType<T extends Type<unknown>> = T extends CompositeType<unknown,
   ? // If composite, return view. MAY propagate changes updwards
     TV
   : // If basic, return struct value. Will NOT propagate changes upwards
-  T extends BasicType<infer V>
-  ? V
-  : never;
+    T extends BasicType<infer V>
+    ? V
+    : never;
 
 export type OptionalViewType<T extends Type<unknown>> = T extends CompositeType<unknown, infer TV, unknown>
   ? // If composite, return view. MAY propagate changes updwards if not nullish
     TV | null | undefined
   : // If basic, return struct value or nullish. Will NOT propagate changes upwards
-  T extends BasicType<infer V>
-  ? V | null | undefined
-  : never;
+    T extends BasicType<infer V>
+    ? V | null | undefined
+    : never;
 
 export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends OptionalType<infer U> ? OptionalViewType<U> : ViewType<Fields[K]>;
@@ -85,7 +85,10 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
 class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<
   StableContainerTypeGeneric<Fields>
 > {
-  constructor(readonly type: StableContainerTypeGeneric<Fields>, readonly tree: Tree) {
+  constructor(
+    readonly type: StableContainerTypeGeneric<Fields>,
+    readonly tree: Tree
+  ) {
     super();
   }
 

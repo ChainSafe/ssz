@@ -1,6 +1,8 @@
-import {bench, setBenchOpts, describe} from "@chainsafe/benchmark";
+import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
 import {ListBasicType, UintNumberType} from "../../src/index.js";
 import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
+
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
 describe("iterate", () => {
   setBenchOpts({noThreshold: true});
@@ -13,15 +15,14 @@ describe("iterate", () => {
 
   bench("Array - for of", () => {
     for (const a of arr) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const x = a.foo;
+      const _x = a.foo;
     }
   });
   bench("Array - for(;;)", () => {
     for (let i = 0; i < arr.length; i++) {
       const a = arr[i];
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const x = a.foo;
+
+      const _x = a.foo;
     }
   });
 });
@@ -55,16 +56,12 @@ describe("readonly values - iterator vs array", () => {
   });
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createBalanceList(count: number) {
-  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
-
   const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
   return balancesList.toViewDU(balancesStruct);
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createValidatorList(count: number) {
   const validatorsStruct = Array.from({length: count}, () => ({
     pubkey: new Uint8Array(48),

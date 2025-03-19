@@ -1,11 +1,11 @@
 import {fromSnapshot, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
-import {ListCompositeOpts, ListCompositeType} from "./listComposite.js";
-import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite.js";
-import {Snapshot} from "../util/types.js";
 import {byteArrayEquals} from "../util/byteArray.js";
 import {zeroSnapshot} from "../util/snapshot.js";
+import {Snapshot} from "../util/types.js";
+import {PartialListCompositeTreeViewDU} from "../viewDU/partialListComposite.js";
 import {addLengthNode} from "./arrayBasic.js";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
+import {ListCompositeOpts, ListCompositeType} from "./listComposite.js";
 
 /**
  * Similar to ListCompositeType, this is mainly used to create a PartialListCompositeTreeViewDU from a snapshot.
@@ -14,10 +14,14 @@ import {addLengthNode} from "./arrayBasic.js";
  * It'll throw errors for all other methods, most of the usage is in the ViewDU class.
  */
 export class PartialListCompositeType<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
+  ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends ListCompositeType<ElementType> {
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListCompositeOpts
+  ) {
     super(elementType, limit, opts);
 
     // only inherit methods in ArrayType of ../view/arrayBasic.ts

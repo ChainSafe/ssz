@@ -1,4 +1,4 @@
-import {bench, setBenchOpts, describe} from "@chainsafe/benchmark";
+import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
 
 describe("big if vs obj", () => {
   setBenchOpts({noThreshold: true});

@@ -1,6 +1,8 @@
-import {LeafNode, subtreeFillToContents, Node} from "@chainsafe/persistent-merkle-tree";
-import {describe, bench} from "@chainsafe/benchmark";
-import {UintNumberType, ListBasicType} from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {LeafNode, Node, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
+import {ListBasicType, UintNumberType} from "../../src/index.js";
+
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
 describe("list", () => {
   const numBalances = 250_000;
@@ -50,7 +52,7 @@ describe("list", () => {
   });
 });
 
-describe("subtreeFillToContents", function () {
+describe("subtreeFillToContents", () => {
   const numBalances = 250_000;
 
   const tbBalances64 = createBalanceList(numBalances);
@@ -82,10 +84,7 @@ describe("subtreeFillToContents", function () {
   });
 });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createBalanceList(count: number) {
-  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
-
   const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
   const viewDU = balancesList.toViewDU(balancesStruct);

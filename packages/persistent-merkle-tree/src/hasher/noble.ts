@@ -1,5 +1,5 @@
+import {byteArrayIntoHashObject, digest64HashObjects} from "@chainsafe/as-sha256";
 import {sha256} from "@noble/hashes/sha256";
-import {digest64HashObjects, byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import type {Hasher} from "./types.js";
 import {
   BLOCK_SIZE,
@@ -38,10 +38,10 @@ export const hasher: Hasher = {
     byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), 0, parent);
   },
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
+    doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
-    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
+    doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

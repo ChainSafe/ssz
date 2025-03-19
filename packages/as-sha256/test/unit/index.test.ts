@@ -1,6 +1,6 @@
-import {describe, it, expect} from "vitest";
-import {createHash, randomBytes} from "crypto";
-import {Buffer} from "buffer";
+import {Buffer} from "node:buffer";
+import {createHash, randomBytes} from "node:crypto";
+import {describe, expect, it} from "vitest";
 import {
   byteArrayToHashObject,
   digest,
@@ -10,7 +10,7 @@ import {
   hashObjectToByteArray,
 } from "../../src/index.js";
 
-describe("hashObjectToByteArray and byteArrayToHashObject", function () {
+describe("hashObjectToByteArray and byteArrayToHashObject", () => {
   const tcs = [
     new Uint8Array([
       190, 57, 56, 15, 241, 208, 38, 30, 111, 55, 218, 254, 66, 120, 182, 98, 239, 97, 31, 28, 178, 247, 192, 161, 131,
@@ -23,17 +23,17 @@ describe("hashObjectToByteArray and byteArrayToHashObject", function () {
     new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
   ];
   for (const [i, byteArr] of tcs.entries()) {
-    it("test case " + i, function () {
+    it(`test case ${i}`, () => {
       const obj = byteArrayToHashObject(byteArr, 0);
       const newByteArr = new Uint8Array(32);
       hashObjectToByteArray(obj, newByteArr, 0);
-      expect(newByteArr).to.be.deep.equal(byteArr, "failed test case" + i);
+      expect(newByteArr).to.be.deep.equal(byteArr, `failed test case ${i}`);
     });
   }
 });
 
-describe("as-sha256 non-SIMD enabled methods", function () {
-  describe("digest()", function () {
+describe("as-sha256 non-SIMD enabled methods", () => {
+  describe("digest()", () => {
     const digestTestCases = [
       {
         input: "",
@@ -63,7 +63,7 @@ describe("as-sha256 non-SIMD enabled methods", function () {
     for (const {input, expectedInputLength, expected} of digestTestCases) {
       const name = input === "" ? "empty string" : input;
       const trimmed = name.length > 97 ? `${name.substring(0, 100)}...` : name;
-      it(trimmed, function () {
+      it(trimmed, () => {
         const inputBuffer = Buffer.from(input, "utf8");
         if (expectedInputLength) {
           expect(inputBuffer.length).to.be.equal(expectedInputLength, "Invalid input buffer length");
@@ -74,21 +74,21 @@ describe("as-sha256 non-SIMD enabled methods", function () {
     }
   });
 
-  it("digest64()", function () {
+  it("digest64()", () => {
     const input = Buffer.alloc(64, "lodestar");
     const output = Buffer.from(digest64(input)).toString("hex");
     const expected = createHash("sha256").update(input).digest("hex");
     expect(output).to.equal(expected);
   });
 
-  it("digest() and digest64() output matches", function () {
+  it("digest() and digest64() output matches", () => {
     const input = Buffer.from("harkamalharkamalharkamalharkamalharkamalharkamalharkamalharkamal", "utf8");
     const output = Buffer.from(digest(input)).toString("hex");
     const output64 = Buffer.from(digest64(input)).toString("hex");
     expect(output).to.be.equal(output64);
   });
 
-  it("digest2Bytes32()", function () {
+  it("digest2Bytes32()", () => {
     const input1 = randomBytes(32);
     const input2 = randomBytes(32);
     const output = Buffer.from(digest2Bytes32(input1, input2)).toString("hex");
@@ -98,7 +98,7 @@ describe("as-sha256 non-SIMD enabled methods", function () {
     expect(output).to.equal(expectedOutput);
   });
 
-  it("digest2Bytes32() matches digest64()", function () {
+  it("digest2Bytes32() matches digest64()", () => {
     const input1 = Buffer.alloc(32, "*");
     const input2 = Buffer.alloc(32, "*");
     const digestBytes32 = digest2Bytes32(input1, input2);
@@ -108,7 +108,7 @@ describe("as-sha256 non-SIMD enabled methods", function () {
     );
   });
 
-  it("digest64HashObject()", function () {
+  it("digest64HashObject()", () => {
     const input1 = randomBytes(32);
     const obj1 = byteArrayToHashObject(input1, 0);
     const input2 = randomBytes(32);
@@ -126,7 +126,7 @@ describe("as-sha256 non-SIMD enabled methods", function () {
     expect(output).to.equal(expectedOutput);
   });
 
-  it("digest64HashObject() and digest2Bytes32() output matches", function () {
+  it("digest64HashObject() and digest2Bytes32() output matches", () => {
     const input1 = Buffer.from("gajindergajindergajindergajinder", "utf8");
     const input2 = Buffer.from("gajindergajindergajindergajinder", "utf8");
     const output = digest2Bytes32(input1, input2);

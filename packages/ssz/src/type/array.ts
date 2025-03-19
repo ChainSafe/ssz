@@ -1,16 +1,14 @@
-import {concatGindices, getNode, Gindex, Node, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, Type} from "./abstract.js";
-import {CompositeType, isCompositeType, LENGTH_GINDEX} from "./composite.js";
+import {Gindex, Node, concatGindices, getNode, toGindex} from "@chainsafe/persistent-merkle-tree";
+import {Type, ValueOf} from "./abstract.js";
 import {
+  ArrayProps,
+  value_cloneArray,
+  value_defaultValueArray,
+  value_equals,
   value_fromJsonArray,
   value_toJsonArray,
-  value_cloneArray,
-  value_equals,
-  value_defaultValueArray,
-  ArrayProps,
 } from "./arrayBasic.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {CompositeType, LENGTH_GINDEX, isCompositeType} from "./composite.js";
 
 /**
  * Array: ordered homogeneous collection
@@ -23,7 +21,10 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
   abstract readonly itemsPerChunk: number;
   protected abstract readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, cachePermanentRootStruct?: boolean) {
+  constructor(
+    readonly elementType: ElementType,
+    cachePermanentRootStruct?: boolean
+  ) {
     super(cachePermanentRootStruct);
   }
 

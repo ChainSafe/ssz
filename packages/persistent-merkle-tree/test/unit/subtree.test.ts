@@ -1,5 +1,14 @@
-import {describe, it, expect, vi} from "vitest";
-import {subtreeFillToContents, LeafNode, getNodesAtDepth, executeHashComputations, BranchNode, Node, HashComputationLevel, zeroNode} from "../../src/index.js";
+import {describe, expect, it, vi} from "vitest";
+import {
+  BranchNode,
+  HashComputationLevel,
+  LeafNode,
+  Node,
+  executeHashComputations,
+  getNodesAtDepth,
+  subtreeFillToContents,
+  zeroNode,
+} from "../../src/index.js";
 
 describe("subtreeFillToContents", () => {
   // the hash computation takes time
@@ -58,7 +67,7 @@ describe("subtreeFillToContents", () => {
   }
 });
 
-describe("subtreeFillToContents with hcByLevel", function () {
+describe("subtreeFillToContents with hcByLevel", () => {
   it("depth = 0", () => {
     // return zeroNode, no hash computations
     const nodes = [LeafNode.fromZero()];

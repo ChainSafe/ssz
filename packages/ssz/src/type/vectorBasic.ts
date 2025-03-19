@@ -1,20 +1,18 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {Require} from "../util/types.js";
+import {ArrayBasicTreeView, ArrayBasicType} from "../view/arrayBasic.js";
+import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
+import {ByteViews, ValueOf} from "./abstract.js";
+import {ArrayType} from "./array.js";
 import {
-  value_deserializeFromBytesArrayBasic,
-  value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_serializeToBytesArrayBasic,
 } from "./arrayBasic.js";
-import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic.js";
-import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
-import {ArrayType} from "./array.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {BasicType} from "./basic.js";
 
 export type VectorBasicOpts = {
   typeName?: string;
@@ -43,7 +41,11 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorBasicOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly length: number,
+    opts?: VectorBasicOpts
+  ) {
     super(elementType);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -76,7 +78,8 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // biome-ignore lint/suspicious/noExplicitAny: We explicity need to use `any` here
     return new ArrayBasicTreeViewDU(this, node, cache as any);
   }
 
@@ -141,7 +144,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return 0;
   }
 
-  tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
+  tree_setChunksNode(_rootNode: Node, chunksNode: Node): Node {
     return chunksNode;
   }
 

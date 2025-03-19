@@ -1,9 +1,9 @@
 import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
 import {
+  byteArrayToHashObject,
   digest,
   digest2Bytes32,
   digest64HashObjects,
-  byteArrayToHashObject,
   hashObjectToByteArray,
 } from "../../src/index.js";
 

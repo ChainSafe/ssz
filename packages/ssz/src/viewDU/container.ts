@@ -1,27 +1,25 @@
 import {
-  getHashComputations,
-  getNodeAtDepth,
   HashComputationLevel,
   LeafNode,
   Node,
+  getHashComputations,
+  getNodeAtDepth,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type} from "../type/abstract.js";
 import {BasicType, isBasicType} from "../type/basic.js";
-import {CompositeType, isCompositeType, CompositeTypeAny} from "../type/composite.js";
+import {CompositeType, CompositeTypeAny, isCompositeType} from "../type/composite.js";
 import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.js";
 import {TreeViewDU} from "./abstract.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
 
 export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<unknown, unknown, infer TVDU>
     ? // If composite, return view. MAY propagate changes updwards
       TVDU
     : // If basic, return struct value. Will NOT propagate changes upwards
-    Fields[K] extends BasicType<infer V>
-    ? V
-    : never;
+      Fields[K] extends BasicType<infer V>
+      ? V
+      : never;
 };
 
 export type ContainerTreeViewDUType<Fields extends Record<string, Type<unknown>>> = FieldsViewDU<Fields> &
@@ -268,7 +266,6 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
         get: function (this: CustomContainerTreeViewDU) {
           const viewChanged = this.viewsChanged.get(index);
           if (viewChanged) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return viewChanged;
           }
 
@@ -287,7 +284,6 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
           // No need to persist the child's view cache since a second get returns this view instance.
           // The cache is only persisted on commit where the viewsChanged map is dropped.
 
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return view;
         },
 

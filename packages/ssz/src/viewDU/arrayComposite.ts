@@ -1,9 +1,9 @@
 import {
+  HashComputationLevel,
+  Node,
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationLevel,
-  Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
@@ -19,7 +19,7 @@ export type ArrayCompositeTreeViewDUCache = {
 };
 
 export class ArrayCompositeTreeViewDU<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends TreeViewDU<ArrayCompositeType<ElementType>> {
   protected nodes: Node[];
   protected caches: unknown[];

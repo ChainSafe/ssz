@@ -1,19 +1,18 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  getNodesAtDepth,
   Node,
+  getNodesAtDepth,
+  merkleizeBlockArray,
+  merkleizeBlocksBytes,
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
-  merkleizeBlocksBytes,
-  merkleizeBlockArray,
 } from "@chainsafe/persistent-merkle-tree";
-import {allocUnsafe} from "@chainsafe/as-sha256";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
+import {Require} from "../util/types.js";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.js";
+import {ByteArray, ByteArrayType} from "./byteArray.js";
 import {ByteViews} from "./composite.js";
-import {ByteArrayType, ByteArray} from "./byteArray.js";
-/* eslint-disable @typescript-eslint/member-ordering */
 
 export interface ByteListOptions {
   typeName?: string;
@@ -50,7 +49,10 @@ export class ByteListType extends ByteArrayType {
     this.mixInLengthBlockBytes.byteLength
   );
 
-  constructor(readonly limitBytes: number, opts?: ByteListOptions) {
+  constructor(
+    readonly limitBytes: number,
+    opts?: ByteListOptions
+  ) {
     super();
 
     if (limitBytes === 0) throw Error("List limit must be > 0");

@@ -25,9 +25,9 @@ export function cacheRoot(
     safeCache && output.length === 32 && offset === 0
       ? output
       : safeCache
-      ? output.subarray(offset, offset + 32)
-      : // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-        Uint8Array.prototype.slice.call(output, offset, offset + 32);
+        ? output.subarray(offset, offset + 32)
+        : // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+          Uint8Array.prototype.slice.call(output, offset, offset + 32);
   value[symbolCachedPermanentRoot] = cachedRoot;
 }
 
@@ -37,7 +37,7 @@ export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
 
 export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
   const layerCount = bitLength(nextPowerOf2(padFor) - 1);
-  if (chunks.length == 0) {
+  if (chunks.length === 0) {
     return zeroHash(layerCount);
   }
 

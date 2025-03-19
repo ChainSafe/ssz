@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {OptionalType, ContainerType, UintNumberType, ValueOf, toHexString} from "../../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {ContainerType, OptionalType, UintNumberType, ValueOf, toHexString} from "../../../../src/index.js";
 
 const byteType = new UintNumberType(1);
 const SimpleObject = new ContainerType({
@@ -9,7 +9,7 @@ const SimpleObject = new ContainerType({
 
 describe("Optional view tests", () => {
   // TODO: implement
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
   it.skip("optional simple type", () => {
     const type = new OptionalType(byteType);
     const value: ValueOf<typeof type> = 9;
@@ -23,7 +23,7 @@ describe("Optional view tests", () => {
   });
 
   // TODO: implement
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
   it.skip("optional composite type", () => {
     const type = new OptionalType(SimpleObject);
     const value: ValueOf<typeof type> = {a: 9, b: 11};

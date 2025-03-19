@@ -1,7 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {CompositeType, fromHexString, Type} from "../../../src/index.js";
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {describe, expect, it} from "vitest";
+import {CompositeType, Type, fromHexString} from "../../../src/index.js";
 
 // For better typesafety outside
 export type InvalidValue = InvalidValueMeta &

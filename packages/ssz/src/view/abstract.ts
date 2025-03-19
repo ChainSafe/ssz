@@ -1,5 +1,5 @@
-import {Node, Tree, Proof} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, JsonPath} from "../type/abstract.js";
+import {Node, Proof, Tree} from "@chainsafe/persistent-merkle-tree";
+import {JsonPath, ValueOf} from "../type/abstract.js";
 import {CompositeType} from "../type/composite.js";
 
 /**

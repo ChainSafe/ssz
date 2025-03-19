@@ -1,7 +1,13 @@
-import {describe, it, expect} from "vitest";
 import type {HashObject} from "@chainsafe/as-sha256";
+import {describe, expect, it} from "vitest";
 import {LeafNode, Node} from "../../src/index.js";
-import {packedNodeRootsToBytes, packedRootsBytesToLeafNodes, packedUintNum64sToLeafNodes} from "../../src/packedNode.js";
+import {
+  packedNodeRootsToBytes,
+  packedRootsBytesToLeafNodes,
+  packedUintNum64sToLeafNodes,
+} from "../../src/packedNode.js";
+
+const NUMBER_2_POW_32 = 2 ** 32;
 
 describe("subtree / packedNode single node", () => {
   const testCases: {
@@ -184,7 +190,7 @@ describe("subtree / packedNode single node", () => {
       const uint8Array = new Uint8Array(size);
       const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
       packedNodeRootsToBytes(dataView, 0, size, nodes);
-      expect("0x" + Buffer.from(uint8Array).toString("hex")).to.equal(outStr);
+      expect(`0x${Buffer.from(uint8Array).toString("hex")}`).to.equal(outStr);
     });
 
     it(`${id} - packedRootsBytesToLeafNodes`, () => {
@@ -196,7 +202,6 @@ describe("subtree / packedNode single node", () => {
 
     // 1 UintNum64 = 8 bytes
     if (testPackedNumbers) {
-      const NUMBER_2_POW_32 = 2 ** 32;
       it(`${id} - packedUintNum64sToLeafNodes, value size=${Math.floor(size / 8)}`, () => {
         const values: number[] = [];
         const uint8Array = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));

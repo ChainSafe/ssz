@@ -9,7 +9,10 @@ export type ListBasicType<ElementType extends BasicType<unknown>> = ArrayBasicTy
 };
 
 export class ListBasicTreeView<ElementType extends BasicType<unknown>> extends ArrayBasicTreeView<ElementType> {
-  constructor(readonly type: ListBasicType<ElementType>, protected tree: Tree) {
+  constructor(
+    readonly type: ListBasicType<ElementType>,
+    protected tree: Tree
+  ) {
     super(type, tree);
   }
 

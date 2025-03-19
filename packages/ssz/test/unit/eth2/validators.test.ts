@@ -1,6 +1,8 @@
-import {describe, it, expect, vi} from "vitest";
-import {toHexString, ListCompositeType, ValueOf, CompositeViewDU} from "../../../src/index.js";
+import {describe, expect, it, vi} from "vitest";
+import {CompositeViewDU, ListCompositeType, ValueOf, toHexString} from "../../../src/index.js";
 import {ValidatorContainer, ValidatorNodeStruct} from "../../lodestarTypes/phase0/sszTypes.js";
+
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 
 type Validator = ValueOf<typeof ValidatorContainer>;
 const validator: Validator = {
@@ -56,7 +58,6 @@ describe("Container with BranchNodeStruct", () => {
   }
 
   describe("ValidatorNodeStruct in List", () => {
-    const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
     const ValidatorsListType = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
 
     it("edit then read", () => {

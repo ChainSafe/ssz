@@ -1,4 +1,4 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 
 describe("Access object properties in generated objects", () => {
   const rawObject = {
@@ -16,6 +16,8 @@ describe("Access object properties in generated objects", () => {
 
   class CustomObj {}
   for (const key in rawObject) {
+    // for-in can include prototypical properties and those should get excluded to avoid bugs
+    if (!Object.hasOwn(rawObject, key)) continue;
     Object.defineProperty(CustomObj.prototype, key, {
       value: rawObject[key as keyof typeof rawObject] as unknown,
       writable: true,

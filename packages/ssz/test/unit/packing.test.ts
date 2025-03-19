@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {UintBigintType, toHexString, VectorBasicType} from "../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {UintBigintType, VectorBasicType, toHexString} from "../../src/index.js";
 
 describe("uint packing", () => {
   const uint8 = new UintBigintType(1);

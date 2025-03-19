@@ -1,4 +1,4 @@
-import {convertGindexToBitstring, Gindex, GindexBitstring} from "../gindex.js";
+import {Gindex, GindexBitstring, convertGindexToBitstring} from "../gindex.js";
 import {BranchNode, LeafNode, Node} from "../node.js";
 import {computeProofBitstrings} from "./util.js";
 
@@ -29,7 +29,7 @@ export function computeDescriptor(indices: Gindex[]): Uint8Array {
   let descriptorBitstring = "";
   for (const gindexBitstring of allBitstringsSorted) {
     for (let i = 0; i < gindexBitstring.length; i++) {
-      if (gindexBitstring[gindexBitstring.length - 1 - i] === "1") {
+      if (gindexBitstring.at(-1 - i) === "1") {
         descriptorBitstring += "1".padStart(i + 1, "0");
         break;
       }
@@ -37,7 +37,7 @@ export function computeDescriptor(indices: Gindex[]): Uint8Array {
   }
 
   // append zero bits to byte-alignt
-  if (descriptorBitstring.length % 8 != 0) {
+  if (descriptorBitstring.length % 8 !== 0) {
     descriptorBitstring = descriptorBitstring.padEnd(
       8 - (descriptorBitstring.length % 8) + descriptorBitstring.length,
       "0"
@@ -47,7 +47,7 @@ export function computeDescriptor(indices: Gindex[]): Uint8Array {
   // convert descriptor bitstring to bytes
   const descriptor = new Uint8Array(descriptorBitstring.length / 8);
   for (let i = 0; i < descriptor.length; i++) {
-    descriptor[i] = Number("0b" + descriptorBitstring.substring(i * 8, (i + 1) * 8));
+    descriptor[i] = Number(`0b${descriptorBitstring.substring(i * 8, (i + 1) * 8)}`);
   }
   return descriptor;
 }

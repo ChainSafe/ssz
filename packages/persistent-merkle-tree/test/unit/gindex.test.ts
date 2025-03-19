@@ -1,14 +1,14 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
-  countToDepth,
-  bitIndexBigInt,
-  iterateAtDepth,
-  Gindex,
-  gindexIterator,
-  concatGindices,
   Bit,
-  getGindicesAtDepth,
+  Gindex,
+  bitIndexBigInt,
+  concatGindices,
+  countToDepth,
   getGindexBits,
+  getGindicesAtDepth,
+  gindexIterator,
+  iterateAtDepth,
 } from "../../src/index.js";
 
 describe("countToDepth", () => {

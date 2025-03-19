@@ -1,9 +1,9 @@
 import {ContainerType, ListCompositeType, VectorCompositeType} from "../../../src/index.js";
-import {preset, BLOCK_BODY_EXECUTION_PAYLOAD_DEPTH as EXECUTION_PAYLOAD_DEPTH} from "../params.js";
-import {ssz as primitiveSsz} from "../primitive/index.js";
-import {ssz as phase0Ssz} from "../phase0/index.js";
 import {ssz as altairSsz} from "../altair/index.js";
 import {ssz as bellatrixSsz} from "../bellatrix/index.js";
+import {BLOCK_BODY_EXECUTION_PAYLOAD_DEPTH as EXECUTION_PAYLOAD_DEPTH, preset} from "../params.js";
+import {ssz as phase0Ssz} from "../phase0/index.js";
+import {ssz as primitiveSsz} from "../primitive/index.js";
 const {
   HISTORICAL_ROOTS_LIMIT,
   MAX_WITHDRAWALS_PER_PAYLOAD,

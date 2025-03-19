@@ -1,20 +1,20 @@
 import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  concatGindices,
-  createProof,
-  getNode,
   Gindex,
+  HashComputationLevel,
   Node,
   Proof,
   ProofType,
   Tree,
+  concatGindices,
+  createProof,
+  getNode,
   merkleizeBlocksBytes,
-  HashComputationLevel,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray.js";
-import {cacheRoot, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
+import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.js";
 import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
+import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.js";
 export {ByteViews};
 
 export const LENGTH_GINDEX = BigInt(3);
@@ -39,8 +39,6 @@ export type CompositeViewDU<T extends CompositeType<unknown, unknown, unknown>> 
 
 /** Any CompositeType without any generic arguments */
 export type CompositeTypeAny = CompositeType<unknown, unknown, unknown>;
-
-/* eslint-disable @typescript-eslint/member-ordering  */
 
 /**
  * Represents a composite type as defined in the spec:

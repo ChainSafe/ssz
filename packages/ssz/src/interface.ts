@@ -25,8 +25,7 @@ export type BitVector = Vector<boolean>;
 export type BitList = List<boolean>;
 
 export interface ObjectLike {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [fieldName: string]: any;
+  [fieldName: string]: unknown;
 }
 
 export interface Union<T> {
@@ -34,8 +33,7 @@ export interface Union<T> {
   value: T;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CompositeValue = Record<string, any> | ArrayLike<unknown> | Union<unknown> | Record<string, never>;
+export type CompositeValue = Record<string, unknown> | ArrayLike<unknown> | Union<unknown> | Record<string, never>;
 
 /**
  * The Json interface is used for json-serializable input

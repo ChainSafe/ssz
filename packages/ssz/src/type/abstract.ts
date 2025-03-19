@@ -1,7 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 
-/* eslint-disable @typescript-eslint/member-ordering  */
-
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
 
 /**

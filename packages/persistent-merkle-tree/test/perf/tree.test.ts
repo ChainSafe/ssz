@@ -1,17 +1,18 @@
-import {describe, bench} from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {
   LeafNode,
-  subtreeFillToContents,
   Node,
-  countToDepth,
   Tree,
+  countToDepth,
+  subtreeFillToContents,
   toGindex,
-  uint8ArrayToHashObject,
   toGindexBitstring,
+  uint8ArrayToHashObject,
 } from "../../src/index.js";
 
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+
 describe("Track the performance of different Tree methods", () => {
-  const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
   // add 1 to countToDepth for mix_in_length spec
   const depth = countToDepth(BigInt(Math.ceil(VALIDATOR_REGISTRY_LIMIT / 4))) + 1;
 

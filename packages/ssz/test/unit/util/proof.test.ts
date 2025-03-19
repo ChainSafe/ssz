@@ -1,9 +1,9 @@
 import {Tree} from "@chainsafe/persistent-merkle-tree";
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {ContainerNodeStructType, ContainerType, ListCompositeType} from "../../../src/index.js";
-import {bytes32Type, uint16NumType} from "../../utils/primitiveTypes.js";
-import {treePartialToJsonPaths, TreeDataTypeCode} from "../../../src/util/proof/treePartialToJsonPaths.js";
+import {TreeDataTypeCode, treePartialToJsonPaths} from "../../../src/util/proof/treePartialToJsonPaths.js";
 import {treePostProcessFromProofNode} from "../../../src/util/proof/treePostProcessFromProofNode.js";
+import {bytes32Type, uint16NumType} from "../../utils/primitiveTypes.js";
 
 describe("Create proof of Array of Objects", () => {
   const SimpleObject = new ContainerType({a: uint16NumType, b: uint16NumType}, {typeName: "SimpleObject"});

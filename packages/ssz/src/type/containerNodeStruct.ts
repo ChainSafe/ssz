@@ -1,13 +1,13 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type, ByteViews} from "./abstract.js";
-import {isCompositeType} from "./composite.js";
-import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container.js";
-import {Require} from "../util/types.js";
+import {BranchNodeStruct} from "../branchNodeStruct.js";
 import {namedClass} from "../util/named.js";
+import {Require} from "../util/types.js";
+import {ValueOfFields} from "../view/container.js";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct.js";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.js";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {ValueOfFields} from "../view/container.js";
+import {ByteViews, Type} from "./abstract.js";
+import {isCompositeType} from "./composite.js";
+import {ContainerOptions, ContainerType, renderContainerTypeName} from "./container.js";
 
 /**
  * ContainerNodeStruct: ordered heterogeneous collection of values.
@@ -24,7 +24,10 @@ import {ValueOfFields} from "../view/container.js";
  * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
  */
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
-  constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    opts?: ContainerOptions<Fields>
+  ) {
     super(fields, {
       // Overwrite default "Container" typeName
       // Render detailed typeName. Consumers should overwrite since it can get long

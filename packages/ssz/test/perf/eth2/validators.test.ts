@@ -1,10 +1,10 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {Validator} from "../../lodestarTypes/phase0/types.js";
-import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes.js";
+import {bench, describe} from "@chainsafe/benchmark";
 import {BranchNodeStruct, CompositeViewDU, ContainerNodeStructTreeViewDU} from "../../../src/index.js";
-import {ValidatorIndex} from "../../lodestarTypes/types.js";
+import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes.js";
+import {Validator} from "../../lodestarTypes/phase0/types.js";
 import {ValidatorType} from "../../lodestarTypes/phase0/validator.js";
 import {doBatchHashTreeRootValidators} from "../../lodestarTypes/phase0/viewDU/listValidator.js";
+import {ValidatorIndex} from "../../lodestarTypes/types.js";
 
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),
@@ -33,7 +33,9 @@ describe("Validator vs ValidatorLeafNodeStruct", () => {
     (treeBacked: CompositeViewDU<typeof ValidatorContainer>, type: typeof ValidatorContainer) => unknown
   > = {
     get_exitEpoch: (tb) => tb.exitEpoch,
-    set_exitEpoch: (tb) => (tb.exitEpoch = 6435),
+    set_exitEpoch: (tb) => {
+      tb.exitEpoch = 6435;
+    },
     get_pubkey: (tb) => tb.pubkey,
     hashTreeRoot: (tb) => tb.hashTreeRoot(),
     createProof: (tb) => tb.createProof([["exitEpoch"]]),

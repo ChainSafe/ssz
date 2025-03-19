@@ -1,25 +1,23 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
 import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
+import {Require} from "../util/types.js";
+import {ArrayCompositeTreeView, ArrayCompositeType} from "../view/arrayComposite.js";
+import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
+import {ByteViews, ValueOf} from "./abstract.js";
+import {ArrayType} from "./array.js";
 import {
-  value_deserializeFromBytesArrayComposite,
-  value_serializedSizeArrayComposite,
-  value_serializeToBytesArrayComposite,
-  tree_serializedSizeArrayComposite,
-  tree_deserializeFromBytesArrayComposite,
-  tree_serializeToBytesArrayComposite,
   maxSizeArrayComposite,
   minSizeArrayComposite,
+  tree_deserializeFromBytesArrayComposite,
+  tree_serializeToBytesArrayComposite,
+  tree_serializedSizeArrayComposite,
+  value_deserializeFromBytesArrayComposite,
   value_getBlocksBytesArrayComposite,
+  value_serializeToBytesArrayComposite,
+  value_serializedSizeArrayComposite,
 } from "./arrayComposite.js";
-import {ArrayCompositeType, ArrayCompositeTreeView} from "../view/arrayComposite.js";
-import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
-import {ArrayType} from "./array.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
 
 export type VectorCompositeOpts = {
   typeName?: string;
@@ -33,8 +31,8 @@ export type VectorCompositeOpts = {
  * - Composite types are always returned as views
  */
 export class VectorCompositeType<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
   >
   extends ArrayType<ElementType, ArrayCompositeTreeView<ElementType>, ArrayCompositeTreeViewDU<ElementType>>
   implements ArrayCompositeType<ElementType>
@@ -51,7 +49,11 @@ export class VectorCompositeType<
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorCompositeOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly length: number,
+    opts?: VectorCompositeOpts
+  ) {
     super(elementType);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
@@ -68,8 +70,7 @@ export class VectorCompositeType<
     this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
+  static named<ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
     opts: Require<VectorCompositeOpts, "typeName">
@@ -83,7 +84,8 @@ export class VectorCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ArrayCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ArrayCompositeTreeViewDU(this, node, cache as any);
   }
 
@@ -148,7 +150,7 @@ export class VectorCompositeType<
     return 0;
   }
 
-  tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
+  tree_setChunksNode(_rootNode: Node, chunksNode: Node): Node {
     return chunksNode;
   }
 

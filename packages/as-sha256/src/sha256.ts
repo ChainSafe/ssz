@@ -1,8 +1,9 @@
-import {newInstance, WasmContext} from "./wasm.js";
+import {WasmContext, newInstance} from "./wasm.js";
 
 /**
  * Class based SHA256
  */
+// biome-ignore lint/style/useNamingConvention: Required to use `SHA256` name for class not PasCalCase
 export default class SHA256 {
   ctx: WasmContext;
   private wasmInputValue: number;
@@ -24,10 +25,10 @@ export default class SHA256 {
   }
 
   update(data: Uint8Array): this {
-    const INPUT_LENGTH = this.ctx.INPUT_LENGTH;
-    if (data.length > INPUT_LENGTH) {
-      for (let i = 0; i < data.length; i += INPUT_LENGTH) {
-        const sliced = data.slice(i, i + INPUT_LENGTH);
+    const inputLength = this.ctx.INPUT_LENGTH;
+    if (data.length > inputLength) {
+      for (let i = 0; i < data.length; i += inputLength) {
+        const sliced = data.slice(i, i + inputLength);
         this.uint8InputArray.set(sliced);
         this.ctx.update(this.wasmInputValue, sliced.length);
       }

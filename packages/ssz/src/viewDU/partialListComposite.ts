@@ -1,11 +1,11 @@
-import {Node, zeroNode, subtreeFillToContents, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {Node, getNodesAtDepth, subtreeFillToContents, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {ValueOf} from "../type/abstract.js";
 import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
+import {PartialListCompositeType} from "../type/partialListComposite.js";
+import {zeroSnapshot} from "../util/snapshot.js";
+import {Snapshot} from "../util/types.js";
 import {ArrayCompositeTreeViewDUCache} from "./arrayComposite.js";
 import {ListCompositeTreeViewDU} from "./listComposite.js";
-import {PartialListCompositeType} from "../type/partialListComposite.js";
-import {Snapshot} from "../util/types.js";
-import {zeroSnapshot} from "../util/snapshot.js";
 
 /**
  * Similar to ListCompositeTreeViewDU but this is created from a snapshot so some methods are not supported
@@ -13,7 +13,7 @@ import {zeroSnapshot} from "../util/snapshot.js";
  * Note that the backed tree is not a full tree, but a partial tree created from a snapshot.
  */
 export class PartialListCompositeTreeViewDU<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends ListCompositeTreeViewDU<ElementType> {
   private snapshot: Snapshot;
 
@@ -63,7 +63,7 @@ export class PartialListCompositeTreeViewDU<
       throw new Error(`Cannot set index ${index} less than existing snapshot count ${this.snapshot.count}`);
     }
 
-    return super.set(index, view);
+    super.set(index, view);
   }
 
   getAllReadonly(): CompositeViewDU<ElementType>[] {
@@ -115,8 +115,8 @@ export class PartialListCompositeTreeViewDU<
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
 
-    let newChunksNode;
-    let newLength;
+    let newChunksNode: Node;
+    let newLength: number;
 
     if (index >= this.length) {
       newChunksNode = zeroNode(this.type.chunkDepth);

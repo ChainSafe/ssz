@@ -1,12 +1,12 @@
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import {HashComputationLevel, Node, digestNLevel, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {ByteViews} from "../../../../src/type/abstract.js";
 import {ListCompositeType} from "../../../../src/type/listComposite.js";
 import {ArrayCompositeTreeViewDUCache} from "../../../../src/viewDU/arrayComposite.js";
-import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
-import {ValidatorNodeStructType, ValidatorType, validatorToChunkBytes} from "../validator.js";
-import {ByteViews} from "../../../../src/type/abstract.js";
 import {ContainerNodeStructTreeViewDU} from "../../../../src/viewDU/containerNodeStruct.js";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
 import {ValidatorIndex} from "../../primitive/types.js";
+import {ValidatorNodeStructType, ValidatorType, validatorToChunkBytes} from "../validator.js";
 
 /**
  * hashtree has a MAX_SIZE of 1024 bytes = 32 chunks
@@ -58,7 +58,8 @@ export class ListValidatorTreeViewDU extends ListCompositeTreeViewDU<ValidatorNo
   commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
     if (hcByLevel === null) {
       // this is not from batchHashTreeRoot() call, go with regular flow
-      return super.commit();
+      super.commit();
+      return;
     }
 
     const isOldRootHashed = this._rootNode.h0 !== null;

@@ -1,6 +1,6 @@
 import {HashComputationLevel, Node, getHashComputations} from "@chainsafe/persistent-merkle-tree";
-import {BitArray} from "../value/bitArray.js";
 import {CompositeType} from "../type/composite.js";
+import {BitArray} from "../value/bitArray.js";
 import {TreeViewDU} from "./abstract.js";
 
 /**
@@ -10,7 +10,10 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   /** Cached BitArray instance computed only on demand */
   private _bitArray: BitArray | null = null;
 
-  constructor(readonly type: CompositeType<BitArray, unknown, unknown>, protected _rootNode: Node) {
+  constructor(
+    readonly type: CompositeType<BitArray, unknown, unknown>,
+    protected _rootNode: Node
+  ) {
     super();
   }
 
@@ -19,6 +22,7 @@ export class BitArrayTreeViewDU extends TreeViewDU<CompositeType<BitArray, unkno
   }
 
   get cache(): unknown {
+    // biome-ignore lint/suspicious/useGetterReturn: There is no cache to return
     return;
   }
 

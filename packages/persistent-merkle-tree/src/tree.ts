@@ -1,9 +1,9 @@
-import {zeroNode} from "./zeroNode.js";
 import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex.js";
-import {Node, LeafNode, BranchNode} from "./node.js";
 import {HashComputationLevel, levelAtIndex} from "./hashComputation.js";
-import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof/index.js";
+import {BranchNode, LeafNode, Node} from "./node.js";
+import {Proof, ProofInput, createNodeFromProof, createProof} from "./proof/index.js";
 import {createSingleProof} from "./proof/single.js";
+import {zeroNode} from "./zeroNode.js";
 
 export type Hook = (newRootNode: Node) => void;
 
@@ -237,8 +237,9 @@ export function setNodeWithFn(
   // Pre-compute entire bitstring instead of using an iterator (25% faster)
   const gindexBitstring = convertGindexToBitstring(gindex);
   const parentNodes = getParentNodes(rootNode, gindexBitstring);
-  const lastParentNode = parentNodes[parentNodes.length - 1];
-  const lastBit = gindexBitstring[gindexBitstring.length - 1];
+  const lastParentNode = parentNodes.at(-1);
+  if (!lastParentNode) throw new Error("Invalid tree - can not find last parent");
+  const lastBit = gindexBitstring.at(-1);
   const oldNode = lastBit === "1" ? lastParentNode.right : lastParentNode.left;
   const newNode = getNewNode(oldNode);
 
