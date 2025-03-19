@@ -1451,9 +1451,10 @@
     yaml "^2.7.0"
     yargs "^17.7.2"
 
-"@chainsafe/biomejs-config@ChainSafe/biomejs-config":
+"@chainsafe/biomejs-config@^0.1.0":
   version "0.1.0"
-  resolved "https://codeload.github.com/ChainSafe/biomejs-config/tar.gz/83264bd4b7d8bca385f8b98fce6e2d08d679f051"
+  resolved "https://registry.yarnpkg.com/@chainsafe/biomejs-config/-/biomejs-config-0.1.0.tgz#374a1598f6b1d3b87b15af6c26ad8e1273c84256"
+  integrity sha512-MFW4CWHGWS5LaYLfLXw9EGlK6CEweM14h1pOnEnHu1zB5J5/gT7rxuaAQSuov8DgOzSVCT65+TD7LXpjRzyZ3A==
 
 "@chainsafe/hashtree-darwin-arm64@1.0.1":
   version "1.0.1"
