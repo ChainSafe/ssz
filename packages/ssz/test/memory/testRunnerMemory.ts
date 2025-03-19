@@ -76,7 +76,7 @@ export function testRunnerMemory<T>(opts: TestRunnerMemoryOpts<T>): number {
     /**
      * Stop after creating `maxInstances` instances.
      */
-    maxInstances = Number.POSITIVE_INFINITY,
+    maxInstances = Infinity,
     /**
      * How to compute the total memory usage.
      * Defaults to `heapUsed + external`.

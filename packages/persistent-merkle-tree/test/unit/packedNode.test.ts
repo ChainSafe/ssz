@@ -209,7 +209,7 @@ describe("subtree / packedNode single node", () => {
           const a = dataView.getUint32(i, true);
           const b = dataView.getUint32(i + 4, true);
           if (a === 0xffffffff && b === 0xffffffff) {
-            values.push(Number.POSITIVE_INFINITY);
+            values.push(Infinity);
           } else {
             values.push(b * number2Pow32 + a);
           }

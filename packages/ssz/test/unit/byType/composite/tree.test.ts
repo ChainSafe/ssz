@@ -32,7 +32,7 @@ for (const byteLen of uintBigintByteLens) {
 // Special case for Uint64Inf
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 runViewTestCompositeSwap(uint64NumInfType, 1, 2);
-runViewTestCompositeSwap(uint64NumInfType, 1, Number.POSITIVE_INFINITY);
+runViewTestCompositeSwap(uint64NumInfType, 1, Infinity);
 
 for (const bytes of [32, 48, 96]) {
   runViewTestCompositeSwap(new ByteVectorType(bytes), Buffer.alloc(bytes, 1), Buffer.alloc(bytes, 2));

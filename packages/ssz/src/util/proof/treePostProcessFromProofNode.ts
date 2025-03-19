@@ -113,5 +113,5 @@ export function treePostProcessFromProofNode(node: Node, type: CompositeType, bi
 /** Return the node horizontal index given a bitstring without the leading "1" */
 function bitstringToIndex(bitstring: string): number {
   if (bitstring === "") return 0;
-  return Number.parseInt(bitstring, 2);
+  return parseInt(bitstring, 2);
 }

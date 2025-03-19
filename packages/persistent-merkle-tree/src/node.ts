@@ -185,7 +185,7 @@ export class LeafNode extends Node {
         return low >>> 0;
       } else if (high === -1 && low === -1 && clipInfinity) {
         // Limit uint returns
-        return Number.POSITIVE_INFINITY;
+        return Infinity;
       } else {
         return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
       }
@@ -251,7 +251,7 @@ export class LeafNode extends Node {
 
     // number spans 2 h values
     else if (uintBytes === 8) {
-      if (value === Number.POSITIVE_INFINITY && clipInfinity) {
+      if (value === Infinity && clipInfinity) {
         setNodeH(this, hIndex, -1);
         setNodeH(this, hIndex + 1, -1);
       } else {

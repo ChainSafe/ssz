@@ -129,7 +129,7 @@ function getMergedJsonPathsFrom(leftRes: TreeDataType, rightRes: TreeDataType): 
 
 function bitstringToIndex(bitstring: string): number {
   if (bitstring === "") return 0;
-  return Number.parseInt(bitstring, 2);
+  return parseInt(bitstring, 2);
 }
 
 /**

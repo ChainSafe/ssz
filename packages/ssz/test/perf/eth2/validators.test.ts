@@ -13,8 +13,8 @@ const validatorStruct: Validator = {
   slashed: false,
   activationEligibilityEpoch: 134530,
   activationEpoch: 134532,
-  exitEpoch: Number.POSITIVE_INFINITY,
-  withdrawableEpoch: Number.POSITIVE_INFINITY,
+  exitEpoch: Infinity,
+  withdrawableEpoch: Infinity,
 };
 
 describe("Validator vs ValidatorLeafNodeStruct", () => {
