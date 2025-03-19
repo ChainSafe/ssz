@@ -7,6 +7,8 @@ import {
   packedUintNum64sToLeafNodes,
 } from "../../src/packedNode.js";
 
+const NUMBER_2_POW_32 = 2 ** 32;
+
 describe("subtree / packedNode single node", () => {
   const testCases: {
     id: string;
@@ -200,7 +202,6 @@ describe("subtree / packedNode single node", () => {
 
     // 1 UintNum64 = 8 bytes
     if (testPackedNumbers) {
-      const number2Pow32 = 2 ** 32;
       it(`${id} - packedUintNum64sToLeafNodes, value size=${Math.floor(size / 8)}`, () => {
         const values: number[] = [];
         const uint8Array = new Uint8Array(Buffer.from(outStr.replace("0x", ""), "hex"));
@@ -211,7 +212,7 @@ describe("subtree / packedNode single node", () => {
           if (a === 0xffffffff && b === 0xffffffff) {
             values.push(Infinity);
           } else {
-            values.push(b * number2Pow32 + a);
+            values.push(b * NUMBER_2_POW_32 + a);
           }
         }
 

@@ -2,6 +2,8 @@ import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
 import {ListBasicType, UintNumberType} from "../../src/index.js";
 import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
 
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+
 describe("iterate", () => {
   setBenchOpts({noThreshold: true});
 
@@ -55,9 +57,7 @@ describe("readonly values - iterator vs array", () => {
 });
 
 function createBalanceList(count: number) {
-  const validatorRegistryLimit = 1099511627776;
-
-  const balancesList = new ListBasicType(new UintNumberType(8), validatorRegistryLimit);
+  const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
   return balancesList.toViewDU(balancesStruct);
 }

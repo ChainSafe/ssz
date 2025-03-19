@@ -2,6 +2,8 @@ import {bench, describe} from "@chainsafe/benchmark";
 import {LeafNode, Node, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 import {ListBasicType, UintNumberType} from "../../src/index.js";
 
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+
 describe("list", () => {
   const numBalances = 250_000;
 
@@ -83,9 +85,7 @@ describe("subtreeFillToContents", () => {
 });
 
 function createBalanceList(count: number) {
-  const validatorRegistryLimit = 1099511627776;
-
-  const balancesList = new ListBasicType(new UintNumberType(8), validatorRegistryLimit);
+  const balancesList = new ListBasicType(new UintNumberType(8), VALIDATOR_REGISTRY_LIMIT);
   const balancesStruct = Array.from({length: count}, () => 31217089836);
   const viewDU = balancesList.toViewDU(balancesStruct);
   // Prime cache

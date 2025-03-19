@@ -10,10 +10,11 @@ import {
   uint8ArrayToHashObject,
 } from "../../src/index.js";
 
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+
 describe("Track the performance of different Tree methods", () => {
-  const validatorRegistryLimit = 1099511627776;
   // add 1 to countToDepth for mix_in_length spec
-  const depth = countToDepth(BigInt(Math.ceil(validatorRegistryLimit / 4))) + 1;
+  const depth = countToDepth(BigInt(Math.ceil(VALIDATOR_REGISTRY_LIMIT / 4))) + 1;
 
   const newRoot = new Uint8Array(Array.from({length: 32}, () => 1));
   const numBalance = 250_000;

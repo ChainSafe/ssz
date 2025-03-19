@@ -14,6 +14,7 @@ import {
 } from "../../src/index.js";
 import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
 
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 // Compilation of various issues from SSZ and Lodestar libs
 
 describe("Regressions / known issues", () => {
@@ -75,8 +76,7 @@ describe("Regressions / known issues", () => {
       validatorIndexes.push(i);
     }
 
-    const validatorRegistryLimit = 1099511627776;
-    const type = new ListBasicType(uint64NumType, validatorRegistryLimit);
+    const type = new ListBasicType(uint64NumType, VALIDATOR_REGISTRY_LIMIT);
     // This is the logic to calculate activeIndexRoots in processFinalUpdates
     const hash = Buffer.from(type.hashTreeRoot(validatorIndexes)).toString("hex");
     expect(hash).to.equal("ba1031ba1a5daab0d49597cfa8664ce2b4c9b4db6ca69fbef51e0a9a325a3b63");

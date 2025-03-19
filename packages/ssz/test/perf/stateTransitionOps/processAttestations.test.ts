@@ -2,15 +2,15 @@ import {beforeAll, bench, describe} from "@chainsafe/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
 import {CompositeViewDU, ListBasicType, UintNumberType} from "../../../src/index.js";
 
+const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
+
 describe("processAttestations", () => {
   const vc = 250_000;
   const attesterShare = 32;
   const attesterIndices: number[] = [];
   const statusArr: number[] = [];
-
-  const validatorRegistryLimit = 1099511627776;
   const uint8Type = new UintNumberType(1);
-  const epochStatusesType = new ListBasicType(uint8Type, validatorRegistryLimit);
+  const epochStatusesType = new ListBasicType(uint8Type, VALIDATOR_REGISTRY_LIMIT);
 
   // Helper types
   type Statuses = typeof epochStatusesType;
