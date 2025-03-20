@@ -1,5 +1,3 @@
-
-
 import * as React from "react";
 
 const SPEC_VERSION = "1.4.0";

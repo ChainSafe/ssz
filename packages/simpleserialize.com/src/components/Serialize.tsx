@@ -1,11 +1,11 @@
-import * as React from "react";
 import {Type} from "@chainsafe/ssz";
-import Output from "./Output";
-import Input from "./Input";
+import * as React from "react";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
+import {ModuleThread, Thread, Worker, spawn} from "threads";
 import {ForkName} from "../util/types";
-import {ModuleThread, spawn, Thread, Worker} from "threads";
+import Input from "./Input";
+import Output from "./Output";
 import {SszWorker} from "./worker";
 
 type Props = {
@@ -62,7 +62,7 @@ export default class Serialize extends React.Component<Props, State> {
   }
 
   async process(forkName: ForkName, name: string, input: unknown, type: Type<unknown>): Promise<void> {
-    let error;
+    let error = "";
     if (this.props.serializeModeOn) {
       this.setOverlay(true, "Serializing...");
       this.serializationWorkerThread
@@ -74,7 +74,9 @@ export default class Serialize extends React.Component<Props, State> {
           });
           this.setOverlay(false);
         })
-        .catch((e: {message: string}) => (error = e.message));
+        .catch((e: {message: string}) => {
+          error = e.message;
+        });
     } else {
       this.setOverlay(false);
     }
@@ -101,11 +103,7 @@ export default class Serialize extends React.Component<Props, State> {
 
     return (
       <div className="section serialize-section is-family-code">
-        <LoadingOverlay
-          active={this.state.showOverlay}
-          spinner={bounceLoader}
-          text={this.state.overlayText}
-        ></LoadingOverlay>
+        <LoadingOverlay active={this.state.showOverlay} spinner={bounceLoader} text={this.state.overlayText} />
         <div className="container">
           <div className="columns is-desktop">
             <div className="column">

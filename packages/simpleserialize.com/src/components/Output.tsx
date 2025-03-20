@@ -1,12 +1,10 @@
-
-
-import * as React from "react";
-import NamedOutput from "./display/NamedOutput";
-import ErrorBox from "./display/ErrorBox";
 import {saveAs} from "file-saver";
+import * as React from "react";
+import ErrorBox from "./display/ErrorBox";
+import NamedOutput from "./display/NamedOutput";
 
-import {serializeOutputTypes, deserializeOutputTypes} from "../util/output_types";
 import {Type} from "@chainsafe/ssz";
+import {deserializeOutputTypes, serializeOutputTypes} from "../util/output_types";
 
 type Props<T> = {
   error: string | undefined;
@@ -56,14 +54,15 @@ export default class Output<T> extends React.Component<Props<T>, State> {
 
   downloadFile(contents: Uint8Array | string, type: string): void {
     const fileContents = new Blob([contents]);
-    saveAs(fileContents, this.props.sszTypeName + "." + type);
+    saveAs(fileContents, `${this.props.sszTypeName}.${type}`);
   }
 
   render(): JSX.Element {
     const {error, serialized, deserialized, hashTreeRoot, serializeModeOn, sszType} = this.props;
     const {showError, outputType} = this.state;
 
-    let serializedStr, hashTreeRootStr;
+    let serializedStr = "";
+    let hashTreeRootStr = "";
     let deserializedStr = "";
     if (serializeModeOn) {
       const serializedOutput = serializeOutputTypes[outputType];
@@ -128,7 +127,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                     this.downloadFile(deserializedStr, this.state.outputType);
                   }}
                 >
-                  {"Download data as ." + this.state.outputType + " file"}
+                  {`Download data as .${this.state.outputType} file`}
                 </button>
               </>
             )}

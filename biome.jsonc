@@ -5,7 +5,7 @@
   },
   "extends": ["@chainsafe/biomejs-config", "@chainsafe/biomejs-config/recommended", "@chainsafe/biomejs-config/esm"],
   "files": {
-    "include": ["packages/*/src/**/*.ts", "packages/*/test/**/*.ts"]
+    "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx", "packages/*/test/**/*.ts"]
   },
   "linter": {
     "rules": {
@@ -201,6 +201,26 @@
             }
           }
         }
+      }
+    },
+    {
+      "include": ["packages/*/src/**/*.tsx"],
+      "linter": {
+        "rules": {
+          // Disable all accessibility rules for React files
+          "a11y": {
+            "useValidAnchor": "off",
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "useKeyWithClickEvents": "off",
+            "useAnchorContent": "off",
+            "useAltText": "off"
+          }
+        }
+      },
+      // Add JSX support for React files
+      "javascript": {
+        "globals": ["JSX"]
       }
     }
   ]
