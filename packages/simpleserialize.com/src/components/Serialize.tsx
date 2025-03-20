@@ -74,7 +74,9 @@ export default class Serialize extends React.Component<Props, State> {
           });
           this.setOverlay(false);
         })
-        .catch((e: {message: string}) => (error = e.message));
+        .catch((e: {message: string}) => {
+          error = e.message;
+        });
     } else {
       this.setOverlay(false);
     }
