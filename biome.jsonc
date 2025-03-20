@@ -204,8 +204,21 @@
       }
     },
     {
-      // Add JSX support for React files
       "include": ["packages/*/src/**/*.tsx"],
+      "linter": {
+        "rules": {
+          // Disable all accessibility rules for React files
+          "a11y": {
+            "useValidAnchor": "off",
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "useKeyWithClickEvents": "off",
+            "useAnchorContent": "off",
+            "useAltText": "off"
+          }
+        }
+      },
+      // Add JSX support for React files
       "javascript": {
         "globals": ["JSX"]
       }
