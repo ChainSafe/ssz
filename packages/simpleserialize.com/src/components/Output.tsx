@@ -61,8 +61,8 @@ export default class Output<T> extends React.Component<Props<T>, State> {
     const {error, serialized, deserialized, hashTreeRoot, serializeModeOn, sszType} = this.props;
     const {showError, outputType} = this.state;
 
-    let serializedStr: string = "";
-    let hashTreeRootStr: string = "";
+    let serializedStr = "";
+    let hashTreeRootStr = "";
     let deserializedStr = "";
     if (serializeModeOn) {
       const serializedOutput = serializeOutputTypes[outputType];
