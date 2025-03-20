@@ -16,7 +16,7 @@ type Props = {
   sszType: Type<unknown>;
   serialized?: Uint8Array;
   deserialized: object;
-  setOverlay: Function;
+  setOverlay: (show: boolean, message?: string) => void;
   worker: Worker;
   alert: AlertManager;
 };
