@@ -7,6 +7,7 @@ import {
   isBitListType,
   isBitVectorType,
   isBooleanType,
+  isByteListType,
   isByteVectorType,
   isContainerType,
   isListType,
@@ -25,7 +26,7 @@ function getTypeName<T>(type: Type<T>, _types: Record<string, Type<T>>, name: st
   else if (isUintType(type)) return `uint${type.byteLength * 8}`;
   else if (isBitListType(type)) return "BitList";
   else if (isBitVectorType(type)) return `BitVector[${type.length}]`;
-  else if (isBitListType(type)) return "Bytes";
+  else if (isByteListType(type)) return "Bytes";
   else if (isByteVectorType(type)) return `BytesN[${type.length}]`;
   else if (isVectorType(type)) return "Vector";
   else if (isListType(type)) return "List";
@@ -38,7 +39,7 @@ function getKind<T>(type: Type<T>): string {
   else if (isUintType(type)) return "uint";
   else if (isBitListType(type)) return "BitList";
   else if (isBitVectorType(type)) return "BitVector";
-  else if (isBitListType(type)) return "Bytes";
+  else if (isByteListType(type)) return "Bytes";
   else if (isByteVectorType(type)) return "BytesN";
   else if (isVectorType(type)) return "Vector";
   else if (isListType(type)) return "List";
