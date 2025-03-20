@@ -184,7 +184,7 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
           <div className="column">
             <div className="container">
               <h3 className="subtitle">Tree-view</h3>
-              {rootNode && rootNode.type ? (
+              {rootNode?.type ? (
                 <EyzyTree
                   data={{
                     sszNode: rootNode,
