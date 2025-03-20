@@ -1,12 +1,10 @@
-
-
-import * as React from "react";
-import NamedOutput from "./display/NamedOutput";
-import ErrorBox from "./display/ErrorBox";
 import {saveAs} from "file-saver";
+import * as React from "react";
+import ErrorBox from "./display/ErrorBox";
+import NamedOutput from "./display/NamedOutput";
 
-import {serializeOutputTypes, deserializeOutputTypes} from "../util/output_types";
 import {Type} from "@chainsafe/ssz";
+import {deserializeOutputTypes, serializeOutputTypes} from "../util/output_types";
 
 type Props<T> = {
   error: string | undefined;

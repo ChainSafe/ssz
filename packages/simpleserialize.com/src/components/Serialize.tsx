@@ -1,11 +1,11 @@
-import * as React from "react";
 import {Type} from "@chainsafe/ssz";
-import Output from "./Output";
-import Input from "./Input";
+import * as React from "react";
 import LoadingOverlay from "react-loading-overlay";
 import BounceLoader from "react-spinners/BounceLoader";
+import {ModuleThread, Thread, Worker, spawn} from "threads";
 import {ForkName} from "../util/types";
-import {ModuleThread, spawn, Thread, Worker} from "threads";
+import Input from "./Input";
+import Output from "./Output";
 import {SszWorker} from "./worker";
 
 type Props = {
