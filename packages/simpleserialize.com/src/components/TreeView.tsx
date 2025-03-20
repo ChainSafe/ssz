@@ -20,7 +20,7 @@ import * as React from "react";
 import {Node as SSZNode, getChildNodes, getRootNode, isBottomType} from "../util/partials";
 import {ForkName, forks} from "../util/types";
 
-function getTypeName<T>(type: Type<T>, types: Record<string, Type<T>>, name: string): string | undefined {
+function getTypeName<T>(type: Type<T>, _types: Record<string, Type<T>>, name: string): string | undefined {
   if (isBooleanType(type)) return "bool";
   else if (isUintType(type)) return `uint${type.byteLength * 8}`;
   else if (isBitListType(type)) return "BitList";
