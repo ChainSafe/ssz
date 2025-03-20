@@ -103,11 +103,7 @@ export default class Serialize extends React.Component<Props, State> {
 
     return (
       <div className="section serialize-section is-family-code">
-        <LoadingOverlay
-          active={this.state.showOverlay}
-          spinner={bounceLoader}
-          text={this.state.overlayText}
-        ></LoadingOverlay>
+        <LoadingOverlay active={this.state.showOverlay} spinner={bounceLoader} text={this.state.overlayText} />
         <div className="container">
           <div className="columns is-desktop">
             <div className="column">
