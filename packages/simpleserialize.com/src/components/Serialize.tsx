@@ -62,7 +62,7 @@ export default class Serialize extends React.Component<Props, State> {
   }
 
   async process(forkName: ForkName, name: string, input: unknown, type: Type<unknown>): Promise<void> {
-    let error: string;
+    let error: string = "";
     if (this.props.serializeModeOn) {
       this.setOverlay(true, "Serializing...");
       this.serializationWorkerThread
