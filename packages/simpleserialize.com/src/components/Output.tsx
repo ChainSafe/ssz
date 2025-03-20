@@ -54,7 +54,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
 
   downloadFile(contents: Uint8Array | string, type: string): void {
     const fileContents = new Blob([contents]);
-    saveAs(fileContents, this.props.sszTypeName + "." + type);
+    saveAs(fileContents, `${this.props.sszTypeName}.${type}`);
   }
 
   render(): JSX.Element {
@@ -126,7 +126,7 @@ export default class Output<T> extends React.Component<Props<T>, State> {
                     this.downloadFile(deserializedStr, this.state.outputType);
                   }}
                 >
-                  {"Download data as ." + this.state.outputType + " file"}
+                  {`Download data as .${this.state.outputType} file`}
                 </button>
               </>
             )}

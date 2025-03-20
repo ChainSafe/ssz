@@ -82,7 +82,7 @@ type DefProps = {
 const Definition = (props: DefProps) => (
   <div className="definition field">
     <div className="field-label is-small">
-      <label className={"label " + (props.isHeader ? "def-header" : "")}>{props.title}</label>
+      <label className={`label ${props.isHeader ? "def-header" : ""}`}>{props.title}</label>
     </div>
     <div className="field-body">{props.children}</div>
   </div>
@@ -106,7 +106,7 @@ const DisplayNodeInfo = (props: NodeProps<unknown>) => {
           <code>{props.node.sszNode.genIndex}</code>
         </Definition>
         <Definition title="Hex">
-          <code>{"0x" + genIndexBN.toString(16)}</code>
+          <code>{`0x${genIndexBN.toString(16)}`}</code>
         </Definition>
         <Definition title="Decimal">
           <code>{genIndexBN.toString(10)}</code>
@@ -145,9 +145,9 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
   static renderText<T>(nodeProps: NodeProps<T>) {
     const sszNode = nodeProps.node.sszNode;
     return (
-      <span className={"ssz-" + getKind(sszNode.type)}>
+      <span className={`ssz-${getKind(sszNode.type)}`}>
         <span
-          className={"node-key " + (nodeProps.node.isListKey ? "list-key" : "normal-key")}
+          className={`node-key ${nodeProps.node.isListKey ? "list-key" : "normal-key"}`}
           key="text-key"
           style={{width: `${nodeProps.node.keyWidth + 1}ch`}}
         >
