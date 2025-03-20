@@ -62,7 +62,7 @@ type NodeProps<T> = {
 
 type Props<T> = {
   forkName: ForkName;
-  input: any;
+  input: unknown;
   sszTypeName: string;
   sszType: Type<T>;
   name: string | undefined;
@@ -75,7 +75,7 @@ type State<T> = {
 
 type DefProps = {
   title: string;
-  children: any;
+  children: unknown;
   isHeader: boolean | undefined;
 };
 
@@ -93,7 +93,7 @@ Definition.defaultProps = {
   isHeader: false,
 };
 
-const DisplayNodeInfo = (props: NodeProps<any>) => {
+const DisplayNodeInfo = (props: NodeProps<unknown>) => {
   const genIndexBN = new BN(props.node.sszNode.genIndex, 2);
   return (
     <div>

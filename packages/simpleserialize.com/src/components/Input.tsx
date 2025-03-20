@@ -324,6 +324,5 @@ class Input extends React.Component<Props, State> {
   }
 }
 
-// @TODO: not sure what to put here instead of any
-
+// biome-ignore lint/suspicious/noExplicitAny: Not sure what to put here instead of any
 export default withAlert<any>()(Input);
