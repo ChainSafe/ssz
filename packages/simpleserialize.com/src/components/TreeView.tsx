@@ -213,7 +213,7 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
                     );
                     let maxTypeWidth = 0; // hack to simulate a table layout in a list.
                     let maxKeyWidth = 0;
-                    out.forEach((n) => {
+                    for (const n of out) {
                       if (n.text.length > maxTypeWidth) {
                         maxTypeWidth = n.text.length;
                       }
@@ -221,7 +221,7 @@ export default class TreeView<T> extends React.Component<Props<T>, State<T>> {
                       if (kl > maxKeyWidth) {
                         maxKeyWidth = kl;
                       }
-                    });
+                    }
                     return out.map(
                       (n): Node<T> => ({
                         ...n,
