@@ -1,13 +1,11 @@
-
-
-import * as React from "react";
 import {Type, toHexString} from "@chainsafe/ssz";
-import {ModuleThread, spawn, Thread, Worker} from "threads";
+import * as React from "react";
 import {ChangeEvent} from "react";
 import {AlertManager, withAlert} from "react-alert";
+import {ModuleThread, Thread, Worker, spawn} from "threads";
 
 import {inputTypes} from "../util/input_types";
-import {ForkName, typeNames, forks} from "../util/types";
+import {ForkName, forks, typeNames} from "../util/types";
 import {SszWorker} from "./worker";
 
 const initialType = "BeaconBlock";
@@ -18,7 +16,7 @@ type Props = {
   sszType: Type<unknown>;
   serialized?: Uint8Array;
   deserialized: object;
-  setOverlay: Function;
+  setOverlay: (show: boolean, message?: string) => void;
   worker: Worker;
   alert: AlertManager;
 };
@@ -229,8 +227,8 @@ class Input extends React.Component<Props, State> {
         reader.readAsArrayBuffer(file);
       }
       reader.onload = (e) => {
-        if (e.target?.result) {
-          if (e.target !== null) processFileContents(e.target.result);
+        if (e.target?.result && e.target !== null) {
+          processFileContents(e.target.result);
         }
       };
       reader.onerror = (e: unknown) => {
@@ -328,6 +326,5 @@ class Input extends React.Component<Props, State> {
   }
 }
 
-// @TODO: not sure what to put here instead of any
-
+// biome-ignore lint/suspicious/noExplicitAny: Not sure what to put here instead of any
 export default withAlert<any>()(Input);

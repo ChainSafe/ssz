@@ -1,7 +1,7 @@
 import React from "react";
+import {Provider as AlertProvider, transitions} from "react-alert";
 import ReactDOM from "react-dom";
 import App from "./App";
-import {transitions, Provider as AlertProvider} from "react-alert";
 
 // @ts-ignore
 import AlertTemplate from "react-alert-template-basic";
@@ -15,7 +15,6 @@ const options = {
 };
 
 ReactDOM.render(
-  
   <AlertProvider template={AlertTemplate} {...options}>
     <App />
   </AlertProvider>,
