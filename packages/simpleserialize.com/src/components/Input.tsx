@@ -227,7 +227,9 @@ class Input extends React.Component<Props, State> {
         reader.readAsArrayBuffer(file);
       }
       reader.onload = (e) => {
-        if (e.target?.result && e.target !== null) processFileContents(e.target.result);
+        if (e.target?.result && e.target !== null) {
+          processFileContents(e.target.result);
+        }
       };
       reader.onerror = (e: unknown) => {
         if (e instanceof Error) {
