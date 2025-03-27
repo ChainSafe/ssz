@@ -7,9 +7,18 @@ export type Hasher = {
   // name of the hashing library
   name: string;
   /**
+   * Hash input Uint8Array into output Uint8Array
+   * output.length = input.length / 2
+   */
+  hashInto(input: Uint8Array, output: Uint8Array): void;
+  /**
    * Hash two 32-byte Uint8Arrays
    */
   digest64(a32Bytes: Uint8Array, b32Bytes: Uint8Array): Uint8Array;
+  /**
+   * The same to digest64, but output is passed as argument
+   */
+  digest64Into(a32Bytes: Uint8Array, b32Bytes: Uint8Array, output: Uint8Array): void;
   /**
    * Hash two 32-byte HashObjects
    */

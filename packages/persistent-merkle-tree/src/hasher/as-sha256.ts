@@ -1,6 +1,7 @@
 import {
   batchHash4HashObjectInputs,
   digest2Bytes32,
+  digest2Bytes32Into,
   digest64HashObjects,
   digest64HashObjectsInto,
   hashInto,
@@ -18,7 +19,9 @@ const buffer = new Uint8Array(4 * BLOCK_SIZE);
 
 export const hasher: Hasher = {
   name: "as-sha256",
+  hashInto,
   digest64: digest2Bytes32,
+  digest64Into: digest2Bytes32Into,
   digest64HashObjects: digest64HashObjectsInto,
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
     doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);

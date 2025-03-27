@@ -9,6 +9,8 @@ import {
   hashObjectToUint8Array,
 } from "./util.js";
 
+const hash64Input = new Uint8Array(64);
+
 const digest64 = (a: Uint8Array, b: Uint8Array): Uint8Array => sha256.create().update(a).update(b).digest();
 const hashInto = (input: Uint8Array, output: Uint8Array): void => {
   if (input.length % 64 !== 0) {
@@ -33,7 +35,20 @@ const buffer = new Uint8Array(4 * BLOCK_SIZE);
 
 export const hasher: Hasher = {
   name: "noble",
+  hashInto,
   digest64,
+  digest64Into: (a, b, output) => {
+    if (a.length !== 32 || b.length !== 32) {
+      throw new Error("Invalid input length");
+    }
+    if (output.length !== 32) {
+      throw new Error("Invalid output length");
+    }
+
+    hash64Input.set(a, 0);
+    hash64Input.set(b, 32);
+    hashInto(hash64Input, output);
+  },
   digest64HashObjects: (left, right, parent) => {
     byteArrayIntoHashObject(digest64(hashObjectToUint8Array(left), hashObjectToUint8Array(right)), 0, parent);
   },
