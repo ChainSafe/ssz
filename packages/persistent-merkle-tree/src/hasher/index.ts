@@ -19,8 +19,16 @@ export function setHasher(newHasher: Hasher): void {
   hasher = newHasher;
 }
 
+export function hashInto(data: Uint8Array, output: Uint8Array): void {
+  hasher.hashInto(data, output);
+}
+
 export function digest64(a: Uint8Array, b: Uint8Array): Uint8Array {
   return hasher.digest64(a, b);
+}
+
+export function digest64Into(a: Uint8Array, b: Uint8Array, output: Uint8Array): void {
+  hasher.digest64Into(a, b, output);
 }
 
 export function digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
