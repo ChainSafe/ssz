@@ -56,10 +56,10 @@ export function digest64(data: Uint8Array): Uint8Array {
 
 export function digest64Into(data: Uint8Array, output: Uint8Array): void {
   if (data.length !== 64) {
-    throw new Error("InvalidLengthForDigest64, got" + data.length);
+    throw new Error(`InvalidLengthForDigest64, got ${data.length}`);
   }
   if (output.length !== 32) {
-    throw new Error("InvalidLengthForOutput32, got" + output.length);
+    throw new Error(`InvalidLengthForOutput32, got ${output.length}`);
   }
 
   inputUint8Array.set(data);

@@ -51,7 +51,7 @@ describe("hasher", () => {
           }
         },
         runsFactor,
-      })
+      });
 
       bench({
         id: `hashTwoObjects ${iterations} times - ${hasher.name}`,
