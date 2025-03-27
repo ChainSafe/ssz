@@ -26,6 +26,7 @@ const destNodes: Node[] = new Array<Node>(PARALLEL_FACTOR);
 
 export const hasher: Hasher = {
   name: "hashtree",
+  hashInto,
   digest64(obj1: Uint8Array, obj2: Uint8Array): Uint8Array {
     if (obj1.length !== 32 || obj2.length !== 32) {
       throw new Error("Invalid input length");
@@ -34,6 +35,18 @@ export const hasher: Hasher = {
     hash64Input.set(obj2, 32);
     hashInto(hash64Input, hash64Output);
     return hash64Output.slice();
+  },
+  digest64Into: (obj1: Uint8Array, obj2: Uint8Array, output: Uint8Array): void => {
+    if (obj1.length !== 32 || obj2.length !== 32) {
+      throw new Error("Invalid input length");
+    }
+    if (output.length !== 32) {
+      throw new Error("Invalid output length");
+    }
+
+    hash64Input.set(obj1, 0);
+    hash64Input.set(obj2, 32);
+    hashInto(hash64Input, output);
   },
   digest64HashObjects(left: HashObject, right: HashObject, parent: HashObject): void {
     hashObjectsToUint32Array(left, right, uint32Input);
