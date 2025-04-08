@@ -196,8 +196,8 @@ function applyPaddingBit(output: Uint8Array, offset: number, bitLen: number): nu
   if (bitLen % 8 === 0) {
     output[newOffset] = 1;
     return newOffset + 1;
-  } else {
-    output[newOffset - 1] |= 1 << (bitLen % 8);
-    return newOffset;
   }
+
+  output[newOffset - 1] |= 1 << (bitLen % 8);
+  return newOffset;
 }

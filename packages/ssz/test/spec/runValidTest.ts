@@ -120,9 +120,8 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
       const viewDU = type.getViewDU(node);
       if (viewDU instanceof TreeViewDU) {
         return viewDU.batchHashTreeRoot();
-      } else {
-        return type.hashTreeRoot(testDataValue);
       }
+      return type.hashTreeRoot(testDataValue);
     }, "type.hashTreeRoot()");
     assertRoot(root, "ViewDU.batchHashTreeRoot()");
   }
@@ -214,9 +213,8 @@ function copy(buf: Uint8Array): Uint8Array {
 export function toJsonOrString(value: unknown): unknown {
   if (typeof value === "number" || typeof value === "bigint") {
     return value.toString(10);
-  } else {
-    return value;
   }
+  return value;
 }
 
 function renderTree(node: Node): void {

@@ -127,9 +127,8 @@ export class UintNumberType extends BasicType<number> {
         const b = dataView.getUint32(start + 4, true);
         if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
           return Infinity;
-        } else {
-          return b * NUMBER_2_POW_32 + a;
         }
+        return b * NUMBER_2_POW_32 + a;
       }
     }
   }
@@ -186,39 +185,41 @@ export class UintNumberType extends BasicType<number> {
   fromJson(json: unknown): number {
     if (typeof json === "number") {
       return json;
-    } else if (typeof json === "string") {
+    }
+
+    if (typeof json === "string") {
       if (this.clipInfinity && json === this.maxDecimalStr) {
         // Allow to handle max possible number
         return Infinity;
-      } else {
-        const num = parseInt(json, 10);
-        if (Number.isNaN(num)) {
-          throw Error("JSON invalid number isNaN");
-        } else if (num > Number.MAX_SAFE_INTEGER) {
-          // Throw to prevent decimal precision errors downstream
-          throw Error("JSON invalid number > MAX_SAFE_INTEGER");
-        } else {
-          return num;
-        }
       }
-    } else if (typeof json === "bigint") {
+
+      const num = Number.parseInt(json, 10);
+      if (Number.isNaN(num)) throw Error("JSON invalid number isNaN");
+
+      if (num > Number.MAX_SAFE_INTEGER) {
+        // Throw to prevent decimal precision errors downstream
+        throw Error("JSON invalid number > MAX_SAFE_INTEGER");
+      }
+
+      return num;
+    }
+
+    if (typeof json === "bigint") {
       if (json > MAX_SAFE_INTEGER_BN) {
         // Throw to prevent decimal precision errors downstream
         throw Error("JSON invalid number > MAX_SAFE_INTEGER_BN");
-      } else {
-        return Number(json);
       }
-    } else {
-      throw Error(`JSON invalid type ${typeof json} expected number`);
+      return Number(json);
     }
+
+    throw Error(`JSON invalid type ${typeof json} expected number`);
   }
 
   toJson(value: number): unknown {
     if (value === Infinity) {
       return this.maxDecimalStr;
-    } else {
-      return value.toString(10);
     }
+    return value.toString(10);
   }
 }
 
@@ -379,13 +380,9 @@ export class UintBigintType extends BasicType<bigint> {
   // JSON
 
   fromJson(json: unknown): bigint {
-    if (typeof json === "bigint") {
-      return json;
-    } else if (typeof json === "string" || typeof json === "number") {
-      return BigInt(json);
-    } else {
-      throw Error(`JSON invalid type ${typeof json} expected bigint`);
-    }
+    if (typeof json === "bigint") return json;
+    if (typeof json === "string" || typeof json === "number") return BigInt(json);
+    throw Error(`JSON invalid type ${typeof json} expected bigint`);
   }
 
   toJson(value: bigint): unknown {

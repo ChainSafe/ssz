@@ -154,13 +154,11 @@ export class PartialListCompositeTreeViewDU<
    * Clone using rootNodeToViewDU() instead of getViewDU().
    */
   clone(dontTransferCache?: boolean): this {
-    if (dontTransferCache) {
-      return this.rootNodeToViewDU(this.node) as this;
-    } else {
-      const cache = this.cache;
-      this.clearCache();
-      return this.rootNodeToViewDU(this.node, cache) as this;
-    }
+    if (dontTransferCache) return this.rootNodeToViewDU(this.node) as this;
+
+    const cache = this.cache;
+    this.clearCache();
+    return this.rootNodeToViewDU(this.node, cache) as this;
   }
 
   /**

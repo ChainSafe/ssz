@@ -206,12 +206,10 @@ export class BitArray {
       }
     }
 
-    if (index === null) {
-      // ERROR_NO_BIT_SET
-      return null;
-    } else {
-      return index;
-    }
+    // ERROR_NO_BIT_SET
+    if (index === null) return null;
+
+    return index;
   }
 
   toBoolArray(): boolean[] {

@@ -43,73 +43,67 @@ export function treePartialToJsonPaths(
       // If this type merkleized fits in a single chunk then this LeafNode includes all data
       if (childType.maxChunkCount === 1) {
         return {type: TreeDataTypeCode.complete, jsonPathProps: [jsonPathProp]};
-      } else {
-        return {type: TreeDataTypeCode.witness};
       }
+
+      return {type: TreeDataTypeCode.witness};
     }
 
     // LeafNode not at type depth can be either
     // - length / selector nodes
     // - witness
-    else {
-      if (currentDepth === 1 && bitstringToIndex(bitstring) === 1 && isCompositeType(type) && type.isList) {
-        return {type: TreeDataTypeCode.complete, jsonPathProps: []};
-      }
-      return {type: TreeDataTypeCode.witness};
+    if (currentDepth === 1 && bitstringToIndex(bitstring) === 1 && isCompositeType(type) && type.isList) {
+      return {type: TreeDataTypeCode.complete, jsonPathProps: []};
     }
-  } else {
-    if (atTypeDepth) {
-      const jsonPathProp = type.getIndexProperty(bitstringToIndex(bitstring));
-      if (jsonPathProp === null) {
-        return {type: TreeDataTypeCode.complete, jsonPathProps: []};
-      }
-
-      const childType = type.getPropertyType(jsonPathProp);
-
-      if (!isCompositeType(childType)) {
-        throw Error("BranchNode does not map to CompositeType");
-      }
-
-      // Restart navigation with childType, bitstring = "0", currentDepth = 0
-      const ress = treePartialToJsonPaths(node, childType, "0", 0);
-
-      if (ress.type === TreeDataTypeCode.complete) {
-        return {type: TreeDataTypeCode.complete, jsonPathProps: [jsonPathProp]};
-      } else if (ress.type === TreeDataTypeCode.partial) {
-        return {
-          type: TreeDataTypeCode.partial,
-          jsonPaths: ress.jsonPaths.filter((jpp) => jpp.length > 0).map((jpp) => [jsonPathProp, ...jpp]),
-        };
-      } else {
-        throw Error(`BranchNode navigation returns witness - bitstring ${bitstring}`);
-      }
-    }
-
-    // BranchNode at not type depth, keep navigating
-    else {
-      const leftRes = treePartialToJsonPaths(node.left, type, `${bitstring}0`, currentDepth + 1);
-      const rightRes = treePartialToJsonPaths(node.right, type, `${bitstring}1`, currentDepth + 1);
-
-      // Upstream status that all data is there
-      if (leftRes.type === TreeDataTypeCode.complete && rightRes.type === TreeDataTypeCode.complete) {
-        return {type: TreeDataTypeCode.complete, jsonPathProps: [...leftRes.jsonPathProps, ...rightRes.jsonPathProps]};
-      }
-
-      // Ensure there's not a bad BranchNode. All BranchNodes must contain some data at least on one side
-      else if (leftRes.type === TreeDataTypeCode.witness && rightRes.type === TreeDataTypeCode.witness) {
-        throw Error(`BranchNode with witness in left and right nodes - bitstring ${bitstring}`);
-      }
-
-      // Here equals to:
-      // - partial-data on both sides
-      // - partial-data + full-data
-      // - partial-data + witness
-      // - full-data + witness
-      else {
-        return {type: TreeDataTypeCode.partial, jsonPaths: getMergedJsonPathsFrom(leftRes, rightRes)};
-      }
-    }
+    return {type: TreeDataTypeCode.witness};
   }
+
+  if (atTypeDepth) {
+    const jsonPathProp = type.getIndexProperty(bitstringToIndex(bitstring));
+    if (jsonPathProp === null) {
+      return {type: TreeDataTypeCode.complete, jsonPathProps: []};
+    }
+
+    const childType = type.getPropertyType(jsonPathProp);
+
+    if (!isCompositeType(childType)) {
+      throw Error("BranchNode does not map to CompositeType");
+    }
+
+    // Restart navigation with childType, bitstring = "0", currentDepth = 0
+    const ress = treePartialToJsonPaths(node, childType, "0", 0);
+
+    if (ress.type === TreeDataTypeCode.complete) {
+      return {type: TreeDataTypeCode.complete, jsonPathProps: [jsonPathProp]};
+    }
+    if (ress.type === TreeDataTypeCode.partial) {
+      return {
+        type: TreeDataTypeCode.partial,
+        jsonPaths: ress.jsonPaths.filter((jpp) => jpp.length > 0).map((jpp) => [jsonPathProp, ...jpp]),
+      };
+    }
+    throw Error(`BranchNode navigation returns witness - bitstring ${bitstring}`);
+  }
+
+  // BranchNode at not type depth, keep navigating
+  const leftRes = treePartialToJsonPaths(node.left, type, `${bitstring}0`, currentDepth + 1);
+  const rightRes = treePartialToJsonPaths(node.right, type, `${bitstring}1`, currentDepth + 1);
+
+  // Upstream status that all data is there
+  if (leftRes.type === TreeDataTypeCode.complete && rightRes.type === TreeDataTypeCode.complete) {
+    return {type: TreeDataTypeCode.complete, jsonPathProps: [...leftRes.jsonPathProps, ...rightRes.jsonPathProps]};
+  }
+
+  // Ensure there's not a bad BranchNode. All BranchNodes must contain some data at least on one side
+  if (leftRes.type === TreeDataTypeCode.witness && rightRes.type === TreeDataTypeCode.witness) {
+    throw Error(`BranchNode with witness in left and right nodes - bitstring ${bitstring}`);
+  }
+
+  // Here equals to:
+  // - partial-data on both sides
+  // - partial-data + full-data
+  // - partial-data + witness
+  // - full-data + witness
+  return {type: TreeDataTypeCode.partial, jsonPaths: getMergedJsonPathsFrom(leftRes, rightRes)};
 }
 
 function getJsonPathFromRes(res: TreeDataType): JsonPath[] {
@@ -140,16 +134,14 @@ function bitstringToIndex(bitstring: string): number {
  * See https://github.com/protolambda/eth-merkle-trees/blob/master/tree_offsets.md
  */
 export function treeOffsetProofToNode(offsets: number[], leaves: Uint8Array[]): Node {
-  if (!leaves.length) {
-    throw new Error("Proof must contain gt 0 leaves");
-  } else if (leaves.length === 1) {
-    return LeafNode.fromRoot(leaves[0]);
-  } else {
-    // the offset popped from the list is the # of leaves in the left subtree
-    const pivot = offsets[0];
-    return new BranchNode(
-      treeOffsetProofToNode(offsets.slice(1, pivot), leaves.slice(0, pivot)),
-      treeOffsetProofToNode(offsets.slice(pivot), leaves.slice(pivot))
-    );
-  }
+  if (!leaves.length) throw new Error("Proof must contain gt 0 leaves");
+
+  if (leaves.length === 1) return LeafNode.fromRoot(leaves[0]);
+
+  // the offset popped from the list is the # of leaves in the left subtree
+  const pivot = offsets[0];
+  return new BranchNode(
+    treeOffsetProofToNode(offsets.slice(1, pivot), leaves.slice(0, pivot)),
+    treeOffsetProofToNode(offsets.slice(pivot), leaves.slice(pivot))
+  );
 }

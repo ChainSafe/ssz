@@ -64,26 +64,18 @@ export function sortDecreasingBitstrings(gindices: GindexBitstring[]): GindexBit
     return [];
   }
   return gindices.sort((a, b) => {
-    if (a.length < b.length) {
-      return 1;
-    } else if (b.length < a.length) {
-      return -1;
-    }
+    if (a.length < b.length) return 1;
+    if (b.length < a.length) return -1;
+
     let aPos0 = a.indexOf("0");
     let bPos0 = b.indexOf("0");
 
     while (true) {
-      if (aPos0 === -1) {
-        return -1;
-      } else if (bPos0 === -1) {
-        return 1;
-      }
+      if (aPos0 === -1) return -1;
+      if (bPos0 === -1) return 1;
 
-      if (aPos0 < bPos0) {
-        return 1;
-      } else if (bPos0 < aPos0) {
-        return -1;
-      }
+      if (aPos0 < bPos0) return 1;
+      if (bPos0 < aPos0) return -1;
 
       aPos0 = a.indexOf("0", aPos0 + 1);
       bPos0 = b.indexOf("0", bPos0 + 1);
