@@ -41,7 +41,9 @@ export function treePartialToJsonPaths(
       const childType = type.getPropertyType(jsonPathProp);
 
       // If this type merkleized fits in a single chunk then this LeafNode includes all data
-      if (childType.maxChunkCount === 1) return {type: TreeDataTypeCode.complete, jsonPathProps: [jsonPathProp]};
+      if (childType.maxChunkCount === 1) {
+        return {type: TreeDataTypeCode.complete, jsonPathProps: [jsonPathProp]};
+      }
 
       return {type: TreeDataTypeCode.witness};
     }
