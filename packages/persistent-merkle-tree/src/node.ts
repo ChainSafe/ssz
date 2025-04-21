@@ -167,34 +167,29 @@ export class LeafNode extends Node {
       const h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         return 0xff & (h >> bitIndex);
-      } else {
-        return 0xffff & (h >> bitIndex);
       }
+      return 0xffff & (h >> bitIndex);
     }
 
     // number equals the h value
-    else if (uintBytes === 4) {
+    if (uintBytes === 4) {
       return getNodeH(this, hIndex) >>> 0;
     }
 
     // number spans 2 h values
-    else if (uintBytes === 8) {
+    if (uintBytes === 8) {
       const low = getNodeH(this, hIndex);
       const high = getNodeH(this, hIndex + 1);
-      if (high === 0) {
-        return low >>> 0;
-      } else if (high === -1 && low === -1 && clipInfinity) {
+      if (high === 0) return low >>> 0;
+      if (high === -1 && low === -1 && clipInfinity) {
         // Limit uint returns
         return Infinity;
-      } else {
-        return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
       }
+      return (low >>> 0) + (high >>> 0) * TWO_POWER_32;
     }
 
     // Bigger uint can't be represented
-    else {
-      throw Error("uintBytes > 8");
-    }
+    throw Error("uintBytes > 8");
   }
 
   getUintBigint(uintBytes: number, offsetBytes: number): bigint {
@@ -204,27 +199,23 @@ export class LeafNode extends Node {
     if (uintBytes < 4) {
       const bitIndex = (offsetBytes % 4) * 8;
       const h = getNodeH(this, hIndex);
-      if (uintBytes === 1) {
-        return BigInt(0xff & (h >> bitIndex));
-      } else {
-        return BigInt(0xffff & (h >> bitIndex));
-      }
+      if (uintBytes === 1) return BigInt(0xff & (h >> bitIndex));
+
+      return BigInt(0xffff & (h >> bitIndex));
     }
 
     // number equals the h value
-    else if (uintBytes === 4) {
+    if (uintBytes === 4) {
       return BigInt(getNodeH(this, hIndex) >>> 0);
     }
 
     // number spans multiple h values
-    else {
-      const hRange = Math.ceil(uintBytes / 4);
-      let v = BigInt(0);
-      for (let i = 0; i < hRange; i++) {
-        v += BigInt(getNodeH(this, hIndex + i) >>> 0) << BigInt(32 * i);
-      }
-      return v;
+    const hRange = Math.ceil(uintBytes / 4);
+    let v = BigInt(0);
+    for (let i = 0; i < hRange; i++) {
+      v += BigInt(getNodeH(this, hIndex + i) >>> 0) << BigInt(32 * i);
     }
+    return v;
   }
 
   setUint(uintBytes: number, offsetBytes: number, value: number, clipInfinity?: boolean): void {
@@ -338,14 +329,14 @@ export function compose(inner: Link, outer: Link): Link {
 
 export function getNodeH(node: Node, hIndex: number): number {
   if (hIndex === 0) return node.h0;
-  else if (hIndex === 1) return node.h1;
-  else if (hIndex === 2) return node.h2;
-  else if (hIndex === 3) return node.h3;
-  else if (hIndex === 4) return node.h4;
-  else if (hIndex === 5) return node.h5;
-  else if (hIndex === 6) return node.h6;
-  else if (hIndex === 7) return node.h7;
-  else throw Error("hIndex > 7");
+  if (hIndex === 1) return node.h1;
+  if (hIndex === 2) return node.h2;
+  if (hIndex === 3) return node.h3;
+  if (hIndex === 4) return node.h4;
+  if (hIndex === 5) return node.h5;
+  if (hIndex === 6) return node.h6;
+  if (hIndex === 7) return node.h7;
+  throw Error("hIndex > 7");
 }
 
 export function setNodeH(node: Node, hIndex: number, value: number): void {

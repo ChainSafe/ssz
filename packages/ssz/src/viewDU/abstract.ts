@@ -109,12 +109,10 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * to NOT transfer the cache to the cloned instance.
    */
   clone(dontTransferCache?: boolean): this {
-    if (dontTransferCache) {
-      return this.type.getViewDU(this.node) as this;
-    } else {
-      const cache = this.cache;
-      this.clearCache();
-      return this.type.getViewDU(this.node, cache) as this;
-    }
+    if (dontTransferCache) return this.type.getViewDU(this.node) as this;
+
+    const cache = this.cache;
+    this.clearCache();
+    return this.type.getViewDU(this.node, cache) as this;
   }
 }

@@ -32,9 +32,8 @@ export function replaceUintTypeWithUintBigintType<T extends Type<any>>(type: T):
 
     if (type instanceof ContainerNodeStructType) {
       return new ContainerNodeStructType(fields, type.opts) as unknown as T;
-    } else {
-      return new ContainerType(fields, type.opts) as unknown as T;
     }
+    return new ContainerType(fields, type.opts) as unknown as T;
   }
 
   // For List or vectors replace the subType

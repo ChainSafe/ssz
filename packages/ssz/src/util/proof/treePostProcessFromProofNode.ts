@@ -39,11 +39,8 @@ export function treePostProcessFromProofNode(node: Node, type: CompositeType, bi
   // Must run tree_fromProofNode on the first received node (i.e. Validator object)
   if (currentDepth === 0) {
     const nodePost = type.tree_fromProofNode(node);
-    if (nodePost.done) {
-      return nodePost.node;
-    } else {
-      node = nodePost.node;
-    }
+    if (nodePost.done) return nodePost.node;
+    node = nodePost.node;
   }
 
   const atTypeDepth = type.depth === currentDepth;
@@ -63,51 +60,40 @@ export function treePostProcessFromProofNode(node: Node, type: CompositeType, bi
         return childType.tree_fromProofNode(node).node;
       }
       // Witness node
-      else {
-        return node;
-      }
+      return node;
     }
 
     // LeafNode not at type depth is a witness or a length / selector nodes
-    else {
-      return node;
-    }
-  } else {
-    if (atTypeDepth) {
-      const jsonPathProp = type.getIndexProperty(bitstringToIndex(bitstring));
-      if (jsonPathProp === null) {
-        // bitstring is out of bounds, witness node
-        return node;
-      }
-
-      const childType = type.getPropertyType(jsonPathProp);
-
-      if (!isCompositeType(childType)) {
-        throw Error("BranchNode does not map to CompositeType");
-      }
-
-      const nodePost = childType.tree_fromProofNode(node);
-
-      // If tree_fromProofNode is the identity function, keep going, otherwise stop navigating
-      if (nodePost.done) {
-        return nodePost.node;
-      } else {
-        return treePostProcessFromProofNode(nodePost.node, childType);
-      }
-    }
-
-    // BranchNode at not type depth, keep navigating
-    else {
-      const leftNode = treePostProcessFromProofNode(node.left, type, `${bitstring}0`, currentDepth + 1);
-      const rightNode = treePostProcessFromProofNode(node.right, type, `${bitstring}1`, currentDepth + 1);
-
-      if (leftNode === node.left && rightNode === node.right) {
-        return node;
-      } else {
-        return new BranchNode(leftNode, rightNode);
-      }
-    }
+    return node;
   }
+
+  if (atTypeDepth) {
+    const jsonPathProp = type.getIndexProperty(bitstringToIndex(bitstring));
+
+    // bitstring is out of bounds, witness node
+    if (jsonPathProp === null) return node;
+
+    const childType = type.getPropertyType(jsonPathProp);
+
+    if (!isCompositeType(childType)) {
+      throw Error("BranchNode does not map to CompositeType");
+    }
+
+    const nodePost = childType.tree_fromProofNode(node);
+
+    // If tree_fromProofNode is the identity function, keep going, otherwise stop navigating
+    if (nodePost.done) return nodePost.node;
+
+    return treePostProcessFromProofNode(nodePost.node, childType);
+  }
+
+  // BranchNode at not type depth, keep navigating
+  const leftNode = treePostProcessFromProofNode(node.left, type, `${bitstring}0`, currentDepth + 1);
+  const rightNode = treePostProcessFromProofNode(node.right, type, `${bitstring}1`, currentDepth + 1);
+
+  if (leftNode === node.left && rightNode === node.right) return node;
+
+  return new BranchNode(leftNode, rightNode);
 }
 
 /** Return the node horizontal index given a bitstring without the leading "1" */

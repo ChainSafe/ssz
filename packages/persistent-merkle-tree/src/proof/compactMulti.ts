@@ -111,11 +111,10 @@ export function descriptorToBitlist(descriptor: Uint8Array): boolean[] {
 export function nodeToCompactMultiProof(node: Node, bitlist: boolean[], bitIndex: number): Uint8Array[] {
   if (bitlist[bitIndex]) {
     return [node.root];
-  } else {
-    const left = nodeToCompactMultiProof(node.left, bitlist, bitIndex + 1);
-    const right = nodeToCompactMultiProof(node.right, bitlist, bitIndex + left.length * 2);
-    return [...left, ...right];
   }
+  const left = nodeToCompactMultiProof(node.left, bitlist, bitIndex + 1);
+  const right = nodeToCompactMultiProof(node.right, bitlist, bitIndex + left.length * 2);
+  return [...left, ...right];
 }
 
 /**
@@ -130,12 +129,11 @@ export function compactMultiProofToNode(
 ): Node {
   if (bitlist[pointer.bitIndex++]) {
     return LeafNode.fromRoot(leaves[pointer.leafIndex++]);
-  } else {
-    return new BranchNode(
-      compactMultiProofToNode(bitlist, leaves, pointer),
-      compactMultiProofToNode(bitlist, leaves, pointer)
-    );
   }
+  return new BranchNode(
+    compactMultiProofToNode(bitlist, leaves, pointer),
+    compactMultiProofToNode(bitlist, leaves, pointer)
+  );
 }
 
 export function createCompactMultiProof(rootNode: Node, descriptor: Uint8Array): Uint8Array[] {

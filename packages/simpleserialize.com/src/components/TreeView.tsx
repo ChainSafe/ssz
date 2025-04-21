@@ -23,28 +23,28 @@ import {ForkName, forks} from "../util/types";
 
 function getTypeName<T>(type: Type<T>, _types: Record<string, Type<T>>, name: string): string | undefined {
   if (isBooleanType(type)) return "bool";
-  else if (isUintType(type)) return `uint${type.byteLength * 8}`;
-  else if (isBitListType(type)) return "BitList";
-  else if (isBitVectorType(type)) return `BitVector[${type.length}]`;
-  else if (isByteListType(type)) return "Bytes";
-  else if (isByteVectorType(type)) return `BytesN[${type.length}]`;
-  else if (isVectorType(type)) return "Vector";
-  else if (isListType(type)) return "List";
-  else if (isContainerType(type)) return `${name}(Container)`;
-  else return "N/A";
+  if (isUintType(type)) return `uint${type.byteLength * 8}`;
+  if (isBitListType(type)) return "BitList";
+  if (isBitVectorType(type)) return `BitVector[${type.length}]`;
+  if (isByteListType(type)) return "Bytes";
+  if (isByteVectorType(type)) return `BytesN[${type.length}]`;
+  if (isVectorType(type)) return "Vector";
+  if (isListType(type)) return "List";
+  if (isContainerType(type)) return `${name}(Container)`;
+  return "N/A";
 }
 
 function getKind<T>(type: Type<T>): string {
   if (isBooleanType(type)) return "bool";
-  else if (isUintType(type)) return "uint";
-  else if (isBitListType(type)) return "BitList";
-  else if (isBitVectorType(type)) return "BitVector";
-  else if (isByteListType(type)) return "Bytes";
-  else if (isByteVectorType(type)) return "BytesN";
-  else if (isVectorType(type)) return "Vector";
-  else if (isListType(type)) return "List";
-  else if (isContainerType(type)) return "Container";
-  else return "N/A";
+  if (isUintType(type)) return "uint";
+  if (isBitListType(type)) return "BitList";
+  if (isBitVectorType(type)) return "BitVector";
+  if (isByteListType(type)) return "Bytes";
+  if (isByteVectorType(type)) return "BytesN";
+  if (isVectorType(type)) return "Vector";
+  if (isListType(type)) return "List";
+  if (isContainerType(type)) return "Container";
+  return "N/A";
 }
 
 type Node<T> = {

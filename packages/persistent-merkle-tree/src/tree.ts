@@ -542,14 +542,14 @@ export function getNodesAtDepth(rootNode: Node, depth: number, startIndex: numbe
   // Optimized paths for short trees (x20 times faster)
   if (depth === 0) {
     return startIndex === 0 && count > 0 ? [rootNode] : [];
-  } else if (depth === 1) {
-    if (count === 0) {
-      return [];
-    } else if (count === 1) {
+  }
+
+  if (depth === 1) {
+    if (count === 0) return [];
+    if (count === 1) {
       return startIndex === 0 ? [rootNode.left] : [rootNode.right];
-    } else {
-      return [rootNode.left, rootNode.right];
     }
+    return [rootNode.left, rootNode.right];
   }
 
   // Ignore first bit "1", then substract 1 to get to the parent

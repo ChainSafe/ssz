@@ -37,7 +37,7 @@ function copyNode<T>(node: INode<T>): INode<T> {
 
 function ensureEditable<T>(node: INode<T>, edit: {ref: boolean}): INode<T> {
   if (node.edit === edit) return node;
-  else return {edit, array: [...node.array] as (INode<T> | undefined)[]};
+  return {edit, array: [...node.array] as (INode<T> | undefined)[]};
 }
 
 /**
