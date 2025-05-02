@@ -37,7 +37,7 @@
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib",
     "build": "tsc -p tsconfig.build.json",
-    "benchmark:files": "node --max-old-space-size=4096 --expose-gc --loader ts-node/esm ../../node_modules/.bin/benchmark",
+    "benchmark:files": "node --max-old-space-size=4096 --expose-gc --loader ts-node/esm/transpile-only ../../node_modules/.bin/benchmark",
     "benchmark": "yarn benchmark:files 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:unit": "vitest run --dir test/unit"
