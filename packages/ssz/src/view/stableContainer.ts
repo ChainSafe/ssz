@@ -7,12 +7,12 @@ import {
   toGindexBitstring,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {BasicType, isBasicType} from "../type/basic.js";
-import {CompositeType, isCompositeType} from "../type/composite.js";
-import {NonOptionalFields, OptionalType} from "../type/optional.js";
-import {BitArray} from "../value/bitArray.js";
-import {TreeView} from "./abstract.js";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, isCompositeType} from "../type/composite.ts";
+import {NonOptionalFields, OptionalType} from "../type/optional.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {TreeView} from "./abstract.ts";
 
 // some code is here to break the circular dependency between type, view, and viewDU
 

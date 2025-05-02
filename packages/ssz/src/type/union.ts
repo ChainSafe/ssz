@@ -9,12 +9,12 @@ import {
   getNode,
   merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ByteViews, Type} from "./abstract.js";
-import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
-import {CompositeType, isCompositeType} from "./composite.js";
-import {NoneType} from "./none.js";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ByteViews, Type} from "./abstract.ts";
+import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.ts";
+import {CompositeType, isCompositeType} from "./composite.ts";
+import {NoneType} from "./none.ts";
 
 type Union<T> = {
   readonly selector: number;

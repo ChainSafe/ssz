@@ -1,6 +1,6 @@
 import {defineConfig, mergeConfig} from "vitest/config";
-import baseConfig from "../../vitest.base.unit.config.js";
-import {getRuntime} from "../../vitest.base.unit.config.js";
+import baseConfig from "../../vitest.base.unit.config.ts";
+import {getRuntime} from "../../vitest.base.unit.config.ts";
 
 export default mergeConfig(
   baseConfig,

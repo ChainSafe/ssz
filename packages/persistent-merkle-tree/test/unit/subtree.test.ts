@@ -8,7 +8,7 @@ import {
   getNodesAtDepth,
   subtreeFillToContents,
   zeroNode,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 describe("subtreeFillToContents", () => {
   // the hash computation takes time

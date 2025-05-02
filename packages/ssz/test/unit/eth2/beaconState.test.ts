@@ -1,8 +1,8 @@
 import {describe, expect, it} from "vitest";
-import {BitArray, fromHexString} from "../../../src/index.js";
-import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
-import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.js";
-import {altair, phase0, ssz} from "../../lodestarTypes/index.js";
+import {BitArray, fromHexString} from "../../../src/index.ts";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64.ts";
+import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.ts";
+import {altair, phase0, ssz} from "../../lodestarTypes/index.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);

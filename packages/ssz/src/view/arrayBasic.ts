@@ -1,9 +1,9 @@
 import {HashComputationLevel, LeafNode, Node, Tree, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract.js";
-import {BasicType} from "../type/basic.js";
-import {CompositeType} from "../type/composite.js";
-import {TreeViewDU} from "../viewDU/abstract.js";
-import {TreeView} from "./abstract.js";
+import {ValueOf} from "../type/abstract.ts";
+import {BasicType} from "../type/basic.ts";
+import {CompositeType} from "../type/composite.ts";
+import {TreeViewDU} from "../viewDU/abstract.ts";
+import {TreeView} from "./abstract.ts";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeType<

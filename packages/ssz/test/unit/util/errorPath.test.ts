@@ -1,7 +1,7 @@
 import {describe, expect, it} from "vitest";
 
-import {ContainerType, ListBasicType, ListCompositeType, Type} from "../../../src/index.js";
-import {byteType} from "../../utils/primitiveTypes.js";
+import {ContainerType, ListBasicType, ListCompositeType, Type} from "../../../src/index.ts";
+import {byteType} from "../../utils/primitiveTypes.ts";
 
 const SimpleObject = new ContainerType({
   b: byteType,

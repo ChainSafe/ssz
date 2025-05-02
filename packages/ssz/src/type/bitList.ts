@@ -6,13 +6,13 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {BitArray} from "../value/bitArray.js";
-import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.js";
-import {BitArrayType} from "./bitArray.js";
-import {ByteViews} from "./composite.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.ts";
+import {BitArrayType} from "./bitArray.ts";
+import {ByteViews} from "./composite.ts";
 
 export interface BitListOptions {
   typeName?: string;

@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ByteListType} from "../../../../src/index.js";
+import {ByteListType} from "../../../../src/index.ts";
 
 describe("ByteListValue", () => {
   const type = new ByteListType(1024);

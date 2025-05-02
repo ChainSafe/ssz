@@ -17,11 +17,11 @@ import {
   cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Case} from "../util/strings.js";
-import {Require} from "../util/types.js";
-import {BitArray} from "../value/bitArray.js";
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Case} from "../util/strings.ts";
+import {Require} from "../util/types.ts";
+import {BitArray} from "../value/bitArray.ts";
 import {
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
@@ -29,16 +29,16 @@ import {
   ValueOfFields,
   computeSerdesData,
   getProfileTreeViewClass,
-} from "../view/profile.js";
+} from "../view/profile.ts";
 import {
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
   getProfileTreeViewDUClass,
-} from "../viewDU/profile.js";
-import {Type, ValueOf} from "./abstract.js";
-import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.js";
-import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
-import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
+} from "../viewDU/profile.ts";
+import {Type, ValueOf} from "./abstract.ts";
+import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.ts";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.ts";
+import {mixInActiveFields, setActiveFields} from "./stableContainer.ts";
 
 type BytesRange = {start: number; end: number};
 

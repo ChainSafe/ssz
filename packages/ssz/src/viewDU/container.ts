@@ -6,11 +6,11 @@ import {
   getNodeAtDepth,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type} from "../type/abstract.js";
-import {BasicType, isBasicType} from "../type/basic.js";
-import {CompositeType, CompositeTypeAny, isCompositeType} from "../type/composite.js";
-import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.js";
-import {TreeViewDU} from "./abstract.js";
+import {ByteViews, Type} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, CompositeTypeAny, isCompositeType} from "../type/composite.ts";
+import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.ts";
+import {TreeViewDU} from "./abstract.ts";
 
 export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<unknown, unknown, infer TVDU>

@@ -1,13 +1,13 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ValueOfFields} from "../view/container.js";
-import {getContainerTreeViewClass} from "../view/containerNodeStruct.js";
-import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.js";
-import {ByteViews, Type} from "./abstract.js";
-import {isCompositeType} from "./composite.js";
-import {ContainerOptions, ContainerType, renderContainerTypeName} from "./container.js";
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ValueOfFields} from "../view/container.ts";
+import {getContainerTreeViewClass} from "../view/containerNodeStruct.ts";
+import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.ts";
+import {ByteViews, Type} from "./abstract.ts";
+import {isCompositeType} from "./composite.ts";
+import {ContainerOptions, ContainerType, renderContainerTypeName} from "./container.ts";
 
 /**
  * ContainerNodeStruct: ordered heterogeneous collection of values.

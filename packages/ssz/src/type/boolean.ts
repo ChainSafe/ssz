@@ -1,8 +1,8 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ByteViews} from "./abstract.ts";
+import {BasicType} from "./basic.ts";
 
 export interface BooleanOpts {
   typeName?: string;

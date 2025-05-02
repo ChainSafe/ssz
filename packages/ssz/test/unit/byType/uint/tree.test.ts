@@ -1,7 +1,7 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {describe, expect, it} from "vitest";
-import {fromHexString, toHexString} from "../../../../src/util/byteArray.js";
-import {byteType, uint64NumInfType} from "../../../utils/primitiveTypes.js";
+import {fromHexString, toHexString} from "../../../../src/util/byteArray.ts";
+import {byteType, uint64NumInfType} from "../../../utils/primitiveTypes.ts";
 
 describe("UintNumberType / tree", () => {
   it("Single value", () => {

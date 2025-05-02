@@ -1,11 +1,11 @@
 import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ArrayCompositeTreeView, ArrayCompositeType} from "../view/arrayComposite.js";
-import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.js";
-import {ByteViews, ValueOf} from "./abstract.js";
-import {ArrayType} from "./array.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayCompositeTreeView, ArrayCompositeType} from "../view/arrayComposite.ts";
+import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.ts";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
 import {
   maxSizeArrayComposite,
   minSizeArrayComposite,
@@ -16,8 +16,8 @@ import {
   value_getBlocksBytesArrayComposite,
   value_serializeToBytesArrayComposite,
   value_serializedSizeArrayComposite,
-} from "./arrayComposite.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
+} from "./arrayComposite.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
 
 export type VectorCompositeOpts = {
   typeName?: string;

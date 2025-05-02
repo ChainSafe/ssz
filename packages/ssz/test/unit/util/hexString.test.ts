@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {fromHexString, toHexString} from "../../../src/index.js";
+import {fromHexString, toHexString} from "../../../src/index.ts";
 
 describe("util / byteArray / toHexString + fromHexString", () => {
   const testCases: string[] = [

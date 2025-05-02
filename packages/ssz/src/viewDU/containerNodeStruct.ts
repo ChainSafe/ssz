@@ -1,10 +1,10 @@
 import {HashComputationLevel, Node} from "@chainsafe/persistent-merkle-tree";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isCompositeType} from "../type/composite.js";
-import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
-import {TreeViewDU} from "./abstract.js";
-import {ContainerTreeViewDUTypeConstructor} from "./container.js";
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {isCompositeType} from "../type/composite.ts";
+import {ContainerTypeGeneric, ValueOfFields} from "../view/container.ts";
+import {TreeViewDU} from "./abstract.ts";
+import {ContainerTreeViewDUTypeConstructor} from "./container.ts";
 
 export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>

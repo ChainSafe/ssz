@@ -9,8 +9,8 @@ import {
   UintNumberType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../src/index.js";
-import {UintBigintByteLen} from "../../../src/type/uint.js";
+} from "../../../src/index.ts";
+import {UintBigintByteLen} from "../../../src/type/uint.ts";
 
 const bool = new BooleanType();
 const byte = new UintNumberType(1);

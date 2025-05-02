@@ -1,6 +1,6 @@
 import {beforeAll, bench, describe} from "@chainsafe/benchmark";
 import {MutableVector} from "@chainsafe/persistent-ts";
-import {CompositeViewDU, ListBasicType, UintNumberType} from "../../../src/index.js";
+import {CompositeViewDU, ListBasicType, UintNumberType} from "../../../src/index.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 

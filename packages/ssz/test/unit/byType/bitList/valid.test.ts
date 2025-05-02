@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
-import {BitArray, BitListType, toHexString} from "../../../../src/index.js";
-import {runTypeTestValid} from "../runTypeTestValid.js";
+import {BitArray, BitListType, toHexString} from "../../../../src/index.ts";
+import {runTypeTestValid} from "../runTypeTestValid.ts";
 
 runTypeTestValid({
   type: new BitListType(2048),

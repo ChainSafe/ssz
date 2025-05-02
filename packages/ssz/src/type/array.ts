@@ -1,5 +1,5 @@
 import {Gindex, Node, concatGindices, getNode, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "./abstract.js";
+import {Type, ValueOf} from "./abstract.ts";
 import {
   ArrayProps,
   value_cloneArray,
@@ -7,8 +7,8 @@ import {
   value_equals,
   value_fromJsonArray,
   value_toJsonArray,
-} from "./arrayBasic.js";
-import {CompositeType, LENGTH_GINDEX, isCompositeType} from "./composite.js";
+} from "./arrayBasic.ts";
+import {CompositeType, LENGTH_GINDEX, isCompositeType} from "./composite.ts";
 
 /**
  * Array: ordered homogeneous collection

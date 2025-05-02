@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ContainerType, OptionalType, UintNumberType, ValueOf, toHexString} from "../../../../src/index.js";
+import {ContainerType, OptionalType, UintNumberType, ValueOf, toHexString} from "../../../../src/index.ts";
 
 const byteType = new UintNumberType(1);
 const SimpleObject = new ContainerType({

@@ -1,5 +1,5 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {BitArray, BitListType} from "../../src/index.js";
+import {BitArray, BitListType} from "../../src/index.ts";
 
 const MAX_VALIDATORS_PER_COMMITTEE = 2048;
 

@@ -1,4 +1,4 @@
-import {ByteVector} from "../interface.js";
+import {ByteVector} from "../interface.ts";
 
 // Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
 const hexByByte = new Array<string>(256);

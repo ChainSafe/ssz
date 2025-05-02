@@ -5,7 +5,7 @@ import {
   digest2Bytes32,
   digest64HashObjects,
   hashObjectToByteArray,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 // Feb 2024 Mac M1
 // digestTwoHashObjects vs digest64 vs digest

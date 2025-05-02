@@ -1,5 +1,5 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {HashComputation, HashComputationLevel, LeafNode, zeroHash} from "../../src/index.js";
+import {HashComputation, HashComputationLevel, LeafNode, zeroHash} from "../../src/index.ts";
 
 /**
  * HashComputationLevel push then loop is faster than HashComputation[] push then loop

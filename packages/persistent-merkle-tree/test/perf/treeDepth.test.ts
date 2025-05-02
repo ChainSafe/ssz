@@ -1,5 +1,5 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {LeafNode, Tree, iterateAtDepth, subtreeFillToDepth} from "../../src/index.js";
+import {LeafNode, Tree, iterateAtDepth, subtreeFillToDepth} from "../../src/index.ts";
 
 describe("Tree", () => {
   for (const depth of [8, 16, 32]) {

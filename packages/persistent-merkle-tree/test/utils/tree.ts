@@ -1,6 +1,6 @@
-import {subtreeFillToContents} from "../../src/index.js";
-import {BranchNode, LeafNode, Node} from "../../src/node.js";
-import {linspace} from "./misc.js";
+import {subtreeFillToContents} from "../../src/index.ts";
+import {BranchNode, LeafNode, Node} from "../../src/node.ts";
+import {linspace} from "./misc.ts";
 
 export function createTree(depth: number, index = 0): Node {
   if (!depth) {

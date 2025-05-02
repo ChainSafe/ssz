@@ -5,10 +5,10 @@ import {
   digest64HashObjectsInto,
   hashInto,
 } from "@chainsafe/as-sha256";
-import type {HashComputationLevel} from "../hashComputation.js";
-import {Node} from "../node.js";
-import type {Hasher} from "./types.js";
-import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
+import type {HashComputationLevel} from "../hashComputation.ts";
+import {Node} from "../node.ts";
+import type {Hasher} from "./types.ts";
+import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.ts";
 
 /**
  * hashInto() function of as-sha256 loop through every 256 bytes

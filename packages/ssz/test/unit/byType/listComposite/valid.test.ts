@@ -4,8 +4,8 @@ import {
   ListBasicType,
   ListCompositeType,
   UintNumberType,
-} from "../../../../src/index.js";
-import {runTypeTestValid} from "../runTypeTestValid.js";
+} from "../../../../src/index.ts";
+import {runTypeTestValid} from "../runTypeTestValid.ts";
 
 const uint64Type = new UintNumberType(8);
 

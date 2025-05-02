@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import {beforeAll, describe, expect, it} from "vitest";
-import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
+import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.ts";
 
 // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
 export function getSimdTests(sha256: any, useSimd: boolean): void {

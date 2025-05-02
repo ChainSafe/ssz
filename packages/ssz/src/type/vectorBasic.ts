@@ -1,18 +1,18 @@
 import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ArrayBasicTreeView, ArrayBasicType} from "../view/arrayBasic.js";
-import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
-import {ByteViews, ValueOf} from "./abstract.js";
-import {ArrayType} from "./array.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayBasicTreeView, ArrayBasicType} from "../view/arrayBasic.ts";
+import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.ts";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
 import {
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
   value_deserializeFromBytesArrayBasic,
   value_serializeToBytesArrayBasic,
-} from "./arrayBasic.js";
-import {BasicType} from "./basic.js";
+} from "./arrayBasic.ts";
+import {BasicType} from "./basic.ts";
 
 export type VectorBasicOpts = {
   typeName?: string;

@@ -1,8 +1,8 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ByteViews} from "./abstract.ts";
+import {BasicType} from "./basic.ts";
 
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
 const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);

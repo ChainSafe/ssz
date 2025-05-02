@@ -9,19 +9,19 @@ import {
   subtreeFillToContents,
   toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Case} from "../util/strings.js";
-import {Require} from "../util/types.js";
-import {getContainerTreeViewClass} from "../view/container.js";
-import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields} from "../view/container.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Case} from "../util/strings.ts";
+import {Require} from "../util/types.ts";
+import {getContainerTreeViewClass} from "../view/container.ts";
+import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields} from "../view/container.ts";
 import {
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
   getContainerTreeViewDUClass,
-} from "../viewDU/container.js";
-import {Type, ValueOf} from "./abstract.js";
-import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.js";
+} from "../viewDU/container.ts";
+import {Type, ValueOf} from "./abstract.ts";
+import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.ts";
 
 type BytesRange = {start: number; end: number};
 

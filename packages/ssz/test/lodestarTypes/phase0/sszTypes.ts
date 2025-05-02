@@ -6,19 +6,19 @@ import {
   ListCompositeType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../src/index.js";
-import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
-import {PartialListCompositeType} from "../../../src/type/partialListComposite.js";
+} from "../../../src/index.ts";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64.ts";
+import {PartialListCompositeType} from "../../../src/type/partialListComposite.ts";
 import {
   ATTESTATION_SUBNET_COUNT,
   DEPOSIT_CONTRACT_TREE_DEPTH,
   JUSTIFICATION_BITS_LENGTH,
   MAX_REQUEST_BLOCKS,
   preset,
-} from "../params.js";
-import * as primitiveSsz from "../primitive/sszTypes.js";
-import {ListValidatorType} from "./listValidator.js";
-import {ValidatorNodeStruct} from "./validator.js";
+} from "../params.ts";
+import * as primitiveSsz from "../primitive/sszTypes.ts";
+import {ListValidatorType} from "./listValidator.ts";
+import {ValidatorNodeStruct} from "./validator.ts";
 
 export {ValidatorNodeStruct};
 

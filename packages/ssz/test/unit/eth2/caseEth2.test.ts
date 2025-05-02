@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {precomputeJsonKey} from "../../../src/type/container.js";
+import {precomputeJsonKey} from "../../../src/type/container.ts";
 
 describe("JSON case eth2", () => {
   const fieldNameToJsonKeyCsv = getFieldNameToJsonKeyCsv();

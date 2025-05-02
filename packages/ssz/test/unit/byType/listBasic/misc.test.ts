@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ListBasicType, UintNumberType} from "../../../../src/index.js";
+import {ListBasicType, UintNumberType} from "../../../../src/index.ts";
 
 describe("To hit 100% coverage", () => {
   const listBasic = new ListBasicType(new UintNumberType(1), 4);

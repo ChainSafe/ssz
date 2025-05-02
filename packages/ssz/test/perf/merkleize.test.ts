@@ -1,6 +1,6 @@
 import {bench, describe} from "@chainsafe/benchmark";
 import {merkleizeBlockArray, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
-import {bitLength, merkleize} from "../../src/util/merkleize.js";
+import {bitLength, merkleize} from "../../src/util/merkleize.ts";
 
 describe("merkleize / bitLength", () => {
   for (const n of [50, 8000, 250000]) {

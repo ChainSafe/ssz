@@ -8,8 +8,8 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type, ValueOf} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {ByteViews, Type, ValueOf} from "./abstract.ts";
+import {BasicType} from "./basic.ts";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.

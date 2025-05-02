@@ -10,10 +10,10 @@ import {
   ValueOf,
   hash64,
   isCompositeType,
-} from "../../../src/index.js";
-import {CompositeTypeAny} from "../../../src/type/composite.js";
-import * as sszAltair from "../../lodestarTypes/altair/sszTypes.js";
-import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.js";
+} from "../../../src/index.ts";
+import {CompositeTypeAny} from "../../../src/type/composite.ts";
+import * as sszAltair from "../../lodestarTypes/altair/sszTypes.ts";
+import * as sszPhase0 from "../../lodestarTypes/phase0/sszTypes.ts";
 import {
   getAttestation,
   getOnce,
@@ -23,7 +23,7 @@ import {
   getSignedContributionAndProof,
   getSyncCommitteeMessage,
   getValidator,
-} from "../../utils/generateEth2Objs.js";
+} from "../../utils/generateEth2Objs.ts";
 
 describe("HashTreeRoot frequent eth2 objects", () => {
   benchHashTreeRoot(sszPhase0.Attestation, getAttestation(0));

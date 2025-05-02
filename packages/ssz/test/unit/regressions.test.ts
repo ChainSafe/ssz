@@ -11,8 +11,8 @@ import {
   VectorBasicType,
   fromHexString,
   toHexString,
-} from "../../src/index.js";
-import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.js";
+} from "../../src/index.ts";
+import {uint32NumType, uint64NumType} from "../utils/primitiveTypes.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 // Compilation of various issues from SSZ and Lodestar libs

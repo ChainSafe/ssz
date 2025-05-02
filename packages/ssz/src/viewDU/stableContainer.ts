@@ -1,12 +1,12 @@
 import {HashComputationLevel, LeafNode, Node, getNodeAtDepth, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, Type} from "../type/abstract.js";
-import {BasicType, isBasicType} from "../type/basic.js";
-import {CompositeType, isCompositeType} from "../type/composite.js";
-import {OptionalType} from "../type/optional.js";
-import {BitArray} from "../value/bitArray.js";
-import {StableContainerTypeGeneric, computeSerdesData} from "../view/stableContainer.js";
-import {TreeViewDU} from "./abstract.js";
-import {BasicContainerTreeViewDU} from "./container.js";
+import {ByteViews, Type} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, isCompositeType} from "../type/composite.ts";
+import {OptionalType} from "../type/optional.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {StableContainerTypeGeneric, computeSerdesData} from "../view/stableContainer.ts";
+import {TreeViewDU} from "./abstract.ts";
+import {BasicContainerTreeViewDU} from "./container.ts";
 
 export type ViewDUValue<T extends Type<unknown>> = T extends CompositeType<unknown, unknown, infer TVDU>
   ? // If composite, return view. MAY propagate changes updwards

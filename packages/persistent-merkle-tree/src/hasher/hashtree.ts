@@ -1,9 +1,9 @@
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import {hashInto} from "@chainsafe/hashtree";
-import type {HashComputationLevel} from "../hashComputation.js";
-import {Node} from "../node.js";
-import {HashObject, Hasher} from "./types.js";
-import {doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
+import type {HashComputationLevel} from "../hashComputation.ts";
+import {Node} from "../node.ts";
+import {HashObject, Hasher} from "./types.ts";
+import {doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.ts";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes

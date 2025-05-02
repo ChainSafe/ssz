@@ -1,8 +1,8 @@
 import {Tree, toGindex} from "@chainsafe/persistent-merkle-tree";
 import {describe, expect, it} from "vitest";
-import {ListCompositeType} from "../../src/index.js";
-import {ByteVectorType} from "../../src/type/byteVector.js";
-import {PartialListCompositeType} from "../../src/type/partialListComposite.js";
+import {ListCompositeType} from "../../src/index.ts";
+import {ByteVectorType} from "../../src/type/byteVector.ts";
+import {PartialListCompositeType} from "../../src/type/partialListComposite.ts";
 
 describe("snapshot", () => {
   const depth = 4;

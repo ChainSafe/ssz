@@ -1,5 +1,5 @@
-import {wasmCode} from "./wasmCode.js";
-import {wasmSimdCode} from "./wasmSimdCode.js";
+import {wasmCode} from "./wasmCode.ts";
+import {wasmSimdCode} from "./wasmSimdCode.ts";
 
 export interface WasmContext {
   readonly HAS_SIMD: boolean;

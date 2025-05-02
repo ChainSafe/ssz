@@ -1,6 +1,6 @@
 import {bench, describe} from "@chainsafe/benchmark";
 import {LeafNode, Node, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
-import {ListBasicType, UintNumberType} from "../../src/index.js";
+import {ListBasicType, UintNumberType} from "../../src/index.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 

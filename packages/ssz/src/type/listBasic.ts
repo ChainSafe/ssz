@@ -5,14 +5,14 @@ import {
   cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ArrayBasicType} from "../view/arrayBasic.js";
-import {ListBasicTreeView} from "../view/listBasic.js";
-import {ListBasicTreeViewDU} from "../viewDU/listBasic.js";
-import {ValueOf} from "./abstract.js";
-import {ArrayType} from "./array.js";
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayBasicType} from "../view/arrayBasic.ts";
+import {ListBasicTreeView} from "../view/listBasic.ts";
+import {ListBasicTreeViewDU} from "../viewDU/listBasic.ts";
+import {ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
 import {
   addLengthNode,
   setChunksNode,
@@ -20,9 +20,9 @@ import {
   tree_serializeToBytesArrayBasic,
   value_deserializeFromBytesArrayBasic,
   value_serializeToBytesArrayBasic,
-} from "./arrayBasic.js";
-import {BasicType} from "./basic.js";
-import {ByteViews} from "./composite.js";
+} from "./arrayBasic.ts";
+import {BasicType} from "./basic.ts";
+import {ByteViews} from "./composite.ts";
 
 export interface ListBasicOpts {
   typeName?: string;

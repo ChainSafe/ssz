@@ -1,6 +1,6 @@
-import {Gindex, GindexBitstring} from "../gindex.js";
-import {BranchNode, LeafNode, Node} from "../node.js";
-import {computeMultiProofBitstrings} from "./util.js";
+import {Gindex, GindexBitstring} from "../gindex.ts";
+import {BranchNode, LeafNode, Node} from "../node.ts";
+import {computeMultiProofBitstrings} from "./util.ts";
 
 /**
  * Compute offsets and leaves of a tree-offset proof

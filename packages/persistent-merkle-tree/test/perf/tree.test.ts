@@ -8,7 +8,7 @@ import {
   toGindex,
   toGindexBitstring,
   uint8ArrayToHashObject,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 

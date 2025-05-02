@@ -1,9 +1,9 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isCompositeType} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
-import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.js";
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {isCompositeType} from "../type/composite.ts";
+import {TreeView} from "./abstract.ts";
+import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.ts";
 
 /**
  * Intented usage:

@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ssz} from "../../lodestarTypes/index.js";
+import {ssz} from "../../lodestarTypes/index.ts";
 
 describe("Various issues and regressions of Eth2 types", () => {
   it("Should push state.validators to ViewDU and update length", () => {
