@@ -227,12 +227,10 @@ export class LeafNode extends Node {
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         h &= ~(0xff << bitIndex);
-        // @ts-expect-error - This kind of expression is always truthy - Identified after TS 5.8 upgrade.
-        h |= (0xff && value) << bitIndex;
+        h |= (0xff & value) << bitIndex;
       } else {
         h &= ~(0xffff << bitIndex);
-        // @ts-expect-error - This kind of expression is always truthy - Identified after TS 5.8 upgrade.
-        h |= (0xffff && value) << bitIndex;
+        h |= (0xffff & value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
     }
@@ -269,12 +267,10 @@ export class LeafNode extends Node {
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
         h &= ~(0xff << bitIndex);
-        // @ts-expect-error - This kind of expression is always truthy - Identified after TS 5.8 upgrade.
-        h |= (0xff && value) << bitIndex;
+        h |= (0xff & value) << bitIndex;
       } else {
         h &= ~(0xffff << bitIndex);
-        // @ts-expect-error - This kind of expression is always truthy - Identified after TS 5.8 upgrade.
-        h |= (0xffff && value) << bitIndex;
+        h |= (0xffff & value) << bitIndex;
       }
       setNodeH(this, hIndex, h);
     }
