@@ -1,7 +1,7 @@
 import {Node, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, ValueOf} from "./abstract.js";
-import {addLengthNode, assertValidArrayLength} from "./arrayBasic.js";
-import {CompositeType} from "./composite.js";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {addLengthNode, assertValidArrayLength} from "./arrayBasic.ts";
+import {CompositeType} from "./composite.ts";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.

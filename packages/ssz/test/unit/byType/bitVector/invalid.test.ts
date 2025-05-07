@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
-import {BitVectorType} from "../../../../src/index.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {BitVectorType} from "../../../../src/index.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 runTypeTestInvalid({
   type: new BitVectorType(8 * 8),

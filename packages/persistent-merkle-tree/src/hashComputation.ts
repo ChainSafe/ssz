@@ -1,4 +1,4 @@
-import type {Node} from "./node.js";
+import type {Node} from "./node.ts";
 
 /**
  * HashComputation to be later used to compute hash of nodes from bottom up.

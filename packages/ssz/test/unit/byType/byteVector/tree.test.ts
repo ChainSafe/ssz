@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ByteVectorType, ContainerType} from "../../../../src/index.js";
+import {ByteVectorType, ContainerType} from "../../../../src/index.ts";
 
 describe("ByteVectorType proofs", () => {
   const rootType = new ByteVectorType(32);

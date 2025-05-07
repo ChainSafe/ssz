@@ -1,10 +1,10 @@
 import {Gindex, HashComputationLevel, Node, Tree, concatGindices, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {byteArrayEquals, fromHexString, toHexString} from "../util/byteArray.js";
-import {BitArray} from "../value/bitArray.js";
-import {BitArrayTreeView} from "../view/bitArray.js";
-import {BitArrayTreeViewDU} from "../viewDU/bitArray.js";
-import {getBlocksBytes} from "./byteArray.js";
-import {CompositeType, LENGTH_GINDEX} from "./composite.js";
+import {byteArrayEquals, fromHexString, toHexString} from "../util/byteArray.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {BitArrayTreeView} from "../view/bitArray.ts";
+import {BitArrayTreeViewDU} from "../viewDU/bitArray.ts";
+import {getBlocksBytes} from "./byteArray.ts";
+import {CompositeType, LENGTH_GINDEX} from "./composite.ts";
 
 /**
  * BitArray: ordered array collection of boolean values

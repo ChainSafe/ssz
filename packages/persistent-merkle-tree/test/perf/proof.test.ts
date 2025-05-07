@@ -1,6 +1,6 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {ProofType, computeDescriptor, createProof} from "../../src/proof/index.js";
-import {createTree} from "../utils/tree.js";
+import {ProofType, computeDescriptor, createProof} from "../../src/proof/index.ts";
+import {createTree} from "../utils/tree.ts";
 
 describe("Proofs", () => {
   const depth = 15;

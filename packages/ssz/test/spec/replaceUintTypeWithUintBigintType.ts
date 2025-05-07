@@ -11,7 +11,7 @@ import {
   UintNumberType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 /**
  * Transform the type to something that is safe to deserialize

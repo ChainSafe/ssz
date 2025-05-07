@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
-import {ContainerType, ListCompositeType, UintNumberType} from "../../../../src/index.js";
-import {PartialListCompositeType} from "../../../../src/type/partialListComposite.js";
+import {ContainerType, ListCompositeType, UintNumberType} from "../../../../src/index.ts";
+import {PartialListCompositeType} from "../../../../src/type/partialListComposite.ts";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(

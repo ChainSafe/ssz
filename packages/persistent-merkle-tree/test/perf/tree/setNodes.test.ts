@@ -1,5 +1,5 @@
 import {beforeAll, bench, describe} from "@chainsafe/benchmark";
-import {LeafNode, Node, Tree, setNodesAtDepth, subtreeFillToContents, toGindex} from "../../../src/index.js";
+import {LeafNode, Node, Tree, setNodesAtDepth, subtreeFillToContents, toGindex} from "../../../src/index.ts";
 
 // Results in Linux Dec 2021
 //

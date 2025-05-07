@@ -1,6 +1,6 @@
 import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
-import {ListBasicType, UintNumberType} from "../../src/index.js";
-import {Validators} from "../lodestarTypes/phase0/sszTypes.js";
+import {ListBasicType, UintNumberType} from "../../src/index.ts";
+import {Validators} from "../lodestarTypes/phase0/sszTypes.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
 

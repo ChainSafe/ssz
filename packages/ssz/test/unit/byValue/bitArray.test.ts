@@ -1,7 +1,7 @@
 import {describe, expect, it} from "vitest";
-import {BitVectorType} from "../../../src/index.js";
-import {BitArray, getUint8ByteToBitBooleanArray} from "../../../src/value/bitArray.js";
-import {linspace} from "../../utils/misc.js";
+import {BitVectorType} from "../../../src/index.ts";
+import {BitArray, getUint8ByteToBitBooleanArray} from "../../../src/value/bitArray.ts";
+import {linspace} from "../../utils/misc.ts";
 
 describe("aggregationBits", () => {
   it("getUint8ByteToBitBooleanArray", () => {

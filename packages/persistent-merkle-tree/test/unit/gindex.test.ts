@@ -9,7 +9,7 @@ import {
   getGindicesAtDepth,
   gindexIterator,
   iterateAtDepth,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 describe("countToDepth", () => {
   const testCases = [

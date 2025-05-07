@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import jsyaml from "js-yaml";
 import {uncompress} from "snappyjs";
-import {schema} from "./sszYamlSchema.js";
+import {schema} from "./sszYamlSchema.ts";
 
 export type ValidTestCaseData = {
   root: string;

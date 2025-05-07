@@ -17,9 +17,9 @@ import {
   VectorBasicType,
   VectorCompositeType,
   toHexString,
-} from "../../../../src/index.js";
-import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
-import {runViewTestMutation} from "../runViewTestMutation.js";
+} from "../../../../src/index.ts";
+import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.ts";
+import {runViewTestMutation} from "../runViewTestMutation.ts";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable

@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ListBasicType, UintNumberType} from "../../../../src/index.js";
+import {ListBasicType, UintNumberType} from "../../../../src/index.ts";
 
 describe("BasicList", () => {
   it("TreeView edit mutate and transfer", () => {

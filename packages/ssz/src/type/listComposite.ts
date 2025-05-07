@@ -11,15 +11,15 @@ import {
   cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ArrayCompositeType} from "../view/arrayComposite.js";
-import {ListCompositeTreeView} from "../view/listComposite.js";
-import {ListCompositeTreeViewDU} from "../viewDU/listComposite.js";
-import {ByteViews, ValueOf} from "./abstract.js";
-import {ArrayType} from "./array.js";
-import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.js";
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayCompositeType} from "../view/arrayComposite.ts";
+import {ListCompositeTreeView} from "../view/listComposite.ts";
+import {ListCompositeTreeViewDU} from "../viewDU/listComposite.ts";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
+import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.ts";
 import {
   maxSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
@@ -28,8 +28,8 @@ import {
   value_deserializeFromBytesArrayComposite,
   value_serializeToBytesArrayComposite,
   value_serializedSizeArrayComposite,
-} from "./arrayComposite.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
+} from "./arrayComposite.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
 
 export interface ListCompositeOpts {
   typeName?: string;

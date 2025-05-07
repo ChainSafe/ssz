@@ -1,12 +1,12 @@
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import {HashComputationLevel, Node, digestNLevel, setNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews} from "../../../../src/type/abstract.js";
-import {ListCompositeType} from "../../../../src/type/listComposite.js";
-import {ArrayCompositeTreeViewDUCache} from "../../../../src/viewDU/arrayComposite.js";
-import {ContainerNodeStructTreeViewDU} from "../../../../src/viewDU/containerNodeStruct.js";
-import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
-import {ValidatorIndex} from "../../primitive/types.js";
-import {ValidatorNodeStructType, ValidatorType, validatorToChunkBytes} from "../validator.js";
+import {ByteViews} from "../../../../src/type/abstract.ts";
+import {ListCompositeType} from "../../../../src/type/listComposite.ts";
+import {ArrayCompositeTreeViewDUCache} from "../../../../src/viewDU/arrayComposite.ts";
+import {ContainerNodeStructTreeViewDU} from "../../../../src/viewDU/containerNodeStruct.ts";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.ts";
+import {ValidatorIndex} from "../../primitive/types.ts";
+import {ValidatorNodeStructType, ValidatorType, validatorToChunkBytes} from "../validator.ts";
 
 /**
  * hashtree has a MAX_SIZE of 1024 bytes = 32 chunks

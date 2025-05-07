@@ -13,6 +13,8 @@
       "es2020.string",
       "es2020.symbol.wellknown"
     ],
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "typeRoots": ["../../node_modules/@types", "./node_modules/@types", "./types"]
   }
 }

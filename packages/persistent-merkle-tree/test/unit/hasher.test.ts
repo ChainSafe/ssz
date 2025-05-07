@@ -1,9 +1,9 @@
 import {describe, expect, it} from "vitest";
 
-import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
-import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
-import {hasher as nobleHasher} from "../../src/hasher/noble.js";
-import {hashObjectToUint8Array, uint8ArrayToHashObject} from "../../src/hasher/util.js";
+import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.ts";
+import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.ts";
+import {hasher as nobleHasher} from "../../src/hasher/noble.ts";
+import {hashObjectToUint8Array, uint8ArrayToHashObject} from "../../src/hasher/util.ts";
 import {
   HashComputationLevel,
   HashObject,
@@ -11,10 +11,10 @@ import {
   LeafNode,
   getHashComputations,
   subtreeFillToContents,
-} from "../../src/index.js";
-import {zeroHash} from "../../src/zeroHash.js";
-import {expectEqualHex} from "../utils/expectHex.js";
-import {buildComparisonTrees} from "../utils/tree.js";
+} from "../../src/index.ts";
+import {zeroHash} from "../../src/zeroHash.ts";
+import {expectEqualHex} from "../utils/expectHex.ts";
+import {buildComparisonTrees} from "../utils/tree.ts";
 
 describe("hashers", () => {
   const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];

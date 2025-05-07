@@ -1,50 +1,50 @@
 // Types
-export {BitListType, deserializeUint8ArrayBitListFromBytes} from "./type/bitList.js";
-export {BitVectorType} from "./type/bitVector.js";
-export {BooleanType} from "./type/boolean.js";
-export {ByteListType} from "./type/byteList.js";
-export {ByteVectorType} from "./type/byteVector.js";
-export {ContainerType} from "./type/container.js";
-export {ContainerNodeStructType} from "./type/containerNodeStruct.js";
-export {ListBasicType} from "./type/listBasic.js";
-export {ListCompositeType} from "./type/listComposite.js";
-export {PartialListCompositeType} from "./type/partialListComposite.js";
-export {NoneType} from "./type/none.js";
-export {UintBigintType, UintNumberType} from "./type/uint.js";
-export {UnionType} from "./type/union.js";
-export {OptionalType} from "./type/optional.js";
-export {VectorBasicType} from "./type/vectorBasic.js";
-export {VectorCompositeType} from "./type/vectorComposite.js";
-export {ListUintNum64Type} from "./type/listUintNum64.js";
-export {StableContainerType} from "./type/stableContainer.js";
-export {ProfileType} from "./type/profile.js";
+export {BitListType, deserializeUint8ArrayBitListFromBytes} from "./type/bitList.ts";
+export {BitVectorType} from "./type/bitVector.ts";
+export {BooleanType} from "./type/boolean.ts";
+export {ByteListType} from "./type/byteList.ts";
+export {ByteVectorType} from "./type/byteVector.ts";
+export {ContainerType} from "./type/container.ts";
+export {ContainerNodeStructType} from "./type/containerNodeStruct.ts";
+export {ListBasicType} from "./type/listBasic.ts";
+export {ListCompositeType} from "./type/listComposite.ts";
+export {PartialListCompositeType} from "./type/partialListComposite.ts";
+export {NoneType} from "./type/none.ts";
+export {UintBigintType, UintNumberType} from "./type/uint.ts";
+export {UnionType} from "./type/union.ts";
+export {OptionalType} from "./type/optional.ts";
+export {VectorBasicType} from "./type/vectorBasic.ts";
+export {VectorCompositeType} from "./type/vectorComposite.ts";
+export {ListUintNum64Type} from "./type/listUintNum64.ts";
+export {StableContainerType} from "./type/stableContainer.ts";
+export {ProfileType} from "./type/profile.ts";
 
 // Base types
-export {ArrayType} from "./type/array.js";
-export {BitArrayType} from "./type/bitArray.js";
-export {ByteArrayType} from "./type/byteArray.js";
+export {ArrayType} from "./type/array.ts";
+export {BitArrayType} from "./type/bitArray.ts";
+export {ByteArrayType} from "./type/byteArray.ts";
 
 // Base type clases
-export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract.js";
-export {BasicType, isBasicType} from "./type/basic.js";
-export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite.js";
-export {TreeView} from "./view/abstract.js";
-export {ValueOfFields} from "./view/container.js";
-export {TreeViewDU} from "./viewDU/abstract.js";
-export {ListCompositeTreeViewDU} from "./viewDU/listComposite.js";
-export {ListBasicTreeViewDU} from "./viewDU/listBasic.js";
-export {ArrayCompositeTreeViewDUCache} from "./viewDU/arrayComposite.js";
-export {ContainerNodeStructTreeViewDU} from "./viewDU/containerNodeStruct.js";
+export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract.ts";
+export {BasicType, isBasicType} from "./type/basic.ts";
+export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite.ts";
+export {TreeView} from "./view/abstract.ts";
+export {ValueOfFields} from "./view/container.ts";
+export {TreeViewDU} from "./viewDU/abstract.ts";
+export {ListCompositeTreeViewDU} from "./viewDU/listComposite.ts";
+export {ListBasicTreeViewDU} from "./viewDU/listBasic.ts";
+export {ArrayCompositeTreeViewDUCache} from "./viewDU/arrayComposite.ts";
+export {ContainerNodeStructTreeViewDU} from "./viewDU/containerNodeStruct.ts";
 
 // Values
-export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray.js";
+export {BitArray, getUint8ByteToBitBooleanArray} from "./value/bitArray.ts";
 
 // Utils
-export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray.js";
+export {fromHexString, toHexString, byteArrayEquals} from "./util/byteArray.ts";
 
-export {Snapshot} from "./util/types.js";
-export {hash64, symbolCachedPermanentRoot} from "./util/merkleize.js";
-export {upgradeToNewType} from "./util/upgrade.js";
+export {Snapshot} from "./util/types.ts";
+export {hash64, symbolCachedPermanentRoot} from "./util/merkleize.ts";
+export {upgradeToNewType} from "./util/upgrade.ts";
 
 // others
-export {BranchNodeStruct} from "./branchNodeStruct.js";
+export {BranchNodeStruct} from "./branchNodeStruct.ts";

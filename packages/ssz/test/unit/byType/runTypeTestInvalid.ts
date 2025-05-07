@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {CompositeType, Type, fromHexString} from "../../../src/index.js";
+import {CompositeType, Type, fromHexString} from "../../../src/index.ts";
 
 // For better typesafety outside
 export type InvalidValue = InvalidValueMeta &

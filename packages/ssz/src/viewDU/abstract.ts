@@ -1,6 +1,6 @@
 import {HashComputationGroup, HashComputationLevel, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, CompositeType} from "../type/composite.js";
-import {TreeView} from "../view/abstract.js";
+import {ByteViews, CompositeType} from "../type/composite.ts";
+import {TreeView} from "../view/abstract.ts";
 
 /**
  * Always allocating a new HashComputationGroup for each hashTreeRoot() is not great for gc

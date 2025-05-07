@@ -9,9 +9,9 @@ import {
   UintBigintType,
   UintNumberType,
   UnionType,
-} from "../../../../src/index.js";
-import {uintBigintByteLens, uintNumberByteLens} from "../../../../src/type/uint.js";
-import {runViewTestCompositeSwap} from "../runViewTestCompositeSwap.js";
+} from "../../../../src/index.ts";
+import {uintBigintByteLens, uintNumberByteLens} from "../../../../src/type/uint.ts";
+import {runViewTestCompositeSwap} from "../runViewTestCompositeSwap.ts";
 
 // Swap properties tests. Because swaping uses the same property names you can write many more tests
 // just by declaring the property type and two values:

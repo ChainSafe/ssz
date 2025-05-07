@@ -8,7 +8,7 @@ import {
   digest64,
   digest64HashObjects,
   hashObjectToByteArray,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 describe("hashObjectToByteArray and byteArrayToHashObject", () => {
   const tcs = [

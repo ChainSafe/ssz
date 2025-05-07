@@ -1,4 +1,4 @@
-import {PersistentVector, TransientVector} from "./Vector.js";
+import {PersistentVector, TransientVector} from "./Vector.ts";
 
 /**
  * A mutable reference to a PersistentVector or TransientVector

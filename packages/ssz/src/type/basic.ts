@@ -1,5 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "./abstract.js";
+import {Type} from "./abstract.ts";
 
 /**
  * Represents a basic type as defined in the spec:

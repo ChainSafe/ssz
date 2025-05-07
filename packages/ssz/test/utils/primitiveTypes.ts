@@ -1,5 +1,5 @@
 // Adapted from https://github.com/prysmaticlabs/prysm/blob/master/shared/ssz/encode_test.go#L296
-import {ByteVectorType, UintBigintType, UintNumberType} from "../../src/index.js";
+import {ByteVectorType, UintBigintType, UintNumberType} from "../../src/index.ts";
 
 export const byteType = new UintNumberType(1);
 export const bytes2Type = new ByteVectorType(2);

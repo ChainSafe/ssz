@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
-import {ContainerType, ListBasicType, ListCompositeType, UintNumberType} from "../../../../src/index.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {ContainerType, ListBasicType, ListCompositeType, UintNumberType} from "../../../../src/index.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 const uint16 = new UintNumberType(2);
 

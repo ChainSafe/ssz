@@ -1,5 +1,5 @@
-import {ContainerType, NoneType, UintNumberType, UnionType} from "../../../../src/index.js";
-import {runTypeTestValid} from "../runTypeTestValid.js";
+import {ContainerType, NoneType, UintNumberType, UnionType} from "../../../../src/index.ts";
+import {runTypeTestValid} from "../runTypeTestValid.ts";
 
 const number16Type = new UintNumberType(2);
 const SimpleObject = new ContainerType({

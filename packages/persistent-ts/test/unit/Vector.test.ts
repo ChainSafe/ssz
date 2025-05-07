@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import {describe, expect, it} from "vitest";
-import {PersistentVector, TransientVector} from "../../src/Vector.js";
+import {PersistentVector, TransientVector} from "../../src/Vector.ts";
 
 describe("Vector", () => {
   it("PersistentVector.empty has a length of 0", () => {

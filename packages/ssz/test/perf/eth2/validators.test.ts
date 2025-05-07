@@ -1,10 +1,10 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {BranchNodeStruct, CompositeViewDU, ContainerNodeStructTreeViewDU} from "../../../src/index.js";
-import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes.js";
-import {Validator} from "../../lodestarTypes/phase0/types.js";
-import {ValidatorType} from "../../lodestarTypes/phase0/validator.js";
-import {doBatchHashTreeRootValidators} from "../../lodestarTypes/phase0/viewDU/listValidator.js";
-import {ValidatorIndex} from "../../lodestarTypes/types.js";
+import {BranchNodeStruct, CompositeViewDU, ContainerNodeStructTreeViewDU} from "../../../src/index.ts";
+import {ValidatorContainer, ValidatorNodeStruct, Validators} from "../../lodestarTypes/phase0/sszTypes.ts";
+import {Validator} from "../../lodestarTypes/phase0/types.ts";
+import {ValidatorType} from "../../lodestarTypes/phase0/validator.ts";
+import {doBatchHashTreeRootValidators} from "../../lodestarTypes/phase0/viewDU/listValidator.ts";
+import {ValidatorIndex} from "../../lodestarTypes/types.ts";
 
 const validatorStruct: Validator = {
   pubkey: Buffer.alloc(48, 0xdd),

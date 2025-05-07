@@ -1,10 +1,10 @@
 import {describe, expect, it} from "vitest";
-import {ContainerType} from "../../../../src/type/container.js";
-import {ListCompositeType} from "../../../../src/type/listComposite.js";
-import {ssz} from "../../../lodestarTypes/index.js";
-import {preset} from "../../../lodestarTypes/params.js";
-import {Validator} from "../../../lodestarTypes/phase0/index.js";
-import {ValidatorType} from "../../../lodestarTypes/phase0/validator.js";
+import {ContainerType} from "../../../../src/type/container.ts";
+import {ListCompositeType} from "../../../../src/type/listComposite.ts";
+import {ssz} from "../../../lodestarTypes/index.ts";
+import {preset} from "../../../lodestarTypes/params.ts";
+import {Validator} from "../../../lodestarTypes/phase0/index.ts";
+import {ValidatorType} from "../../../lodestarTypes/phase0/validator.ts";
 const {VALIDATOR_REGISTRY_LIMIT} = preset;
 
 describe("ListValidator ssz type", () => {

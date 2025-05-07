@@ -1,7 +1,7 @@
-import {ByteViews} from "../../../src/type/abstract.js";
-import {ContainerNodeStructType} from "../../../src/type/containerNodeStruct.js";
-import {ValueOfFields} from "../../../src/view/container.js";
-import * as primitiveSsz from "../primitive/sszTypes.js";
+import {ByteViews} from "../../../src/type/abstract.ts";
+import {ContainerNodeStructType} from "../../../src/type/containerNodeStruct.ts";
+import {ValueOfFields} from "../../../src/view/container.ts";
+import * as primitiveSsz from "../primitive/sszTypes.ts";
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
 const {Boolean, Bytes32, UintNum64, BLSPubkey, EpochInf} = primitiveSsz;

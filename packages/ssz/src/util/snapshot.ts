@@ -1,6 +1,6 @@
 import {zeroHash} from "@chainsafe/persistent-merkle-tree";
-import {hash64} from "./merkleize.js";
-import {Snapshot} from "./types.js";
+import {hash64} from "./merkleize.ts";
+import {Snapshot} from "./types.ts";
 
 /**
  * Create a zero snapshot with the given chunksDepth.

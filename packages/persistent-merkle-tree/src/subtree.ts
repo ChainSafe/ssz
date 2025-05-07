@@ -1,6 +1,6 @@
-import {HashComputationLevel, getHashComputations, levelAtIndex} from "./hashComputation.js";
-import {BranchNode, Node} from "./node.js";
-import {zeroNode} from "./zeroNode.js";
+import {HashComputationLevel, getHashComputations, levelAtIndex} from "./hashComputation.ts";
+import {BranchNode, Node} from "./node.ts";
+import {zeroNode} from "./zeroNode.ts";
 
 export function subtreeFillToDepth(bottom: Node, depth: number): Node {
   let node = bottom;

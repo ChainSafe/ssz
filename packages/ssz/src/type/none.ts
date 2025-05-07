@@ -1,6 +1,6 @@
 import {LeafNode, Node, zeroNode} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {ByteViews} from "./abstract.ts";
+import {BasicType} from "./basic.ts";
 
 export class NoneType extends BasicType<null> {
   readonly typeName = "none";

@@ -1,8 +1,8 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {ListCompositeType} from "../../../src/type/listComposite.js";
-import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite.js";
-import {ValidatorNodeStructType} from "./validator.js";
-import {ListValidatorTreeViewDU} from "./viewDU/listValidator.js";
+import {ListCompositeType} from "../../../src/type/listComposite.ts";
+import {ListCompositeTreeViewDU} from "../../../src/viewDU/listComposite.ts";
+import {ValidatorNodeStructType} from "./validator.ts";
+import {ListValidatorTreeViewDU} from "./viewDU/listValidator.ts";
 
 /**
  * Model ssz type for a list of validators in ethereum consensus layer.

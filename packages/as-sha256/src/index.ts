@@ -1,8 +1,8 @@
-import {allocUnsafe} from "./alloc.js";
-import type {HashObject} from "./hashObject.js";
-import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
-import SHA256 from "./sha256.js";
-import {WasmContext, newInstance} from "./wasm.js";
+import {allocUnsafe} from "./alloc.ts";
+import type {HashObject} from "./hashObject.ts";
+import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.ts";
+import SHA256 from "./sha256.ts";
+import {WasmContext, newInstance} from "./wasm.ts";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
 export {allocUnsafe};
 

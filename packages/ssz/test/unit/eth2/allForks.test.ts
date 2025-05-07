@@ -1,8 +1,8 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
 import {describe, it} from "vitest";
-import {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src/index.js";
-import {allForks, altair, bellatrix, phase0, ssz} from "../../lodestarTypes/index.js";
-import {ForkName} from "../../utils/fork.js";
+import {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src/index.ts";
+import {allForks, altair, bellatrix, phase0, ssz} from "../../lodestarTypes/index.ts";
+import {ForkName} from "../../utils/fork.ts";
 
 /** False variable to not run code but still compile with Typescript */
 const alwaysFalse = 0 < 1;

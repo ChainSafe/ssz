@@ -1,5 +1,5 @@
-import {OptionalType, UintNumberType} from "../../../../src/index.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {OptionalType, UintNumberType} from "../../../../src/index.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 const byteType = new UintNumberType(1);
 

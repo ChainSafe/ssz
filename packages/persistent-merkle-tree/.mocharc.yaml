@@ -3,4 +3,4 @@ require:
 - ts-node/register
 - ../../setHasher.mjs
 loader: 
-  - ts-node/esm
+  - ts-node/esm/transpile-only

@@ -6,4 +6,4 @@ require:
 maxMs: 30_000
 threshold: 3
 loader: 
-  - ts-node/esm
+  - ts-node/esm/transpile-only

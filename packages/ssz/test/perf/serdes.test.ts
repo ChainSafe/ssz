@@ -13,8 +13,8 @@ import {
   UintNumberType,
   ValueOf,
   VectorCompositeType,
-} from "../../src/index.js";
-import {ValidatorContainer, ValidatorNodeStruct} from "../lodestarTypes/phase0/sszTypes.js";
+} from "../../src/index.ts";
+import {ValidatorContainer, ValidatorNodeStruct} from "../lodestarTypes/phase0/sszTypes.ts";
 
 describe("SSZ (de)serialize", () => {
   const uint8 = new UintNumberType(1);

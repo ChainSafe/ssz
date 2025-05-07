@@ -9,11 +9,11 @@ import {
   StableContainerType,
   Type,
   fromHexString,
-} from "../../../src/index.js";
-import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite.js";
-import {ArrayBasicTreeView} from "../../../src/view/arrayBasic.js";
-import {RootHex} from "../../lodestarTypes/index.js";
-import {wrapErr} from "../../utils/error.js";
+} from "../../../src/index.ts";
+import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite.ts";
+import {ArrayBasicTreeView} from "../../../src/view/arrayBasic.ts";
+import {RootHex} from "../../lodestarTypes/index.ts";
+import {wrapErr} from "../../utils/error.ts";
 
 export function runProofTestOnAllJsonPaths({
   type,

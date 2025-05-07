@@ -1,5 +1,5 @@
-import {LeafNode, Node, getNodeH, setNodeH} from "./node.js";
-import {subtreeFillToContents} from "./subtree.js";
+import {LeafNode, Node, getNodeH, setNodeH} from "./node.ts";
+import {subtreeFillToContents} from "./subtree.ts";
 
 const NUMBER_2_POW_32 = 2 ** 32;
 

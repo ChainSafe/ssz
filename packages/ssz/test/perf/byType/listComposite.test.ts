@@ -1,5 +1,5 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src/index.js";
+import {ContainerNodeStructType, ContainerType, ListCompositeType, UintNumberType} from "../../../src/index.ts";
 
 const byteType = new UintNumberType(1);
 

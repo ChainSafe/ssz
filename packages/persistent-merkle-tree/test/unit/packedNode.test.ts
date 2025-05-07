@@ -1,11 +1,11 @@
 import type {HashObject} from "@chainsafe/as-sha256";
 import {describe, expect, it} from "vitest";
-import {LeafNode, Node} from "../../src/index.js";
+import {LeafNode, Node} from "../../src/index.ts";
 import {
   packedNodeRootsToBytes,
   packedRootsBytesToLeafNodes,
   packedUintNum64sToLeafNodes,
-} from "../../src/packedNode.js";
+} from "../../src/packedNode.ts";
 
 const NUMBER_2_POW_32 = 2 ** 32;
 

@@ -11,10 +11,10 @@ import {
   getNode,
   merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
-import {byteArrayEquals} from "../util/byteArray.js";
-import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.js";
-import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.js";
-import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.js";
+import {byteArrayEquals} from "../util/byteArray.ts";
+import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.ts";
+import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.ts";
+import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.ts";
 export {ByteViews};
 
 export const LENGTH_GINDEX = BigInt(3);

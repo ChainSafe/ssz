@@ -1,7 +1,7 @@
-import {BitArray} from "../../src/index.js";
-import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
-import {BeaconState, SignedContributionAndProof, SyncCommitteeMessage} from "../lodestarTypes/altair/types.js";
-import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types.js";
+import {BitArray} from "../../src/index.ts";
+import * as sszAltair from "../lodestarTypes/altair/sszTypes.ts";
+import {BeaconState, SignedContributionAndProof, SyncCommitteeMessage} from "../lodestarTypes/altair/types.ts";
+import {Attestation, SignedAggregateAndProof, SignedBeaconBlock, Validator} from "../lodestarTypes/phase0/types.ts";
 
 // Typical mainnet numbers
 const BITS_PER_ATTESTATION = 90;

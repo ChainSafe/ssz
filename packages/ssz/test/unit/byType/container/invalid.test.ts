@@ -1,7 +1,7 @@
 import {describe, expect, it} from "vitest";
-import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src/index.js";
-import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {ContainerNodeStructType, ContainerType, ListBasicType, UintNumberType} from "../../../../src/index.ts";
+import {byteType, uint16NumType} from "../../../utils/primitiveTypes.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 runTypeTestInvalid({
   type: new ContainerType({a: uint16NumType}),

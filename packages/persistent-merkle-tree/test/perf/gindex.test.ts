@@ -1,5 +1,5 @@
 import {bench, describe} from "@chainsafe/benchmark";
-import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.js";
+import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.ts";
 
 describe("gindices at depth", () => {
   const count = 100;
