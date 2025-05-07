@@ -1433,10 +1433,10 @@
     core-js "2.6.10"
     require-resolve "0.0.2"
 
-"@chainsafe/benchmark@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@chainsafe/benchmark/-/benchmark-1.1.0.tgz#4b5d569917377a8dc70de552bffae6e92a022fad"
-  integrity sha512-QjyN768ImQxhWaOUKLev7xNtnZQXoeVooK6/CRvAh+RGyKwtAnFnzn9YGSmEHzHFRJ33SeJn7biif0zCWfJ84g==
+"@chainsafe/benchmark@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@chainsafe/benchmark/-/benchmark-1.2.3.tgz#568d62e898077eec3bf4a035cbee49f8c8d7cf4e"
+  integrity sha512-5rQKK2ar1k8DwqEMU5hTQlTrtrPzNdlfrMtbRgtrfYT/QpSADXGq1vBlywofY1D8HuEuv1LhRrn3p2rgibIXew==
   dependencies:
     "@actions/cache" "^4.0.0"
     "@actions/github" "^6.0.0"
@@ -1446,6 +1446,7 @@
     cli-table3 "^0.6.5"
     csv-parse "^5.6.0"
     csv-stringify "^6.5.2"
+    debug "^4.4.0"
     glob "^10.4.5"
     log-symbols "^7.0.0"
     yaml "^2.7.0"

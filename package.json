@@ -27,7 +27,7 @@
     "@babel/preset-typescript": "^7.14.5",
     "@babel/register": "^7.15.3",
     "@biomejs/biome": "^1.9.4",
-    "@chainsafe/benchmark": "^1.1.0",
+    "@chainsafe/benchmark": "^1.2.3",
     "@chainsafe/biomejs-config": "^0.1.0",
     "@types/node": "^22.10.2",
     "@vitest/browser": "~3.0.7",
