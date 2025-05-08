@@ -6,6 +6,8 @@ import {hasher as nobleHasher} from "../../src/hasher/noble.ts";
 import {HashComputationLevel, getHashComputations} from "../../src/index.ts";
 import {buildComparisonTrees} from "../utils/tree.ts";
 
+const PARALLEL_FACTOR = 16;
+
 describe("hasher", () => {
   const iterations = 500_000;
 
@@ -18,16 +20,34 @@ describe("hasher", () => {
     root2[i] = 2;
   }
 
+  const batchInput = new Uint8Array(PARALLEL_FACTOR * 64).fill(1);
+  const batchOutput = new Uint8Array(PARALLEL_FACTOR * 32);
   const hashers: Hasher[] = [hashtreeHasher, asSha256Hasher, nobleHasher];
 
   const runsFactor = 10;
   for (const hasher of hashers) {
     describe(hasher.name, () => {
       bench({
-        id: `hash 2 Uint8Array ${iterations} times - ${hasher.name}`,
+        id: `hash 2 32 bytes Uint8Array ${iterations} times - ${hasher.name}`,
+        fn: () => {
+          const output = new Uint8Array(32);
+          for (let i = 0; i < runsFactor; i++) {
+            // should not use `hasher.digest64` here because of memory allocation, and it's not comparable
+            // to the batch hash test below and `digest64HashObjects`
+            for (let j = 0; j < iterations; j++) hasher.digest64Into(root1, root2, output);
+          }
+        },
+        runsFactor,
+      });
+
+      // use this test to see how faster batch hash is compared to single hash in `digest64`
+      bench({
+        id: `batch hash ${PARALLEL_FACTOR} x 64 Uint8Array ${iterations / PARALLEL_FACTOR} times - ${hasher.name}`,
         fn: () => {
           for (let i = 0; i < runsFactor; i++) {
-            for (let j = 0; j < iterations; j++) hasher.digest64(root1, root2);
+            for (let j = 0; j < iterations / PARALLEL_FACTOR; j++) {
+              hasher.hashInto(batchInput, batchOutput);
+            }
           }
         },
         runsFactor,
@@ -49,6 +69,7 @@ describe("hasher", () => {
         runsFactor,
       });
 
+      // use to compare performance between hashers
       bench({
         id: `executeHashComputations - ${hasher.name}`,
         beforeEach: () => {
@@ -78,6 +99,7 @@ describe("hashtree", () => {
     },
   });
 
+  // compare this to "get root" to see how efficient the hash computation is
   bench({
     id: "executeHashComputations",
     beforeEach: () => {
@@ -91,6 +113,7 @@ describe("hashtree", () => {
     },
   });
 
+  // the traditional/naive way of getting the root
   bench({
     id: "get root",
     beforeEach: async () => {

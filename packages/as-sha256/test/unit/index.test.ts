@@ -5,8 +5,10 @@ import {
   byteArrayToHashObject,
   digest,
   digest2Bytes32,
+  digest2Bytes32Into,
   digest64,
   digest64HashObjects,
+  digest64Into,
   hashObjectToByteArray,
 } from "../../src/index.ts";
 
@@ -74,11 +76,15 @@ describe("as-sha256 non-SIMD enabled methods", () => {
     }
   });
 
-  it("digest64()", () => {
+  it("digest64() and digest64Into()", () => {
     const input = Buffer.alloc(64, "lodestar");
     const output = Buffer.from(digest64(input)).toString("hex");
     const expected = createHash("sha256").update(input).digest("hex");
     expect(output).to.equal(expected);
+
+    const output2 = Buffer.alloc(32);
+    digest64Into(input, output2);
+    expect(output2.toString("hex")).to.equal(expected);
   });
 
   it("digest() and digest64() output matches", () => {
@@ -88,7 +94,7 @@ describe("as-sha256 non-SIMD enabled methods", () => {
     expect(output).to.be.equal(output64);
   });
 
-  it("digest2Bytes32()", () => {
+  it("digest2Bytes32() and digest2Bytes32Into()", () => {
     const input1 = randomBytes(32);
     const input2 = randomBytes(32);
     const output = Buffer.from(digest2Bytes32(input1, input2)).toString("hex");
@@ -96,6 +102,10 @@ describe("as-sha256 non-SIMD enabled methods", () => {
       .update(Buffer.of(...input1, ...input2))
       .digest("hex");
     expect(output).to.equal(expectedOutput);
+
+    const output2 = Buffer.alloc(32);
+    digest2Bytes32Into(input1, input2, output2);
+    expect(output2.toString("hex")).to.equal(expectedOutput);
   });
 
   it("digest2Bytes32() matches digest64()", () => {
