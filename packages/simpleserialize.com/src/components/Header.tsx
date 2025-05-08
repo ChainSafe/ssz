@@ -1,6 +1,6 @@
 import * as React from "react";
 
-const SPEC_VERSION = "1.4.0";
+const SPEC_VERSION = "1.5.0";
 
 export default function Header(): JSX.Element {
   return (

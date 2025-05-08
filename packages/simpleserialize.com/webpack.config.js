@@ -1,22 +1,22 @@
-const webpack = require('webpack');
-const { resolve } = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require("webpack");
+const {resolve} = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === "production";
 
 const config = {
   devtool: "source-map",
-  mode: isProd ? 'production' : 'development',
+  mode: isProd ? "production" : "development",
   entry: {
-    index: './src/index.tsx',
+    index: "./src/index.tsx",
   },
   output: {
-    path: resolve(__dirname, 'dist'),
-    filename: '[name].js',
+    path: resolve(__dirname, "dist"),
+    filename: "[name].js",
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   module: {
     rules: [
@@ -27,45 +27,45 @@ const config = {
         },
       },
       {
-      test: /\.scss$/,
-      use: [
+        test: /\.scss$/,
+        use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader'
+            loader: "css-loader",
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               sourceMap: true,
-            }
-          }
-        ]
-      },{
+            },
+          },
+        ],
+      },
+      {
         test: /\.tsx?$/,
-        use: 'babel-loader',
+        use: "babel-loader",
         exclude: /node_modules/,
-      }
+      },
     ],
   },
   plugins: [
     new webpack.ProvidePlugin({
-      process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],
+      process: "process/browser",
+      Buffer: ["buffer", "Buffer"],
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].bundle.css'
+      filename: "css/[name].bundle.css",
     }),
     new HtmlWebpackPlugin({
-      title: 'Simple Serialize | Chainsafe Systems',
-      template: 'src/index.html',
+      title: "Simple Serialize | Chainsafe Systems",
+      template: "src/index.html",
     }),
   ],
 };
 
 if (isProd) {
   config.optimization = {
-    minimizer: [
-    ],
+    minimizer: [],
   };
 } else {
   config.devServer = {
@@ -73,22 +73,24 @@ if (isProd) {
     open: true, // https://webpack.js.org/configuration/dev-server/#devserveropen
     hot: true, // https://webpack.js.org/configuration/dev-server/#devserverhot
     compress: true, // https://webpack.js.org/configuration/dev-server/#devservercompress
-    stats: 'errors-only', // https://webpack.js.org/configuration/dev-server/#devserverstats-
-    overlay: true, // https://webpack.js.org/configuration/dev-server/#devserveroverlay
+    client: {
+      overlay: true, // https://webpack.js.org/configuration/dev-server/#overlay
+      logging: "error", // https://webpack.js.org/configuration/dev-server/#logging
+    },
   };
 }
 
 const workerConfig = {
   name: "worker",
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   entry: {
-    index: './src/components/worker/index.ts',
+    index: "./src/components/worker/index.ts",
   },
   output: {
-    path: resolve(__dirname, 'dist'),
-    filename: 'worker.js',
+    path: resolve(__dirname, "dist"),
+    filename: "worker.js",
   },
   module: {
     rules: [
@@ -100,21 +102,21 @@ const workerConfig = {
       },
       {
         test: /worker?$/,
-        loader: 'threads-webpack-plugin',
+        loader: "threads-webpack-plugin",
       },
       {
         test: /\.ts?$/,
-        use: 'babel-loader',
+        use: "babel-loader",
         exclude: /node_modules/,
-      }
+      },
     ],
   },
   plugins: [
     new webpack.ProvidePlugin({
-      process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],
+      process: "process/browser",
+      Buffer: ["buffer", "Buffer"],
     }),
-  ]
-}
+  ],
+};
 
 module.exports = [config, workerConfig];
