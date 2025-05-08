@@ -9,13 +9,35 @@ export type ValueWithCachedPermanentRoot = {
   [symbolCachedPermanentRoot]?: Uint8Array;
 };
 
+/**
+ * Cache a root for a ValueWithCachedPermanentRoot instance
+ * - if safeCache is true and output is 32 bytes and offset is 0, use output directly
+ * - if safeCache, use output subarray
+ * - otherwise, need to clone the root at output offset
+ */
+export function cacheRoot(
+  value: ValueWithCachedPermanentRoot,
+  output: Uint8Array,
+  offset: number,
+  safeCache: boolean
+): void {
+  const cachedRoot =
+    safeCache && output.length === 32 && offset === 0
+      ? output
+      : safeCache
+        ? output.subarray(offset, offset + 32)
+        : // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+          Uint8Array.prototype.slice.call(output, offset, offset + 32);
+  value[symbolCachedPermanentRoot] = cachedRoot;
+}
+
 export function hash64(bytes32A: Uint8Array, bytes32B: Uint8Array): Uint8Array {
   return hasher.digest64(bytes32A, bytes32B);
 }
 
 export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
   const layerCount = bitLength(nextPowerOf2(padFor) - 1);
-  if (chunks.length == 0) {
+  if (chunks.length === 0) {
     return zeroHash(layerCount);
   }
 
@@ -41,22 +63,6 @@ export function merkleize(chunks: Uint8Array[], padFor: number): Uint8Array {
   }
 
   return chunks[0];
-}
-
-/**
- * Split a long Uint8Array into Uint8Array of exactly 32 bytes
- */
-export function splitIntoRootChunks(longChunk: Uint8Array): Uint8Array[] {
-  const chunkCount = Math.ceil(longChunk.length / 32);
-  const chunks = new Array<Uint8Array>(chunkCount);
-
-  for (let i = 0; i < chunkCount; i++) {
-    const chunk = new Uint8Array(32);
-    chunk.set(longChunk.slice(i * 32, (i + 1) * 32));
-    chunks[i] = chunk;
-  }
-
-  return chunks;
 }
 
 /** @ignore */

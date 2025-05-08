@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-
 import * as React from "react";
 
 const SPEC_VERSION = "1.5.0";

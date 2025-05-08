@@ -1,18 +1,18 @@
 import {
-  getNodeAtDepth,
   Gindex,
-  zeroNode,
   LeafNode,
   Node,
-  toGindexBitstring,
   Tree,
+  getNodeAtDepth,
+  toGindexBitstring,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isBasicType, BasicType} from "../type/basic.js";
-import {isCompositeType, CompositeType} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
-import {BitArray} from "../value/bitArray.js";
-import {NonOptionalFields} from "../type/optional.js";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, isCompositeType} from "../type/composite.ts";
+import {NonOptionalFields} from "../type/optional.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {TreeView} from "./abstract.ts";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;
@@ -42,9 +42,9 @@ export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
     ? // If composite, return view. MAY propagate changes updwards
       TV
     : // If basic, return struct value. Will NOT propagate changes upwards
-    Fields[K] extends BasicType<infer V>
-    ? V
-    : never;
+      Fields[K] extends BasicType<infer V>
+      ? V
+      : never;
 };
 
 export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
@@ -69,7 +69,10 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *
  */
 class ProfileTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    readonly tree: Tree
+  ) {
     super();
   }
 
@@ -193,10 +196,8 @@ export function computeSerdesData<Fields extends Record<string, Type<unknown>>>(
 
   let optionalIndex = 0;
   for (const {optional, fieldType} of fields) {
-    if (optional) {
-      if (!optionalFields.get(optionalIndex++)) {
-        continue;
-      }
+    if (optional && !optionalFields.get(optionalIndex++)) {
+      continue;
     }
 
     isFixedLen.push(fieldType.fixedSize !== null);

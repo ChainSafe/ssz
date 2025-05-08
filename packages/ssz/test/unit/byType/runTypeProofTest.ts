@@ -3,17 +3,17 @@ import {expect} from "vitest";
 import {
   BitArray,
   ContainerType,
-  fromHexString,
   JsonPath,
   OptionalType,
   ProfileType,
   StableContainerType,
   Type,
-} from "../../../src/index.js";
-import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite.js";
-import {ArrayBasicTreeView} from "../../../src/view/arrayBasic.js";
-import {RootHex} from "../../lodestarTypes/index.js";
-import {wrapErr} from "../../utils/error.js";
+  fromHexString,
+} from "../../../src/index.ts";
+import {CompositeTypeAny, isCompositeType} from "../../../src/type/composite.ts";
+import {ArrayBasicTreeView} from "../../../src/view/arrayBasic.ts";
+import {RootHex} from "../../lodestarTypes/index.ts";
+import {wrapErr} from "../../utils/error.ts";
 
 export function runProofTestOnAllJsonPaths({
   type,
@@ -34,30 +34,33 @@ export function runProofTestOnAllJsonPaths({
       continue;
     }
 
-    wrapErr(() => {
-      if (type.tree_createProofGindexes(node, [jsonPath]).length === 0) {
-        return;
-      }
+    wrapErr(
+      () => {
+        if (type.tree_createProofGindexes(node, [jsonPath]).length === 0) {
+          return;
+        }
 
-      const proof = type.tree_createProof(node, [jsonPath]);
-      const viewFromProof = type.createFromProof(proof, root);
+        const proof = type.tree_createProof(node, [jsonPath]);
+        const viewFromProof = type.createFromProof(proof, root);
 
-      const typeLeaf = getJsonPathType(type, jsonPath);
-      const viewLeafFromProof = getJsonPathView(type, viewFromProof, jsonPath);
-      const jsonLeaf = getJsonPathValue(type, json, jsonPath);
+        const typeLeaf = getJsonPathType(type, jsonPath);
+        const viewLeafFromProof = getJsonPathView(type, viewFromProof, jsonPath);
+        const jsonLeaf = getJsonPathValue(type, json, jsonPath);
 
-      const jsonLeafFromProof =
-        viewLeafFromProof == null
-          ? viewLeafFromProof
-          : typeLeaf.toJson(
-              isCompositeType(typeLeaf) ? typeLeaf.toValueFromView(viewLeafFromProof) : viewLeafFromProof
-            );
+        const jsonLeafFromProof =
+          viewLeafFromProof == null
+            ? viewLeafFromProof
+            : typeLeaf.toJson(
+                isCompositeType(typeLeaf) ? typeLeaf.toValueFromView(viewLeafFromProof) : viewLeafFromProof
+              );
 
-      expect(jsonLeafFromProof).to.deep.equal(jsonLeaf, "Wrong value fromProof");
+        expect(jsonLeafFromProof).to.deep.equal(jsonLeaf, "Wrong value fromProof");
 
-      // TODO: Ensure the value is the same
-      viewFromProof;
-    }, `Proof JSON path ${JSON.stringify(jsonPath)}`);
+        // TODO: Ensure the value is the same
+        viewFromProof;
+      },
+      `Proof JSON path ${JSON.stringify(jsonPath)}`
+    );
   }
 }
 
@@ -114,7 +117,6 @@ function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unkno
 function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       type = type.elementType;
     }
     if (typeof jsonProp === "number") {
@@ -123,6 +125,7 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
       if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
         // Coerce jsonProp to a fieldName. JSON paths may be in JSON notation or fieldName notation
         const fieldName =
+          // biome-ignore lint/complexity/useLiteralKeys: The key `jsonKeyToFieldName` is protected field
           (type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] ?? jsonProp;
         view = (view as Record<string, unknown>)[fieldName as string];
       } else {
@@ -146,13 +149,13 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
 function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath): unknown {
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       type = type.elementType;
     }
     if (typeof jsonProp === "number") {
       json = (json as unknown[])[jsonProp];
     } else if (typeof jsonProp === "string") {
       if (type instanceof ContainerType || type instanceof StableContainerType || type instanceof ProfileType) {
+        // biome-ignore lint/complexity/useLiteralKeys: The key `jsonKeyToFieldName` is protected field
         if ((type as ContainerType<Record<string, Type<unknown>>>)["jsonKeyToFieldName"][jsonProp] === undefined) {
           throw Error(`Unknown jsonProp ${jsonProp} for type ${type.typeName}`);
         }

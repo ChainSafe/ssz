@@ -1,17 +1,15 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ByteViews} from "./composite.js";
-import {ByteArrayType} from "./byteArray.js";
+import {Node, getNodesAtDepth, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ByteArrayType} from "./byteArray.ts";
+import {ByteViews} from "./composite.ts";
 
 export type ByteVector = Uint8Array;
 
 export interface ByteVectorOptions {
   typeName?: string;
 }
-
-/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * ByteVector: Immutable alias of Vector[byte, N]
@@ -36,7 +34,10 @@ export class ByteVectorType extends ByteArrayType {
   readonly maxChunkCount: number;
   readonly isList = false;
 
-  constructor(readonly lengthBytes: number, opts?: ByteVectorOptions) {
+  constructor(
+    readonly lengthBytes: number,
+    opts?: ByteVectorOptions
+  ) {
     super();
 
     if (lengthBytes === 0) throw Error("Vector length must be > 0");

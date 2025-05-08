@@ -1,15 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {describe, beforeAll, expect, it} from "vitest";
-import crypto from "crypto";
-import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.js";
+import crypto from "node:crypto";
+import {beforeAll, describe, expect, it} from "vitest";
+import {byteArrayToHashObject, hashObjectToByteArray} from "../../src/hashObject.ts";
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
 export function getSimdTests(sha256: any, useSimd: boolean): void {
   describe(`as-sha256 SIMD enabled methods ${useSimd ? "with SIMD" : "without SIMD"}`, () => {
-    beforeAll(function () {
+    beforeAll(() => {
       sha256.reinitializeInstance(useSimd);
       expect(sha256.simdEnabled).to.equal(useSimd);
     });
@@ -23,7 +19,7 @@ export function getSimdTests(sha256: any, useSimd: boolean): void {
         131, 72, 178, 215, 235, 20, 207, 110,
       ]);
       for (let i = 0; i < 4; i++) {
-        expect(outputs[i]).to.be.deep.equal(expectedOutput, "incorrect batchHash4UintArray64s result " + i);
+        expect(outputs[i]).to.be.deep.equal(expectedOutput, `incorrect batchHash4UintArray64s result ${i}`);
       }
     });
 
@@ -50,7 +46,7 @@ export function getSimdTests(sha256: any, useSimd: boolean): void {
       for (let i = 0; i < 4; i++) {
         const output = new Uint8Array(32);
         hashObjectToByteArray(outputs[i], output, 0);
-        expect(output).to.be.deep.equal(expectedOutput, "incorrect batchHash4UintArray64s result " + i);
+        expect(output).to.be.deep.equal(expectedOutput, `incorrect batchHash4UintArray64s result ${i}`);
       }
     });
 

@@ -3,8 +3,8 @@ name: Tests
 on: [pull_request, push]
 
 jobs:
-  test:
-    name: Tests
+  test-node:
+    name: Tests Node
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -31,7 +31,6 @@ jobs:
         run: yarn test:unit
       - name: Browsers Tests
         run: yarn test:browsers
-
       # Download spec tests with cache
       - name: Restore spec tests cache
         uses: actions/cache@master
@@ -41,7 +40,6 @@ jobs:
       - name: Download spec tests
         run: yarn download-spec-tests
         working-directory: packages/ssz
-
       # Run them in different steps to quickly identifying which command failed
       # Otherwise just doing `yarn test:spec` you can't tell which specific suite failed
       # many of the suites have identical names for minimal and mainnet
@@ -66,3 +64,51 @@ jobs:
       - name: Spec tests bellatrix-mainnet
         run: LODESTAR_FORK=bellatrix yarn test:spec-static-mainnet
         working-directory: packages/ssz
+  
+  test-bun:
+    name: Tests Bun
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2      
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install Yarn
+        run: bun install -g npm:yarn
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+      - name: Generate
+        run: bun run --filter '*' generate
+      - name: Unit Tests
+        run: bun run --bun --filter '*' test:unit
+
+  test-deno:
+    name: Tests Deno
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "22"
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+      # Deno does not run task in workspaces if same task exists on root package.json
+      - name: Clean root scripts 
+        run: cat package.json | jq 'del( .scripts )' > package.json.backup && mv package.json.backup package.json
+      - name: Generate
+        run: deno task --recursive generate
+      - name: Unit Tests
+        run: deno task --recursive test:unit

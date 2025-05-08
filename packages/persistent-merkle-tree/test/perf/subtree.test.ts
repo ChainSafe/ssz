@@ -1,8 +1,8 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {Node} from "../../src/node.js";
-import {packedRootsBytesToLeafNodes} from "../../src/packedNode.js";
-import {subtreeFillToContents} from "../../src/subtree.js";
-import {zeroNode} from "../../src/zeroNode.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {Node} from "../../src/node.ts";
+import {packedRootsBytesToLeafNodes} from "../../src/packedNode.ts";
+import {subtreeFillToContents} from "../../src/subtree.ts";
+import {zeroNode} from "../../src/zeroNode.ts";
 
 describe("packedRootsBytesToLeafNodes", () => {
   const bytes = 4 * 1000;

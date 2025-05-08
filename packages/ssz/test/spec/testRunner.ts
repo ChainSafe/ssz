@@ -1,13 +1,8 @@
-import path from "path";
-import fs from "fs";
-import {uncompress} from "snappyjs";
+import fs from "node:fs";
+import path from "node:path";
 import jsyaml from "js-yaml";
-import {schema} from "./sszYamlSchema.js";
-
-/* eslint-disable
-  @typescript-eslint/explicit-module-boundary-types,
-  @typescript-eslint/explicit-function-return-type
-*/
+import {uncompress} from "snappyjs";
+import {schema} from "./sszYamlSchema.ts";
 
 export type ValidTestCaseData = {
   root: string;

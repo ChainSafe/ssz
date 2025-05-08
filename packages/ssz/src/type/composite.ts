@@ -1,18 +1,20 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  concatGindices,
-  createProof,
-  getNode,
   Gindex,
+  HashComputationLevel,
   Node,
   Proof,
   ProofType,
   Tree,
-  HashComputationLevel,
+  concatGindices,
+  createProof,
+  getNode,
+  merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
-import {byteArrayEquals} from "../util/byteArray.js";
-import {merkleize, symbolCachedPermanentRoot, ValueWithCachedPermanentRoot} from "../util/merkleize.js";
-import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
+import {byteArrayEquals} from "../util/byteArray.ts";
+import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.ts";
+import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.ts";
+import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.ts";
 export {ByteViews};
 
 export const LENGTH_GINDEX = BigInt(3);
@@ -38,8 +40,6 @@ export type CompositeViewDU<T extends CompositeType<unknown, unknown, unknown>> 
 /** Any CompositeType without any generic arguments */
 export type CompositeTypeAny = CompositeType<unknown, unknown, unknown>;
 
-/* eslint-disable @typescript-eslint/member-ordering  */
-
 /**
  * Represents a composite type as defined in the spec:
  * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#composite-types
@@ -59,6 +59,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    * Required for ContainerNodeStruct to ensure no dangerous types are constructed.
    */
   abstract readonly isViewMutable: boolean;
+  protected blocksBuffer = new Uint8Array(0);
 
   constructor(
     /**
@@ -216,13 +217,30 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
       }
     }
 
-    const root = merkleize(this.getRoots(value), this.maxChunkCount);
+    const root = allocUnsafe(32);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
-    if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
-    }
+    // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
+  }
+
+  hashTreeRootInto(value: V, output: Uint8Array, offset: number, safeCache = false): void {
+    // Return cached mutable root if any
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        output.set(cachedRoot, offset);
+        return;
+      }
+    }
+
+    const blocksBuffer = this.getBlocksBytes(value);
+    merkleizeBlocksBytes(blocksBuffer, this.maxChunkCount, output, offset);
+    if (this.cachePermanentRootStruct) {
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
+    }
   }
 
   // For debugging and testing this feature
@@ -236,7 +254,12 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   //   and feed those numbers directly to the hasher input with a DataView
   // - The return of the hasher should be customizable too, to reduce conversions from Uint8Array
   //   to hashObject and back.
-  protected abstract getRoots(value: V): Uint8Array[];
+
+  /**
+   * Get multiple SHA256 blocks, each is 64 bytes long.
+   * If chunk count is not even, need to append zeroHash(0)
+   */
+  protected abstract getBlocksBytes(value: V): Uint8Array;
 
   // Proofs API
 

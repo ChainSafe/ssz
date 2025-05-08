@@ -1,13 +1,13 @@
-import {describe, bench, beforeAll} from "@chainsafe/benchmark";
+import {beforeAll, bench, describe} from "@chainsafe/benchmark";
 import {
-  subtreeFillToContents,
-  Tree,
-  Node,
-  LeafNode,
-  getNodesAtDepth,
-  zeroNode,
   BranchNode,
-} from "../../../src/index.js";
+  LeafNode,
+  Node,
+  Tree,
+  getNodesAtDepth,
+  subtreeFillToContents,
+  zeroNode,
+} from "../../../src/index.ts";
 
 // Results in Linux Dec 2021
 //

@@ -1,9 +1,9 @@
 import {LeafNode, Node, packedUintNum64sToLeafNodes, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
 
-import {ListBasicTreeViewDU} from "../viewDU/listBasic.js";
-import {ListBasicOpts, ListBasicType} from "./listBasic.js";
-import {UintNumberType} from "./uint.js";
-import {addLengthNode} from "./arrayBasic.js";
+import {ListBasicTreeViewDU} from "../viewDU/listBasic.ts";
+import {addLengthNode} from "./arrayBasic.ts";
+import {ListBasicOpts, ListBasicType} from "./listBasic.ts";
+import {UintNumberType} from "./uint.ts";
 
 /**
  * Specific implementation of ListBasicType for UintNumberType with some optimizations.

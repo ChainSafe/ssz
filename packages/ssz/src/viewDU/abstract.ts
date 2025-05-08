@@ -1,6 +1,6 @@
-import {HashComputationLevel, executeHashComputations, HashComputationGroup} from "@chainsafe/persistent-merkle-tree";
-import {ByteViews, CompositeType} from "../type/composite.js";
-import {TreeView} from "../view/abstract.js";
+import {HashComputationGroup, HashComputationLevel, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
+import {ByteViews, CompositeType} from "../type/composite.ts";
+import {TreeView} from "../view/abstract.ts";
 
 /**
  * Always allocating a new HashComputationGroup for each hashTreeRoot() is not great for gc
@@ -11,8 +11,6 @@ const symbolCachedTreeRoot = Symbol("ssz_cached_tree_root");
 export type NodeWithCachedTreeRoot = {
   [symbolCachedTreeRoot]?: Uint8Array;
 };
-
-/* eslint-disable @typescript-eslint/member-ordering  */
 
 /**
  * A Deferred Update Tree View (`ViewDU`) is a wrapper around a type and
@@ -111,12 +109,10 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * to NOT transfer the cache to the cloned instance.
    */
   clone(dontTransferCache?: boolean): this {
-    if (dontTransferCache) {
-      return this.type.getViewDU(this.node) as this;
-    } else {
-      const cache = this.cache;
-      this.clearCache();
-      return this.type.getViewDU(this.node, cache) as this;
-    }
+    if (dontTransferCache) return this.type.getViewDU(this.node) as this;
+
+    const cache = this.cache;
+    this.clearCache();
+    return this.type.getViewDU(this.node, cache) as this;
   }
 }

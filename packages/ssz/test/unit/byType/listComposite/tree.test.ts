@@ -1,17 +1,18 @@
-import {describe, it, expect, beforeEach} from "vitest";
+import {beforeEach, describe, expect, it} from "vitest";
 import {
+  ByteVectorType,
   CompositeView,
   ContainerNodeStructType,
   ContainerType,
   ListCompositeType,
-  toHexString,
   UintNumberType,
   ValueOf,
-} from "../../../../src/index.js";
-import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite.js";
-import {ssz} from "../../../lodestarTypes/primitive/index.js";
-import {runViewTestMutation} from "../runViewTestMutation.js";
-import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.js";
+  toHexString,
+} from "../../../../src/index.ts";
+import {ArrayCompositeTreeViewDU} from "../../../../src/viewDU/arrayComposite.ts";
+import {ListCompositeTreeViewDU} from "../../../../src/viewDU/listComposite.ts";
+import {ssz} from "../../../lodestarTypes/primitive/index.ts";
+import {runViewTestMutation} from "../runViewTestMutation.ts";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(
@@ -227,7 +228,21 @@ describe("ListCompositeType.sliceFrom", () => {
   }
 });
 
-describe("ListCompositeType batchHashTreeRoot", () => {
+describe("ListCompositeType hashTreeRoot", () => {
+  it("shouldzero out the last sha256 block", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+    const value0 = Array.from({length: 65}, (_, i) => Buffer.alloc(32, i));
+    const value1 = Array.from({length: 120}, (_, i) => Buffer.alloc(32, i));
+    const expectedRoot0 = listType.hashTreeRoot(value0);
+    const expectedRoot1 = listType.hashTreeRoot(value1);
+    // now increase block array size
+    listType.hashTreeRoot(Array.from({length: 1024}, () => Buffer.alloc(32, 3)));
+    expect(listType.hashTreeRoot(value0)).to.deep.equal(expectedRoot0);
+    expect(listType.hashTreeRoot(value1)).to.deep.equal(expectedRoot1);
+  });
+});
+
+describe("ListCompositeType ViewDU batchHashTreeRoot", () => {
   const value = [
     {a: 1, b: 2},
     {a: 3, b: 4},
@@ -243,6 +258,7 @@ describe("ListCompositeType batchHashTreeRoot", () => {
   for (const list of [listOfContainersType, listOfContainersType2]) {
     const typeName = list.typeName;
     const expectedRoot = list.toView(value).hashTreeRoot();
+    expect(listOfContainersType2.hashTreeRoot(value)).to.be.deep.equal(expectedRoot);
 
     it(`${typeName} - fresh ViewDU`, () => {
       expect(listOfContainersType.toViewDU(value).batchHashTreeRoot()).toEqual(expectedRoot);
@@ -339,23 +355,91 @@ describe("ListCompositeType batchHashTreeRoot", () => {
   }
 });
 
-describe("ListCompositeType getAllReadOnly - no commit", () => {
-  it("getAllReadOnly() without commit", () => {
+describe("ListCompositeType", () => {
+  let listView: ListCompositeTreeViewDU<ByteVectorType>;
+
+  beforeEach(() => {
     const listType = new ListCompositeType(ssz.Root, 1024);
     const listLength = 2;
     const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
-    const listView = listType.toViewDU(list);
+    listView = listType.toViewDU(list);
     expect(listView.getAllReadonly()).to.deep.equal(list);
+  });
 
+  it("getAllReadOnly()", () => {
     // modify
     listView.set(0, Buffer.alloc(32, 1));
     // push
     listView.push(Buffer.alloc(32, 1));
 
     // getAllReadOnly() without commit, now all items should be the same
-    expect(listView.getAllReadonly()).to.deep.equal(Array.from({length: 3}, () => Buffer.alloc(32, 1)));
+    const all = listView.getAllReadonly();
+    expect(all).to.deep.equal(Array.from({length: 3}, () => Buffer.alloc(32, 1)));
+
+    const out = new Array<Buffer>(3).fill(Buffer.alloc(32, 0));
+    // getAllReadonly() with "out" parameter of the same length
+    const all2 = listView.getAllReadonly(out);
+    expect(all2 === out).to.be.true;
+    expect(out).to.deep.equal(all);
 
     // getAllReadOnlyValues() will throw
     expect(() => listView.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
+  });
+
+  it("forEach()", () => {
+    listView.forEach((item, i) => expect(item).to.deep.equal(Buffer.alloc(32, i)));
+  });
+
+  it("getAllReadonlyValues()", () => {
+    // no param
+    expect(listView.getAllReadonlyValues()).to.deep.equal(Array.from({length: 2}, (_, i) => Buffer.alloc(32, i)));
+    const out = new Array<Buffer>(2).fill(Buffer.alloc(32, 0));
+
+    // with "out" param
+    const all = listView.getAllReadonlyValues(out);
+    expect(all === out).to.be.true;
+    expect(out).to.be.deep.equal(Array.from({length: 2}, (_, i) => Buffer.alloc(32, i)));
+  });
+
+  it("forEachValue()", () => {
+    listView.forEachValue((item, i) => expect(item).to.deep.equal(Buffer.alloc(32, i)));
+  });
+
+  it("getReadonlyByRange", () => {
+    const listType = new ListCompositeType(ssz.Root, 1024);
+
+    for (const loadNodes of [false, true]) {
+      for (const listLength of [5, 10, 15, 20, 21, 22, 23, 24, 25]) {
+        const list = Array.from({length: listLength}, (_, i) => Buffer.alloc(32, i));
+        const listView = listType.toViewDU(list);
+
+        if (loadNodes) {
+          listView.getAllReadonly();
+        }
+
+        const total: Buffer[] = [];
+        let start = 0;
+        const count = 10;
+        // this is equivalent to getAllReadonly()
+        // but consumer can break in the middle to improve performance
+        while (start < listLength) {
+          for (const item of listView.getReadonlyByRange(start, count)) {
+            total.push(item as Buffer);
+          }
+          start += count;
+        }
+
+        expect(total.length).to.equal(listLength);
+        expect(total).to.deep.equal(list);
+      }
+    }
+
+    // test the bound of "count" parameter
+    const list = Array.from({length: 10}, (_, i) => Buffer.alloc(32, i));
+    const listView = listType.toViewDU(list);
+    for (let start = 5; start < 10; start++) {
+      const items = listView.getReadonlyByRange(start, list.length);
+      expect(items.length).to.equal(list.length - start);
+    }
   });
 });

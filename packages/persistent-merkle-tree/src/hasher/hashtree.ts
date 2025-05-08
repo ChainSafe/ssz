@@ -1,9 +1,9 @@
-import {hashInto} from "@chainsafe/hashtree";
-import {Hasher, HashObject} from "./types.js";
-import {Node} from "../node.js";
-import type {HashComputationLevel} from "../hashComputation.js";
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
-import {doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
+import {hashInto} from "@chainsafe/hashtree";
+import type {HashComputationLevel} from "../hashComputation.ts";
+import {Node} from "../node.ts";
+import {HashObject, Hasher} from "./types.ts";
+import {doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.ts";
 
 /**
  * Best SIMD implementation is in 512 bits = 64 bytes
@@ -41,10 +41,10 @@ export const hasher: Hasher = {
     byteArrayIntoHashObject(hash64Output, 0, parent);
   },
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
+    doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
-    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, uint8Input);
+    doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, uint8Input);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

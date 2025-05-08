@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {LeafNode, Node, toGindex, Tree, zeroNode, treeZeroAfterIndex, getNodesAtDepth} from "../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {LeafNode, Node, Tree, getNodesAtDepth, toGindex, treeZeroAfterIndex, zeroNode} from "../../../src/index.ts";
 
 describe("tree / zeroAfterIndex", () => {
   // Test all possible zeroAfterIndex operations for any tree with 0 <= depth < 6
@@ -43,10 +43,9 @@ function printLeafTreeDiff(nodeA: Node, nodeB: Node, depth: number, length: numb
     const nodesA = getNodesAtDepth(nodeA, d, 0, length);
     const nodesB = getNodesAtDepth(nodeB, d, 0, length);
     const toIndex = Math.ceil(length / 2 ** (depth - d));
-    // eslint-disable-next-line no-console
+
     console.log(`Depth ${d}`);
     for (let i = 0; i < toIndex; i++) {
-      // eslint-disable-next-line no-console
       console.log(`${d} ${i} A ${toHex(nodesA[i].root)} B ${toHex(nodesB[i].root)}`);
     }
   }

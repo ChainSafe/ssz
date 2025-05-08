@@ -1,7 +1,7 @@
-import {describe, it, expect} from "vitest";
-import {ListBasicType} from "../../../../src/index.js";
-import {byteType} from "../../../utils/primitiveTypes.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {describe, expect, it} from "vitest";
+import {ListBasicType} from "../../../../src/index.ts";
+import {byteType} from "../../../utils/primitiveTypes.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 runTypeTestInvalid({
   type: new ListBasicType(byteType, 2),

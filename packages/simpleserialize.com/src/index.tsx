@@ -1,8 +1,8 @@
 import React from "react";
+import {Provider as AlertProvider, transitions} from "react-alert";
 import ReactDOM from "react-dom";
 import App from "./App";
-import {transitions, Provider as AlertProvider} from "react-alert";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 import AlertTemplate from "react-alert-template-basic";
 
@@ -15,7 +15,6 @@ const options = {
 };
 
 ReactDOM.render(
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   <AlertProvider template={AlertTemplate} {...options}>
     <App />
   </AlertProvider>,

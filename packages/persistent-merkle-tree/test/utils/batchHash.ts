@@ -1,6 +1,6 @@
-import { HashComputationLevel, getHashComputations } from "../../src/hashComputation.js";
-import { executeHashComputations } from "../../src/hasher/index.js";
-import { Node } from "../../src/node.js";
+import {HashComputationLevel, getHashComputations} from "../../src/hashComputation.ts";
+import {executeHashComputations} from "../../src/hasher/index.ts";
+import {Node} from "../../src/node.ts";
 
 /**
  * This is only a test utility function, don't want to use it in production because it allocates memory every time.

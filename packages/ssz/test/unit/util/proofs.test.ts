@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
-import {BitVectorType, BitListType, ContainerType} from "../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {BitListType, BitVectorType, ContainerType} from "../../../src/index.ts";
 
 /** Pick bitLen to fill 2 nodes */
 const bitLen2Nodes = 8 * 32 * 2;

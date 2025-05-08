@@ -1,11 +1,11 @@
-import {describe, it, expect} from "vitest";
-import * as sszAltair from "../lodestarTypes/altair/sszTypes.js";
-import {getRandomState} from "../utils/generateEth2Objs.js";
+import {describe, expect, it} from "vitest";
+import * as sszAltair from "../lodestarTypes/altair/sszTypes.ts";
+import {getRandomState} from "../utils/generateEth2Objs.ts";
 
 describe("Unchanged ViewDUs", () => {
   const state = sszAltair.BeaconState.toViewDU(getRandomState(100));
 
-  it.skip("should not recompute batchHashTreeRoot() when no fields is changed", () => {
+  it("should not recompute batchHashTreeRoot() when no fields is changed", () => {
     const root = state.batchHashTreeRoot();
     // this causes viewsChanged inside BeaconState container
     state.validators.length;

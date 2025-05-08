@@ -1,4 +1,4 @@
-import {Gindex, GindexBitstring, gindexParent, gindexSibling} from "../gindex.js";
+import {Gindex, GindexBitstring, gindexParent, gindexSibling} from "../gindex.ts";
 
 // Not currently in use, but simpler implementation useful for testing
 /**
@@ -34,7 +34,7 @@ export function computeProofBitstrings(gindex: GindexBitstring): {
   let g = gindex;
   while (g.length > 1) {
     path.add(g);
-    const lastBit = g[g.length - 1];
+    const lastBit = g.at(-1);
     const parent = g.substring(0, g.length - 1);
     branch.add(parent + (Number(lastBit) ^ 1));
     g = parent;
@@ -64,26 +64,18 @@ export function sortDecreasingBitstrings(gindices: GindexBitstring[]): GindexBit
     return [];
   }
   return gindices.sort((a, b) => {
-    if (a.length < b.length) {
-      return 1;
-    } else if (b.length < a.length) {
-      return -1;
-    }
+    if (a.length < b.length) return 1;
+    if (b.length < a.length) return -1;
+
     let aPos0 = a.indexOf("0");
     let bPos0 = b.indexOf("0");
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      if (aPos0 === -1) {
-        return -1;
-      } else if (bPos0 === -1) {
-        return 1;
-      }
 
-      if (aPos0 < bPos0) {
-        return 1;
-      } else if (bPos0 < aPos0) {
-        return -1;
-      }
+    while (true) {
+      if (aPos0 === -1) return -1;
+      if (bPos0 === -1) return 1;
+
+      if (aPos0 < bPos0) return 1;
+      if (bPos0 < aPos0) return -1;
 
       aPos0 = a.indexOf("0", aPos0 + 1);
       bPos0 = b.indexOf("0", bPos0 + 1);
@@ -111,9 +103,9 @@ export function filterParentBitstrings(gindices: GindexBitstring[]): GindexBitst
 }
 
 export enum SortOrder {
-  InOrder,
-  Decreasing,
-  Unsorted,
+  InOrder = 0,
+  Decreasing = 1,
+  Unsorted = 2,
 }
 
 /**
@@ -138,14 +130,22 @@ export function computeMultiProofBitstrings(
   for (const gindex of leaves) {
     if (gindex.length > maxBitLength) maxBitLength = gindex.length;
     const {path, branch} = computeProofBitstrings(gindex);
-    path.forEach((g) => paths.add(g));
-    branch.forEach((g) => branches.add(g));
+    for (const p of path) {
+      paths.add(p);
+    }
+    for (const b of branch) {
+      branches.add(b);
+    }
   }
 
   // Remove all branches that are included in the paths
-  paths.forEach((g) => branches.delete(g));
+  for (const p of paths) {
+    branches.delete(p);
+  }
   // Add all remaining branches to the leaves
-  branches.forEach((g) => proof.add(g));
+  for (const b of branches) {
+    proof.add(b);
+  }
 
   switch (sortOrder) {
     case SortOrder.InOrder:

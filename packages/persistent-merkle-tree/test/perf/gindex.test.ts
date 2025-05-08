@@ -1,5 +1,5 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {getGindexBits, getGindicesAtDepth, gindexIterator, iterateAtDepth} from "../../src/index.ts";
 
 describe("gindices at depth", () => {
   const count = 100;
@@ -17,9 +17,8 @@ describe("gindices at depth", () => {
   });
 
   bench("iterateAtDepth", () => {
-    for (let gindex of iterateAtDepth(depth, BigInt(startIx), BigInt(count))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      gindex++;
+    for (let _gindex of iterateAtDepth(depth, BigInt(startIx), BigInt(count))) {
+      _gindex++;
     }
   });
 });

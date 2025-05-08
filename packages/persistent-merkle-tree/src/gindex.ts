@@ -17,9 +17,8 @@ export function toGindexBitstring(depth: number, index: number): GindexBitstring
   const str = index ? Number(index).toString(2) : "";
   if (str.length > depth) {
     throw new Error("index too large for depth");
-  } else {
-    return "1" + str.padStart(depth, "0");
   }
+  return `1${str.padStart(depth, "0")}`;
 }
 
 export function convertGindexToBitstring(gindex: Gindex | GindexBitstring): GindexBitstring {
@@ -28,12 +27,11 @@ export function convertGindexToBitstring(gindex: Gindex | GindexBitstring): Gind
       throw new Error(ERR_INVALID_GINDEX);
     }
     return gindex;
-  } else {
-    if (gindex < 1) {
-      throw new Error(ERR_INVALID_GINDEX);
-    }
-    return gindex.toString(2);
   }
+  if (gindex < 1) {
+    throw new Error(ERR_INVALID_GINDEX);
+  }
+  return gindex.toString(2);
 }
 
 // Get the depth (root starting at 0) necessary to cover a subtree of `count` elements.
@@ -63,9 +61,8 @@ export function iterateAtDepth(depth: number, startIndex: bigint, count: bigint)
             const value = i;
             i++;
             return {done: false, value};
-          } else {
-            return {done: true, value: undefined};
           }
+          return {done: true, value: undefined};
         },
       };
     },

@@ -1,9 +1,10 @@
-import {allocUnsafe} from "./alloc.js";
-import {newInstance, WasmContext} from "./wasm.js";
-import type {HashObject} from "./hashObject.js";
-import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.js";
-import SHA256 from "./sha256.js";
+import {allocUnsafe} from "./alloc.ts";
+import type {HashObject} from "./hashObject.ts";
+import {byteArrayIntoHashObject, byteArrayToHashObject, hashObjectToByteArray} from "./hashObject.ts";
+import SHA256 from "./sha256.ts";
+import {WasmContext, newInstance} from "./wasm.ts";
 export {HashObject, byteArrayToHashObject, hashObjectToByteArray, byteArrayIntoHashObject, SHA256};
+export {allocUnsafe};
 
 let ctx: WasmContext;
 export let simdEnabled: boolean;
@@ -302,10 +303,10 @@ export function hashInto(input: Uint8Array, output: Uint8Array): void {
 }
 
 function update(data: Uint8Array): void {
-  const INPUT_LENGTH = ctx.INPUT_LENGTH;
-  if (data.length > INPUT_LENGTH) {
-    for (let i = 0; i < data.length; i += INPUT_LENGTH) {
-      const sliced = data.subarray(i, i + INPUT_LENGTH);
+  const inputLength = ctx.INPUT_LENGTH;
+  if (data.length > inputLength) {
+    for (let i = 0; i < data.length; i += inputLength) {
+      const sliced = data.subarray(i, i + inputLength);
       inputUint8Array.set(sliced);
       ctx.update(wasmInputValue, sliced.length);
     }

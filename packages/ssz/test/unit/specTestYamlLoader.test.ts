@@ -1,10 +1,8 @@
-import {describe, it, expect} from "vitest";
 import jsyaml from "js-yaml";
-import {readYamlNumbersAsStrings} from "../spec/testRunner.js";
-import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.js";
-import {toHexString} from "../../src/index.js";
-
-/* eslint-disable quotes */
+import {describe, expect, it} from "vitest";
+import {toHexString} from "../../src/index.ts";
+import {BeaconBlockHeader} from "../lodestarTypes/phase0/sszTypes.ts";
+import {readYamlNumbersAsStrings} from "../spec/testRunner.ts";
 
 describe("Spec test YAML loader", () => {
   it("Load YAML string number", () => {

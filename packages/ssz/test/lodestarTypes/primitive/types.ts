@@ -1,5 +1,5 @@
-import {ValueOf} from "../../../src/index.js";
-import * as ssz from "./sszTypes.js";
+import {ValueOf} from "../../../src/index.ts";
+import * as ssz from "./sszTypes.ts";
 
 // Each type exported here contains both a compile-time type
 // (a typescript interface) and a run-time ssz type (a javascript variable)

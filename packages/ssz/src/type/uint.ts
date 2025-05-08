@@ -1,10 +1,8 @@
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {namedClass} from "../util/named.js";
-import {Require} from "../util/types.js";
-import {ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ByteViews} from "./abstract.ts";
+import {BasicType} from "./basic.ts";
 
 const MAX_SAFE_INTEGER_BN = BigInt(Number.MAX_SAFE_INTEGER);
 const BIGINT_2_POW_64 = BigInt(2) ** BigInt(64);
@@ -51,7 +49,10 @@ export class UintNumberType extends BasicType<number> {
   private readonly clipInfinity: boolean;
   private readonly setBitwiseOR: boolean;
 
-  constructor(readonly byteLength: UintNumberByteLen, opts?: UintNumberOpts) {
+  constructor(
+    readonly byteLength: UintNumberByteLen,
+    opts?: UintNumberOpts
+  ) {
     super();
 
     if (byteLength > 8) {
@@ -126,11 +127,16 @@ export class UintNumberType extends BasicType<number> {
         const b = dataView.getUint32(start + 4, true);
         if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
           return Infinity;
-        } else {
-          return b * NUMBER_2_POW_32 + a;
         }
+        return b * NUMBER_2_POW_32 + a;
       }
     }
+  }
+
+  value_toTree(value: number): Node {
+    const node = LeafNode.fromZero();
+    node.setUint(this.byteLength, 0, value, this.clipInfinity);
+    return node;
   }
 
   tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
@@ -179,39 +185,41 @@ export class UintNumberType extends BasicType<number> {
   fromJson(json: unknown): number {
     if (typeof json === "number") {
       return json;
-    } else if (typeof json === "string") {
+    }
+
+    if (typeof json === "string") {
       if (this.clipInfinity && json === this.maxDecimalStr) {
         // Allow to handle max possible number
         return Infinity;
-      } else {
-        const num = parseInt(json, 10);
-        if (isNaN(num)) {
-          throw Error("JSON invalid number isNaN");
-        } else if (num > Number.MAX_SAFE_INTEGER) {
-          // Throw to prevent decimal precision errors downstream
-          throw Error("JSON invalid number > MAX_SAFE_INTEGER");
-        } else {
-          return num;
-        }
       }
-    } else if (typeof json === "bigint") {
+
+      const num = Number.parseInt(json, 10);
+      if (Number.isNaN(num)) throw Error("JSON invalid number isNaN");
+
+      if (num > Number.MAX_SAFE_INTEGER) {
+        // Throw to prevent decimal precision errors downstream
+        throw Error("JSON invalid number > MAX_SAFE_INTEGER");
+      }
+
+      return num;
+    }
+
+    if (typeof json === "bigint") {
       if (json > MAX_SAFE_INTEGER_BN) {
         // Throw to prevent decimal precision errors downstream
         throw Error("JSON invalid number > MAX_SAFE_INTEGER_BN");
-      } else {
-        return Number(json);
       }
-    } else {
-      throw Error(`JSON invalid type ${typeof json} expected number`);
+      return Number(json);
     }
+
+    throw Error(`JSON invalid type ${typeof json} expected number`);
   }
 
   toJson(value: number): unknown {
     if (value === Infinity) {
       return this.maxDecimalStr;
-    } else {
-      return value.toString(10);
     }
+    return value.toString(10);
   }
 }
 
@@ -239,7 +247,10 @@ export class UintBigintType extends BasicType<bigint> {
   readonly minSize: number;
   readonly maxSize: number;
 
-  constructor(readonly byteLength: UintBigintByteLen, opts?: UintBigintOpts) {
+  constructor(
+    readonly byteLength: UintBigintByteLen,
+    opts?: UintBigintOpts
+  ) {
     super();
 
     if (byteLength > 32) {
@@ -369,13 +380,9 @@ export class UintBigintType extends BasicType<bigint> {
   // JSON
 
   fromJson(json: unknown): bigint {
-    if (typeof json === "bigint") {
-      return json;
-    } else if (typeof json === "string" || typeof json === "number") {
-      return BigInt(json);
-    } else {
-      throw Error(`JSON invalid type ${typeof json} expected bigint`);
-    }
+    if (typeof json === "bigint") return json;
+    if (typeof json === "string" || typeof json === "number") return BigInt(json);
+    throw Error(`JSON invalid type ${typeof json} expected bigint`);
   }
 
   toJson(value: bigint): unknown {

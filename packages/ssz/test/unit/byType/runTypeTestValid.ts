@@ -1,11 +1,9 @@
-import {describe, it, expect} from "vitest";
-import {toHexString, TreeViewDU, UnionType} from "../../../src/index.js";
-import {Type} from "../../../src/type/abstract.js";
-import {isCompositeType} from "../../../src/type/composite.js";
-import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest.js";
-import {runProofTestOnAllJsonPaths} from "./runTypeProofTest.js";
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {describe, expect, it} from "vitest";
+import {TreeViewDU, UnionType, toHexString} from "../../../src/index.ts";
+import {Type} from "../../../src/type/abstract.ts";
+import {isCompositeType} from "../../../src/type/composite.ts";
+import {runValidSszTest, toJsonOrString} from "../../spec/runValidTest.ts";
+import {runProofTestOnAllJsonPaths} from "./runTypeProofTest.ts";
 
 export type TypeTestValid = {
   id?: string;

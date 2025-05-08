@@ -1,9 +1,9 @@
-import {zeroNode} from "./zeroNode.js";
-import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex.js";
-import {Node, LeafNode, BranchNode} from "./node.js";
-import {HashComputationLevel, levelAtIndex} from "./hashComputation.js";
-import {createNodeFromProof, createProof, Proof, ProofInput} from "./proof/index.js";
-import {createSingleProof} from "./proof/single.js";
+import {Gindex, GindexBitstring, convertGindexToBitstring} from "./gindex.ts";
+import {HashComputationLevel, levelAtIndex} from "./hashComputation.ts";
+import {BranchNode, LeafNode, Node} from "./node.ts";
+import {Proof, ProofInput, createNodeFromProof, createProof} from "./proof/index.ts";
+import {createSingleProof} from "./proof/single.ts";
+import {zeroNode} from "./zeroNode.ts";
 
 export type Hook = (newRootNode: Node) => void;
 
@@ -237,8 +237,9 @@ export function setNodeWithFn(
   // Pre-compute entire bitstring instead of using an iterator (25% faster)
   const gindexBitstring = convertGindexToBitstring(gindex);
   const parentNodes = getParentNodes(rootNode, gindexBitstring);
-  const lastParentNode = parentNodes[parentNodes.length - 1];
-  const lastBit = gindexBitstring[gindexBitstring.length - 1];
+  const lastParentNode = parentNodes.at(-1);
+  if (!lastParentNode) throw new Error("Invalid tree - can not find last parent");
+  const lastBit = gindexBitstring.at(-1);
   const oldNode = lastBit === "1" ? lastParentNode.right : lastParentNode.left;
   const newNode = getNewNode(oldNode);
 
@@ -541,14 +542,14 @@ export function getNodesAtDepth(rootNode: Node, depth: number, startIndex: numbe
   // Optimized paths for short trees (x20 times faster)
   if (depth === 0) {
     return startIndex === 0 && count > 0 ? [rootNode] : [];
-  } else if (depth === 1) {
-    if (count === 0) {
-      return [];
-    } else if (count === 1) {
+  }
+
+  if (depth === 1) {
+    if (count === 0) return [];
+    if (count === 1) {
       return startIndex === 0 ? [rootNode.left] : [rootNode.right];
-    } else {
-      return [rootNode.left, rootNode.right];
     }
+    return [rootNode.left, rootNode.right];
   }
 
   // Ignore first bit "1", then substract 1 to get to the parent

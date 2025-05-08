@@ -1,8 +1,8 @@
-import {describe, it} from "vitest";
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src/index.js";
-import {allForks, altair, bellatrix, phase0, ssz} from "../../lodestarTypes/index.js";
-import {ForkName} from "../../utils/fork.js";
+import {describe, it} from "vitest";
+import {CompositeView, CompositeViewDU, ContainerType, ValueOf} from "../../../src/index.ts";
+import {allForks, altair, bellatrix, phase0, ssz} from "../../lodestarTypes/index.ts";
+import {ForkName} from "../../utils/fork.ts";
 
 /** False variable to not run code but still compile with Typescript */
 const alwaysFalse = 0 < 1;
@@ -378,28 +378,28 @@ describe("Eth2 allForks BeaconState, non-cached and cached", () => {
     genericArgCachedBeaconStateAllForks(getCachedBeaconState(typeMashup.defaultViewDU()));
     genericArgBeaconStateAllForks(getCachedBeaconState(typeMashup.defaultViewDU()));
 
-    function assertValue(state: phase0.BeaconState | altair.BeaconState | bellatrix.BeaconState): void {
-      state;
+    function assertValue(_state: phase0.BeaconState | altair.BeaconState | bellatrix.BeaconState): void {
+      _state;
     }
     function assertView(
-      state:
+      _state:
         | CompositeView<typeof ssz.phase0.BeaconState>
         | CompositeView<typeof ssz.altair.BeaconState>
         | CompositeView<typeof ssz.bellatrix.BeaconState>
         | CompositeView<typeof ssz.capella.BeaconState>
         | CompositeView<typeof ssz.deneb.BeaconState>
     ): void {
-      state;
+      _state;
     }
     function assertViewDU(
-      state:
+      _state:
         | CompositeViewDU<typeof ssz.phase0.BeaconState>
         | CompositeViewDU<typeof ssz.altair.BeaconState>
         | CompositeViewDU<typeof ssz.bellatrix.BeaconState>
         | CompositeViewDU<typeof ssz.capella.BeaconState>
         | CompositeViewDU<typeof ssz.deneb.BeaconState>
     ): void {
-      state;
+      _state;
     }
   });
 });

@@ -1,6 +1,6 @@
 import fc from "fast-check";
-import {describe, it, expect} from "vitest";
-import {List} from "../../src/List.js";
+import {describe, expect, it} from "vitest";
+import {List} from "../../src/List.ts";
 
 describe("List", () => {
   it("List.empty isEmpty", () => {

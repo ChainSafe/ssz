@@ -1,12 +1,12 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
-  computeProofGindices,
-  computeProofBitstrings,
-  sortInOrderBitstrings,
-  filterParentBitstrings,
   computeMultiProofBitstrings,
+  computeProofBitstrings,
+  computeProofGindices,
+  filterParentBitstrings,
   sortDecreasingBitstrings,
-} from "../../../src/proof/util.js";
+  sortInOrderBitstrings,
+} from "../../../src/proof/util.ts";
 
 describe("computeProofGindices", () => {
   it("simple implementation should match bitstring implementation", () => {
@@ -14,8 +14,8 @@ describe("computeProofGindices", () => {
     for (const gindex of gindices) {
       const simple = computeProofGindices(gindex);
       const bitstring = computeProofBitstrings(gindex.toString(2));
-      expect(new Set([...bitstring.branch].map((str) => BigInt("0b" + str)))).toEqual(simple.branch);
-      expect(new Set([...bitstring.path].map((str) => BigInt("0b" + str)))).toEqual(simple.path);
+      expect(new Set([...bitstring.branch].map((str) => BigInt(`0b${str}`)))).toEqual(simple.branch);
+      expect(new Set([...bitstring.path].map((str) => BigInt(`0b${str}`)))).toEqual(simple.path);
     }
   });
 
@@ -58,7 +58,7 @@ describe("sortInOrderBitstrings", () => {
       const actual = sortInOrderBitstrings(
         gindices.map((g) => g.toString(2)),
         bitLength
-      ).map((str) => BigInt("0b" + str));
+      ).map((str) => BigInt(`0b${str}`));
       expect(actual).toEqual(output);
     }
   });
@@ -78,7 +78,7 @@ describe("filterParentBitstrings", () => {
       },
     ];
     for (const {input, output} of testCases) {
-      const actual = filterParentBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt("0b" + str));
+      const actual = filterParentBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt(`0b${str}`));
       expect(new Set(actual)).toEqual(new Set(output));
     }
   });
@@ -99,7 +99,7 @@ describe("computeMultiProofBitstrings", () => {
       },
     ];
     for (const {input, output} of testCases) {
-      const actual = computeMultiProofBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt("0b" + str));
+      const actual = computeMultiProofBitstrings(input.map((g) => g.toString(2))).map((str) => BigInt(`0b${str}`));
       expect(actual).toEqual(output);
     }
   });

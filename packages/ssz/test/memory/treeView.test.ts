@@ -1,6 +1,6 @@
 import {LeafNode, Tree, zeroNode} from "@chainsafe/persistent-merkle-tree";
 import {MutableVector} from "@chainsafe/persistent-ts";
-import {testRunnerMemory} from "./testRunnerMemory.js";
+import {testRunnerMemory} from "./testRunnerMemory.ts";
 
 // Results in Linux Dec 2021
 //
@@ -81,7 +81,6 @@ function testRunnerMemoryBpi(testCases: TestCase[]): void {
       convergeFactor: 0.2 / 100,
     });
 
-    // eslint-disable-next-line no-console
     console.log(`${id.padEnd(longestId)} - ${bpi.toFixed(1)} bytes / instance`);
   }
 }

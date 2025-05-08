@@ -4,8 +4,8 @@ import {
   ListBasicType,
   ListCompositeType,
   VectorCompositeType,
-} from "../../../src/index.js";
-import {preset, FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT} from "../params.js";
+} from "../../../src/index.ts";
+import {FINALIZED_ROOT_DEPTH, NEXT_SYNC_COMMITTEE_DEPTH, SYNC_COMMITTEE_SUBNET_COUNT, preset} from "../params.ts";
 const {
   SYNC_COMMITTEE_SIZE,
   HISTORICAL_ROOTS_LIMIT,
@@ -13,8 +13,8 @@ const {
   EPOCHS_PER_SYNC_COMMITTEE_PERIOD,
   SLOTS_PER_EPOCH,
 } = preset;
-import * as phase0Ssz from "../phase0/sszTypes.js";
-import * as primitiveSsz from "../primitive/sszTypes.js";
+import * as phase0Ssz from "../phase0/sszTypes.ts";
+import * as primitiveSsz from "../primitive/sszTypes.ts";
 
 const {
   Bytes32,

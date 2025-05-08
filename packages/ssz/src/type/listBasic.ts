@@ -1,30 +1,28 @@
-import {LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "./abstract.js";
-import {BasicType} from "./basic.js";
-import {ByteViews} from "./composite.js";
+import {allocUnsafe} from "@chainsafe/as-sha256";
+import {HashComputationLevel, LeafNode, Node, Tree, merkleizeBlocksBytes} from "@chainsafe/persistent-merkle-tree";
 import {
-  value_deserializeFromBytesArrayBasic,
-  value_serializeToBytesArrayBasic,
-  tree_deserializeFromBytesArrayBasic,
-  tree_serializeToBytesArrayBasic,
+  ValueWithCachedPermanentRoot,
+  cacheRoot,
+  maxChunksToDepth,
+  symbolCachedPermanentRoot,
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayBasicType} from "../view/arrayBasic.ts";
+import {ListBasicTreeView} from "../view/listBasic.ts";
+import {ListBasicTreeViewDU} from "../viewDU/listBasic.ts";
+import {ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
+import {
   addLengthNode,
   setChunksNode,
-} from "./arrayBasic.js";
-import {
-  mixInLength,
-  maxChunksToDepth,
-  splitIntoRootChunks,
-  symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ArrayBasicType} from "../view/arrayBasic.js";
-import {ListBasicTreeView} from "../view/listBasic.js";
-import {ListBasicTreeViewDU} from "../viewDU/listBasic.js";
-import {ArrayType} from "./array.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+  tree_deserializeFromBytesArrayBasic,
+  tree_serializeToBytesArrayBasic,
+  value_deserializeFromBytesArrayBasic,
+  value_serializeToBytesArrayBasic,
+} from "./arrayBasic.ts";
+import {BasicType} from "./basic.ts";
+import {ByteViews} from "./composite.ts";
 
 export interface ListBasicOpts {
   typeName?: string;
@@ -52,9 +50,19 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
+  );
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListBasicOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListBasicOpts
+  ) {
     super(elementType, opts?.cachePermanentRootStruct);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -85,7 +93,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ListBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ListBasicTreeViewDU(this, node, cache as any);
   }
 
@@ -174,20 +182,52 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
       }
     }
 
-    const root = mixInLength(super.hashTreeRoot(value), value.length);
+    const root = allocUnsafe(32);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
-    if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
-    }
+    // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number, safeCache = false): void {
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        output.set(cachedRoot, offset);
+        return;
+      }
+    }
+
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
+
+    if (this.cachePermanentRootStruct) {
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
+    }
+  }
+
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const byteLen = this.value_serializedSize(value);
+    const blockByteLen = Math.ceil(byteLen / 64) * 64;
+    // reallocate this.blocksBuffer if needed
+    if (byteLen > this.blocksBuffer.length) {
+      // pad 1 chunk if maxChunkCount is not even
+      this.blocksBuffer = new Uint8Array(blockByteLen);
+    }
+    const blockBytes = this.blocksBuffer.subarray(0, blockByteLen);
+    const uint8Array = blockBytes.subarray(0, byteLen);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, value.length, {uint8Array, dataView}, 0, value);
-    return splitIntoRootChunks(uint8Array);
+
+    // all padding bytes must be zero, this is similar to set zeroHash(0)
+    this.blocksBuffer.subarray(byteLen, blockByteLen).fill(0);
+    return blockBytes;
   }
 
   // JSON: inherited from ArrayType

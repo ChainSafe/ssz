@@ -2,22 +2,25 @@ import {
   BitListType,
   BitVectorType,
   ContainerType,
-  ContainerNodeStructType,
   ListBasicType,
   ListCompositeType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../src/index.js";
-import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
-import {PartialListCompositeType} from "../../../src/type/partialListComposite.js";
+} from "../../../src/index.ts";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64.ts";
+import {PartialListCompositeType} from "../../../src/type/partialListComposite.ts";
 import {
-  preset,
-  MAX_REQUEST_BLOCKS,
+  ATTESTATION_SUBNET_COUNT,
   DEPOSIT_CONTRACT_TREE_DEPTH,
   JUSTIFICATION_BITS_LENGTH,
-  ATTESTATION_SUBNET_COUNT,
-} from "../params.js";
-import * as primitiveSsz from "../primitive/sszTypes.js";
+  MAX_REQUEST_BLOCKS,
+  preset,
+} from "../params.ts";
+import * as primitiveSsz from "../primitive/sszTypes.ts";
+import {ListValidatorType} from "./listValidator.ts";
+import {ValidatorNodeStruct} from "./validator.ts";
+
+export {ValidatorNodeStruct};
 
 const {
   EPOCHS_PER_ETH1_VOTING_PERIOD,
@@ -36,6 +39,7 @@ const {
 } = preset;
 
 const {
+  // biome-ignore lint/suspicious/noShadowRestrictedNames: It is required to use `Boolean` name as type
   Boolean,
   Bytes32,
   UintNum64,
@@ -261,12 +265,14 @@ export const ValidatorContainer = new ContainerType(
   {typeName: "Validator", jsonCase: "eth2"}
 );
 
-export const ValidatorNodeStruct = new ContainerNodeStructType(ValidatorContainer.fields, ValidatorContainer.opts);
 // The main Validator type is the 'ContainerNodeStructType' version
 export const Validator = ValidatorNodeStruct;
 
 // Export as stand-alone for direct tree optimizations
-export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
+// since Mar 2025 instead of using ListCompositeType
+// export const Validators = new ListCompositeType(ValidatorNodeStruct, VALIDATOR_REGISTRY_LIMIT);
+// we switch to ListValidatorType which support batch hash
+export const Validators = new ListValidatorType(VALIDATOR_REGISTRY_LIMIT);
 export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 export const RandaoMixes = new VectorCompositeType(Bytes32, EPOCHS_PER_HISTORICAL_VECTOR);
 export const Slashings = new VectorBasicType(Gwei, EPOCHS_PER_SLASHINGS_VECTOR);

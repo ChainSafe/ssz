@@ -9,6 +9,36 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/persistent-merkle-tree bumped from 1.0.0 to 1.0.1
 
+## [1.2.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.1.0...ssz-v1.2.0) (2025-03-13)
+
+
+### Features
+
+* get list composite by range ([#472](https://github.com/ChainSafe/ssz/issues/472)) ([#473](https://github.com/ChainSafe/ssz/issues/473)) ([867273f](https://github.com/ChainSafe/ssz/commit/867273fc88a8c9e50662ebf491caf2a584fcc48a))
+* model ListValidator ssz type ([#471](https://github.com/ChainSafe/ssz/issues/471)) ([9432799](https://github.com/ChainSafe/ssz/commit/9432799856f4f3e6cf3c43066715662313392f43))
+
+## [1.1.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.0.2...ssz-v1.1.0) (2025-03-12)
+
+
+### Features
+
+* add tests workflow for bun and deno ([#423](https://github.com/ChainSafe/ssz/issues/423)) ([089daed](https://github.com/ChainSafe/ssz/commit/089daeda999ca9887327ef06efa5bdf6507ae0e3))
+* forEach() api for ArrayComposite() ([#469](https://github.com/ChainSafe/ssz/issues/469)) ([7ad418c](https://github.com/ChainSafe/ssz/commit/7ad418ce08e6469b562244a14df65f05c1fffdc2))
+* improve type.hashTreeRoot() using batch ([#409](https://github.com/ChainSafe/ssz/issues/409)) ([66742f0](https://github.com/ChainSafe/ssz/commit/66742f0faf617f713744048609408365d6185780))
+
+
+### Bug Fixes
+
+* do not rebind node if unchanged child ViewDUs ([#470](https://github.com/ChainSafe/ssz/issues/470)) ([ab23b30](https://github.com/ChainSafe/ssz/commit/ab23b30ce2d940883816ea9cfbbf2473165353ca))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped from 1.0.0 to 1.1.0
+    * @chainsafe/persistent-merkle-tree bumped from 1.0.1 to 1.1.0
+
 ## [1.0.2](https://github.com/ChainSafe/ssz/compare/ssz-v1.0.1...ssz-v1.0.2) (2025-01-30)
 
 

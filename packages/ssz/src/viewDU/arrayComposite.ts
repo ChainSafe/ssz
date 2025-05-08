@@ -1,15 +1,15 @@
 import {
+  HashComputationLevel,
+  Node,
   getHashComputations,
   getNodeAtDepth,
   getNodesAtDepth,
-  HashComputationLevel,
-  Node,
   setNodesAtDepth,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
-import {ArrayCompositeType} from "../view/arrayComposite.js";
-import {TreeViewDU} from "./abstract.js";
+import {ValueOf} from "../type/abstract.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.ts";
+import {ArrayCompositeType} from "../view/arrayComposite.ts";
+import {TreeViewDU} from "./abstract.ts";
 
 export type ArrayCompositeTreeViewDUCache = {
   nodes: Node[];
@@ -19,7 +19,7 @@ export type ArrayCompositeTreeViewDUCache = {
 };
 
 export class ArrayCompositeTreeViewDU<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends TreeViewDU<ArrayCompositeType<ElementType>> {
   protected nodes: Node[];
   protected caches: unknown[];
@@ -147,11 +147,15 @@ export class ArrayCompositeTreeViewDU<
   /**
    * Returns all elements at every index, if an index is modified it will return the modified view.
    * No need to commit() before calling this function.
+   * @param views optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonly(): CompositeViewDU<ElementType>[] {
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    if (views && views.length !== this._length) {
+      throw Error(`Expected ${this._length} views, got ${views.length}`);
+    }
     this.populateAllOldNodes();
 
-    const views = new Array<CompositeViewDU<ElementType>>(this._length);
+    views = views ?? new Array<CompositeViewDU<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       // this will get pending change first, if not it will get from the `this.nodes` array
       views[i] = this.getReadonly(i);
@@ -160,16 +164,86 @@ export class ArrayCompositeTreeViewDU<
   }
 
   /**
-   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * Apply `fn` to each ViewDU in the array.
+   * Similar to getAllReadOnly(), no need to commit() before calling this function.
+   * if an item is modified it will return the modified view.
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  forEach(fn: (viewDU: CompositeViewDU<ElementType>, index: number) => void): void {
+    this.populateAllOldNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.getReadonly(i), i);
+    }
+  }
+
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
+   */
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this._length) {
+      throw Error(`Expected ${this._length} values, got ${values.length}`);
+    }
     this.populateAllNodes();
 
-    const values = new Array<ValueOf<ElementType>>(this._length);
+    values = values ?? new Array<ValueOf<ElementType>>(this._length);
     for (let i = 0; i < this._length; i++) {
       values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
     }
     return values;
+  }
+
+  /**
+   * Apply `fn` to each value in the array
+   */
+  forEachValue(fn: (value: ValueOf<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this._length; i++) {
+      fn(this.type.elementType.tree_toValue(this.nodes[i]), i);
+    }
+  }
+
+  /**
+   * Get by range of indexes. Returns an array of views of the Composite element type.
+   * This is similar to getAllReadonly() where we dont have to commit() before calling this function.
+   */
+  getReadonlyByRange(startIndex: number, count: number): CompositeViewDU<ElementType>[] {
+    if (startIndex < 0) {
+      throw Error(`Error getting by range, startIndex < 0: ${startIndex}`);
+    }
+
+    if (count <= 0) {
+      throw Error(`Error getting by range, count <= 0: ${count}`);
+    }
+
+    const originalLength = this.dirtyLength ? this.type.tree_getLength(this._rootNode) : this._length;
+    if (startIndex >= originalLength) {
+      throw Error(`Error getting by range, startIndex >= length: ${startIndex} >= ${originalLength}`);
+    }
+
+    count = Math.min(count, originalLength - startIndex);
+
+    let dataAvailable = true;
+    for (let i = startIndex; i < startIndex + count; i++) {
+      if (this.nodes[i] == null) {
+        dataAvailable = false;
+        break;
+      }
+    }
+
+    // if one of nodes is not available, get all nodes at depth
+    if (!dataAvailable) {
+      const nodes = getNodesAtDepth(this._rootNode, this.type.depth, startIndex, count);
+      for (const [i, node] of nodes.entries()) {
+        this.nodes[startIndex + i] = node;
+      }
+    }
+
+    const result = new Array<CompositeViewDU<ElementType>>(count);
+    for (let i = 0; i < count; i++) {
+      result[i] = this.getReadonly(startIndex + i);
+    }
+
+    return result;
   }
 
   /**
@@ -195,9 +269,12 @@ export class ArrayCompositeTreeViewDU<
 
     for (const [index, view] of this.viewsChanged) {
       const node = this.type.elementType.commitViewDU(view, offsetView, byLevelView);
-      // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
-      this.nodes[index] = node;
-      nodesChanged.push({index, node});
+      // there's a chance the view is not changed, no need to rebind nodes in that case
+      if (this.nodes[index] !== node) {
+        // Set new node in nodes array to ensure data represented in the tree and fast nodes access is equal
+        this.nodes[index] = node;
+        nodesChanged.push({index, node});
+      }
 
       // Cache the view's caches to preserve it's data after 'this.viewsChanged.clear()'
       const cache = this.type.elementType.cacheOfViewDU(view);

@@ -1,7 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {testRunnerMemory} from "./testRunnerMemory.js";
-
-/* eslint-disable no-console */
+import {testRunnerMemory} from "./testRunnerMemory.ts";
 
 // How to efficiently represent roots or bigger chunks of raw bytes
 //

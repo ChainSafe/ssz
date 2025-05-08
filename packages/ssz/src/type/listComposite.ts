@@ -1,31 +1,35 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  mixInLength,
+  HashComputationLevel,
+  Node,
+  Tree,
+  merkleizeBlockArray,
+  merkleizeBlocksBytes,
+} from "@chainsafe/persistent-merkle-tree";
+import {
+  ValueWithCachedPermanentRoot,
+  cacheRoot,
   maxChunksToDepth,
   symbolCachedPermanentRoot,
-  ValueWithCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.js";
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayCompositeType} from "../view/arrayComposite.ts";
+import {ListCompositeTreeView} from "../view/listComposite.ts";
+import {ListCompositeTreeViewDU} from "../viewDU/listComposite.ts";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
+import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.ts";
 import {
-  value_deserializeFromBytesArrayComposite,
-  value_serializedSizeArrayComposite,
-  value_serializeToBytesArrayComposite,
-  tree_serializedSizeArrayComposite,
+  maxSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
   tree_serializeToBytesArrayComposite,
-  value_getRootsArrayComposite,
-  maxSizeArrayComposite,
-} from "./arrayComposite.js";
-import {ArrayCompositeType} from "../view/arrayComposite.js";
-import {ListCompositeTreeView} from "../view/listComposite.js";
-import {ListCompositeTreeViewDU} from "../viewDU/listComposite.js";
-import {ArrayType} from "./array.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+  tree_serializedSizeArrayComposite,
+  value_deserializeFromBytesArrayComposite,
+  value_serializeToBytesArrayComposite,
+  value_serializedSizeArrayComposite,
+} from "./arrayComposite.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
 
 export interface ListCompositeOpts {
   typeName?: string;
@@ -40,8 +44,8 @@ export interface ListCompositeOpts {
  * - Composite types are always returned as views
  */
 export class ListCompositeType<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
+    ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
   >
   extends ArrayType<ElementType, ListCompositeTreeView<ElementType>, ListCompositeTreeViewDU<ElementType>>
   implements ArrayCompositeType<ElementType>
@@ -56,9 +60,20 @@ export class ListCompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly blockArray: Uint8Array[] = [];
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
+  );
   protected readonly defaultLen = 0;
 
-  constructor(readonly elementType: ElementType, readonly limit: number, opts?: ListCompositeOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly limit: number,
+    opts?: ListCompositeOpts
+  ) {
     super(elementType, opts?.cachePermanentRootStruct);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
@@ -74,7 +89,7 @@ export class ListCompositeType<
     this.maxSize = maxSizeArrayComposite(elementType, this.limit);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
   static named<ElementType extends CompositeType<any, CompositeView<ElementType>, CompositeViewDU<ElementType>>>(
     elementType: ElementType,
     limit: number,
@@ -89,7 +104,7 @@ export class ListCompositeType<
 
   getViewDU(node: Node, cache?: unknown): ListCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ListCompositeTreeViewDU(this, node, cache as any);
   }
 
@@ -180,17 +195,66 @@ export class ListCompositeType<
       }
     }
 
-    const root = mixInLength(super.hashTreeRoot(value), value.length);
+    const root = allocUnsafe(32);
+    const safeCache = true;
+    this.hashTreeRootInto(value, root, 0, safeCache);
 
-    if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
-    }
+    // hashTreeRootInto will cache the root if cachePermanentRootStruct is true
 
     return root;
   }
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    return value_getRootsArrayComposite(this.elementType, value.length, value);
+  hashTreeRootInto(value: ValueOf<ElementType>[], output: Uint8Array, offset: number, safeCache = false): void {
+    if (this.cachePermanentRootStruct) {
+      const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
+      if (cachedRoot) {
+        output.set(cachedRoot, offset);
+        return;
+      }
+    }
+
+    // should not call super.hashTreeRootInto() here
+    // use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation
+    // reallocate this.blockArray if needed
+    if (value.length > this.blockArray.length) {
+      const blockDiff = value.length - this.blockArray.length;
+      const newBlocksBytes = new Uint8Array(blockDiff * 64);
+      for (let i = 0; i < blockDiff; i++) {
+        this.blockArray.push(newBlocksBytes.subarray(i * 64, (i + 1) * 64));
+      }
+    }
+
+    // populate this.blockArray
+    for (let i = 0; i < value.length; i++) {
+      // 2 values share a block
+      const block = this.blockArray[Math.floor(i / 2)];
+      const offset = i % 2 === 0 ? 0 : 32;
+      this.elementType.hashTreeRootInto(value[i], block, offset);
+    }
+
+    const blockLimit = Math.ceil(value.length / 2);
+    // zero out the last block if needed
+    if (value.length % 2 === 1) {
+      this.blockArray[blockLimit - 1].fill(0, 32);
+    }
+
+    // compute hashTreeRoot
+    merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthBlockBytes, 0);
+
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
+
+    if (this.cachePermanentRootStruct) {
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
+    }
+  }
+
+  protected getBlocksBytes(): Uint8Array {
+    // we use merkleizeBlockArray for hashTreeRoot() computation
+    throw Error("getBlockBytes should not be called for ListCompositeType");
   }
 
   // JSON: inherited from ArrayType

@@ -1,28 +1,27 @@
 import {
-  Node,
-  getNodesAtDepth,
-  subtreeFillToContents,
-  Tree,
   Gindex,
-  toGindex,
+  HashComputationLevel,
+  Node,
+  Tree,
   concatGindices,
   getNode,
-  HashComputationLevel,
+  getNodesAtDepth,
+  subtreeFillToContents,
+  toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
-import {getContainerTreeViewClass} from "../view/container.js";
-import {ValueOfFields, FieldEntry, ContainerTreeViewType, ContainerTreeViewTypeConstructor} from "../view/container.js";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Case} from "../util/strings.ts";
+import {Require} from "../util/types.ts";
+import {getContainerTreeViewClass} from "../view/container.ts";
+import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields} from "../view/container.ts";
 import {
-  getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/container.js";
-import {Case} from "../util/strings.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+  getContainerTreeViewDUClass,
+} from "../viewDU/container.ts";
+import {Type, ValueOf} from "./abstract.ts";
+import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.ts";
 
 type BytesRange = {start: number; end: number};
 
@@ -79,7 +78,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
 
-  constructor(readonly fields: Fields, readonly opts?: ContainerOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    readonly opts?: ContainerOptions<Fields>
+  ) {
     super(opts?.cachePermanentRootStruct);
 
     // Render detailed typeName. Consumers should overwrite since it can get long
@@ -130,6 +132,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
+    const fieldBytes = this.fieldsEntries.length * 32;
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -272,15 +276,13 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // Merkleization
 
-  protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
-    const roots = new Array<Uint8Array>(this.fieldsEntries.length);
-
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
-      roots[i] = fieldType.hashTreeRoot(struct[fieldName]);
+      fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);
     }
-
-    return roots;
+    // remaining bytes are zeroed as we never write them
+    return this.blocksBuffer;
   }
 
   // Proofs
@@ -554,11 +556,9 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
       throw Error(`casingMap[${String(fieldName as symbol)}] not defined`);
     }
     return keyFromCaseMap as string;
-  } else if (jsonCase) {
-    return Case[jsonCase](fieldName as string);
-  } else {
-    return fieldName as string;
   }
+  if (jsonCase) return Case[jsonCase](fieldName as string);
+  return fieldName as string;
 }
 
 /**

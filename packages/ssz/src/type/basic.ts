@@ -1,7 +1,5 @@
 import {LeafNode} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "./abstract.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {Type} from "./abstract.ts";
 
 /**
  * Represents a basic type as defined in the spec:
@@ -30,11 +28,17 @@ export abstract class BasicType<V> extends Type<V> {
   }
 
   hashTreeRoot(value: V): Uint8Array {
-    // TODO: Optimize
-    const uint8Array = new Uint8Array(32);
+    const root = new Uint8Array(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
+  }
+
+  hashTreeRootInto(value: V, output: Uint8Array, offset: number): void {
+    const uint8Array = output.subarray(offset, offset + 32);
+    // output could have preallocated data, some types may not fill the whole 32 bytes
+    uint8Array.fill(0);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     this.value_serializeToBytes({uint8Array, dataView}, 0, value);
-    return uint8Array;
   }
 
   clone(value: V): V {

@@ -1,13 +1,13 @@
-import {describe, it, expect, vi} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {
+  ProofType,
   computeDescriptor,
   createNodeFromProof,
   createProof,
   deserializeProof,
-  ProofType,
   serializeProof,
-} from "../../../src/proof/index.js";
-import {createTree} from "../../utils/tree.js";
+} from "../../../src/proof/index.ts";
+import {createTree} from "../../utils/tree.ts";
 
 describe("proof equivalence", () => {
   it("should compute the same root from different proof types - single leaf", () => {

@@ -1,6 +1,6 @@
-import {describe, it, expect} from "vitest";
-import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset.js";
-import {zeroNode} from "../../../src/zeroNode.js";
+import {describe, expect, it} from "vitest";
+import {createNodeFromTreeOffsetProof, createTreeOffsetProof} from "../../../src/proof/treeOffset.ts";
+import {zeroNode} from "../../../src/zeroNode.ts";
 
 describe("computeTreeOffsetProof", () => {
   it("should properly compute known testcases", () => {

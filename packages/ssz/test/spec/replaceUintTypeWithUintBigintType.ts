@@ -1,20 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-, @typescript-eslint/no-explicit-any */
-
 // #######################################
 // # MUST NOT IMPORT FROM @chainsafe/ssz #
 // #######################################
 import {
-  Type,
-  UintNumberType,
-  UintBigintType,
+  ContainerNodeStructType,
   ContainerType,
   ListBasicType,
   ListCompositeType,
+  Type,
+  UintBigintType,
+  UintNumberType,
   VectorBasicType,
   VectorCompositeType,
-  ContainerNodeStructType,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 /**
  * Transform the type to something that is safe to deserialize
@@ -35,9 +32,8 @@ export function replaceUintTypeWithUintBigintType<T extends Type<any>>(type: T):
 
     if (type instanceof ContainerNodeStructType) {
       return new ContainerNodeStructType(fields, type.opts) as unknown as T;
-    } else {
-      return new ContainerType(fields, type.opts) as unknown as T;
     }
+    return new ContainerType(fields, type.opts) as unknown as T;
   }
 
   // For List or vectors replace the subType

@@ -1,5 +1,5 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {ByteListType, ListBasicType, UintNumberType} from "../../src/index.ts";
 
 describe("ByteListType vs BasicListType<byte>", () => {
   const limit = 256 * 2;
@@ -16,32 +16,32 @@ describe("ByteListType vs BasicListType<byte>", () => {
   const tbByteLsSerialized = byteLs.serialize(tbByteLs);
   const tbBasicLsSerialized = tbBasicLs.serialize();
 
-  const ROUNDS = 10000;
+  const rounds = 10000;
 
   bench("ByteListType - deserialize", () => {
-    for (let i = 0; i < ROUNDS; i++) {
+    for (let i = 0; i < rounds; i++) {
       byteLs.deserialize(tbByteLsSerialized);
     }
   });
   bench("BasicListType<byte> - deserialize", () => {
-    for (let i = 0; i < ROUNDS; i++) {
+    for (let i = 0; i < rounds; i++) {
       basicLs.deserialize(tbBasicLsSerialized);
     }
   });
 
   bench("ByteListType - serialize", () => {
-    for (let i = 0; i < ROUNDS; i++) {
+    for (let i = 0; i < rounds; i++) {
       byteLs.serialize(tbByteLs);
     }
   });
   bench("BasicListType<byte> - serialize", () => {
-    for (let i = 0; i < ROUNDS; i++) {
+    for (let i = 0; i < rounds; i++) {
       tbBasicLs.serialize();
     }
   });
 
   bench("BasicListType<byte> - tree_convertToStruct", () => {
-    for (let i = 0; i < ROUNDS; i++) {
+    for (let i = 0; i < rounds; i++) {
       tbBasicLs.toValue();
     }
   });

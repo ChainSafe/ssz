@@ -1,15 +1,15 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import {describe, it, vi} from "vitest";
-import {isCompositeType, Type} from "../../src/index.js";
-import {ssz} from "../lodestarTypes/index.js";
-import {ethereumConsensusSpecsTests} from "../specTestVersioning.js";
-import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType.js";
-import {parseSszStaticTestcase} from "./testRunner.js";
-import {runValidSszTest} from "./runValidTest.js";
-import {ForkName} from "../utils/fork.js";
-import {ACTIVE_PRESET} from "../lodestarTypes/params.js";
-import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
+import {Type, isCompositeType} from "../../src/index.ts";
+import {ssz} from "../lodestarTypes/index.ts";
+import {ACTIVE_PRESET} from "../lodestarTypes/params.ts";
+import {ethereumConsensusSpecsTests} from "../specTestVersioning.ts";
+import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.ts";
+import {ForkName} from "../utils/fork.ts";
+import {replaceUintTypeWithUintBigintType} from "./replaceUintTypeWithUintBigintType.ts";
+import {runValidSszTest} from "./runValidTest.ts";
+import {parseSszStaticTestcase} from "./testRunner.ts";
 
 // ssz_static
 // | Attestation
@@ -20,15 +20,6 @@ import {runProofTestOnAllJsonPaths} from "../unit/byType/runTypeProofTest.js";
 //
 // Docs: https://github.com/ethereum/consensus-specs/blob/master/tests/formats/ssz_static/core.md
 
-/* eslint-disable
-  @typescript-eslint/naming-convention,
-  @typescript-eslint/no-unsafe-assignment,
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access,
-  no-console
-*/
-
-// eslint-disable-next-line
 type Types = Record<string, Type<any>>;
 
 export function sszStatic(fork: ForkName): void {
@@ -59,7 +50,7 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
           continue;
         }
 
-        it(testId, function () {
+        it(testId, () => {
           // Mainnet must deal with big full states and hash each one multiple times
           if (preset === "mainnet") {
             vi.setConfig({testTimeout: 30 * 1000});

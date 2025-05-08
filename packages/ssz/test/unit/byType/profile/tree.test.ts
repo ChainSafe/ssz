@@ -1,5 +1,5 @@
-import {describe, it, expect} from "vitest";
 import {Tree} from "@chainsafe/persistent-merkle-tree";
+import {describe, expect, it} from "vitest";
 import {
   BitArray,
   BitListType,
@@ -15,14 +15,14 @@ import {
   OptionalType,
   ProfileType,
   StableContainerType,
-  toHexString,
   UnionType,
   ValueOf,
   VectorBasicType,
   VectorCompositeType,
-} from "../../../../src/index.js";
-import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.js";
-import {runViewTestMutation} from "../runViewTestMutation.js";
+  toHexString,
+} from "../../../../src/index.ts";
+import {uint64NumInfType, uint64NumType} from "../../../utils/primitiveTypes.ts";
+import {runViewTestMutation} from "../runViewTestMutation.ts";
 
 // Test both ContainerType, ContainerNodeStructType only if
 // - All fields are immutable
@@ -239,7 +239,7 @@ runViewTestMutation({
   ],
 });
 
-describe("ProfileViewDU batchHashTreeRoot", function () {
+describe("ProfileViewDU batchHashTreeRoot", () => {
   const childContainerType = new ContainerType({f0: uint64NumInfType, f1: uint64NumInfType});
   const unionType = new UnionType([new NoneType(), uint64NumType]);
   const listBasicType = new ListBasicType(uint64NumType, 10);

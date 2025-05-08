@@ -1,12 +1,12 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {Hasher, HashObject, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.js";
-import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.js";
-import {hasher as nobleHasher} from "../../src/hasher/noble.js";
-import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.js";
-import {buildComparisonTrees} from "../utils/tree.js";
-import {HashComputationLevel, getHashComputations} from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {hasher as asSha256Hasher} from "../../src/hasher/as-sha256.ts";
+import {hasher as hashtreeHasher} from "../../src/hasher/hashtree.ts";
+import {HashObject, Hasher, setHasher, uint8ArrayToHashObject} from "../../src/hasher/index.ts";
+import {hasher as nobleHasher} from "../../src/hasher/noble.ts";
+import {HashComputationLevel, getHashComputations} from "../../src/index.ts";
+import {buildComparisonTrees} from "../utils/tree.ts";
 
-describe("hasher", function () {
+describe("hasher", () => {
   const iterations = 500_000;
 
   const root1 = new Uint8Array(32);
@@ -65,7 +65,7 @@ describe("hasher", function () {
   }
 });
 
-describe("hashtree", function () {
+describe("hashtree", () => {
   bench({
     id: "getHashComputations",
     beforeEach: () => {

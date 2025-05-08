@@ -1,9 +1,9 @@
-import {getNodesAtDepth, LeafNode, Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract.js";
-import {BasicType} from "../type/basic.js";
-import {CompositeType} from "../type/composite.js";
-import {TreeViewDU} from "../viewDU/abstract.js";
-import {TreeView} from "./abstract.js";
+import {HashComputationLevel, LeafNode, Node, Tree, getNodesAtDepth} from "@chainsafe/persistent-merkle-tree";
+import {ValueOf} from "../type/abstract.ts";
+import {BasicType} from "../type/basic.ts";
+import {CompositeType} from "../type/composite.ts";
+import {TreeViewDU} from "../viewDU/abstract.ts";
+import {TreeView} from "./abstract.ts";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayBasicType<ElementType extends BasicType<unknown>> = CompositeType<
@@ -38,7 +38,10 @@ export type ArrayType = {
 };
 
 export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends TreeView<ArrayBasicType<ElementType>> {
-  constructor(readonly type: ArrayBasicType<ElementType>, protected tree: Tree) {
+  constructor(
+    readonly type: ArrayBasicType<ElementType>,
+    protected tree: Tree
+  ) {
     super();
   }
 
@@ -61,7 +64,6 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     const leafNode = this.tree.getNodeAtDepth(this.type.depth, chunkIndex) as LeafNode;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.type.elementType.tree_getFromPackedNode(leafNode, index) as ValueOf<ElementType>;
   }
 
@@ -87,14 +89,18 @@ export class ArrayBasicTreeView<ElementType extends BasicType<unknown>> extends 
 
   /**
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAll(): ValueOf<ElementType>[] {
+  getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this.length) {
+      throw Error(`Expected ${this.length} values, got ${values.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
     const leafNodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, chunkCount) as LeafNode[];
 
-    const values = new Array<ValueOf<ElementType>>(length);
+    values = values ?? new Array<ValueOf<ElementType>>(length);
     const itemsPerChunk = this.type.itemsPerChunk; // Prevent many access in for loop below
     const lenFullNodes = Math.floor(length / itemsPerChunk);
     const remainder = length % itemsPerChunk;

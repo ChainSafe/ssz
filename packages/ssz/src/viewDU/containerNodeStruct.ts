@@ -1,12 +1,10 @@
-import {Node, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isCompositeType} from "../type/composite.js";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {ContainerTypeGeneric, ValueOfFields} from "../view/container.js";
-import {ContainerTreeViewDUTypeConstructor} from "./container.js";
-import {TreeViewDU} from "./abstract.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {HashComputationLevel, Node} from "@chainsafe/persistent-merkle-tree";
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {isCompositeType} from "../type/composite.ts";
+import {ContainerTypeGeneric, ValueOfFields} from "../view/container.ts";
+import {TreeViewDU} from "./abstract.ts";
+import {ContainerTreeViewDUTypeConstructor} from "./container.ts";
 
 export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
   ContainerTypeGeneric<Fields>
@@ -14,7 +12,10 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
   protected valueChanged: ValueOfFields<Fields> | null = null;
   protected _rootNode: BranchNodeStruct<ValueOfFields<Fields>>;
 
-  constructor(readonly type: ContainerTypeGeneric<Fields>, node: Node) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    node: Node
+  ) {
     super();
     this._rootNode = node as BranchNodeStruct<ValueOfFields<Fields>>;
   }
@@ -24,6 +25,7 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
   }
 
   get cache(): void {
+    // biome-ignore lint/suspicious/useGetterReturn: There is no cache to return
     return;
   }
 
@@ -74,7 +76,6 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         // TODO: Review the memory cost of this closures
         get: function (this: CustomContainerTreeViewDU): ValueOf<Fields[keyof Fields]> {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return (this.valueChanged || this._rootNode.value)[fieldName];
         },
 

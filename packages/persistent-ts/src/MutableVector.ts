@@ -1,10 +1,10 @@
-import {PersistentVector, TransientVector} from "./Vector.js";
+import {PersistentVector, TransientVector} from "./Vector.ts";
 
 /**
  * A mutable reference to a PersistentVector or TransientVector
  */
 export class MutableVector<T> implements Iterable<T> {
-  public vector: PersistentVector<T> | TransientVector<T>;
+  vector: PersistentVector<T> | TransientVector<T>;
 
   private constructor(vector: PersistentVector<T>) {
     this.vector = vector;

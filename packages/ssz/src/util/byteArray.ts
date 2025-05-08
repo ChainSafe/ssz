@@ -1,4 +1,4 @@
-import {ByteVector} from "../interface.js";
+import {ByteVector} from "../interface.ts";
 
 // Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
 const hexByByte = new Array<string>(256);
@@ -7,7 +7,7 @@ export function toHexString(bytes: Uint8Array | ByteVector): string {
   let hex = "0x";
   for (const byte of bytes) {
     if (!hexByByte[byte]) {
-      hexByByte[byte] = byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
+      hexByByte[byte] = byte < 16 ? `0${byte.toString(16)}` : byte.toString(16);
     }
     hex += hexByByte[byte];
   }

@@ -1,7 +1,7 @@
-import {describe, it, expect} from "vitest";
-import {ListBasicType, toHexString, UintNumberType} from "../../../../src/index.js";
-import {runViewTestMutation, TreeMutation} from "../runViewTestMutation.js";
-import {ListUintNum64Type} from "../../../../src/type/listUintNum64.js";
+import {describe, expect, it} from "vitest";
+import {ListBasicType, UintNumberType, toHexString} from "../../../../src/index.ts";
+import {ListUintNum64Type} from "../../../../src/type/listUintNum64.ts";
+import {TreeMutation, runViewTestMutation} from "../runViewTestMutation.ts";
 
 const limit = 100;
 const uint64NumInf = new UintNumberType(8, {clipInfinity: true});
@@ -241,7 +241,7 @@ describe("ListBasicType.sliceTo", () => {
   }
 });
 
-describe("ListBasicType batchHashTreeRoot", function () {
+describe("ListBasicType batchHashTreeRoot", () => {
   const value = [1, 2, 3, 4];
   const expectedRoot = ListN64Uint64NumberType.toView(value).hashTreeRoot();
 

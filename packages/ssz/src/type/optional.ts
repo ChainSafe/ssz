@@ -1,19 +1,19 @@
+import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
-  concatGindices,
   Gindex,
+  HashComputationLevel,
   Node,
   Tree,
-  zeroNode,
-  HashComputationLevel,
+  concatGindices,
   getHashComputations,
+  merkleizeBlocksBytes,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {mixInLength} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {Type, ByteViews, JsonPath, JsonPathProp} from "./abstract.js";
-import {CompositeType, isCompositeType} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ByteViews, JsonPath, JsonPathProp, Type} from "./abstract.ts";
+import {addLengthNode, getLengthFromRootNode} from "./arrayBasic.ts";
+import {CompositeType, isCompositeType} from "./composite.ts";
 
 export type NonOptionalType<T extends Type<unknown>> = T extends OptionalType<infer U> ? U : T;
 export type NonOptionalFields<Fields extends Record<string, Type<unknown>>> = {
@@ -47,8 +47,17 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
+  );
 
-  constructor(readonly elementType: ElementType, opts?: OptionalOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    opts?: OptionalOpts
+  ) {
     super();
 
     this.typeName = opts?.typeName ?? `Optional[${elementType.typeName}]`;
@@ -59,6 +68,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     this.minSize = 0;
     // Max size includes prepended 0x01 byte
     this.maxSize = elementType.maxSize + 1;
+    // maxChunkCount = 1 so this.blocksBuffer.length = 32 in this case
+    this.blocksBuffer = new Uint8Array(32);
   }
 
   static named<ElementType extends Type<unknown>>(
@@ -109,51 +120,44 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     if (value !== null) {
       output.uint8Array[offset] = 1;
       return this.elementType.value_serializeToBytes(output, offset + 1, value);
-    } else {
-      return offset;
     }
+    return offset;
   }
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfType<ElementType> {
-    if (start === end) {
-      return null as ValueOfType<ElementType>;
-    } else {
-      const selector = data.uint8Array[start];
-      if (selector !== 1) {
-        throw new Error(`Invalid selector for Optional type: ${selector}`);
-      }
-      return this.elementType.value_deserializeFromBytes(data, start + 1, end) as ValueOfType<ElementType>;
+    if (start === end) return null as ValueOfType<ElementType>;
+
+    const selector = data.uint8Array[start];
+    if (selector !== 1) {
+      throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
+    return this.elementType.value_deserializeFromBytes(data, start + 1, end) as ValueOfType<ElementType>;
   }
 
   tree_serializedSize(node: Node): number {
     const selector = getLengthFromRootNode(node);
 
-    if (selector === 0) {
-      return 0;
-    } else if (selector === 1) {
+    if (selector === 0) return 0;
+    if (selector === 1) {
       return 1 + this.elementType.value_serializedSize(node.left);
-    } else {
-      throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
+    throw new Error(`Invalid selector for Optional type: ${selector}`);
   }
 
   tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const selector = getLengthFromRootNode(node);
 
-    if (selector === 0) {
-      return offset;
-    } else if (selector === 1) {
+    if (selector === 0) return offset;
+    if (selector === 1) {
       output.uint8Array[offset] = 1;
       return this.elementType.tree_serializeToBytes(output, offset + 1, node.left);
-    } else {
-      throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
+    throw new Error(`Invalid selector for Optional type: ${selector}`);
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    let valueNode;
-    let selector;
+    let valueNode: Node;
+    let selector: number;
     if (start === end) {
       selector = 0;
       valueNode = zeroNode(0);
@@ -171,13 +175,27 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   // Merkleization
 
   hashTreeRoot(value: ValueOfType<ElementType>): Uint8Array {
-    const selector = value === null ? 0 : 1;
-    return mixInLength(super.hashTreeRoot(value), selector);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
   }
 
-  protected getRoots(value: ValueOfType<ElementType>): Uint8Array[] {
-    const valueRoot = value === null ? new Uint8Array(32) : this.elementType.hashTreeRoot(value);
-    return [valueRoot];
+  hashTreeRootInto(value: ValueOfType<ElementType>, output: Uint8Array, offset: number): void {
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
+    const selector = value === null ? 0 : 1;
+    this.mixInLengthBuffer.writeUIntLE(selector, 32, 6);
+    // one for hashTreeRoot(value), one for selector
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
+  }
+
+  protected getBlocksBytes(value: ValueOfType<ElementType>): Uint8Array {
+    if (value === null) {
+      this.blocksBuffer.fill(0);
+    } else {
+      this.elementType.hashTreeRootInto(value, this.blocksBuffer, 0);
+    }
+    return this.blocksBuffer;
   }
 
   // Proofs
@@ -186,33 +204,29 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     if (isCompositeType(this.elementType)) {
       const propIndex = this.elementType.getPropertyGindex(prop);
       return propIndex === null ? propIndex : concatGindices([VALUE_GINDEX, propIndex]);
-    } else {
-      throw new Error("not applicable for Optional basic type");
     }
+    throw new Error("not applicable for Optional basic type");
   }
 
   getPropertyType(prop: JsonPathProp): Type<unknown> {
     if (isCompositeType(this.elementType)) {
       return this.elementType.getPropertyType(prop);
-    } else {
-      throw new Error("not applicable for Optional basic type");
     }
+    throw new Error("not applicable for Optional basic type");
   }
 
   getIndexProperty(index: number): JsonPathProp | null {
     if (isCompositeType(this.elementType)) {
       return this.elementType.getIndexProperty(index);
-    } else {
-      throw new Error("not applicable for Optional basic type");
     }
+    throw new Error("not applicable for Optional basic type");
   }
 
   tree_createProofGindexes(node: Node, jsonPaths: JsonPath[]): Gindex[] {
     if (isCompositeType(this.elementType)) {
       return super.tree_createProofGindexes(node, jsonPaths);
-    } else {
-      throw new Error("not applicable for Optional basic type");
     }
+    throw new Error("not applicable for Optional basic type");
   }
 
   tree_getLeafGindices(rootGindex: bigint, rootNode?: Node): Gindex[] {
@@ -228,15 +242,15 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
         ...this.elementType.tree_getLeafGindices(concatGindices([rootGindex, VALUE_GINDEX]), rootNode.left),
         concatGindices([rootGindex, SELECTOR_GINDEX]),
       ];
-    } else if (selector === 0 || selector === 1) {
+    }
+    if (selector === 0 || selector === 1) {
       return [
         //
         concatGindices([rootGindex, VALUE_GINDEX]),
         concatGindices([rootGindex, SELECTOR_GINDEX]),
       ];
-    } else {
-      throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
+    throw new Error(`Invalid selector for Optional type: ${selector}`);
   }
 
   // JSON
@@ -254,11 +268,8 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
   }
 
   equals(a: ValueOfType<ElementType>, b: ValueOfType<ElementType>): boolean {
-    if (a === null && b === null) {
-      return true;
-    } else if (a === null || b === null) {
-      return false;
-    }
+    if (a === null && b === null) return true;
+    if (a === null || b === null) return false;
 
     return this.elementType.equals(a, b);
   }

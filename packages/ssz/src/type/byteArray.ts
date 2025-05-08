@@ -1,20 +1,17 @@
 import {
-  concatGindices,
   Gindex,
-  Node,
-  toGindex,
-  Tree,
   HashComputationLevel,
+  Node,
+  Tree,
+  concatGindices,
   getHashComputations,
+  toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {fromHexString, toHexString, byteArrayEquals} from "../util/byteArray.js";
-import {splitIntoRootChunks} from "../util/merkleize.js";
-import {ByteViews} from "./abstract.js";
-import {CompositeType, LENGTH_GINDEX} from "./composite.js";
+import {byteArrayEquals, fromHexString, toHexString} from "../util/byteArray.ts";
+import {ByteViews} from "./abstract.ts";
+import {CompositeType, LENGTH_GINDEX} from "./composite.ts";
 
 export type ByteArray = Uint8Array;
-
-/* eslint-disable @typescript-eslint/member-ordering */
 
 /**
  * ByteArray: ordered array collection of byte values
@@ -82,10 +79,21 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return Uint8Array.prototype.slice.call(data.uint8Array, start, end);
   }
 
+  value_toTree(value: ByteArray): Node {
+    // this saves 1 allocation of Uint8Array
+    const dataView = new DataView(value.buffer, value.byteOffset, value.byteLength);
+    return this.tree_deserializeFromBytes({uint8Array: value, dataView}, 0, value.length);
+  }
+
   // Merkleization
 
-  protected getRoots(value: ByteArray): Uint8Array[] {
-    return splitIntoRootChunks(value);
+  protected getBlocksBytes(value: ByteArray): Uint8Array {
+    // reallocate this.blocksBuffer if needed
+    if (value.length > this.blocksBuffer.length) {
+      const chunkCount = Math.ceil(value.length / 32);
+      this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
+    }
+    return getBlocksBytes(value, this.blocksBuffer);
   }
 
   // Proofs
@@ -148,4 +156,17 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
   }
 
   protected abstract assertValidSize(size: number): void;
+}
+
+export function getBlocksBytes(value: Uint8Array, blocksBuffer: Uint8Array): Uint8Array {
+  if (value.length > blocksBuffer.length) {
+    throw new Error(`data length ${value.length} exceeds blocksBuffer length ${blocksBuffer.length}`);
+  }
+
+  blocksBuffer.set(value);
+  const valueLen = value.length;
+  const blockByteLen = Math.ceil(valueLen / 64) * 64;
+  // all padding bytes must be zero, this is similar to set zeroHash(0)
+  blocksBuffer.subarray(valueLen, blockByteLen).fill(0);
+  return blocksBuffer.subarray(0, blockByteLen);
 }

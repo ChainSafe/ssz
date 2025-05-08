@@ -1,7 +1,5 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
 
-/* eslint-disable @typescript-eslint/member-ordering  */
-
 export type ValueOf<T extends Type<unknown>> = T extends Type<infer V> ? V : never;
 
 /**
@@ -144,6 +142,11 @@ export abstract class Type<V> {
    * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
    */
   abstract hashTreeRoot(value: V): Uint8Array;
+
+  /**
+   * Same to hashTreeRoot() but here we write result to output.
+   */
+  abstract hashTreeRootInto(value: V, output: Uint8Array, offset: number): void;
 
   // JSON support
 

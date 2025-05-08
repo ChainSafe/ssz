@@ -1,13 +1,13 @@
 import {Node} from "@chainsafe/persistent-merkle-tree";
-import {Type, ByteViews} from "./abstract.js";
-import {isCompositeType} from "./composite.js";
-import {ContainerType, ContainerOptions, renderContainerTypeName} from "./container.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {getContainerTreeViewClass} from "../view/containerNodeStruct.js";
-import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.js";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {ValueOfFields} from "../view/container.js";
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ValueOfFields} from "../view/container.ts";
+import {getContainerTreeViewClass} from "../view/containerNodeStruct.ts";
+import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.ts";
+import {ByteViews, Type} from "./abstract.ts";
+import {isCompositeType} from "./composite.ts";
+import {ContainerOptions, ContainerType, renderContainerTypeName} from "./container.ts";
 
 /**
  * ContainerNodeStruct: ordered heterogeneous collection of values.
@@ -24,7 +24,10 @@ import {ValueOfFields} from "../view/container.js";
  * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
  */
 export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
-  constructor(readonly fields: Fields, opts?: ContainerOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    opts?: ContainerOptions<Fields>
+  ) {
     super(fields, {
       // Overwrite default "Container" typeName
       // Render detailed typeName. Consumers should overwrite since it can get long
@@ -108,7 +111,6 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
     return new BranchNodeStruct(this.valueToTree.bind(this), value);
   }
 
-  // TODO: Optimize conversion
   private valueToTree(value: ValueOfFields<Fields>): Node {
     const uint8Array = new Uint8Array(this.value_serializedSize(value));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);

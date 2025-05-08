@@ -1,13 +1,18 @@
-import {getNodesAtDepth, Node, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
-import {mixInLength, maxChunksToDepth} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ByteViews} from "./composite.js";
-import {addLengthNode, getLengthFromRootNode, getChunksNodeFromRootNode} from "./arrayBasic.js";
-import {BitArray} from "../value/bitArray.js";
-import {BitArrayType} from "./bitArray.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {allocUnsafe} from "@chainsafe/as-sha256";
+import {
+  Node,
+  getNodesAtDepth,
+  merkleizeBlocksBytes,
+  packedNodeRootsToBytes,
+  packedRootsBytesToNode,
+} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.ts";
+import {BitArrayType} from "./bitArray.ts";
+import {ByteViews} from "./composite.ts";
 
 export interface BitListOptions {
   typeName?: string;
@@ -29,8 +34,17 @@ export class BitListType extends BitArrayType {
   readonly maxSize: number;
   readonly maxChunkCount: number;
   readonly isList = true;
+  readonly mixInLengthBlockBytes = new Uint8Array(64);
+  readonly mixInLengthBuffer = Buffer.from(
+    this.mixInLengthBlockBytes.buffer,
+    this.mixInLengthBlockBytes.byteOffset,
+    this.mixInLengthBlockBytes.byteLength
+  );
 
-  constructor(readonly limitBits: number, opts?: BitListOptions) {
+  constructor(
+    readonly limitBits: number,
+    opts?: BitListOptions
+  ) {
     super();
 
     if (limitBits === 0) throw Error("List limit must be > 0");
@@ -101,7 +115,18 @@ export class BitListType extends BitArrayType {
   // Merkleization: inherited from BitArrayType
 
   hashTreeRoot(value: BitArray): Uint8Array {
-    return mixInLength(super.hashTreeRoot(value), value.bitLen);
+    const root = allocUnsafe(32);
+    this.hashTreeRootInto(value, root, 0);
+    return root;
+  }
+
+  hashTreeRootInto(value: BitArray, output: Uint8Array, offset: number): void {
+    super.hashTreeRootInto(value, this.mixInLengthBlockBytes, 0);
+    // mixInLength
+    this.mixInLengthBuffer.writeUIntLE(value.bitLen, 32, 6);
+    // one for hashTreeRoot(value), one for length
+    const chunkCount = 2;
+    merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);
   }
 
   // Proofs: inherited from BitArrayType
@@ -171,8 +196,8 @@ function applyPaddingBit(output: Uint8Array, offset: number, bitLen: number): nu
   if (bitLen % 8 === 0) {
     output[newOffset] = 1;
     return newOffset + 1;
-  } else {
-    output[newOffset - 1] |= 1 << bitLen % 8;
-    return newOffset;
   }
+
+  output[newOffset - 1] |= 1 << (bitLen % 8);
+  return newOffset;
 }

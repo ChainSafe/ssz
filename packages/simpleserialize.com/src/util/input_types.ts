@@ -1,17 +1,18 @@
 import {Type, fromHexString, toHexString} from "@chainsafe/ssz";
 import {dumpYaml, parseYaml} from "./yaml";
 
-type InputTypeRecord = Record<string, InputType>
+type InputTypeRecord = Record<string, InputType>;
 
 type InputType = {
-  parse: <T>(raw: string, type: Type<T>) => T,
-  dump: <T>(value: any, type: Type<T>) => string,
-}
+  parse: <T>(raw: string, type: Type<T>) => T;
+  // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
+  dump: <T>(value: any, type: Type<T>) => string;
+};
 
 export const inputTypes: InputTypeRecord = {
   yaml: {
     parse: (raw, type) => type.fromJson(parseYaml(raw)),
-    dump: (value, type) => dumpYaml(type.toJson(typeof value === 'number' ? value.toString() : value)),
+    dump: (value, type) => dumpYaml(type.toJson(typeof value === "number" ? value.toString() : value)),
   },
   json: {
     parse: (raw, type) => type.fromJson(JSON.parse(raw)),

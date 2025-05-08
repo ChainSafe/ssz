@@ -1,7 +1,7 @@
 import {Node, getNodesAtDepth, subtreeFillToContents} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {CompositeType} from "./composite.js";
-import {addLengthNode, assertValidArrayLength} from "./arrayBasic.js";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {addLengthNode, assertValidArrayLength} from "./arrayBasic.ts";
+import {CompositeType} from "./composite.ts";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -21,9 +21,7 @@ export function minSizeArrayComposite<ElementType extends CompositeType<unknown,
     return minCount * (4 + elementType.minSize);
   }
   // Fixed length
-  else {
-    return minCount * elementType.minSize;
-  }
+  return minCount * elementType.minSize;
 }
 
 export function maxSizeArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
@@ -35,9 +33,7 @@ export function maxSizeArrayComposite<ElementType extends CompositeType<unknown,
     return maxCount * (4 + elementType.maxSize);
   }
   // Fixed length
-  else {
-    return maxCount * elementType.maxSize;
-  }
+  return maxCount * elementType.maxSize;
 }
 
 export function value_serializedSizeArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
@@ -55,9 +51,7 @@ export function value_serializedSizeArrayComposite<ElementType extends Composite
   }
 
   // Fixed length
-  else {
-    return length * elementType.fixedSize;
-  }
+  return length * elementType.fixedSize;
 }
 
 /**
@@ -83,16 +77,14 @@ export function value_serializeToBytesArrayComposite<ElementType extends Composi
   }
 
   // Fixed length
-  else {
-    for (let i = 0; i < length; i++) {
-      elementType.value_serializeToBytes(output, offset + i * elementType.fixedSize, value[i]);
-    }
-    return offset + length * elementType.fixedSize;
+  for (let i = 0; i < length; i++) {
+    elementType.value_serializeToBytes(output, offset + i * elementType.fixedSize, value[i]);
   }
+  return offset + length * elementType.fixedSize;
 }
 
 export function value_deserializeFromBytesArrayComposite<
-  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>
+  ElementType extends CompositeType<ValueOf<ElementType>, unknown, unknown>,
 >(
   elementType: ElementType,
   data: ByteViews,
@@ -137,9 +129,7 @@ export function tree_serializedSizeArrayComposite<ElementType extends CompositeT
   }
 
   // Fixed length
-  else {
-    return length * elementType.fixedSize;
-  }
+  return length * elementType.fixedSize;
 }
 
 /**
@@ -171,12 +161,10 @@ export function tree_serializeToBytesArrayComposite<ElementType extends Composit
   }
 
   // Fixed length
-  else {
-    for (let i = 0; i < nodes.length; i++) {
-      offset = elementType.tree_serializeToBytes(output, offset, nodes[i]);
-    }
-    return offset;
+  for (let i = 0; i < nodes.length; i++) {
+    offset = elementType.tree_serializeToBytes(output, offset, nodes[i]);
   }
+  return offset;
 }
 
 export function tree_deserializeFromBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
@@ -206,26 +194,33 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   // TODO: Add LeafNode.fromUint()
   if (arrayProps.isList) {
     return addLengthNode(chunksNode, length);
-  } else {
-    return chunksNode;
   }
+  return chunksNode;
 }
 
-/**
- * @param length In List length = value.length, Vector length = fixed value
- */
-export function value_getRootsArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
+export function value_getBlocksBytesArrayComposite<ElementType extends CompositeType<unknown, unknown, unknown>>(
   elementType: ElementType,
   length: number,
-  value: ValueOf<ElementType>[]
-): Uint8Array[] {
-  const roots = new Array<Uint8Array>(length);
+  value: ValueOf<ElementType>[],
+  blocksBuffer: Uint8Array
+): Uint8Array {
+  const blockBytesLen = Math.ceil(length / 2) * 64;
+  if (blockBytesLen > blocksBuffer.length) {
+    throw new Error(`blocksBuffer is too small: ${blocksBuffer.length} < ${blockBytesLen}`);
+  }
+  const blocksBytes = blocksBuffer.subarray(0, blockBytesLen);
 
   for (let i = 0; i < length; i++) {
-    roots[i] = elementType.hashTreeRoot(value[i]);
+    elementType.hashTreeRootInto(value[i], blocksBytes, i * 32);
   }
 
-  return roots;
+  const isOddChunk = length % 2 === 1;
+  if (isOddChunk) {
+    // similar to append zeroHash(0)
+    blocksBytes.subarray(length * 32, blockBytesLen).fill(0);
+  }
+
+  return blocksBytes;
 }
 
 function readOffsetsArrayComposite(

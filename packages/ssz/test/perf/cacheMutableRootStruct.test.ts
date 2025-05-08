@@ -1,5 +1,5 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {BitVectorType, ContainerType, UintBigintType, ValueOf} from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {BitVectorType, ContainerType, UintBigintType, ValueOf} from "../../src/index.ts";
 
 describe("cachePermanentRootStruct", () => {
   const uint64 = new UintBigintType(8);

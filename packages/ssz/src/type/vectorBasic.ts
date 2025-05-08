@@ -1,20 +1,18 @@
-import {Node, Tree, HashComputationLevel} from "@chainsafe/persistent-merkle-tree";
-import {maxChunksToDepth, splitIntoRootChunks} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {ValueOf, ByteViews} from "./abstract.js";
-import {BasicType} from "./basic.js";
+import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import {maxChunksToDepth} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Require} from "../util/types.ts";
+import {ArrayBasicTreeView, ArrayBasicType} from "../view/arrayBasic.ts";
+import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.ts";
+import {ByteViews, ValueOf} from "./abstract.ts";
+import {ArrayType} from "./array.ts";
 import {
-  value_deserializeFromBytesArrayBasic,
-  value_serializeToBytesArrayBasic,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
-} from "./arrayBasic.js";
-import {ArrayBasicType, ArrayBasicTreeView} from "../view/arrayBasic.js";
-import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.js";
-import {ArrayType} from "./array.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+  value_deserializeFromBytesArrayBasic,
+  value_serializeToBytesArrayBasic,
+} from "./arrayBasic.ts";
+import {BasicType} from "./basic.ts";
 
 export type VectorBasicOpts = {
   typeName?: string;
@@ -43,7 +41,11 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorBasicOpts) {
+  constructor(
+    readonly elementType: ElementType,
+    readonly length: number,
+    opts?: VectorBasicOpts
+  ) {
     super(elementType);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -59,6 +61,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     this.minSize = this.fixedSize;
     this.maxSize = this.fixedSize;
     this.defaultLen = length;
+    this.blocksBuffer = new Uint8Array(Math.ceil(this.maxChunkCount / 2) * 64);
   }
 
   static named<ElementType extends BasicType<unknown>>(
@@ -75,7 +78,8 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // biome-ignore lint/suspicious/noExplicitAny: We explicity need to use `any` here
     return new ArrayBasicTreeViewDU(this, node, cache as any);
   }
 
@@ -140,17 +144,19 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return 0;
   }
 
-  tree_setChunksNode(rootNode: Node, chunksNode: Node): Node {
+  tree_setChunksNode(_rootNode: Node, chunksNode: Node): Node {
     return chunksNode;
   }
 
   // Merkleization
 
-  protected getRoots(value: ValueOf<ElementType>[]): Uint8Array[] {
-    const uint8Array = new Uint8Array(this.fixedSize);
+  protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    const uint8Array = this.blocksBuffer.subarray(0, this.fixedSize);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
-    return splitIntoRootChunks(uint8Array);
+
+    // remaining bytes from this.fixedSize to this.blocksBuffer.length must be zeroed
+    return this.blocksBuffer;
   }
 
   // JSON: inherited from ArrayType

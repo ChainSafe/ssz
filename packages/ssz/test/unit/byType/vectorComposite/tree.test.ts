@@ -1,12 +1,12 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
   ContainerNodeStructType,
   ContainerType,
   UintNumberType,
   ValueOf,
   VectorCompositeType,
-} from "../../../../src/index.js";
-import {runViewTestMutation} from "../runViewTestMutation.js";
+} from "../../../../src/index.ts";
+import {runViewTestMutation} from "../runViewTestMutation.ts";
 
 const uint64NumInfType = new UintNumberType(8, {clipInfinity: true});
 const containerUintsType = new ContainerType(

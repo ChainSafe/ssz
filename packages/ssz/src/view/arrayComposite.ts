@@ -1,12 +1,12 @@
-import {getNodesAtDepth, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
-import {ValueOf} from "../type/abstract.js";
-import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
-import {ArrayType} from "./arrayBasic.js";
+import {Node, Tree, getNodesAtDepth, toGindexBitstring} from "@chainsafe/persistent-merkle-tree";
+import {ValueOf} from "../type/abstract.ts";
+import {CompositeType, CompositeView, CompositeViewDU} from "../type/composite.ts";
+import {TreeView} from "./abstract.ts";
+import {ArrayType} from "./arrayBasic.ts";
 
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
 export type ArrayCompositeType<
-  ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<unknown, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > = CompositeType<ValueOf<ElementType>[], unknown, unknown> &
   ArrayType & {
     readonly elementType: ElementType;
@@ -14,9 +14,12 @@ export type ArrayCompositeType<
   };
 
 export class ArrayCompositeTreeView<
-  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>
+  ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends TreeView<ArrayCompositeType<ElementType>> {
-  constructor(readonly type: ArrayCompositeType<ElementType>, protected tree: Tree) {
+  constructor(
+    readonly type: ArrayCompositeType<ElementType>,
+    protected tree: Tree
+  ) {
     super();
   }
 
@@ -73,12 +76,16 @@ export class ArrayCompositeTreeView<
    * Returns an array of views of all elements in the array, from index zero to `this.length - 1`.
    * The returned views don't have a parent hook to this View's Tree, so changes in the returned views won't be
    * propagated upwards. To get linked element Views use `this.get()`
+   * @param views optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonly(): CompositeView<ElementType>[] {
+  getAllReadonly(views?: CompositeView<ElementType>[]): CompositeView<ElementType>[] {
+    if (views && views.length !== this.length) {
+      throw Error(`Expected ${this.length} views, got ${views.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const views = new Array<CompositeView<ElementType>>(length);
+    views = views ?? new Array<CompositeView<ElementType>>(length);
     for (let i = 0; i < length; i++) {
       // TODO: Optimize
       views[i] = this.type.elementType.getView(new Tree(nodes[i]));
@@ -90,12 +97,16 @@ export class ArrayCompositeTreeView<
    * Returns an array of values of all elements in the array, from index zero to `this.length - 1`.
    * The returned values are not Views so any changes won't be propagated upwards.
    * To get linked element Views use `this.get()`
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonlyValues(): ValueOf<ElementType>[] {
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    if (values && values.length !== this.length) {
+      throw Error(`Expected ${this.length} values, got ${values.length}`);
+    }
     const length = this.length;
     const chunksNode = this.type.tree_getChunksNode(this.node);
     const nodes = getNodesAtDepth(chunksNode, this.type.chunkDepth, 0, length);
-    const values = new Array<ValueOf<ElementType>>(length);
+    values = values ?? new Array<ValueOf<ElementType>>(length);
     for (let i = 0; i < length; i++) {
       values[i] = this.type.elementType.tree_toValue(nodes[i]);
     }

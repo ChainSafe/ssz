@@ -1,50 +1,48 @@
 import {
-  Node,
   BranchNode,
-  LeafNode,
-  getNodesAtDepth,
-  subtreeFillToContents,
-  Tree,
   Gindex,
-  toGindex,
+  LeafNode,
+  Node,
+  Tree,
   concatGindices,
-  getNode,
-  zeroNode,
-  zeroHash,
   countToDepth,
+  getNode,
   getNodeH,
+  getNodesAtDepth,
+  merkleizeBlocksBytes,
   setNode,
   setNodeWithFn,
+  subtreeFillToContents,
+  toGindex,
+  zeroHash,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {
   ValueWithCachedPermanentRoot,
-  hash64,
+  cacheRoot,
   maxChunksToDepth,
-  merkleize,
-  splitIntoRootChunks,
   symbolCachedPermanentRoot,
-} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {JsonPath, Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny, isCompositeType} from "./composite.js";
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Case} from "../util/strings.ts";
+import {Require} from "../util/types.ts";
+import {BitArray} from "../value/bitArray.ts";
 import {
-  getContainerTreeViewClass,
-  ValueOfFields,
-  FieldEntry,
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
+  FieldEntry,
+  ValueOfFields,
   computeSerdesData,
-} from "../view/stableContainer.js";
+  getContainerTreeViewClass,
+} from "../view/stableContainer.ts";
 import {
-  getContainerTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/stableContainer.js";
-import {Case} from "../util/strings.js";
-import {isOptionalType, toNonOptionalType, NonOptionalFields} from "./optional.js";
-import {BitArray} from "../value/bitArray.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+  getContainerTreeViewDUClass,
+} from "../viewDU/stableContainer.ts";
+import {JsonPath, Type, ValueOf} from "./abstract.ts";
+import {ByteViews, CompositeType, CompositeTypeAny, isCompositeType} from "./composite.ts";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.ts";
 
 type BytesRange = {start: number; end: number};
 
@@ -99,8 +97,14 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
   private padActiveFields: boolean[];
+  // temporary root to avoid memory allocation
+  private tempRoot = new Uint8Array(32);
 
-  constructor(fields: Fields, readonly maxFields: number, readonly opts?: StableContainerOptions<Fields>) {
+  constructor(
+    fields: Fields,
+    readonly maxFields: number,
+    readonly opts?: StableContainerOptions<Fields>
+  ) {
     super();
 
     this.fields = fields;
@@ -153,6 +157,8 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getContainerTreeViewClass?.(this) ?? getContainerTreeViewClass(this);
     this.TreeViewDU = opts?.getContainerTreeViewDUClass?.(this) ?? getContainerTreeViewDUClass(this);
+    const fieldBytes = this.fieldsEntries.length * 32;
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -341,43 +347,43 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
   }
 
   // Merkleization
-  hashTreeRoot(value: ValueOfFields<Fields>): Uint8Array {
+  // hashTreeRoot is the same to parent as it call hashTreeRootInto()
+  hashTreeRootInto(value: ValueOfFields<Fields>, output: Uint8Array, offset: number, safeCache = false): void {
     // Return cached mutable root if any
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
       if (cachedRoot) {
-        return cachedRoot;
+        output.set(cachedRoot, offset);
+        return;
       }
     }
 
+    const blockBytes = this.getBlocksBytes(value);
+    merkleizeBlocksBytes(blockBytes, this.maxChunkCount, this.tempRoot, 0);
     // compute active field bitvector
     const activeFields = BitArray.fromBoolArray([
       ...this.fieldsEntries.map(({fieldName}) => value[fieldName] != null),
       ...this.padActiveFields,
     ]);
-    const root = mixInActiveFields(super.hashTreeRoot(value), activeFields);
+    mixInActiveFields(this.tempRoot, activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
-
-    return root;
   }
 
-  protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
-    const roots = new Array<Uint8Array>(this.fieldsEntries.length);
-
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        roots[i] = zeroHash(0);
-        continue;
+        this.blocksBuffer.set(zeroHash(0), i * 32);
+      } else {
+        fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);
       }
-
-      roots[i] = fieldType.hashTreeRoot(struct[fieldName]);
     }
 
-    return roots;
+    return this.blocksBuffer;
   }
 
   // Proofs
@@ -713,11 +719,11 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
       throw Error(`casingMap[${String(fieldName as symbol)}] not defined`);
     }
     return keyFromCaseMap as string;
-  } else if (jsonCase) {
-    return Case[jsonCase](fieldName as string);
-  } else {
-    return fieldName as string;
   }
+
+  if (jsonCase) return Case[jsonCase](fieldName as string);
+
+  return fieldName as string;
 }
 
 /**
@@ -753,12 +759,15 @@ export function getActiveFields(rootNode: Node, bitLen: number): BitArray {
   return new BitArray(activeFieldsBuf, bitLen);
 }
 
+// This is a global buffer to avoid creating a new one for each call to getActiveFields
+const singleChunkActiveFieldsBuf = new Uint8Array(32);
+
 export function setActiveFields(rootNode: Node, activeFields: BitArray): Node {
   // fast path for depth 1, the bitvector fits in one chunk
   if (activeFields.bitLen <= 256) {
-    const activeFieldsBuf = new Uint8Array(32);
-    activeFieldsBuf.set(activeFields.uint8Array);
-    return new BranchNode(rootNode.left, LeafNode.fromRoot(activeFieldsBuf));
+    singleChunkActiveFieldsBuf.fill(0);
+    singleChunkActiveFieldsBuf.set(activeFields.uint8Array);
+    return new BranchNode(rootNode.left, LeafNode.fromRoot(singleChunkActiveFieldsBuf));
   }
 
   const activeFieldsChunkCount = Math.ceil(activeFields.bitLen / 256);
@@ -817,15 +826,24 @@ export function setActiveField(rootNode: Node, bitLen: number, fieldIndex: numbe
   return new BranchNode(rootNode.left, newActiveFieldsNode);
 }
 
-export function mixInActiveFields(root: Uint8Array, activeFields: BitArray): Uint8Array {
+// This is a global buffer to avoid creating a new one for each call to getBlocksBytes
+const mixInActiveFieldsBlockBytes = new Uint8Array(64);
+const activeFieldsSingleChunk = mixInActiveFieldsBlockBytes.subarray(32);
+
+export function mixInActiveFields(root: Uint8Array, activeFields: BitArray, output: Uint8Array, offset: number): void {
   // fast path for depth 1, the bitvector fits in one chunk
+  mixInActiveFieldsBlockBytes.set(root, 0);
   if (activeFields.bitLen <= 256) {
-    const activeFieldsChunk = new Uint8Array(32);
-    activeFieldsChunk.set(activeFields.uint8Array);
-    return hash64(root, activeFieldsChunk);
+    activeFieldsSingleChunk.fill(0);
+    activeFieldsSingleChunk.set(activeFields.uint8Array);
+    // 1 chunk for root, 1 chunk for activeFields
+    const chunkCount = 2;
+    merkleizeBlocksBytes(mixInActiveFieldsBlockBytes, chunkCount, output, offset);
+    return;
   }
 
-  const activeFieldsChunks = splitIntoRootChunks(activeFields.uint8Array);
-  const activeFieldsRoot = merkleize(activeFieldsChunks, activeFieldsChunks.length);
-  return hash64(root, activeFieldsRoot);
+  const chunkCount = Math.ceil(activeFields.uint8Array.length / 32);
+  merkleizeBlocksBytes(activeFields.uint8Array, chunkCount, activeFieldsSingleChunk, 0);
+  // 1 chunk for root, 1 chunk for activeFields
+  merkleizeBlocksBytes(mixInActiveFieldsBlockBytes, 2, output, offset);
 }

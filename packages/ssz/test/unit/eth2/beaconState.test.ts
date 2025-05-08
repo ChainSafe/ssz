@@ -1,13 +1,13 @@
-import {describe, it, expect} from "vitest";
-import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.js";
-import {ListUintNum64Type} from "../../../src/type/listUintNum64.js";
-import {altair, phase0, ssz} from "../../lodestarTypes/index.js";
-import {BitArray, fromHexString} from "../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {BitArray, fromHexString} from "../../../src/index.ts";
+import {ListUintNum64Type} from "../../../src/type/listUintNum64.ts";
+import {BeaconState} from "../../lodestarTypes/deneb/sszTypes.ts";
+import {altair, phase0, ssz} from "../../lodestarTypes/index.ts";
 
 const VALIDATOR_REGISTRY_LIMIT = 1099511627776;
-export const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
+const Balances = new ListUintNum64Type(VALIDATOR_REGISTRY_LIMIT);
 
-describe("BeaconState ViewDU batchHashTreeRoot", function () {
+describe("BeaconState ViewDU batchHashTreeRoot", () => {
   const view = BeaconState.defaultView();
   const viewDU = BeaconState.defaultViewDU();
 

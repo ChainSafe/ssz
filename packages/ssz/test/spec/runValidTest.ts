@@ -1,19 +1,17 @@
-import {expect} from "vitest";
 import {LeafNode, Node} from "@chainsafe/persistent-merkle-tree";
-import {Type} from "../../src/type/abstract.js";
-import {fromHexString, toHexString} from "../../src/util/byteArray.js";
-import {CompositeType, isCompositeType} from "../../src/type/composite.js";
-import {isBasicType} from "../../src/type/basic.js";
-import {wrapErr} from "../utils/error.js";
-import {TreeViewDU} from "../../src/index.js";
+import {expect} from "vitest";
+import {TreeViewDU} from "../../src/index.ts";
+import {Type} from "../../src/type/abstract.ts";
+import {isBasicType} from "../../src/type/basic.ts";
+import {CompositeType, isCompositeType} from "../../src/type/composite.ts";
+import {fromHexString, toHexString} from "../../src/util/byteArray.ts";
+import {wrapErr} from "../utils/error.ts";
 
 type ValidTestCaseData = {
   root: string;
   serialized: string | Uint8Array;
   jsonValue: unknown;
 };
-
-/* eslint-disable no-console */
 
 export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData): {node: Node; json: unknown} {
   const testDataRootHex = testData.root;
@@ -26,7 +24,7 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     console.log(
       JSON.stringify(
         testData.jsonValue,
-        (key, value: unknown) => (typeof value === "bigint" ? value.toString() : value),
+        (_key, value: unknown) => (typeof value === "bigint" ? value.toString() : value),
         2
       )
     );
@@ -101,13 +99,11 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
   // 0x0000000000000000000000000000000000000000000000000000000000000000
   if (process.env.RENDER_ROOTS) {
     if (type.isBasic) {
-      console.log("ROOTS Basic", toHexString(type.serialize(testDataValue)));
+      console.log("Chunk Bytes Basic", toHexString(type.serialize(testDataValue)));
     } else {
-      const roots = (type as CompositeType<unknown, unknown, unknown>)["getRoots"](testDataValue);
-      console.log(
-        "ROOTS Composite",
-        roots.map((root) => toHexString(root))
-      );
+      // biome-ignore lint/complexity/useLiteralKeys: The function `getBlocksBytes` is private
+      const blocksBytes = (type as CompositeType<unknown, unknown, unknown>)["getBlocksBytes"](testDataValue);
+      console.log("Blocks Bytes Composite", toHexString(blocksBytes));
     }
   }
 
@@ -124,9 +120,8 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
       const viewDU = type.getViewDU(node);
       if (viewDU instanceof TreeViewDU) {
         return viewDU.batchHashTreeRoot();
-      } else {
-        return type.hashTreeRoot(testDataValue);
       }
+      return type.hashTreeRoot(testDataValue);
     }, "type.hashTreeRoot()");
     assertRoot(root, "ViewDU.batchHashTreeRoot()");
   }
@@ -218,9 +213,8 @@ function copy(buf: Uint8Array): Uint8Array {
 export function toJsonOrString(value: unknown): unknown {
   if (typeof value === "number" || typeof value === "bigint") {
     return value.toString(10);
-  } else {
-    return value;
   }
+  return value;
 }
 
 function renderTree(node: Node): void {
@@ -231,8 +225,8 @@ export function gatherLeafNodes(node: Node, nodes = new Map<string, string>(), g
   if (node.isLeaf()) {
     nodes.set(gindex, toHexString(node.root));
   } else {
-    gatherLeafNodes(node.left, nodes, gindex + "0");
-    gatherLeafNodes(node.right, nodes, gindex + "1");
+    gatherLeafNodes(node.left, nodes, `${gindex}0`);
+    gatherLeafNodes(node.right, nodes, `${gindex}1`);
   }
   return nodes;
 }

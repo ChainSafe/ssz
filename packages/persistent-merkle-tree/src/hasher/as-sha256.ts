@@ -1,14 +1,14 @@
 import {
-  digest2Bytes32,
-  digest64HashObjectsInto,
-  digest64HashObjects,
   batchHash4HashObjectInputs,
+  digest2Bytes32,
+  digest64HashObjects,
+  digest64HashObjectsInto,
   hashInto,
 } from "@chainsafe/as-sha256";
-import type {Hasher} from "./types.js";
-import {Node} from "../node.js";
-import type {HashComputationLevel} from "../hashComputation.js";
-import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.js";
+import type {HashComputationLevel} from "../hashComputation.ts";
+import {Node} from "../node.ts";
+import type {Hasher} from "./types.ts";
+import {BLOCK_SIZE, doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.ts";
 
 /**
  * hashInto() function of as-sha256 loop through every 256 bytes
@@ -21,10 +21,10 @@ export const hasher: Hasher = {
   digest64: digest2Bytes32,
   digest64HashObjects: digest64HashObjectsInto,
   merkleizeBlocksBytes(blocksBytes: Uint8Array, padFor: number, output: Uint8Array, offset: number): void {
-    return doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
+    doMerkleizeBlocksBytes(blocksBytes, padFor, output, offset, hashInto);
   },
   merkleizeBlockArray(blocks, blockLimit, padFor, output, offset) {
-    return doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
+    doMerkleizeBlockArray(blocks, blockLimit, padFor, output, offset, hashInto, buffer);
   },
   digestNLevel(data: Uint8Array, nLevel: number): Uint8Array {
     return doDigestNLevel(data, nLevel, hashInto);

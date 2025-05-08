@@ -1,6 +1,6 @@
 {
   "name": "@chainsafe/as-sha256",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An AssemblyScript implementation of SHA256",
   "author": "ChainSafe Systems",
   "license": "Apache-2.0",
@@ -21,9 +21,8 @@
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "lint": "echo 'no linting for this package'",
     "check-types": "tsc --noEmit",
-    "generate": "rm -rf ./dist && node --loader ts-node/esm ./scripts/codegen.ts",
+    "generate": "rm -rf ./dist && node --loader ts-node/esm/transpile-only ./scripts/codegen.ts",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert",
     "asbuild": "yarn asbuild:untouched && yarn asbuild:optimized",
@@ -33,11 +32,8 @@
     "build:lib": "tsc -p tsconfig.build.json",
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
     "build": "yarn asbuild && yarn asbuild:simd && yarn generate && yarn build:lib",
-    "test": "yarn run test:unit",
     "test:unit": "vitest run --dir test/unit/",
-    "test:browsers": "yarn test:browsers:chrome && yarn test:browsers:firefox",
-    "test:browsers:chrome": "vitest run --browser chrome --config ./vitest.browser.config.ts --dir test/unit",
-    "test:browsers:firefox": "vitest run --browser firefox --config ./vitest.browser.config.ts --dir test/unit",
+    "test:browsers": "vitest run --config ./vitest.browser.config.ts --dir test/unit",
     "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
     "benchmark:local": "yarn benchmark --local",
     "test:ci": "yarn test:as-ci"

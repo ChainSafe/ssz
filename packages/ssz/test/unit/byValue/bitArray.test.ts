@@ -1,11 +1,9 @@
-import {describe, it, expect} from "vitest";
-import {getUint8ByteToBitBooleanArray, BitArray} from "../../../src/value/bitArray.js";
-import {BitVectorType} from "../../../src/index.js";
-import {linspace} from "../../utils/misc.js";
+import {describe, expect, it} from "vitest";
+import {BitVectorType} from "../../../src/index.ts";
+import {BitArray, getUint8ByteToBitBooleanArray} from "../../../src/value/bitArray.ts";
+import {linspace} from "../../utils/misc.ts";
 
-const BITS_PER_BYTE = 8;
-
-describe("aggregationBits", function () {
+describe("aggregationBits", () => {
   it("getUint8ByteToBitBooleanArray", () => {
     expect(getUint8ByteToBitBooleanArray(1)).toEqual([true, false, false, false, false, false, false, false]);
     expect(getUint8ByteToBitBooleanArray(5)).toEqual([true, false, true, false, false, false, false, false]);
@@ -215,14 +213,3 @@ describe("BitArray helper get unparticipants", () => {
     });
   }
 });
-
-/**
- * Get aggregation bit (true/false) from an aggregation bytes array and validator index in committee.
- * Notice: If we want to access the bit in batch, using this method is not efficient, check the performance
- *         test for an example of how to do that.
- */
-export function getAggregationBit(attBytes: number[] | Uint8Array, indexInCommittee: number): boolean {
-  const byteIndex = Math.floor(indexInCommittee / BITS_PER_BYTE);
-  const indexInByte = indexInCommittee % BITS_PER_BYTE;
-  return getUint8ByteToBitBooleanArray(attBytes[byteIndex])[indexInByte];
-}

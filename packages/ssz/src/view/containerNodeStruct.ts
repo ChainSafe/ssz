@@ -1,11 +1,9 @@
 import {Node, Tree} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isCompositeType} from "../type/composite.js";
-import {BranchNodeStruct} from "../branchNodeStruct.js";
-import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.js";
-import {TreeView} from "./abstract.js";
-
-/* eslint-disable @typescript-eslint/member-ordering */
+import {BranchNodeStruct} from "../branchNodeStruct.ts";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {isCompositeType} from "../type/composite.ts";
+import {TreeView} from "./abstract.ts";
+import {ContainerTreeViewTypeConstructor, ContainerTypeGeneric, ValueOfFields} from "./container.ts";
 
 /**
  * Intented usage:
@@ -23,7 +21,10 @@ import {TreeView} from "./abstract.js";
  *
  */
 class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    readonly tree: Tree
+  ) {
     super();
   }
 
@@ -60,6 +61,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
 
           // TODO: Should this check for valid field name? Benchmark the cost
           newNodeValue[fieldName] = value as ValueOf<Fields[keyof Fields]>;
+          // biome-ignore lint/complexity/useLiteralKeys: The key `valueToNode` is private field
           this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
         },
       });
@@ -86,6 +88,7 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
 
           // TODO: Should this check for valid field name? Benchmark the cost
           newNodeValue[fieldName] = fieldType.toValueFromView(view) as ValueOf<Fields[keyof Fields]>;
+          // biome-ignore lint/complexity/useLiteralKeys: The key `valueToNode` is private field
           this.tree.rootNode = new BranchNodeStruct(node["valueToNode"], newNodeValue);
         },
       });

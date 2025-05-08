@@ -1,20 +1,20 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
   BitListType,
   BitVectorType,
   BooleanType,
   ByteListType,
   ByteVectorType,
-  ContainerType,
   ContainerNodeStructType,
+  ContainerType,
   ListBasicType,
   ListCompositeType,
-  UintNumberType,
   UintBigintType,
+  UintNumberType,
   UnionType,
   VectorBasicType,
   VectorCompositeType,
-} from "../../src/index.js";
+} from "../../src/index.ts";
 
 describe("Customize object name for all types", () => {
   const typeName = "CustomType1234";

@@ -1,5 +1,5 @@
-import {wasmCode} from "./wasmCode.js";
-import {wasmSimdCode} from "./wasmSimdCode.js";
+import {wasmCode} from "./wasmCode.ts";
+import {wasmSimdCode} from "./wasmSimdCode.ts";
 
 export interface WasmContext {
   readonly HAS_SIMD: boolean;
@@ -28,7 +28,7 @@ export interface WasmContext {
 const importObj = {
   env: {
     // modified from https://github.com/AssemblyScript/assemblyscript/blob/v0.9.2/lib/loader/index.js#L70
-    abort: function (msg: number, file: number, line: number, col: number) {
+    abort: (msg: number, file: number, line: number, col: number) => {
       throw Error(`abort: ${msg}:${file}:${line}:${col}`);
     },
   },

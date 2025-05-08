@@ -1,11 +1,11 @@
-import {testRunnerMemory} from "./testRunnerMemory.js";
-import {ssz} from "../lodestarTypes/phase0/index.js";
+import {ssz} from "../lodestarTypes/phase0/index.ts";
 import {
   getAttestation,
-  getSignedAggregateAndProof,
   getBitsSingle,
+  getSignedAggregateAndProof,
   getSignedBeaconBlockPhase0,
-} from "../utils/generateEth2Objs.js";
+} from "../utils/generateEth2Objs.ts";
+import {testRunnerMemory} from "./testRunnerMemory.ts";
 
 // Results in Linux Dec 2021
 //
@@ -58,7 +58,6 @@ function testRunnerMemoryBpi(testCases: {getInstance: (bytes: number) => unknown
       convergeFactor: 0.2 / 100,
     });
 
-    // eslint-disable-next-line no-console
     console.log(`${id.padEnd(longestId)} - ${bpi.toFixed(1)} bytes / instance`);
   }
 }

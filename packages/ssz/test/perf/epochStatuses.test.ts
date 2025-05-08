@@ -1,7 +1,7 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {CompositeViewDU} from "../../src/index.js";
-import {EpochParticipation} from "../lodestarTypes/altair/sszTypes.js";
-import {fillArray, linspace} from "../utils/misc.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {CompositeViewDU} from "../../src/index.ts";
+import {EpochParticipation} from "../lodestarTypes/altair/sszTypes.ts";
+import {fillArray, linspace} from "../utils/misc.ts";
 
 describe("processAttestations() epochStatuses", () => {
   const len = 250_000;

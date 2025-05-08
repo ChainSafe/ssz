@@ -1,10 +1,10 @@
-import {describe, it, expect} from "vitest";
-import path from "path";
-import fs from "fs";
-import {ethereumConsensusSpecsTests} from "../../specTestVersioning.js";
-import {parseSszGenericValidTestcase, parseSszGenericInvalidTestcase} from "../testRunner.js";
-import {runValidSszTest} from "../runValidTest.js";
-import {getTestType} from "./types.js";
+import fs from "node:fs";
+import path from "node:path";
+import {describe, expect, it} from "vitest";
+import {ethereumConsensusSpecsTests} from "../../specTestVersioning.ts";
+import {runValidSszTest} from "../runValidTest.ts";
+import {parseSszGenericInvalidTestcase, parseSszGenericValidTestcase} from "../testRunner.ts";
+import {getTestType} from "./types.ts";
 
 const rootGenericSszPath = path.join(
   ethereumConsensusSpecsTests.outputDir,
@@ -35,7 +35,6 @@ for (const testType of fs.readdirSync(rootGenericSszPath)) {
         const type = getTestType(testType, invalidCase);
         const testData = parseSszGenericInvalidTestcase(path.join(invalidCasesPath, invalidCase));
 
-        /* eslint-disable no-console */
         if (process.env.DEBUG) {
           console.log({serialized: Buffer.from(testData.serialized).toString("hex")});
         }

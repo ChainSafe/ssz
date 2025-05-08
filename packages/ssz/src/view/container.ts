@@ -1,9 +1,9 @@
-import {getNodeAtDepth, Gindex, LeafNode, Node, toGindexBitstring, Tree} from "@chainsafe/persistent-merkle-tree";
-import {Type, ValueOf} from "../type/abstract.js";
-import {isBasicType, BasicType} from "../type/basic.js";
-import {isCompositeType, CompositeType} from "../type/composite.js";
-import {TreeView} from "./abstract.js";
-import {NonOptionalFields} from "../type/optional.js";
+import {Gindex, LeafNode, Node, Tree, getNodeAtDepth, toGindexBitstring} from "@chainsafe/persistent-merkle-tree";
+import {Type, ValueOf} from "../type/abstract.ts";
+import {BasicType, isBasicType} from "../type/basic.ts";
+import {CompositeType, isCompositeType} from "../type/composite.ts";
+import {NonOptionalFields} from "../type/optional.ts";
+import {TreeView} from "./abstract.ts";
 
 export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   fieldName: keyof Fields;
@@ -33,9 +33,9 @@ export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
     ? // If composite, return view. MAY propagate changes updwards
       TV
     : // If basic, return struct value. Will NOT propagate changes upwards
-    Fields[K] extends BasicType<infer V>
-    ? V
-    : never;
+      Fields[K] extends BasicType<infer V>
+      ? V
+      : never;
 };
 
 export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
@@ -60,7 +60,10 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *
  */
 class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
-  constructor(readonly type: ContainerTypeGeneric<Fields>, readonly tree: Tree) {
+  constructor(
+    readonly type: ContainerTypeGeneric<Fields>,
+    readonly tree: Tree
+  ) {
     super();
   }
 

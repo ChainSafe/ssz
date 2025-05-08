@@ -1,39 +1,44 @@
 import {
-  Node,
-  getNodesAtDepth,
-  subtreeFillToContents,
-  Tree,
+  BranchNode,
   Gindex,
-  toGindex,
+  Node,
+  Tree,
   concatGindices,
   getNode,
-  BranchNode,
+  getNodesAtDepth,
+  merkleizeBlocksBytes,
+  subtreeFillToContents,
+  toGindex,
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {ValueWithCachedPermanentRoot, maxChunksToDepth, symbolCachedPermanentRoot} from "../util/merkleize.js";
-import {Require} from "../util/types.js";
-import {namedClass} from "../util/named.js";
-import {Type, ValueOf} from "./abstract.js";
-import {CompositeType, ByteViews, CompositeTypeAny} from "./composite.js";
 import {
-  getProfileTreeViewClass,
-  ValueOfFields,
-  FieldEntry,
+  ValueWithCachedPermanentRoot,
+  cacheRoot,
+  maxChunksToDepth,
+  symbolCachedPermanentRoot,
+} from "../util/merkleize.ts";
+import {namedClass} from "../util/named.ts";
+import {Case} from "../util/strings.ts";
+import {Require} from "../util/types.ts";
+import {BitArray} from "../value/bitArray.ts";
+import {
   ContainerTreeViewType,
   ContainerTreeViewTypeConstructor,
+  FieldEntry,
+  ValueOfFields,
   computeSerdesData,
-} from "../view/profile.js";
+  getProfileTreeViewClass,
+} from "../view/profile.ts";
 import {
-  getProfileTreeViewDUClass,
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
-} from "../viewDU/profile.js";
-import {Case} from "../util/strings.js";
-import {BitArray} from "../value/bitArray.js";
-import {mixInActiveFields, setActiveFields} from "./stableContainer.js";
-import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.js";
-/* eslint-disable @typescript-eslint/member-ordering */
+  getProfileTreeViewDUClass,
+} from "../viewDU/profile.ts";
+import {Type, ValueOf} from "./abstract.ts";
+import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.ts";
+import {NonOptionalFields, isOptionalType, toNonOptionalType} from "./optional.ts";
+import {mixInActiveFields, setActiveFields} from "./stableContainer.ts";
 
 type BytesRange = {start: number; end: number};
 
@@ -87,8 +92,14 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
   protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
   private optionalFieldsCount: number;
+  // temporary root to avoid memory allocation
+  private tempRoot = new Uint8Array(32);
 
-  constructor(readonly fields: Fields, activeFields: BitArray, readonly opts?: ProfileOptions<Fields>) {
+  constructor(
+    readonly fields: Fields,
+    activeFields: BitArray,
+    readonly opts?: ProfileOptions<Fields>
+  ) {
     super();
 
     // Render detailed typeName. Consumers should overwrite since it can get long
@@ -154,6 +165,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     // Refactor this constructor to allow customization without pollutin the options
     this.TreeView = opts?.getProfileTreeViewClass?.(this) ?? getProfileTreeViewClass(this);
     this.TreeViewDU = opts?.getProfileTreeViewDUClass?.(this) ?? getProfileTreeViewDUClass(this);
+    const fieldBytes = this.activeFields.bitLen * 32;
+    this.blocksBuffer = new Uint8Array(Math.ceil(fieldBytes / 64) * 64);
   }
 
   static named<Fields extends Record<string, Type<unknown>>>(
@@ -361,37 +374,38 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
   }
 
   // Merkleization
-  hashTreeRoot(value: ValueOfFields<Fields>): Uint8Array {
+  // hashTreeRoot is the same to parent as it call hashTreeRootInto()
+  hashTreeRootInto(value: ValueOfFields<Fields>, output: Uint8Array, offset: number, safeCache = false): void {
     // Return cached mutable root if any
     if (this.cachePermanentRootStruct) {
       const cachedRoot = (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot];
       if (cachedRoot) {
-        return cachedRoot;
+        output.set(cachedRoot, offset);
+        return;
       }
     }
 
-    const root = mixInActiveFields(super.hashTreeRoot(value), this.activeFields);
+    const blocksBytes = this.getBlocksBytes(value);
+    merkleizeBlocksBytes(blocksBytes, this.maxChunkCount, this.tempRoot, 0);
+    mixInActiveFields(this.tempRoot, this.activeFields, output, offset);
 
     if (this.cachePermanentRootStruct) {
-      (value as ValueWithCachedPermanentRoot)[symbolCachedPermanentRoot] = root;
+      cacheRoot(value as ValueWithCachedPermanentRoot, output, offset, safeCache);
     }
-
-    return root;
   }
 
-  protected getRoots(struct: ValueOfFields<Fields>): Uint8Array[] {
-    const roots = new Array<Uint8Array>(this.activeFields.bitLen).fill(zeroHash(0));
-
-    // already asserted that # of active fields in bitvector === # of fields
+  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+    this.blocksBuffer.fill(0);
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, chunkIndex, optional} = this.fieldsEntries[i];
       if (optional && struct[fieldName] == null) {
-        continue;
+        this.blocksBuffer.set(zeroHash(0), chunkIndex * 32);
+      } else {
+        fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, chunkIndex * 32);
       }
-      roots[chunkIndex] = fieldType.hashTreeRoot(struct[fieldName]);
     }
-
-    return roots;
+    // remaining bytes are zeroed as we never write them
+    return this.blocksBuffer;
   }
 
   // Proofs
@@ -650,11 +664,11 @@ export function precomputeJsonKey<Fields extends Record<string, Type<unknown>>>(
       throw Error(`casingMap[${String(fieldName as symbol)}] not defined`);
     }
     return keyFromCaseMap as string;
-  } else if (jsonCase) {
-    return Case[jsonCase](fieldName as string);
-  } else {
-    return fieldName as string;
   }
+
+  if (jsonCase) return Case[jsonCase](fieldName as string);
+
+  return fieldName as string;
 }
 
 /**

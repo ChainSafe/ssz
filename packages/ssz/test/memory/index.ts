@@ -1,4 +1,4 @@
-import {StringDecoder} from "string_decoder";
+import {StringDecoder} from "node:string_decoder";
 
 const refs: any[] = [];
 const xs: number[] = [];
@@ -9,28 +9,28 @@ const heapUsed: number[] = [];
 const rss: number[] = [];
 
 enum TestType {
-  EmptyObject,
-  ArrayOfNumbers,
-  BufferAlloc,
-  BufferFromString,
-  Uint8Array,
-  ArrayBuffer,
-  Number,
+  EmptyObject = 0,
+  ArrayOfNumbers = 1,
+  BufferAlloc = 2,
+  BufferFromString = 3,
+  Uint8Array = 4,
+  ArrayBuffer = 5,
+  Number = 6,
   // From Proto
-  FixedObject8,
-  FixedObject4,
-  FixedArray,
-  FixedObject4BigInt,
-  String32BytesHex,
-  NativeBinding32Bytes,
-  BlstPublicKey,
-  StringDecoder,
-  BigInt,
-  FinalizationRegistry,
+  FixedObject8 = 7,
+  FixedObject4 = 8,
+  FixedArray = 9,
+  FixedObject4BigInt = 10,
+  String32BytesHex = 11,
+  NativeBinding32Bytes = 12,
+  BlstPublicKey = 13,
+  StringDecoder = 14,
+  BigInt = 15,
+  FinalizationRegistry = 16,
   // Bitlist alternatives
-  BitListArrayOfBools,
-  BitListUint8Array,
-  BitListArrayOfBytes,
+  BitListArrayOfBools = 17,
+  BitListUint8Array = 18,
+  BitListArrayOfBytes = 19,
 }
 
 const testType = TestType.BitListUint8Array;
@@ -211,7 +211,6 @@ for (let i = 0; i < 1e8; i++) {
     const heapUsedM = linearRegression(xs, heapUsed).m;
     const rssM = linearRegression(xs, rss).m;
 
-    // eslint-disable-next-line no-console
     console.log(i, {arrayBuffersM, externalM, heapTotalM, heapUsedM, rssM});
   }
 }

@@ -1,6 +1,6 @@
-import {describe, it, expect} from "vitest";
-import {UintNumberType, VectorBasicType} from "../../../../src/index.js";
-import {runViewTestMutation} from "../runViewTestMutation.js";
+import {describe, expect, it} from "vitest";
+import {UintNumberType, VectorBasicType} from "../../../../src/index.ts";
+import {runViewTestMutation} from "../runViewTestMutation.ts";
 
 const uint64NumInf = new UintNumberType(8, {clipInfinity: true});
 const vectorType = new VectorBasicType(uint64NumInf, 8);

@@ -1,6 +1,6 @@
-import {BranchNode, Node} from "./node.js";
-import {getHashComputations, levelAtIndex, HashComputationLevel} from "./hashComputation.js";
-import {zeroNode} from "./zeroNode.js";
+import {HashComputationLevel, getHashComputations, levelAtIndex} from "./hashComputation.ts";
+import {BranchNode, Node} from "./node.ts";
+import {zeroNode} from "./zeroNode.ts";
 
 export function subtreeFillToDepth(bottom: Node, depth: number): Node {
   let node = bottom;
@@ -18,7 +18,7 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
 
   if (depth === 0) {
     if (length === 1) return bottom;
-    else throw new Error("ERR_NAVIGATION");
+    throw new Error("ERR_NAVIGATION");
   }
 
   if (depth === 1) {
@@ -28,12 +28,9 @@ export function subtreeFillToLength(bottom: Node, depth: number, length: number)
   const pivot = maxLength >> 1;
   if (length <= pivot) {
     return new BranchNode(subtreeFillToLength(bottom, depth - 1, length), zeroNode(depth - 1));
-  } else {
-    return new BranchNode(
-      subtreeFillToDepth(bottom, depth - 1),
-      subtreeFillToLength(bottom, depth - 1, length - pivot)
-    );
   }
+
+  return new BranchNode(subtreeFillToDepth(bottom, depth - 1), subtreeFillToLength(bottom, depth - 1, length - pivot));
 }
 
 /**

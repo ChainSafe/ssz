@@ -1,6 +1,6 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {getNodeAtDepth, getNodesAtDepth, setNodeAtDepth, setNodesAtDepth, zeroNode} from "../../../src/index.js";
-import {linspace, fillArray} from "../../utils/misc.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {getNodeAtDepth, getNodesAtDepth, setNodeAtDepth, setNodesAtDepth, zeroNode} from "../../../src/index.ts";
+import {fillArray, linspace} from "../../utils/misc.ts";
 
 describe("Tree opts with low depth", () => {
   const runsFactor = 100_000;

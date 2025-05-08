@@ -1,6 +1,6 @@
-import {describe, it, expect} from "vitest";
-import {ssz} from "../../lodestarTypes/index.js";
-import {Type} from "../../../src/index.js";
+import {describe, expect, it} from "vitest";
+import {Type} from "../../../src/index.ts";
+import {ssz} from "../../lodestarTypes/index.ts";
 
 enum ForkName {
   phase0 = "phase0",

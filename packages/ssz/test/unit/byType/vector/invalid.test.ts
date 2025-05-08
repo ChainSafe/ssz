@@ -1,7 +1,7 @@
-import {describe, it, expect} from "vitest";
-import {VectorBasicType, VectorCompositeType} from "../../../../src/index.js";
-import {byteType, uint16NumType} from "../../../utils/primitiveTypes.js";
-import {runTypeTestInvalid} from "../runTypeTestInvalid.js";
+import {describe, expect, it} from "vitest";
+import {VectorBasicType, VectorCompositeType} from "../../../../src/index.ts";
+import {byteType, uint16NumType} from "../../../utils/primitiveTypes.ts";
+import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
 runTypeTestInvalid({
   type: new VectorBasicType(uint16NumType, 2),

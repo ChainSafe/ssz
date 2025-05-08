@@ -1,12 +1,13 @@
-import {describe, bench} from "@chainsafe/benchmark";
-import {BitArray, BitListType} from "../../src/index.js";
+import {bench, describe} from "@chainsafe/benchmark";
+import {BitArray, BitListType} from "../../src/index.ts";
+
+const MAX_VALIDATORS_PER_COMMITTEE = 2048;
 
 // running zipIndexesCommitteeBits() on `bitLen: 2048, bitsSet: 2048` takes 50.904 us/op
 // However deserializing a BitList to struct `len 2048, set 2048` takes 560.4670 us/op,
 // so it's far more efficient to keep bitlists as Uint8Arrays and also save memory.
 
 describe("BitListType types", () => {
-  const MAX_VALIDATORS_PER_COMMITTEE = 2048;
   const CommitteeBits = new BitListType(MAX_VALIDATORS_PER_COMMITTEE);
 
   const testCases: {bitLen: number; bitsSet: number}[] = [

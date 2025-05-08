@@ -1,8 +1,7 @@
 /** @module ssz */
-import * as ssz from "./index.js";
+import * as ssz from "./index.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(function (window: any) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+// biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
+((window: any) => {
   window.ssz = ssz;
 })(window);

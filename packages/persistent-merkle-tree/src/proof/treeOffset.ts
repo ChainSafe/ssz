@@ -1,6 +1,6 @@
-import {Gindex, GindexBitstring} from "../gindex.js";
-import {BranchNode, LeafNode, Node} from "../node.js";
-import {computeMultiProofBitstrings} from "./util.js";
+import {Gindex, GindexBitstring} from "../gindex.ts";
+import {BranchNode, LeafNode, Node} from "../node.ts";
+import {computeMultiProofBitstrings} from "./util.ts";
 
 /**
  * Compute offsets and leaves of a tree-offset proof
@@ -20,18 +20,19 @@ export function nodeToTreeOffsetProof(
   if (!proofGindices.length || !proofGindices[0].startsWith(gindex)) {
     // there are no proof indices left OR the current subtree contains no remaining proof indices
     return [[], []];
-  } else if (gindex === proofGindices[0]) {
+  }
+
+  if (gindex === proofGindices[0]) {
     // the current node is at the next proof index
     proofGindices.shift();
     return [[], [node.root]];
-  } else {
-    // recursively compute offsets, leaves for the left and right subtree
-    const [leftOffsets, leftLeaves] = nodeToTreeOffsetProof(node.left, gindex + "0", proofGindices);
-    const [rightOffsets, rightLeaves] = nodeToTreeOffsetProof(node.right, gindex + "1", proofGindices);
-    // the offset prepended to the list is # of leaves in the left subtree
-    const pivot = leftLeaves.length;
-    return [[pivot].concat(leftOffsets, rightOffsets), leftLeaves.concat(rightLeaves)];
   }
+  // recursively compute offsets, leaves for the left and right subtree
+  const [leftOffsets, leftLeaves] = nodeToTreeOffsetProof(node.left, `${gindex}0`, proofGindices);
+  const [rightOffsets, rightLeaves] = nodeToTreeOffsetProof(node.right, `${gindex}1`, proofGindices);
+  // the offset prepended to the list is # of leaves in the left subtree
+  const pivot = leftLeaves.length;
+  return [[pivot].concat(leftOffsets, rightOffsets), leftLeaves.concat(rightLeaves)];
 }
 
 /**
@@ -42,18 +43,14 @@ export function nodeToTreeOffsetProof(
  * See https://github.com/protolambda/eth-merkle-trees/blob/master/tree_offsets.md
  */
 export function treeOffsetProofToNode(offsets: number[], leaves: Uint8Array[]): Node {
-  if (!leaves.length) {
-    throw new Error("Proof must contain gt 0 leaves");
-  } else if (leaves.length === 1) {
-    return LeafNode.fromRoot(leaves[0]);
-  } else {
-    // the offset popped from the list is the # of leaves in the left subtree
-    const pivot = offsets[0];
-    return new BranchNode(
-      treeOffsetProofToNode(offsets.slice(1, pivot), leaves.slice(0, pivot)),
-      treeOffsetProofToNode(offsets.slice(pivot), leaves.slice(pivot))
-    );
-  }
+  if (!leaves.length) throw new Error("Proof must contain gt 0 leaves");
+  if (leaves.length === 1) return LeafNode.fromRoot(leaves[0]);
+  // the offset popped from the list is the # of leaves in the left subtree
+  const pivot = offsets[0];
+  return new BranchNode(
+    treeOffsetProofToNode(offsets.slice(1, pivot), leaves.slice(0, pivot)),
+    treeOffsetProofToNode(offsets.slice(pivot), leaves.slice(pivot))
+  );
 }
 
 /**
