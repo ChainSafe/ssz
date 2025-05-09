@@ -23,7 +23,10 @@ export class ArrayCompositeTreeViewDU<
 > extends TreeViewDU<ArrayCompositeType<ElementType>> {
   protected nodes: Node[];
   protected caches: unknown[];
-  protected readonly viewsChanged = new Map<number, CompositeViewDU<ElementType>>();
+  protected readonly viewsChanged: Map<number, CompositeViewDU<ElementType>> = new Map<
+    number,
+    CompositeViewDU<ElementType>
+  >();
   protected _length: number;
   // TODO: Consider these properties are not accessible in the cache object persisted in the parent's cache.
   // nodes, caches, _length, and nodesPopulated are mutated. Consider having them in a _cache object such that

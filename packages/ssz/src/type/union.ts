@@ -47,8 +47,8 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly mixInLengthBlockBytes = new Uint8Array(64);
-  readonly mixInLengthBuffer = Buffer.from(
+  readonly mixInLengthBlockBytes: Uint8Array = new Uint8Array(64);
+  readonly mixInLengthBuffer: Buffer = Buffer.from(
     this.mixInLengthBlockBytes.buffer,
     this.mixInLengthBlockBytes.byteOffset,
     this.mixInLengthBlockBytes.byteLength

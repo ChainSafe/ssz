@@ -59,7 +59,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
    * Required for ContainerNodeStruct to ensure no dangerous types are constructed.
    */
   abstract readonly isViewMutable: boolean;
-  protected blocksBuffer = new Uint8Array(0);
+  protected blocksBuffer: Uint8Array = new Uint8Array(0);
 
   constructor(
     /**

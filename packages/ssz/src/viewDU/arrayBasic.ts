@@ -22,7 +22,7 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
   ArrayBasicType<ElementType>
 > {
   protected nodes: LeafNode[];
-  protected readonly nodesChanged = new Set<number>();
+  protected readonly nodesChanged: Set<number> = new Set<number>();
   protected _length: number;
   protected dirtyLength = false;
   private nodesPopulated: boolean;
