@@ -10,6 +10,10 @@ on:
 jobs:
   maybe-release:
     name: release
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write # The OIDC ID token is used for authentication with JSR.    
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
     outputs:
@@ -57,10 +61,15 @@ jobs:
       - name: Check npm config
         run: npm config list
           
-      - run: node_modules/.bin/lerna publish from-package --no-verify-access --yes
+      - name: Publish to npm
+        run: node_modules/.bin/lerna publish from-package --no-verify-access --yes
         if: ${{ steps.release.outputs.releases_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to JSR
+        run: yarn lerna exec 'yarn jsr publish' --scope @chainsafe/ssz --scope @chainsafe/as-sha256 --scope @chainsafe/persistent-merkle-tree --scope @chainsafe/persistent-ts
+        if: ${{ steps.release.outputs.releases_created }}
 
       - name: Publish to Cloudflare Pages
         if: ${{ steps.release.outputs.releases_created }}
