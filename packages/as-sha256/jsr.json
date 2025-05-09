@@ -1,0 +1,18 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@chainsafe/as-sha256",
+  "version": "1.1.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "include": [
+      "src",
+      "package.json",
+      ".npmrc",
+      "README.md",
+      "LICENSE",
+      "CHANGELOG.md"
+    ]
+  }
+}

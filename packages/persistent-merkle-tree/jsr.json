@@ -1,0 +1,21 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@chainsafe/persistent-merkle-tree",
+  "version": "1.1.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./hasher/hashtree": "./src/hasher/hashtree.ts",
+    "./hasher/noble": "./src/hasher/noble.ts",
+    "./hasher/as-sha256": "./src/hasher/as-sha256.ts"
+  },
+  "publish": {
+    "include": [
+      "src",
+      "package.json",
+      ".npmrc",
+      "README.md",
+      "LICENSE",
+      "CHANGELOG.md"
+    ]
+  }
+}
