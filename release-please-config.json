@@ -9,7 +9,10 @@
         "bumpMinorPreMajor": true,
         "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
-        "versioning": "default"
+        "versioning": "default",
+        "extra-files": [
+          { "type": "json", "path": "jsr.json", "jsonpath": "$.version" }
+        ]
       },
       "packages/persistent-merkle-tree": {
         "releaseType": "node",
@@ -18,7 +21,10 @@
         "bumpMinorPreMajor": true,
         "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
-        "versioning": "default"
+        "versioning": "default",
+        "extra-files": [
+          { "type": "json", "path": "jsr.json", "jsonpath": "$.version" }
+        ]        
       },
       "packages/persistent-ts": {
         "releaseType": "node",
@@ -27,7 +33,10 @@
         "bumpMinorPreMajor": true,
         "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
-        "versioning": "default"
+        "versioning": "default",
+        "extra-files": [
+          { "type": "json", "path": "jsr.json", "jsonpath": "$.version" }
+        ]        
       },
       "packages/ssz": {
         "releaseType": "node",
@@ -36,7 +45,10 @@
         "bumpMinorPreMajor": true,
         "bumpPatchForMinorPreMajor": true,
         "changelogPath": "CHANGELOG.md",
-        "versioning": "default"
+        "versioning": "default",
+        "extra-files": [
+          { "type": "json", "path": "jsr.json", "jsonpath": "$.version" }
+        ]        
       }
     }
   }
