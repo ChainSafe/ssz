@@ -21,6 +21,15 @@ jobs:
         run: yarn --immutable
       - name: Build
         run: yarn build
+
+      # JSR requires all packages to have no slow types on public interfaces,
+      # Which requires explicit type annotations for complex types. 
+      # i.e. `const a = 10;` is fine but `const a = new Map()` is complex. 
+      # We can't enforce it with TSC or Biome so had to rely on this task 
+      # https://jsr.io/docs/about-slow-types#explicit-types
+      - name: Dry run for JSR publish
+        run: yarn jsr publish --dry-run
+
       - name: Generate
         run: yarn generate
       - name: Check types
