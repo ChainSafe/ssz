@@ -68,7 +68,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to JSR
-        run: yarn lerna exec 'yarn jsr publish' --scope @chainsafe/ssz --scope @chainsafe/as-sha256 --scope @chainsafe/persistent-merkle-tree --scope @chainsafe/persistent-ts
+        run: yarn jsr publish
         if: ${{ steps.release.outputs.releases_created }}
 
       - name: Publish to Cloudflare Pages
