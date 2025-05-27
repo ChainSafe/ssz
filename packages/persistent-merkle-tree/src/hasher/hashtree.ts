@@ -136,6 +136,7 @@ if (
   cpuFeatures.arch === "x86" &&
   !(cpuFeatures.flags.avx || cpuFeatures.flags.avx2 || cpuFeatures.flags.avx512f || cpuFeatures.flags.avx512vl)
 ) {
+  console.log("Hashtree hasher was requested but the CPU architecture does not support AVX, AVX2 or the correct AVX512 instruction sets. Falling back to as-sha256 hasher instead.")
   hasher = asSha256Hasher;
 }
 
