@@ -1,7 +1,9 @@
 import {byteArrayIntoHashObject} from "@chainsafe/as-sha256";
 import {hashInto} from "@chainsafe/hashtree";
+import CpuFeatures from "cpu-features";
 import type {HashComputationLevel} from "../hashComputation.ts";
 import {Node} from "../node.ts";
+import {hasher as asSha256Hasher} from "./as-sha256.ts";
 import {HashObject, Hasher} from "./types.ts";
 import {doDigestNLevel, doMerkleizeBlockArray, doMerkleizeBlocksBytes} from "./util.ts";
 
@@ -24,7 +26,7 @@ const hash64Output = uint8Output.subarray(0, 32);
 // size input array to 2 HashObject per computation * 32 bytes per object
 const destNodes: Node[] = new Array<Node>(PARALLEL_FACTOR);
 
-export const hasher: Hasher = {
+let hasher: Hasher = {
   name: "hashtree",
   digest64(obj1: Uint8Array, obj2: Uint8Array): Uint8Array {
     if (obj1.length !== 32 || obj2.length !== 32) {
@@ -128,3 +130,13 @@ function hashObjectsToUint32Array(obj1: HashObject, obj2: HashObject, arr: Uint3
   arr[14] = obj2.h6;
   arr[15] = obj2.h7;
 }
+
+const cpuFeatures = CpuFeatures();
+if (
+  cpuFeatures.arch === "x86" &&
+  !(cpuFeatures.flags.avx || cpuFeatures.flags.avx2 || cpuFeatures.flags.avx512f || cpuFeatures.flags.avx512vl)
+) {
+  hasher = asSha256Hasher;
+}
+
+export {hasher};
