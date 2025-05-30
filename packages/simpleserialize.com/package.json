@@ -15,7 +15,7 @@
   "dependencies": {
     "@babel/runtime": "^7.14.6",
     "@babel/types": "^7.14.5",
-    "@chainsafe/ssz": "1.2.0",
+    "@chainsafe/ssz": "1.2.1",
     "@lodestar/types": "^1.29.0",
     "bn.js": "^5.2.0",
     "bulma": "^0.9.3",
