@@ -139,4 +139,13 @@ describe("as-sha256 non-SIMD enabled methods", () => {
 
     expect(Buffer.from(output).toString("hex")).to.be.equal(Buffer.from(outputByteArray).toString("hex"));
   });
+
+  it("digest and node crypto match", () => {
+    for (let i = 0; i < 200; i++) {
+      const input = Buffer.alloc(i);
+      const output = Buffer.from(digest(input)).toString("hex");
+      const expectedOutput = createHash("sha256").update(input).digest().toString("hex");
+      expect(output).to.equal(expectedOutput, `Mismatch for input length ${i}`);
+    }
+  });
 });

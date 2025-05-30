@@ -254,23 +254,20 @@ export function update(dataPtr: usize, dataLength: i32): void {
 }
 
 export function final(outPtr: usize): void {
-  // one additional round of hashes required
-  // because padding will not fit
-  if ((bytesHashed & 63) < 63) {
-    store8(mPtr, mLength, 0x80);
-    mLength++;
-  }
-  if ((bytesHashed & 63) >= 56) {
+  // add padding bit, 0b10000000 = 0x80
+  store8(mPtr, mLength, 0x80);
+  mLength++;
+
+  // a block is 64 bytes, and we use 8 bytes to store input's length (see below) so if mLength <= (64 - 8 = 56) we can use the current block
+  // otherwise, one additional round of hashes required if the input length can't fit in the current block
+  if (mLength > 56) {
     fill(mPtr + mLength, 0, 64 - mLength);
     hashBlocks(wPtr, mPtr, 1);
     mLength = 0;
   }
-  if ((bytesHashed & 63) >= 63) {
-    store8(mPtr, mLength, 0x80);
-    mLength++;
-  }
   fill(mPtr + mLength, 0, 64 - mLength - 8);
 
+  // use the last 8 bytes of the block to store the length of the input
   store<u32>(mPtr + 64 - 8, bswap(bytesHashed / 0x20000000)); // length -- high bits
   store<u32>(mPtr + 64 - 4, bswap(bytesHashed << 3)); // length -- low bits
 
