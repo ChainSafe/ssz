@@ -54,6 +54,19 @@ export function digest64(data: Uint8Array): Uint8Array {
   throw new Error("InvalidLengthForDigest64");
 }
 
+export function digest64Into(data: Uint8Array, output: Uint8Array): void {
+  if (data.length !== 64) {
+    throw new Error(`InvalidLengthForDigest64, got ${data.length}`);
+  }
+  if (output.length !== 32) {
+    throw new Error(`InvalidLengthForOutput32, got ${output.length}`);
+  }
+
+  inputUint8Array.set(data);
+  ctx.digest64(wasmInputValue, wasmOutputValue);
+  output.set(outputUint8Array32);
+}
+
 export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Array {
   if (bytes1.length === 32 && bytes2.length === 32) {
     inputUint8Array.set(bytes1);
@@ -62,6 +75,20 @@ export function digest2Bytes32(bytes1: Uint8Array, bytes2: Uint8Array): Uint8Arr
     return allocDigest();
   }
   throw new Error("InvalidLengthForDigest64");
+}
+
+export function digest2Bytes32Into(bytes1: Uint8Array, bytes2: Uint8Array, output: Uint8Array): void {
+  if (bytes1.length !== 32 || bytes2.length !== 32) {
+    throw new Error("InvalidLengthForDigest64");
+  }
+  if (output.length !== 32) {
+    throw new Error("InvalidLengthForOutput32");
+  }
+
+  inputUint8Array.set(bytes1);
+  inputUint8Array.set(bytes2, 32);
+  ctx.digest64(wasmInputValue, wasmOutputValue);
+  output.set(outputUint8Array32);
 }
 
 /**
