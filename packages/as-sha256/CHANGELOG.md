@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.1.0...as-sha256-v1.2.0) (2025-05-30)
+
+
+### Features
+
+* hashInto() and digest64Into() api ([#480](https://github.com/ChainSafe/ssz/issues/480)) ([d69a8a3](https://github.com/ChainSafe/ssz/commit/d69a8a3ae512c3567a80b2fc5ccc32d0a59a3b3e))
+
+
+### Bug Fixes
+
+* fix digest when input length = n * 64 - 1 ([#489](https://github.com/ChainSafe/ssz/issues/489)) ([e773805](https://github.com/ChainSafe/ssz/commit/e77380598413c9176f83f4dc880e3891b4dc45cd))
+
 ## [1.1.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.0.0...as-sha256-v1.1.0) (2025-03-12)
 
 
