@@ -1532,27 +1532,18 @@
  (func $assembly/common/final (param $0 i32)
   (local $1 i32)
   (local $2 i32)
-  global.get $assembly/common/bytesHashed
-  i32.const 63
-  i32.and
-  i32.const 63
-  i32.lt_u
-  if
-   global.get $assembly/common/mPtr
-   global.get $assembly/common/mLength
-   i32.add
-   i32.const 128
-   i32.store8
-   global.get $assembly/common/mLength
-   i32.const 1
-   i32.add
-   global.set $assembly/common/mLength
-  end
-  global.get $assembly/common/bytesHashed
-  i32.const 63
-  i32.and
+  global.get $assembly/common/mPtr
+  global.get $assembly/common/mLength
+  i32.add
+  i32.const 128
+  i32.store8
+  global.get $assembly/common/mLength
+  i32.const 1
+  i32.add
+  global.set $assembly/common/mLength
+  global.get $assembly/common/mLength
   i32.const 56
-  i32.ge_u
+  i32.gt_s
   if
    global.get $assembly/common/mPtr
    global.get $assembly/common/mLength
@@ -1583,22 +1574,6 @@
    i32.const 1
    call $assembly/common/hashBlocks
    i32.const 0
-   global.set $assembly/common/mLength
-  end
-  global.get $assembly/common/bytesHashed
-  i32.const 63
-  i32.and
-  i32.const 63
-  i32.ge_u
-  if
-   global.get $assembly/common/mPtr
-   global.get $assembly/common/mLength
-   i32.add
-   i32.const 128
-   i32.store8
-   global.get $assembly/common/mLength
-   i32.const 1
-   i32.add
    global.set $assembly/common/mLength
   end
   global.get $assembly/common/mPtr
