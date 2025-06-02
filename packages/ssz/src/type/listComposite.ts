@@ -61,8 +61,8 @@ export class ListCompositeType<
   readonly isList = true;
   readonly isViewMutable = true;
   readonly blockArray: Uint8Array[] = [];
-  readonly mixInLengthBlockBytes = new Uint8Array(64);
-  readonly mixInLengthBuffer = Buffer.from(
+  readonly mixInLengthBlockBytes: Uint8Array = new Uint8Array(64);
+  readonly mixInLengthBuffer: Buffer = Buffer.from(
     this.mixInLengthBlockBytes.buffer,
     this.mixInLengthBlockBytes.byteOffset,
     this.mixInLengthBlockBytes.byteLength
