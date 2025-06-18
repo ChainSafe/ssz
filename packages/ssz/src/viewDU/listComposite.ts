@@ -79,7 +79,8 @@ export class ListCompositeTreeViewDU<
    * Note: If index === n, returns an empty list of length 0
    *
    */
-  sliceFrom(index: number): this {
+  sliceFrom(_index: number): this {
+    let index = _index;
     // Commit before getting rootNode to ensure all pending data is in the rootNode
     this.commit();
     // populate to `this.nodes` to ensure all nodes are loaded

@@ -122,8 +122,9 @@ class Input extends React.Component<Props, State> {
     }
   }
 
-  async resetWith(inputType: string, sszTypeName: string): Promise<void> {
+  async resetWith(inputType: string, _sszTypeName: string): Promise<void> {
     const types = this.types();
+    let sszTypeName = _sszTypeName;
     let sszType = types[sszTypeName];
 
     // get a new ssz type if it's not in our fork

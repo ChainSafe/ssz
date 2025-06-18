@@ -149,7 +149,8 @@ export class ArrayCompositeTreeViewDU<
    * No need to commit() before calling this function.
    * @param views optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+  getAllReadonly(_views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    let views = _views;
     if (views && views.length !== this._length) {
       throw Error(`Expected ${this._length} views, got ${views.length}`);
     }
@@ -179,7 +180,8 @@ export class ArrayCompositeTreeViewDU<
    * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
    * @param values optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+  getAllReadonlyValues(_values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    let values = _values;
     if (values && values.length !== this._length) {
       throw Error(`Expected ${this._length} values, got ${values.length}`);
     }
@@ -206,7 +208,8 @@ export class ArrayCompositeTreeViewDU<
    * Get by range of indexes. Returns an array of views of the Composite element type.
    * This is similar to getAllReadonly() where we dont have to commit() before calling this function.
    */
-  getReadonlyByRange(startIndex: number, count: number): CompositeViewDU<ElementType>[] {
+  getReadonlyByRange(startIndex: number, _count: number): CompositeViewDU<ElementType>[] {
+    let count = _count;
     if (startIndex < 0) {
       throw Error(`Error getting by range, startIndex < 0: ${startIndex}`);
     }

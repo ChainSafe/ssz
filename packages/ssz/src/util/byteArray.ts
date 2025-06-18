@@ -14,7 +14,8 @@ export function toHexString(bytes: Uint8Array | ByteVector): string {
   return hex;
 }
 
-export function fromHexString(hex: string): Uint8Array {
+export function fromHexString(_hex: string): Uint8Array {
+  let hex = _hex;
   if (typeof hex !== "string") {
     throw new Error(`hex argument type ${typeof hex} must be of type string`);
   }

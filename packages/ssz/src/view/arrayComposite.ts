@@ -78,7 +78,8 @@ export class ArrayCompositeTreeView<
    * propagated upwards. To get linked element Views use `this.get()`
    * @param views optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonly(views?: CompositeView<ElementType>[]): CompositeView<ElementType>[] {
+  getAllReadonly(_views?: CompositeView<ElementType>[]): CompositeView<ElementType>[] {
+    let views = _views;
     if (views && views.length !== this.length) {
       throw Error(`Expected ${this.length} views, got ${views.length}`);
     }
@@ -99,7 +100,8 @@ export class ArrayCompositeTreeView<
    * To get linked element Views use `this.get()`
    * @param values optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+  getAllReadonlyValues(_values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    let values = _values;
     if (values && values.length !== this.length) {
       throw Error(`Expected ${this.length} values, got ${values.length}`);
     }

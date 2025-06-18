@@ -35,8 +35,9 @@ function isCompositeType(type: Type): type is CompositeType {
  *
  * @param bitstring Bitstring without the leading "1", since it's only used to compute horizontal indexes.
  */
-export function treePostProcessFromProofNode(node: Node, type: CompositeType, bitstring = "", currentDepth = 0): Node {
+export function treePostProcessFromProofNode(_node: Node, type: CompositeType, bitstring = "", currentDepth = 0): Node {
   // Must run tree_fromProofNode on the first received node (i.e. Validator object)
+  let node: Node = _node;
   if (currentDepth === 0) {
     const nodePost = type.tree_fromProofNode(node);
     if (nodePost.done) return nodePost.node;

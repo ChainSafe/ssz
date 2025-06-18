@@ -257,7 +257,8 @@ export class LeafNode extends Node {
     }
   }
 
-  setUintBigint(uintBytes: number, offsetBytes: number, valueBN: bigint): void {
+  setUintBigint(uintBytes: number, offsetBytes: number, _valueBN: bigint): void {
+    let valueBN = _valueBN;
     const hIndex = Math.floor(offsetBytes / 4);
 
     // number has to be masked from an h value
@@ -290,8 +291,9 @@ export class LeafNode extends Node {
     }
   }
 
-  bitwiseOrUint(uintBytes: number, offsetBytes: number, value: number): void {
+  bitwiseOrUint(uintBytes: number, offsetBytes: number, _value: number): void {
     const hIndex = Math.floor(offsetBytes / 4);
+    let value = _value;
 
     // number has to be masked from an h value
     if (uintBytes < 4) {
