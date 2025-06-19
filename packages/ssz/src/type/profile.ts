@@ -266,7 +266,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     return variableIndex;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfFields<Fields> {
+  value_deserializeFromBytes(data: ByteViews, _start: number, end: number): ValueOfFields<Fields> {
+    let start = _start;
     const {optionalFields, fieldRanges} = this.getFieldRanges(data, start, end);
     const value = {} as {[K in keyof Fields]: unknown};
     const optionalFieldsLen = optionalFields.uint8Array.length;
@@ -349,7 +350,8 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
     return variableIndex;
   }
 
-  tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+  tree_deserializeFromBytes(data: ByteViews, _start: number, end: number): Node {
+    let start = _start;
     const {optionalFields, fieldRanges} = this.getFieldRanges(data, start, end);
     const nodes = new Array<Node>(this.activeFields.bitLen).fill(zeroNode(0));
     const optionalFieldsLen = optionalFields.uint8Array.length;

@@ -39,9 +39,10 @@ export class ValidatorNodeStructType extends ContainerNodeStructType<typeof Vali
 
   value_serializeToBytes(
     {uint8Array: output, dataView}: ByteViews,
-    offset: number,
+    _offset: number,
     validator: ValueOfFields<typeof ValidatorType>
   ): number {
+    let offset = _offset;
     output.set(validator.pubkey, offset);
     offset += PUBKEY_SIZE;
     output.set(validator.withdrawalCredentials, offset);
@@ -115,7 +116,8 @@ export function validatorToChunkBytes(
   writeEpochInf(dataView, offset, withdrawableEpoch);
 }
 
-function writeEpochInf(dataView: DataView, offset: number, value: number): number {
+function writeEpochInf(dataView: DataView, _offset: number, value: number): number {
+  let offset = _offset;
   if (value === Infinity) {
     dataView.setUint32(offset, 0xffffffff, true);
     offset += UINT32_SIZE;

@@ -257,12 +257,12 @@ export class LeafNode extends Node {
     }
   }
 
-  setUintBigint(uintBytes: number, offsetBytes: number, valueBN: bigint): void {
+  setUintBigint(uintBytes: number, offsetBytes: number, _valueBN: bigint): void {
     const hIndex = Math.floor(offsetBytes / 4);
 
     // number has to be masked from an h value
     if (uintBytes < 4) {
-      const value = Number(valueBN);
+      const value = Number(_valueBN);
       const bitIndex = (offsetBytes % 4) * 8;
       let h = getNodeH(this, hIndex);
       if (uintBytes === 1) {
@@ -277,11 +277,12 @@ export class LeafNode extends Node {
 
     // number equals the h value
     else if (uintBytes === 4) {
-      setNodeH(this, hIndex, Number(valueBN));
+      setNodeH(this, hIndex, Number(_valueBN));
     }
 
     // number spans multiple h values
     else {
+      let valueBN = _valueBN;
       const hEnd = hIndex + Math.ceil(uintBytes / 4);
       for (let i = hIndex; i < hEnd; i++) {
         setNodeH(this, i, Number(valueBN & BigInt(0xffffffff)));
@@ -290,8 +291,9 @@ export class LeafNode extends Node {
     }
   }
 
-  bitwiseOrUint(uintBytes: number, offsetBytes: number, value: number): void {
+  bitwiseOrUint(uintBytes: number, offsetBytes: number, _value: number): void {
     const hIndex = Math.floor(offsetBytes / 4);
+    let value = _value;
 
     // number has to be masked from an h value
     if (uintBytes < 4) {

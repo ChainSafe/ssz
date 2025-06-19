@@ -278,7 +278,8 @@ export class UintBigintType extends BasicType<bigint> {
 
   // Serialization + deserialization
 
-  value_serializeToBytes({dataView}: ByteViews, offset: number, value: bigint): number {
+  value_serializeToBytes({dataView}: ByteViews, offset: number, _value: bigint): number {
+    let value = _value;
     switch (this.byteLength) {
       case 1:
         dataView.setInt8(offset, Number(value));

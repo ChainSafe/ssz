@@ -102,7 +102,8 @@ function getJsonPathsFromValue(value: unknown, parentPath: JsonPath = [], jsonPa
 /**
  * Returns the end type of a JSON path
  */
-function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unknown> {
+function getJsonPathType(_type: CompositeTypeAny, jsonPath: JsonPath): Type<unknown> {
+  let type = _type;
   for (const jsonProp of jsonPath) {
     type = type.getPropertyType(jsonProp) as CompositeTypeAny;
   }
@@ -114,7 +115,9 @@ function getJsonPathType(type: CompositeTypeAny, jsonPath: JsonPath): Type<unkno
  * Requires the type to coerce jsonProp to a fieldName.
  * JSON paths may be in JSON notation or fieldName notation
  */
-function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath): unknown {
+function getJsonPathView(_type: Type<unknown>, _view: unknown, jsonPath: JsonPath): unknown {
+  let type = _type;
+  let view = _view;
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
       type = type.elementType;
@@ -146,7 +149,9 @@ function getJsonPathView(type: Type<unknown>, view: unknown, jsonPath: JsonPath)
  * Requires the type to coerce jsonProp to a fieldName.
  * JSON paths may be in JSON notation or fieldName notation
  */
-function getJsonPathValue(type: Type<unknown>, json: unknown, jsonPath: JsonPath): unknown {
+function getJsonPathValue(_type: Type<unknown>, _json: unknown, jsonPath: JsonPath): unknown {
+  let type = _type;
+  let json = _json;
   for (const jsonProp of jsonPath) {
     if (type instanceof OptionalType) {
       type = type.elementType;

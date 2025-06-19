@@ -17,7 +17,7 @@
         // https://github.com/ChainSafe/ssz/pull/475#discussion_r1995814916
         "useNumberNamespace": "off",
         // TODO: There are two many usages, will fix in separate PR
-        "noParameterAssign": "off",
+        "noParameterAssign": "warn",
         // We use to export types and object without differentiating
         "useExportType": "off",
         // We use to import types and object without differentiating
