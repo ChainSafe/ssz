@@ -45,7 +45,7 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
  */
 export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
   const size = end - start;
-
+  
   // If the offset in data is not a multiple of 4, Uint32Array can't be used
   // > start offset of Uint32Array should be a multiple of 4
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
@@ -53,9 +53,7 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   const fullNodeCount = Math.floor(size / 32);
   const leafNodes = new Array<LeafNode>(Math.ceil(size / 32));
 
-  // Efficiently construct the tree writing to hashObjects directly
-
-  // TODO: Optimize, with this approach each h property is written twice
+ // Efficiently construct the tree writing to hashObjects directly
   for (let i = 0; i < fullNodeCount; i++) {
     const offset = start + i * 32;
     leafNodes[i] = new LeafNode(
@@ -70,28 +68,37 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
     );
   }
 
-  // Consider that the last node may only include partial data
+// Consider that the last node may only include partial data
   const remainderBytes = size % 32;
 
-  // Last node
+  // Instead of creating a LeafNode with zeros and then overwriting some properties, we do a
+  // single write in the constructor: We pass all eight hValues to the LeafNode constructor.
   if (remainderBytes > 0) {
-    const node = new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
-    leafNodes[fullNodeCount] = node;
-
-    // Loop to dynamically copy the full h values
+    const offset = start + fullNodeCount * 32;
     const fullHCount = Math.floor(remainderBytes / 4);
-    for (let h = 0; h < fullHCount; h++) {
-      setNodeH(node, h, dataView.getInt32(start + fullNodeCount * 32 + h * 4, true));
+    const remainderUint32 = remainderBytes % 4;
+    const hValues = new Array(8).fill(0); // Temporary array initialized to zeros
+
+    // Set fully available h values
+    for (let i = 0; i < fullHCount; i++) {
+      hValues[i] = dataView.getInt32(offset + i * 4, true);
     }
 
-    const remainderUint32 = size % 4;
+    // Set partial h value if there are remaining bytes
     if (remainderUint32 > 0) {
       let h = 0;
-      for (let i = 0; i < remainderUint32; i++) {
-        h |= dataView.getUint8(start + size - remainderUint32 + i) << (i * 8);
+      const partialOffset = offset + fullHCount * 4;
+      for (let j = 0; j < remainderUint32; j++) {
+        h |= dataView.getUint8(partialOffset + j) << (j * 8);
       }
-      setNodeH(node, fullHCount, h);
+      hValues[fullHCount] = h;
     }
+
+    // Create the partial node with all h values set once
+    leafNodes[fullNodeCount] = new LeafNode(
+      hValues[0], hValues[1], hValues[2], hValues[3],
+      hValues[4], hValues[5], hValues[6], hValues[7]
+    );
   }
 
   return leafNodes;
