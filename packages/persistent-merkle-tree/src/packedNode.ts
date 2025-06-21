@@ -20,52 +20,22 @@ export function packedRootsBytesToNode(depth: number, dataView: DataView, start:
  * |------|------|------|------|------|------|------|------|
  */
 export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
-  const fullNodeCount = Math.floor(values.length / 4);
   const leafNodes = new Array<LeafNode>(Math.ceil(values.length / 4));
-  for (let i = 0; i < fullNodeCount; i++) {
-    const start = i * 4;
-    const v0 = values[start];
-    const v1 = values[start + 1];
-    const v2 = values[start + 2];
-    const v3 = values[start + 3];
-
-    // write values directly into the constructor
-    leafNodes[i] = new LeafNode(
-      v0 === Infinity ? 0xffffffff : v0 & 0xffffffff,
-      v0 === Infinity ? 0xffffffff : (v0 / NUMBER_2_POW_32) & 0xffffffff,
-      v1 === Infinity ? 0xffffffff : v1 & 0xffffffff,
-      v1 === Infinity ? 0xffffffff : (v1 / NUMBER_2_POW_32) & 0xffffffff,
-      v2 === Infinity ? 0xffffffff : v2 & 0xffffffff,
-      v2 === Infinity ? 0xffffffff : (v2 / NUMBER_2_POW_32) & 0xffffffff,
-      v3 === Infinity ? 0xffffffff : v3 & 0xffffffff,
-      v3 === Infinity ? 0xffffffff : (v3 / NUMBER_2_POW_32) & 0xffffffff
-    );
-  }
-
-  // If there are remaining values, create a partial LeafNode to store them
-  const remainderValues = values.length % 4;
-  if (remainderValues > 0) {
-    // Calculate the starting index in the values array for the remaining values
-    // fullNodeCount is the number of full nodes, each handling 4 values
-    const start = fullNodeCount * 4;
-    const hValues = new Array(8).fill(0);
-
-    for (let j = 0; j < remainderValues; j++) {
-      const value = values[start + j];
-      const hIndex = 2 * j;
-
-      if (value === Infinity) {
-        hValues[hIndex] = 0xffffffff;
-        hValues[hIndex + 1] = 0xffffffff;
-      } else {
-        hValues[hIndex] = value & 0xffffffff;
-        hValues[hIndex + 1] = (value / NUMBER_2_POW_32) & 0xffffffff;
-      }
+  for (let i = 0; i < values.length; i++) {
+    const nodeIndex = Math.floor(i / 4);
+    const leafNode = leafNodes[nodeIndex] ?? new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
+    const vIndex = i % 4;
+    const hIndex = 2 * vIndex;
+    const value = values[i];
+    // same logic to UintNumberType.value_serializeToBytes() for 8 bytes
+    if (value === Infinity) {
+      setNodeH(leafNode, hIndex, 0xffffffff);
+      setNodeH(leafNode, hIndex + 1, 0xffffffff);
+    } else {
+      setNodeH(leafNode, hIndex, value & 0xffffffff);
+      setNodeH(leafNode, hIndex + 1, (value / NUMBER_2_POW_32) & 0xffffffff);
     }
-    leafNodes[fullNodeCount] = new LeafNode(
-      hValues[0], hValues[1], hValues[2], hValues[3],
-      hValues[4], hValues[5], hValues[6], hValues[7]
-    );
+    leafNodes[nodeIndex] = leafNode;
   }
   return leafNodes;
 }
