@@ -92,13 +92,11 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Install pnpm
-        run: deno install -g npm:pnpm
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: deno run --allow-all npm:pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm build
+        run: deno run --allow-all npm:pnpm build
       - name: Generate
-        run: pnpm generate
+        run: deno run --allow-all npm:pnpm generate
       - name: Unit Tests
-        run: pnpm test:unit
+        run: deno run --allow-all npm:pnpm test:unit
