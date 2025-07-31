@@ -80,7 +80,7 @@ jobs:
       - name: Build
         run: bun run --bun pnpm build
       - name: Generate
-        run: nun run --bun pnpm generate
+        run: bun run --bun pnpm generate
       - name: Unit Tests
         run: bun run --bun pnpm test:unit
 
