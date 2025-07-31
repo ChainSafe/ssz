@@ -60,8 +60,8 @@ importers:
   packages/persistent-merkle-tree:
     dependencies:
       '@chainsafe/as-sha256':
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 'workspace:'
+        version: link:../as-sha256
       '@chainsafe/hashtree':
         specifier: 1.0.1
         version: 1.0.1
@@ -78,11 +78,11 @@ importers:
   packages/ssz:
     dependencies:
       '@chainsafe/as-sha256':
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 'workspace:'
+        version: link:../as-sha256
       '@chainsafe/persistent-merkle-tree':
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 'workspace:'
+        version: link:../persistent-merkle-tree
     devDependencies:
       '@lodestar/spec-test-util':
         specifier: ^1.23.1
@@ -273,9 +273,6 @@ packages:
   '@chainsafe/as-sha256@0.5.0':
     resolution: {integrity: sha512-dTIY6oUZNdC5yDTVP5Qc9hAlKAsn0QTQ2DnQvvsbTnKSTbYs3p5RPN0aIUqN0liXei/9h24c7V0dkV44cnWIQA==}
 
-  '@chainsafe/as-sha256@1.2.0':
-    resolution: {integrity: sha512-H2BNHQ5C3RS+H0ZvOdovK6GjFAyq5T6LClad8ivwj9Oaiy28uvdsGVS7gNJKuZmg0FGHAI+n7F0Qju6U0QkKDA==}
-
   '@chainsafe/babel-plugin-inline-binary-import@1.0.3':
     resolution: {integrity: sha512-LqAkjpdOinE5wHXAB0NkpyNNjAOQD1IgtOIke7xcXHTJB0zji02UirbzkWd//0DglNZYfJrvjBW87atM/z0s8w==}
 
@@ -309,9 +306,6 @@ packages:
   '@chainsafe/hashtree@1.0.1':
     resolution: {integrity: sha512-bleu9FjqBeR/l6W1u2Lz+HsS0b0LLJX2eUt3hOPBN7VqOhidx8wzkVh2S7YurS+iTQtfdK4K5QU9tcTGNrGwDg==}
     engines: {node: '>= 18'}
-
-  '@chainsafe/persistent-merkle-tree@1.2.0':
-    resolution: {integrity: sha512-Ng2eqd6OPvFPPuroQ659ZrFMHtc44LxUfK7K2WkoBhlQ3hrvIn3UTQNKc77xUCU40xjeBGSxAfz+MSV256i+/g==}
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -4635,8 +4629,6 @@ snapshots:
 
   '@chainsafe/as-sha256@0.5.0': {}
 
-  '@chainsafe/as-sha256@1.2.0': {}
-
   '@chainsafe/babel-plugin-inline-binary-import@1.0.3':
     dependencies:
       core-js: 2.6.10
@@ -4680,12 +4672,6 @@ snapshots:
       '@chainsafe/hashtree-darwin-arm64': 1.0.1
       '@chainsafe/hashtree-linux-arm64-gnu': 1.0.1
       '@chainsafe/hashtree-linux-x64-gnu': 1.0.1
-
-  '@chainsafe/persistent-merkle-tree@1.2.0':
-    dependencies:
-      '@chainsafe/as-sha256': 1.2.0
-      '@chainsafe/hashtree': 1.0.1
-      '@noble/hashes': 1.4.0
 
   '@colors/colors@1.5.0':
     optional: true
