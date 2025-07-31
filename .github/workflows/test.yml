@@ -73,8 +73,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install Yarn
-        run: bun install -g npm:yarn
+      - name: Install pnpm
+        run: bun install -g npm:pnpm
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
