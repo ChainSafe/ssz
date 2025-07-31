@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "npmClient": "yarn",
+  "npmClient": "pnpm",
   "useNx": true,
   "version": "1.18.1",
   "stream": true,
