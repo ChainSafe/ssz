@@ -1,1 +1,0 @@
-[![Eth Consensus Spec v1.5.0](https://img.shields.io/badge/ETH%20consensus--spec-1.5.0-blue)](https://github.com/ethereum/consensus-specs/releases/tag/v1.5.0)
