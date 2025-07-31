@@ -7,7 +7,7 @@ AssemblyScript implementation of SHA256.
 
 ## Usage
 
-`yarn add @chainsafe/as-sha256`
+`pnpm add @chainsafe/as-sha256`
 
 ```typescript
 import {digest, digest64, SHA256} from "@chainsafe/as-sha256";
