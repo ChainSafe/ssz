@@ -89,12 +89,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2-beta
-        with:
-          node-version: "22"
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+      - name: Install pnpm
+        run: deno install -g npm:pnpm
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
