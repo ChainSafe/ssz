@@ -1,0 +1,13 @@
+packages:
+  - packages/*
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - aws-sdk
+  - bigint-buffer
+  - core-js
+  - edgedriver
+  - esbuild
+  - geckodriver
+  - msw
+  - nx
