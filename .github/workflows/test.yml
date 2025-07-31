@@ -76,13 +76,13 @@ jobs:
       - name: Install pnpm
         run: bun install -g npm:pnpm
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: bun run --bun pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm build
+        run: bun run --bun pnpm build
       - name: Generate
-        run: pnpm generate
+        run: nun run --bun pnpm generate
       - name: Unit Tests
-        run: pnpm test:unit
+        run: bun run --bun pnpm test:unit
 
   test-deno:
     name: Tests Deno
