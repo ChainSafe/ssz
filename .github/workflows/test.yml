@@ -75,20 +75,14 @@ jobs:
           bun-version: latest
       - name: Install pnpm
         run: bun install -g npm:pnpm
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build
         run: pnpm build
       - name: Generate
-        run: bun run --filter '*' generate
+        run: pnpm generate
       - name: Unit Tests
-        run: bun run --bun --filter '*' test:unit
+        run: pnpm test:unit
 
   test-deno:
     name: Tests Deno
