@@ -12,4 +12,4 @@ onlyBuiltDependencies:
   - esbuild
   - geckodriver
   - msw
-  - nx
+  - '@lerna-lite/cli'
