@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {expect} from "vitest";
 
 type BufferLike = string | Uint8Array | Buffer;
 
@@ -16,5 +16,5 @@ export function toHex(bytes: BufferLike): string {
 }
 
 export function expectEqualHex(value: BufferLike, expected: BufferLike): void {
-  expect(toHex(value)).to.be.equal(toHex(expected));
+  expect(toHex(value)).toEqual(toHex(expected));
 }
