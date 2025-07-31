@@ -17,24 +17,24 @@
     "build": "tsc -p tsconfig.build.json",
     "build-web": "webpack --mode production --entry ./lib/esm/web.js --output ./dist/ssz.min.js",
     "build:docs": "typedoc --exclude src/index.ts,src/web.ts --out docs src",
-    "build:release": "yarn clean && yarn build && yarn build-web && yarn run build:docs",
+    "build:release": "pnpm clean && pnpm build && pnpm build-web && pnpm build:docs",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf lib && rm -rf dist && rm -f tsconfig.tsbuildinfo",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "pnpm build",
     "benchmark": "node --loader=ts-node/esm --max-old-space-size=4096 --expose-gc ../../node_modules/.bin/benchmark 'test/perf/*.test.ts'",
-    "benchmark:local": "yarn benchmark --local",
+    "benchmark:local": "pnpm benchmark --local",
     "test:unit": "vitest run --dir test/unit",
-    "test:spec": "yarn test:spec-generic && yarn test:spec-static test:spec-eip-4881",
+    "test:spec": "pnpm test:spec-generic && pnpm test:spec-static test:spec-eip-4881",
     "test:spec-generic": "vitest run --dir test/spec/generic",
-    "test:spec-static": "yarn test:spec-static-minimal && yarn test:spec-static-mainnet",
+    "test:spec-static": "pnpm test:spec-static-minimal && pnpm test:spec-static-mainnet",
     "test:spec-static-minimal": "LODESTAR_PRESET=minimal vitest run --dir test/spec/ test/spec/ssz_static.test.ts",
     "test:spec-static-mainnet": "LODESTAR_PRESET=mainnet vitest run --dir test/spec/ test/spec/ssz_static.test.ts",
     "test:spec-eip-4881": "vitest run --dir test/spec/ test/spec/eip-4881/**/*.test.ts",
     "download-spec-tests": "node --loader ts-node/esm/transpile-only test/spec/downloadTests.ts"
   },
   "dependencies": {
-    "@chainsafe/as-sha256": "1.2.0",
-    "@chainsafe/persistent-merkle-tree": "1.2.0"
+    "@chainsafe/as-sha256": "workspace:",
+    "@chainsafe/persistent-merkle-tree": "workspace:"
   },
   "devDependencies": {
     "@lodestar/spec-test-util": "^1.23.1",
