@@ -61,13 +61,3 @@ jobs:
         if: ${{ steps.release.outputs.releases_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish to Cloudflare Pages
-        if: ${{ steps.release.outputs.releases_created }}
-        uses: cloudflare/pages-action@1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: simpleserialize
-          directory: ./packages/simpleserialize.com/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
