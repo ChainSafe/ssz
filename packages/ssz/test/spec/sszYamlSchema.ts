@@ -8,13 +8,14 @@ import jsYaml from "js-yaml";
 const {Schema} = jsYaml;
 
 // @ts-ignore
-import nullType from "js-yaml/lib/js-yaml/type/null.js";
+const nullType = jsYaml.types.null;
 
 // @ts-ignore
-import boolType from "js-yaml/lib/js-yaml/type/bool.js";
+const boolType = jsYaml.types.bool;
 
 // @ts-ignore
-import floatType from "js-yaml/lib/js-yaml/type/float.js";
+const floatType = jsYaml.types.float;
+
 // Forked from https://github.com/nodeca/js-yaml/blob/master/lib/js-yaml/type/int.js
 // Currently only supports loading ints
 const {Type} = jsYaml;

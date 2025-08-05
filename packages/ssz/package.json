@@ -39,7 +39,7 @@
   "devDependencies": {
     "@lodestar/spec-test-util": "^1.23.1",
     "@types/js-yaml": "^4.0.5",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^4.1.0",
     "snappyjs": "^0.6.1"
   },
   "keywords": [
