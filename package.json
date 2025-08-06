@@ -11,7 +11,7 @@
     "check-types": "pnpm -r check-types",
     "test:browsers": "pnpm -r test:browsers",
     "test:unit": "pnpm -r test:unit",
-    "benchmark:files": "NODE_OPTIONS='--max_old_space_size=4096 --loader=ts-node/esm' benchmark --config .benchrc.yaml",
+    "benchmark:files": "NODE_OPTIONS='--max_old_space_size=4096 --loader=ts-node/esm' pnpm exec benchmark --config .benchrc.yaml",
     "benchmark": "pnpm benchmark:files 'packages/*/test/perf/**/*.test.ts'",
     "benchmark:local": "pnpm benchmark --local",
     "check-readme": "pnpm -r check-readme"
