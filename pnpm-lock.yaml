@@ -17,6 +17,9 @@ importers:
       '@chainsafe/biomejs-config':
         specifier: ^0.1.0
         version: 0.1.0(@biomejs/biome@1.9.4)
+      '@chainsafe/persistent-merkle-tree':
+        specifier: 'workspace:'
+        version: link:packages/persistent-merkle-tree
       '@types/node':
         specifier: ^22.10.2
         version: 22.10.2
