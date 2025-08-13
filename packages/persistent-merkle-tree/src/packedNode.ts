@@ -1,4 +1,4 @@
-import {LeafNode, Node, getNodeH, setNodeH} from "./node.ts";
+import {LeafNode, Node, getNodeH} from "./node.ts";
 import {subtreeFillToContents} from "./subtree.ts";
 
 const NUMBER_2_POW_32 = 2 ** 32;
@@ -20,23 +20,41 @@ export function packedRootsBytesToNode(depth: number, dataView: DataView, start:
  * |------|------|------|------|------|------|------|------|
  */
 export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
-  const leafNodes = new Array<LeafNode>(Math.ceil(values.length / 4));
-  for (let i = 0; i < values.length; i++) {
-    const nodeIndex = Math.floor(i / 4);
-    const leafNode = leafNodes[nodeIndex] ?? new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
-    const vIndex = i % 4;
-    const hIndex = 2 * vIndex;
-    const value = values[i];
-    // same logic to UintNumberType.value_serializeToBytes() for 8 bytes
-    if (value === Infinity) {
-      setNodeH(leafNode, hIndex, 0xffffffff);
-      setNodeH(leafNode, hIndex + 1, 0xffffffff);
-    } else {
-      setNodeH(leafNode, hIndex, value & 0xffffffff);
-      setNodeH(leafNode, hIndex + 1, (value / NUMBER_2_POW_32) & 0xffffffff);
+  if (values.length === 0) return [];
+
+  const leaves = Math.ceil(values.length / 4);
+  const leafNodes = new Array<LeafNode>(leaves);
+
+  let i = 0; // index into values
+  for (let nodeIndex = 0; nodeIndex < leaves; nodeIndex++) {
+    // Pre-fill with zeros; we’ll assign the used slots below.
+    let h0 = 0, h1 = 0, h2 = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0, h7 = 0;
+
+    // Up to 4 uint64 numbers per leaf → 8 x uint32 words (lo,hi) pairs
+    for (let slot = 0; slot < 4 && i < values.length; slot++, i++) {
+      const value = values[i];
+      let lo: number, hi: number;
+
+      if (value === Infinity) {
+        lo = 0xffffffff;
+        hi = 0xffffffff;
+      } else {
+        // low 32 bits (unsigned) and high 32 bits (unsigned)
+        lo = (value >>> 0) >>> 0;
+        hi = (Math.floor(value / NUMBER_2_POW_32) >>> 0) >>> 0;
+      }
+
+      switch (slot) {
+        case 0: h0 = lo; h1 = hi; break;
+        case 1: h2 = lo; h3 = hi; break;
+        case 2: h4 = lo; h5 = hi; break;
+        case 3: h6 = lo; h7 = hi; break;
+      }
     }
-    leafNodes[nodeIndex] = leafNode;
+
+    leafNodes[nodeIndex] = new LeafNode(h0, h1, h2, h3, h4, h5, h6, h7);
   }
+
   return leafNodes;
 }
 
