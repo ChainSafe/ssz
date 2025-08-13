@@ -20,7 +20,6 @@ export function packedRootsBytesToNode(depth: number, dataView: DataView, start:
  * |------|------|------|------|------|------|------|------|
  */
 export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
-  console.log("%%%%%%%%% packedUintNum64sToLeafNodes called with", values.length, "values");
   if (values.length === 0) return [];
 
   const leaves = Math.ceil(values.length / 4);
@@ -82,7 +81,6 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
  * Optimized deserialization of linear bytes to consecutive leaf nodes
  */
 export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
-  console.log("%%%%%%%%% packedRootsBytesToLeafNodes called with", {start, end});
   const size = end - start;
   const fullLeafBytes = 32;
 
