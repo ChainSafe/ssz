@@ -45,7 +45,7 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
  */
 export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
   const size = end - start;
-  
+
   // If the offset in data is not a multiple of 4, Uint32Array can't be used
   // > start offset of Uint32Array should be a multiple of 4
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
@@ -53,7 +53,7 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   const fullNodeCount = Math.floor(size / 32);
   const leafNodes = new Array<LeafNode>(Math.ceil(size / 32));
 
- // Efficiently construct the tree writing to hashObjects directly
+  // Efficiently construct the tree writing to hashObjects directly
   for (let i = 0; i < fullNodeCount; i++) {
     const offset = start + i * 32;
     leafNodes[i] = new LeafNode(
@@ -68,7 +68,7 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
     );
   }
 
-// Consider that the last node may only include partial data
+  // Consider that the last node may only include partial data
   const remainderBytes = size % 32;
 
   // Instead of creating a LeafNode with zeros and then overwriting some properties, we do a
@@ -96,8 +96,14 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
 
     // Create the partial node with all h values set once
     leafNodes[fullNodeCount] = new LeafNode(
-      hValues[0], hValues[1], hValues[2], hValues[3],
-      hValues[4], hValues[5], hValues[6], hValues[7]
+      hValues[0],
+      hValues[1],
+      hValues[2],
+      hValues[3],
+      hValues[4],
+      hValues[5],
+      hValues[6],
+      hValues[7]
     );
   }
 
