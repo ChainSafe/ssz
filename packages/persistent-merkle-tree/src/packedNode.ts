@@ -28,7 +28,14 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
   let i = 0; // index into values
   for (let nodeIndex = 0; nodeIndex < leaves; nodeIndex++) {
     // Pre-fill with zeros; we’ll assign the used slots below.
-    let h0 = 0, h1 = 0, h2 = 0, h3 = 0, h4 = 0, h5 = 0, h6 = 0, h7 = 0;
+    let h0 = 0,
+      h1 = 0,
+      h2 = 0,
+      h3 = 0,
+      h4 = 0,
+      h5 = 0,
+      h6 = 0,
+      h7 = 0;
 
     // Up to 4 uint64 numbers per leaf → 8 x uint32 words (lo,hi) pairs
     for (let slot = 0; slot < 4 && i < values.length; slot++, i++) {
@@ -45,10 +52,22 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
       }
 
       switch (slot) {
-        case 0: h0 = lo; h1 = hi; break;
-        case 1: h2 = lo; h3 = hi; break;
-        case 2: h4 = lo; h5 = hi; break;
-        case 3: h6 = lo; h7 = hi; break;
+        case 0:
+          h0 = lo;
+          h1 = hi;
+          break;
+        case 1:
+          h2 = lo;
+          h3 = hi;
+          break;
+        case 2:
+          h4 = lo;
+          h5 = hi;
+          break;
+        case 3:
+          h6 = lo;
+          h7 = hi;
+          break;
       }
     }
 
@@ -86,7 +105,6 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
       dataView.getUint32(offset + 28, true)
     );
   }
-
 
   // Instead of creating a LeafNode with zeros and then overwriting some properties, we do a
   // single write in the constructor: We pass all eight hValues to the LeafNode constructor.
