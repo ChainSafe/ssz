@@ -57,14 +57,14 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   for (let i = 0; i < fullNodeCount; i++) {
     const offset = start + i * 32;
     leafNodes[i] = new LeafNode(
-      dataView.getInt32(offset + 0, true),
-      dataView.getInt32(offset + 4, true),
-      dataView.getInt32(offset + 8, true),
-      dataView.getInt32(offset + 12, true),
-      dataView.getInt32(offset + 16, true),
-      dataView.getInt32(offset + 20, true),
-      dataView.getInt32(offset + 24, true),
-      dataView.getInt32(offset + 28, true)
+      dataView.getUint32(offset + 0, true),
+      dataView.getUint32(offset + 4, true),
+      dataView.getUint32(offset + 8, true),
+      dataView.getUint32(offset + 12, true),
+      dataView.getUint32(offset + 16, true),
+      dataView.getUint32(offset + 20, true),
+      dataView.getUint32(offset + 24, true),
+      dataView.getUint32(offset + 28, true)
     );
   }
 
