@@ -20,6 +20,7 @@ export function packedRootsBytesToNode(depth: number, dataView: DataView, start:
  * |------|------|------|------|------|------|------|------|
  */
 export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
+  console.log("%%%%%%%%% packedUintNum64sToLeafNodes called with", values.length, "values");
   if (values.length === 0) return [];
 
   const leaves = Math.ceil(values.length / 4);
@@ -81,6 +82,7 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
  * Optimized deserialization of linear bytes to consecutive leaf nodes
  */
 export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
+  console.log("%%%%%%%%% packedRootsBytesToLeafNodes called with", {start, end});
   const size = end - start;
   const fullLeafBytes = 32;
 
@@ -95,14 +97,14 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
   for (let i = 0; i < fullNodeCount; i++) {
     const offset = start + i * fullLeafBytes;
     leafNodes[i] = new LeafNode(
-      dataView.getUint32(offset + 0, true),
-      dataView.getUint32(offset + 4, true),
-      dataView.getUint32(offset + 8, true),
-      dataView.getUint32(offset + 12, true),
-      dataView.getUint32(offset + 16, true),
-      dataView.getUint32(offset + 20, true),
-      dataView.getUint32(offset + 24, true),
-      dataView.getUint32(offset + 28, true)
+      dataView.getInt32(offset + 0, true),
+      dataView.getInt32(offset + 4, true),
+      dataView.getInt32(offset + 8, true),
+      dataView.getInt32(offset + 12, true),
+      dataView.getInt32(offset + 16, true),
+      dataView.getInt32(offset + 20, true),
+      dataView.getInt32(offset + 24, true),
+      dataView.getInt32(offset + 28, true)
     );
   }
 
@@ -117,7 +119,7 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
     // Whole 4-byte words we can take directly
     const fullWordCount = Math.floor(remainderBytes / 4);
     for (let i = 0; i < fullWordCount; i++) {
-      hValues[i] = dataView.getUint32(offset + i * 4, true);
+      hValues[i] = dataView.getInt32(offset + i * 4, true);
     }
 
     // Remaining bytes that form a partial word
