@@ -45,17 +45,18 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
  */
 export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
   const size = end - start;
+  const fullLeafBytes = 32;
 
   // If the offset in data is not a multiple of 4, Uint32Array can't be used
   // > start offset of Uint32Array should be a multiple of 4
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
 
-  const fullNodeCount = Math.floor(size / 32);
-  const leafNodes = new Array<LeafNode>(Math.ceil(size / 32));
+  const fullNodeCount = Math.floor(size / fullLeafBytes);
+  const leafNodes = new Array<LeafNode>(Math.ceil(size / fullLeafBytes));
 
   // Efficiently construct the tree writing to hashObjects directly
   for (let i = 0; i < fullNodeCount; i++) {
-    const offset = start + i * 32;
+    const offset = start + i * fullLeafBytes;
     leafNodes[i] = new LeafNode(
       dataView.getUint32(offset + 0, true),
       dataView.getUint32(offset + 4, true),
@@ -68,30 +69,30 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
     );
   }
 
-  // Consider that the last node may only include partial data
-  const remainderBytes = size % 32;
 
   // Instead of creating a LeafNode with zeros and then overwriting some properties, we do a
   // single write in the constructor: We pass all eight hValues to the LeafNode constructor.
+  const remainderBytes = size % fullLeafBytes;
   if (remainderBytes > 0) {
-    const offset = start + fullNodeCount * 32;
-    const fullHCount = Math.floor(remainderBytes / 4);
-    const remainderUint32 = remainderBytes % 4;
-    const hValues = new Array(8).fill(0); // Temporary array initialized to zeros
+    const offset = start + fullNodeCount * fullLeafBytes;
+    // Precompute final h values once
+    const hValues = [0, 0, 0, 0, 0, 0, 0, 0];
 
-    // Set fully available h values
-    for (let i = 0; i < fullHCount; i++) {
-      hValues[i] = dataView.getInt32(offset + i * 4, true);
+    // Whole 4-byte words we can take directly
+    const fullWordCount = Math.floor(remainderBytes / 4);
+    for (let i = 0; i < fullWordCount; i++) {
+      hValues[i] = dataView.getUint32(offset + i * 4, true);
     }
 
-    // Set partial h value if there are remaining bytes
-    if (remainderUint32 > 0) {
+    // Remaining bytes that form a partial word
+    const remainderByteCount = remainderBytes % 4;
+    if (remainderByteCount > 0) {
       let h = 0;
-      const partialOffset = offset + fullHCount * 4;
-      for (let j = 0; j < remainderUint32; j++) {
+      const partialOffset = offset + fullWordCount * 4;
+      for (let j = 0; j < remainderByteCount; j++) {
         h |= dataView.getUint8(partialOffset + j) << (j * 8);
       }
-      hValues[fullHCount] = h;
+      hValues[fullWordCount] = h;
     }
 
     // Create the partial node with all h values set once
