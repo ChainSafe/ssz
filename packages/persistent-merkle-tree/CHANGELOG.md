@@ -9,6 +9,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @chainsafe/as-sha256 bumped to 0.4.2
 
+## [1.2.1](https://github.com/chainsafe/ssz/compare/persistent-merkle-tree-v1.2.0...persistent-merkle-tree-v1.2.1) (2025-08-22)
+
+
+### Miscellaneous
+
+* update dep for @chainsafe/hashtree ([#498](https://github.com/chainsafe/ssz/issues/498)) ([7f0eccc](https://github.com/chainsafe/ssz/commit/7f0eccc96b59b57d78de89243fc9604bf6ff50d7))
+
 ## [1.2.0](https://github.com/ChainSafe/ssz/compare/persistent-merkle-tree-v1.1.0...persistent-merkle-tree-v1.2.0) (2025-05-30)
 
 
