@@ -111,7 +111,8 @@ export class ArrayBasicTreeViewDU<ElementType extends BasicType<unknown>> extend
    * Get all values of this array as Basic element type values, from index zero to `this.length - 1`
    * @param values optional output parameter, if is provided it must be an array of the same length as this array
    */
-  getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+  getAll(_values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    let values = _values;
     if (values && values.length !== this._length) {
       throw Error(`Expected ${this._length} values, got ${values.length}`);
     }

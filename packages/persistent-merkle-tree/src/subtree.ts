@@ -2,8 +2,10 @@ import {HashComputationLevel, getHashComputations, levelAtIndex} from "./hashCom
 import {BranchNode, Node} from "./node.ts";
 import {zeroNode} from "./zeroNode.ts";
 
-export function subtreeFillToDepth(bottom: Node, depth: number): Node {
+export function subtreeFillToDepth(bottom: Node, _depth: number): Node {
   let node = bottom;
+  let depth = _depth;
+
   while (depth > 0) {
     node = new BranchNode(node, node);
     depth--;
