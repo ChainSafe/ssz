@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/chainsafe/ssz/compare/persistent-ts-v1.0.0...persistent-ts-v1.0.1) (2025-08-22)
+
+
+### Miscellaneous
+
+* add support for ts extension import ([#484](https://github.com/chainsafe/ssz/issues/484)) ([3891cf8](https://github.com/chainsafe/ssz/commit/3891cf8203d2b8177be228f2c06518743fef239f))
+* fix linting rule lint/style/noUselessElse ([#476](https://github.com/chainsafe/ssz/issues/476)) ([a5a2427](https://github.com/chainsafe/ssz/commit/a5a2427056d1d90ad4ae955c192686150fad492a))
+* migrate the linting from eslint to biomejs ([#475](https://github.com/chainsafe/ssz/issues/475)) ([b9f9354](https://github.com/chainsafe/ssz/commit/b9f935435b01e228b5ee3bc225e348cf25eb8dba))
+
 ## [1.0.0](https://github.com/ChainSafe/ssz/compare/persistent-ts-v0.19.2...persistent-ts-v1.0.0) (2025-01-23)
 
 

@@ -1,6 +1,12 @@
 {
+    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
     "bootstrap-sha": "3e81068b1cdb284fc207126257fb588e2eb269fd",
     "plugins": ["node-workspace"],
+    "changelog-sections": [
+      { "type": "feat", "section": "Features", "hidden": false },
+      { "type": "fix", "section": "Bug Fixes", "hidden": false },
+      { "type": "chore", "section": "Miscellaneous", "hidden": false }
+    ],
     "packages": {
       "packages/as-sha256": {
         "releaseType": "node",

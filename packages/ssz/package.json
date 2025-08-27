@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "author": "ChainSafe Systems",
   "homepage": "https://github.com/chainsafe/ssz",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -34,12 +34,12 @@
   },
   "dependencies": {
     "@chainsafe/as-sha256": "1.2.0",
-    "@chainsafe/persistent-merkle-tree": "1.2.0"
+    "@chainsafe/persistent-merkle-tree": "1.2.1"
   },
   "devDependencies": {
     "@lodestar/spec-test-util": "^1.23.1",
     "@types/js-yaml": "^4.0.5",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^4.1.0",
     "snappyjs": "^0.6.1"
   },
   "keywords": [

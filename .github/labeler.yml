@@ -10,8 +10,5 @@ persistent-ts:
 ssz:
   - packages/ssz/**/*
 
-simpleserialize.com:
-  - packages/simpleserialize.com/**/*
-
 CI:
   - .github/**/*

@@ -16,6 +16,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.2.2](https://github.com/chainsafe/ssz/compare/ssz-v1.2.1...ssz-v1.2.2) (2025-08-22)
+
+
+### Miscellaneous
+
+* migrate the simpleserialize.com package to separate git repo ([#494](https://github.com/chainsafe/ssz/issues/494)) ([b9fb51f](https://github.com/chainsafe/ssz/commit/b9fb51f852d7abdfaacc96f1d1c87c9079c49f43))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/persistent-merkle-tree bumped from 1.2.0 to 1.2.1
+
 ## [1.2.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.1.0...ssz-v1.2.0) (2025-03-13)
 
 
