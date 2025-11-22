@@ -1,4 +1,5 @@
 import {Node, getNodesAtDepth, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
+import {slice} from "../util/byteArray.ts";
 import {maxChunksToDepth} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
@@ -78,10 +79,9 @@ export class BitVectorType extends BitArrayType {
     return offset + this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): BitArray {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): BitArray {
     this.assertValidLength(data.uint8Array, start, end);
-    // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-    return new BitArray(Uint8Array.prototype.slice.call(data.uint8Array, start, end), this.lengthBits);
+    return new BitArray(slice(data.uint8Array, start, end, reuseBytes), this.lengthBits);
   }
 
   tree_serializedSize(): number {

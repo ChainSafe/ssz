@@ -7,7 +7,7 @@ import {
   getHashComputations,
   toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {byteArrayEquals, fromHexString, toHexString} from "../util/byteArray.ts";
+import {byteArrayEquals, fromHexString, slice, toHexString} from "../util/byteArray.ts";
 import {ByteViews} from "./abstract.ts";
 import {CompositeType, LENGTH_GINDEX} from "./composite.ts";
 
@@ -74,9 +74,9 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return offset + value.length;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ByteArray {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ByteArray {
     this.assertValidSize(end - start);
-    return Uint8Array.prototype.slice.call(data.uint8Array, start, end);
+    return slice(data.uint8Array, start, end, reuseBytes);
   }
 
   value_toTree(value: ByteArray): Node {

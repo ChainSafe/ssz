@@ -90,7 +90,8 @@ export function value_deserializeFromBytesArrayComposite<
   data: ByteViews,
   start: number,
   end: number,
-  arrayProps: ArrayProps
+  arrayProps: ArrayProps,
+  reuseBytes?: boolean
 ): ValueOf<ElementType>[] {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
   const length = offsets.length; // Capture length before pushing end offset
@@ -102,7 +103,7 @@ export function value_deserializeFromBytesArrayComposite<
     // The offsets are relative to the start
     const startEl = start + offsets[i];
     const endEl = i === length - 1 ? end : start + offsets[i + 1];
-    values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl);
+    values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl, reuseBytes);
   }
 
   return values;

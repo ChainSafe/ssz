@@ -258,7 +258,7 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     return variableIndex;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfFields<Fields> {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfFields<Fields> {
     const {activeFields, fieldRanges} = this.getFieldRanges(data, start, end);
     const value = {} as {[K in keyof Fields]: unknown};
 
@@ -270,7 +270,12 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       }
 
       const fieldRange = fieldRanges[rangesIx++];
-      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
+      value[fieldName] = fieldType.value_deserializeFromBytes(
+        data,
+        start + fieldRange.start,
+        start + fieldRange.end,
+        reuseBytes
+      );
     }
 
     return value as ValueOfFields<Fields>;

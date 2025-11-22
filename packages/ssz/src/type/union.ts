@@ -141,7 +141,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     return this.types[value.selector].value_serializeToBytes(output, offset + 1, value.value);
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfTypes<Types> {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfTypes<Types> {
     const selector = data.uint8Array[start];
     if (selector > this.maxSelector) {
       throw Error(`Invalid selector ${selector}`);
@@ -149,7 +149,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
 
     return {
       selector,
-      value: this.types[selector].value_deserializeFromBytes(data, start + 1, end) as unknown,
+      value: this.types[selector].value_deserializeFromBytes(data, start + 1, end, reuseBytes) as unknown,
     } as ValueOfTypes<Types>;
   }
 
