@@ -270,7 +270,12 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
       }
 
       const fieldRange = fieldRanges[rangesIx++];
-      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end, reuseBytes);
+      value[fieldName] = fieldType.value_deserializeFromBytes(
+        data,
+        start + fieldRange.start,
+        start + fieldRange.end,
+        reuseBytes
+      );
     }
 
     return value as ValueOfFields<Fields>;

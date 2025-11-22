@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import { slice } from "../../src/util/byteArray.ts";
+import {slice} from "../../src/util/byteArray.ts";
 
 describe("slice", () => {
   it("Ensure slice copies memory with reuseBytes == false", () => {

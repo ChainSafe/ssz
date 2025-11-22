@@ -1,11 +1,11 @@
 import {Node, getNodesAtDepth, packedNodeRootsToBytes, packedRootsBytesToNode} from "@chainsafe/persistent-merkle-tree";
+import {slice} from "../util/byteArray.ts";
 import {maxChunksToDepth} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
 import {BitArray} from "../value/bitArray.ts";
 import {BitArrayType} from "./bitArray.ts";
 import {ByteViews} from "./composite.ts";
-import { slice } from "../util/byteArray.ts";
 
 export interface BitVectorOptions {
   typeName?: string;

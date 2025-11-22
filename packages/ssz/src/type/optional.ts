@@ -124,7 +124,12 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     return offset;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfType<ElementType> {
+  value_deserializeFromBytes(
+    data: ByteViews,
+    start: number,
+    end: number,
+    reuseBytes?: boolean
+  ): ValueOfType<ElementType> {
     if (start === end) return null as ValueOfType<ElementType>;
 
     const selector = data.uint8Array[start];

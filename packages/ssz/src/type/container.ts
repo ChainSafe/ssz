@@ -221,7 +221,12 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
-      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end, reuseBytes);
+      value[fieldName] = fieldType.value_deserializeFromBytes(
+        data,
+        start + fieldRange.start,
+        start + fieldRange.end,
+        reuseBytes
+      );
     }
 
     return value as ValueOfFields<Fields>;

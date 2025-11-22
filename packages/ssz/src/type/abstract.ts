@@ -122,7 +122,6 @@ export abstract class Type<V> {
 
   /** Deserialize binary data to value */
   deserialize(uint8Array: Uint8Array, opts?: {reuseBytes?: boolean}): V {
-
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length, opts?.reuseBytes);
   }

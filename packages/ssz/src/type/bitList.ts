@@ -6,6 +6,7 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToNode,
 } from "@chainsafe/persistent-merkle-tree";
+import {slice} from "../util/byteArray.ts";
 import {maxChunksToDepth} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
@@ -13,7 +14,6 @@ import {BitArray} from "../value/bitArray.ts";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.ts";
 import {BitArrayType} from "./bitArray.ts";
 import {ByteViews} from "./composite.ts";
-import { slice } from "../util/byteArray.ts";
 
 export interface BitListOptions {
   typeName?: string;
@@ -136,7 +136,12 @@ export class BitListType extends BitArrayType {
 
   // Deserializer helpers
 
-  private deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number, reuseBytes?: boolean): BitArrayDeserialized {
+  private deserializeUint8ArrayBitListFromBytes(
+    data: Uint8Array,
+    start: number,
+    end: number,
+    reuseBytes?: boolean
+  ): BitArrayDeserialized {
     const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes);
     if (bitLen > this.limitBits) {
       throw Error(`bitLen over limit ${bitLen} > ${this.limitBits}`);

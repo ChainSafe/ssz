@@ -280,7 +280,12 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
         continue;
       }
       const fieldRange = fieldRanges[i];
-      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end, reuseBytes);
+      value[fieldName] = fieldType.value_deserializeFromBytes(
+        data,
+        start + fieldRange.start,
+        start + fieldRange.end,
+        reuseBytes
+      );
     }
 
     return value as ValueOfFields<Fields>;
