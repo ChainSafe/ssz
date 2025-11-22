@@ -214,14 +214,14 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return variableIndex;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfFields<Fields> {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfFields<Fields> {
     const fieldRanges = this.getFieldRanges(data.dataView, start, end);
     const value = {} as {[K in keyof Fields]: unknown};
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       const fieldRange = fieldRanges[i];
-      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end);
+      value[fieldName] = fieldType.value_deserializeFromBytes(data, start + fieldRange.start, start + fieldRange.end, reuseBytes);
     }
 
     return value as ValueOfFields<Fields>;

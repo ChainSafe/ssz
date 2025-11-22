@@ -135,8 +135,8 @@ export class ListCompositeType<
     return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOf<ElementType>[] {
-    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this);
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOf<ElementType>[] {
+    return value_deserializeFromBytesArrayComposite(this.elementType, data, start, end, this, reuseBytes);
   }
 
   tree_serializedSize(node: Node): number {

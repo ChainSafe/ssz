@@ -38,6 +38,15 @@ describe("Deserialize frequent eth2 objects", () => {
         type.deserialize(bytes);
       },
     });
+
+    bench<Uint8Array, Uint8Array>({
+      id: `deserialize ${type.typeName} - struct (reuse bytes)`,
+      before: () => type.serialize(value),
+      beforeEach: (bytes) => bytes,
+      fn: (bytes) => {
+        type.deserialize(bytes, {reuseBytes: true});
+      },
+    });
   }
 
   for (const validatorCount of [300_000]) {

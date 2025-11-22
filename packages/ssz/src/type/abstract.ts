@@ -81,7 +81,7 @@ export abstract class Type<V> {
   /** INTERNAL METHOD: Serialize value to existing output ArrayBuffer views */
   abstract value_serializeToBytes(output: ByteViews, offset: number, value: V): number;
   /** INTERNAL METHOD: Deserialize value from a section of ArrayBuffer views */
-  abstract value_deserializeFromBytes(data: ByteViews, start: number, end: number): V;
+  abstract value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): V;
   /** INTERNAL METHOD: Return serialized size of a tree */
   abstract tree_serializedSize(node: Node): number;
   /** INTERNAL METHOD: Serialize tree to existing output ArrayBuffer views  */
@@ -121,16 +121,10 @@ export abstract class Type<V> {
   }
 
   /** Deserialize binary data to value */
-  deserialize(uint8Array: Uint8Array): V {
-    // Buffer.prototype.slice does not copy memory, force use Uint8Array.prototype.slice https://github.com/nodejs/node/issues/28087
-    // - Uint8Array.prototype.slice: Copy memory, safe to mutate
-    // - Buffer.prototype.slice: Does NOT copy memory, mutation affects both views
-    // We could ensure that all Buffer instances are converted to Uint8Array before calling value_deserializeFromBytes
-    // However doing that in a browser friendly way is not easy. Downstream code uses `Uint8Array.prototype.slice.call`
-    // to ensure Buffer.prototype.slice is never used. Unit tests also test non-mutability.
+  deserialize(uint8Array: Uint8Array, opts?: {reuseBytes?: boolean}): V {
 
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
-    return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
+    return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length, opts?.reuseBytes);
   }
 
   // Merkleization

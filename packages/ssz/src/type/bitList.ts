@@ -13,6 +13,7 @@ import {BitArray} from "../value/bitArray.ts";
 import {addLengthNode, getChunksNodeFromRootNode, getLengthFromRootNode} from "./arrayBasic.ts";
 import {BitArrayType} from "./bitArray.ts";
 import {ByteViews} from "./composite.ts";
+import { slice } from "../util/byteArray.ts";
 
 export interface BitListOptions {
   typeName?: string;
@@ -79,8 +80,8 @@ export class BitListType extends BitArrayType {
     return applyPaddingBit(output.uint8Array, offset, value.bitLen);
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): BitArray {
-    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): BitArray {
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end, reuseBytes);
     return new BitArray(uint8Array, bitLen);
   }
 
@@ -135,8 +136,8 @@ export class BitListType extends BitArrayType {
 
   // Deserializer helpers
 
-  private deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number): BitArrayDeserialized {
-    const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data, start, end);
+  private deserializeUint8ArrayBitListFromBytes(data: Uint8Array, start: number, end: number, reuseBytes?: boolean): BitArrayDeserialized {
+    const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes);
     if (bitLen > this.limitBits) {
       throw Error(`bitLen over limit ${bitLen} > ${this.limitBits}`);
     }
@@ -149,7 +150,8 @@ type BitArrayDeserialized = {uint8Array: Uint8Array; bitLen: number};
 export function deserializeUint8ArrayBitListFromBytes(
   data: Uint8Array,
   start: number,
-  end: number
+  end: number,
+  reuseBytes?: boolean
 ): BitArrayDeserialized {
   if (end > data.length) {
     throw Error(`BitList attempting to read byte ${end} of data length ${data.length}`);
@@ -163,15 +165,13 @@ export function deserializeUint8ArrayBitListFromBytes(
   }
 
   if (lastByte === 1) {
-    // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-    const uint8Array = Uint8Array.prototype.slice.call(data, start, end - 1);
+    const uint8Array = slice(data, start, end - 1, reuseBytes);
     const bitLen = (size - 1) * 8;
     return {uint8Array, bitLen};
   }
 
   // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
-  // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-  const uint8Array = Uint8Array.prototype.slice.call(data, start, end);
+  const uint8Array = slice(data, start, end, reuseBytes);
   // mask lastChunkByte
   const lastByteBitLength = lastByte.toString(2).length - 1;
   const bitLen = (size - 1) * 8 + lastByteBitLength;

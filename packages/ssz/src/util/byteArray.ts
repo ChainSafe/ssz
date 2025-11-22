@@ -3,6 +3,19 @@ import {ByteVector} from "../interface.ts";
 // Caching this info costs about ~1000 bytes and speeds up toHexString() by x6
 const hexByByte = new Array<string>(256);
 
+/** Wrapper to select Uint8Array.slice or Uint8Array.subarray */
+export function slice(data: Uint8Array, start?: number, end?: number, reuseBytes?: boolean): Uint8Array {
+  // Buffer.prototype.slice does not copy memory, force use Uint8Array.prototype.slice https://github.com/nodejs/node/issues/28087
+  // - Uint8Array.prototype.slice: Copy memory, safe to mutate
+  // - Buffer.prototype.slice: Does NOT copy memory, mutation affects both views
+  // We could ensure that all Buffer instances are converted to Uint8Array before calling value_deserializeFromBytes
+  // However doing that in a browser friendly way is not easy. Downstream code uses `Uint8Array.prototype.slice.call`
+  // to ensure Buffer.prototype.slice is never used. Unit tests also test non-mutability.
+  return reuseBytes
+    ? Uint8Array.prototype.subarray.call(data, start, end)
+    : Uint8Array.prototype.slice.call(data, start, end);
+}
+
 export function toHexString(bytes: Uint8Array | ByteVector): string {
   let hex = "0x";
   for (const byte of bytes) {

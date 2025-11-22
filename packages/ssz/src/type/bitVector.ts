@@ -5,6 +5,7 @@ import {Require} from "../util/types.ts";
 import {BitArray} from "../value/bitArray.ts";
 import {BitArrayType} from "./bitArray.ts";
 import {ByteViews} from "./composite.ts";
+import { slice } from "../util/byteArray.ts";
 
 export interface BitVectorOptions {
   typeName?: string;
@@ -78,10 +79,9 @@ export class BitVectorType extends BitArrayType {
     return offset + this.fixedSize;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): BitArray {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): BitArray {
     this.assertValidLength(data.uint8Array, start, end);
-    // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
-    return new BitArray(Uint8Array.prototype.slice.call(data.uint8Array, start, end), this.lengthBits);
+    return new BitArray(slice(data.uint8Array, start, end, reuseBytes), this.lengthBits);
   }
 
   tree_serializedSize(): number {

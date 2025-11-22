@@ -124,14 +124,14 @@ export class OptionalType<ElementType extends Type<unknown>> extends CompositeTy
     return offset;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number): ValueOfType<ElementType> {
+  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfType<ElementType> {
     if (start === end) return null as ValueOfType<ElementType>;
 
     const selector = data.uint8Array[start];
     if (selector !== 1) {
       throw new Error(`Invalid selector for Optional type: ${selector}`);
     }
-    return this.elementType.value_deserializeFromBytes(data, start + 1, end) as ValueOfType<ElementType>;
+    return this.elementType.value_deserializeFromBytes(data, start + 1, end, reuseBytes) as ValueOfType<ElementType>;
   }
 
   tree_serializedSize(node: Node): number {
