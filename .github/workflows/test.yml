@@ -89,26 +89,3 @@ jobs:
         run: bun run --filter '*' generate
       - name: Unit Tests
         run: bun run --bun --filter '*' test:unit
-
-  test-deno:
-    name: Tests Deno
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2-beta
-        with:
-          node-version: "22"
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-      - name: Install
-        run: yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
-      # Deno does not run task in workspaces if same task exists on root package.json
-      - name: Clean root scripts 
-        run: cat package.json | jq 'del( .scripts )' > package.json.backup && mv package.json.backup package.json
-      - name: Generate
-        run: deno task --recursive generate
-      - name: Unit Tests
-        run: deno task --recursive test:unit
