@@ -16,6 +16,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.3.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.2.2...ssz-v1.3.0) (2025-11-22)
+
+
+### Features
+
+* add reuseBytes option to deserialize ([#503](https://github.com/ChainSafe/ssz/issues/503)) ([b1e55bc](https://github.com/ChainSafe/ssz/commit/b1e55bcd7e58145e3b8c902ff24f7b520588337d))
+
 ## [1.2.2](https://github.com/chainsafe/ssz/compare/ssz-v1.2.1...ssz-v1.2.2) (2025-08-22)
 
 
