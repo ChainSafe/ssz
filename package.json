@@ -32,6 +32,7 @@
     "vite-plugin-node-polyfills": "^0.23.0",
     "vitest": "~3.0.7",
     "vitest-in-process-pool": "^2.0.0",
-    "webdriverio": "^9.2.11"
+    "webdriverio": "^9.2.11",
+    "@chainsafe/persistent-merkle-tree": "workspace:"
   }
 }
