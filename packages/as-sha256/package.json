@@ -25,18 +25,18 @@
     "generate": "rm -rf ./dist && node --loader ts-node/esm/transpile-only ./scripts/codegen.ts",
     "asbuild:untouched": "asc assembly/index.ts -o build/untouched.wasm -t build/untouched.wat --runtime minimal --target debug",
     "asbuild:optimized": "asc assembly/index.ts -o build/optimized.wasm -t build/optimized.wat --runtime minimal --target release -O3z --noAssert",
-    "asbuild": "yarn asbuild:untouched && yarn asbuild:optimized",
+    "asbuild": "pnpm asbuild:untouched && pnpm asbuild:optimized",
     "asbuild:simd:untouched": "asc assembly/index.simd.ts -o build/untouched.simd.wasm -t build/untouched.simd.wat --runtime minimal --target debug --enable simd",
     "asbuild:simd:optimized": "asc assembly/index.simd.ts -o build/optimized.simd.wasm -t build/optimized.simd.wat --runtime minimal --target release -O3z --noAssert --enable simd",
-    "asbuild:simd": "yarn asbuild:simd:untouched && yarn asbuild:simd:optimized",
+    "asbuild:simd": "pnpm asbuild:simd:untouched && pnpm asbuild:simd:optimized",
     "build:lib": "tsc -p tsconfig.build.json",
     "build:web": "webpack --mode production --entry ./index.js --output ./dist/as-sha256.min.js",
-    "build": "yarn asbuild && yarn asbuild:simd && yarn generate && yarn build:lib",
+    "build": "pnpm asbuild && pnpm asbuild:simd && pnpm generate && pnpm build:lib",
     "test:unit": "vitest run --dir test/unit/",
     "test:browsers": "vitest run --config ./vitest.browser.config.ts --dir test/unit",
     "benchmark": "node -r ts-node/register ./node_modules/.bin/benchmark 'test/perf/*.test.ts'",
-    "benchmark:local": "yarn benchmark --local",
-    "test:ci": "yarn test:as-ci"
+    "benchmark:local": "pnpm benchmark --local",
+    "test:ci": "pnpm test:as-ci"
   },
   "devDependencies": {
     "@chainsafe/babel-plugin-inline-binary-import": "^1.0.3",

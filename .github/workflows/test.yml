@@ -16,21 +16,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.node}}
-          cache: yarn
+          cache: pnpm
       - name: Bootstrap
-        run: yarn --immutable
+        run: pnpm i --frozen-lockfile
       - name: Build
-        run: yarn build
+        run: pnpm build
       - name: Generate
-        run: yarn generate
+        run: pnpm generate
       - name: Check types
-        run: yarn check-types
+        run: pnpm check-types
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
       - name: Unit Tests
-        run: yarn test:unit
+        run: pnpm test:unit
       - name: Browsers Tests
-        run: yarn test:browsers
+        run: pnpm test:browsers
       # Download spec tests with cache
       - name: Restore spec tests cache
         uses: actions/cache@master
@@ -38,31 +38,31 @@ jobs:
           path: packages/ssz/spec-tests
           key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
       - name: Download spec tests
-        run: yarn download-spec-tests
+        run: pnpm download-spec-tests
         working-directory: packages/ssz
       # Run them in different steps to quickly identifying which command failed
-      # Otherwise just doing `yarn test:spec` you can't tell which specific suite failed
+      # Otherwise just doing `pnpm test:spec` you can't tell which specific suite failed
       # many of the suites have identical names for minimal and mainnet
       - name: Spec tests general
-        run: yarn test:spec-generic
+        run: pnpm test:spec-generic
         working-directory: packages/ssz
       - name: Spec tests phase0-minimal
-        run: LODESTAR_FORK=phase0 yarn test:spec-static-minimal
+        run: LODESTAR_FORK=phase0 pnpm test:spec-static-minimal
         working-directory: packages/ssz
       - name: Spec tests phase0-mainnet
-        run: LODESTAR_FORK=phase0 yarn test:spec-static-mainnet
+        run: LODESTAR_FORK=phase0 pnpm test:spec-static-mainnet
         working-directory: packages/ssz
       - name: Spec tests altair-minimal
-        run: LODESTAR_FORK=altair yarn test:spec-static-minimal
+        run: LODESTAR_FORK=altair pnpm test:spec-static-minimal
         working-directory: packages/ssz
       - name: Spec tests altair-mainnet
-        run: LODESTAR_FORK=altair yarn test:spec-static-mainnet
+        run: LODESTAR_FORK=altair pnpm test:spec-static-mainnet
         working-directory: packages/ssz
       - name: Spec tests bellatrix-minimal
-        run: LODESTAR_FORK=bellatrix yarn test:spec-static-minimal
+        run: LODESTAR_FORK=bellatrix pnpm test:spec-static-minimal
         working-directory: packages/ssz
       - name: Spec tests bellatrix-mainnet
-        run: LODESTAR_FORK=bellatrix yarn test:spec-static-mainnet
+        run: LODESTAR_FORK=bellatrix pnpm test:spec-static-mainnet
         working-directory: packages/ssz
   
   test-bun:
@@ -73,8 +73,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install Yarn
-        run: bun install -g npm:yarn
+      - name: Install pnpm
+        run: bun install -g npm:pnpm
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -82,9 +82,9 @@ jobs:
         with:
           bun-version: latest
       - name: Install
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Build
-        run: yarn build
+        run: pnpm build
       - name: Generate
         run: bun run --filter '*' generate
       - name: Unit Tests

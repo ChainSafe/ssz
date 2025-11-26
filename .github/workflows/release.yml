@@ -32,12 +32,12 @@ jobs:
       
       - uses: actions/setup-node@v4
         with:
-          cache: 'yarn'
+          cache: 'pnpm'
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: yarn install --immutable
+      - run: pnpm install --frozen-lockfile
         if: ${{ steps.release.outputs.releases_created }}
 
       - run: git config user.email $(git --no-pager show -s --format='%ae' HEAD)
@@ -45,7 +45,7 @@ jobs:
       - run: git config user.name $(git --no-pager show -s --format='%an' HEAD)
         if: ${{ steps.release.outputs.releases_created }}
 
-      - run: yarn build
+      - run: pnpm build
         if: ${{ steps.release.outputs.releases_created }}
 
       - env:
