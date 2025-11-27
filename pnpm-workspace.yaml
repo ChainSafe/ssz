@@ -1,0 +1,22 @@
+packages:
+  - packages/*
+
+linkWorkspacePackages: true
+
+# Only use packages with at least 2 days of release (set in minutes)
+minimumReleaseAge: 2880
+
+nodeLinker: "isolated"
+
+ignoredBuiltDependencies:
+  - aws-sdk
+  - core-js
+  - edgedriver
+  - geckodriver
+  - msw
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - bigint-buffer
+  - esbuild
+  - nx

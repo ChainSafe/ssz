@@ -38,8 +38,8 @@
     "clean": "rm -rf lib",
     "build": "tsc -p tsconfig.build.json",
     "benchmark:files": "node --max-old-space-size=4096 --expose-gc --loader ts-node/esm/transpile-only ../../node_modules/.bin/benchmark",
-    "benchmark": "yarn benchmark:files 'test/perf/*.test.ts'",
-    "benchmark:local": "yarn benchmark --local",
+    "benchmark": "pnpm benchmark:files 'test/perf/*.test.ts'",
+    "benchmark:local": "pnpm benchmark --local",
     "test:unit": "vitest run --dir test/unit"
   },
   "repository": {
@@ -59,7 +59,7 @@
   },
   "homepage": "https://github.com/ChainSafe/persistent-merkle-tree#readme",
   "dependencies": {
-    "@chainsafe/as-sha256": "1.2.0",
+    "@chainsafe/as-sha256": "workspace:",
     "@chainsafe/hashtree": "1.0.2",
     "@noble/hashes": "^1.3.0"
   }
