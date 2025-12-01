@@ -4,20 +4,20 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
-    "clean": "lerna run clean",
-    "generate": "lerna run generate",
-    "build": "yarn clean && lerna run build",
+    "clean": "pnpm -r clean",
+    "generate": "pnpm -r generate",
+    "build": "pnpm clean && pnpm -r build",
     "lint": "biome check",
     "lint:fix": "biome check --write",
-    "check-types": "lerna run check-types",
-    "test:browsers": "lerna run test:browsers",
-    "test:unit": "lerna run test:unit",
+    "check-types": "pnpm -r check-types",
+    "test:browsers": "pnpm -r test:browsers",
+    "test:unit": "pnpm -r test:unit",
     "benchmark:files": "NODE_OPTIONS='--max_old_space_size=4096 --loader=ts-node/esm' benchmark --config .benchrc.yaml",
-    "benchmark": "yarn benchmark:files 'packages/*/test/perf/**/*.test.ts'",
-    "benchmark:local": "yarn benchmark --local",
-    "check-readme": "lerna run check-readme"
+    "benchmark": "pnpm benchmark:files 'packages/*/test/perf/**/*.test.ts'",
+    "benchmark:local": "pnpm benchmark --local",
+    "check-readme": "pnpm -r check-readme"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -32,6 +32,7 @@
     "vite-plugin-node-polyfills": "^0.23.0",
     "vitest": "~3.0.7",
     "vitest-in-process-pool": "^2.0.0",
-    "webdriverio": "^9.2.11"
+    "webdriverio": "^9.2.11",
+    "@chainsafe/persistent-merkle-tree": "workspace:"
   }
 }

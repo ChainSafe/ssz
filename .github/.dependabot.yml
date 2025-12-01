@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "yarn"
+  - package-ecosystem: "pnpm"
     schedule:
       interval: daily
     requiredLabels:
