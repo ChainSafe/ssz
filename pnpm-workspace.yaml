@@ -19,4 +19,3 @@ onlyBuiltDependencies:
   - '@biomejs/biome'
   - bigint-buffer
   - esbuild
-  - nx
