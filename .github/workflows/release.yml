@@ -58,7 +58,7 @@ jobs:
       - name: Check npm config
         run: npm config list
           
-      - run: pnpm -r publish --access public --no-git-check
+      - run: pnpm publish -r --access public --no-git-check
         if: ${{ steps.release.outputs.releases_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
