@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.2.0...as-sha256-v1.2.1) (2025-12-09)
+
+
+### Miscellaneous
+
+* migrate yarn 1 to pnpm ([#496](https://github.com/ChainSafe/ssz/issues/496)) ([d72d7af](https://github.com/ChainSafe/ssz/commit/d72d7afdd2047854701d3d55b6b7e395f3ce4f7a))
+
 ## [1.2.0](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.1.0...as-sha256-v1.2.0) (2025-05-30)
 
 

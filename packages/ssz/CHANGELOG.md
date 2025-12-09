@@ -16,6 +16,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.3.1](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.0...ssz-v1.3.1) (2025-12-09)
+
+
+### Miscellaneous
+
+* migrate yarn 1 to pnpm ([#496](https://github.com/ChainSafe/ssz/issues/496)) ([d72d7af](https://github.com/ChainSafe/ssz/commit/d72d7afdd2047854701d3d55b6b7e395f3ce4f7a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 1.2.1
+    * @chainsafe/persistent-merkle-tree bumped to 1.2.2
+
 ## [1.3.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.2.2...ssz-v1.3.0) (2025-11-22)
 
 
