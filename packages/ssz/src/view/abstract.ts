@@ -31,7 +31,7 @@ export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown
    * Merkleize view and compute its hashTreeRoot.
    *
    * See spec for definition of hashTreeRoot:
-   * https://github.com/ethereum/consensus-specs/blob/master/ssz/simple-serialize.md#merkleization
+   * https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/simple-serialize.md#merkleization
    */
   hashTreeRoot(): Uint8Array {
     return this.node.root;
@@ -49,7 +49,7 @@ export abstract class TreeView<T extends CompositeType<unknown, unknown, unknown
    * ```
    *
    * See spec for definition of merkle multiproofs:
-   * https://github.com/ethereum/consensus-specs/blob/master/ssz/merkle-proofs.md#merkle-multiproofs
+   * https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/merkle-proofs.md#merkle-multiproofs
    */
   createProof(paths: JsonPath[]): Proof {
     return this.type.tree_createProof(this.node, paths);

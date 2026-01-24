@@ -54,7 +54,7 @@ export interface TreeOffsetProof {
 /**
  * A proof for multiple leaves in a tree.
  *
- * See https://github.com/ethereum/consensus-specs/blob/master/ssz/merkle-proofs.md#merkle-multiproofs
+ * See https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/merkle-proofs.md#merkle-multiproofs
  */
 export interface MultiProof {
   type: ProofType.multi;

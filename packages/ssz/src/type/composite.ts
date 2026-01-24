@@ -42,7 +42,7 @@ export type CompositeTypeAny = CompositeType<unknown, unknown, unknown>;
 
 /**
  * Represents a composite type as defined in the spec:
- * https://github.com/ethereum/consensus-specs/blob/master/ssz/simple-serialize.md#composite-types
+ * https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/simple-serialize.md#composite-types
  */
 export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
   readonly isBasic = false;

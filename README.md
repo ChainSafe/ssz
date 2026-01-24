@@ -5,7 +5,7 @@
 ## Intro
 
 This monorepo is part of [ChainSafe's Lodestar](https://lodestar.chainsafe.io) project.
-It contains packages related to [Simple Serialize](https://github.com/ethereum/consensus-specs/blob/master/ssz/simple-serialize.md).
+It contains packages related to [Simple Serialize](https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/simple-serialize.md).
 
 ## Packages
 

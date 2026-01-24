@@ -3,7 +3,7 @@ import {Type} from "./abstract.ts";
 
 /**
  * Represents a basic type as defined in the spec:
- * https://github.com/ethereum/consensus-specs/blob/master/ssz/simple-serialize.md#basic-types
+ * https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/simple-serialize.md#basic-types
  */
 export abstract class BasicType<V> extends Type<V> {
   readonly isBasic = true;

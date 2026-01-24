@@ -132,7 +132,7 @@ export abstract class Type<V> {
    * Merkleize value and compute its hashTreeRoot.
    *
    * See spec for definition of hashTreeRoot:
-   * https://github.com/ethereum/consensus-specs/blob/master/ssz/simple-serialize.md#merkleization
+   * https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/simple-serialize.md#merkleization
    */
   abstract hashTreeRoot(value: V): Uint8Array;
 
