@@ -57,7 +57,7 @@ export abstract class TreeViewDU<T extends CompositeType<unknown, unknown, unkno
    * Commits any pending changes before computing the root.
    *
    * See spec for definition of hashTreeRoot:
-   * https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md#merkleization
+   * https://github.com/ethereum/consensus-specs/blob/master/ssz/simple-serialize.md#merkleization
    */
   hashTreeRoot(): Uint8Array {
     this.commit();
