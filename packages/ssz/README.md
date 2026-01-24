@@ -5,7 +5,7 @@
 
 ## Summary
 
-[Simple Serialize (SSZ)](https://github.com/ethereum/consensus-specs/blob/dev/ssz/simple-serialize.md) is a consensus layer standard that defines how consensus objects are serialized and merkleized.
+[Simple Serialize (SSZ)](https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/simple-serialize.md) is a consensus layer standard that defines how consensus objects are serialized and merkleized.
 
 SSZ is a type system that defines:
 

@@ -6,7 +6,7 @@ import {SortOrder, computeMultiProofBitstrings} from "./util.ts";
 /**
  * Create an multiproof
  *
- * See https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
+ * See https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/merkle-proofs.md#merkle-multiproofs
  *
  * @param rootNode the root node of the tree
  * @param gindices generalized indices of leaves to include in the proof
@@ -28,7 +28,7 @@ export function createMultiProof(rootNode: Node, gindices: Gindex[]): [Uint8Arra
 /**
  * Recreate a `Node` given a multiproof
  *
- * See https://github.com/ethereum/consensus-specs/blob/dev/ssz/merkle-proofs.md#merkle-multiproofs
+ * See https://github.com/ethereum/consensus-specs/blob/v1.6.1/ssz/merkle-proofs.md#merkle-multiproofs
  *
  * @param leaves leaves of a EF multiproof
  * @param witnesses witnesses of a EF multiproof
