@@ -65,3 +65,17 @@ describe("VectorBasicType batchHashTreeRoot", () => {
     expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
   });
 });
+
+describe("VectorBasicType array-like values", () => {
+  const uint32VectorType = new VectorBasicType(new UintNumberType(4), 4);
+  const typedValue = new Uint32Array([11, 22, 33, 44]);
+  const arrayValue = [11, 22, 33, 44];
+
+  it("accepts Uint32Array in toView", () => {
+    expect(uint32VectorType.toView(typedValue).toValue()).toEqual(arrayValue);
+  });
+
+  it("accepts Uint32Array in toViewDU", () => {
+    expect(uint32VectorType.toViewDU(typedValue).toValue()).toEqual(arrayValue);
+  });
+});
