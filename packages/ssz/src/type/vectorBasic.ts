@@ -42,11 +42,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(
-    readonly elementType: ElementType,
-    readonly length: number,
-    opts?: VectorBasicOpts
-  ) {
+  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorBasicOpts) {
     super(elementType);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
