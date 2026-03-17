@@ -1,4 +1,5 @@
 import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import type {ArrayLike} from "../interface.ts";
 import {maxChunksToDepth} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
@@ -41,11 +42,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   readonly isViewMutable = true;
   protected readonly defaultLen: number;
 
-  constructor(
-    readonly elementType: ElementType,
-    readonly length: number,
-    opts?: VectorBasicOpts
-  ) {
+  constructor(readonly elementType: ElementType, readonly length: number, opts?: VectorBasicOpts) {
     super(elementType);
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
@@ -76,6 +73,10 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
     return new ArrayBasicTreeView(this, tree);
   }
 
+  toView(value: ArrayLike<ValueOf<ElementType>>): ArrayBasicTreeView<ElementType> {
+    return super.toView(value as ValueOf<ElementType>[]);
+  }
+
   getViewDU(node: Node, cache?: unknown): ArrayBasicTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
 
@@ -98,6 +99,10 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
 
   cacheOfViewDU(view: ArrayBasicTreeViewDU<ElementType>): unknown {
     return view.cache;
+  }
+
+  toViewDU(value: ArrayLike<ValueOf<ElementType>>): ArrayBasicTreeViewDU<ElementType> {
+    return super.toViewDU(value as ValueOf<ElementType>[]);
   }
 
   // Serialization + deserialization
