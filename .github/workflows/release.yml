@@ -30,14 +30,16 @@ jobs:
         if: ${{ steps.release.outputs.releases_created }}
 
       - uses: pnpm/action-setup@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
 
       - run: corepack enable
-      
+        if: ${{ steps.release.outputs.releases_created }}
+
       - uses: actions/setup-node@v6
         with:
           cache: 'pnpm'
           node-version: 20
+          registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.releases_created }}
 
       - run: pnpm install --frozen-lockfile
