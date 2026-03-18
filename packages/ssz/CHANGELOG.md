@@ -16,6 +16,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.3.1](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.0...ssz-v1.3.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* allow array-like input for VectorBasicType views ([#512](https://github.com/ChainSafe/ssz/issues/512)) ([1d0ff62](https://github.com/ChainSafe/ssz/commit/1d0ff625bc9d81626bc11abb72653924b7a86f73))
+
+
+### Miscellaneous
+
+* fix ssz links ([#511](https://github.com/ChainSafe/ssz/issues/511)) ([3956039](https://github.com/ChainSafe/ssz/commit/395603961d179b7599f037e458949eeffb399ee2))
+* migrate yarn 1 to pnpm ([#496](https://github.com/ChainSafe/ssz/issues/496)) ([d72d7af](https://github.com/ChainSafe/ssz/commit/d72d7afdd2047854701d3d55b6b7e395f3ce4f7a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 1.2.1
+    * @chainsafe/persistent-merkle-tree bumped to 1.2.2
+
 ## [1.3.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.2.2...ssz-v1.3.0) (2025-11-22)
 
 
