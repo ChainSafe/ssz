@@ -24,7 +24,7 @@ export {ArrayType} from "./type/array.ts";
 export {BitArrayType} from "./type/bitArray.ts";
 export {ByteArrayType} from "./type/byteArray.ts";
 
-// Base type clases
+// Base type classes
 export {Type, ValueOf, JsonPath, ByteViews} from "./type/abstract.ts";
 export {BasicType, isBasicType} from "./type/basic.ts";
 export {CompositeType, CompositeTypeAny, CompositeView, CompositeViewDU, isCompositeType} from "./type/composite.ts";
