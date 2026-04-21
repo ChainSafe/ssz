@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/ChainSafe/ssz/compare/persistent-ts-v1.0.2...persistent-ts-v1.0.3) (2026-04-21)
+
+
+### Bug Fixes
+
+* update package.json repo links so provenance works ([#523](https://github.com/ChainSafe/ssz/issues/523)) ([d619c45](https://github.com/ChainSafe/ssz/commit/d619c457b1cacc8131b1b3bc89182aba5ee13b7a))
+
 ## [1.0.2](https://github.com/ChainSafe/ssz/compare/persistent-ts-v1.0.1...persistent-ts-v1.0.2) (2026-04-21)
 
 

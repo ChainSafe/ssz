@@ -16,6 +16,28 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.3.4](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.3...ssz-v1.3.4) (2026-04-21)
+
+
+### Bug Fixes
+
+* update package.json repo links so provenance works ([#523](https://github.com/ChainSafe/ssz/issues/523)) ([d619c45](https://github.com/ChainSafe/ssz/commit/d619c457b1cacc8131b1b3bc89182aba5ee13b7a))
+
+
+### Miscellaneous
+
+* bump @lodestar/spec-test-util to 1.42.0 ([#518](https://github.com/ChainSafe/ssz/issues/518)) ([67a26aa](https://github.com/ChainSafe/ssz/commit/67a26aac5048f73fb22cc018c5c41d16e34e5c68))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 1.2.4
+    * @chainsafe/persistent-merkle-tree bumped to 1.2.5
+  * devDependencies
+    * @chainsafe/persistent-ts bumped to 1.0.3
+
 ## [1.3.3](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.2...ssz-v1.3.3) (2026-04-21)
 
 
