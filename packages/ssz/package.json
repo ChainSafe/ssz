@@ -38,7 +38,7 @@
     "@chainsafe/persistent-merkle-tree": "workspace:"
   },
   "devDependencies": {
-    "@lodestar/spec-test-util": "^1.23.1",
+    "@lodestar/spec-test-util": "^1.42.0",
     "@chainsafe/persistent-ts": "workspace:",
     "@types/js-yaml": "^4.0.5",
     "js-yaml": "^4.1.0",
