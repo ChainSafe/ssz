@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/ChainSafe/ssz/compare/persistent-ts-v1.0.1...persistent-ts-v1.0.2) (2026-04-21)
+
+
+### Bug Fixes
+
+* bump package versions to trigger release ([#519](https://github.com/ChainSafe/ssz/issues/519)) ([1571989](https://github.com/ChainSafe/ssz/commit/15719899351cb9eabd199fdf058200527ca6aaa7))
+
 ## [1.0.1](https://github.com/chainsafe/ssz/compare/persistent-ts-v1.0.0...persistent-ts-v1.0.1) (2025-08-22)
 
 
