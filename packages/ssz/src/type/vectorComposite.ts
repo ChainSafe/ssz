@@ -1,10 +1,11 @@
 import {HashComputationLevel, Node, Tree} from "@chainsafe/persistent-merkle-tree";
+import type {ArrayLike} from "../interface.ts";
 import {maxChunksToDepth} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
 import {ArrayCompositeTreeView, ArrayCompositeType} from "../view/arrayComposite.ts";
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.ts";
-import {ByteViews, ValueOf} from "./abstract.ts";
+import {ByteViews, Type, ValueOf} from "./abstract.ts";
 import {ArrayType} from "./array.ts";
 import {
   maxSizeArrayComposite,
@@ -18,6 +19,19 @@ import {
   value_serializedSizeArrayComposite,
 } from "./arrayComposite.ts";
 import {CompositeType, CompositeView, CompositeViewDU} from "./composite.ts";
+import type {ListBasicType} from "./listBasic.ts";
+import type {VectorBasicType} from "./vectorBasic.ts";
+
+/**
+ * Input element type accepted by the outer composite.
+ * When the element is a basic vector/list, allow any `ArrayLike` of the basic value
+ * (e.g. `Uint32Array` for a `VectorBasicType<UintNumberType>`), not only plain `number[]`.
+ */
+type CompositeElementInput<ElementType extends Type<unknown>> = ElementType extends VectorBasicType<infer B>
+  ? ArrayLike<ValueOf<B>>
+  : ElementType extends ListBasicType<infer B>
+    ? ArrayLike<ValueOf<B>>
+    : ValueOf<ElementType>;
 
 export type VectorCompositeOpts = {
   typeName?: string;
@@ -82,11 +96,27 @@ export class VectorCompositeType<
     return new ArrayCompositeTreeView(this, tree);
   }
 
+  toView(value: ValueOf<ElementType>[]): ArrayCompositeTreeView<ElementType>;
+  toView(value: ArrayLike<CompositeElementInput<ElementType>>): ArrayCompositeTreeView<ElementType>;
+  toView(
+    value: ValueOf<ElementType>[] | ArrayLike<CompositeElementInput<ElementType>>
+  ): ArrayCompositeTreeView<ElementType> {
+    return super.toView(value as ValueOf<ElementType>[]);
+  }
+
   getViewDU(node: Node, cache?: unknown): ArrayCompositeTreeViewDU<ElementType> {
     // cache type should be validated (if applicate) in the view
 
     // biome-ignore lint/suspicious/noExplicitAny: We need to use `any` here explicitly
     return new ArrayCompositeTreeViewDU(this, node, cache as any);
+  }
+
+  toViewDU(value: ValueOf<ElementType>[]): ArrayCompositeTreeViewDU<ElementType>;
+  toViewDU(value: ArrayLike<CompositeElementInput<ElementType>>): ArrayCompositeTreeViewDU<ElementType>;
+  toViewDU(
+    value: ValueOf<ElementType>[] | ArrayLike<CompositeElementInput<ElementType>>
+  ): ArrayCompositeTreeViewDU<ElementType> {
+    return super.toViewDU(value as ValueOf<ElementType>[]);
   }
 
   commitView(view: ArrayCompositeTreeView<ElementType>): Node {
