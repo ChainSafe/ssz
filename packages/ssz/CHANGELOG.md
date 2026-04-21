@@ -16,6 +16,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.3.3](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.2...ssz-v1.3.3) (2026-04-21)
+
+
+### Bug Fixes
+
+* bump package versions to trigger release ([#519](https://github.com/ChainSafe/ssz/issues/519)) ([1571989](https://github.com/ChainSafe/ssz/commit/15719899351cb9eabd199fdf058200527ca6aaa7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 1.2.3
+    * @chainsafe/persistent-merkle-tree bumped to 1.2.4
+  * devDependencies
+    * @chainsafe/persistent-ts bumped to 1.0.2
+
 ## [1.3.2](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.1...ssz-v1.3.2) (2026-04-20)
 
 

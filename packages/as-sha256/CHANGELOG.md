@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.2.2...as-sha256-v1.2.3) (2026-04-21)
+
+
+### Bug Fixes
+
+* bump package versions to trigger release ([#519](https://github.com/ChainSafe/ssz/issues/519)) ([1571989](https://github.com/ChainSafe/ssz/commit/15719899351cb9eabd199fdf058200527ca6aaa7))
+
 ## [1.2.2](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.2.1...as-sha256-v1.2.2) (2026-04-20)
 
 
