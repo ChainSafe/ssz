@@ -16,6 +16,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.4.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.4...ssz-v1.4.0) (2026-04-21)
+
+
+### Features
+
+* allow array-like input for VectorCompositeType views ([#525](https://github.com/ChainSafe/ssz/issues/525)) ([0feec86](https://github.com/ChainSafe/ssz/commit/0feec862c943f7b47eff9a74dec33c77a1c62334))
+
 ## [1.3.4](https://github.com/ChainSafe/ssz/compare/ssz-v1.3.3...ssz-v1.3.4) (2026-04-21)
 
 
