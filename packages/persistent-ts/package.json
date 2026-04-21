@@ -17,10 +17,6 @@
     "test:unit": "vitest run --dir test/unit",
     "test:perf": "node --loader=ts-node/esm/transpile-only' benchmark 'test/perf/**/*.test.ts'"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cronokirby/persistent-ts.git"
-  },
   "keywords": [
     "persistent",
     "functional",
@@ -29,9 +25,14 @@
   "author": "Lúcás Meier",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cronokirby/persistent-ts/issues"
+    "url": "https://github.com/ChainSafe/ssz/issues"
   },
-  "homepage": "https://github.com/cronokirby/persistent-ts#readme",
+  "homepage": "https://github.com/ChainSafe/ssz/tree/master/packages/persistent-ts/#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChainSafe/ssz.git",
+    "directory": "packages/persistent-ts"
+  },
   "devDependencies": {
     "fast-check": "^1.15.1"
   },

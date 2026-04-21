@@ -10,7 +10,8 @@
   "homepage": "https://github.com/ChainSafe/ssz/tree/master/packages/as-sha256/#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chainsafe/ssz.git"
+    "url": "git+https://github.com/ChainSafe/ssz.git",
+    "directory": "packages/as-sha256"
   },
   "type": "module",
   "main": "./lib/index.js",

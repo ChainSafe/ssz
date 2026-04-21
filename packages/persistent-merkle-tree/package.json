@@ -42,10 +42,6 @@
     "benchmark:local": "pnpm benchmark --local",
     "test:unit": "vitest run --dir test/unit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ChainSafe/persistent-merkle-tree.git"
-  },
   "keywords": [
     "hash",
     "ethereum",
@@ -55,9 +51,14 @@
   "author": "ChainSafe Systems",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ChainSafe/persistent-merkle-tree/issues"
+    "url": "https://github.com/ChainSafe/ssz/issues"
   },
-  "homepage": "https://github.com/ChainSafe/persistent-merkle-tree#readme",
+  "homepage": "https://github.com/ChainSafe/ssz/tree/master/packages/persistent-merkle-tree/#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChainSafe/ssz.git",
+    "directory": "packages/persistent-merkle-tree"
+  },
   "dependencies": {
     "@chainsafe/as-sha256": "workspace:",
     "@chainsafe/hashtree": "1.0.2",
