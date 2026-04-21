@@ -19,7 +19,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cronokirby/persistent-ts.git"
+    "url": "git+https://github.com/ChainSafe/ssz.git",
+    "directory": "packages/persistent-ts"
   },
   "keywords": [
     "persistent",
