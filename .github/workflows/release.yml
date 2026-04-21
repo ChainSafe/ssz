@@ -2,15 +2,15 @@ name: Release
 
 on:
   workflow_run:
-    workflows: [ Tests ]
+    workflows: [Tests]
     branches: [master]
     types:
       - completed
 
 permissions:
-  id-token: write       # Required for OIDC
-  contents: write       # Required to create a Github release
-  pull-requests: write  # Required to add tags to pull requests
+  id-token: write # Required for OIDC
+  contents: write # Required to create a Github release
+  pull-requests: write # Required to add tags to pull requests
 
 jobs:
   release-please:
@@ -20,12 +20,11 @@ jobs:
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
     steps:
-
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           target-branch: master
-      
+
       - uses: actions/checkout@v6
         if: ${{ steps.release.outputs.releases_created }}
 
@@ -37,9 +36,9 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          cache: 'pnpm'
-          node-version: 20
-          registry-url: 'https://registry.npmjs.org'
+          cache: "pnpm"
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
         if: ${{ steps.release.outputs.releases_created }}
 
       - run: pnpm install --frozen-lockfile
@@ -52,6 +51,6 @@ jobs:
 
       - run: pnpm build
         if: ${{ steps.release.outputs.releases_created }}
-      
+
       - run: pnpm publish -r --access public --provenance --no-git-check
         if: ${{ steps.release.outputs.releases_created }}
