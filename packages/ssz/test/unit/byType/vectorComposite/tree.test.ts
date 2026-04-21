@@ -4,6 +4,7 @@ import {
   ContainerType,
   UintNumberType,
   ValueOf,
+  VectorBasicType,
   VectorCompositeType,
 } from "../../../../src/index.ts";
 import {runViewTestMutation} from "../runViewTestMutation.ts";
@@ -124,4 +125,28 @@ describe("VectorCompositeType batchHashTreeRoot", () => {
       expect(viewDU.batchHashTreeRoot()).toEqual(expectedRoot);
     });
   }
+});
+
+describe("VectorCompositeType of basic vector array-like input", () => {
+  const uint32VectorType = new VectorBasicType(new UintNumberType(4), 4);
+  const vectorOfVectorsType = new VectorCompositeType(uint32VectorType, 2);
+
+  const arrayInput = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+  ];
+  const typedInput = [new Uint32Array([1, 2, 3, 4]), new Uint32Array([5, 6, 7, 8])];
+  const mixedInput = [[1, 2, 3, 4], new Uint32Array([5, 6, 7, 8])];
+
+  it("accepts Uint32Array[] in toView", () => {
+    expect(vectorOfVectorsType.toView(typedInput).toValue()).toEqual(arrayInput);
+  });
+
+  it("accepts Uint32Array[] in toViewDU", () => {
+    expect(vectorOfVectorsType.toViewDU(typedInput).toValue()).toEqual(arrayInput);
+  });
+
+  it("accepts mixed number[] | Uint32Array[] in toViewDU", () => {
+    expect(vectorOfVectorsType.toViewDU(mixedInput).toValue()).toEqual(arrayInput);
+  });
 });
