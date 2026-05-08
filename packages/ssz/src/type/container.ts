@@ -14,7 +14,14 @@ import {namedClass} from "../util/named.ts";
 import {Case} from "../util/strings.ts";
 import {Require} from "../util/types.ts";
 import {getContainerTreeViewClass} from "../view/container.ts";
-import {ContainerTreeViewType, ContainerTreeViewTypeConstructor, FieldEntry, ValueOfFields} from "../view/container.ts";
+import {
+  ContainerTreeViewType,
+  ContainerTreeViewTypeConstructor,
+  EphemeralFieldEntry,
+  EphemeralValueOfFields,
+  FieldEntry,
+  ValueOfFields,
+} from "../view/container.ts";
 import {
   ContainerTreeViewDUType,
   ContainerTreeViewDUTypeConstructor,
@@ -25,11 +32,21 @@ import {ByteViews, CompositeType, CompositeTypeAny} from "./composite.ts";
 
 type BytesRange = {start: number; end: number};
 
-export type ContainerOptions<Fields extends Record<string, unknown>> = {
+export type ContainerOptions<
+  Fields extends Record<string, unknown>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = {
   typeName?: string;
   jsonCase?: KeyCase;
   casingMap?: CasingMap<Fields>;
   cachePermanentRootStruct?: boolean;
+  /**
+   * Optional declaration of additional fields that are NOT part of consensus serialization, hashing,
+   * JSON encoding, or equality. Ephemeral fields are accessible/settable on the value, View, and ViewDU
+   * (typed via their `Type`) but never affect any on-the-wire or merkle behavior. Useful for caching
+   * derived data on a container without forking the type.
+   */
+  ephemeralFields?: EphemeralFields;
   getContainerTreeViewClass?: typeof getContainerTreeViewClass;
   getContainerTreeViewDUClass?: typeof getContainerTreeViewDUClass;
 };
@@ -49,10 +66,13 @@ type CasingMap<Fields extends Record<string, unknown>> = Partial<{[K in keyof Fi
  * Container: ordered heterogeneous collection of values
  * - Notation: Custom name per instance
  */
-export class ContainerType<Fields extends Record<string, Type<unknown>>> extends CompositeType<
-  ValueOfFields<Fields>,
-  ContainerTreeViewType<Fields>,
-  ContainerTreeViewDUType<Fields>
+export class ContainerType<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> extends CompositeType<
+  ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>,
+  ContainerTreeViewType<Fields, EphemeralFields>,
+  ContainerTreeViewDUType<Fields, EphemeralFields>
 > {
   readonly typeName: string;
   readonly depth: number;
@@ -65,6 +85,8 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // Precomputed data for faster serdes
   readonly fieldsEntries: FieldEntry<Fields>[];
+  readonly ephemeralFields: EphemeralFields;
+  readonly ephemeralFieldsEntries: EphemeralFieldEntry<EphemeralFields>[];
   /** End of fixed section of serialized Container */
   readonly fixedEnd: number;
   protected readonly fieldsGindex: Record<keyof Fields, Gindex>;
@@ -75,12 +97,12 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   protected readonly variableOffsetsPosition: number[];
 
   /** Cached TreeView constuctor with custom prototype for this Type's properties */
-  protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields>;
-  protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields>;
+  protected readonly TreeView: ContainerTreeViewTypeConstructor<Fields, EphemeralFields>;
+  protected readonly TreeViewDU: ContainerTreeViewDUTypeConstructor<Fields, EphemeralFields>;
 
   constructor(
     readonly fields: Fields,
-    readonly opts?: ContainerOptions<Fields>
+    readonly opts?: ContainerOptions<Fields, EphemeralFields>
   ) {
     super(opts?.cachePermanentRootStruct);
 
@@ -103,6 +125,26 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
     if (this.fieldsEntries.length === 0) {
       throw Error("Container must have > 0 fields");
+    }
+
+    // Build ephemeralFieldsEntries. Ephemeral fields are NOT part of any consensus computation:
+    // they are excluded from maxChunkCount, gindex, serdes data, and chunk hashing. They exist
+    // only as application-level slots accessible on the value/View/ViewDU.
+    //
+    // NOTE: Avoid using ephemeral names that collide with View/ViewDU base-class members
+    // (`type`, `tree`, `node`, `cache`, `nodes`, etc.) — those properties are pre-existing on
+    // the view classes and the ephemeral accessor would conflict (often as a TS readonly error).
+    this.ephemeralFields = (opts?.ephemeralFields ?? ({} as EphemeralFields)) as EphemeralFields;
+    this.ephemeralFieldsEntries = [];
+    for (const fieldName of Object.keys(this.ephemeralFields) as (keyof EphemeralFields)[]) {
+      if (Object.prototype.hasOwnProperty.call(fields, fieldName as string)) {
+        throw Error(`Ephemeral field name '${String(fieldName as symbol)}' collides with a consensus field`);
+      }
+      this.ephemeralFieldsEntries.push({
+        fieldName,
+        fieldType: this.ephemeralFields[fieldName],
+        jsonKey: fieldName as string,
+      });
     }
 
     // Precalculate for Proofs API
@@ -143,37 +185,68 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return new (namedClass(ContainerType, opts.typeName))(fields, opts);
   }
 
-  defaultValue(): ValueOfFields<Fields> {
+  defaultValue(): ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields> {
     const value = {} as ValueOfFields<Fields>;
     for (const {fieldName, fieldType} of this.fieldsEntries) {
       value[fieldName] = fieldType.defaultValue() as ValueOf<Fields[keyof Fields]>;
     }
-    return value;
+    // Ephemeral fields are intentionally omitted: they are optional and absent by default.
+    return value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>;
   }
 
-  getView(tree: Tree): ContainerTreeViewType<Fields> {
+  getView(tree: Tree): ContainerTreeViewType<Fields, EphemeralFields> {
     return new this.TreeView(this, tree);
   }
 
-  getViewDU(node: Node, cache?: unknown): ContainerTreeViewDUType<Fields> {
+  getViewDU(node: Node, cache?: unknown): ContainerTreeViewDUType<Fields, EphemeralFields> {
     return new this.TreeViewDU(this, node, cache);
   }
 
-  cacheOfViewDU(view: ContainerTreeViewDUType<Fields>): unknown {
+  cacheOfViewDU(view: ContainerTreeViewDUType<Fields, EphemeralFields>): unknown {
     return view.cache;
   }
 
-  commitView(view: ContainerTreeViewType<Fields>): Node {
+  commitView(view: ContainerTreeViewType<Fields, EphemeralFields>): Node {
     return view.node;
   }
 
   commitViewDU(
-    view: ContainerTreeViewDUType<Fields>,
+    view: ContainerTreeViewDUType<Fields, EphemeralFields>,
     hcOffset = 0,
     hcByLevel: HashComputationLevel[] | null = null
   ): Node {
     view.commit(hcOffset, hcByLevel);
     return view.node;
+  }
+
+  /**
+   * Override of {@link CompositeType.toView}: after building the tree-backed View, copy any present
+   * ephemeral fields from the source value onto the View's ephemeral storage. Ephemeral fields are
+   * not represented in the tree, so they would otherwise be lost.
+   */
+  toView(
+    value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+  ): ContainerTreeViewType<Fields, EphemeralFields> {
+    const view = super.toView(value);
+    for (const {fieldName} of this.ephemeralFieldsEntries) {
+      const v = (value as Record<string, unknown>)[fieldName as string];
+      if (v !== undefined) (view as unknown as Record<string, unknown>)[fieldName as string] = v;
+    }
+    return view;
+  }
+
+  /**
+   * Override of {@link CompositeType.toViewDU}: see {@link ContainerType.toView}.
+   */
+  toViewDU(
+    value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+  ): ContainerTreeViewDUType<Fields, EphemeralFields> {
+    const view = super.toViewDU(value);
+    for (const {fieldName} of this.ephemeralFieldsEntries) {
+      const v = (value as Record<string, unknown>)[fieldName as string];
+      if (v !== undefined) (view as unknown as Record<string, unknown>)[fieldName as string] = v;
+    }
+    return view;
   }
 
   // Serialization + deserialization
@@ -184,7 +257,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
   // [field1 offset][field2 data       ][field1 data               ]
   // [0x000000c]    [0xaabbaabbaabbaabb][0xffffffffffffffffffffffff]
 
-  value_serializedSize(value: ValueOfFields<Fields>): number {
+  value_serializedSize(value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>): number {
     let totalSize = 0;
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
@@ -195,7 +268,11 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return totalSize;
   }
 
-  value_serializeToBytes(output: ByteViews, offset: number, value: ValueOfFields<Fields>): number {
+  value_serializeToBytes(
+    output: ByteViews,
+    offset: number,
+    value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+  ): number {
     let fixedIndex = offset;
     let variableIndex = offset + this.fixedEnd;
 
@@ -214,7 +291,12 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
     return variableIndex;
   }
 
-  value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfFields<Fields> {
+  value_deserializeFromBytes(
+    data: ByteViews,
+    start: number,
+    end: number,
+    reuseBytes?: boolean
+  ): ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields> {
     const fieldRanges = this.getFieldRanges(data.dataView, start, end);
     const value = {} as {[K in keyof Fields]: unknown};
 
@@ -229,7 +311,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       );
     }
 
-    return value as ValueOfFields<Fields>;
+    return value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>;
   }
 
   tree_serializedSize(node: Node): number {
@@ -281,7 +363,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // Merkleization
 
-  protected getBlocksBytes(struct: ValueOfFields<Fields>): Uint8Array {
+  protected getBlocksBytes(struct: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>): Uint8Array {
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       fieldType.hashTreeRootInto(struct[fieldName], this.blocksBuffer, i * 32);
@@ -342,7 +424,7 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
 
   // JSON
 
-  fromJson(json: unknown): ValueOfFields<Fields> {
+  fromJson(json: unknown): ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields> {
     if (typeof json !== "object") {
       throw Error("JSON must be of type object");
     }
@@ -360,22 +442,24 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       }
       value[fieldName] = fieldType.fromJson(jsonValue) as ValueOf<Fields[keyof Fields]>;
     }
-
-    return value;
+    // Ephemerals are intentionally not part of JSON encoding.
+    return value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>;
   }
 
-  toJson(value: ValueOfFields<Fields>): Record<string, unknown> {
+  toJson(value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>): Record<string, unknown> {
     const json: Record<string, unknown> = {};
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType, jsonKey} = this.fieldsEntries[i];
       json[jsonKey] = fieldType.toJson(value[fieldName]);
     }
-
+    // Ephemerals are intentionally not part of JSON encoding.
     return json;
   }
 
-  clone(value: ValueOfFields<Fields>): ValueOfFields<Fields> {
+  clone(
+    value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+  ): ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields> {
     const newValue = {} as ValueOfFields<Fields>;
 
     for (let i = 0; i < this.fieldsEntries.length; i++) {
@@ -383,17 +467,28 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
       newValue[fieldName] = fieldType.clone(value[fieldName]) as ValueOf<Fields[keyof Fields]>;
     }
 
-    return newValue;
+    // Carry over present ephemeral fields, cloning each via its own type.
+    for (const {fieldName, fieldType} of this.ephemeralFieldsEntries) {
+      const v = (value as Record<string, unknown>)[fieldName as string];
+      if (v !== undefined) {
+        (newValue as Record<string, unknown>)[fieldName as string] = fieldType.clone(v);
+      }
+    }
+
+    return newValue as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>;
   }
 
-  equals(a: ValueOfFields<Fields>, b: ValueOfFields<Fields>): boolean {
+  equals(
+    a: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>,
+    b: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+  ): boolean {
     for (let i = 0; i < this.fieldsEntries.length; i++) {
       const {fieldName, fieldType} = this.fieldsEntries[i];
       if (!fieldType.equals(a[fieldName], b[fieldName])) {
         return false;
       }
     }
-
+    // Ephemeral fields are NOT considered for equality — they are not part of consensus.
     return true;
   }
 
