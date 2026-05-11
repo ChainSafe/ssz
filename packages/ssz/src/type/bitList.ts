@@ -161,6 +161,9 @@ export function deserializeUint8ArrayBitListFromBytes(
   if (end > data.length) {
     throw Error(`BitList attempting to read byte ${end} of data length ${data.length}`);
   }
+  if (end <= start) {
+    throw Error("BitList requires a padding bit");
+  }
 
   const lastByte = data[end - 1];
   const size = end - start;
