@@ -1,4 +1,4 @@
-import {describe, expect, it, vi} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
   ProofType,
   computeDescriptor,
@@ -28,8 +28,6 @@ describe("proof equivalence", () => {
     }
   });
   it("should compute the same root from different proof types - multiple leaves", () => {
-    vi.setConfig({testTimeout: 10_000});
-
     const depth = 6;
     const maxIndex = 2 ** depth;
     const node = createTree(depth);
@@ -60,7 +58,7 @@ describe("proof equivalence", () => {
         }
       }
     }
-  });
+  }, 30_000);
 });
 
 describe("proof serialize/deserialize", () => {

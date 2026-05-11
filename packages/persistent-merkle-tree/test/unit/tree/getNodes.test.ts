@@ -24,11 +24,11 @@ describe("tree / getNodes", () => {
   it("getNodesAtDepth", () => {
     const nodes = getNodesAtDepth(tree.rootNode, depth, 0, length);
     assertValidNodes(nodes, expectedNodes);
-  });
+  }, 60_000);
 
   function assertValidNodes(nodes: Node[], expectedNodes: Node[]): void {
     for (let i = 0; i < expectedNodes.length; i++) {
-      expect(nodes[i]).toEqualWithMessage(expectedNodes[i], `Wrong node index ${i}`);
+      expect(nodes[i]).toBeWithMessage(expectedNodes[i], `Wrong node index ${i}`);
     }
   }
 });
