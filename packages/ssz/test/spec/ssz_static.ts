@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import {describe, it, vi} from "vitest";
+import {describe, it} from "vitest";
 import {Type, isCompositeType} from "../../src/index.ts";
 import {ssz} from "../lodestarTypes/index.ts";
 import {ACTIVE_PRESET} from "../lodestarTypes/params.ts";
@@ -50,20 +50,22 @@ function testStatic(typeName: string, sszType: Type<unknown>, forkName: ForkName
           continue;
         }
 
-        it(testId, () => {
-          // Mainnet must deal with big full states and hash each one multiple times
-          if (preset === "mainnet") {
-            vi.setConfig({testTimeout: 30 * 1000});
-          }
+        // Mainnet deals with big full states; timeout must be the 3rd arg to `it`
+        // because `vi.setConfig` inside the test callback doesn't affect it.
+        const timeout = preset === "mainnet" ? 30 * 1000 : undefined;
+        it(
+          testId,
+          () => {
+            const testData = parseSszStaticTestcase(path.join(caseDir, testId));
+            const {node, json} = runValidSszTest(sszTypeNoUint, testData);
 
-          const testData = parseSszStaticTestcase(path.join(caseDir, testId));
-          const {node, json} = runValidSszTest(sszTypeNoUint, testData);
-
-          // Run auto-generated proof tests only for minimal
-          if (isCompositeType(sszTypeNoUint) && preset !== "mainnet") {
-            runProofTestOnAllJsonPaths({type: sszTypeNoUint, node, json, rootHex: testData.root});
-          }
-        });
+            // Run auto-generated proof tests only for minimal
+            if (isCompositeType(sszTypeNoUint) && preset !== "mainnet") {
+              runProofTestOnAllJsonPaths({type: sszTypeNoUint, node, json, rootHex: testData.root});
+            }
+          },
+          timeout
+        );
       }
     });
   }

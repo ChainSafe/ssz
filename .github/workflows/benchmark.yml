@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: 20
+          node-version: 24
       - run: pnpm i --frozen-lockfile && pnpm build && pnpm generate
 
       - name: Run benchmarks
