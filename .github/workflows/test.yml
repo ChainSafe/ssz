@@ -64,20 +64,16 @@ jobs:
       - name: Spec tests bellatrix-mainnet
         run: LODESTAR_FORK=bellatrix pnpm test:spec-static-mainnet
         working-directory: packages/ssz
-  
+
   test-bun:
     name: Tests Bun
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2      
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
-      - name: Install pnpm
-        run: bun install -g npm:pnpm
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+          node-version: 22
+      - run: corepack enable
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
