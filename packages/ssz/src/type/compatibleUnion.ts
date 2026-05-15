@@ -52,6 +52,8 @@ const SELECTOR_GINDEX = BigInt(3);
 /**
  * CompatibleUnion: union type containing one of the given subtypes with compatible Merkleization.
  * - Notation: CompatibleUnion({selector: type}), e.g. CompatibleUnion({1: Square, 2: Circle})
+ *
+ * The right leaf encodes the selector and reuses existing list length-node helpers for tree operations.
  */
 export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> extends CompositeType<
   CompatibleUnion<unknown>,

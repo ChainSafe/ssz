@@ -1,5 +1,6 @@
 import {allocUnsafe} from "@chainsafe/as-sha256";
 import {
+  BranchNode,
   Gindex,
   HashComputationLevel,
   LeafNode,
@@ -13,6 +14,8 @@ import {
   packedNodeRootsToBytes,
   packedRootsBytesToLeafNodes,
   setNode,
+  subtreeFillToContents,
+  zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
 import {byteArrayEquals} from "../util/byteArray.ts";
 import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.ts";
@@ -44,6 +47,7 @@ import {
   getNodesAtProgressiveDepth,
   merkleizeProgressiveBytes,
   progressiveChunkGindex,
+  progressiveSubtreeDepth,
   progressiveSubtreeFillToContents,
 } from "./progressive.ts";
 
@@ -632,9 +636,22 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
   }
 
   push(value: ValueOf<ElementType>): void {
-    const values = this.type.tree_toValue(this._rootNode);
-    values.push(value);
-    this._rootNode = this.type.value_toTree(values);
+    const length = this.length;
+    if (length >= this.type.limit) {
+      throw Error("Error pushing over limit");
+    }
+
+    const chunkIndex = Math.floor(length / this.type.itemsPerChunk);
+    const gindex = chunkGindexFromListRoot(chunkIndex);
+    const leafNode =
+      length % this.type.itemsPerChunk === 0
+        ? LeafNode.fromZero()
+        : (getNode(this._rootNode, gindex) as LeafNode).clone();
+
+    this.type.elementType.tree_setToPackedNode(leafNode, length, value);
+
+    const chunksNode = appendProgressiveChunk(this.type.tree_getChunksNode(this._rootNode), chunkIndex, leafNode);
+    this._rootNode = this.type.tree_setChunksNode(this._rootNode, chunksNode, length + 1);
   }
 
   getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
@@ -763,9 +780,20 @@ export class ProgressiveListCompositeTreeViewDU<
   }
 
   push(view: CompositeViewDU<ElementType>): void {
-    const values = this.type.tree_toValue(this._rootNode);
-    values.push(this.type.elementType.toValueFromViewDU(view));
-    this._rootNode = this.type.value_toTree(values);
+    this.commit();
+
+    const length = this.length;
+    if (length >= this.type.limit) {
+      throw Error("Error pushing over limit");
+    }
+
+    const node = this.type.elementType.commitViewDU(view);
+    const chunksNode = appendProgressiveChunk(this.type.tree_getChunksNode(this._rootNode), length, node);
+    this._rootNode = this.type.tree_setChunksNode(this._rootNode, chunksNode, length + 1);
+    this.caches[length] = this.type.elementType.cacheOfViewDU(view);
+    if (this.type.elementType.isViewMutable) {
+      this.viewsChanged.set(length, view);
+    }
   }
 
   protected clearCache(): void {
@@ -780,6 +808,37 @@ type ProgressiveListCompositeTreeViewDUCache = {
 
 function chunkGindexFromListRoot(chunkIndex: number): Gindex {
   return concatGindices([CHUNKS_GINDEX, progressiveChunkGindex(chunkIndex)]);
+}
+
+function appendProgressiveChunk(chunksNode: Node, chunkIndex: number, chunkNode: Node): Node {
+  const {subtreeIndex, subtreeStart} = progressiveSubtreeIndexAndStart(chunkIndex);
+  if (chunkIndex !== subtreeStart) {
+    return setNode(chunksNode, progressiveChunkGindex(chunkIndex), chunkNode);
+  }
+
+  const subtreeNode = subtreeFillToContents([chunkNode], progressiveSubtreeDepth(subtreeIndex));
+  const subtreeBranch = new BranchNode(subtreeNode, zeroNode(0));
+  if (subtreeIndex === 0) {
+    return subtreeBranch;
+  }
+
+  return setNode(chunksNode, progressiveSubtreeBranchGindex(subtreeIndex), subtreeBranch);
+}
+
+function progressiveSubtreeIndexAndStart(chunkIndex: number): {subtreeIndex: number; subtreeStart: number} {
+  let subtreeIndex = 0;
+  let subtreeStart = 0;
+  let subtreeLength = 1;
+  while (chunkIndex >= subtreeStart + subtreeLength) {
+    subtreeStart += subtreeLength;
+    subtreeLength *= 4;
+    subtreeIndex++;
+  }
+  return {subtreeIndex, subtreeStart};
+}
+
+function progressiveSubtreeBranchGindex(subtreeIndex: number): Gindex {
+  return concatGindices(Array.from({length: subtreeIndex}, () => BigInt(3)));
 }
 
 function readOffsetsProgressiveListComposite(

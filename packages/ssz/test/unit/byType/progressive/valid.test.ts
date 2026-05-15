@@ -46,6 +46,19 @@ describe("ProgressiveListBasicType", () => {
     expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(expected)));
   });
 
+  it("supports incremental TreeViewDU pushes across progressive subtrees", () => {
+    const value = Array.from({length: 32 * 5 + 1}, (_, i) => i % 256);
+    const view = type.defaultViewDU();
+    for (const element of value) {
+      view.push(element);
+    }
+
+    expect(view.get(32)).to.equal(value[32]);
+    expect(view.get(32 * 5)).to.equal(value[32 * 5]);
+    expect(view.getAll()).to.deep.equal(value);
+    expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value)));
+  });
+
   it("creates and restores proofs for variable-depth chunks", () => {
     const value = Array.from({length: 33}, (_, i) => i);
     const view = type.toView(value);
@@ -89,6 +102,17 @@ describe("ProgressiveListCompositeType", () => {
     const restored = wrapperType.createFromProof(proof, root);
 
     expect(toHexString(restored.hashTreeRoot())).to.equal(toHexString(root));
+  });
+
+  it("supports incremental TreeViewDU pushes across progressive subtrees", () => {
+    const value = Array.from({length: 6}, (_, i) => ({a: i, b: i + 1}));
+    const view = type.defaultViewDU();
+    for (const element of value) {
+      view.push(elementType.toViewDU(element));
+    }
+
+    expect(type.toValueFromViewDU(view)).to.deep.equal(value);
+    expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value)));
   });
 });
 
