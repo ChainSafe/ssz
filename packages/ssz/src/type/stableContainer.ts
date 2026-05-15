@@ -418,32 +418,42 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
     const activeFields = this.tree_getActiveFields(node);
 
     for (const jsonPath of jsonPaths) {
-      const prop = jsonPath[0];
+      const [prop, ...remainingPath] = jsonPath;
       if (prop == null) {
         continue;
       }
-      const fieldIndex = this.fieldsEntries.findIndex((entry) => entry.fieldName === prop);
-      if (fieldIndex === -1) throw Error(`Unknown container property ${prop}`);
+      if (typeof prop !== "string") {
+        throw Error(`Unknown container property ${String(prop)}`);
+      }
+      const fieldName = this.fields[prop] ? prop : this.jsonKeyToFieldName[prop];
+      const fieldIndex = this.fieldsEntries.findIndex((entry) => entry.fieldName === fieldName);
+      if (fieldIndex === -1) throw Error(`Unknown container property ${String(prop)}`);
       const entry = this.fieldsEntries[fieldIndex];
       if (entry.optional && !activeFields.get(fieldIndex)) {
         // field is inactive and doesn't count as a leaf
         continue;
       }
 
-      // same to Composite
-      const {type, gindex} = this.getPathInfo(jsonPath);
-      if (!isCompositeType(type)) {
-        gindexes.push(gindex);
-      } else {
-        // if the path subtype is composite, include the gindices of all the leaves
-        const leafGindexes = type.tree_getLeafGindices(
-          gindex,
-          type.fixedSize === null ? getNode(node, gindex) : undefined
-        );
-        for (const gindex of leafGindexes) {
-          gindexes.push(gindex);
+      const {fieldType, gindex} = entry;
+      if (!isCompositeType(fieldType)) {
+        if (remainingPath.length > 0) {
+          throw new Error("Invalid path: cannot navigate beyond a basic type");
         }
+        gindexes.push(gindex);
+        continue;
       }
+
+      const childNode = getNode(node, gindex);
+      if (remainingPath.length === 0) {
+        gindexes.push(...fieldType.tree_getLeafGindices(gindex, childNode));
+        continue;
+      }
+
+      gindexes.push(
+        ...fieldType
+          .tree_createProofGindexes(childNode, [remainingPath])
+          .map((childGindex) => concatGindices([gindex, childGindex]))
+      );
     }
 
     return gindexes;

@@ -10,6 +10,7 @@ import {
   ProgressiveByteListType,
   ProgressiveContainerType,
   ProgressiveListBasicType,
+  StableContainerType,
   UintNumberType,
   VectorBasicType,
   hash64,
@@ -93,6 +94,33 @@ describe("CompatibleUnionType", () => {
     const restored = wrapperType.createFromProof(proof, root);
 
     expect(toHexString(restored.hashTreeRoot())).to.equal(toHexString(root));
+  });
+
+  it("creates selected data proofs when nested in a StableContainer", () => {
+    const CommonOnly = new ProgressiveContainerType({common: byte}, [true]);
+    const WithExtra = new ProgressiveContainerType({common: byte, fieldOnlyInB: byte}, [true, true]);
+    const unionType = new CompatibleUnionType({
+      1: CommonOnly,
+      2: WithExtra,
+    });
+    const wrapperType = new StableContainerType({shape: unionType}, 4);
+    const value = {
+      shape: {
+        selector: 2,
+        data: {
+          common: 7,
+          fieldOnlyInB: 9,
+        },
+      },
+    };
+    const root = wrapperType.hashTreeRoot(value);
+
+    for (const path of [[["shape", "data", "common"]], [["shape", "data", "fieldOnlyInB"]]]) {
+      const proof = wrapperType.toView(value).createProof(path);
+      const restored = wrapperType.createFromProof(proof, root);
+
+      expect(toHexString(restored.hashTreeRoot())).to.equal(toHexString(root));
+    }
   });
 
   it("allows byte list and vector aliases to match uint8 arrays", () => {
