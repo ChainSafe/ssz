@@ -7,7 +7,9 @@ import {
   ContainerType,
   ListBasicType,
   ProgressiveBitListType,
+  ProgressiveByteListType,
   ProgressiveContainerType,
+  ProgressiveListBasicType,
   UintNumberType,
   VectorBasicType,
   hash64,
@@ -96,5 +98,8 @@ describe("CompatibleUnionType", () => {
   it("allows byte list and vector aliases to match uint8 arrays", () => {
     expect(() => new CompatibleUnionType({1: new ByteListType(4), 2: new ListBasicType(byte, 4)})).not.toThrow();
     expect(() => new CompatibleUnionType({1: new ByteVectorType(4), 2: new VectorBasicType(byte, 4)})).not.toThrow();
+    expect(
+      () => new CompatibleUnionType({1: new ProgressiveByteListType(), 2: new ProgressiveListBasicType(byte)})
+    ).not.toThrow();
   });
 });

@@ -10,6 +10,7 @@ export {ContainerNodeStructType} from "./type/containerNodeStruct.ts";
 export {ListBasicType} from "./type/listBasic.ts";
 export {ListCompositeType} from "./type/listComposite.ts";
 export {ProgressiveBitListType} from "./type/progressiveBitList.ts";
+export {ProgressiveByteListType} from "./type/progressiveByteList.ts";
 export {ProgressiveContainerType} from "./type/progressiveContainer.ts";
 export {ProgressiveListBasicType, ProgressiveListCompositeType} from "./type/progressiveList.ts";
 export {PartialListCompositeType} from "./type/partialListComposite.ts";

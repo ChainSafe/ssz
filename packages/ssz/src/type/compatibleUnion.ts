@@ -30,6 +30,7 @@ import {ContainerType} from "./container.ts";
 import {ListBasicType} from "./listBasic.ts";
 import {ListCompositeType} from "./listComposite.ts";
 import {ProgressiveBitListType} from "./progressiveBitList.ts";
+import {ProgressiveByteListType} from "./progressiveByteList.ts";
 import {ProgressiveContainerType} from "./progressiveContainer.ts";
 import {ProgressiveListBasicType, ProgressiveListCompositeType} from "./progressiveList.ts";
 import {UintBigintType, UintNumberType} from "./uint.ts";
@@ -480,6 +481,10 @@ export function areTypesCompatible(a: Type<unknown>, b: Type<unknown>): boolean 
     return getByteVectorCompatibleLength(a) === getByteVectorCompatibleLength(b);
   }
 
+  if (isProgressiveByteListCompatibleType(a) && isProgressiveByteListCompatibleType(b)) {
+    return true;
+  }
+
   if (isLimitedListType(a) && isLimitedListType(b)) {
     return a.limit === b.limit && areTypesCompatible(a.elementType, b.elementType);
   }
@@ -554,6 +559,15 @@ function isByteVectorCompatibleType(type: Type<unknown>): type is ByteVectorType
 
 function getByteVectorCompatibleLength(type: ByteVectorType | VectorBasicType<BasicType<unknown>>): number {
   return type instanceof ByteVectorType ? type.lengthBytes : type.length;
+}
+
+function isProgressiveByteListCompatibleType(
+  type: Type<unknown>
+): type is ProgressiveByteListType | ProgressiveListBasicType<BasicType<unknown>> {
+  return (
+    type instanceof ProgressiveByteListType ||
+    (type instanceof ProgressiveListBasicType && isByteBasicType(type.elementType))
+  );
 }
 
 function isLimitedListType(

@@ -3,6 +3,7 @@ import {
   BitArray,
   ContainerType,
   ProgressiveBitListType,
+  ProgressiveByteListType,
   ProgressiveContainerType,
   ProgressiveListBasicType,
   ProgressiveListCompositeType,
@@ -104,6 +105,38 @@ describe("ProgressiveBitListType", () => {
   });
 });
 
+describe("ProgressiveByteListType", () => {
+  const type = new ProgressiveByteListType();
+
+  it("round-trips byte list serialization and computes progressive roots", () => {
+    const value = Uint8Array.from({length: 32 * 5 + 7}, (_, i) => i % 256);
+    const equivalentList = new ProgressiveListBasicType(uint8);
+    const serialized = type.serialize(value);
+    expect(toHexString(serialized)).to.equal(toHexString(value));
+    expect(toHexString(serialized)).to.equal(toHexString(equivalentList.serialize(Array.from(value))));
+    expect(type.deserialize(serialized)).to.deep.equal(value);
+    expect(type.toJson(value)).to.equal(toHexString(value));
+    expect(type.fromJson(toHexString(value))).to.deep.equal(value);
+    expect(toHexString(type.hashTreeRoot(value))).to.equal(toHexString(progressiveByteListRoot(value)));
+    expect(toHexString(type.hashTreeRoot(value))).to.equal(toHexString(equivalentList.hashTreeRoot(Array.from(value))));
+  });
+
+  it("supports empty byte lists", () => {
+    expect(toHexString(type.serialize(new Uint8Array(0)))).to.equal("0x");
+    expect(toHexString(type.hashTreeRoot(new Uint8Array(0)))).to.equal(toHexString(mixInLength(new Uint8Array(32), 0)));
+  });
+
+  it("creates and restores proofs for progressive byte chunks", () => {
+    const wrapperType = new ContainerType({bytes: type});
+    const value = {bytes: Uint8Array.from({length: 32 * 5 + 1}, (_, i) => i % 256)};
+    const root = wrapperType.hashTreeRoot(value);
+    const proof = wrapperType.toView(value).createProof([["bytes"]]);
+    const restored = wrapperType.createFromProof(proof, root);
+
+    expect(toHexString(restored.hashTreeRoot())).to.equal(toHexString(root));
+  });
+});
+
 describe("ProgressiveContainerType", () => {
   const type = new ProgressiveContainerType(
     {
@@ -170,6 +203,10 @@ function progressiveListCompositeRoot<T>(elementType: Type<T>, value: T[]): Uint
 
 function progressiveBitlistRoot(value: BitArray): Uint8Array {
   return mixInLength(progressiveRoot(chunkify(value.uint8Array)), value.bitLen);
+}
+
+function progressiveByteListRoot(value: Uint8Array): Uint8Array {
+  return mixInLength(progressiveRoot(chunkify(value)), value.length);
 }
 
 function progressiveContainerRoot(type: {activeFields: BitArray}, fieldRoots: Uint8Array[]): Uint8Array {
