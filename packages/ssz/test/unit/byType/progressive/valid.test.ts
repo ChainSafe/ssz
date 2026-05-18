@@ -59,6 +59,16 @@ describe("ProgressiveListBasicType", () => {
     expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value)));
   });
 
+  it("supports TreeViewDU slice helpers", () => {
+    const value = Array.from({length: 32 * 5 + 1}, (_, i) => i % 256);
+    const view = type.toViewDU(value);
+
+    expect(view.sliceTo(34).getAll()).to.deep.equal(value.slice(0, 35));
+    expect(toHexString(view.sliceTo(34).hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value.slice(0, 35))));
+    expect(view.sliceFrom(34).getAll()).to.deep.equal(value.slice(34));
+    expect(toHexString(view.sliceFrom(34).hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value.slice(34))));
+  });
+
   it("creates and restores proofs for variable-depth chunks", () => {
     const value = Array.from({length: 33}, (_, i) => i);
     const view = type.toView(value);
@@ -114,6 +124,33 @@ describe("ProgressiveListCompositeType", () => {
     expect(type.toValueFromViewDU(view)).to.deep.equal(value);
     expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value)));
   });
+
+  it("supports TreeViewDU readonly and slice helpers", () => {
+    const value = Array.from({length: 6}, (_, i) => ({a: i, b: i + 1}));
+    const modified = [...value];
+    modified[1] = {a: 1, b: 99};
+    const view = type.toViewDU(value);
+    view.get(1).b = 99;
+
+    expect(elementType.toValueFromViewDU(view.getReadonly(1))).to.deep.equal(modified[1]);
+    expect(view.getAllReadonly().map((item) => elementType.toValueFromViewDU(item))).to.deep.equal(modified);
+    expect(view.getReadonlyByRange(1, 2).map((item) => elementType.toValueFromViewDU(item))).to.deep.equal(
+      modified.slice(1, 3)
+    );
+    expect(() => view.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
+
+    view.commit();
+    expect(view.getAllReadonlyValues()).to.deep.equal(modified);
+
+    const forEachValues: typeof value = [];
+    view.forEachValue((item) => forEachValues.push(item));
+    expect(forEachValues).to.deep.equal(modified);
+
+    expect(view.sliceTo(2).getAllReadonlyValues()).to.deep.equal(modified.slice(0, 3));
+    expect(toHexString(view.sliceTo(2).hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(modified.slice(0, 3))));
+    expect(view.sliceFrom(2).getAllReadonlyValues()).to.deep.equal(modified.slice(2));
+    expect(toHexString(view.sliceFrom(2).hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(modified.slice(2))));
+  });
 });
 
 describe("ProgressiveBitListType", () => {
@@ -143,6 +180,13 @@ describe("ProgressiveByteListType", () => {
     expect(type.fromJson(toHexString(value))).to.deep.equal(value);
     expect(toHexString(type.hashTreeRoot(value))).to.equal(toHexString(progressiveByteListRoot(value)));
     expect(toHexString(type.hashTreeRoot(value))).to.equal(toHexString(equivalentList.hashTreeRoot(Array.from(value))));
+  });
+
+  it("accepts byte array JSON for ProgressiveList[byte] fixtures", () => {
+    const value = Uint8Array.from([1, 2, 3]);
+    expect(type.fromJson([1, "2", 3n])).to.deep.equal(value);
+    expect(type.toJson(value)).to.equal("0x010203");
+    expect(() => type.fromJson([256])).toThrow("Invalid byte value 256");
   });
 
   it("supports empty byte lists", () => {
