@@ -26,6 +26,11 @@ describe("BitListType constructor errors", () => {
 });
 
 describe("Extra error cases", () => {
+  it("No padding byte - empty", () => {
+    const bitListType = new BitListType(8 * 8);
+    expect(() => bitListType.deserialize(new Uint8Array(0))).toThrow("padding bit");
+  });
+
   it("Wrong range over bytes end", () => {
     const bitListType = new BitListType(8 * 8);
     const uint8Array = new Uint8Array(0);

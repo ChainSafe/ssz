@@ -291,22 +291,41 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     const gindexes: Gindex[] = [];
 
     for (const jsonPath of jsonPaths) {
-      const {type, gindex} = this.getPathInfo(jsonPath);
-      if (!isCompositeType(type)) {
-        gindexes.push(gindex);
-      } else {
-        // if the path subtype is composite, include the gindices of all the leaves
-        const leafGindexes = type.tree_getLeafGindices(
-          gindex,
-          type.fixedSize === null ? getNode(node, gindex) : undefined
-        );
-        for (const gindex of leafGindexes) {
-          gindexes.push(gindex);
-        }
-      }
+      gindexes.push(...this.tree_createProofGindexesForPath(node, jsonPath));
     }
 
     return gindexes;
+  }
+
+  private tree_createProofGindexesForPath(node: Node, jsonPath: JsonPath): Gindex[] {
+    const [prop, ...remainingPath] = jsonPath;
+
+    if (prop === undefined) {
+      return this.tree_getLeafGindices(BigInt(1), node);
+    }
+
+    const childGindex = this.getPropertyGindex(prop);
+    if (childGindex === null) {
+      return this.tree_getLeafGindices(BigInt(1), node);
+    }
+
+    const childType = this.getPropertyType(prop);
+
+    if (!isCompositeType(childType)) {
+      if (remainingPath.length > 0) {
+        throw new Error("Invalid path: cannot navigate beyond a basic type");
+      }
+      return [childGindex];
+    }
+
+    const childNode = getNode(node, childGindex);
+    if (remainingPath.length === 0) {
+      return childType.tree_getLeafGindices(childGindex, childNode);
+    }
+
+    return childType
+      .tree_createProofGindexes(childNode, [remainingPath])
+      .map((gindex) => concatGindices([childGindex, gindex]));
   }
 
   /**

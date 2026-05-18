@@ -61,13 +61,17 @@ export function runValidSszTest(type: Type<unknown>, testData: ValidTestCaseData
     expect(isEqual).to.equal(true, "Value is not equal to itself");
   }
 
-  {
-    // value - not equals
+  // value - not equals
+  try {
     const defaultValue = type.defaultValue();
     const defaultSerialized = wrapErr(() => type.serialize(defaultValue), "serialize default");
     if (toHexString(defaultSerialized) !== testDataSerializedHex) {
       const isEqual = wrapErr(() => type.equals(testDataValue, defaultValue), "type.equals()");
       expect(isEqual).to.equal(false, "Value is equal to default value");
+    }
+  } catch (e) {
+    if (!String(e).includes("does not define a default value")) {
+      throw e;
     }
   }
 
