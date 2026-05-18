@@ -139,6 +139,13 @@ describe("ProgressiveListCompositeType", () => {
     );
     expect(() => view.getAllReadonlyValues()).toThrow("Must commit changes before reading all nodes");
 
+    const rangeView = type.toViewDU(value);
+    expect(rangeView.getReadonlyByRange(1, 2).map((item) => elementType.toValueFromViewDU(item))).to.deep.equal(
+      value.slice(1, 3)
+    );
+    expect(rangeView.cache.nodesPopulated).to.equal(false);
+    expect(rangeView.cache.nodes?.length).to.equal(3);
+
     view.commit();
     expect(view.getAllReadonlyValues()).to.deep.equal(modified);
 

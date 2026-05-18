@@ -945,7 +945,6 @@ export class ProgressiveListCompositeTreeViewDU<
     }
 
     count = Math.min(count, length - startIndex);
-    this.populateAllOldNodes();
 
     const result = new Array<CompositeViewDU<ElementType>>(count);
     for (let i = 0; i < count; i++) {
@@ -969,7 +968,7 @@ export class ProgressiveListCompositeTreeViewDU<
 
     const newLength = Math.max(index + 1, 0);
     const chunksNode = this.type.tree_getChunksNode(rootNode);
-    const nodes = getNodesAtProgressiveDepth(chunksNode, length).slice(0, newLength);
+    const nodes = getNodesAtProgressiveDepth(chunksNode, newLength);
     const newChunksNode = progressiveSubtreeFillToContents(nodes);
     const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
 
