@@ -659,6 +659,48 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
     return view.getAll(values);
   }
 
+  /**
+   * Returns a new ProgressiveListBasicTreeViewDU instance with the values from 0 to `index`.
+   * To achieve it, rebinds the underlying tree zero-ing all nodes right of `chunkIndex`.
+   * Also set all value right of `index` in the same chunk to 0.
+   */
+  sliceTo(index: number): this {
+    if (index < 0) {
+      throw new Error(`Does not support sliceTo() with negative index ${index}`);
+    }
+
+    const length = this.length;
+    if (index >= length - 1) {
+      return this;
+    }
+
+    const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+    const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
+    const nodePrev = getNode(this._rootNode, chunkGindexFromListRoot(chunkIndex)) as LeafNode;
+
+    const nodeChanged = LeafNode.fromZero();
+    for (let i = chunkIndex * this.type.itemsPerChunk; i <= index; i++) {
+      const prevValue = this.type.elementType.tree_getFromPackedNode(nodePrev, i);
+      this.type.elementType.tree_setToPackedNode(nodeChanged, i, prevValue);
+    }
+
+    const chunkCount = Math.ceil((index + 1) / this.type.itemsPerChunk);
+    const nodes = getNodesAtProgressiveDepth(chunksNode, chunkCount);
+    nodes[chunkIndex] = nodeChanged;
+    const newChunksNode = progressiveSubtreeFillToContents(nodes);
+
+    const newLength = index + 1;
+    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, newLength);
+    return this.type.getViewDU(newRootNode) as this;
+  }
+
+  /**
+   * Returns a new ProgressiveListBasicTreeViewDU instance with the values from `index` to the end of list.
+   */
+  sliceFrom(index: number): this {
+    return this.type.toViewDU(this.getAll().slice(index)) as this;
+  }
+
   protected clearCache(): void {
     // No cached data to clear.
   }
@@ -715,8 +757,10 @@ export class ProgressiveListCompositeTreeView<
 export class ProgressiveListCompositeTreeViewDU<
   ElementType extends CompositeType<ValueOf<ElementType>, CompositeView<ElementType>, CompositeViewDU<ElementType>>,
 > extends TreeViewDU<ProgressiveListCompositeType<ElementType>> {
+  private nodes: Node[] = [];
   private caches: unknown[] = [];
   private readonly viewsChanged = new Map<number, CompositeViewDU<ElementType>>();
+  private nodesPopulated = false;
 
   constructor(
     readonly type: ProgressiveListCompositeType<ElementType>,
@@ -725,7 +769,9 @@ export class ProgressiveListCompositeTreeViewDU<
   ) {
     super();
     if (cache) {
+      this.nodes = cache.nodes ?? [];
       this.caches = cache.caches;
+      this.nodesPopulated = cache.nodesPopulated ?? false;
     }
   }
 
@@ -738,7 +784,7 @@ export class ProgressiveListCompositeTreeViewDU<
   }
 
   get cache(): ProgressiveListCompositeTreeViewDUCache {
-    return {caches: this.caches};
+    return {nodes: this.nodes, caches: this.caches, nodesPopulated: this.nodesPopulated};
   }
 
   commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
@@ -746,6 +792,7 @@ export class ProgressiveListCompositeTreeViewDU<
       const gindex = chunkGindexFromListRoot(index);
       this._rootNode = setNode(this._rootNode, gindex, this.type.elementType.commitViewDU(view));
       this.caches[index] = this.type.elementType.cacheOfViewDU(view);
+      this.nodes[index] = getNode(this._rootNode, gindex);
     }
     this.viewsChanged.clear();
 
@@ -760,14 +807,36 @@ export class ProgressiveListCompositeTreeViewDU<
       return changed;
     }
 
-    const view = this.type.elementType.getViewDU(
-      getNode(this._rootNode, chunkGindexFromListRoot(index)),
-      this.caches[index]
-    );
+    let node = this.nodes[index];
+    if (node === undefined) {
+      node = getNode(this._rootNode, chunkGindexFromListRoot(index));
+      this.nodes[index] = node;
+    }
+
+    const view = this.type.elementType.getViewDU(node, this.caches[index]);
     if (this.type.elementType.isViewMutable) {
       this.viewsChanged.set(index, view);
     }
     return view;
+  }
+
+  /**
+   * Get element at `index`. Returns a view of the Composite element type.
+   * DOES NOT PROPAGATE CHANGES: use only for reads and to skip parent references.
+   */
+  getReadonly(index: number): CompositeViewDU<ElementType> {
+    const changed = this.viewsChanged.get(index);
+    if (changed) {
+      return changed;
+    }
+
+    let node = this.nodes[index];
+    if (node === undefined) {
+      node = getNode(this._rootNode, chunkGindexFromListRoot(index));
+      this.nodes[index] = node;
+    }
+
+    return this.type.elementType.getViewDU(node, this.caches[index]);
   }
 
   set(index: number, view: CompositeViewDU<ElementType>): void {
@@ -790,20 +859,179 @@ export class ProgressiveListCompositeTreeViewDU<
     const node = this.type.elementType.commitViewDU(view);
     const chunksNode = appendProgressiveChunk(this.type.tree_getChunksNode(this._rootNode), length, node);
     this._rootNode = this.type.tree_setChunksNode(this._rootNode, chunksNode, length + 1);
+    if (this.nodesPopulated) {
+      this.nodes[length] = node;
+    }
     this.caches[length] = this.type.elementType.cacheOfViewDU(view);
     if (this.type.elementType.isViewMutable) {
       this.viewsChanged.set(length, view);
     }
   }
 
+  /**
+   * Returns all elements at every index, if an index is modified it will return the modified view.
+   * No need to commit() before calling this function.
+   */
+  getAllReadonly(views?: CompositeViewDU<ElementType>[]): CompositeViewDU<ElementType>[] {
+    const length = this.length;
+    if (views && views.length !== length) {
+      throw Error(`Expected ${length} views, got ${views.length}`);
+    }
+    this.populateAllOldNodes();
+
+    views = views ?? new Array<CompositeViewDU<ElementType>>(length);
+    for (let i = 0; i < length; i++) {
+      views[i] = this.getReadonly(i);
+    }
+    return views;
+  }
+
+  /**
+   * Apply `fn` to each ViewDU in the array.
+   * Similar to getAllReadOnly(), no need to commit() before calling this function.
+   * if an item is modified it will return the modified view.
+   */
+  forEach(fn: (viewDU: CompositeViewDU<ElementType>, index: number) => void): void {
+    this.populateAllOldNodes();
+    for (let i = 0; i < this.length; i++) {
+      fn(this.getReadonly(i), i);
+    }
+  }
+
+  /**
+   * WARNING: Returns all commited changes, if there are any pending changes commit them beforehand
+   * @param values optional output parameter, if is provided it must be an array of the same length as this array
+   */
+  getAllReadonlyValues(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
+    const length = this.length;
+    if (values && values.length !== length) {
+      throw Error(`Expected ${length} values, got ${values.length}`);
+    }
+    this.populateAllNodes();
+
+    values = values ?? new Array<ValueOf<ElementType>>(length);
+    for (let i = 0; i < length; i++) {
+      values[i] = this.type.elementType.tree_toValue(this.nodes[i]);
+    }
+    return values;
+  }
+
+  /**
+   * Apply `fn` to each value in the array.
+   */
+  forEachValue(fn: (value: ValueOf<ElementType>, index: number) => void): void {
+    this.populateAllNodes();
+    for (let i = 0; i < this.length; i++) {
+      fn(this.type.elementType.tree_toValue(this.nodes[i]), i);
+    }
+  }
+
+  /**
+   * Get by range of indexes. Returns an array of views of the Composite element type.
+   * This is similar to getAllReadonly() where we dont have to commit() before calling this function.
+   */
+  getReadonlyByRange(startIndex: number, count: number): CompositeViewDU<ElementType>[] {
+    if (startIndex < 0) {
+      throw Error(`Error getting by range, startIndex < 0: ${startIndex}`);
+    }
+
+    if (count <= 0) {
+      throw Error(`Error getting by range, count <= 0: ${count}`);
+    }
+
+    const length = this.length;
+    if (startIndex >= length) {
+      throw Error(`Error getting by range, startIndex >= length: ${startIndex} >= ${length}`);
+    }
+
+    count = Math.min(count, length - startIndex);
+
+    const result = new Array<CompositeViewDU<ElementType>>(count);
+    for (let i = 0; i < count; i++) {
+      result[i] = this.getReadonly(startIndex + i);
+    }
+    return result;
+  }
+
+  /**
+   * Returns a new ProgressiveListCompositeTreeViewDU instance with the values from 0 to `index`.
+   * `index` is inclusive.
+   */
+  sliceTo(index: number): this {
+    this.commit();
+    const rootNode = this._rootNode;
+    const length = this.length;
+
+    if (index >= length - 1) {
+      return this;
+    }
+
+    const newLength = Math.max(index + 1, 0);
+    const chunksNode = this.type.tree_getChunksNode(rootNode);
+    const nodes = getNodesAtProgressiveDepth(chunksNode, newLength);
+    const newChunksNode = progressiveSubtreeFillToContents(nodes);
+    const newRootNode = this.type.tree_setChunksNode(rootNode, newChunksNode, newLength);
+
+    return this.rootNodeToViewDU(newRootNode);
+  }
+
+  /**
+   * Returns a new ProgressiveListCompositeTreeViewDU instance with the values from `index` to the end of list.
+   */
+  sliceFrom(index: number): this {
+    this.commit();
+    this.populateAllNodes();
+
+    if (index < 0) {
+      index += this.nodes.length;
+    }
+    if (index <= 0) {
+      return this;
+    }
+
+    const nodes = index >= this.nodes.length ? [] : this.nodes.slice(index);
+    const newChunksNode = progressiveSubtreeFillToContents(nodes);
+    const newRootNode = this.type.tree_setChunksNode(this._rootNode, newChunksNode, nodes.length);
+
+    return this.rootNodeToViewDU(newRootNode);
+  }
+
   protected clearCache(): void {
+    this.nodes = [];
     this.caches = [];
+    this.nodesPopulated = false;
     this.viewsChanged.clear();
+  }
+
+  protected populateAllNodes(): void {
+    if (this.viewsChanged.size > 0) {
+      throw Error("Must commit changes before reading all nodes");
+    }
+
+    if (!this.nodesPopulated) {
+      const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+      this.nodes = getNodesAtProgressiveDepth(chunksNode, this.length);
+      this.nodesPopulated = true;
+    }
+  }
+
+  protected populateAllOldNodes(): void {
+    if (!this.nodesPopulated) {
+      const chunksNode = this.type.tree_getChunksNode(this._rootNode);
+      this.nodes = getNodesAtProgressiveDepth(chunksNode, this.length);
+      this.nodesPopulated = true;
+    }
+  }
+
+  protected rootNodeToViewDU(rootNode: Node): this {
+    return this.type.getViewDU(rootNode) as this;
   }
 }
 
 type ProgressiveListCompositeTreeViewDUCache = {
+  nodes?: Node[];
   caches: unknown[];
+  nodesPopulated?: boolean;
 };
 
 function chunkGindexFromListRoot(chunkIndex: number): Gindex {

@@ -115,6 +115,36 @@ export class ProgressiveByteListType extends ByteArrayType {
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, 2, output, offset);
   }
 
+  fromJson(json: unknown): ByteArray {
+    if (!Array.isArray(json)) {
+      return super.fromJson(json);
+    }
+
+    const value = Uint8Array.from(
+      json.map((byte) => {
+        const byteNumber =
+          typeof byte === "bigint"
+            ? Number(byte)
+            : typeof byte === "number"
+              ? byte
+              : typeof byte === "string"
+                ? Number(byte)
+                : Number.NaN;
+        if (
+          !Number.isInteger(byteNumber) ||
+          byteNumber < 0 ||
+          byteNumber > 255 ||
+          String(byteNumber) !== String(byte)
+        ) {
+          throw Error(`Invalid byte value ${byte}`);
+        }
+        return byteNumber;
+      })
+    );
+    this.assertValidSize(value.length);
+    return value;
+  }
+
   tree_getLeafGindices(rootGindex: Gindex, rootNode?: Node): Gindex[] {
     const byteLen = this.tree_getByteLen(rootNode);
     const chunkCount = Math.ceil(byteLen / 32);
