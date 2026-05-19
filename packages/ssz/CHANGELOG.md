@@ -16,6 +16,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.6.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.5.0...ssz-v1.6.0) (2026-05-19)
+
+
+### Features
+
+* add progressive list view helpers ([#530](https://github.com/ChainSafe/ssz/issues/530)) ([88cd4f6](https://github.com/ChainSafe/ssz/commit/88cd4f6d36a98d34ad987b6a368e9a48070c4202))
+
 ## [1.5.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.4.0...ssz-v1.5.0) (2026-05-18)
 
 
