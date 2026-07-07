@@ -13,6 +13,7 @@ export {ProgressiveBitListType} from "./type/progressiveBitList.ts";
 export {ProgressiveByteListType} from "./type/progressiveByteList.ts";
 export {ProgressiveContainerType} from "./type/progressiveContainer.ts";
 export {ProgressiveListBasicType, ProgressiveListCompositeType} from "./type/progressiveList.ts";
+export {progressiveSubtreeFillToContents} from "./type/progressive.ts";
 export {PartialListCompositeType} from "./type/partialListComposite.ts";
 export {NoneType} from "./type/none.ts";
 export {UintBigintType, UintNumberType} from "./type/uint.ts";
