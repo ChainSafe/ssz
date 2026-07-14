@@ -31,7 +31,7 @@ jobs:
           HEAD_COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
         run: |
           if [[ "$HEAD_COMMIT_MESSAGE" == "chore: release "* ]]; then
-            echo "::error::release-please did not tag the merged release PR. Check that its branch was release-please--branches--master."
+            echo "::error::release-please did not tag the merged release PR. Review the release-please logs for an unrecognized PR or other release error."
             exit 1
           fi
 
