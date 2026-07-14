@@ -144,11 +144,10 @@ export function progressiveSubtreeFillToContents(nodes: Node[]): Node {
 }
 
 export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[] {
-  // Fill by offset: spreading a large subtree into `push(...)` exceeds V8's argument limit.
-  const nodes = new Array<Node>(count);
+  // Push nodes individually; `nodes.push(...subtreeNodes)` would spread a large subtree past V8's argument limit.
+  const nodes: Node[] = [];
   let node = rootNode;
   let remaining = count;
-  let offset = 0;
   let subtreeLength = BASE_CHUNK_COUNT;
 
   for (let subtreeIndex = 0; remaining > 0; subtreeIndex++) {
@@ -160,9 +159,8 @@ export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[
     const subtreeDepth = progressiveSubtreeDepth(subtreeIndex);
     const subtreeNodes = getNodesAtDepth(node.left, subtreeDepth, 0, subtreeNodeCount);
     for (let i = 0; i < subtreeNodes.length; i++) {
-      nodes[offset + i] = subtreeNodes[i];
+      nodes.push(subtreeNodes[i]);
     }
-    offset += subtreeNodeCount;
     node = node.right;
     remaining -= subtreeNodeCount;
     subtreeLength *= SCALING_FACTOR;
