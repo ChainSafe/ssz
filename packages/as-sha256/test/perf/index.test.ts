@@ -1,4 +1,4 @@
-import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {
   byteArrayToHashObject,
   digest,
@@ -13,10 +13,6 @@ import {
 //     ✓ digest64 50023 times                                                27.30382 ops/s    36.62491 ms/op   x1.003       1625 runs   60.0 s
 //     ✓ digest 50023 times                                                  27.31207 ops/s    36.61385 ms/op   x0.999       1624 runs   60.0 s
 describe("digestTwoHashObjects vs digest64 vs digest", () => {
-  setBenchOpts({
-    minMs: 60000,
-  });
-
   const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
   const input1 = "gajindergajindergajindergajinder";
   const input2 = "gajindergajindergajindergajinder";

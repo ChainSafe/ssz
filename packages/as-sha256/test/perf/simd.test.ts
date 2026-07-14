@@ -1,4 +1,4 @@
-import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {byteArrayToHashObject} from "../../src/hashObject.ts";
 import {batchHash4HashObjectInputs, batchHash4UintArray64s, digest64, digest64HashObjects} from "../../src/index.ts";
 
@@ -12,10 +12,6 @@ import {batchHash4HashObjectInputs, batchHash4UintArray64s, digest64, digest64Ha
     ✓ hash 200092 times using batchHash4HashObjectInputs                  9.211751 ops/s    108.5570 ms/op        -         88 runs   10.1 s
  */
 describe("digest64 vs batchHash4UintArray64s vs digest64HashObjects vs batchHash4HashObjectInputs", () => {
-  setBenchOpts({
-    minMs: 10_000,
-  });
-
   const input = Buffer.from("gajindergajindergajindergajindergajindergajindergajindergajinder", "utf8");
   // total number of time running hash for 200000 balances
   const iterations = 50023;

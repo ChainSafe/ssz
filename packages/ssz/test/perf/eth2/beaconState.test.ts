@@ -1,4 +1,4 @@
-import {bench, describe, setBenchOpts} from "@chainsafe/benchmark";
+import {bench, describe} from "@chainsafe/benchmark";
 import {HashComputationGroup, HashComputationLevel, executeHashComputations} from "@chainsafe/persistent-merkle-tree";
 import {BitArray, CompositeViewDU, toHexString} from "../../../src/index.ts";
 import {BeaconState} from "../../lodestarTypes/altair/sszTypes.ts";
@@ -18,10 +18,6 @@ const expectedRoot = "0xb0780ec0d44bff1ae8a351e98e37a9d8c3e28edb38c9d5a6312656e0
  * Increasing number of validators could be OOM since we have to create BeaconState every time
  */
 describe(`BeaconState ViewDU partially modified tree vc=${vc} numModified=${numModified}`, () => {
-  setBenchOpts({
-    minMs: 20_000,
-  });
-
   const hc = new HashComputationGroup();
   bench({
     id: `BeaconState ViewDU batchHashTreeRoot vc=${vc} mod=${numModified}`,
