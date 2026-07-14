@@ -261,7 +261,7 @@ export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> ex
       const [prop, ...remainingPath] = jsonPath;
 
       if (prop === undefined) {
-        gindices.push(...this.tree_getLeafGindices(BigInt(1), node));
+        for (const g of this.tree_getLeafGindices(BigInt(1), node)) gindices.push(g);
         continue;
       }
 
@@ -279,9 +279,11 @@ export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> ex
 
       if (remainingPath.length === 0) {
         if (isCompositeType(selectedType)) {
-          gindices.push(
-            ...selectedType.tree_getLeafGindices(VALUE_GINDEX, selectedType.fixedSize === null ? dataNode : undefined)
-          );
+          for (const g of selectedType.tree_getLeafGindices(
+            VALUE_GINDEX,
+            selectedType.fixedSize === null ? dataNode : undefined
+          ))
+            gindices.push(g);
         } else {
           gindices.push(VALUE_GINDEX);
         }
@@ -328,7 +330,7 @@ export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> ex
     const valueGindex = concatGindices([rootGindex, VALUE_GINDEX]);
     const gindices: Gindex[] = [];
     if (isCompositeType(type)) {
-      gindices.push(...type.tree_getLeafGindices(valueGindex, getNode(rootNode, VALUE_GINDEX)));
+      for (const g of type.tree_getLeafGindices(valueGindex, getNode(rootNode, VALUE_GINDEX))) gindices.push(g);
     } else {
       gindices.push(valueGindex);
     }

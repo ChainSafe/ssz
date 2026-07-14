@@ -231,7 +231,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     const type = this.types[selector];
     const extendedFieldGindex = concatGindices([rootGindex, VALUE_GINDEX]);
     if (isCompositeType(type)) {
-      gindices.push(...type.tree_getLeafGindices(extendedFieldGindex, getNode(rootNode, VALUE_GINDEX)));
+      for (const g of type.tree_getLeafGindices(extendedFieldGindex, getNode(rootNode, VALUE_GINDEX))) gindices.push(g);
     } else {
       gindices.push(extendedFieldGindex);
     }

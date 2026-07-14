@@ -86,11 +86,12 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
           gindex < endGindex;
           gindex++, extendedGindex++
         ) {
-          gindices.push(...this.elementType.tree_getLeafGindices(extendedGindex, getNode(rootNode, gindex)));
+          for (const g of this.elementType.tree_getLeafGindices(extendedGindex, getNode(rootNode, gindex)))
+            gindices.push(g);
         }
       } else {
         for (let i = 0, extendedGindex = extendedStartIndex; i < length; i++, extendedGindex++) {
-          gindices.push(...this.elementType.tree_getLeafGindices(extendedGindex));
+          for (const g of this.elementType.tree_getLeafGindices(extendedGindex)) gindices.push(g);
         }
       }
     }

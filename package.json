@@ -11,6 +11,7 @@
     "build": "pnpm clean && pnpm -r build",
     "lint": "biome check",
     "lint:fix": "biome check --write",
+    "lint:no-push-spread": "node scripts/no-push-spread.mjs",
     "check-types": "pnpm -r check-types",
     "test:browsers": "pnpm -r test:browsers",
     "test:unit": "pnpm -r test:unit",

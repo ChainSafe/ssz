@@ -291,7 +291,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     const gindexes: Gindex[] = [];
 
     for (const jsonPath of jsonPaths) {
-      gindexes.push(...this.tree_createProofGindexesForPath(node, jsonPath));
+      for (const g of this.tree_createProofGindexesForPath(node, jsonPath)) gindexes.push(g);
     }
 
     return gindexes;
