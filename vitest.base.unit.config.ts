@@ -2,10 +2,9 @@ import path from "node:path";
 import { defineConfig, ViteUserConfig } from "vitest/config";
 const __dirname = new URL(".", import.meta.url).pathname;
 
-export type Runtime = "node" | "deno" | "bun";
+export type Runtime = "node" | "deno";
 
 export function getRuntime(): Runtime {
-  if ("bun" in process.versions) return "bun";
   if ("deno" in process.versions) return "deno";
 
   return "node";
@@ -28,9 +27,9 @@ export function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
       reporters: process.env.GITHUB_ACTIONS
         ? ["verbose", "hanging-process", "github-actions"]
         : [
-            process.env.TEST_COMPACT_OUTPUT ? "basic" : "verbose",
-            "hanging-process",
-          ],
+          process.env.TEST_COMPACT_OUTPUT ? "basic" : "verbose",
+          "hanging-process",
+        ],
     };
   }
 

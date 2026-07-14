@@ -64,24 +64,3 @@ jobs:
       - name: Spec tests bellatrix-mainnet
         run: LODESTAR_FORK=bellatrix pnpm test:spec-static-mainnet
         working-directory: packages/ssz
-
-  test-bun:
-    name: Tests Bun
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: corepack enable
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - name: Install
-        run: pnpm install --frozen-lockfile
-      - name: Build
-        run: pnpm build
-      - name: Generate
-        run: bun run --filter '*' generate
-      - name: Unit Tests
-        run: bun run --bun --filter '*' test:unit
