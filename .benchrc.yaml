@@ -2,6 +2,11 @@
 threshold: 3
 maxMs: 60000
 minRuns: 10
+# Match Lodestar's CI convergence policy so noisy microbenchmarks stop once
+# their moving average is stable enough for the 3x regression threshold.
+convergeFactor: 0.075
+convergence: linear
+averageCalculation: clean-outliers
 triggerGC: false
 sort: true
 setupFiles: 
