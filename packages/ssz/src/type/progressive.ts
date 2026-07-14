@@ -144,7 +144,6 @@ export function progressiveSubtreeFillToContents(nodes: Node[]): Node {
 }
 
 export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[] {
-  // Push nodes individually; `nodes.push(...subtreeNodes)` would spread a large subtree past V8's argument limit.
   const nodes: Node[] = [];
   let node = rootNode;
   let remaining = count;
