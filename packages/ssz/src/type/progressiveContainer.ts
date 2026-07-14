@@ -12,7 +12,6 @@ import {
   setNode,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {pushAll} from "../util/array.ts";
 import {byteArrayEquals} from "../util/byteArray.ts";
 import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
@@ -366,9 +365,10 @@ export class ProgressiveContainerType<Fields extends Record<string, Type<unknown
           if (!rootNode) {
             throw new Error("variable type requires tree argument to get leaves");
           }
-          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)));
+          for (const g of compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)))
+            gindices.push(g);
         } else {
-          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot));
+          for (const g of compositeType.tree_getLeafGindices(fieldGindexFromRoot)) gindices.push(g);
         }
       }
     }

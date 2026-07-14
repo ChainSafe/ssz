@@ -17,7 +17,6 @@ import {
   subtreeFillToContents,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {pushAll} from "../util/array.ts";
 import {byteArrayEquals} from "../util/byteArray.ts";
 import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
@@ -515,12 +514,13 @@ export class ProgressiveListCompositeType<
       if (this.elementType.isBasic) {
         gindices.push(elementGindex);
       } else if (this.elementType.fixedSize === null) {
-        pushAll(
-          gindices,
-          this.elementType.tree_getLeafGindices(elementGindex, getNode(rootNode, elementGindexFromListRoot))
-        );
+        for (const g of this.elementType.tree_getLeafGindices(
+          elementGindex,
+          getNode(rootNode, elementGindexFromListRoot)
+        ))
+          gindices.push(g);
       } else {
-        pushAll(gindices, this.elementType.tree_getLeafGindices(elementGindex));
+        for (const g of this.elementType.tree_getLeafGindices(elementGindex)) gindices.push(g);
       }
     }
     gindices.push(concatGindices([rootGindex, LENGTH_GINDEX]));

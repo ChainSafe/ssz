@@ -11,7 +11,6 @@ import {
   getNode,
   merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
-import {pushAll} from "../util/array.ts";
 import {byteArrayEquals} from "../util/byteArray.ts";
 import {ValueWithCachedPermanentRoot, cacheRoot, symbolCachedPermanentRoot} from "../util/merkleize.ts";
 import {treePostProcessFromProofNode} from "../util/proof/treePostProcessFromProofNode.ts";
@@ -292,7 +291,7 @@ export abstract class CompositeType<V, TV, TVDU> extends Type<V> {
     const gindexes: Gindex[] = [];
 
     for (const jsonPath of jsonPaths) {
-      pushAll(gindexes, this.tree_createProofGindexesForPath(node, jsonPath));
+      for (const g of this.tree_createProofGindexesForPath(node, jsonPath)) gindexes.push(g);
     }
 
     return gindexes;

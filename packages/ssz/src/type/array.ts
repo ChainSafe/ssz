@@ -1,5 +1,4 @@
 import {Gindex, Node, concatGindices, getNode, toGindex} from "@chainsafe/persistent-merkle-tree";
-import {pushAll} from "../util/array.ts";
 import {Type, ValueOf} from "./abstract.ts";
 import {
   ArrayProps,
@@ -87,11 +86,12 @@ export abstract class ArrayType<ElementType extends Type<unknown>, TV, TVDU> ext
           gindex < endGindex;
           gindex++, extendedGindex++
         ) {
-          pushAll(gindices, this.elementType.tree_getLeafGindices(extendedGindex, getNode(rootNode, gindex)));
+          for (const g of this.elementType.tree_getLeafGindices(extendedGindex, getNode(rootNode, gindex)))
+            gindices.push(g);
         }
       } else {
         for (let i = 0, extendedGindex = extendedStartIndex; i < length; i++, extendedGindex++) {
-          pushAll(gindices, this.elementType.tree_getLeafGindices(extendedGindex));
+          for (const g of this.elementType.tree_getLeafGindices(extendedGindex)) gindices.push(g);
         }
       }
     }

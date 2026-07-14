@@ -9,7 +9,6 @@ import {
   subtreeFillToContents,
   toGindex,
 } from "@chainsafe/persistent-merkle-tree";
-import {pushAll} from "../util/array.ts";
 import {maxChunksToDepth} from "../util/merkleize.ts";
 import {namedClass} from "../util/named.ts";
 import {Case} from "../util/strings.ts";
@@ -331,9 +330,10 @@ export class ContainerType<Fields extends Record<string, Type<unknown>>> extends
           if (!rootNode) {
             throw new Error("variable type requires tree argument to get leaves");
           }
-          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)));
+          for (const g of compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)))
+            gindices.push(g);
         } else {
-          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot));
+          for (const g of compositeType.tree_getLeafGindices(fieldGindexFromRoot)) gindices.push(g);
         }
       }
     }

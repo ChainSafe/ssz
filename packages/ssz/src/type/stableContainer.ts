@@ -17,7 +17,6 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
-import {pushAll} from "../util/array.ts";
 import {
   ValueWithCachedPermanentRoot,
   cacheRoot,
@@ -446,16 +445,14 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
       const childNode = getNode(node, gindex);
       if (remainingPath.length === 0) {
-        pushAll(gindexes, fieldType.tree_getLeafGindices(gindex, childNode));
+        for (const g of fieldType.tree_getLeafGindices(gindex, childNode)) gindexes.push(g);
         continue;
       }
 
-      pushAll(
-        gindexes,
-        fieldType
-          .tree_createProofGindexes(childNode, [remainingPath])
-          .map((childGindex) => concatGindices([gindex, childGindex]))
-      );
+      for (const g of fieldType
+        .tree_createProofGindexes(childNode, [remainingPath])
+        .map((childGindex) => concatGindices([gindex, childGindex])))
+        gindexes.push(g);
     }
 
     return gindexes;
@@ -486,9 +483,10 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
           if (!rootNode) {
             throw new Error("variable type requires tree argument to get leaves");
           }
-          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)));
+          for (const g of compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)))
+            gindices.push(g);
         } else {
-          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot));
+          for (const g of compositeType.tree_getLeafGindices(fieldGindexFromRoot)) gindices.push(g);
         }
       }
     }
