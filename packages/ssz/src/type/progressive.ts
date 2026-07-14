@@ -156,7 +156,10 @@ export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[
 
     const subtreeNodeCount = Math.min(subtreeLength, remaining);
     const subtreeDepth = progressiveSubtreeDepth(subtreeIndex);
-    nodes.push(...getNodesAtDepth(node.left, subtreeDepth, 0, subtreeNodeCount));
+    const subtreeNodes = getNodesAtDepth(node.left, subtreeDepth, 0, subtreeNodeCount);
+    for (let i = 0; i < subtreeNodes.length; i++) {
+      nodes.push(subtreeNodes[i]);
+    }
     node = node.right;
     remaining -= subtreeNodeCount;
     subtreeLength *= SCALING_FACTOR;
