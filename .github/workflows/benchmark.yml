@@ -19,6 +19,21 @@ jobs:
     runs-on: ubuntu-latest
     # Don't run on forks. Forks don't have access to the S3 credentials and the workflow will fail
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    strategy:
+      # A regression in one shard must not cancel the signal from the others
+      fail-fast: false
+      matrix:
+        include:
+          # Shards are balanced by measured runtime, not package boundaries.
+          # A threshold regression fails the shard's job; PR comments are disabled
+          # (--skipPostComment) because @chainsafe/benchmark posts all shards under one
+          # fixed comment tag and they would overwrite each other.
+          - name: ssz
+            files: "'packages/ssz/test/perf/**/*.test.ts' --ignore 'packages/ssz/test/perf/eth2/**'"
+          - name: ssz-eth2-as-sha256
+            files: "'packages/ssz/test/perf/eth2/**/*.test.ts' 'packages/as-sha256/test/perf/**/*.test.ts'"
+          - name: persistent-merkle-tree
+            files: "'packages/persistent-merkle-tree/test/perf/**/*.test.ts'"
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -29,8 +44,8 @@ jobs:
           node-version: 24
       - run: pnpm i --frozen-lockfile && pnpm build && pnpm generate
 
-      - name: Run benchmarks
-        run: pnpm benchmark
+      - name: Run benchmarks (${{ matrix.name }})
+        run: pnpm benchmark:files ${{ matrix.files }} --skipPostComment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # benchmark options
@@ -41,5 +56,7 @@ jobs:
           S3_REGION: ${{ secrets.S3_BENCH_LODESTAR_REGION }}
           S3_BUCKET: ${{ secrets.S3_BENCH_LODESTAR_BUCKET }}
           S3_ENDPOINT: ${{ secrets.S3_BENCH_LODESTAR_ENDPOINT }}
-          # Key prefix to separate benchmark data from multiple repositories
-          S3_KEY_PREFIX: ${{ github.repository }}/${{ runner.os }}
+          # Key prefix to separate benchmark data from multiple repositories.
+          # Per-shard suffix keeps each shard's history file independent (no shared
+          # cache entry to corrupt, comparisons stay per-shard).
+          S3_KEY_PREFIX: ${{ github.repository }}/${{ runner.os }}/${{ matrix.name }}

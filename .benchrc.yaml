@@ -1,7 +1,14 @@
 # benchmark opts
 threshold: 3
-maxMs: 60000
+# Hard per-case ceiling. Convergence stops most cases much earlier; this only bounds the
+# slow/noisy ones that never stabilize (they previously burned the full 60s each). With
+# threshold=3 (alert only on 3x regression), 10s of samples is ample precision.
+maxMs: 10000
 minRuns: 10
+# Wall-clock kill timer per case (vitest task timeout). Must exceed maxMs + warm-up +
+# overhead: the tool only auto-raises it when maxMs is strictly greater than the 10s
+# default, so maxMs == 10000 would leave full-length cases racing the timeout.
+timeoutBench: 20000
 # Match Lodestar's CI convergence policy so noisy microbenchmarks stop once
 # their moving average is stable enough for the 3x regression threshold.
 convergeFactor: 0.075
