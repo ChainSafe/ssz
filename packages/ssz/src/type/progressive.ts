@@ -144,9 +144,15 @@ export function progressiveSubtreeFillToContents(nodes: Node[]): Node {
 }
 
 export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[] {
-  const nodes: Node[] = [];
+  // Pre-allocate the exact result size and fill by offset. Do NOT use
+  // `nodes.push(...getNodesAtDepth(...))`: a single progressive subtree can hold up to 2^(2*subtreeIndex)
+  // chunks, so for large lists the spread expands to hundreds of thousands of call arguments and throws
+  // `RangeError: Maximum call stack size exceeded`. `getNodesAtDepth` returns exactly `count` nodes, so the
+  // per-subtree counts sum to `count`.
+  const nodes = new Array<Node>(count);
   let node = rootNode;
   let remaining = count;
+  let offset = 0;
   let subtreeLength = BASE_CHUNK_COUNT;
 
   for (let subtreeIndex = 0; remaining > 0; subtreeIndex++) {
@@ -156,7 +162,11 @@ export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[
 
     const subtreeNodeCount = Math.min(subtreeLength, remaining);
     const subtreeDepth = progressiveSubtreeDepth(subtreeIndex);
-    nodes.push(...getNodesAtDepth(node.left, subtreeDepth, 0, subtreeNodeCount));
+    const subtreeNodes = getNodesAtDepth(node.left, subtreeDepth, 0, subtreeNodeCount);
+    for (let i = 0; i < subtreeNodes.length; i++) {
+      nodes[offset + i] = subtreeNodes[i];
+    }
+    offset += subtreeNodeCount;
     node = node.right;
     remaining -= subtreeNodeCount;
     subtreeLength *= SCALING_FACTOR;

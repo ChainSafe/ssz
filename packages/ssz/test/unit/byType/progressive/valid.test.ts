@@ -1,3 +1,4 @@
+import {LeafNode} from "@chainsafe/persistent-merkle-tree";
 import {describe, expect, it} from "vitest";
 import {
   BitArray,
@@ -12,6 +13,7 @@ import {
   toHexString,
 } from "../../../../src/index.ts";
 import {Type} from "../../../../src/type/abstract.ts";
+import {getNodesAtProgressiveDepth, progressiveSubtreeFillToContents} from "../../../../src/type/progressive.ts";
 import {merkleize, mixInLength} from "../../../../src/util/merkleize.ts";
 
 const uint8 = new UintNumberType(1);
@@ -256,6 +258,30 @@ describe("ProgressiveContainerType", () => {
     const proof = view.createProof([["color"]]);
     const restored = type.createFromProof(proof, type.hashTreeRoot(value));
     expect(toHexString(restored.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value)));
+  });
+});
+
+describe("getNodesAtProgressiveDepth", () => {
+  it("materializes large progressive lists at production scale (regression: #535)", () => {
+    // Regression for chainsafe/ssz#535. Progressive subtrees hold 1, 4, 16, ... 65536, 262144, ... chunks.
+    // The previous implementation did `nodes.push(...getNodesAtDepth(...))`, spreading a whole subtree as
+    // call arguments; on V8 that throws `RangeError: Maximum call stack size exceeded` once a subtree
+    // exceeds the argument-spread limit (~125k on Node's default stack), which bricked block import on a
+    // Gloas beacon state whose validator registry (~500k) placed 262144 nodes in a single subtree.
+    // Exercise that exact shape (9th subtree fully populated) and assert every node is returned, in order.
+    const count = 349_525; // (4^10 - 1) / 3 — fills the 9th subtree completely (262144 nodes)
+    const subtree9Start = 87_381; // (4^9 - 1) / 3 — sum of subtree capacities 1..65536
+    const nodes = Array.from({length: count}, (_, i) => LeafNode.fromUint32(i));
+    const rootNode = progressiveSubtreeFillToContents(nodes);
+
+    const result = getNodesAtProgressiveDepth(rootNode, count);
+
+    expect(result.length).to.equal(count);
+    // Order and node identity are preserved across the subtree boundary.
+    expect(result[0]).to.equal(nodes[0]);
+    expect(result[subtree9Start - 1]).to.equal(nodes[subtree9Start - 1]);
+    expect(result[subtree9Start]).to.equal(nodes[subtree9Start]);
+    expect(result[count - 1]).to.equal(nodes[count - 1]);
   });
 });
 
