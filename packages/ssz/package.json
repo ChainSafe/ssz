@@ -12,7 +12,7 @@
     "url": "git+https://github.com/ChainSafe/ssz.git",
     "directory": "packages/ssz"
   },
-  "version": "1.6.1",
+  "version": "1.6.2",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
