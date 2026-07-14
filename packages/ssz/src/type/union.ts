@@ -9,6 +9,7 @@ import {
   getNode,
   merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
+import {pushAll} from "../util/array.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
 import {ByteViews, Type} from "./abstract.ts";
@@ -231,7 +232,7 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
     const type = this.types[selector];
     const extendedFieldGindex = concatGindices([rootGindex, VALUE_GINDEX]);
     if (isCompositeType(type)) {
-      gindices.push(...type.tree_getLeafGindices(extendedFieldGindex, getNode(rootNode, VALUE_GINDEX)));
+      pushAll(gindices, type.tree_getLeafGindices(extendedFieldGindex, getNode(rootNode, VALUE_GINDEX)));
     } else {
       gindices.push(extendedFieldGindex);
     }

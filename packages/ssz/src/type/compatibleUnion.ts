@@ -12,6 +12,7 @@ import {
   getNode,
   merkleizeBlocksBytes,
 } from "@chainsafe/persistent-merkle-tree";
+import {pushAll} from "../util/array.ts";
 import {byteArrayEquals} from "../util/byteArray.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
@@ -261,7 +262,7 @@ export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> ex
       const [prop, ...remainingPath] = jsonPath;
 
       if (prop === undefined) {
-        gindices.push(...this.tree_getLeafGindices(BigInt(1), node));
+        pushAll(gindices, this.tree_getLeafGindices(BigInt(1), node));
         continue;
       }
 
@@ -279,8 +280,9 @@ export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> ex
 
       if (remainingPath.length === 0) {
         if (isCompositeType(selectedType)) {
-          gindices.push(
-            ...selectedType.tree_getLeafGindices(VALUE_GINDEX, selectedType.fixedSize === null ? dataNode : undefined)
+          pushAll(
+            gindices,
+            selectedType.tree_getLeafGindices(VALUE_GINDEX, selectedType.fixedSize === null ? dataNode : undefined)
           );
         } else {
           gindices.push(VALUE_GINDEX);
@@ -328,7 +330,7 @@ export class CompatibleUnionType<Types extends Record<number, Type<unknown>>> ex
     const valueGindex = concatGindices([rootGindex, VALUE_GINDEX]);
     const gindices: Gindex[] = [];
     if (isCompositeType(type)) {
-      gindices.push(...type.tree_getLeafGindices(valueGindex, getNode(rootNode, VALUE_GINDEX)));
+      pushAll(gindices, type.tree_getLeafGindices(valueGindex, getNode(rootNode, VALUE_GINDEX)));
     } else {
       gindices.push(valueGindex);
     }

@@ -12,6 +12,7 @@ import {
   zeroHash,
   zeroNode,
 } from "@chainsafe/persistent-merkle-tree";
+import {pushAll} from "../util/array.ts";
 import {
   ValueWithCachedPermanentRoot,
   cacheRoot,
@@ -451,9 +452,9 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
           if (!rootNode) {
             throw new Error("variable type requires tree argument to get leaves");
           }
-          gindices.push(...compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)));
+          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot, getNode(rootNode, fieldGindex)));
         } else {
-          gindices.push(...compositeType.tree_getLeafGindices(fieldGindexFromRoot));
+          pushAll(gindices, compositeType.tree_getLeafGindices(fieldGindexFromRoot));
         }
       }
     }

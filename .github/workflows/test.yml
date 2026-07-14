@@ -27,6 +27,8 @@ jobs:
         run: pnpm check-types
       - name: Lint
         run: pnpm lint
+      - name: Lint (no push-spread)
+        run: pnpm lint:no-push-spread
       - name: Unit Tests
         run: pnpm test:unit
       - name: Browsers Tests
