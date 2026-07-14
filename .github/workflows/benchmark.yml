@@ -15,9 +15,16 @@ on:
 
 jobs:
   benchmark:
+    name: benchmark (${{ matrix.package }})
     runs-on: ubuntu-latest
     # Don't run on forks. Forks don't have access to the S3 credentials and the workflow will fail
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    strategy:
+      matrix:
+        package:
+          - ssz
+          - persistent-merkle-tree
+          - as-sha256
 
     steps:
       - uses: actions/checkout@v3
@@ -29,8 +36,13 @@ jobs:
       - run: pnpm i --frozen-lockfile && pnpm build && pnpm generate
 
       - name: Run benchmarks
-        run: pnpm benchmark
+        # --skipPostComment: parallel jobs would overwrite each other's PR comment
+        # (the comment marker is hardcoded in @chainsafe/benchmark). A single
+        # aggregated comment is posted by the post-comment job below.
+        shell: bash
+        run: pnpm benchmark:files 'packages/${{ matrix.package }}/test/perf/**/*.test.ts' --skipPostComment 2>&1 | tee bench-output-${{ matrix.package }}.txt
         env:
+          NO_COLOR: "1"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # benchmark options
           BENCHMARK_S3: true
@@ -40,5 +52,68 @@ jobs:
           S3_REGION: ${{ secrets.S3_BENCH_LODESTAR_REGION }}
           S3_BUCKET: ${{ secrets.S3_BENCH_LODESTAR_BUCKET }}
           S3_ENDPOINT: ${{ secrets.S3_BENCH_LODESTAR_ENDPOINT }}
-          # Key prefix to separate benchmark data from multiple repositories
-          S3_KEY_PREFIX: ${{ github.repository }}/${{ runner.os }}
+          # Key prefix to separate benchmark data from multiple repositories.
+          # Package suffix to separate parallel jobs.
+          S3_KEY_PREFIX: ${{ github.repository }}/${{ runner.os }}/${{ matrix.package }}
+
+      - name: Upload benchmark output
+        # Upload even when the benchmark step failed (regression) so the PR
+        # comment shows the regressed results too
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-output-${{ matrix.package }}
+          path: bench-output-${{ matrix.package }}.txt
+
+  # Post one PR comment combining the results of all packages
+  post-comment:
+    name: post benchmark comment
+    runs-on: ubuntu-latest
+    needs: benchmark
+    if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bench-output-*
+          merge-multiple: true
+
+      - name: Post aggregated comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const marker = "<!-- benchmark-results-aggregate -->";
+            const packages = ["ssz", "persistent-merkle-tree", "as-sha256"];
+            // Keep total body safely under GitHub's 65536-char comment limit
+            const maxPerPackage = 18000;
+
+            let body = `${marker}\n## Performance Report\n\nCommit: ${context.payload.pull_request.head.sha}\n`;
+            for (const pkg of packages) {
+              const file = `bench-output-${pkg}.txt`;
+              let output;
+              try {
+                output = fs.readFileSync(file, "utf8");
+              } catch {
+                output = "(no output — job may have failed before benchmarks ran)";
+              }
+              // Strip any remaining ANSI escape codes
+              output = output.replace(/\x1b\[[0-9;]*m/g, "").trim();
+              if (output.length > maxPerPackage) {
+                output = "…(truncated)…\n" + output.slice(-maxPerPackage);
+              }
+              body += `\n<details><summary><b>${pkg}</b></summary>\n\n\`\`\`\n${output}\n\`\`\`\n\n</details>\n`;
+            }
+
+            const {data: comments} = await github.rest.issues.listComments({
+              ...context.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const prev = comments.find((c) => c.body && c.body.includes(marker));
+            if (prev) {
+              await github.rest.issues.updateComment({...context.repo, comment_id: prev.id, body});
+            } else {
+              await github.rest.issues.createComment({...context.repo, issue_number: context.issue.number, body});
+            }
