@@ -25,32 +25,42 @@ jobs:
         with:
           target-branch: master
 
+      - name: Verify release commit was tagged
+        if: steps.release.outputs.releases_created != 'true'
+        env:
+          HEAD_COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
+        run: |
+          if [[ "$HEAD_COMMIT_MESSAGE" == "chore: release "* ]]; then
+            echo "::error::release-please did not tag the merged release PR. Review the release-please logs for an unrecognized PR or other release error."
+            exit 1
+          fi
+
       - uses: actions/checkout@v6
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - uses: pnpm/action-setup@v4
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - run: corepack enable
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - uses: actions/setup-node@v6
         with:
           cache: "pnpm"
           node-version: 24
           registry-url: "https://registry.npmjs.org"
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - run: pnpm install --frozen-lockfile
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - run: git config user.email $(git --no-pager show -s --format='%ae' HEAD)
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
       - run: git config user.name $(git --no-pager show -s --format='%an' HEAD)
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - run: pnpm build
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
 
       - run: pnpm publish -r --access public --provenance --no-git-check
-        if: ${{ steps.release.outputs.releases_created }}
+        if: steps.release.outputs.releases_created == 'true'
