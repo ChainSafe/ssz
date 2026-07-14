@@ -1,19 +1,27 @@
 name: Tests
 
-on: [pull_request, push]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-  test-node:
-    name: Tests Node
+  node_checks:
+    name: Node checks
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         node: [22, 24]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{matrix.node}}
           cache: pnpm
@@ -31,46 +39,77 @@ jobs:
         run: pnpm test:unit
       - name: Browsers Tests
         run: pnpm test:browsers
+
+  spec_tests:
+    name: Spec tests (${{ matrix.suite }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: general
+            command: pnpm test:spec-generic
+          - suite: phase0
+            command: pnpm test:spec-static
+            fork: phase0
+          - suite: altair
+            command: pnpm test:spec-static
+            fork: altair
+          - suite: bellatrix
+            command: pnpm test:spec-static
+            fork: bellatrix
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - run: corepack enable
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Bootstrap
+        run: pnpm i --frozen-lockfile
+      - name: Build
+        run: pnpm build
+      - name: Generate
+        run: pnpm generate
       # Download spec tests with cache
       - name: Restore spec tests cache
-        uses: actions/cache@master
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: packages/ssz/spec-tests
           key: spec-test-data-${{ hashFiles('packages/ssz/test/specTestVersioning.ts') }}
       - name: Download spec tests
         run: pnpm download-spec-tests
         working-directory: packages/ssz
-      # Run them in different steps to quickly identifying which command failed
-      # Otherwise just doing `pnpm test:spec` you can't tell which specific suite failed
-      # many of the suites have identical names for minimal and mainnet
-      - name: Spec tests general
-        run: pnpm test:spec-generic
+      - name: Spec tests ${{ matrix.suite }}
+        run: ${{ matrix.command }}
         working-directory: packages/ssz
-      - name: Spec tests phase0-minimal
-        run: LODESTAR_FORK=phase0 pnpm test:spec-static-minimal
-        working-directory: packages/ssz
-      - name: Spec tests phase0-mainnet
-        run: LODESTAR_FORK=phase0 pnpm test:spec-static-mainnet
-        working-directory: packages/ssz
-      - name: Spec tests altair-minimal
-        run: LODESTAR_FORK=altair pnpm test:spec-static-minimal
-        working-directory: packages/ssz
-      - name: Spec tests altair-mainnet
-        run: LODESTAR_FORK=altair pnpm test:spec-static-mainnet
-        working-directory: packages/ssz
-      - name: Spec tests bellatrix-minimal
-        run: LODESTAR_FORK=bellatrix pnpm test:spec-static-minimal
-        working-directory: packages/ssz
-      - name: Spec tests bellatrix-mainnet
-        run: LODESTAR_FORK=bellatrix pnpm test:spec-static-mainnet
-        working-directory: packages/ssz
+        env:
+          LODESTAR_FORK: ${{ matrix.fork }}
+
+  test-node:
+    name: Tests Node
+    if: ${{ always() }}
+    needs: [node_checks, spec_tests]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - name: Verify Node checks and spec tests
+        env:
+          NODE_CHECKS_RESULT: ${{ needs.node_checks.result }}
+          SPEC_TESTS_RESULT: ${{ needs.spec_tests.result }}
+        run: |
+          test "$NODE_CHECKS_RESULT" = success
+          test "$SPEC_TESTS_RESULT" = success
 
   test-bun:
     name: Tests Bun
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 22
       - run: corepack enable
