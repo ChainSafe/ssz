@@ -1,4 +1,4 @@
-import {LeafNode, Node, getNodeH, setNodeH} from "./node.ts";
+import {LeafNode, Node, getNodeH} from "./node.ts";
 import {subtreeFillToContents} from "./subtree.ts";
 
 const NUMBER_2_POW_32 = 2 ** 32;
@@ -20,23 +20,60 @@ export function packedRootsBytesToNode(depth: number, dataView: DataView, start:
  * |------|------|------|------|------|------|------|------|
  */
 export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
-  const leafNodes = new Array<LeafNode>(Math.ceil(values.length / 4));
-  for (let i = 0; i < values.length; i++) {
-    const nodeIndex = Math.floor(i / 4);
-    const leafNode = leafNodes[nodeIndex] ?? new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
-    const vIndex = i % 4;
-    const hIndex = 2 * vIndex;
-    const value = values[i];
-    // same logic to UintNumberType.value_serializeToBytes() for 8 bytes
-    if (value === Infinity) {
-      setNodeH(leafNode, hIndex, 0xffffffff);
-      setNodeH(leafNode, hIndex + 1, 0xffffffff);
-    } else {
-      setNodeH(leafNode, hIndex, value & 0xffffffff);
-      setNodeH(leafNode, hIndex + 1, (value / NUMBER_2_POW_32) & 0xffffffff);
+  if (values.length === 0) return [];
+
+  const leaves = Math.ceil(values.length / 4);
+  const leafNodes = new Array<LeafNode>(leaves);
+
+  let i = 0; // index into values
+  for (let nodeIndex = 0; nodeIndex < leaves; nodeIndex++) {
+    // Pre-fill with zeros; we’ll assign the used slots below.
+    let h0 = 0,
+      h1 = 0,
+      h2 = 0,
+      h3 = 0,
+      h4 = 0,
+      h5 = 0,
+      h6 = 0,
+      h7 = 0;
+
+    // Up to 4 uint64 numbers per leaf → 8 x uint32 words (lo,hi) pairs
+    for (let slot = 0; slot < 4 && i < values.length; slot++, i++) {
+      const value = values[i];
+      let lo: number, hi: number;
+
+      if (value === Infinity) {
+        lo = 0xffffffff;
+        hi = 0xffffffff;
+      } else {
+        // low 32 bits (unsigned) and high 32 bits (unsigned)
+        lo = (value >>> 0) >>> 0;
+        hi = (Math.floor(value / NUMBER_2_POW_32) >>> 0) >>> 0;
+      }
+
+      switch (slot) {
+        case 0:
+          h0 = lo;
+          h1 = hi;
+          break;
+        case 1:
+          h2 = lo;
+          h3 = hi;
+          break;
+        case 2:
+          h4 = lo;
+          h5 = hi;
+          break;
+        case 3:
+          h6 = lo;
+          h7 = hi;
+          break;
+      }
     }
-    leafNodes[nodeIndex] = leafNode;
+
+    leafNodes[nodeIndex] = new LeafNode(h0, h1, h2, h3, h4, h5, h6, h7);
   }
+
   return leafNodes;
 }
 
@@ -45,19 +82,18 @@ export function packedUintNum64sToLeafNodes(values: number[]): LeafNode[] {
  */
 export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, end: number): Node[] {
   const size = end - start;
+  const fullLeafBytes = 32;
 
   // If the offset in data is not a multiple of 4, Uint32Array can't be used
   // > start offset of Uint32Array should be a multiple of 4
   // NOTE: Performance tests show that using a DataView is as fast as Uint32Array
 
-  const fullNodeCount = Math.floor(size / 32);
-  const leafNodes = new Array<LeafNode>(Math.ceil(size / 32));
+  const fullNodeCount = Math.floor(size / fullLeafBytes);
+  const leafNodes = new Array<LeafNode>(Math.ceil(size / fullLeafBytes));
 
   // Efficiently construct the tree writing to hashObjects directly
-
-  // TODO: Optimize, with this approach each h property is written twice
   for (let i = 0; i < fullNodeCount; i++) {
-    const offset = start + i * 32;
+    const offset = start + i * fullLeafBytes;
     leafNodes[i] = new LeafNode(
       dataView.getInt32(offset + 0, true),
       dataView.getInt32(offset + 4, true),
@@ -70,28 +106,42 @@ export function packedRootsBytesToLeafNodes(dataView: DataView, start: number, e
     );
   }
 
-  // Consider that the last node may only include partial data
-  const remainderBytes = size % 32;
-
-  // Last node
+  // Instead of creating a LeafNode with zeros and then overwriting some properties, we do a
+  // single write in the constructor: We pass all eight hValues to the LeafNode constructor.
+  const remainderBytes = size % fullLeafBytes;
   if (remainderBytes > 0) {
-    const node = new LeafNode(0, 0, 0, 0, 0, 0, 0, 0);
-    leafNodes[fullNodeCount] = node;
+    const offset = start + fullNodeCount * fullLeafBytes;
+    // Precompute final h values once
+    const hValues = [0, 0, 0, 0, 0, 0, 0, 0];
 
-    // Loop to dynamically copy the full h values
-    const fullHCount = Math.floor(remainderBytes / 4);
-    for (let h = 0; h < fullHCount; h++) {
-      setNodeH(node, h, dataView.getInt32(start + fullNodeCount * 32 + h * 4, true));
+    // Whole 4-byte words we can take directly
+    const fullWordCount = Math.floor(remainderBytes / 4);
+    for (let i = 0; i < fullWordCount; i++) {
+      hValues[i] = dataView.getInt32(offset + i * 4, true);
     }
 
-    const remainderUint32 = size % 4;
-    if (remainderUint32 > 0) {
+    // Remaining bytes that form a partial word
+    const remainderByteCount = remainderBytes % 4;
+    if (remainderByteCount > 0) {
       let h = 0;
-      for (let i = 0; i < remainderUint32; i++) {
-        h |= dataView.getUint8(start + size - remainderUint32 + i) << (i * 8);
+      const partialOffset = offset + fullWordCount * 4;
+      for (let j = 0; j < remainderByteCount; j++) {
+        h |= dataView.getUint8(partialOffset + j) << (j * 8);
       }
-      setNodeH(node, fullHCount, h);
+      hValues[fullWordCount] = h;
     }
+
+    // Create the partial node with all h values set once
+    leafNodes[fullNodeCount] = new LeafNode(
+      hValues[0],
+      hValues[1],
+      hValues[2],
+      hValues[3],
+      hValues[4],
+      hValues[5],
+      hValues[6],
+      hValues[7]
+    );
   }
 
   return leafNodes;
