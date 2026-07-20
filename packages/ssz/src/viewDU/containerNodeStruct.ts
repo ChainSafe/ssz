@@ -2,18 +2,21 @@ import {HashComputationLevel, Node} from "@chainsafe/persistent-merkle-tree";
 import {BranchNodeStruct} from "../branchNodeStruct.ts";
 import {Type, ValueOf} from "../type/abstract.ts";
 import {isCompositeType} from "../type/composite.ts";
-import {ContainerTypeGeneric, ValueOfFields} from "../view/container.ts";
+import {ContainerTypeGeneric, EphemeralValueOfFields, ValueOfFields} from "../view/container.ts";
 import {TreeViewDU} from "./abstract.ts";
 import {ContainerTreeViewDUTypeConstructor} from "./container.ts";
 
-export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
-  ContainerTypeGeneric<Fields>
-> {
+export class ContainerNodeStructTreeViewDU<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> extends TreeViewDU<ContainerTypeGeneric<Fields, EphemeralFields>> {
   protected valueChanged: ValueOfFields<Fields> | null = null;
   protected _rootNode: BranchNodeStruct<ValueOfFields<Fields>>;
+  /** Storage for ephemeral (non-consensus) field values. Kept per-instance, not in the tree. */
+  protected ephemeralValues: Record<string, unknown> = {};
 
   constructor(
-    readonly type: ContainerTypeGeneric<Fields>,
+    readonly type: ContainerTypeGeneric<Fields, EphemeralFields>,
     node: Node
   ) {
     super();
@@ -43,7 +46,9 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
       const value = this.valueChanged;
       this.valueChanged = null;
 
-      this._rootNode = this.type.value_toTree(value) as BranchNodeStruct<ValueOfFields<Fields>>;
+      this._rootNode = this.type.value_toTree(
+        value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+      ) as BranchNodeStruct<ValueOfFields<Fields>>;
     }
 
     if (this._rootNode.h0 === null && hcByLevel !== null) {
@@ -57,10 +62,11 @@ export class ContainerNodeStructTreeViewDU<Fields extends Record<string, Type<un
   }
 }
 
-export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
-  type: ContainerTypeGeneric<Fields>
-): ContainerTreeViewDUTypeConstructor<Fields> {
-  class CustomContainerTreeViewDU extends ContainerNodeStructTreeViewDU<Fields> {}
+export function getContainerTreeViewDUClass<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+>(type: ContainerTypeGeneric<Fields, EphemeralFields>): ContainerTreeViewDUTypeConstructor<Fields, EphemeralFields> {
+  class CustomContainerTreeViewDU extends ContainerNodeStructTreeViewDU<Fields, EphemeralFields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -81,7 +87,9 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
 
         set: function (this: CustomContainerTreeViewDU, value: ValueOf<Fields[keyof Fields]>) {
           if (this.valueChanged === null) {
-            this.valueChanged = this.type.clone(this._rootNode.value);
+            this.valueChanged = this.type.clone(
+              this._rootNode.value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+            ) as ValueOfFields<Fields>;
           }
 
           this.valueChanged[fieldName] = value;
@@ -106,7 +114,9 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
         // Expects TreeViewDU of fieldName
         set: function (this: CustomContainerTreeViewDU, view: unknown) {
           if (this.valueChanged === null) {
-            this.valueChanged = this.type.clone(this._rootNode.value);
+            this.valueChanged = this.type.clone(
+              this._rootNode.value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+            ) as ValueOfFields<Fields>;
           }
 
           const value = fieldType.toValueFromViewDU(view);
@@ -122,8 +132,23 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
     }
   }
 
+  // Define accessors for ephemeral fields. These never touch valueChanged or the BranchNodeStruct value.
+  for (const {fieldName} of type.ephemeralFieldsEntries ?? []) {
+    const key = fieldName as string;
+    Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+      configurable: false,
+      enumerable: true,
+      get: function (this: CustomContainerTreeViewDU) {
+        return (this as unknown as {ephemeralValues: Record<string, unknown>}).ephemeralValues[key];
+      },
+      set: function (this: CustomContainerTreeViewDU, value: unknown) {
+        (this as unknown as {ephemeralValues: Record<string, unknown>}).ephemeralValues[key] = value;
+      },
+    });
+  }
+
   // Change class name
   Object.defineProperty(CustomContainerTreeViewDU, "name", {value: type.typeName, writable: false});
 
-  return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields>;
+  return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields, EphemeralFields>;
 }
