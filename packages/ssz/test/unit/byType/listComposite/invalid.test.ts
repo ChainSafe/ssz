@@ -50,6 +50,12 @@ runTypeTestInvalid({
       error: "Offset out of bounds",
     },
     {
+      id: "First offset out of bounds",
+      // Correct:  0x080000000c0000000100020003000400
+      serialized: "0xf0ffffff0c0000000100020003000400",
+      error: "Offset out of bounds",
+    },
+    {
       id: "Offset data length not multiple of 4",
       // Correct:  0x080000000c0000000100020003000400
       serialized: "0x070000000c0000000100020003000400",
