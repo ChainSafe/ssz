@@ -292,6 +292,12 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
     throw Error("Offset data length not multiple of 4");
   }
 
+  // The first offset points to the start of the data section, so it must lie within the array's
+  // size. Validate it here, before it is used to size the offsets allocation below.
+  if (firstOffset > size) {
+    throw new Error(`Offset out of bounds ${firstOffset} > ${size}`);
+  }
+
   const offsetCount = offsetDataLength / 4;
   const offsets = new Uint32Array(offsetCount);
   offsets[0] = firstOffset;
