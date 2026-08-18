@@ -16,6 +16,26 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.6.3](https://github.com/ChainSafe/ssz/compare/ssz-v1.6.2...ssz-v1.6.3) (2026-08-18)
+
+
+### Bug Fixes
+
+* check first offset in readVariableOffsetsArrayComposite ([#543](https://github.com/ChainSafe/ssz/issues/543)) ([2b876ad](https://github.com/ChainSafe/ssz/commit/2b876ad367c078419f7ee9ed8c9c6057aa63305d))
+
+
+### Miscellaneous
+
+* reduce test workflow critical path ([#539](https://github.com/ChainSafe/ssz/issues/539)) ([dcc065d](https://github.com/ChainSafe/ssz/commit/dcc065d26fbbfe5e98a2e9909230b5990fabc383))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @chainsafe/as-sha256 bumped to 1.2.5
+    * @chainsafe/persistent-merkle-tree bumped to 1.3.1
+
 ## [1.6.2](https://github.com/ChainSafe/ssz/compare/ssz-v1.6.1...ssz-v1.6.2) (2026-07-14)
 
 

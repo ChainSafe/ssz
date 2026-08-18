@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.2.4...as-sha256-v1.2.5) (2026-08-18)
+
+
+### Miscellaneous
+
+* reduce test workflow critical path ([#539](https://github.com/ChainSafe/ssz/issues/539)) ([dcc065d](https://github.com/ChainSafe/ssz/commit/dcc065d26fbbfe5e98a2e9909230b5990fabc383))
+
 ## [1.2.4](https://github.com/ChainSafe/ssz/compare/as-sha256-v1.2.3...as-sha256-v1.2.4) (2026-04-21)
 
 
