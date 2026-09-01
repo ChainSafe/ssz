@@ -25,6 +25,8 @@ import {
 
 export interface ProgressiveByteListOptions {
   typeName?: string;
+  /** Optional runtime limit on byte length. Does not affect the progressive Merkle tree shape. */
+  limit?: number;
 }
 
 const CHUNKS_GINDEX = BigInt(2);
@@ -45,9 +47,10 @@ export class ProgressiveByteListType extends ByteArrayType {
   readonly chunkDepth = 0;
   readonly fixedSize = null;
   readonly minSize = 0;
-  readonly maxSize = PROGRESSIVE_LIST_MAX_SIZE;
+  readonly maxSize: number;
   readonly maxChunkCount = Number.MAX_SAFE_INTEGER;
   readonly isList = true;
+  readonly limitBytes: number;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
     this.mixInLengthBlockBytes.buffer,
@@ -57,7 +60,12 @@ export class ProgressiveByteListType extends ByteArrayType {
 
   constructor(opts?: ProgressiveByteListOptions) {
     super();
+
+    this.limitBytes = opts?.limit ?? PROGRESSIVE_LIST_MAX_SIZE;
+    if (this.limitBytes === 0) throw Error("List limit must be > 0");
+
     this.typeName = opts?.typeName ?? "ProgressiveByteList";
+    this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, this.limitBytes);
   }
 
   static named(opts: Require<ProgressiveByteListOptions, "typeName">): ProgressiveByteListType {
@@ -157,8 +165,8 @@ export class ProgressiveByteListType extends ByteArrayType {
   }
 
   protected assertValidSize(size: number): void {
-    if (size > PROGRESSIVE_LIST_MAX_SIZE) {
-      throw Error(`ProgressiveByteList invalid size ${size} max ${PROGRESSIVE_LIST_MAX_SIZE}`);
+    if (size > this.limitBytes) {
+      throw Error(`ProgressiveByteList invalid size ${size} limit ${this.limitBytes}`);
     }
   }
 }

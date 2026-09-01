@@ -224,6 +224,26 @@ describe("ProgressiveBitListType", () => {
     expect(deserialized.toBoolArray()).to.deep.equal(value.toBoolArray());
     expect(toHexString(type.hashTreeRoot(value))).to.equal(toHexString(progressiveBitlistRoot(value)));
   });
+
+  it("enforces an optional runtime limit without changing serialization or merkleization", () => {
+    const limitedType = new ProgressiveBitListType({limit: 2});
+    const value = BitArray.fromBoolArray([true, false]);
+    const valueOverLimit = BitArray.fromBoolArray([true, false, true]);
+
+    expect(limitedType.limitBits).to.equal(2);
+    expect(limitedType.maxSize).to.equal(2);
+    expect(limitedType.deserialize(limitedType.serialize(value)).toBoolArray()).to.deep.equal(value.toBoolArray());
+    expect(limitedType.serialize(valueOverLimit)).to.deep.equal(type.serialize(valueOverLimit));
+    expect(() => limitedType.deserialize(type.serialize(valueOverLimit))).toThrow("bitLen over limit 3 > 2");
+    expect(() => limitedType.fromJson(type.toJson(valueOverLimit))).toThrow("bitLen over limit 3 > 2");
+    expect(toHexString(limitedType.hashTreeRoot(valueOverLimit))).to.equal(
+      toHexString(type.hashTreeRoot(valueOverLimit))
+    );
+  });
+
+  it("requires the runtime limit to be greater than zero", () => {
+    expect(() => new ProgressiveBitListType({limit: 0})).toThrow("List limit must be > 0");
+  });
 });
 
 describe("ProgressiveByteListType", () => {
@@ -247,6 +267,30 @@ describe("ProgressiveByteListType", () => {
     expect(type.fromJson([1, "2", 3n])).to.deep.equal(value);
     expect(type.toJson(value)).to.equal("0x010203");
     expect(() => type.fromJson([256])).toThrow("Invalid byte value 256");
+  });
+
+  it("enforces an optional runtime limit without changing serialization or merkleization", () => {
+    const limitedType = new ProgressiveByteListType({limit: 2});
+    const value = Uint8Array.from([1, 2]);
+    const valueOverLimit = Uint8Array.from([1, 2, 3]);
+
+    expect(limitedType.limitBytes).to.equal(2);
+    expect(limitedType.maxSize).to.equal(2);
+    expect(limitedType.deserialize(limitedType.serialize(value))).to.deep.equal(value);
+    expect(limitedType.serialize(valueOverLimit)).to.deep.equal(type.serialize(valueOverLimit));
+    expect(() => limitedType.deserialize(type.serialize(valueOverLimit))).toThrow(
+      "ProgressiveByteList invalid size 3 limit 2"
+    );
+    expect(() => limitedType.fromJson(type.toJson(valueOverLimit))).toThrow(
+      "ProgressiveByteList invalid size 3 limit 2"
+    );
+    expect(toHexString(limitedType.hashTreeRoot(valueOverLimit))).to.equal(
+      toHexString(type.hashTreeRoot(valueOverLimit))
+    );
+  });
+
+  it("requires the runtime limit to be greater than zero", () => {
+    expect(() => new ProgressiveByteListType({limit: 0})).toThrow("List limit must be > 0");
   });
 
   it("supports empty byte lists", () => {

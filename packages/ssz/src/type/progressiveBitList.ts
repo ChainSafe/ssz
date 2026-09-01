@@ -27,13 +27,15 @@ import {
 
 export interface ProgressiveBitListOptions {
   typeName?: string;
+  /** Optional runtime limit on bit length. Does not affect the progressive Merkle tree shape. */
+  limit?: number;
 }
 
 const CHUNKS_GINDEX = BigInt(2);
 const LENGTH_GINDEX = BigInt(3);
 
 /**
- * ProgressiveBitList: variable-length collection of boolean values without a limit.
+ * ProgressiveBitList: variable-length collection of boolean values without a Merkleization limit.
  * - Serialization is identical to BitList, including the padding bit.
  * - Merkleization uses EIP-7916 progressive merkleization.
  */
@@ -43,9 +45,10 @@ export class ProgressiveBitListType extends BitArrayType {
   readonly chunkDepth = 0;
   readonly fixedSize = null;
   readonly minSize = 1;
-  readonly maxSize = PROGRESSIVE_LIST_MAX_SIZE;
+  readonly maxSize: number;
   readonly maxChunkCount = Number.MAX_SAFE_INTEGER;
   readonly isList = true;
+  readonly limitBits: number;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
     this.mixInLengthBlockBytes.buffer,
@@ -55,7 +58,12 @@ export class ProgressiveBitListType extends BitArrayType {
 
   constructor(opts?: ProgressiveBitListOptions) {
     super();
+
+    this.limitBits = opts?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (this.limitBits === 0) throw Error("List limit must be > 0");
+
     this.typeName = opts?.typeName ?? "ProgressiveBitList";
+    this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, Math.ceil(this.limitBits / 8) + 1);
   }
 
   static named(opts: Require<ProgressiveBitListOptions, "typeName">): ProgressiveBitListType {
@@ -84,7 +92,7 @@ export class ProgressiveBitListType extends BitArrayType {
   }
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): BitArray {
-    const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end, reuseBytes);
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end, reuseBytes);
     return new BitArray(uint8Array, bitLen);
   }
 
@@ -105,7 +113,7 @@ export class ProgressiveBitListType extends BitArrayType {
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
+    const {uint8Array, bitLen} = this.deserializeUint8ArrayBitListFromBytes(data.uint8Array, start, end);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     const nodes = packedRootsBytesToLeafNodes(dataView, 0, uint8Array.length);
     return addLengthNode(progressiveSubtreeFillToContents(nodes), bitLen);
@@ -140,6 +148,19 @@ export class ProgressiveBitListType extends BitArrayType {
     }
     gindices.push(concatGindices([rootGindex, LENGTH_GINDEX]));
     return gindices;
+  }
+
+  private deserializeUint8ArrayBitListFromBytes(
+    data: Uint8Array,
+    start: number,
+    end: number,
+    reuseBytes?: boolean
+  ): {uint8Array: Uint8Array; bitLen: number} {
+    const deserialized = deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes);
+    if (deserialized.bitLen > this.limitBits) {
+      throw Error(`bitLen over limit ${deserialized.bitLen} > ${this.limitBits}`);
+    }
+    return deserialized;
   }
 }
 
