@@ -35,6 +35,33 @@ describe("ProgressiveListBasicType", () => {
     expect(toHexString(type.hashTreeRoot([]))).to.equal(toHexString(mixInLength(new Uint8Array(32), 0)));
   });
 
+  it("enforces an optional runtime limit without changing merkleization", () => {
+    const limitedType = new ProgressiveListBasicType(uint8, {limit: 2});
+    const value = [1, 2];
+    const valueOverLimit = [1, 2, 3];
+
+    expect(limitedType.limit).to.equal(2);
+    expect(limitedType.maxSize).to.equal(2);
+    expect(limitedType.deserialize(limitedType.serialize(value))).to.deep.equal(value);
+    expect(limitedType.serialize(valueOverLimit)).to.deep.equal(Uint8Array.from(valueOverLimit));
+    expect(() => limitedType.deserialize(Uint8Array.from(valueOverLimit))).toThrow(
+      "Invalid list length 3 over limit 2"
+    );
+    expect(() => limitedType.fromJson(valueOverLimit)).toThrow("Invalid list length 3 over limit 2");
+    expect(toHexString(limitedType.hashTreeRoot(valueOverLimit))).to.equal(
+      toHexString(type.hashTreeRoot(valueOverLimit))
+    );
+
+    const view = limitedType.defaultViewDU();
+    view.push(1);
+    view.push(2);
+    expect(() => view.push(3)).toThrow("Error pushing over limit");
+  });
+
+  it("requires the runtime limit to be greater than zero", () => {
+    expect(() => new ProgressiveListBasicType(uint8, {limit: 0})).toThrow("List limit must be > 0");
+  });
+
   it("supports TreeViewDU mutation beyond the first progressive subtree", () => {
     const value = Array.from({length: 33}, (_, i) => i);
     const view = type.toViewDU(value);
@@ -97,6 +124,30 @@ describe("ProgressiveListCompositeType", () => {
     expect(toHexString(type.hashTreeRoot(value))).to.equal(
       toHexString(progressiveListCompositeRoot(elementType, value))
     );
+  });
+
+  it("enforces an optional runtime limit without changing merkleization", () => {
+    const limitedType = new ProgressiveListCompositeType(elementType, {limit: 2});
+    const value = [
+      {a: 1, b: 2},
+      {a: 3, b: 4},
+    ];
+    const valueOverLimit = [...value, {a: 5, b: 6}];
+
+    expect(limitedType.limit).to.equal(2);
+    expect(limitedType.maxSize).to.equal(6);
+    expect(limitedType.deserialize(limitedType.serialize(value))).to.deep.equal(value);
+    expect(limitedType.serialize(valueOverLimit)).to.deep.equal(type.serialize(valueOverLimit));
+    expect(() => limitedType.deserialize(type.serialize(valueOverLimit))).toThrow("Invalid list length 3 over limit 2");
+    expect(() => limitedType.fromJson(valueOverLimit)).toThrow("Invalid list length 3 over limit 2");
+    expect(toHexString(limitedType.hashTreeRoot(valueOverLimit))).to.equal(
+      toHexString(type.hashTreeRoot(valueOverLimit))
+    );
+
+    const view = limitedType.defaultViewDU();
+    view.push(elementType.toViewDU(value[0]));
+    view.push(elementType.toViewDU(value[1]));
+    expect(() => view.push(elementType.toViewDU(valueOverLimit[2]))).toThrow("Error pushing over limit");
   });
 
   it("creates nested proofs for variable-size composite elements", () => {
@@ -173,6 +224,26 @@ describe("ProgressiveBitListType", () => {
     expect(deserialized.toBoolArray()).to.deep.equal(value.toBoolArray());
     expect(toHexString(type.hashTreeRoot(value))).to.equal(toHexString(progressiveBitlistRoot(value)));
   });
+
+  it("enforces an optional runtime limit without changing serialization or merkleization", () => {
+    const limitedType = new ProgressiveBitListType({limit: 2});
+    const value = BitArray.fromBoolArray([true, false]);
+    const valueOverLimit = BitArray.fromBoolArray([true, false, true]);
+
+    expect(limitedType.limitBits).to.equal(2);
+    expect(limitedType.maxSize).to.equal(2);
+    expect(limitedType.deserialize(limitedType.serialize(value)).toBoolArray()).to.deep.equal(value.toBoolArray());
+    expect(limitedType.serialize(valueOverLimit)).to.deep.equal(type.serialize(valueOverLimit));
+    expect(() => limitedType.deserialize(type.serialize(valueOverLimit))).toThrow("bitLen over limit 3 > 2");
+    expect(() => limitedType.fromJson(type.toJson(valueOverLimit))).toThrow("bitLen over limit 3 > 2");
+    expect(toHexString(limitedType.hashTreeRoot(valueOverLimit))).to.equal(
+      toHexString(type.hashTreeRoot(valueOverLimit))
+    );
+  });
+
+  it("requires the runtime limit to be greater than zero", () => {
+    expect(() => new ProgressiveBitListType({limit: 0})).toThrow("List limit must be > 0");
+  });
 });
 
 describe("ProgressiveByteListType", () => {
@@ -196,6 +267,30 @@ describe("ProgressiveByteListType", () => {
     expect(type.fromJson([1, "2", 3n])).to.deep.equal(value);
     expect(type.toJson(value)).to.equal("0x010203");
     expect(() => type.fromJson([256])).toThrow("Invalid byte value 256");
+  });
+
+  it("enforces an optional runtime limit without changing serialization or merkleization", () => {
+    const limitedType = new ProgressiveByteListType({limit: 2});
+    const value = Uint8Array.from([1, 2]);
+    const valueOverLimit = Uint8Array.from([1, 2, 3]);
+
+    expect(limitedType.limitBytes).to.equal(2);
+    expect(limitedType.maxSize).to.equal(2);
+    expect(limitedType.deserialize(limitedType.serialize(value))).to.deep.equal(value);
+    expect(limitedType.serialize(valueOverLimit)).to.deep.equal(type.serialize(valueOverLimit));
+    expect(() => limitedType.deserialize(type.serialize(valueOverLimit))).toThrow(
+      "ProgressiveByteList invalid size 3 limit 2"
+    );
+    expect(() => limitedType.fromJson(type.toJson(valueOverLimit))).toThrow(
+      "ProgressiveByteList invalid size 3 limit 2"
+    );
+    expect(toHexString(limitedType.hashTreeRoot(valueOverLimit))).to.equal(
+      toHexString(type.hashTreeRoot(valueOverLimit))
+    );
+  });
+
+  it("requires the runtime limit to be greater than zero", () => {
+    expect(() => new ProgressiveByteListType({limit: 0})).toThrow("List limit must be > 0");
   });
 
   it("supports empty byte lists", () => {

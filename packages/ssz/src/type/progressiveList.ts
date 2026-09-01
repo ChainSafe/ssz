@@ -34,6 +34,7 @@ import {
   value_serializeToBytesArrayBasic,
 } from "./arrayBasic.ts";
 import {
+  maxSizeArrayComposite,
   minSizeArrayComposite,
   value_deserializeFromBytesArrayComposite,
   value_serializeToBytesArrayComposite,
@@ -54,6 +55,8 @@ import {
 export interface ProgressiveListOpts {
   typeName?: string;
   cachePermanentRootStruct?: boolean;
+  /** Optional runtime limit on element count. Does not affect the progressive Merkle tree shape. */
+  limit?: number;
 }
 
 const CHUNKS_GINDEX = BigInt(2);
@@ -71,10 +74,10 @@ export class ProgressiveListBasicType<ElementType extends BasicType<unknown>> ex
   readonly maxChunkCount = Number.MAX_SAFE_INTEGER;
   readonly fixedSize = null;
   readonly minSize = 0;
-  readonly maxSize = PROGRESSIVE_LIST_MAX_SIZE;
+  readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly limit = Number.MAX_SAFE_INTEGER;
+  readonly limit: number;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
     this.mixInLengthBlockBytes.buffer,
@@ -91,8 +94,11 @@ export class ProgressiveListBasicType<ElementType extends BasicType<unknown>> ex
 
     if (!elementType.isBasic) throw Error("elementType must be basic");
 
+    this.limit = opts?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (this.limit === 0) throw Error("List limit must be > 0");
     this.typeName = opts?.typeName ?? `ProgressiveList[${elementType.typeName}]`;
     this.itemsPerChunk = 32 / elementType.byteLength;
+    this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, this.limit * elementType.maxSize);
   }
 
   static named<ElementType extends BasicType<unknown>>(
@@ -288,7 +294,7 @@ export class ProgressiveListCompositeType<
   readonly maxSize: number;
   readonly isList = true;
   readonly isViewMutable = true;
-  readonly limit = Number.MAX_SAFE_INTEGER;
+  readonly limit: number;
   readonly mixInLengthBlockBytes = new Uint8Array(64);
   readonly mixInLengthBuffer = Buffer.from(
     this.mixInLengthBlockBytes.buffer,
@@ -305,9 +311,11 @@ export class ProgressiveListCompositeType<
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
 
+    this.limit = opts?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (this.limit === 0) throw Error("List limit must be > 0");
     this.typeName = opts?.typeName ?? `ProgressiveList[${elementType.typeName}]`;
     this.minSize = minSizeArrayComposite(elementType, 0);
-    this.maxSize = PROGRESSIVE_LIST_MAX_SIZE;
+    this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, maxSizeArrayComposite(elementType, this.limit));
   }
 
   static named<
