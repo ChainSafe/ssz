@@ -38,3 +38,11 @@ describe("Extra error cases", () => {
     expect(() => bitListType.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length + 1)).toThrow();
   });
 });
+
+describe("BitListType limit", () => {
+  it("rejects a non-positive or fractional limit", () => {
+    for (const limit of [0, -1, 1.5]) {
+      expect(() => new BitListType(limit)).toThrow("List limit must be a positive integer");
+    }
+  });
+});

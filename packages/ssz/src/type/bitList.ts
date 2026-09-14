@@ -48,7 +48,9 @@ export class BitListType extends BitArrayType {
   ) {
     super();
 
-    if (limitBits === 0) throw Error("List limit must be > 0");
+    if (!Number.isInteger(limitBits) || limitBits <= 0) {
+      throw Error("List limit must be a positive integer");
+    }
 
     this.typeName = opts?.typeName ?? `BitList[${limitBits}]`;
     // TODO Check that itemsPerChunk is an integer

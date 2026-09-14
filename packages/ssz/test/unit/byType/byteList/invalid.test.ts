@@ -19,3 +19,11 @@ describe("ByteListType constructor errors", () => {
     expect(() => new ByteListType(0)).toThrow();
   });
 });
+
+describe("ByteListType limit", () => {
+  it("rejects a non-positive or fractional limit", () => {
+    for (const limit of [0, -1, 1.5]) {
+      expect(() => new ByteListType(limit)).toThrow("List limit must be a positive integer");
+    }
+  });
+});

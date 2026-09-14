@@ -70,6 +70,13 @@ describe("ProgressiveListBasicType", () => {
     expect(() => emptyType.defaultViewDU().push(1)).toThrow("Error pushing over limit");
   });
 
+  it("rejects a negative or fractional runtime limit", () => {
+    expect(() => new ProgressiveListBasicType(uint8, {limit: -1})).toThrow("List limit must be a non-negative integer");
+    expect(() => new ProgressiveListBasicType(uint8, {limit: 1.5})).toThrow(
+      "List limit must be a non-negative integer"
+    );
+  });
+
   it("supports TreeViewDU mutation beyond the first progressive subtree", () => {
     const value = Array.from({length: 33}, (_, i) => i);
     const view = type.toViewDU(value);
@@ -170,6 +177,15 @@ describe("ProgressiveListCompositeType", () => {
     expect(() => emptyType.fromJson([{a: 1, b: 2}])).toThrow("Invalid list length 1 over limit 0");
     expect(() => emptyType.defaultViewDU().push(elementType.toViewDU({a: 1, b: 2}))).toThrow(
       "Error pushing over limit"
+    );
+  });
+
+  it("rejects a negative or fractional runtime limit", () => {
+    expect(() => new ProgressiveListCompositeType(elementType, {limit: -1})).toThrow(
+      "List limit must be a non-negative integer"
+    );
+    expect(() => new ProgressiveListCompositeType(elementType, {limit: 1.5})).toThrow(
+      "List limit must be a non-negative integer"
     );
   });
 
@@ -274,6 +290,11 @@ describe("ProgressiveBitListType", () => {
     expect(() => emptyType.deserialize(type.serialize(oneBit))).toThrow("bitLen over limit 1 > 0");
     expect(() => emptyType.fromJson(type.toJson(oneBit))).toThrow("bitLen over limit 1 > 0");
   });
+
+  it("rejects a negative or fractional runtime limit", () => {
+    expect(() => new ProgressiveBitListType({limit: -1})).toThrow("List limit must be a non-negative integer");
+    expect(() => new ProgressiveBitListType({limit: 1.5})).toThrow("List limit must be a non-negative integer");
+  });
 });
 
 describe("ProgressiveByteListType", () => {
@@ -327,6 +348,11 @@ describe("ProgressiveByteListType", () => {
     expect(emptyType.deserialize(new Uint8Array(0))).to.deep.equal(new Uint8Array(0));
     expect(() => emptyType.deserialize(Uint8Array.from([1]))).toThrow("ProgressiveByteList invalid size 1 limit 0");
     expect(() => emptyType.fromJson("0x01")).toThrow("ProgressiveByteList invalid size 1 limit 0");
+  });
+
+  it("rejects a negative or fractional runtime limit", () => {
+    expect(() => new ProgressiveByteListType({limit: -1})).toThrow("List limit must be a non-negative integer");
+    expect(() => new ProgressiveByteListType({limit: 1.5})).toThrow("List limit must be a non-negative integer");
   });
 
   it("supports empty byte lists", () => {
