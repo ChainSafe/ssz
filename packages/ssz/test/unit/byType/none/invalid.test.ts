@@ -9,5 +9,7 @@ runTypeTestInvalid({
     {id: "Object", json: {}},
     {id: "Array", json: []},
     {id: "Object stringified", json: JSON.stringify({})},
+    {id: "Non-empty bytes for None", serialized: "0x00"},
+    {id: "Dirty tail bytes for None", serialized: "0xff"},
   ],
 });
