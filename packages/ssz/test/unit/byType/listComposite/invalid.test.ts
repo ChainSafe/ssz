@@ -83,3 +83,13 @@ describe("Invalid ListBasicType at constructor", () => {
     expect(() => new ListCompositeType(uint16 as unknown as typeof compositeType, 2)).toThrow();
   });
 });
+
+describe("ListCompositeType limit", () => {
+  it("rejects a non-positive or fractional limit", () => {
+    for (const limit of [0, -1, 1.5]) {
+      expect(() => new ListCompositeType(new ContainerType({a: uint16}), limit)).toThrow(
+        "List limit must be a positive integer"
+      );
+    }
+  });
+});

@@ -55,7 +55,9 @@ export class ByteListType extends ByteArrayType {
   ) {
     super();
 
-    if (limitBytes === 0) throw Error("List limit must be > 0");
+    if (!Number.isInteger(limitBytes) || limitBytes <= 0) {
+      throw Error("List limit must be a positive integer");
+    }
 
     this.typeName = opts?.typeName ?? `ByteList[${limitBytes}]`;
     this.maxChunkCount = Math.ceil(this.limitBytes / 32);

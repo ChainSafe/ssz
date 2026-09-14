@@ -77,7 +77,9 @@ export class ListCompositeType<
     super(elementType, opts?.cachePermanentRootStruct);
 
     if (elementType.isBasic) throw Error("elementType must not be basic");
-    if (limit === 0) throw Error("List limit must be > 0");
+    if (!Number.isInteger(limit) || limit <= 0) {
+      throw Error("List limit must be a positive integer");
+    }
 
     this.typeName = opts?.typeName ?? `List[${elementType.typeName}, ${limit}]`;
 
