@@ -60,8 +60,9 @@ export class ProgressiveBitListType extends BitArrayType {
     super();
 
     this.limitBits = opts?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (!Number.isInteger(this.limitBits) || this.limitBits < 0)
+    if (!Number.isInteger(this.limitBits) || this.limitBits < 0) {
       throw Error("List limit must be a non-negative integer");
+    }
 
     this.typeName = opts?.typeName ?? "ProgressiveBitList";
     this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, Math.ceil(this.limitBits / 8) + 1);
