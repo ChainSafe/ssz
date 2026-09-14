@@ -25,7 +25,7 @@ import {
 
 export interface ProgressiveByteListOptions {
   typeName?: string;
-  /** Optional runtime limit on byte length. Does not affect the progressive Merkle tree shape. */
+  /** Optional runtime limit on byte length, 0 requires an empty list. Does not affect the progressive Merkle tree shape. */
   limit?: number;
 }
 
@@ -62,7 +62,6 @@ export class ProgressiveByteListType extends ByteArrayType {
     super();
 
     this.limitBytes = opts?.limit ?? PROGRESSIVE_LIST_MAX_SIZE;
-    if (this.limitBytes === 0) throw Error("List limit must be > 0");
 
     this.typeName = opts?.typeName ?? "ProgressiveByteList";
     this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, this.limitBytes);

@@ -58,8 +58,16 @@ describe("ProgressiveListBasicType", () => {
     expect(() => view.push(3)).toThrow("Error pushing over limit");
   });
 
-  it("requires the runtime limit to be greater than zero", () => {
-    expect(() => new ProgressiveListBasicType(uint8, {limit: 0})).toThrow("List limit must be > 0");
+  it("supports a zero limit for lists that must be empty", () => {
+    const emptyType = new ProgressiveListBasicType(uint8, {limit: 0});
+
+    expect(emptyType.limit).to.equal(0);
+    expect(emptyType.maxSize).to.equal(0);
+    expect(emptyType.deserialize(new Uint8Array(0))).to.deep.equal([]);
+    expect(() => emptyType.deserialize(Uint8Array.from([1]))).toThrow("Invalid list length 1 over limit 0");
+    expect(() => emptyType.deserializeToViewDU(Uint8Array.from([1]))).toThrow("Invalid list length 1 over limit 0");
+    expect(() => emptyType.fromJson([1])).toThrow("Invalid list length 1 over limit 0");
+    expect(() => emptyType.defaultViewDU().push(1)).toThrow("Error pushing over limit");
   });
 
   it("supports TreeViewDU mutation beyond the first progressive subtree", () => {
@@ -148,6 +156,21 @@ describe("ProgressiveListCompositeType", () => {
     view.push(elementType.toViewDU(value[0]));
     view.push(elementType.toViewDU(value[1]));
     expect(() => view.push(elementType.toViewDU(valueOverLimit[2]))).toThrow("Error pushing over limit");
+  });
+
+  it("supports a zero limit for lists that must be empty", () => {
+    const emptyType = new ProgressiveListCompositeType(elementType, {limit: 0});
+    const serialized = type.serialize([{a: 1, b: 2}]);
+
+    expect(emptyType.limit).to.equal(0);
+    expect(emptyType.maxSize).to.equal(0);
+    expect(emptyType.deserialize(new Uint8Array(0))).to.deep.equal([]);
+    expect(() => emptyType.deserialize(serialized)).toThrow("Invalid list length 1 over limit 0");
+    expect(() => emptyType.deserializeToViewDU(serialized)).toThrow("Invalid list length 1 over limit 0");
+    expect(() => emptyType.fromJson([{a: 1, b: 2}])).toThrow("Invalid list length 1 over limit 0");
+    expect(() => emptyType.defaultViewDU().push(elementType.toViewDU({a: 1, b: 2}))).toThrow(
+      "Error pushing over limit"
+    );
   });
 
   it("creates nested proofs for variable-size composite elements", () => {
@@ -241,8 +264,15 @@ describe("ProgressiveBitListType", () => {
     );
   });
 
-  it("requires the runtime limit to be greater than zero", () => {
-    expect(() => new ProgressiveBitListType({limit: 0})).toThrow("List limit must be > 0");
+  it("supports a zero limit for bitlists that must be empty", () => {
+    const emptyType = new ProgressiveBitListType({limit: 0});
+    const oneBit = BitArray.fromBoolArray([true]);
+
+    expect(emptyType.limitBits).to.equal(0);
+    expect(emptyType.maxSize).to.equal(1);
+    expect(emptyType.deserialize(emptyType.serialize(BitArray.fromBitLen(0))).bitLen).to.equal(0);
+    expect(() => emptyType.deserialize(type.serialize(oneBit))).toThrow("bitLen over limit 1 > 0");
+    expect(() => emptyType.fromJson(type.toJson(oneBit))).toThrow("bitLen over limit 1 > 0");
   });
 });
 
@@ -289,8 +319,14 @@ describe("ProgressiveByteListType", () => {
     );
   });
 
-  it("requires the runtime limit to be greater than zero", () => {
-    expect(() => new ProgressiveByteListType({limit: 0})).toThrow("List limit must be > 0");
+  it("supports a zero limit for byte lists that must be empty", () => {
+    const emptyType = new ProgressiveByteListType({limit: 0});
+
+    expect(emptyType.limitBytes).to.equal(0);
+    expect(emptyType.maxSize).to.equal(0);
+    expect(emptyType.deserialize(new Uint8Array(0))).to.deep.equal(new Uint8Array(0));
+    expect(() => emptyType.deserialize(Uint8Array.from([1]))).toThrow("ProgressiveByteList invalid size 1 limit 0");
+    expect(() => emptyType.fromJson("0x01")).toThrow("ProgressiveByteList invalid size 1 limit 0");
   });
 
   it("supports empty byte lists", () => {

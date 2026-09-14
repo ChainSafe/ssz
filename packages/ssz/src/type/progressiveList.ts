@@ -55,7 +55,7 @@ import {
 export interface ProgressiveListOpts {
   typeName?: string;
   cachePermanentRootStruct?: boolean;
-  /** Optional runtime limit on element count. Does not affect the progressive Merkle tree shape. */
+  /** Optional runtime limit on element count, 0 requires an empty list. Does not affect the progressive Merkle tree shape. */
   limit?: number;
 }
 
@@ -95,7 +95,6 @@ export class ProgressiveListBasicType<ElementType extends BasicType<unknown>> ex
     if (!elementType.isBasic) throw Error("elementType must be basic");
 
     this.limit = opts?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (this.limit === 0) throw Error("List limit must be > 0");
     this.typeName = opts?.typeName ?? `ProgressiveList[${elementType.typeName}]`;
     this.itemsPerChunk = 32 / elementType.byteLength;
     this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, this.limit * elementType.maxSize);
@@ -312,7 +311,6 @@ export class ProgressiveListCompositeType<
     if (elementType.isBasic) throw Error("elementType must not be basic");
 
     this.limit = opts?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (this.limit === 0) throw Error("List limit must be > 0");
     this.typeName = opts?.typeName ?? `ProgressiveList[${elementType.typeName}]`;
     this.minSize = minSizeArrayComposite(elementType, 0);
     this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, maxSizeArrayComposite(elementType, this.limit));
