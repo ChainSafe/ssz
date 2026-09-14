@@ -27,7 +27,7 @@ import {
 
 export interface ProgressiveBitListOptions {
   typeName?: string;
-  /** Optional runtime limit on bit length. Does not affect the progressive Merkle tree shape. */
+  /** Optional runtime limit on bit length, 0 requires an empty list. Does not affect the progressive Merkle tree shape. */
   limit?: number;
 }
 
@@ -60,7 +60,6 @@ export class ProgressiveBitListType extends BitArrayType {
     super();
 
     this.limitBits = opts?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (this.limitBits === 0) throw Error("List limit must be > 0");
 
     this.typeName = opts?.typeName ?? "ProgressiveBitList";
     this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, Math.ceil(this.limitBits / 8) + 1);
