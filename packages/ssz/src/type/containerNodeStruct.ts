@@ -82,9 +82,6 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
 
   // ContainerNodeStructType can only parse proofs that contain all the data.
   // TODO: Support converting a partial tree to a partial value
-  getPropertyGindex(): null {
-    return null;
-  }
 
   // Post process tree to convert regular BranchNode to BranchNodeStruct
   // TODO: Optimize conversions
