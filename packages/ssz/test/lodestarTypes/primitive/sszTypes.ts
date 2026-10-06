@@ -50,6 +50,8 @@ export const SubcommitteeIndex = UintNum64;
  */
 export const ValidatorIndex = UintNum64;
 export const WithdrawalIndex = UintNum64;
+/** Builder index can be infinity in bid when self-build */
+export const BuilderIndex = UintNumInf64;
 export const Gwei = UintBn64;
 export const Wei = UintBn256;
 export const Root = new ByteVectorType(32);
