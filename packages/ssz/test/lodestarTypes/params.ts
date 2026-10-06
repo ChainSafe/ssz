@@ -125,6 +125,16 @@ const presetMainnet = {
   FIELD_ELEMENTS_PER_BLOB: 4096,
   MAX_BLOB_COMMITMENTS_PER_BLOCK: 4096,
   MAX_BLOBS_PER_BLOCK: 6,
+
+  // ELECTRA
+  ///////////
+  PENDING_DEPOSITS_LIMIT: 134217728,
+  PENDING_PARTIAL_WITHDRAWALS_LIMIT: 134217728,
+  PENDING_CONSOLIDATIONS_LIMIT: 262144,
+
+  // GLOAS
+  ///////////
+  PTC_SIZE: 512,
 };
 
 const presetMinimal = {
@@ -248,6 +258,16 @@ const presetMinimal = {
   FIELD_ELEMENTS_PER_BLOB: 4,
   MAX_BLOB_COMMITMENTS_PER_BLOCK: 16,
   MAX_BLOBS_PER_BLOCK: 6,
+
+  // ELECTRA
+  ///////////
+  PENDING_DEPOSITS_LIMIT: 134217728,
+  PENDING_PARTIAL_WITHDRAWALS_LIMIT: 64,
+  PENDING_CONSOLIDATIONS_LIMIT: 64,
+
+  // GLOAS
+  ///////////
+  PTC_SIZE: 16,
 };
 
 export const preset = ACTIVE_PRESET === "mainnet" ? presetMainnet : presetMinimal;

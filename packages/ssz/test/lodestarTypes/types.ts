@@ -6,6 +6,9 @@ export {ts as altair} from "./altair/index.ts";
 export {ts as bellatrix} from "./bellatrix/index.ts";
 export {ts as capella} from "./capella/index.ts";
 export {ts as deneb} from "./deneb/index.ts";
+export {ts as electra} from "./electra/index.ts";
+export {ts as fulu} from "./fulu/index.ts";
+export {ts as gloas} from "./gloas/index.ts";
 
 export {ts as allForks} from "./allForks/index.ts";
 
