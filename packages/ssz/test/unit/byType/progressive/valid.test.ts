@@ -113,6 +113,59 @@ describe("ProgressiveListBasicType", () => {
     expect(toHexString(view.sliceFrom(34).hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(value.slice(34))));
   });
 
+  it("keeps the chunk cache populated by getAll() consistent across set and push", () => {
+    const value = Array.from({length: 32 * 5 + 1}, (_, i) => i % 256);
+    const expected = [...value];
+    const view = type.toViewDU(value);
+
+    expect(view.getAll()).to.deep.equal(expected);
+    view.set(40, 210);
+    expected[40] = 210;
+    // Fills the last partial chunk, then starts a new chunk
+    for (let i = 0; i < 32; i++) {
+      view.push(i);
+      expected.push(i);
+    }
+    for (let i = 0; i < expected.length; i++) expect(view.get(i)).to.equal(expected[i]);
+    expect(view.getAll()).to.deep.equal(expected);
+    expect(view.clone().getAll()).to.deep.equal(expected);
+    expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(expected)));
+  });
+
+  it("keeps cached chunk nodes consistent across get, set, push, clone and parent commit", () => {
+    const value = Array.from({length: 32 * 5 + 1}, (_, i) => i % 256);
+    const expected = [...value];
+    const view = type.toViewDU(value);
+
+    // Populate the chunk cache, then mutate cached and uncached chunks
+    for (let i = 0; i < value.length; i += 7) expect(view.get(i)).to.equal(value[i]);
+    view.set(32, 200);
+    expected[32] = 200;
+    view.set(33, 201);
+    expected[33] = 201;
+    view.push(202);
+    expected.push(202);
+    for (let i = 0; i < expected.length; i++) expect(view.get(i)).to.equal(expected[i]);
+    expect(toHexString(view.hashTreeRoot())).to.equal(toHexString(type.hashTreeRoot(expected)));
+
+    // Cache is transferred on clone and dropped from the source view
+    const cloned = view.clone();
+    cloned.set(0, 203);
+    expect(cloned.get(0)).to.equal(203);
+    expect(view.get(0)).to.equal(expected[0]);
+    expect(view.getAll()).to.deep.equal(expected);
+
+    // Cache survives a parent container commit
+    const containerType = new ContainerType({list: type});
+    const container = containerType.toViewDU({list: expected});
+    for (let i = 0; i < expected.length; i++) expect(container.list.get(i)).to.equal(expected[i]);
+    container.list.set(64, 204);
+    expected[64] = 204;
+    container.commit();
+    for (let i = 0; i < expected.length; i++) expect(container.list.get(i)).to.equal(expected[i]);
+    expect(toHexString(container.hashTreeRoot())).to.equal(toHexString(containerType.hashTreeRoot({list: expected})));
+  });
+
   it("creates and restores proofs for variable-depth chunks", () => {
     const value = Array.from({length: 33}, (_, i) => i);
     const view = type.toView(value);

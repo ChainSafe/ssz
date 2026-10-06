@@ -114,8 +114,8 @@ export class ProgressiveListBasicType<ElementType extends BasicType<unknown>> ex
     return new ProgressiveListBasicTreeView(this, tree);
   }
 
-  getViewDU(node: Node): ProgressiveListBasicTreeViewDU<ElementType> {
-    return new ProgressiveListBasicTreeViewDU(this, node);
+  getViewDU(node: Node, cache?: unknown): ProgressiveListBasicTreeViewDU<ElementType> {
+    return new ProgressiveListBasicTreeViewDU(this, node, cache as ProgressiveListBasicTreeViewDUCache);
   }
 
   commitView(view: ProgressiveListBasicTreeView<ElementType>): Node {
@@ -131,8 +131,8 @@ export class ProgressiveListBasicType<ElementType extends BasicType<unknown>> ex
     return view.node;
   }
 
-  cacheOfViewDU(): unknown {
-    return;
+  cacheOfViewDU(view: ProgressiveListBasicTreeViewDU<ElementType>): unknown {
+    return view.cache;
   }
 
   createFromProof(proof: Proof, root?: Uint8Array): ProgressiveListBasicTreeView<ElementType> {
@@ -352,8 +352,8 @@ export class ProgressiveListCompositeType<
     return view.node;
   }
 
-  cacheOfViewDU(): unknown {
-    return;
+  cacheOfViewDU(view: ProgressiveListCompositeTreeViewDU<ElementType>): unknown {
+    return view.cache;
   }
 
   createFromProof(proof: Proof, root?: Uint8Array): ProgressiveListCompositeTreeView<ElementType> {
@@ -602,14 +602,30 @@ export class ProgressiveListBasicTreeView<ElementType extends BasicType<unknown>
   }
 }
 
+export type ProgressiveListBasicTreeViewDUCache = {
+  nodes: LeafNode[];
+  nodesPopulated: boolean;
+};
+
 export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknown>> extends TreeViewDU<
   ProgressiveListBasicType<ElementType>
 > {
+  /**
+   * Sparse cache of chunk leaf nodes by chunk index, always consistent with `_rootNode`.
+   * Avoids recomputing the progressive gindex and walking the tree on every `get()`.
+   */
+  protected nodes: LeafNode[];
+  /** True when `nodes` holds every chunk of the list, set by `getAll()` */
+  private nodesPopulated: boolean;
+
   constructor(
     readonly type: ProgressiveListBasicType<ElementType>,
-    protected _rootNode: Node
+    protected _rootNode: Node,
+    cache?: ProgressiveListBasicTreeViewDUCache
   ) {
     super();
+    this.nodes = cache?.nodes ?? [];
+    this.nodesPopulated = cache?.nodesPopulated ?? false;
   }
 
   get length(): number {
@@ -620,8 +636,8 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
     return this._rootNode;
   }
 
-  get cache(): unknown {
-    return undefined;
+  get cache(): ProgressiveListBasicTreeViewDUCache {
+    return {nodes: this.nodes, nodesPopulated: this.nodesPopulated};
   }
 
   commit(hcOffset = 0, hcByLevel: HashComputationLevel[] | null = null): void {
@@ -632,7 +648,11 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
 
   get(index: number): ValueOf<ElementType> {
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
-    const leafNode = getNode(this._rootNode, chunkGindexFromListRoot(chunkIndex)) as LeafNode;
+    let leafNode = this.nodes[chunkIndex];
+    if (leafNode === undefined) {
+      leafNode = getNode(this._rootNode, chunkGindexFromListRoot(chunkIndex)) as LeafNode;
+      this.nodes[chunkIndex] = leafNode;
+    }
     return this.type.elementType.tree_getFromPackedNode(leafNode, index) as ValueOf<ElementType>;
   }
 
@@ -644,9 +664,10 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
 
     const chunkIndex = Math.floor(index / this.type.itemsPerChunk);
     const gindex = chunkGindexFromListRoot(chunkIndex);
-    const leafNode = (getNode(this._rootNode, gindex) as LeafNode).clone();
+    const leafNode = ((this.nodes[chunkIndex] ?? getNode(this._rootNode, gindex)) as LeafNode).clone();
     this.type.elementType.tree_setToPackedNode(leafNode, index, value);
     this._rootNode = setNode(this._rootNode, gindex, leafNode);
+    this.nodes[chunkIndex] = leafNode;
   }
 
   push(value: ValueOf<ElementType>): void {
@@ -660,17 +681,39 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
     const leafNode =
       length % this.type.itemsPerChunk === 0
         ? LeafNode.fromZero()
-        : (getNode(this._rootNode, gindex) as LeafNode).clone();
+        : ((this.nodes[chunkIndex] ?? getNode(this._rootNode, gindex)) as LeafNode).clone();
 
     this.type.elementType.tree_setToPackedNode(leafNode, length, value);
 
     const chunksNode = appendProgressiveChunk(this.type.tree_getChunksNode(this._rootNode), chunkIndex, leafNode);
     this._rootNode = this.type.tree_setChunksNode(this._rootNode, chunksNode, length + 1);
+    this.nodes[chunkIndex] = leafNode;
   }
 
+  /**
+   * Get all values of this list. Populates the chunk node cache, so subsequent `get()` calls do not walk the tree.
+   */
   getAll(values?: ValueOf<ElementType>[]): ValueOf<ElementType>[] {
-    const view = new ProgressiveListBasicTreeView(this.type, new Tree(this._rootNode));
-    return view.getAll(values);
+    const length = this.length;
+    if (values && values.length !== length) {
+      throw Error(`Expected ${length} values, got ${values.length}`);
+    }
+
+    if (!this.nodesPopulated) {
+      const chunkCount = Math.ceil(length / this.type.itemsPerChunk);
+      this.nodes = getNodesAtProgressiveDepth(this.type.tree_getChunksNode(this._rootNode), chunkCount) as LeafNode[];
+      this.nodesPopulated = true;
+    }
+
+    values = values ?? new Array<ValueOf<ElementType>>(length);
+    const itemsPerChunk = this.type.itemsPerChunk;
+    for (let i = 0; i < length; i++) {
+      values[i] = this.type.elementType.tree_getFromPackedNode(
+        this.nodes[Math.floor(i / itemsPerChunk)],
+        i
+      ) as ValueOf<ElementType>;
+    }
+    return values;
   }
 
   /**
@@ -716,7 +759,8 @@ export class ProgressiveListBasicTreeViewDU<ElementType extends BasicType<unknow
   }
 
   protected clearCache(): void {
-    // No cached data to clear.
+    this.nodes = [];
+    this.nodesPopulated = false;
   }
 }
 
