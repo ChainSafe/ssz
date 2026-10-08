@@ -9,7 +9,7 @@ import {
 import {ByteViews, Type} from "../type/abstract.ts";
 import {BasicType, isBasicType} from "../type/basic.ts";
 import {CompositeType, CompositeTypeAny, isCompositeType} from "../type/composite.ts";
-import {BasicContainerTypeGeneric, ContainerTypeGeneric} from "../view/container.ts";
+import {BasicContainerTypeGeneric, ContainerTypeGeneric, EphemeralValueOfFields} from "../view/container.ts";
 import {TreeViewDU} from "./abstract.ts";
 
 export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
@@ -22,10 +22,21 @@ export type FieldsViewDU<Fields extends Record<string, Type<unknown>>> = {
       : never;
 };
 
-export type ContainerTreeViewDUType<Fields extends Record<string, Type<unknown>>> = FieldsViewDU<Fields> &
-  TreeViewDU<ContainerTypeGeneric<Fields>>;
-export type ContainerTreeViewDUTypeConstructor<Fields extends Record<string, Type<unknown>>> = {
-  new (type: ContainerTypeGeneric<Fields>, node: Node, cache?: unknown): ContainerTreeViewDUType<Fields>;
+export type ContainerTreeViewDUType<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = FieldsViewDU<Fields> &
+  EphemeralValueOfFields<EphemeralFields> &
+  TreeViewDU<ContainerTypeGeneric<Fields, EphemeralFields>>;
+export type ContainerTreeViewDUTypeConstructor<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = {
+  new (
+    type: ContainerTypeGeneric<Fields, EphemeralFields>,
+    node: Node,
+    cache?: unknown
+  ): ContainerTreeViewDUType<Fields, EphemeralFields>;
 };
 
 export type ChangedNode = {index: number; node: Node};
@@ -36,17 +47,20 @@ type ContainerTreeViewDUCache = {
   nodesPopulated: boolean;
 };
 
-export class BasicContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends TreeViewDU<
-  BasicContainerTypeGeneric<Fields>
-> {
+export class BasicContainerTreeViewDU<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> extends TreeViewDU<BasicContainerTypeGeneric<Fields, EphemeralFields>> {
   protected nodes: Node[] = [];
   protected caches: unknown[];
   protected readonly nodesChanged = new Set<number>();
   protected readonly viewsChanged = new Map<number, unknown>();
+  /** Storage for ephemeral (non-consensus) field values. Kept per-instance, not in the tree. */
+  protected ephemeralValues: Record<string, unknown> = {};
   private nodesPopulated: boolean;
 
   constructor(
-    readonly type: BasicContainerTypeGeneric<Fields>,
+    readonly type: BasicContainerTypeGeneric<Fields, EphemeralFields>,
     protected _rootNode: Node,
     cache?: ContainerTreeViewDUCache
   ) {
@@ -157,9 +171,12 @@ export class BasicContainerTreeViewDU<Fields extends Record<string, Type<unknown
   }
 }
 
-class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends BasicContainerTreeViewDU<Fields> {
+class ContainerTreeViewDU<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> extends BasicContainerTreeViewDU<Fields, EphemeralFields> {
   constructor(
-    readonly type: ContainerTypeGeneric<Fields>,
+    readonly type: ContainerTypeGeneric<Fields, EphemeralFields>,
     protected _rootNode: Node,
     cache?: ContainerTreeViewDUCache
   ) {
@@ -205,10 +222,11 @@ class ContainerTreeViewDU<Fields extends Record<string, Type<unknown>>> extends 
   }
 }
 
-export function getContainerTreeViewDUClass<Fields extends Record<string, Type<unknown>>>(
-  type: ContainerTypeGeneric<Fields>
-): ContainerTreeViewDUTypeConstructor<Fields> {
-  class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields> {}
+export function getContainerTreeViewDUClass<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+>(type: ContainerTypeGeneric<Fields, EphemeralFields>): ContainerTreeViewDUTypeConstructor<Fields, EphemeralFields> {
+  class CustomContainerTreeViewDU extends ContainerTreeViewDU<Fields, EphemeralFields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -305,8 +323,24 @@ export function getContainerTreeViewDUClass<Fields extends Record<string, Type<u
     }
   }
 
+  // Define accessors for ephemeral fields. Backed by per-instance `ephemeralValues`, not the tree.
+  // No commit/cache machinery: ephemerals are stored as raw values and never appear in nodesChanged/viewsChanged.
+  for (const {fieldName} of type.ephemeralFieldsEntries ?? []) {
+    const key = fieldName as string;
+    Object.defineProperty(CustomContainerTreeViewDU.prototype, fieldName, {
+      configurable: false,
+      enumerable: true,
+      get: function (this: CustomContainerTreeViewDU) {
+        return (this as unknown as {ephemeralValues: Record<string, unknown>}).ephemeralValues[key];
+      },
+      set: function (this: CustomContainerTreeViewDU, value: unknown) {
+        (this as unknown as {ephemeralValues: Record<string, unknown>}).ephemeralValues[key] = value;
+      },
+    });
+  }
+
   // Change class name
   Object.defineProperty(CustomContainerTreeViewDU, "name", {value: type.typeName, writable: false});
 
-  return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields>;
+  return CustomContainerTreeViewDU as unknown as ContainerTreeViewDUTypeConstructor<Fields, EphemeralFields>;
 }
