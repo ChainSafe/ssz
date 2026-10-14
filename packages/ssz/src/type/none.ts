@@ -20,7 +20,8 @@ export class NoneType extends BasicType<null> {
     return offset;
   }
 
-  value_deserializeFromBytes(_data: ByteViews, _start: number): null {
+  value_deserializeFromBytes(_data: ByteViews, start: number, end: number): null {
+    this.assertValidSize(end - start);
     return null;
   }
 
@@ -28,7 +29,8 @@ export class NoneType extends BasicType<null> {
     return offset;
   }
 
-  tree_deserializeFromBytes(_data: ByteViews, _start: number, _end: number): Node {
+  tree_deserializeFromBytes(_data: ByteViews, start: number, end: number): Node {
+    this.assertValidSize(end - start);
     return zeroNode(0);
   }
 
