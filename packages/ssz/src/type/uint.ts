@@ -193,7 +193,9 @@ export class UintNumberType extends BasicType<number> {
         return Infinity;
       }
 
-      const num = Number.parseInt(json, 10);
+      // parseInt("10abc", 10) is 10. Require the whole string to be digits.
+      if (!/^[0-9]+$/.test(json)) throw Error("JSON invalid number");
+      const num = Number(json);
       if (Number.isNaN(num)) throw Error("JSON invalid number isNaN");
 
       if (num > Number.MAX_SAFE_INTEGER) {

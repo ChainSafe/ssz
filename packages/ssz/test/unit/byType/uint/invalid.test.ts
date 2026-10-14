@@ -35,6 +35,7 @@ const invalidValuesForNumberAndBigint: InvalidValue[] = [
 runTypeTestInvalid({
   type: new UintNumberType(8),
   values: [
+    {id: "Trailing junk", json: "10abc"},
     {id: "Number over Number.MAX_SAFE_INTEGER", json: String(Number.MAX_SAFE_INTEGER * 2)},
     {id: "BigInt over Number.MAX_SAFE_INTEGER", json: BigInt(Number.MAX_SAFE_INTEGER * 2)},
     ...invalidValuesForNumberAndBigint,
