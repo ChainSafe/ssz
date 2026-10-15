@@ -4,9 +4,11 @@ import {
   CompositeType,
   CompositeTypeAny,
   ListCompositeType,
+  ProgressiveByteListType,
   ProgressiveListCompositeType,
   ProgressiveSerializedListType,
   SerializedList,
+  SerializedListElementType,
   SerializedListType,
 } from "../../../../src/index.ts";
 import {preset} from "../../../lodestarTypes/params.ts";
@@ -17,11 +19,11 @@ const {MAX_BYTES_PER_TRANSACTION, MAX_TRANSACTIONS_PER_PAYLOAD} = preset;
 // List and ProgressiveList views have different classes
 type ListTypeOf<V> = CompositeType<V, any, any> & {
   readonly limit: number;
-  readonly elementType: ByteListType;
+  readonly elementType: SerializedListElementType;
   tree_getLength(node: Node): number;
 };
 
-/** ListCompositeType or ProgressiveListCompositeType of ByteListType */
+/** ListCompositeType or ProgressiveListCompositeType of ByteListType or ProgressiveByteListType */
 export type OldListType = ListTypeOf<Uint8Array[]>;
 /** SerializedListType or ProgressiveSerializedListType */
 export type NewListType = ListTypeOf<SerializedList>;
@@ -35,7 +37,7 @@ export type TypePair = {
   newType: NewListType;
 };
 
-// Same as lodestar bellatrix and gloas types
+// Same as lodestar bellatrix types
 export const Transaction = new ByteListType(MAX_BYTES_PER_TRANSACTION);
 
 export const transactionsPair: TypePair = {
@@ -44,13 +46,19 @@ export const transactionsPair: TypePair = {
   newType: new SerializedListType(Transaction, MAX_TRANSACTIONS_PER_PAYLOAD),
 };
 
+// Same as lodestar gloas types
+export const ProgressiveTransaction = new ProgressiveByteListType({
+  typeName: "Transaction",
+  limit: MAX_BYTES_PER_TRANSACTION,
+});
+
 export const progressiveTransactionsPair: TypePair = {
   id: "gloas Transactions",
-  oldType: new ProgressiveListCompositeType(Transaction, {
+  oldType: new ProgressiveListCompositeType(ProgressiveTransaction, {
     typeName: "Transactions",
     limit: MAX_TRANSACTIONS_PER_PAYLOAD,
   }),
-  newType: new ProgressiveSerializedListType(Transaction, {
+  newType: new ProgressiveSerializedListType(ProgressiveTransaction, {
     typeName: "Transactions",
     limit: MAX_TRANSACTIONS_PER_PAYLOAD,
   }),
@@ -63,15 +71,27 @@ export const transactionsPairs = [transactionsPair, progressiveTransactionsPair]
 export const SMALL_LIMIT = 4;
 export const SMALL_LIMIT_BYTES = 8;
 const SmallTransaction = new ByteListType(SMALL_LIMIT_BYTES);
+const SmallProgressiveTransaction = new ProgressiveByteListType({limit: SMALL_LIMIT_BYTES});
 
 export const smallLimitPairs: TypePair[] = [
   {
-    id: "List small limit",
+    id: "List of ByteList small limit",
     oldType: new ListCompositeType(SmallTransaction, SMALL_LIMIT),
     newType: new SerializedListType(SmallTransaction, SMALL_LIMIT),
   },
   {
-    id: "ProgressiveList small limit",
+    id: "ProgressiveList of ProgressiveByteList small limit",
+    oldType: new ProgressiveListCompositeType(SmallProgressiveTransaction, {limit: SMALL_LIMIT}),
+    newType: new ProgressiveSerializedListType(SmallProgressiveTransaction, {limit: SMALL_LIMIT}),
+  },
+  // Not used in production, the other element type of each list type
+  {
+    id: "List of ProgressiveByteList small limit",
+    oldType: new ListCompositeType(SmallProgressiveTransaction, SMALL_LIMIT),
+    newType: new SerializedListType(SmallProgressiveTransaction, SMALL_LIMIT),
+  },
+  {
+    id: "ProgressiveList of ByteList small limit",
     oldType: new ProgressiveListCompositeType(SmallTransaction, {limit: SMALL_LIMIT}),
     newType: new ProgressiveSerializedListType(SmallTransaction, {limit: SMALL_LIMIT}),
   },
@@ -79,8 +99,8 @@ export const smallLimitPairs: TypePair[] = [
 
 export const zeroLimitProgressivePair: TypePair = {
   id: "ProgressiveList limit 0",
-  oldType: new ProgressiveListCompositeType(SmallTransaction, {limit: 0}),
-  newType: new ProgressiveSerializedListType(SmallTransaction, {limit: 0}),
+  oldType: new ProgressiveListCompositeType(SmallProgressiveTransaction, {limit: 0}),
+  newType: new ProgressiveSerializedListType(SmallProgressiveTransaction, {limit: 0}),
 };
 
 /** Deterministic PRNG (mulberry32) so failures are reproducible */

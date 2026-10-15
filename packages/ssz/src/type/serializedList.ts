@@ -19,6 +19,7 @@ import {ByteListType} from "./byteList.ts";
 import {CompositeType} from "./composite.ts";
 import {ListCompositeType} from "./listComposite.ts";
 import {merkleizeProgressiveBytes} from "./progressive.ts";
+import {ProgressiveByteListType} from "./progressiveByteList.ts";
 import {
   ProgressiveListCompositeTreeView,
   ProgressiveListCompositeTreeViewDU,
@@ -35,14 +36,17 @@ export interface ProgressiveSerializedListOpts extends SerializedListOpts {
   limit?: number;
 }
 
+/** Element types supported by SerializedList types, both have a `Uint8Array` value */
+export type SerializedListElementType = ByteListType | ProgressiveByteListType;
+
 /** The list type with `Uint8Array[]` values that a SerializedList type is equivalent to */
 type InnerListType<TV, TVDU> = CompositeType<Uint8Array[], TV, TVDU> & {
   readonly limit: number;
-  readonly elementType: ByteListType;
+  readonly elementType: SerializedListElementType;
 };
 
 /**
- * Same SSZ type as `inner` (a list of ByteList) but its value is a `SerializedList`: the canonical serialization in a
+ * Same SSZ type as `inner` (a list of ByteList or ProgressiveByteList) but its value is a `SerializedList`: the canonical serialization in a
  * single Uint8Array plus element offsets, instead of one Uint8Array per element. Deserializing a list of many tiny
  * elements then allocates 2 objects instead of one per element.
  *
@@ -67,15 +71,15 @@ abstract class SerializedListBaseType<TV, TVDU> extends CompositeType<Serialized
   );
 
   constructor(
-    readonly elementType: ByteListType,
+    readonly elementType: SerializedListElementType,
     /** Equivalent list type with `Uint8Array[]` values, used for tree operations and views */
     readonly inner: InnerListType<TV, TVDU>,
     cachePermanentRootStruct?: boolean
   ) {
     super(cachePermanentRootStruct);
 
-    if (!(elementType instanceof ByteListType)) {
-      throw Error("elementType must be ByteListType");
+    if (!(elementType instanceof ByteListType || elementType instanceof ProgressiveByteListType)) {
+      throw Error("elementType must be ByteListType or ProgressiveByteListType");
     }
 
     this.typeName = inner.typeName;
@@ -136,13 +140,9 @@ abstract class SerializedListBaseType<TV, TVDU> extends CompositeType<Serialized
     const length = offsets.length - 1;
     assertValidArrayLength(length, this);
 
-    // Same validation as ByteListType.value_deserializeFromBytes() for each element
-    const limitBytes = this.elementType.limitBytes;
+    // Same validation as elementType.value_deserializeFromBytes() for each element
     for (let i = 0; i < length; i++) {
-      const size = offsets[i + 1] - offsets[i];
-      if (size > limitBytes) {
-        throw Error(`ByteList invalid size ${size} limit ${limitBytes}`);
-      }
+      this.elementType.assertValidByteLength(offsets[i + 1] - offsets[i]);
     }
 
     return new SerializedList(slice(data.uint8Array, start, end, reuseBytes), offsets);
@@ -264,16 +264,17 @@ abstract class SerializedListBaseType<TV, TVDU> extends CompositeType<Serialized
 }
 
 /**
- * `List[ByteList[N], LIMIT]` with a `SerializedList` value, equivalent to `ListCompositeType(ByteListType(N), LIMIT)`.
+ * `List[ByteList[N], LIMIT]` (or of ProgressiveByteList) with a `SerializedList` value, equivalent to
+ * `ListCompositeType(elementType, LIMIT)`.
  * @see SerializedListBaseType
  */
 export class SerializedListType extends SerializedListBaseType<
-  ListCompositeTreeView<ByteListType>,
-  ListCompositeTreeViewDU<ByteListType>
+  ListCompositeTreeView<SerializedListElementType>,
+  ListCompositeTreeViewDU<SerializedListElementType>
 > {
   private readonly blockArray: Uint8Array[] = [];
 
-  constructor(elementType: ByteListType, limit: number, opts?: SerializedListOpts) {
+  constructor(elementType: SerializedListElementType, limit: number, opts?: SerializedListOpts) {
     super(
       elementType,
       new ListCompositeType(elementType, limit, {typeName: opts?.typeName}),
@@ -310,15 +311,15 @@ export class SerializedListType extends SerializedListBaseType<
 }
 
 /**
- * `ProgressiveList[ByteList[N]]` with a `SerializedList` value, equivalent to
- * `ProgressiveListCompositeType(ByteListType(N), opts)`.
+ * `ProgressiveList[ProgressiveByteList]` with a `SerializedList` value, equivalent to
+ * `ProgressiveListCompositeType(elementType, opts)`.
  * @see SerializedListBaseType
  */
 export class ProgressiveSerializedListType extends SerializedListBaseType<
-  ProgressiveListCompositeTreeView<ByteListType>,
-  ProgressiveListCompositeTreeViewDU<ByteListType>
+  ProgressiveListCompositeTreeView<SerializedListElementType>,
+  ProgressiveListCompositeTreeViewDU<SerializedListElementType>
 > {
-  constructor(elementType: ByteListType, opts?: ProgressiveSerializedListOpts) {
+  constructor(elementType: SerializedListElementType, opts?: ProgressiveSerializedListOpts) {
     super(
       elementType,
       new ProgressiveListCompositeType(elementType, {typeName: opts?.typeName, limit: opts?.limit}),

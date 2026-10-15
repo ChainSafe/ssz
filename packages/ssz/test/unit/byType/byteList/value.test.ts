@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ByteListType} from "../../../../src/index.ts";
+import {ByteListType, ProgressiveByteListType} from "../../../../src/index.ts";
 
 describe("ByteListValue", () => {
   const type = new ByteListType(1024);
@@ -27,43 +27,44 @@ describe("ByteListValue", () => {
   });
 });
 
-describe("ByteListType.hashTreeRootFromBytesInto", () => {
-  const type = new ByteListType(1024);
-  const data = Uint8Array.from({length: 1200}, (_, i) => (i * 7 + 3) & 0xff);
+for (const type of [new ByteListType(1024), new ProgressiveByteListType({limit: 1024})]) {
+  describe(`${type.constructor.name}.hashTreeRootFromBytesInto`, () => {
+    const data = Uint8Array.from({length: 1200}, (_, i) => (i * 7 + 3) & 0xff);
 
-  // [start, end) ranges around 32 bytes chunk and 64 bytes block boundaries, including empty ranges
-  const ranges: [number, number][] = [
-    [0, 0],
-    [5, 5],
-    [0, 1],
-    [3, 35],
-    [1, 64],
-    [7, 72],
-    [10, 138],
-    [100, 1124],
-    [176, 1200],
-  ];
+    // [start, end) ranges around 32 bytes chunk and 64 bytes block boundaries, including empty ranges
+    const ranges: [number, number][] = [
+      [0, 0],
+      [5, 5],
+      [0, 1],
+      [3, 35],
+      [1, 64],
+      [7, 72],
+      [10, 138],
+      [100, 1124],
+      [176, 1200],
+    ];
 
-  for (const [start, end] of ranges) {
-    it(`[${start}, ${end})`, () => {
-      // value_toTree() does not use hashTreeRootInto(), so it is an independent reference
-      const expectedRoot = type.value_toTree(data.slice(start, end)).root;
+    for (const [start, end] of ranges) {
+      it(`[${start}, ${end})`, () => {
+        // value_toTree() does not use hashTreeRootInto(), so it is an independent reference
+        const expectedRoot = type.value_toTree(data.slice(start, end)).root;
 
-      const output = new Uint8Array(32 + 16).fill(0xff);
-      type.hashTreeRootFromBytesInto(data, start, end, output, 8);
-      expect(output.subarray(8, 40)).to.deep.equal(expectedRoot);
-      expect(output.subarray(0, 8).every((b) => b === 0xff)).to.equal(true);
-      expect(output.subarray(40).every((b) => b === 0xff)).to.equal(true);
+        const output = new Uint8Array(32 + 16).fill(0xff);
+        type.hashTreeRootFromBytesInto(data, start, end, output, 8);
+        expect(output.subarray(8, 40)).to.deep.equal(expectedRoot);
+        expect(output.subarray(0, 8).every((b) => b === 0xff)).to.equal(true);
+        expect(output.subarray(40).every((b) => b === 0xff)).to.equal(true);
 
-      expect(type.hashTreeRoot(data.slice(start, end))).to.deep.equal(expectedRoot);
+        expect(type.hashTreeRoot(data.slice(start, end))).to.deep.equal(expectedRoot);
+      });
+    }
+
+    it("is not affected by previous longer values", () => {
+      const expectedRoot = type.value_toTree(data.slice(10, 75)).root;
+      type.hashTreeRootFromBytesInto(data, 0, 1024, new Uint8Array(32), 0);
+      const output = new Uint8Array(32);
+      type.hashTreeRootFromBytesInto(data, 10, 75, output, 0);
+      expect(output).to.deep.equal(expectedRoot);
     });
-  }
-
-  it("is not affected by previous longer values", () => {
-    const expectedRoot = type.value_toTree(data.slice(10, 75)).root;
-    type.hashTreeRootFromBytesInto(data, 0, 1024, new Uint8Array(32), 0);
-    const output = new Uint8Array(32);
-    type.hashTreeRootFromBytesInto(data, 10, 75, output, 0);
-    expect(output).to.deep.equal(expectedRoot);
   });
-});
+}

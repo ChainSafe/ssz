@@ -117,11 +117,31 @@ export class ProgressiveByteListType extends ByteArrayType {
   }
 
   hashTreeRootInto(value: Uint8Array, output: Uint8Array, offset: number): void {
-    const blockBytes = this.getBlocksBytes(value);
-    const chunkCount = Math.ceil(value.length / 32);
+    this.hashTreeRootFromBytesInto(value, 0, value.length, output, offset);
+  }
+
+  /**
+   * Same to hashTreeRootInto() but the value is `data[start, end)`, so callers holding many ProgressiveByteList values
+   * in a single buffer don't need to allocate one Uint8Array per value.
+   */
+  hashTreeRootFromBytesInto(data: Uint8Array, start: number, end: number, output: Uint8Array, offset: number): void {
+    const length = end - start;
+    const chunkCount = Math.ceil(length / 32);
+
+    // same to getBlocksBytes(value)
+    if (length > this.blocksBuffer.length) {
+      this.blocksBuffer = new Uint8Array(Math.ceil(chunkCount / 2) * 64);
+    }
+    const blockByteLen = Math.ceil(length / 64) * 64;
+    if (length > 0) {
+      this.blocksBuffer.set(data.subarray(start, end));
+    }
+    // all padding bytes must be zero, this is similar to set zeroHash(0)
+    this.blocksBuffer.fill(0, length, blockByteLen);
+    const blockBytes = this.blocksBuffer.subarray(0, blockByteLen);
 
     merkleizeProgressiveBytes(blockBytes, chunkCount, this.mixInLengthBlockBytes, 0);
-    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    this.mixInLengthBuffer.writeUIntLE(length, 32, 6);
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, 2, output, offset);
   }
 

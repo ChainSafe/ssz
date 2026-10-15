@@ -2,6 +2,7 @@ import {bench, describe} from "@chainsafe/benchmark";
 import {
   ByteListType,
   ListCompositeType,
+  ProgressiveByteListType,
   ProgressiveListCompositeType,
   ProgressiveSerializedListType,
   SerializedListType,
@@ -9,7 +10,9 @@ import {
 
 const MAX_BYTES_PER_TRANSACTION = 2 ** 30;
 const MAX_TRANSACTIONS_PER_PAYLOAD = 2 ** 20;
+// Same as lodestar bellatrix and gloas types
 const Transaction = new ByteListType(MAX_BYTES_PER_TRANSACTION);
+const ProgressiveTransaction = new ProgressiveByteListType({typeName: "Transaction", limit: MAX_BYTES_PER_TRANSACTION});
 
 const pairs = [
   {
@@ -19,8 +22,8 @@ const pairs = [
   },
   {
     id: "ProgressiveList",
-    oldType: new ProgressiveListCompositeType(Transaction, {limit: MAX_TRANSACTIONS_PER_PAYLOAD}),
-    newType: new ProgressiveSerializedListType(Transaction, {limit: MAX_TRANSACTIONS_PER_PAYLOAD}),
+    oldType: new ProgressiveListCompositeType(ProgressiveTransaction, {limit: MAX_TRANSACTIONS_PER_PAYLOAD}),
+    newType: new ProgressiveSerializedListType(ProgressiveTransaction, {limit: MAX_TRANSACTIONS_PER_PAYLOAD}),
   },
 ];
 

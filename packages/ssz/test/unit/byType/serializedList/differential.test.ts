@@ -11,6 +11,7 @@ import {
 } from "../../../../src/index.ts";
 import {
   ElementSizes,
+  ProgressiveTransaction,
   Transaction,
   TypePair,
   asComposite,
@@ -159,8 +160,8 @@ describe("cachePermanentRootStruct", () => {
       newType: new SerializedListType(Transaction, 1024, {cachePermanentRootStruct: true}),
     },
     {
-      oldType: new ProgressiveListCompositeType(Transaction, {cachePermanentRootStruct: true}),
-      newType: new ProgressiveSerializedListType(Transaction, {cachePermanentRootStruct: true}),
+      oldType: new ProgressiveListCompositeType(ProgressiveTransaction, {cachePermanentRootStruct: true}),
+      newType: new ProgressiveSerializedListType(ProgressiveTransaction, {cachePermanentRootStruct: true}),
     },
   ];
 

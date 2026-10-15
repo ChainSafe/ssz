@@ -1,5 +1,6 @@
 /**
- * Immutable list of byte strings stored as its canonical SSZ serialization, i.e. a `List[ByteList[N], LIMIT]`
+ * Immutable list of byte strings stored as its canonical SSZ serialization, i.e. a `List[ByteList[N], LIMIT]` or a
+ * `ProgressiveList[ProgressiveByteList]`
  * kept as a single `Uint8Array` instead of one `Uint8Array` per element.
  *
  * ```
@@ -8,7 +9,7 @@
  * ```
  *
  * Elements are returned as subarrays of `bytes` without copying. Consumers MUST NOT mutate `bytes` or any returned
- * element, same contract as `ByteListType` values.
+ * element, same contract as `ByteListType` / `ProgressiveByteListType` values.
  *
  * Note: `structuredClone()` and `postMessage()` drop the class prototype, send `bytes` instead and deserialize again.
  */

@@ -1,8 +1,8 @@
 import {describe, expect, it} from "vitest";
 import {
   ByteListType,
+  ByteVectorType,
   ListCompositeType,
-  ProgressiveByteListType,
   ProgressiveListCompositeType,
   ProgressiveSerializedListType,
   SerializedListType,
@@ -160,9 +160,10 @@ describe("SerializedList types invalid at constructor, same as old types", () =>
     }
   });
 
-  it("elementType must be ByteListType", () => {
-    const notByteList = new ProgressiveByteListType() as unknown as ByteListType;
-    expect(() => new SerializedListType(notByteList, 2)).toThrow("elementType must be ByteListType");
-    expect(() => new ProgressiveSerializedListType(notByteList)).toThrow("elementType must be ByteListType");
+  it("elementType must be ByteListType or ProgressiveByteListType", () => {
+    const notByteList = new ByteVectorType(8) as unknown as ByteListType;
+    const error = "elementType must be ByteListType or ProgressiveByteListType";
+    expect(() => new SerializedListType(notByteList, 2)).toThrow(error);
+    expect(() => new ProgressiveSerializedListType(notByteList)).toThrow(error);
   });
 });
