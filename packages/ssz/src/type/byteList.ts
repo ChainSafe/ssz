@@ -117,11 +117,20 @@ export class ByteListType extends ByteArrayType {
    * Use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation
    */
   hashTreeRootInto(value: Uint8Array, output: Uint8Array, offset: number): void {
+    this.hashTreeRootFromBytesInto(value, 0, value.length, output, offset);
+  }
+
+  /**
+   * Same to hashTreeRootInto() but the value is `data[start, end)`, so callers holding many ByteList values
+   * in a single buffer don't need to allocate one Uint8Array per value.
+   */
+  hashTreeRootFromBytesInto(data: Uint8Array, start: number, end: number, output: Uint8Array, offset: number): void {
+    const length = end - start;
     // should not call super.hashTreeRoot() here
     // use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation
     // reallocate this.blockArray if needed
-    if (value.length > this.blockBytesLen) {
-      const newBlockCount = Math.ceil(value.length / 64);
+    if (length > this.blockBytesLen) {
+      const newBlockCount = Math.ceil(length / 64);
       // this.blockBytesLen should be a multiple of 64
       const oldBlockCount = Math.ceil(this.blockBytesLen / 64);
       const blockDiff = newBlockCount - oldBlockCount;
@@ -133,21 +142,21 @@ export class ByteListType extends ByteArrayType {
     }
 
     // populate this.blockArray
-    for (let i = 0; i < value.length; i += 64) {
+    for (let i = 0; i < length; i += 64) {
       const block = this.blockArray[i / 64];
-      // zero out the last block if it's over value.length
-      if (i + 64 > value.length) {
+      // zero out the last block if it's over length
+      if (i + 64 > length) {
         block.fill(0);
       }
-      block.set(value.subarray(i, Math.min(i + 64, value.length)));
+      block.set(data.subarray(start + i, start + Math.min(i + 64, length)));
     }
 
     // compute hashTreeRoot
-    const blockLimit = Math.ceil(value.length / 64);
+    const blockLimit = Math.ceil(length / 64);
     merkleizeBlockArray(this.blockArray, blockLimit, this.maxChunkCount, this.mixInLengthBlockBytes, 0);
 
     // mixInLength
-    this.mixInLengthBuffer.writeUIntLE(value.length, 32, 6);
+    this.mixInLengthBuffer.writeUIntLE(length, 32, 6);
     // one for hashTreeRoot(value), one for length
     const chunkCount = 2;
     merkleizeBlocksBytes(this.mixInLengthBlockBytes, chunkCount, output, offset);

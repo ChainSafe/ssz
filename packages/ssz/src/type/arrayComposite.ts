@@ -268,10 +268,17 @@ function readOffsetsArrayComposite(
 /**
  * Reads the values of contiguous variable offsets. Provided buffer includes offsets that point to position
  * within `size`. This function also validates that all offsets are in range.
+ *
+ * @param withEndOffset if true, the returned array has one extra trailing entry equal to `size`
  */
-function readVariableOffsetsArrayComposite(dataView: DataView, start: number, size: number): Uint32Array {
+export function readVariableOffsetsArrayComposite(
+  dataView: DataView,
+  start: number,
+  size: number,
+  withEndOffset = false
+): Uint32Array {
   if (size === 0) {
-    return new Uint32Array(0);
+    return withEndOffset ? new Uint32Array(1) : new Uint32Array(0);
   }
 
   // all elements are variable-sized
@@ -299,7 +306,7 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
   }
 
   const offsetCount = offsetDataLength / 4;
-  const offsets = new Uint32Array(offsetCount);
+  const offsets = new Uint32Array(withEndOffset ? offsetCount + 1 : offsetCount);
   offsets[0] = firstOffset;
 
   // ArrayComposite has a contiguous section of offsets, then the data
@@ -326,6 +333,10 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
     if (offset < offsets[offsetIdx - 1]) {
       throw new Error(`Offsets must be increasing ${offset} < ${offsets[offsetIdx - 1]}`);
     }
+  }
+
+  if (withEndOffset) {
+    offsets[offsetCount] = size;
   }
 
   return offsets;
