@@ -96,6 +96,21 @@ describe("SerializedList deserialized value", () => {
         expect(value.toArray()).toEqual(items);
       });
 
+      it("clone returns a separate copy, also for a Buffer backed value", () => {
+        for (const value of [deserialize(false), deserialize(true), newType.deserialize(Buffer.from(serialized))]) {
+          const cloned = newType.clone(value);
+          expect(cloned).not.toBe(value);
+          expect(cloned.bytes.buffer).not.toBe(value.bytes.buffer);
+          expect(cloned.offsets.buffer).not.toBe(value.offsets.buffer);
+          expect(newType.equals(cloned, value)).toBe(true);
+          // A Buffer backed value clones to a Buffer (copied, Uint8Array.prototype.slice keeps the species)
+          expect(cloned.toArray().map((item) => new Uint8Array(item))).toEqual(items);
+          // mutating the clone does not affect the original
+          cloned.bytes[cloned.bytes.length - 1] ^= 0xff;
+          expect(newType.equals(cloned, value)).toBe(false);
+        }
+      });
+
       it("does not mutate the input", () => {
         const copy = buffer.slice();
         deserialize(false);

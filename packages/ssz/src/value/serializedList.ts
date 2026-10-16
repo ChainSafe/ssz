@@ -58,6 +58,12 @@ export class SerializedList {
     return new SerializedList(bytes, offsets);
   }
 
+  /** Returns a deep copy, `bytes` and `offsets` of the result don't share memory with this instance */
+  clone(): SerializedList {
+    // Buffer.prototype.slice does not copy memory, Enforce Uint8Array usage https://github.com/nodejs/node/issues/28087
+    return new SerializedList(Uint8Array.prototype.slice.call(this.bytes, 0), this.offsets.slice());
+  }
+
   /** Number of elements */
   get length(): number {
     return this.offsets.length - 1;

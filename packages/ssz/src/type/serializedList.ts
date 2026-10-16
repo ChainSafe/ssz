@@ -252,9 +252,8 @@ abstract class SerializedListBaseType<TV, TVDU> extends CompositeType<Serialized
     return json;
   }
 
-  // SerializedList is immutable
   clone(value: SerializedList): SerializedList {
-    return value;
+    return value.clone();
   }
 
   equals(a: SerializedList, b: SerializedList): boolean {
