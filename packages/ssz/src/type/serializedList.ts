@@ -136,7 +136,7 @@ abstract class SerializedListBaseType<TV, TVDU> extends CompositeType<Serialized
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): SerializedList {
     // Same offsets validation as value_deserializeFromBytesArrayComposite(), used by both inner types for values
-    const offsets = readVariableOffsetsArrayComposite(data.dataView, start, end - start, true);
+    const offsets = readVariableOffsetsArrayComposite(data.dataView, start, end - start);
     const length = offsets.length - 1;
     assertValidArrayLength(length, this);
 
