@@ -23,11 +23,11 @@ export class SerializedList {
     readonly bytes: Uint8Array,
     /**
      * Start of each element relative to `bytes`, plus a last entry equal to `bytes.length`, so length is n + 1.
-     * The extra entry lets element `i` always be `[offsets[i], offsets[i + 1])`, including the last one. List types
-     * keep only n offsets and special case the last element instead, see `endEl` in
-     * value_deserializeFromBytesArrayComposite(). We need it on every get(), getSize() and hash, not only once.
+     * The extra entry lets element `i` always be `[offsets[i], offsets[i + 1])`, including the last one, same layout
+     * as readVariableOffsetsArrayComposite(). We need it on every get(), getSize() and hash, not only once. A
+     * `Float64Array` when `bytes` is 2^32 bytes or larger, so the last entry doesn't wrap.
      */
-    readonly offsets: Uint32Array
+    readonly offsets: Uint32Array | Float64Array
   ) {}
 
   static empty(): SerializedList {
