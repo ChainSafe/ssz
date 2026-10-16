@@ -6,6 +6,7 @@ import {
   ProgressiveSerializedListType,
   SerializedList,
   SerializedListType,
+  byteArrayEquals,
   symbolCachedPermanentRoot,
   toHexString,
 } from "../../../../src/index.ts";
@@ -195,27 +196,42 @@ describe("hashTreeRootInto at an offset", () => {
   }
 });
 
-describe("MAX_TRANSACTIONS_PER_PAYLOAD empty transactions", () => {
-  for (const {oldType, newType} of transactionsPairs) {
-    it(`${newType.typeName} - limit and limit + 1`, () => {
-      const limit = newType.limit;
-      const emptyTx = new Uint8Array(0);
-      const items = new Array<Uint8Array>(limit).fill(emptyTx);
+/**
+ * Upper bound of transactions in a mainnet block: a 21000 gas transfer is the cheapest transaction, so
+ * - pre-gloas: a 100M gas block (mainnet is at 60M as of 2026) holds at most 100M / 21000 ≈ 4762 transactions
+ * - gloas (glamsterdam) targets 200M gas: at most 200M / 21000 ≈ 9524 transactions
+ */
+const mainnetBlockTxCounts = [
+  {pair: transactionsPair, txCount: 5_000},
+  {pair: progressiveTransactionsPair, txCount: 10_000},
+];
 
+describe("mainnet sized block", () => {
+  // assertCompatible() is too slow at this size with coverage on, check the block processing path only
+  for (const {pair, txCount} of mainnetBlockTxCounts) {
+    const {id, oldType, newType} = pair;
+    it(`${id} - ${txCount} transactions`, () => {
+      const items = randomItems(createRng(13), txCount, "mixed", 2000);
       const serialized = oldType.serialize(items);
-      const value = newType.deserialize(serialized);
-      expect(value.length).toBe(limit);
-      expect(value.bytes.length).toBe(serialized.length);
-      expect(toHexString(newType.hashTreeRoot(value))).toBe(toHexString(oldType.hashTreeRoot(items)));
+      const rootHex = toHexString(oldType.hashTreeRoot(items));
 
-      // one more element than the limit
-      const overLimit = new Uint8Array(serialized.length + 4);
-      const dataView = new DataView(overLimit.buffer);
-      for (let i = 0; i <= limit; i++) {
-        dataView.setUint32(i * 4, (limit + 1) * 4, true);
+      const value = newType.deserialize(serialized);
+      expect(value.length).toBe(txCount);
+      expect(newType.equals(value, SerializedList.fromArray(items))).toBe(true);
+      expect(toHexString(newType.serialize(value))).toBe(toHexString(serialized));
+      expect(toHexString(newType.hashTreeRoot(value))).toBe(rootHex);
+      expect(toHexString(newType.value_toTree(value).root)).toBe(rootHex);
+
+      // get(i) and getSize(i) match the elements deserialized by the old type
+      const oldValue = oldType.deserialize(serialized);
+      const mismatches: number[] = [];
+      for (let i = 0; i < txCount; i++) {
+        if (!byteArrayEquals(value.get(i), oldValue[i]) || value.getSize(i) !== oldValue[i].length) {
+          mismatches.push(i);
+        }
       }
-      expect(() => newType.deserialize(overLimit)).toThrow(`Invalid list length ${limit + 1} over limit ${limit}`);
-    }, 60_000);
+      expect(mismatches).toEqual([]);
+    });
   }
 });
 
