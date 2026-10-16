@@ -33,6 +33,7 @@ import {ProgressiveBitListType} from "./progressiveBitList.ts";
 import {ProgressiveByteListType} from "./progressiveByteList.ts";
 import {ProgressiveContainerType} from "./progressiveContainer.ts";
 import {ProgressiveListBasicType, ProgressiveListCompositeType} from "./progressiveList.ts";
+import {ProgressiveSerializedListType, SerializedListType} from "./serializedList.ts";
 import {UintBigintType, UintNumberType} from "./uint.ts";
 import {VectorBasicType} from "./vectorBasic.ts";
 import {VectorCompositeType} from "./vectorComposite.ts";
@@ -576,8 +577,11 @@ function isProgressiveByteListCompatibleType(
 
 function isLimitedListType(
   type: Type<unknown>
-): type is ListBasicType<BasicType<unknown>> | ListCompositeType<CompositeType<unknown, unknown, unknown>> {
-  return type instanceof ListBasicType || type instanceof ListCompositeType;
+): type is
+  | ListBasicType<BasicType<unknown>>
+  | ListCompositeType<CompositeType<unknown, unknown, unknown>>
+  | SerializedListType {
+  return type instanceof ListBasicType || type instanceof ListCompositeType || type instanceof SerializedListType;
 }
 
 function isVectorType(
@@ -590,8 +594,13 @@ function isProgressiveListType(
   type: Type<unknown>
 ): type is
   | ProgressiveListBasicType<BasicType<unknown>>
-  | ProgressiveListCompositeType<CompositeType<unknown, unknown, unknown>> {
-  return type instanceof ProgressiveListBasicType || type instanceof ProgressiveListCompositeType;
+  | ProgressiveListCompositeType<CompositeType<unknown, unknown, unknown>>
+  | ProgressiveSerializedListType {
+  return (
+    type instanceof ProgressiveListBasicType ||
+    type instanceof ProgressiveListCompositeType ||
+    type instanceof ProgressiveSerializedListType
+  );
 }
 
 function areContainersCompatible(

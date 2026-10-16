@@ -155,6 +155,11 @@ export abstract class ByteArrayType extends CompositeType<ByteArray, ByteArray, 
     return byteArrayEquals(a, b);
   }
 
+  /** Throws the same error as value_deserializeFromBytes() for a value of `size` bytes, without allocating it */
+  assertValidByteLength(size: number): void {
+    this.assertValidSize(size);
+  }
+
   protected abstract assertValidSize(size: number): void;
 }
 

@@ -312,7 +312,7 @@ function readOffsetsArrayComposite(
  *
  * The returned array has one extra trailing entry equal to `size`, see readOffsetsArrayComposite().
  */
-function readVariableOffsetsArrayComposite(
+export function readVariableOffsetsArrayComposite(
   dataView: DataView,
   start: number,
   size: number
