@@ -418,17 +418,30 @@ export class ProgressiveListCompositeType<
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
-    const offsets = readOffsetsProgressiveListComposite(this.elementType.fixedSize, data.dataView, start, end, this);
-    const length = offsets.length;
-    const nodes = new Array<Node>(length);
+    const {fixedSize} = this.elementType;
+    let nodes: Node[];
 
-    for (let i = 0; i < length; i++) {
-      const startEl = start + offsets[i];
-      const endEl = i === length - 1 ? end : start + offsets[i + 1];
-      nodes[i] = this.elementType.tree_deserializeFromBytes(data, startEl, endEl);
+    if (fixedSize === null) {
+      const offsets = readOffsetsProgressiveListComposite(data.dataView, start, end, this);
+      const length = offsets.length;
+      nodes = new Array<Node>(length);
+
+      for (let i = 0; i < length; i++) {
+        const startEl = start + offsets[i];
+        const endEl = i === length - 1 ? end : start + offsets[i + 1];
+        nodes[i] = this.elementType.tree_deserializeFromBytes(data, startEl, endEl);
+      }
+    } else {
+      const length = readFixedLengthProgressiveListComposite(fixedSize, start, end, this);
+      nodes = new Array<Node>(length);
+
+      for (let i = 0; i < length; i++) {
+        const startEl = start + i * fixedSize;
+        nodes[i] = this.elementType.tree_deserializeFromBytes(data, startEl, startEl + fixedSize);
+      }
     }
 
-    return addLengthNode(progressiveSubtreeFillToContents(nodes), length);
+    return addLengthNode(progressiveSubtreeFillToContents(nodes), nodes.length);
   }
 
   tree_getLength(node: Node): number {
@@ -1127,20 +1140,13 @@ function progressiveSubtreeBranchGindex(subtreeIndex: number): Gindex {
   return concatGindices(Array.from({length: subtreeIndex}, () => BigInt(3)));
 }
 
-function readOffsetsProgressiveListComposite(
-  elementFixedSize: null | number,
-  data: DataView,
+function readFixedLengthProgressiveListComposite(
+  elementFixedSize: number,
   start: number,
   end: number,
   arrayProps: {isList: true; limit: number}
-): Uint32Array {
+): number {
   const size = end - start;
-
-  if (elementFixedSize === null) {
-    const offsets = readVariableOffsetsProgressiveList(data, start, size);
-    assertValidArrayLength(offsets.length, arrayProps);
-    return offsets;
-  }
 
   if (elementFixedSize === 0) {
     throw Error("element fixed length is 0");
@@ -1151,10 +1157,17 @@ function readOffsetsProgressiveListComposite(
 
   const length = size / elementFixedSize;
   assertValidArrayLength(length, arrayProps);
-  const offsets = new Uint32Array(length);
-  for (let i = 0; i < length; i++) {
-    offsets[i] = i * elementFixedSize;
-  }
+  return length;
+}
+
+function readOffsetsProgressiveListComposite(
+  data: DataView,
+  start: number,
+  end: number,
+  arrayProps: {isList: true; limit: number}
+): Uint32Array {
+  const offsets = readVariableOffsetsProgressiveList(data, start, end - start);
+  assertValidArrayLength(offsets.length, arrayProps);
   return offsets;
 }
 

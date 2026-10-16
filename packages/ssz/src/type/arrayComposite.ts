@@ -93,17 +93,32 @@ export function value_deserializeFromBytesArrayComposite<
   arrayProps: ArrayProps,
   reuseBytes?: boolean
 ): ValueOf<ElementType>[] {
-  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
-  // offsets include the end of the last element
-  const length = offsets.length - 1;
+  const {fixedSize} = elementType;
 
+  // Variable length
+  if (fixedSize === null) {
+    const offsets = readOffsetsArrayComposite(data.dataView, start, end, arrayProps);
+    // offsets include the end of the last element
+    const length = offsets.length - 1;
+    const values = new Array<ValueOf<ElementType>>(length);
+
+    for (let i = 0; i < length; i++) {
+      // The offsets are relative to the start
+      const startEl = start + offsets[i];
+      const endEl = start + offsets[i + 1];
+      values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl, reuseBytes);
+    }
+
+    return values;
+  }
+
+  // Fixed length
+  const length = readFixedLengthArrayComposite(fixedSize, start, end, arrayProps);
   const values = new Array<ValueOf<ElementType>>(length);
 
   for (let i = 0; i < length; i++) {
-    // The offsets are relative to the start
-    const startEl = start + offsets[i];
-    const endEl = start + offsets[i + 1];
-    values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl, reuseBytes);
+    const startEl = start + i * fixedSize;
+    values[i] = elementType.value_deserializeFromBytes(data, startEl, startEl + fixedSize, reuseBytes);
   }
 
   return values;
@@ -176,18 +191,37 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   end: number,
   arrayProps: ArrayProps
 ): Node {
-  const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
-  // offsets include the end of the last element
-  const length = offsets.length - 1;
+  const {fixedSize} = elementType;
+  let nodes: Node[];
 
-  const nodes = new Array<Node>(length);
+  // Variable length
+  if (fixedSize === null) {
+    const offsets = readOffsetsArrayComposite(data.dataView, start, end, arrayProps);
+    // offsets include the end of the last element
+    const length = offsets.length - 1;
+    nodes = new Array<Node>(length);
 
-  for (let i = 0; i < length; i++) {
-    // The offsets are relative to the start
-    const startEl = start + offsets[i];
-    const endEl = start + offsets[i + 1];
-    nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, endEl);
+    for (let i = 0; i < length; i++) {
+      // The offsets are relative to the start
+      const startEl = start + offsets[i];
+      const endEl = start + offsets[i + 1];
+      nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, endEl);
+    }
   }
+
+  // Fixed length
+  else {
+    const length = readFixedLengthArrayComposite(fixedSize, start, end, arrayProps);
+    nodes = new Array<Node>(length);
+
+    for (let i = 0; i < length; i++) {
+      const startEl = start + i * fixedSize;
+      nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, startEl + fixedSize);
+    }
+  }
+
+  // Read before subtreeFillToContents(), which mutates nodes
+  const length = nodes.length;
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
   const chunksNode = subtreeFillToContents(nodes, chunkDepth);
@@ -225,44 +259,46 @@ export function value_getBlocksBytesArrayComposite<ElementType extends Composite
 }
 
 /**
- * Returns the offset of each element relative to `start`, plus a trailing entry equal to `end - start`, so element `i`
- * is always `[offsets[i], offsets[i + 1])`. The array length is the element count + 1.
+ * Returns the element count of an array of fixed size elements. Element `i` is `[i * fixedSize, (i + 1) * fixedSize)`
+ * relative to `start`.
+ */
+function readFixedLengthArrayComposite(
+  elementFixedSize: number,
+  start: number,
+  end: number,
+  arrayProps: ArrayProps
+): number {
+  const size = end - start;
+
+  // There's no valid CompositeType with fixed size 0, it's un-rechable code. But prevents diving by zero
+  /* istanbul ignore if */
+  if (elementFixedSize === 0) {
+    throw Error("element fixed length is 0");
+  }
+  if (size % elementFixedSize !== 0) {
+    throw Error(`size ${size} is not multiple of element fixedSize ${elementFixedSize}`);
+  }
+
+  const length = size / elementFixedSize;
+
+  // Vector + List length validation
+  assertValidArrayLength(length, arrayProps);
+
+  return length;
+}
+
+/**
+ * Returns the offset of each variable size element relative to `start`, plus a trailing entry equal to `end - start`,
+ * so element `i` is always `[offsets[i], offsets[i + 1])`. The array length is the element count + 1.
  */
 function readOffsetsArrayComposite(
-  elementFixedSize: null | number,
   data: DataView,
   start: number,
   end: number,
   arrayProps: ArrayProps
 ): Uint32Array | Float64Array {
-  const size = end - start;
-  let offsets: Uint32Array | Float64Array;
-
-  // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
-  if (elementFixedSize === null) {
-    offsets = readVariableOffsetsArrayComposite(data, start, size);
-  }
-
-  // Fixed length
-  else {
-    // There's no valid CompositeType with fixed size 0, it's un-rechable code. But prevents diving by zero
-    /* istanbul ignore if */
-    if (elementFixedSize === 0) {
-      throw Error("element fixed length is 0");
-    }
-    if (size % elementFixedSize !== 0) {
-      throw Error(`size ${size} is not multiple of element fixedSize ${elementFixedSize}`);
-    }
-
-    const length = size / elementFixedSize;
-    // Keep the terminal offset in full-width storage when it cannot fit in a Uint32.
-    offsets = size < 2 ** 32 ? new Uint32Array(length + 1) : new Float64Array(length + 1);
-
-    for (let i = 0; i <= length; i++) {
-      offsets[i] = i * elementFixedSize;
-    }
-  }
+  const offsets = readVariableOffsetsArrayComposite(data, start, end - start);
 
   // Vector + List length validation
   assertValidArrayLength(offsets.length - 1, arrayProps);
