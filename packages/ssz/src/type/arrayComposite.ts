@@ -234,9 +234,9 @@ function readOffsetsArrayComposite(
   start: number,
   end: number,
   arrayProps: ArrayProps
-): Uint32Array {
+): Uint32Array | Float64Array {
   const size = end - start;
-  let offsets: Uint32Array;
+  let offsets: Uint32Array | Float64Array;
 
   // Variable Length
   // Indices contain offsets, which are indices deeper in the byte array
@@ -256,7 +256,8 @@ function readOffsetsArrayComposite(
     }
 
     const length = size / elementFixedSize;
-    offsets = new Uint32Array(length + 1);
+    // Keep the terminal offset in full-width storage when it cannot fit in a Uint32.
+    offsets = size < 2 ** 32 ? new Uint32Array(length + 1) : new Float64Array(length + 1);
 
     for (let i = 0; i <= length; i++) {
       offsets[i] = i * elementFixedSize;
@@ -275,7 +276,11 @@ function readOffsetsArrayComposite(
  *
  * The returned array has one extra trailing entry equal to `size`, see readOffsetsArrayComposite().
  */
-function readVariableOffsetsArrayComposite(dataView: DataView, start: number, size: number): Uint32Array {
+function readVariableOffsetsArrayComposite(
+  dataView: DataView,
+  start: number,
+  size: number
+): Uint32Array | Float64Array {
   if (size === 0) {
     return new Uint32Array(1);
   }
@@ -305,7 +310,8 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
   }
 
   const offsetCount = offsetDataLength / 4;
-  const offsets = new Uint32Array(offsetCount + 1);
+  // Serialized offsets are Uint32, but the implicit terminal offset is the full input size.
+  const offsets = size < 2 ** 32 ? new Uint32Array(offsetCount + 1) : new Float64Array(offsetCount + 1);
   offsets[0] = firstOffset;
 
   // ArrayComposite has a contiguous section of offsets, then the data
