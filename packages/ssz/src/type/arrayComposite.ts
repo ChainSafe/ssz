@@ -94,15 +94,15 @@ export function value_deserializeFromBytesArrayComposite<
   reuseBytes?: boolean
 ): ValueOf<ElementType>[] {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
-  const length = offsets.length; // Capture length before pushing end offset
+  // offsets include the end of the last element
+  const length = offsets.length - 1;
 
   const values = new Array<ValueOf<ElementType>>(length);
 
-  // offests include the last element end
   for (let i = 0; i < length; i++) {
     // The offsets are relative to the start
     const startEl = start + offsets[i];
-    const endEl = i === length - 1 ? end : start + offsets[i + 1];
+    const endEl = start + offsets[i + 1];
     values[i] = elementType.value_deserializeFromBytes(data, startEl, endEl, reuseBytes);
   }
 
@@ -177,15 +177,15 @@ export function tree_deserializeFromBytesArrayComposite<ElementType extends Comp
   arrayProps: ArrayProps
 ): Node {
   const offsets = readOffsetsArrayComposite(elementType.fixedSize, data.dataView, start, end, arrayProps);
-  const length = offsets.length; // Capture length before pushing end offset
+  // offsets include the end of the last element
+  const length = offsets.length - 1;
 
   const nodes = new Array<Node>(length);
 
-  // offests include the last element end
   for (let i = 0; i < length; i++) {
     // The offsets are relative to the start
     const startEl = start + offsets[i];
-    const endEl = i === length - 1 ? end : start + offsets[i + 1];
+    const endEl = start + offsets[i + 1];
     nodes[i] = elementType.tree_deserializeFromBytes(data, startEl, endEl);
   }
 
@@ -224,6 +224,10 @@ export function value_getBlocksBytesArrayComposite<ElementType extends Composite
   return blocksBytes;
 }
 
+/**
+ * Returns the offset of each element relative to `start`, plus a trailing entry equal to `end - start`, so element `i`
+ * is always `[offsets[i], offsets[i + 1])`. The array length is the element count + 1.
+ */
 function readOffsetsArrayComposite(
   elementFixedSize: null | number,
   data: DataView,
@@ -252,15 +256,15 @@ function readOffsetsArrayComposite(
     }
 
     const length = size / elementFixedSize;
-    offsets = new Uint32Array(length);
+    offsets = new Uint32Array(length + 1);
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i <= length; i++) {
       offsets[i] = i * elementFixedSize;
     }
   }
 
   // Vector + List length validation
-  assertValidArrayLength(offsets.length, arrayProps);
+  assertValidArrayLength(offsets.length - 1, arrayProps);
 
   return offsets;
 }
@@ -268,10 +272,12 @@ function readOffsetsArrayComposite(
 /**
  * Reads the values of contiguous variable offsets. Provided buffer includes offsets that point to position
  * within `size`. This function also validates that all offsets are in range.
+ *
+ * The returned array has one extra trailing entry equal to `size`, see readOffsetsArrayComposite().
  */
 function readVariableOffsetsArrayComposite(dataView: DataView, start: number, size: number): Uint32Array {
   if (size === 0) {
-    return new Uint32Array(0);
+    return new Uint32Array(1);
   }
 
   // all elements are variable-sized
@@ -299,7 +305,7 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
   }
 
   const offsetCount = offsetDataLength / 4;
-  const offsets = new Uint32Array(offsetCount);
+  const offsets = new Uint32Array(offsetCount + 1);
   offsets[0] = firstOffset;
 
   // ArrayComposite has a contiguous section of offsets, then the data
@@ -327,6 +333,8 @@ function readVariableOffsetsArrayComposite(dataView: DataView, start: number, si
       throw new Error(`Offsets must be increasing ${offset} < ${offsets[offsetIdx - 1]}`);
     }
   }
+
+  offsets[offsetCount] = size;
 
   return offsets;
 }
