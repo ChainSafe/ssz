@@ -12,21 +12,56 @@ export type FieldEntry<Fields extends Record<string, Type<unknown>>> = {
   gindex: Gindex;
 };
 
+/**
+ * Entry for an ephemeral (non-consensus) field. No `gindex` because ephemeral fields are not part of the merkle tree.
+ */
+export type EphemeralFieldEntry<EphemeralFields extends Record<string, Type<unknown>>> = {
+  fieldName: keyof EphemeralFields;
+  fieldType: EphemeralFields[keyof EphemeralFields];
+  jsonKey: string;
+};
+
 /** Expected API of this View's type. This interface allows to break a recursive dependency between types and views */
-export type BasicContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = CompositeType<
-  ValueOfFields<Fields>,
-  ContainerTreeViewType<Fields>,
+export type BasicContainerTypeGeneric<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = CompositeType<
+  ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>,
+  ContainerTreeViewType<Fields, EphemeralFields>,
   unknown
 > & {
   readonly fields: Fields;
   readonly fieldsEntries: (FieldEntry<Fields> | FieldEntry<NonOptionalFields<Fields>>)[];
+  // Optional so that other consumers (ProfileType, StableContainerType) need not provide them.
+  // ContainerType always populates both — readers should default to `[]` for the loop.
+  readonly ephemeralFields?: EphemeralFields;
+  readonly ephemeralFieldsEntries?: EphemeralFieldEntry<EphemeralFields>[];
 };
 
-export type ContainerTypeGeneric<Fields extends Record<string, Type<unknown>>> = BasicContainerTypeGeneric<Fields> & {
+export type ContainerTypeGeneric<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = BasicContainerTypeGeneric<Fields, EphemeralFields> & {
   readonly fixedEnd: number;
 };
 
 export type ValueOfFields<Fields extends Record<string, Type<unknown>>> = {[K in keyof Fields]: ValueOf<Fields[K]>};
+
+/**
+ * `Partial<ValueOfFields<EphemeralFields>>`, but resolves to `unknown` when EphemeralFields is the unspecified
+ * default `Record<string, never>` (its `keyof` is `string`). Without this guard, intersecting with
+ * `Partial<{[K in string]: never}>` would force every string key of the consensus value to be `undefined`.
+ */
+export type EphemeralValueOfFields<EphemeralFields extends Record<string, Type<unknown>>> =
+  string extends keyof EphemeralFields ? unknown : Partial<ValueOfFields<EphemeralFields>>;
+
+/**
+ * Helper for callers that have populated all ephemeral fields and want them required (non-optional) at the type level.
+ */
+export type PopulatedValueOfFields<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>>,
+> = ValueOfFields<Fields> & ValueOfFields<EphemeralFields>;
 
 export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
   [K in keyof Fields]: Fields[K] extends CompositeType<unknown, infer TV, unknown>
@@ -38,10 +73,17 @@ export type FieldsView<Fields extends Record<string, Type<unknown>>> = {
       : never;
 };
 
-export type ContainerTreeViewType<Fields extends Record<string, Type<unknown>>> = FieldsView<Fields> &
-  TreeView<BasicContainerTypeGeneric<Fields>>;
-export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<unknown>>> = {
-  new (type: ContainerTypeGeneric<Fields>, tree: Tree): ContainerTreeViewType<Fields>;
+export type ContainerTreeViewType<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = FieldsView<Fields> &
+  EphemeralValueOfFields<EphemeralFields> &
+  TreeView<BasicContainerTypeGeneric<Fields, EphemeralFields>>;
+export type ContainerTreeViewTypeConstructor<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> = {
+  new (type: ContainerTypeGeneric<Fields, EphemeralFields>, tree: Tree): ContainerTreeViewType<Fields, EphemeralFields>;
 };
 
 /**
@@ -59,9 +101,15 @@ export type ContainerTreeViewTypeConstructor<Fields extends Record<string, Type<
  *   iterate the entire data structure and views
  *
  */
-class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends TreeView<ContainerTypeGeneric<Fields>> {
+class ContainerTreeView<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> extends TreeView<ContainerTypeGeneric<Fields, EphemeralFields>> {
+  /** Storage for ephemeral (non-consensus) field values. Kept per-instance, not in the tree. */
+  protected ephemeralValues: Record<string, unknown> = {};
+
   constructor(
-    readonly type: ContainerTypeGeneric<Fields>,
+    readonly type: ContainerTypeGeneric<Fields, EphemeralFields>,
     readonly tree: Tree
   ) {
     super();
@@ -72,10 +120,11 @@ class ContainerTreeView<Fields extends Record<string, Type<unknown>>> extends Tr
   }
 }
 
-export function getContainerTreeViewClass<Fields extends Record<string, Type<unknown>>>(
-  type: ContainerTypeGeneric<Fields>
-): ContainerTreeViewTypeConstructor<Fields> {
-  class CustomContainerTreeView extends ContainerTreeView<Fields> {}
+export function getContainerTreeViewClass<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+>(type: ContainerTypeGeneric<Fields, EphemeralFields>): ContainerTreeViewTypeConstructor<Fields, EphemeralFields> {
+  class CustomContainerTreeView extends ContainerTreeView<Fields, EphemeralFields> {}
 
   // Dynamically define prototype methods
   for (let index = 0; index < type.fieldsEntries.length; index++) {
@@ -133,8 +182,24 @@ export function getContainerTreeViewClass<Fields extends Record<string, Type<unk
     }
   }
 
+  // Define accessors for ephemeral fields. Backed by per-instance `ephemeralValues`, not the tree.
+  // No commit/sub-view machinery: ephemerals are stored as raw values.
+  for (const {fieldName} of type.ephemeralFieldsEntries ?? []) {
+    const key = fieldName as string;
+    Object.defineProperty(CustomContainerTreeView.prototype, fieldName, {
+      configurable: false,
+      enumerable: true,
+      get: function (this: CustomContainerTreeView) {
+        return (this as unknown as {ephemeralValues: Record<string, unknown>}).ephemeralValues[key];
+      },
+      set: function (this: CustomContainerTreeView, value: unknown) {
+        (this as unknown as {ephemeralValues: Record<string, unknown>}).ephemeralValues[key] = value;
+      },
+    });
+  }
+
   // Change class name
   Object.defineProperty(CustomContainerTreeView, "name", {value: type.typeName, writable: false});
 
-  return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields>;
+  return CustomContainerTreeView as unknown as ContainerTreeViewTypeConstructor<Fields, EphemeralFields>;
 }
