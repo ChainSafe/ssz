@@ -527,7 +527,12 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
    * - offsets are relative to the start of serialized active fields, after the Bitvector[N]
    */
   getFieldRanges(data: ByteViews, start: number, end: number): {optionalFields: BitArray; fieldRanges: BytesRange[]} {
+    const size = end - start;
     const optionalFieldsByteLen = Math.ceil(this.optionalFieldsCount / 8);
+    if (size < optionalFieldsByteLen) {
+      throw Error(`${this.typeName} size ${size} less than optional fields size ${optionalFieldsByteLen}`);
+    }
+
     const optionalFields = new BitArray(
       data.uint8Array.subarray(start, start + optionalFieldsByteLen),
       this.optionalFieldsCount
@@ -540,7 +545,6 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
 
     if (variableOffsetsPosition.length === 0) {
       // Validate fixed length container
-      const size = end - start;
       if (size !== fixedEnd + optionalFieldsByteLen) {
         throw Error(
           `${this.typeName} size ${size} not equal fixed end plus optionalFieldsByteLen ${
@@ -550,6 +554,10 @@ export class ProfileType<Fields extends Record<string, Type<unknown>>> extends C
       }
 
       return {optionalFields, fieldRanges: fieldRangesFixedLen};
+    }
+
+    if (size < fixedEnd + optionalFieldsByteLen) {
+      throw Error(`${this.typeName} size ${size} less than fixed section size ${fixedEnd + optionalFieldsByteLen}`);
     }
 
     // Read offsets in one pass
