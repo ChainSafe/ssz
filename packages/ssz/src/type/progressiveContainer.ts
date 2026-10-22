@@ -418,12 +418,16 @@ export class ProgressiveContainerType<Fields extends Record<string, Type<unknown
   }
 
   getFieldRanges(data: DataView, start: number, end: number): BytesRange[] {
+    const size = end - start;
     if (this.variableOffsetsPosition.length === 0) {
-      const size = end - start;
       if (size !== this.fixedEnd) {
         throw Error(`${this.typeName} size ${size} not equal fixed size ${this.fixedEnd}`);
       }
       return this.fieldRangesFixedLen;
+    }
+
+    if (size < this.fixedEnd) {
+      throw Error(`${this.typeName} size ${size} less than fixed section size ${this.fixedEnd}`);
     }
 
     const offsets = readVariableOffsets(data, start, end, this.fixedEnd, this.variableOffsetsPosition);
