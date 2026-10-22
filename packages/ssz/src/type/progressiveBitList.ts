@@ -158,11 +158,7 @@ export class ProgressiveBitListType extends BitArrayType {
     end: number,
     reuseBytes?: boolean
   ): {uint8Array: Uint8Array; bitLen: number} {
-    const deserialized = deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes);
-    if (deserialized.bitLen > this.limitBits) {
-      throw Error(`bitLen over limit ${deserialized.bitLen} > ${this.limitBits}`);
-    }
-    return deserialized;
+    return deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes, this.limitBits);
   }
 }
 

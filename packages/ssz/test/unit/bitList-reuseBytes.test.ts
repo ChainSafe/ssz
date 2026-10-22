@@ -1,4 +1,4 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {
   BitArray,
   BitListType,
@@ -6,6 +6,7 @@ import {
   ByteListType,
   ContainerType,
   ProgressiveBitListType,
+  deserializeUint8ArrayBitListFromBytes,
 } from "../../src/index.ts";
 
 for (const type of [new BitListType(16), new ProgressiveBitListType({limit: 16})]) {
@@ -96,6 +97,46 @@ for (const type of [new BitListType(16), new ProgressiveBitListType({limit: 16})
         expect(() => type.deserialize(bytes, {reuseBytes: true})).to.throw("bitLen over limit 17 > 16");
         expect(Array.from(bytes)).to.deep.equal([0x00, 0x00, 0x03]);
       });
+
+      for (const bitLen of [17, 24]) {
+        it.each(["copy", "reuse", "view", "viewDU"] as const)(
+          `rejects ${bitLen} bits before slicing the input (%s)`,
+          (mode) => {
+            const bytes = createInput(bitLen === 17 ? [0x00, 0x00, 0x02] : [0x00, 0x00, 0x00, 0x01]);
+            const copy = vi.spyOn(Uint8Array.prototype, "slice");
+            const view = vi.spyOn(Uint8Array.prototype, "subarray");
+
+            try {
+              expect(() => {
+                if (mode === "view") type.deserializeToView(bytes);
+                else if (mode === "viewDU") type.deserializeToViewDU(bytes);
+                else type.deserialize(bytes, {reuseBytes: mode === "reuse"});
+              }).to.throw(`bitLen over limit ${bitLen} > 16`);
+              expect(copy).not.toHaveBeenCalled();
+              expect(view).not.toHaveBeenCalled();
+            } finally {
+              copy.mockRestore();
+              view.mockRestore();
+            }
+          }
+        );
+      }
     });
   }
 }
+
+it("keeps the shared decoder usable without a limit", () => {
+  const bytes = Uint8Array.of(0x00, 0x03);
+  const value = deserializeUint8ArrayBitListFromBytes(bytes, 0, bytes.length, true);
+
+  expect(value.bitLen).to.equal(9);
+  expect(Array.from(value.uint8Array)).to.deep.equal([0x00, 0x01]);
+  expect(Array.from(bytes)).to.deep.equal([0x00, 0x03]);
+});
+
+it("accepts only an empty bitlist with a zero progressive limit", () => {
+  const type = new ProgressiveBitListType({limit: 0});
+
+  expect(type.deserialize(Uint8Array.of(0x01), {reuseBytes: true}).bitLen).to.equal(0);
+  expect(() => type.deserialize(Uint8Array.of(0x02), {reuseBytes: true})).to.throw("bitLen over limit 1 > 0");
+});
