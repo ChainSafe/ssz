@@ -181,7 +181,8 @@ export function deserializeUint8ArrayBitListFromBytes(
   }
 
   // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
-  const uint8Array = slice(data, start, end, reuseBytes);
+  // Copy even when reusing bytes so clearing the padding bit leaves the input intact.
+  const uint8Array = slice(data, start, end);
   // mask lastChunkByte
   const lastByteBitLength = lastByte.toString(2).length - 1;
   const bitLen = (size - 1) * 8 + lastByteBitLength;
