@@ -2,7 +2,7 @@ import {Node} from "@chainsafe/persistent-merkle-tree";
 import {BranchNodeStruct} from "../branchNodeStruct.ts";
 import {namedClass} from "../util/named.ts";
 import {Require} from "../util/types.ts";
-import {ValueOfFields} from "../view/container.ts";
+import {EphemeralValueOfFields, ValueOfFields} from "../view/container.ts";
 import {getContainerTreeViewClass} from "../view/containerNodeStruct.ts";
 import {getContainerTreeViewDUClass} from "../viewDU/containerNodeStruct.ts";
 import {ByteViews, Type} from "./abstract.ts";
@@ -23,10 +23,13 @@ import {ContainerOptions, ContainerType, renderContainerTypeName} from "./contai
  *
  * This tradeoff is good for data that is read often, written rarely, and consumes a lot of memory (i.e. Validator)
  */
-export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>>> extends ContainerType<Fields> {
+export class ContainerNodeStructType<
+  Fields extends Record<string, Type<unknown>>,
+  EphemeralFields extends Record<string, Type<unknown>> = Record<string, never>,
+> extends ContainerType<Fields, EphemeralFields> {
   constructor(
     readonly fields: Fields,
-    opts?: ContainerOptions<Fields>
+    opts?: ContainerOptions<Fields, EphemeralFields>
   ) {
     super(fields, {
       // Overwrite default "Container" typeName
@@ -65,17 +68,24 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
   }
 
   tree_serializedSize(node: Node): number {
-    return this.value_serializedSize((node as BranchNodeStruct<ValueOfFields<Fields>>).value);
+    return this.value_serializedSize(
+      (node as BranchNodeStruct<ValueOfFields<Fields>>).value as ValueOfFields<Fields> &
+        EphemeralValueOfFields<EphemeralFields>
+    );
   }
 
   tree_serializeToBytes(output: ByteViews, offset: number, node: Node): number {
     const {value} = node as BranchNodeStruct<ValueOfFields<Fields>>;
-    return this.value_serializeToBytes(output, offset, value);
+    return this.value_serializeToBytes(
+      output,
+      offset,
+      value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>
+    );
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const value = this.value_deserializeFromBytes(data, start, end);
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+    return new BranchNodeStruct(this.valueToTree.bind(this), value as ValueOfFields<Fields>);
   }
 
   // Proofs
@@ -103,18 +113,20 @@ export class ContainerNodeStructType<Fields extends Record<string, Type<unknown>
 
   // Overwrites for fast conversion node <-> value
 
-  tree_toValue(node: Node): ValueOfFields<Fields> {
-    return (node as BranchNodeStruct<ValueOfFields<Fields>>).value;
+  tree_toValue(node: Node): ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields> {
+    return (node as BranchNodeStruct<ValueOfFields<Fields>>).value as ValueOfFields<Fields> &
+      EphemeralValueOfFields<EphemeralFields>;
   }
 
-  value_toTree(value: ValueOfFields<Fields>): Node {
-    return new BranchNodeStruct(this.valueToTree.bind(this), value);
+  value_toTree(value: ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>): Node {
+    return new BranchNodeStruct(this.valueToTree.bind(this), value as ValueOfFields<Fields>);
   }
 
   private valueToTree(value: ValueOfFields<Fields>): Node {
-    const uint8Array = new Uint8Array(this.value_serializedSize(value));
+    const widened = value as ValueOfFields<Fields> & EphemeralValueOfFields<EphemeralFields>;
+    const uint8Array = new Uint8Array(this.value_serializedSize(widened));
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
-    this.value_serializeToBytes({uint8Array, dataView}, 0, value);
+    this.value_serializeToBytes({uint8Array, dataView}, 0, widened);
     return super.tree_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length);
   }
 }
