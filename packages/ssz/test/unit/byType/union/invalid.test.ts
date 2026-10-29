@@ -9,6 +9,7 @@ runTypeTestInvalid({
   type: new UnionType([noneType, byteType]),
   values: [
     {id: "Selector too high", serialized: "0x02ff"},
+    {id: "Dirty tail on None variant", serialized: "0x00ff"},
 
     {id: "No selector", json: {}},
     {id: "Bad selector", json: {selector: "1"}},
