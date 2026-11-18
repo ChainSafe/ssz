@@ -58,7 +58,7 @@ export class BitListType extends BitArrayType {
     this.chunkDepth = maxChunksToDepth(this.maxChunkCount);
     // Depth includes the extra level for the length node
     this.depth = 1 + this.chunkDepth;
-    this.maxSize = Math.ceil(limitBits / 8) + 1; // +1 for the extra padding bit
+    this.maxSize = Math.floor(limitBits / 8) + 1; // +1 for the extra padding bit
   }
 
   static named(limitBits: number, opts: Require<BitListOptions, "typeName">): BitListType {

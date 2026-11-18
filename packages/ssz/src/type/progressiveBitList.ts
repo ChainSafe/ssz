@@ -65,7 +65,7 @@ export class ProgressiveBitListType extends BitArrayType {
     }
 
     this.typeName = opts?.typeName ?? "ProgressiveBitList";
-    this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, Math.ceil(this.limitBits / 8) + 1);
+    this.maxSize = Math.min(PROGRESSIVE_LIST_MAX_SIZE, Math.floor(this.limitBits / 8) + 1);
   }
 
   static named(opts: Require<ProgressiveBitListOptions, "typeName">): ProgressiveBitListType {
