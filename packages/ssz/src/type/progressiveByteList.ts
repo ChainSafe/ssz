@@ -61,7 +61,7 @@ export class ProgressiveByteListType extends ByteArrayType {
   constructor(opts?: ProgressiveByteListOptions) {
     super();
 
-    this.limitBytes = opts?.limit ?? PROGRESSIVE_LIST_MAX_SIZE;
+    this.limitBytes = opts?.limit ?? Number.MAX_SAFE_INTEGER;
     if (!Number.isInteger(this.limitBytes) || this.limitBytes < 0) {
       throw Error("List limit must be a non-negative integer");
     }

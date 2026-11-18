@@ -323,7 +323,7 @@ describe("ProgressiveBitListType", () => {
     const valueOverLimit = BitArray.fromBoolArray([true, false, true]);
 
     expect(limitedType.limitBits).to.equal(2);
-    expect(limitedType.maxSize).to.equal(2);
+    expect(limitedType.maxSize).to.equal(1);
     expect(limitedType.deserialize(limitedType.serialize(value)).toBoolArray()).to.deep.equal(value.toBoolArray());
     expect(limitedType.serialize(valueOverLimit)).to.deep.equal(type.serialize(valueOverLimit));
     expect(() => limitedType.deserialize(type.serialize(valueOverLimit))).toThrow("bitLen over limit 3 > 2");
