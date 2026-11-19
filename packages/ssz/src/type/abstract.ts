@@ -120,7 +120,11 @@ export abstract class Type<V> {
     return uint8Array;
   }
 
-  /** Deserialize binary data to value */
+  /**
+   * Deserialize binary data to value.
+   * With `reuseBytes`, fields may share the input buffer. Non-byte-aligned bitlists
+   * are still copied so removing their padding bit does not modify the input.
+   */
   deserialize(uint8Array: Uint8Array, opts?: {reuseBytes?: boolean}): V {
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     return this.value_deserializeFromBytes({uint8Array, dataView}, 0, uint8Array.length, opts?.reuseBytes);
