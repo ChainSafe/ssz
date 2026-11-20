@@ -63,6 +63,7 @@ runTypeTestValid({
     {json: 2 ** 32, serialized: "0x0000000001000000", root: null},
     {json: 2 ** 52 - 1, serialized: "0xffffffffffff0f00", root: null},
     {json: BigInt(2 ** 52 - 1), serialized: "0xffffffffffff0f00", root: null},
+    {json: Number.MAX_SAFE_INTEGER, serialized: "0xffffffffffff1f00", root: null},
   ],
 });
 
@@ -83,6 +84,7 @@ runTypeTestValid({
     },
     {json: 2 ** 32, serialized: "0x0000000001000000", root: null},
     {json: 2 ** 52 - 1, serialized: "0xffffffffffff0f00", root: null},
+    {json: Number.MAX_SAFE_INTEGER, serialized: "0xffffffffffff1f00", root: null},
   ],
 });
 

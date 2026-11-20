@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {UintBigintType, UintNumberType} from "../../../../src/index.ts";
+import {ContainerType, UintBigintType, UintNumberType} from "../../../../src/index.ts";
 import {UintNumberByteLen, uintBigintByteLens, uintNumberByteLens} from "../../../../src/type/uint.ts";
 import {InvalidValue, runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
@@ -32,12 +32,33 @@ const invalidValuesForNumberAndBigint: InvalidValue[] = [
   {id: "Object stringified", json: JSON.stringify({})},
 ];
 
+const serializedOverMaxSafeInteger = "Invalid serialized number > MAX_SAFE_INTEGER";
+
 runTypeTestInvalid({
   type: new UintNumberType(8),
   values: [
     {id: "Number over Number.MAX_SAFE_INTEGER", json: String(Number.MAX_SAFE_INTEGER * 2)},
     {id: "BigInt over Number.MAX_SAFE_INTEGER", json: BigInt(Number.MAX_SAFE_INTEGER * 2)},
+    {id: "Serialized 2^53", serialized: "0x0000000000002000", error: serializedOverMaxSafeInteger},
+    {id: "Serialized 2^64-2", serialized: "0xfeffffffffffffff", error: serializedOverMaxSafeInteger},
+    {id: "Serialized 2^64-1", serialized: "0xffffffffffffffff", error: serializedOverMaxSafeInteger},
     ...invalidValuesForNumberAndBigint,
+  ],
+});
+
+runTypeTestInvalid({
+  type: new UintNumberType(8, {clipInfinity: true}),
+  values: [
+    {id: "Serialized 2^53", serialized: "0x0000000000002000", error: serializedOverMaxSafeInteger},
+    {id: "Serialized 2^64-2", serialized: "0xfeffffffffffffff", error: serializedOverMaxSafeInteger},
+  ],
+});
+
+runTypeTestInvalid({
+  type: new ContainerType({a: new UintNumberType(8), b: new UintNumberType(8, {clipInfinity: true})}),
+  values: [
+    {id: "Field a 2^64-2", serialized: "0xfeffffffffffffff0000000000000000", error: serializedOverMaxSafeInteger},
+    {id: "Field b 2^64-2", serialized: "0x0000000000000000feffffffffffffff", error: serializedOverMaxSafeInteger},
   ],
 });
 
