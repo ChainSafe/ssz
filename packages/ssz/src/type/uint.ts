@@ -11,6 +11,8 @@ const BIGINT_2_POW_192 = BigInt(2) ** BigInt(192);
 // const BIGINT_64_MAX = BigInt("0xffffffffffffffff");
 const NUMBER_2_POW_32 = 2 ** 32;
 const NUMBER_32_MAX = 0xffffffff;
+/** Max high 32 bits of a uint64 that keeps the value <= Number.MAX_SAFE_INTEGER */
+const NUMBER_SAFE_HIGH_MAX = 0x1fffff;
 
 export interface UintNumberOpts {
   /** Represent the value 2^64-1 as the symbolic value `+Infinity`. @see UintNumberType for a justification. */
@@ -37,6 +39,7 @@ export const uintBigintByteLens: UintBigintByteLen[] = [1, 2, 4, 8, 16, 32];
  * As of 2021 performance of 'Number' is extremely faster than 'BigInt'. Some values are spec'ed as Uint64 but
  * practically they will never exceed 53 bits, such as any unit time or simple counters. This type is an optimization
  * for these cases, as UintNumber64 can represent any value between 0 and 2^53−1 as well as the max value 2^64-1.
+ * Deserializing any other value throws, since it can't be represented exactly as a Number.
  */
 export class UintNumberType extends BasicType<number> {
   readonly typeName: string;
@@ -125,8 +128,12 @@ export class UintNumberType extends BasicType<number> {
       case 8: {
         const a = dataView.getUint32(start, true);
         const b = dataView.getUint32(start + 4, true);
-        if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
-          return Infinity;
+        if (b > NUMBER_SAFE_HIGH_MAX) {
+          if (b === NUMBER_32_MAX && a === NUMBER_32_MAX && this.clipInfinity) {
+            return Infinity;
+          }
+          // Throw to prevent decimal precision errors downstream
+          throw Error("Invalid serialized number > MAX_SAFE_INTEGER");
         }
         return b * NUMBER_2_POW_32 + a;
       }
