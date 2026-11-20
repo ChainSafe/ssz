@@ -39,7 +39,8 @@ export const uintBigintByteLens: UintBigintByteLen[] = [1, 2, 4, 8, 16, 32];
  * As of 2021 performance of 'Number' is extremely faster than 'BigInt'. Some values are spec'ed as Uint64 but
  * practically they will never exceed 53 bits, such as any unit time or simple counters. This type is an optimization
  * for these cases, as UintNumber64 can represent any value between 0 and 2^53−1 as well as the max value 2^64-1.
- * Deserializing any other value throws, since it can't be represented exactly as a Number.
+ * Deserializing any other value throws, since it can't be represented exactly as a Number. Packed arrays
+ * deserialized to a tree are not checked per element, they keep the original bytes so their root stays exact.
  */
 export class UintNumberType extends BasicType<number> {
   readonly typeName: string;
