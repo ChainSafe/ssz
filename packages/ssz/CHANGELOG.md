@@ -16,6 +16,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.9.1](https://github.com/ChainSafe/ssz/compare/ssz-v1.9.0...ssz-v1.9.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* reject uint64 values above `MAX_SAFE_INTEGER` in `UintNumberType` deserialization ([#564](https://github.com/ChainSafe/ssz/issues/564)) ([930bac4](https://github.com/ChainSafe/ssz/commit/930bac4e6e6c43f53e57e3cbafb1c59a074e077e))
+
 ## [1.9.0](https://github.com/ChainSafe/ssz/compare/ssz-v1.8.1...ssz-v1.9.0) (2026-10-16)
 
 
