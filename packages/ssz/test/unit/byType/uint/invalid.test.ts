@@ -37,6 +37,7 @@ const serializedOverMaxSafeInteger = "Invalid serialized number > MAX_SAFE_INTEG
 runTypeTestInvalid({
   type: new UintNumberType(8),
   values: [
+    {id: "Trailing junk", json: "10abc"},
     {id: "Number over Number.MAX_SAFE_INTEGER", json: String(Number.MAX_SAFE_INTEGER * 2)},
     {id: "BigInt over Number.MAX_SAFE_INTEGER", json: BigInt(Number.MAX_SAFE_INTEGER * 2)},
     {id: "Serialized 2^53", serialized: "0x0000000000002000", error: serializedOverMaxSafeInteger},
