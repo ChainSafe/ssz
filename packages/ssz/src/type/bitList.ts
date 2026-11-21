@@ -144,11 +144,7 @@ export class BitListType extends BitArrayType {
     end: number,
     reuseBytes?: boolean
   ): BitArrayDeserialized {
-    const {uint8Array, bitLen} = deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes);
-    if (bitLen > this.limitBits) {
-      throw Error(`bitLen over limit ${bitLen} > ${this.limitBits}`);
-    }
-    return {uint8Array, bitLen};
+    return deserializeUint8ArrayBitListFromBytes(data, start, end, reuseBytes, this.limitBits);
   }
 }
 
@@ -158,7 +154,8 @@ export function deserializeUint8ArrayBitListFromBytes(
   data: Uint8Array,
   start: number,
   end: number,
-  reuseBytes?: boolean
+  reuseBytes?: boolean,
+  limitBits = Infinity
 ): BitArrayDeserialized {
   if (end > data.length) {
     throw Error(`BitList attempting to read byte ${end} of data length ${data.length}`);
@@ -174,17 +171,21 @@ export function deserializeUint8ArrayBitListFromBytes(
     throw new Error("Invalid deserialized bitlist, padding bit required");
   }
 
+  const lastByteBitLength = lastByte === 1 ? 0 : lastByte.toString(2).length - 1;
+  const bitLen = (size - 1) * 8 + lastByteBitLength;
+  if (bitLen > limitBits) {
+    throw Error(`bitLen over limit ${bitLen} > ${limitBits}`);
+  }
+
   if (lastByte === 1) {
     const uint8Array = slice(data, start, end - 1, reuseBytes);
-    const bitLen = (size - 1) * 8;
     return {uint8Array, bitLen};
   }
 
   // the last byte is > 1, so a padding bit will exist in the last byte and need to be removed
-  const uint8Array = slice(data, start, end, reuseBytes);
+  // Copy even when reusing bytes so clearing the padding bit leaves the input intact.
+  const uint8Array = slice(data, start, end);
   // mask lastChunkByte
-  const lastByteBitLength = lastByte.toString(2).length - 1;
-  const bitLen = (size - 1) * 8 + lastByteBitLength;
   const mask = 0xff >> (8 - lastByteBitLength);
   uint8Array[size - 1] &= mask;
   return {uint8Array, bitLen};
