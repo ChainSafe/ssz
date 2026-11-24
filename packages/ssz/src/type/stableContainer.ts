@@ -578,8 +578,13 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
    * `activeFields` is a bitvector prepended to the serialized data.
    */
   getFieldRanges(data: ByteViews, start: number, end: number): {activeFields: BitArray; fieldRanges: BytesRange[]} {
+    const size = end - start;
     // this.maxChunkCount = maxFields
     const activeFieldsByteLen = Math.ceil(this.maxChunkCount / 8);
+    if (size < activeFieldsByteLen) {
+      throw Error(`${this.typeName} size ${size} less than active fields size ${activeFieldsByteLen}`);
+    }
+
     // active fields bitvector, do not mutate
     const activeFields = new BitArray(data.uint8Array.subarray(start, start + activeFieldsByteLen), this.maxChunkCount);
 
@@ -590,12 +595,15 @@ export class StableContainerType<Fields extends Record<string, Type<unknown>>> e
 
     if (variableOffsetsPosition.length === 0) {
       // Validate fixed length container
-      const size = end - start;
       if (size !== fixedEnd) {
         throw Error(`${this.typeName} size ${size} not equal fixed size ${fixedEnd}`);
       }
 
       return {activeFields, fieldRanges: fieldRangesFixedLen};
+    }
+
+    if (size < fixedEnd) {
+      throw Error(`${this.typeName} size ${size} less than fixed section size ${fixedEnd}`);
     }
 
     // Read offsets in one pass
