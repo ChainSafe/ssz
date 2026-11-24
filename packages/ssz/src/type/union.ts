@@ -142,6 +142,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   }
 
   value_deserializeFromBytes(data: ByteViews, start: number, end: number, reuseBytes?: boolean): ValueOfTypes<Types> {
+    if (end <= start) {
+      throw Error("Union requires a selector byte");
+    }
+
     const selector = data.uint8Array[start];
     if (selector > this.maxSelector) {
       throw Error(`Invalid selector ${selector}`);
@@ -168,6 +172,10 @@ export class UnionType<Types extends Type<unknown>[]> extends CompositeType<
   }
 
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
+    if (end <= start) {
+      throw Error("Union requires a selector byte");
+    }
+
     const selector = data.uint8Array[start];
     if (selector > this.maxSelector) {
       throw Error(`Invalid selector ${selector}`);
