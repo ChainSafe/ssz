@@ -154,9 +154,7 @@ export function zeroProgressiveListBasicRootNode(itemsPerChunk: number, length: 
   if (!Number.isInteger(itemsPerChunk) || itemsPerChunk <= 0) {
     throw Error(`Invalid itemsPerChunk ${itemsPerChunk}`);
   }
-  if (!Number.isInteger(length) || length < 0) {
-    throw Error(`Invalid progressive list length ${length}`);
-  }
+  assertValidProgressiveListLength(length);
 
   const chunkCount = Math.ceil(length / itemsPerChunk);
   return new BranchNode(zeroProgressiveChunksNode(progressiveSubtreeCount(chunkCount)), LeafNode.fromUint32(length));
@@ -169,10 +167,14 @@ export function zeroProgressiveListBasicRootNode(itemsPerChunk: number, length: 
  * See https://github.com/ChainSafe/ssz/issues/542
  */
 export function progressiveListRootNode(nodes: Node[], length: number): Node {
-  if (!Number.isInteger(length) || length < 0) {
+  assertValidProgressiveListLength(length);
+  return new BranchNode(progressiveSubtreeFillToContents(nodes), LeafNode.fromUint32(length));
+}
+
+function assertValidProgressiveListLength(length: number): void {
+  if (!Number.isInteger(length) || length < 0 || length > PROGRESSIVE_LIST_MAX_SIZE) {
     throw Error(`Invalid progressive list length ${length}`);
   }
-  return new BranchNode(progressiveSubtreeFillToContents(nodes), LeafNode.fromUint32(length));
 }
 
 /**

@@ -56,5 +56,8 @@ describe("progressive list root helpers", () => {
     expect(() => zeroProgressiveListBasicRootNode(0, 1)).to.throw(/itemsPerChunk/);
     expect(() => zeroProgressiveListBasicRootNode(4, -1)).to.throw(/length/);
     expect(() => progressiveListRootNode([], -1)).to.throw(/length/);
+    // LeafNode.fromUint32 truncates above uint32; reject before mix-in
+    expect(() => zeroProgressiveListBasicRootNode(4, 0x1_0000_0000)).to.throw(/length/);
+    expect(() => progressiveListRootNode([], 0x1_0000_0000)).to.throw(/length/);
   });
 });
