@@ -16,6 +16,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
     * @chainsafe/as-sha256 bumped from 1.1.0 to 1.2.0
     * @chainsafe/persistent-merkle-tree bumped from 1.1.0 to 1.2.0
 
+## [1.9.2](https://github.com/ChainSafe/ssz/compare/ssz-v1.9.1...ssz-v1.9.2) (2026-11-24)
+
+
+### Bug Fixes
+
+* reject Union input without a selector byte ([#568](https://github.com/ChainSafe/ssz/issues/568)) ([d6eaeda](https://github.com/ChainSafe/ssz/commit/d6eaeda913cd20e6be36b17b9c81c7aa3be2bc95))
+
 ## [1.9.1](https://github.com/ChainSafe/ssz/compare/ssz-v1.9.0...ssz-v1.9.1) (2026-11-20)
 
 
