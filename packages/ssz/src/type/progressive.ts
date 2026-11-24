@@ -1,6 +1,7 @@
 import {
   BranchNode,
   Gindex,
+  LeafNode,
   Node,
   concatGindices,
   digest64Into,
@@ -141,6 +142,55 @@ export function progressiveSubtreeFillToContents(nodes: Node[]): Node {
     root = new BranchNode(subtreeRoots[i], root);
   }
   return root;
+}
+
+/**
+ * Root node (chunks + length mix-in) of a zero-filled ProgressiveListBasicType of `length` items.
+ *
+ * Useful when constructing progressive list trees without allocating a zero value array.
+ * See https://github.com/ChainSafe/ssz/issues/542
+ */
+export function zeroProgressiveListBasicRootNode(itemsPerChunk: number, length: number): Node {
+  if (!Number.isInteger(itemsPerChunk) || itemsPerChunk <= 0) {
+    throw Error(`Invalid itemsPerChunk ${itemsPerChunk}`);
+  }
+  if (!Number.isInteger(length) || length < 0) {
+    throw Error(`Invalid progressive list length ${length}`);
+  }
+
+  const chunkCount = Math.ceil(length / itemsPerChunk);
+  return new BranchNode(zeroProgressiveChunksNode(progressiveSubtreeCount(chunkCount)), LeafNode.fromUint32(length));
+}
+
+/**
+ * Root node of a progressive list from its chunk/element nodes + length mix-in.
+ *
+ * `nodes` are packed 32-byte chunk leaves for basic lists, or element root nodes for composite lists.
+ * See https://github.com/ChainSafe/ssz/issues/542
+ */
+export function progressiveListRootNode(nodes: Node[], length: number): Node {
+  if (!Number.isInteger(length) || length < 0) {
+    throw Error(`Invalid progressive list length ${length}`);
+  }
+  return new BranchNode(progressiveSubtreeFillToContents(nodes), LeafNode.fromUint32(length));
+}
+
+/**
+ * Chunks node of a zero-filled progressive merkle list spanning `numSubtrees` balanced subtrees
+ * (chunk capacities 1, 4, 16, ... = 4^i; depths 0, 2, 4, ... = 2i).
+ *
+ * Not memoized: the zero data is already fully shared via the cached zeroNode(2i) subtrees;
+ * only the O(numSubtrees) spine BranchNodes are allocated per call.
+ */
+function zeroProgressiveChunksNode(numSubtrees: number): Node {
+  // chain(k) = B(zeroNode(0), B(zeroNode(2), ... B(zeroNode(2(k-1)), zeroNode(0))))
+  let node: Node = zeroNode(0); // terminator
+  for (let i = numSubtrees - 1; i >= 0; i--) {
+    // BranchNode(left: balanced subtree i, right: rest of chain) — chain grows to the right,
+    // same as progressiveSubtreeFillToContents: `root = new BranchNode(subtreeRoots[i], root)`
+    node = new BranchNode(zeroNode(2 * i), node);
+  }
+  return node;
 }
 
 export function getNodesAtProgressiveDepth(rootNode: Node, count: number): Node[] {
