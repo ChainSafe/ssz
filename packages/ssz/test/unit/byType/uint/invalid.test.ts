@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ContainerType, UintBigintType, UintNumberType} from "../../../../src/index.ts";
+import {ContainerType, ListUintNum64Type, UintBigintType, UintNumberType} from "../../../../src/index.ts";
 import {UintNumberByteLen, uintBigintByteLens, uintNumberByteLens} from "../../../../src/type/uint.ts";
 import {InvalidValue, runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
@@ -81,5 +81,47 @@ describe("Invalid UintType at constructor", () => {
   });
   it("UintBigintType byteLen > 8", () => {
     expect(() => new UintBigintType(64 as UintNumberByteLen)).toThrow();
+  });
+});
+
+describe("Uint serialize rejects out-of-range values (#572)", () => {
+  const u8 = new UintNumberType(1);
+  const u64 = new UintNumberType(8);
+  const u64Inf = new UintNumberType(8, {clipInfinity: true});
+  const ub8 = new UintBigintType(1);
+
+  it("UintNumberType uint8 rejects negative, overflow, float, NaN", () => {
+    expect(() => u8.serialize(-1)).toThrow();
+    expect(() => u8.serialize(256)).toThrow();
+    expect(() => u8.serialize(1.5)).toThrow();
+    expect(() => u8.serialize(NaN)).toThrow();
+    expect(() => u8.serialize(Infinity)).toThrow();
+  });
+
+  it("UintNumberType uint64 rejects above MAX_SAFE_INTEGER and negatives", () => {
+    expect(() => u64.serialize(-1)).toThrow();
+    expect(() => u64.serialize(Number.MAX_SAFE_INTEGER + 1)).toThrow();
+    expect(() => u64.serialize(Infinity)).toThrow();
+  });
+
+  it("UintNumberType clipInfinity still allows Infinity", () => {
+    expect(Array.from(u64Inf.serialize(Infinity))).toEqual(Array(8).fill(0xff));
+  });
+
+  it("UintBigintType rejects negative and overflow", () => {
+    expect(() => ub8.serialize(-1n)).toThrow();
+    expect(() => ub8.serialize(256n)).toThrow();
+  });
+});
+
+describe("ListUintNum64Type packing validates elements (#572)", () => {
+  const list = new ListUintNum64Type(8);
+
+  it("rejects Infinity in toViewDU optimized packing", () => {
+    expect(() => list.toViewDU([Infinity])).toThrow();
+  });
+
+  it("rejects negative in value_toTree packing", () => {
+    expect(() => list.value_toTree([-1])).toThrow();
   });
 });

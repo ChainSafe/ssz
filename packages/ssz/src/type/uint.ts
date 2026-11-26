@@ -14,6 +14,60 @@ const NUMBER_32_MAX = 0xffffffff;
 /** Max high 32 bits of a uint64 that keeps the value <= Number.MAX_SAFE_INTEGER */
 const NUMBER_SAFE_HIGH_MAX = 0x1fffff;
 
+/** Exclusive upper bound for an unsigned integer of `byteLength` bytes. */
+function uintMaxExclusive(byteLength: number): number {
+  return 2 ** (byteLength * 8);
+}
+
+function assertValidUintNumberValue(
+  value: number,
+  byteLength: number,
+  clipInfinity: boolean
+): void {
+  if (typeof value !== "number") {
+    throw Error(`Invalid uint value type ${typeof value} expected number`);
+  }
+  if (value === Infinity) {
+    if (!(clipInfinity && byteLength === 8)) {
+      throw Error("Invalid uint value Infinity");
+    }
+    return;
+  }
+  if (!Number.isFinite(value)) {
+    throw Error(`Invalid uint value ${value}`);
+  }
+  if (!Number.isInteger(value)) {
+    throw Error(`Invalid uint value ${value} expected integer`);
+  }
+  if (value < 0) {
+    throw Error(`Invalid uint value ${value} < 0`);
+  }
+  // Number cannot represent every uint64 exactly; keep the same ceiling as deserialize.
+  if (byteLength === 8) {
+    if (value > Number.MAX_SAFE_INTEGER) {
+      throw Error("Invalid uint value > MAX_SAFE_INTEGER");
+    }
+    return;
+  }
+  if (value >= uintMaxExclusive(byteLength)) {
+    throw Error(`Invalid uint value ${value} >= 2^${byteLength * 8}`);
+  }
+}
+
+function assertValidUintBigintValue(value: bigint, byteLength: number): void {
+  if (typeof value !== "bigint") {
+    throw Error(`Invalid uint value type ${typeof value} expected bigint`);
+  }
+  if (value < BigInt(0)) {
+    throw Error(`Invalid uint value ${value} < 0`);
+  }
+  const maxExclusive = BigInt(2) ** BigInt(byteLength * 8);
+  if (value >= maxExclusive) {
+    throw Error(`Invalid uint value ${value} >= 2^${byteLength * 8}`);
+  }
+}
+
+
 export interface UintNumberOpts {
   /** Represent the value 2^64-1 as the symbolic value `+Infinity`. @see UintNumberType for a justification. */
   clipInfinity?: boolean;
@@ -88,12 +142,18 @@ export class UintNumberType extends BasicType<number> {
     return 0;
   }
 
+  /** Reject values outside the uint domain before serialize / tree packing. */
+  assertValidValue(value: number): void {
+    assertValidUintNumberValue(value, this.byteLength, this.clipInfinity);
+  }
+
   // Serialization + deserialization
 
   value_serializeToBytes({dataView}: ByteViews, offset: number, value: number): number {
+    assertValidUintNumberValue(value, this.byteLength, this.clipInfinity);
     switch (this.byteLength) {
       case 1:
-        dataView.setInt8(offset, value);
+        dataView.setUint8(offset, value);
         break;
       case 2:
         dataView.setUint16(offset, value, true);
@@ -178,6 +238,7 @@ export class UintNumberType extends BasicType<number> {
   }
 
   tree_setToPackedNode(leafNode: LeafNode, index: number, value: number): void {
+    assertValidUintNumberValue(value, this.byteLength, this.clipInfinity);
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
 
     // TODO: Benchmark the cost of this if, and consider using a different class
@@ -284,12 +345,18 @@ export class UintBigintType extends BasicType<bigint> {
     return BigInt(0);
   }
 
+  /** Reject values outside the uint domain before serialize / tree packing. */
+  assertValidValue(value: bigint): void {
+    assertValidUintBigintValue(value, this.byteLength);
+  }
+
   // Serialization + deserialization
 
   value_serializeToBytes({dataView}: ByteViews, offset: number, value: bigint): number {
+    assertValidUintBigintValue(value, this.byteLength);
     switch (this.byteLength) {
       case 1:
-        dataView.setInt8(offset, Number(value));
+        dataView.setUint8(offset, Number(value));
         break;
       case 2:
         dataView.setUint16(offset, Number(value), true);
@@ -380,6 +447,7 @@ export class UintBigintType extends BasicType<bigint> {
 
   /** Mutates node to set value */
   tree_setToPackedNode(leafNode: LeafNode, index: number, value: bigint): void {
+    assertValidUintBigintValue(value, this.byteLength);
     const offsetBytes = this.byteLength * (index % this.itemsPerChunk);
     // TODO: Not-optimized, copy pasted from UintNumberType
     leafNode.setUintBigint(this.byteLength, offsetBytes, value);
