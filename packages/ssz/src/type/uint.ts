@@ -142,6 +142,11 @@ export class UintNumberType extends BasicType<number> {
     return 0;
   }
 
+  /** Reject values outside the uint domain before serialize / tree packing. */
+  assertValidValue(value: number): void {
+    assertValidUintNumberValue(value, this.byteLength, this.clipInfinity);
+  }
+
   // Serialization + deserialization
 
   value_serializeToBytes({dataView}: ByteViews, offset: number, value: number): number {
@@ -338,6 +343,11 @@ export class UintBigintType extends BasicType<bigint> {
 
   defaultValue(): bigint {
     return BigInt(0);
+  }
+
+  /** Reject values outside the uint domain before serialize / tree packing. */
+  assertValidValue(value: bigint): void {
+    assertValidUintBigintValue(value, this.byteLength);
   }
 
   // Serialization + deserialization

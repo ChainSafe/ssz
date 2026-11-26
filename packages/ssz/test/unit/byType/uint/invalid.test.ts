@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ContainerType, UintBigintType, UintNumberType} from "../../../../src/index.ts";
+import {ContainerType, ListUintNum64Type, UintBigintType, UintNumberType} from "../../../../src/index.ts";
 import {UintNumberByteLen, uintBigintByteLens, uintNumberByteLens} from "../../../../src/type/uint.ts";
 import {InvalidValue, runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
@@ -111,5 +111,17 @@ describe("Uint serialize rejects out-of-range values (#572)", () => {
   it("UintBigintType rejects negative and overflow", () => {
     expect(() => ub8.serialize(-1n)).toThrow();
     expect(() => ub8.serialize(256n)).toThrow();
+  });
+});
+
+describe("ListUintNum64Type packing validates elements (#572)", () => {
+  const list = new ListUintNum64Type(8);
+
+  it("rejects Infinity in toViewDU optimized packing", () => {
+    expect(() => list.toViewDU([Infinity])).toThrow();
+  });
+
+  it("rejects negative in value_toTree packing", () => {
+    expect(() => list.value_toTree([-1])).toThrow();
   });
 });

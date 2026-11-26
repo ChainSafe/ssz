@@ -40,6 +40,11 @@ export class ListUintNum64Type extends ListBasicType<UintNumberType> {
       throw new Error(`Exceeds limit: ${value.length} > ${this.limit}`);
     }
 
+    // Optimized packing bypasses tree_setToPackedNode; validate here (#572 review).
+    for (const item of value) {
+      this.elementType.assertValidValue(item);
+    }
+
     const leafNodes = packedUintNum64sToLeafNodes(value);
     // subtreeFillToContents mutates the leafNodes array
     const rootNode = subtreeFillToContents([...leafNodes], this.chunkDepth);
