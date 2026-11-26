@@ -28,6 +28,7 @@ import {ArrayType} from "./array.ts";
 import {
   addLengthNode,
   assertValidArrayLength,
+  assertValidPackedElements,
   getLengthFromRootNode,
   setChunksNode,
   value_deserializeFromBytesArrayBasic,
@@ -172,6 +173,7 @@ export class ProgressiveListBasicType<ElementType extends BasicType<unknown>> ex
   tree_deserializeFromBytes(data: ByteViews, start: number, end: number): Node {
     const length = (end - start) / this.elementType.byteLength;
     assertValidArrayLength(length, this, true);
+    assertValidPackedElements(this.elementType, data, start, end);
     const nodes = packedRootsBytesToLeafNodes(data.dataView, start, end);
     return addLengthNode(progressiveSubtreeFillToContents(nodes), length);
   }

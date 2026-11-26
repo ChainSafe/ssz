@@ -10,6 +10,7 @@ import {
 } from "@chainsafe/persistent-merkle-tree";
 import {ByteViews, Type, ValueOf} from "./abstract.ts";
 import {BasicType} from "./basic.ts";
+import {BooleanType} from "./boolean.ts";
 
 // There's a matrix of Array-ish types that require a combination of this functions.
 // Regular class extends syntax doesn't work because it can only extend a single class.
@@ -129,6 +130,25 @@ export function tree_serializeToBytesArrayBasic<ElementType extends BasicType<un
 }
 
 // List of basic elements will pack them in merkelized form
+/**
+ * Packed chunks store element bytes as they are, so element types that reject some byte values must be checked
+ * before the bytes become leaves. Of the basic types only boolean has such values.
+ */
+export function assertValidPackedElements<ElementType extends BasicType<unknown>>(
+  elementType: ElementType,
+  data: ByteViews,
+  start: number,
+  end: number
+): void {
+  if (elementType instanceof BooleanType) {
+    for (let i = start; i < end; i++) {
+      if (data.uint8Array[i] > 1) {
+        throw Error(`Boolean: invalid value ${data.uint8Array[i]}`);
+      }
+    }
+  }
+}
+
 export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicType<unknown>>(
   elementType: ElementType,
   chunkDepth: number,
@@ -140,6 +160,8 @@ export function tree_deserializeFromBytesArrayBasic<ElementType extends BasicTyp
   // Vector + List length validation
   const length = (end - start) / elementType.byteLength;
   assertValidArrayLength(length, arrayProps, true);
+
+  assertValidPackedElements(elementType, data, start, end);
 
   // Abstract converting data to LeafNode to allow for custom data representation, such as the hashObject
   const chunksNode = packedRootsBytesToNode(chunkDepth, data.dataView, start, end);
