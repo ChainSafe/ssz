@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {VectorBasicType, VectorCompositeType} from "../../../../src/index.ts";
+import {BooleanType, VectorBasicType, VectorCompositeType} from "../../../../src/index.ts";
 import {byteType, uint16NumType} from "../../../utils/primitiveTypes.ts";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
@@ -13,6 +13,14 @@ runTypeTestInvalid({
     {id: "Object", json: {}},
     {id: "null", json: null},
     {id: "Object stringified", json: JSON.stringify({})},
+  ],
+});
+
+runTypeTestInvalid({
+  type: new VectorBasicType(new BooleanType(), 4),
+  values: [
+    {id: "Boolean over 1", serialized: "00010201", error: "Boolean: invalid value"},
+    {id: "Boolean max byte", serialized: "ff000000", error: "Boolean: invalid value"},
   ],
 });
 

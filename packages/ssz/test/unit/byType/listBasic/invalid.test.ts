@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ListBasicType} from "../../../../src/index.ts";
+import {BooleanType, ListBasicType, ProgressiveListBasicType} from "../../../../src/index.ts";
 import {byteType} from "../../../utils/primitiveTypes.ts";
 import {runTypeTestInvalid} from "../runTypeTestInvalid.ts";
 
@@ -13,6 +13,17 @@ runTypeTestInvalid({
     {id: "Object stringified", json: JSON.stringify({})},
   ],
 });
+
+for (const type of [new ListBasicType(new BooleanType(), 40), new ProgressiveListBasicType(new BooleanType())]) {
+  runTypeTestInvalid({
+    type,
+    values: [
+      {id: "Boolean over 1", serialized: "0102", error: "Boolean: invalid value"},
+      {id: "Boolean max byte", serialized: "ff00", error: "Boolean: invalid value"},
+      {id: "Boolean over 1 in second chunk", serialized: `${"01".repeat(33)}05`, error: "Boolean: invalid value"},
+    ],
+  });
+}
 
 // Invalid types at constructor time
 
