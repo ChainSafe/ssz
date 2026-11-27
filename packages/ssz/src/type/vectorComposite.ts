@@ -7,6 +7,7 @@ import {ArrayCompositeTreeView, ArrayCompositeType} from "../view/arrayComposite
 import {ArrayCompositeTreeViewDU} from "../viewDU/arrayComposite.ts";
 import {ByteViews, Type, ValueOf} from "./abstract.ts";
 import {ArrayType} from "./array.ts";
+import {assertValidArrayLength} from "./arrayBasic.ts";
 import {
   maxSizeArrayComposite,
   minSizeArrayComposite,
@@ -143,6 +144,7 @@ export class VectorCompositeType<
   }
 
   value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
+    assertValidArrayLength(value.length, this);
     return value_serializeToBytesArrayComposite(this.elementType, this.length, output, offset, value);
   }
 

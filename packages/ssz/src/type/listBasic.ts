@@ -15,6 +15,7 @@ import {ValueOf} from "./abstract.ts";
 import {ArrayType} from "./array.ts";
 import {
   addLengthNode,
+  assertValidArrayLength,
   setChunksNode,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
@@ -123,6 +124,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   }
 
   value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
+    assertValidArrayLength(value.length, this);
     return value_serializeToBytesArrayBasic(this.elementType, value.length, output, offset, value);
   }
 
@@ -215,6 +217,7 @@ export class ListBasicType<ElementType extends BasicType<unknown>>
   }
 
   protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    assertValidArrayLength(value.length, this);
     const byteLen = this.value_serializedSize(value);
     const blockByteLen = Math.ceil(byteLen / 64) * 64;
     // reallocate this.blocksBuffer if needed
