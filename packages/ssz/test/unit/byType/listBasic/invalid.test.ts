@@ -33,4 +33,9 @@ describe("ListBasicType limit", () => {
       expect(() => new ListBasicType(byteType, limit)).toThrow("List limit must be a positive integer");
     }
   });
+
+  it("serialize rejects a value longer than the limit", () => {
+    const list = new ListBasicType(byteType, 4);
+    expect(() => list.serialize([1, 2, 3, 4, 5])).toThrow("Invalid list length 5 over limit 4");
+  });
 });

@@ -92,4 +92,9 @@ describe("ListCompositeType limit", () => {
       );
     }
   });
+
+  it("serialize rejects a value longer than the limit", () => {
+    const list = new ListCompositeType(new ContainerType({a: uint16}), 2);
+    expect(() => list.serialize([{a: 1}, {a: 2}, {a: 3}])).toThrow("Invalid list length 3 over limit 2");
+  });
 });

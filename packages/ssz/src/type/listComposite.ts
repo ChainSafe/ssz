@@ -19,7 +19,7 @@ import {ListCompositeTreeView} from "../view/listComposite.ts";
 import {ListCompositeTreeViewDU} from "../viewDU/listComposite.ts";
 import {ByteViews, ValueOf} from "./abstract.ts";
 import {ArrayType} from "./array.ts";
-import {addLengthNode, getLengthFromRootNode, setChunksNode} from "./arrayBasic.ts";
+import {addLengthNode, assertValidArrayLength, getLengthFromRootNode, setChunksNode} from "./arrayBasic.ts";
 import {
   maxSizeArrayComposite,
   tree_deserializeFromBytesArrayComposite,
@@ -130,10 +130,13 @@ export class ListCompositeType<
   // Serialization + deserialization
 
   value_serializedSize(value: ValueOf<ElementType>[]): number {
+    // Validate before serialize() allocates the output buffer from this size.
+    assertValidArrayLength(value.length, this);
     return value_serializedSizeArrayComposite(this.elementType, value.length, value);
   }
 
   value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
+    assertValidArrayLength(value.length, this);
     return value_serializeToBytesArrayComposite(this.elementType, value.length, output, offset, value);
   }
 
@@ -219,6 +222,8 @@ export class ListCompositeType<
         return;
       }
     }
+
+    assertValidArrayLength(value.length, this);
 
     // should not call super.hashTreeRootInto() here
     // use  merkleizeBlockArray() instead of merkleizeBlocksBytes() to avoid big memory allocation

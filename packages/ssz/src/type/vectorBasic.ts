@@ -8,6 +8,7 @@ import {ArrayBasicTreeViewDU} from "../viewDU/arrayBasic.ts";
 import {ByteViews, ValueOf} from "./abstract.ts";
 import {ArrayType} from "./array.ts";
 import {
+  assertValidArrayLength,
   tree_deserializeFromBytesArrayBasic,
   tree_serializeToBytesArrayBasic,
   value_deserializeFromBytesArrayBasic,
@@ -116,6 +117,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   }
 
   value_serializeToBytes(output: ByteViews, offset: number, value: ValueOf<ElementType>[]): number {
+    assertValidArrayLength(value.length, this);
     return value_serializeToBytesArrayBasic(this.elementType, this.length, output, offset, value);
   }
 
@@ -160,6 +162,7 @@ export class VectorBasicType<ElementType extends BasicType<unknown>>
   // Merkleization
 
   protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    assertValidArrayLength(value.length, this);
     const uint8Array = this.blocksBuffer.subarray(0, this.fixedSize);
     const dataView = new DataView(uint8Array.buffer, uint8Array.byteOffset, uint8Array.byteLength);
     value_serializeToBytesArrayBasic(this.elementType, this.length, {uint8Array, dataView}, 0, value);
