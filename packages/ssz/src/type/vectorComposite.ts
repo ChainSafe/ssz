@@ -194,6 +194,7 @@ export class VectorCompositeType<
   // Merkleization
 
   protected getBlocksBytes(value: ValueOf<ElementType>[]): Uint8Array {
+    assertValidArrayLength(value.length, this);
     return value_getBlocksBytesArrayComposite(this.elementType, this.length, value, this.blocksBuffer);
   }
 
