@@ -130,6 +130,8 @@ export class ListCompositeType<
   // Serialization + deserialization
 
   value_serializedSize(value: ValueOf<ElementType>[]): number {
+    // Validate before serialize() allocates the output buffer from this size.
+    assertValidArrayLength(value.length, this);
     return value_serializedSizeArrayComposite(this.elementType, value.length, value);
   }
 
